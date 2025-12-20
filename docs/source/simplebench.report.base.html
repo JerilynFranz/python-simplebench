@@ -616,7 +616,7 @@ for the ExecutionEnvironment class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.report.base.RawDataBlock">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.base.</span></span><span class="sig-name descname"><span class="pre">RawDataBlock</span></span><a class="reference internal" href="../_modules/simplebench/report/base/raw_data_block.html#RawDataBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.RawDataBlock" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.base.hydrator.hydrator.html#simplebench.base.hydrator.hydrator.Hydrator" title="simplebench.base.hydrator.hydrator.Hydrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hydrator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.base.hydrator.hydrator.html#simplebench.base.hydrator.hydrator.Hydrator" title="simplebench.base.hydrator.hydrator.Hydrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hydrator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Hashable" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hashable</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>Base class representing a raw data block.</p>
 <p>Initialize RawDataBlock class.</p>
 <dl class="py attribute">
@@ -943,7 +943,7 @@ for the version.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.report.base.ValueBlock">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.base.</span></span><span class="sig-name descname"><span class="pre">ValueBlock</span></span><a class="reference internal" href="../_modules/simplebench/report/base/value_block.html#ValueBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.ValueBlock" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.base.hydrator.hydrator.html#simplebench.base.hydrator.hydrator.Hydrator" title="simplebench.base.hydrator.hydrator.Hydrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hydrator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.base.hydrator.hydrator.html#simplebench.base.hydrator.hydrator.Hydrator" title="simplebench.base.hydrator.hydrator.Hydrator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hydrator</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Hashable" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hashable</span></code></a></p>
 <p>Base class representing a value block.</p>
 <p>Initialize ValueBlock class.</p>
 <dl class="py attribute">
@@ -975,7 +975,7 @@ for the version.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.base.value_block_dict.html#simplebench.report.base.value_block_dict.ValueBlockDataBase" title="simplebench.report.base.value_block_dict.ValueBlockDataBase"><span class="pre">ValueBlockDataBase</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.base.value_block.html#simplebench.report.base.value_block.ValueBlock" title="simplebench.report.base.value_block.ValueBlock"><span class="pre">ValueBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/base/value_block.html#ValueBlock.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.ValueBlock.from_dict" title="Link to this definition">🔗</a></dt>
@@ -992,10 +992,24 @@ for the version.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.report.base.ValueBlock.to_dict">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/base/value_block.html#ValueBlock.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.ValueBlock.to_dict" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.base.value_block_dict.html#simplebench.report.base.value_block_dict.ValueBlockDictBase" title="simplebench.report.base.value_block_dict.ValueBlockDictBase"><span class="pre">ValueBlockDictBase</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/base/value_block.html#ValueBlock.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.ValueBlock.to_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Convert the ValueBlock instance to a dictionary.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.base.ValueBlockDataBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.base.</span></span><span class="sig-name descname"><span class="pre">ValueBlockDataBase</span></span><a class="reference internal" href="../_modules/simplebench/report/base/value_block_dict.html#ValueBlockDataBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.ValueBlockDataBase" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypedDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Base type for ValueBlock data used as INPUT.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.base.ValueBlockDictBase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.base.</span></span><span class="sig-name descname"><span class="pre">ValueBlockDictBase</span></span><a class="reference internal" href="../_modules/simplebench/report/base/value_block_dict.html#ValueBlockDictBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.base.ValueBlockDictBase" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypedDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
+<p>Base type for ValueBlock data structures.</p>
 </dd></dl>
 
 <section id="submodules">
@@ -1124,6 +1138,11 @@ for the version.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.value_block.html#simplebench.report.base.value_block.ValueBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.to_dict()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.report.base.value_block_dict.html">simplebench.report.base.value_block_dict module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.base.value_block_dict.html#simplebench.report.base.value_block_dict.ValueBlockDataBase"><code class="docutils literal notranslate"><span class="pre">ValueBlockDataBase</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.base.value_block_dict.html#simplebench.report.base.value_block_dict.ValueBlockDictBase"><code class="docutils literal notranslate"><span class="pre">ValueBlockDictBase</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.report.base.vcs_info.html">simplebench.report.base.vcs_info module</a><ul>
@@ -1283,6 +1302,8 @@ for the version.</p>
 <li><a class="reference internal" href="#simplebench.report.base.ValueBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.to_dict()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#simplebench.report.base.ValueBlockDataBase"><code class="docutils literal notranslate"><span class="pre">ValueBlockDataBase</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.base.ValueBlockDictBase"><code class="docutils literal notranslate"><span class="pre">ValueBlockDictBase</span></code></a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 </ul>
 </li>

@@ -254,17 +254,11 @@
 <span></span><span class="sd">&quot;&quot;&quot;Class for JSON raw data block representation.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_RawDataBlockErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawDataBlock</span> <span class="k">as</span> <span class="n">RawDataBlockBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Values</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">validate_namespaced_identifier</span><span class="p">,</span>
-    <span class="n">validate_positive_float</span><span class="p">,</span>
-    <span class="n">validate_string</span><span class="p">,</span>
-    <span class="n">validate_type</span><span class="p">,</span>
-<span class="p">)</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.raw_data_block_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawDataBlockSchema</span>
 
 
@@ -298,33 +292,38 @@
             <span class="o">*</span><span class="p">,</span>
             <span class="n">semantic_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">timer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">cpu_timer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
             <span class="n">data</span><span class="p">:</span> <span class="n">Values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize JSONStatsSummary base class.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize RawDataBlock class.</span>
 
-<span class="sd">        :param str semantic_type: The semantic type string for the value block. (&#39;type&#39; field in JSON data)</span>
+<span class="sd">        :param str semantic_type: The semantic type string for the raw data block. (&#39;type&#39; field in JSON data)</span>
 <span class="sd">        :param (str | None) timer: The timer string or None.</span>
 <span class="sd">        :param str unit: The unit of measurement.</span>
 <span class="sd">        :param float scale: The scale factor.</span>
 <span class="sd">        :param Values data: The raw data values of the block.</span>
+<span class="sd">        :param (str | None) timer: The timer string or None.</span>
+<span class="sd">        :param (str | None) cpu_timer: The CPU timer string or None.</span>
 <span class="sd">        :raise SimpleBenchTypeError: If any parameter is of incorrect type.</span>
 <span class="sd">        :raise SimpleBenchValueError: If any parameter has an invalid value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">semantic_type</span> <span class="o">=</span> <span class="n">semantic_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">timer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_type</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">semantic_type</span><span class="p">(</span><span class="n">semantic_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">timer</span><span class="p">(</span><span class="n">timer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cpu_timer</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">cpu_timer</span><span class="p">(</span><span class="n">cpu_timer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RawDataBlock.from_dict">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.raw_data_block.raw_data_block.html#simplebench.report.versions.v1.RawDataBlock.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;RawDataBlock&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a RawDataBlock instance from a dictionary.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a RawDataBlock instance from a dictionary that represents the</span>
+<span class="sd">        JSON raw data block. It must conform to the :class:`RawDataBlockSchema`.</span>
 
 <span class="sd">        :param data: Dictionary containing the JSON raw data block data.</span>
-<span class="sd">        :return: A RawDataBlock instance.</span>
+<span class="sd">        :return RawDataBlock: A RawDataBlock instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">init_params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">()</span>
         <span class="n">init_params</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
@@ -356,31 +355,13 @@
             <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span>
             <span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
         <span class="p">}</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">output</span><span class="p">[</span><span class="s1">&#39;timer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu_timer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span><span class="p">[</span><span class="s1">&#39;cpu_timer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cpu_timer</span>
+
         <span class="k">return</span> <span class="n">output</span></div>
-
-
-<div class="viewcode-block" id="RawDataBlock.validate_timer">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.raw_data_block.raw_data_block.html#simplebench.report.versions.v1.RawDataBlock.validate_timer">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">validate_timer</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the timer.</span>
-<span class="sd">        :param value: The timer string to validate.</span>
-<span class="sd">        :return: The validated timer string or None.</span>
-<span class="sd">        :raise SimpleBenchTypeError: If the timer is not a string or None.</span>
-<span class="sd">        :raises SimpleBenchValueError: If the timer string is invalid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">timer_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
-            <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;timer&#39;</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMER_TYPE</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_TIMER_VALUE</span><span class="p">,</span>
-            <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">timer_name</span></div>
 
 
     <span class="nd">@property</span>
@@ -391,19 +372,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_type</span>
 
-    <span class="nd">@semantic_type</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">semantic_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the semantic type value.</span>
-
-<span class="sd">        :param value: The semantic type value.</span>
-<span class="sd">        :raise SimpleBenchTypeError: If type is not a string.</span>
-<span class="sd">        :raise SimpleBenchValueError: If type is an invalid format.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_semantic_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_namespaced_identifier</span><span class="p">(</span>
-            <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;semantic_type&#39;</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_SEMANTIC_TYPE_TYPE</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_SEMANTIC_TYPE_VALUE</span><span class="p">)</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the unit of measurement.</span>
@@ -411,20 +379,6 @@
 <span class="sd">        :return: The unit of measurement.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span>
-
-    <span class="nd">@unit</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the unit of measurement.</span>
-
-<span class="sd">        :param value: The unit of measurement.</span>
-<span class="sd">        :raise SimpleBenchTypeError: If unit is not a string.</span>
-<span class="sd">        :raise SimpleBenchValueError: If unit is an empty string.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate_string</span><span class="p">(</span>
-            <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;unit&#39;</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_UNIT_TYPE</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_UNIT_VALUE</span><span class="p">,</span>
-            <span class="n">allow_blank</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -435,18 +389,21 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span>
 
-    <span class="nd">@scale</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the scale factor.</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cpu_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the CPU timer.</span>
 
-<span class="sd">        :param value: The scale factor.</span>
-<span class="sd">        :raise SimpleBenchTypeError: If scale is not a float.</span>
-<span class="sd">        :raise SimpleBenchValueError: If scale is not a positive number.</span>
+<span class="sd">        :return str | None: The CPU timer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">validate_positive_float</span><span class="p">(</span>
-            <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_SCALE_TYPE</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_SCALE_VALUE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cpu_timer</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the timer.</span>
+
+<span class="sd">        :return str | None: The timer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Values</span><span class="p">:</span>
@@ -456,16 +413,48 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
 
-    <span class="nd">@data</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the data.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the string representation of the RawDataBlock instance.</span>
 
-<span class="sd">        :param value: The data.</span>
-<span class="sd">        :raise SimpleBenchTypeError: If data is not of type Values.</span>
+<span class="sd">        :return: String representation of the RawDataBlock instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
-            <span class="n">value</span><span class="p">,</span> <span class="n">Values</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span><span class="p">,</span>
-            <span class="n">_RawDataBlockErrorTag</span><span class="o">.</span><span class="n">INVALID_DATA_TYPE</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;RawDataBlock(semantic_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">semantic_type</span><span class="si">!r}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;timer=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="si">!r}</span><span class="s2">, cpu_timer=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cpu_timer</span><span class="si">!r}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;unit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="si">!r}</span><span class="s2">, scale=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="si">!r}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;data=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="si">!r}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check equality between two RawDataBlock instances.</span>
+
+<span class="sd">        :param other: The other object to compare with.</span>
+<span class="sd">        :return: True if both instances are equal, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">RawDataBlock</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">semantic_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">semantic_type</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">timer</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpu_timer</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">cpu_timer</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">unit</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">scale</span> <span class="ow">and</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the hash of the RawDataBlock instance.</span>
+
+<span class="sd">        :return: Hash of the RawDataBlock instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">semantic_type</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cpu_timer</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span></div>
 
 </pre></div>
         </article>

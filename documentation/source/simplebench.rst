@@ -41,4 +41,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   simplebench.decorators
    simplebench.defaults

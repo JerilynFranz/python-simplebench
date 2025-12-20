@@ -1,27 +1,44 @@
-"""Class for JSON value block representation."""
+"""V1 ValueBlock representation.
+
+This module provides the `ValueBlock` class, which represents a single named
+value in a JSON report.
+
+The `ValueBlock` class is immutable and implements validation and serialization
+methods to and from dictionaries that conform to the following JSON Schema version:
+
+https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/value-block.json
+
+As a V1 implementation, it serves as a frozen snapshot of the value block
+representation, ensuring backward compatibility with future versions of the JSON
+report schema.
+
+An instance can be created in two ways:
+1. By directly instantiating the `ValueBlock` class with the required parameters.
+2. By using the `from_dict` class method to create an instance from a
+   dictionary that matches the JSON schema.
+
+The class also implements equality, hashing, and copy protocols to allow for
+comparison, use in hash-based collections, and efficient copying.
+"""
+from copy import copy
 from typing import Any
 
-from simplebench.report._error_tags import _ValueBlockErrorTag
 from simplebench.report.base import JSONSchema
 from simplebench.report.base import ValueBlock as ValueBlockBase
-from simplebench.validators import (
-    validate_namespaced_identifier,
-    validate_positive_float,
-    validate_string,
-    validate_type,
-)
+from simplebench.report.versions.v1.types import ValueBlockData, ValueBlockDict
 
+from . import validate
 from .value_block_schema import ValueBlockSchema
 
 
 class ValueBlock(ValueBlockBase):
     """Class representing a value block (V1).
 
-    :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
+    :param str semantic_type: The semantic type string for the value block.
     :param (str | None) timer: The timer string or None.
     :param str unit: The unit of measurement.
     :param float scale: The scale factor.
-    :param float value: The value of the block.
+    :param float | int value: The value of the block.
     :raise SimpleBenchTypeError: If any parameter is of incorrect type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -38,6 +55,14 @@ class ValueBlock(ValueBlockBase):
     ID: str = SCHEMA.ID
     """ID of the value block schema."""
 
+    __slots__ = (
+        '_semantic_type',
+        '_timer',
+        '_unit',
+        '_scale',
+        '_value',
+    )
+
     def __init__(
             self,
             *,
@@ -52,22 +77,27 @@ class ValueBlock(ValueBlockBase):
         :param (str | None) timer: The timer string or None.
         :param str unit: The unit of measurement.
         :param float scale: The scale factor.
-        :param float value: The value of the block.
+        :param float | int value: The value of the block.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
-        self.semantic_type = semantic_type
-        self.timer = timer
-        self.unit = unit
-        self.scale = scale
-        self.value = value
+        self._semantic_type: str = validate.semantic_type(semantic_type)
+        self._timer: str | None = validate.timer(timer)
+        self._unit: str = validate.unit(unit)
+        self._scale: float = validate.scale(scale)
+        self._value: float = validate.value(value)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "ValueBlock":
+    def from_dict(cls, data: ValueBlockData) -> "ValueBlock":  # type: ignore[override]
         """Create a ValueBlock instance from a dictionary.
 
-        :param data: Dictionary containing the JSON results data.
-        :return: A ValueBlock instance.
+        The input dictionary must conform to the JSON schema for ValueBlock V1,
+        with the exceptions that the `type` and `version` fields are optional;
+        if omitted, they are assumed to be the V1 :attr:`ValueBlockSchema.TYPE` and
+        :attr:`ValueBlockSchema.VERSION` constants.
+
+        :param ValueBlockData data: Dictionary containing the JSON results data.
+        :return ValueBlock: A ValueBlock instance.
         """
         init_params = cls.init_params()
         init_params['type'] = str
@@ -82,12 +112,19 @@ class ValueBlock(ValueBlockBase):
         )
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> ValueBlockDict:
         """Convert the ValueBlock instance to a dictionary.
 
-        :return: Dictionary representation of the ValueBlock instance.
+        The returned dictionary conforms to the JSON schema for ValueBlock V1
+        and is suitable for serialization.
+
+        The returned :class:`ValueBlockDict` has a stricter definition than
+        :class:`ValueBlockData`. It requires the `type` and `version` fields
+        to be present and guarantees that the `value` field is a `float`.
+
+        :return ValueBlockDict: Dictionary representation of the ValueBlock instance.
         """
-        output: dict[str, Any] = {
+        output: ValueBlockDict = {
             'type': self.TYPE,
             'version': self.VERSION,
             'semantic_type': self.semantic_type,
@@ -99,25 +136,6 @@ class ValueBlock(ValueBlockBase):
             output['timer'] = self.timer
         return output
 
-    @classmethod
-    def validate_timer(cls, value: Any) -> str | None:
-        """Validate the timer.
-        :param value: The timer string to validate.
-        :return: The validated timer string or None.
-        :raise SimpleBenchTypeError: If the timer is not a string or None.
-        :raises SimpleBenchValueError: If the timer string is invalid.
-        """
-        if value is None:
-            return None
-
-        timer_name: str = validate_string(
-            value, 'timer',
-            _ValueBlockErrorTag.INVALID_TIMER_TYPE,
-            _ValueBlockErrorTag.INVALID_TIMER_VALUE,
-            allow_blank=False)
-
-        return timer_name
-
     @property
     def semantic_type(self) -> str:
         """Get the semantic type value.
@@ -126,18 +144,13 @@ class ValueBlock(ValueBlockBase):
         """
         return self._semantic_type
 
-    @semantic_type.setter
-    def semantic_type(self, value: str) -> None:
-        """Set the semantic type value.
+    @property
+    def timer(self) -> str | None:
+        """Get the timer value.
 
-        :param value: The semantic type value.
-        :raise SimpleBenchTypeError: If type is not a string.
-        :raise SimpleBenchValueError: If type is an invalid format.
+        :return: The timer value or None.
         """
-        self._semantic_type: str = validate_namespaced_identifier(
-            value, 'semantic_type',
-            _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
-            _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
+        return self._timer
 
     @property
     def unit(self) -> str:
@@ -146,20 +159,6 @@ class ValueBlock(ValueBlockBase):
         :return: The unit of measurement.
         """
         return self._unit
-
-    @unit.setter
-    def unit(self, value: str) -> None:
-        """Set the unit of measurement.
-
-        :param value: The unit of measurement.
-        :raise SimpleBenchTypeError: If unit is not a string.
-        :raise SimpleBenchValueError: If unit is an empty string.
-        """
-        self._unit: str = validate_string(
-            value, 'unit',
-            _ValueBlockErrorTag.INVALID_UNIT_TYPE,
-            _ValueBlockErrorTag.INVALID_UNIT_VALUE,
-            allow_blank=False)
 
     @property
     def scale(self) -> float:
@@ -170,34 +169,71 @@ class ValueBlock(ValueBlockBase):
         """
         return self._scale
 
-    @scale.setter
-    def scale(self, value: float) -> None:
-        """Set the scale factor.
-
-        :param value: The scale factor.
-        :raise SimpleBenchTypeError: If scale is not a float.
-        :raise SimpleBenchValueError: If scale is not a positive number.
-        """
-        self._scale: float = validate_positive_float(
-            value, 'scale',
-            _ValueBlockErrorTag.INVALID_SCALE_TYPE,
-            _ValueBlockErrorTag.INVALID_SCALE_VALUE)
-
     @property
-    def value(self) -> float | int:
+    def value(self) -> float:
         """Get the value.
 
-        :return: The value as a float or int.
+        :return: The value as a float.
         """
         return self._value
 
-    @value.setter
-    def value(self, value: float | int) -> None:
-        """Set the value.
+    def __hash__(self) -> int:
+        """Get the hash of the ValueBlock instance.
 
-        :param value: The value.
-        :raise SimpleBenchTypeError: If value is not a float or int.
+        :return: The hash value.
         """
-        self._value: float | int = validate_type(
-            value, (float, int), 'value',
-            _ValueBlockErrorTag.INVALID_VALUE_TYPE)
+        return hash((
+            self.semantic_type,
+            self.timer,
+            self.unit,
+            self.scale,
+            self.value,
+        ))
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two ValueBlock instances.
+
+        :param other: The other ValueBlock instance to compare.
+        :return: True if equal, False otherwise.
+        """
+        if not isinstance(other, ValueBlock):
+            return NotImplemented
+        return (
+            self.semantic_type == other.semantic_type and
+            self.timer == other.timer and
+            self.unit == other.unit and
+            self.scale == other.scale and
+            self.value == other.value
+        )
+
+    def __repr__(self) -> str:
+        """Get the string representation of the ValueBlock instance.
+
+        :return: The string representation.
+        """
+        params: dict[str, str | float | None] = {
+            'semantic_type': self.semantic_type,
+            'timer': self.timer,
+            'unit': self.unit,
+            'scale': self.scale,
+            'value': self.value,
+        }
+        if self.timer is None:  # deletion instead of addition preserves ordering
+            del params['timer']
+        formatted_params = ', '.join(
+            f"{key}={value!r}" for key, value in params.items()
+        )
+
+        return f"ValueBlock({formatted_params})"
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> "ValueBlock":
+        """Create a deep copy of the ValueBlock instance.
+
+        Since the ValueBlock instance and its contained attributes are immutable,
+        a shallow copy is functionally identical to a deep copy. This method
+        overrides the default `copy.deepcopy` to perform a more efficient shallow copy.
+
+        :param memo: Memoization dictionary for deep copy.
+        :return: A deep copy of the ValueBlock instance.
+        """
+        return copy(self)

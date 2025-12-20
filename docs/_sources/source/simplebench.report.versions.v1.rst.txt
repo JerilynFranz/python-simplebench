@@ -21,5 +21,6 @@ Subpackages
    simplebench.report.versions.v1.report
    simplebench.report.versions.v1.results_info
    simplebench.report.versions.v1.stats_block
+   simplebench.report.versions.v1.types
    simplebench.report.versions.v1.value_block
    simplebench.report.versions.v1.vcs_info

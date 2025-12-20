@@ -23,4 +23,4 @@ Submodules
 
    simplebench.case.case
    simplebench.case.function_runner
-   simplebench.case.validators
+   simplebench.case.validate

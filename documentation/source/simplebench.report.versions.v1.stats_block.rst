@@ -14,3 +14,4 @@ Submodules
 
    simplebench.report.versions.v1.stats_block.stats_block
    simplebench.report.versions.v1.stats_block.stats_block_schema
+   simplebench.report.versions.v1.stats_block.validate

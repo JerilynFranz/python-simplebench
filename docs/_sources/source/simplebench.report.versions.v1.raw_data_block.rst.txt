@@ -14,3 +14,4 @@ Submodules
 
    simplebench.report.versions.v1.raw_data_block.raw_data_block
    simplebench.report.versions.v1.raw_data_block.raw_data_block_schema
+   simplebench.report.versions.v1.raw_data_block.validate

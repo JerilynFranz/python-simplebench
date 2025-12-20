@@ -262,16 +262,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Values</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_non_blank_string</span><span class="p">,</span> <span class="n">validate_positive_float</span><span class="p">,</span> <span class="n">validate_positive_int</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ResultsErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stats</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">validate_belongs_to_metric_category</span><span class="p">,</span>
-    <span class="n">validate_extra_info</span><span class="p">,</span>
-    <span class="n">validate_iterations</span><span class="p">,</span>
-    <span class="n">validate_marks</span><span class="p">,</span>
-    <span class="n">validate_metric</span><span class="p">,</span>
-    <span class="n">validate_variation_cols</span><span class="p">,</span>
-<span class="p">)</span>
 
 <span class="n">MetricsObject</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">MetricsObject</span>
 <span class="n">ResultsInfo</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">ResultsInfo</span>
@@ -381,10 +374,10 @@
             <span class="n">rounds</span><span class="p">,</span> <span class="s1">&#39;rounds&#39;</span><span class="p">,</span>
             <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">ROUNDS_INVALID_ARG_TYPE</span><span class="p">,</span>
             <span class="n">_ResultsErrorTag</span><span class="o">.</span><span class="n">ROUNDS_INVALID_ARG_VALUE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="n">Metric</span><span class="p">,</span> <span class="n">Values</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate_iterations</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate_variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_marks</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="n">validate_marks</span><span class="p">(</span><span class="n">marks</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span> <span class="o">=</span> <span class="n">validate_extra_info</span><span class="p">(</span><span class="n">extra_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="n">Metric</span><span class="p">,</span> <span class="n">Values</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">iterations</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_marks</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">marks</span><span class="p">(</span><span class="n">marks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">extra_info</span><span class="p">(</span><span class="n">extra_info</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_repr_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># cache for __repr__</span>
 
     <span class="nd">@property</span>
@@ -454,7 +447,7 @@
 <span class="sd">        :param Metric metric: The metric of the results to return. Must be a registered metric.</span>
 <span class="sd">        :return Stats: The statistical summary of the benchmark results.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_belongs_to_metric_category</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="o">.</span><span class="n">STATISTICAL</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">belongs_to_metric_category</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="o">.</span><span class="n">STATISTICAL</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stats_cache</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="n">Stats</span><span class="p">(</span><span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
                                               <span class="n">rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rounds</span><span class="p">,</span>
@@ -474,7 +467,7 @@
 <span class="sd">        :param Metric metric: The metric of the results to return. Must be a registered metric.</span>
 <span class="sd">        :return float: The cumulative sum of the benchmark results.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_belongs_to_metric_category</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="o">.</span><span class="n">CUMULATIVE</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">belongs_to_metric_category</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="o">.</span><span class="n">CUMULATIVE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">metric</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_sum_cache</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iterations</span><span class="p">[</span><span class="n">metric</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sum_cache</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span></div>
@@ -488,7 +481,7 @@
 <span class="sd">        :param Metric metric: The metric of the results to return. Must be a registered metric.</span>
 <span class="sd">        :return Values: The raw data of the benchmark results as a Values instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_belongs_to_metric_category</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="o">.</span><span class="n">RAW</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">belongs_to_metric_category</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="o">.</span><span class="n">RAW</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span></div>
 
 
@@ -501,7 +494,7 @@
 
 <span class="sd">        :return Values: The requested metric values from the benchmark results.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span><span class="p">[</span><span class="n">metric</span><span class="p">]</span></div>
 
 
@@ -515,7 +508,7 @@
 
 <span class="sd">        :return StatsBlock: The StatsBlock representation of the Stats for the given metric.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
         <span class="n">stats_instance</span><span class="p">:</span> <span class="n">Stats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">full_data</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">stats_instance</span><span class="o">.</span><span class="n">stats_block</span><span class="p">(</span><span class="n">full_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -531,7 +524,7 @@
 
 <span class="sd">        :return ValueBlock: The ValueBlock representation of the sum for the given metric.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
         <span class="n">total_sum</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ValueBlock</span><span class="p">(</span>
             <span class="n">semantic_type</span><span class="o">=</span><span class="n">metric</span><span class="o">.</span><span class="n">metric_type</span><span class="o">.</span><span class="n">semantic_type</span><span class="p">,</span>
@@ -550,7 +543,7 @@
 <span class="sd">        :param Metric metric: The metric of the results to return. Must be a registered metric.</span>
 <span class="sd">        :return RawDataBlock: The RawDataBlock representation of the raw data for the given metric.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">validate_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
         <span class="n">raw_data</span><span class="p">:</span> <span class="n">Values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">RawDataBlock</span><span class="p">(</span>
             <span class="n">semantic_type</span><span class="o">=</span><span class="n">metric</span><span class="o">.</span><span class="n">metric_type</span><span class="o">.</span><span class="n">semantic_type</span><span class="p">,</span>

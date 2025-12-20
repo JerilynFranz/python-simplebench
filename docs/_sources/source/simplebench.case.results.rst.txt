@@ -21,4 +21,4 @@ Submodules
    :maxdepth: 4
 
    simplebench.case.results.results
-   simplebench.case.results.validators
+   simplebench.case.results.validate

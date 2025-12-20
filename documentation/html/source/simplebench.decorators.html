@@ -176,7 +176,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -252,13 +252,37 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="simplebench-decorators-module">
-<h1>simplebench.decorators module<a class="headerlink" href="#simplebench-decorators-module" title="Link to this heading">🔗</a></h1>
+          <section id="module-simplebench.decorators">
+<span id="simplebench-decorators-module"></span><h1>simplebench.decorators module<a class="headerlink" href="#module-simplebench.decorators" title="Link to this heading">🔗</a></h1>
+<p>A collection of decorators for simplebench.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.decorators.immutable">
+<span class="sig-prename descclassname"><span class="pre">simplebench.decorators.</span></span><span class="sig-name descname"><span class="pre">immutable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">setter_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/decorators.html#immutable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.decorators.immutable" title="Link to this definition">🔗</a></dt>
+<dd><p>Decorator to make a property immutable after its initial setting.</p>
+<p>This decorator wraps a property’s setter method. On the first call to the
+setter, it allows the value to be set. On any subsequent call, it raises
+a <cite>SimpleBenchAttributeError</cite>, preventing the property from being changed.</p>
+<p>It assumes the property’s value is stored in a private attribute with the
+same name as the property, but prefixed with an underscore (e.g., <cite>_name</cite>
+for a property named <cite>name</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>setter_method</strong> – The setter method of the property to be decorated.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The wrapped setter method with immutability enforcement.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchAttributeError" title="simplebench.exceptions.SimpleBenchAttributeError"><strong>SimpleBenchAttributeError</strong></a> – If the property is set more than once.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -286,8 +310,27 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">simplebench.decorators module</a><ul>
+<li><a class="reference internal" href="#simplebench.decorators.immutable"><code class="docutils literal notranslate"><span class="pre">immutable()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

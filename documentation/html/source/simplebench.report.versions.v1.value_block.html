@@ -279,11 +279,11 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>semantic_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The semantic type string for the value block. (‘type’ field in JSON data)</p></li>
+<li><p><strong>semantic_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The semantic type string for the value block.</p></li>
 <li><p><strong>timer</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em><em>)</em>) – The timer string or None.</p></li>
 <li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unit of measurement.</p></li>
 <li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scale factor.</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The value of the block.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The value of the block.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -301,7 +301,7 @@
 <li><p><strong>timer</strong> (<em>(</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> | </em><em>None</em><em>)</em>) – The timer string or None.</p></li>
 <li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unit of measurement.</p></li>
 <li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The scale factor.</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The value of the block.</p></li>
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The value of the block.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
@@ -340,16 +340,20 @@
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.versions.v1.types.value_block_dict.html#simplebench.report.versions.v1.types.value_block_dict.ValueBlockData" title="simplebench.report.versions.v1.types.value_block_dict.ValueBlockData"><span class="pre">ValueBlockData</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock" title="simplebench.report.versions.v1.value_block.value_block.ValueBlock"><span class="pre">ValueBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/value_block/value_block.html#ValueBlock.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlock.from_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a ValueBlock instance from a dictionary.</p>
+<p>The input dictionary must conform to the JSON schema for ValueBlock V1,
+with the exceptions that the <cite>type</cite> and <cite>version</cite> fields are optional;
+if omitted, they are assumed to be the V1 <a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlockSchema.TYPE" title="simplebench.report.versions.v1.value_block.ValueBlockSchema.TYPE"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ValueBlockSchema.TYPE</span></code></a> and
+<a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlockSchema.VERSION" title="simplebench.report.versions.v1.value_block.ValueBlockSchema.VERSION"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ValueBlockSchema.VERSION</span></code></a> constants.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – Dictionary containing the JSON results data.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ValueBlockData" title="simplebench.report.versions.v1.types.ValueBlockData"><em>ValueBlockData</em></a>) – Dictionary containing the JSON results data.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Return ValueBlock<span class="colon">:</span></dt>
 <dd class="field-even"><p>A ValueBlock instance.</p>
 </dd>
 </dl>
@@ -380,12 +384,28 @@
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.value_block.ValueBlock.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/value_block/value_block.html#ValueBlock.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlock.to_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Convert the ValueBlock instance to a dictionary.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.value_block.ValueBlock.timer">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlock.timer" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the timer value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The timer value or None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.value_block.ValueBlock.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.types.value_block_dict.html#simplebench.report.versions.v1.types.value_block_dict.ValueBlockDict" title="simplebench.report.versions.v1.types.value_block_dict.ValueBlockDict"><span class="pre">ValueBlockDict</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/value_block/value_block.html#ValueBlock.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlock.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert the ValueBlock instance to a dictionary.</p>
+<p>The returned dictionary conforms to the JSON schema for ValueBlock V1
+and is suitable for serialization.</p>
+<p>The returned <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueBlockDict</span></code> has a stricter definition than
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ValueBlockData</span></code>. It requires the <cite>type</cite> and <cite>version</cite> fields
+to be present and guarantees that the <cite>value</cite> field is a <cite>float</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return ValueBlockDict<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dictionary representation of the ValueBlock instance.</p>
 </dd>
 </dl>
@@ -402,29 +422,13 @@
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.value_block.ValueBlock.validate_timer">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_timer</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/value_block/value_block.html#ValueBlock.validate_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlock.validate_timer" title="Link to this definition">🔗</a></dt>
-<dd><p>Validate the timer.
-:param value: The timer string to validate.
-:return: The validated timer string or None.
-:raise SimpleBenchTypeError: If the timer is not a string or None.
-:raises SimpleBenchValueError: If the timer string is invalid.</p>
-</dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.value_block.ValueBlock.value">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlock.value" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlock.value" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The value as a float or int.</p>
+<dd class="field-odd"><p>The value as a float.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -473,6 +477,14 @@ modifications.</p>
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.value_block.validate.html">simplebench.report.versions.v1.value_block.validate module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.value_block.validate.html#simplebench.report.versions.v1.value_block.validate.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.value_block.validate.html#simplebench.report.versions.v1.value_block.validate.semantic_type"><code class="docutils literal notranslate"><span class="pre">semantic_type()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.value_block.validate.html#simplebench.report.versions.v1.value_block.validate.timer"><code class="docutils literal notranslate"><span class="pre">timer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.value_block.validate.html#simplebench.report.versions.v1.value_block.validate.unit"><code class="docutils literal notranslate"><span class="pre">unit()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.value_block.validate.html#simplebench.report.versions.v1.value_block.validate.value"><code class="docutils literal notranslate"><span class="pre">value()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html">simplebench.report.versions.v1.value_block.value_block module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock"><code class="docutils literal notranslate"><span class="pre">ValueBlock</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.ID"><code class="docutils literal notranslate"><span class="pre">ValueBlock.ID</span></code></a></li>
@@ -482,9 +494,9 @@ modifications.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.from_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.from_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.scale"><code class="docutils literal notranslate"><span class="pre">ValueBlock.scale</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.semantic_type"><code class="docutils literal notranslate"><span class="pre">ValueBlock.semantic_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.timer"><code class="docutils literal notranslate"><span class="pre">ValueBlock.timer</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.to_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.unit"><code class="docutils literal notranslate"><span class="pre">ValueBlock.unit</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.validate_timer"><code class="docutils literal notranslate"><span class="pre">ValueBlock.validate_timer()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block.html#simplebench.report.versions.v1.value_block.value_block.ValueBlock.value"><code class="docutils literal notranslate"><span class="pre">ValueBlock.value</span></code></a></li>
 </ul>
 </li>
@@ -551,9 +563,9 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.from_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.scale"><code class="docutils literal notranslate"><span class="pre">ValueBlock.scale</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.semantic_type"><code class="docutils literal notranslate"><span class="pre">ValueBlock.semantic_type</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.timer"><code class="docutils literal notranslate"><span class="pre">ValueBlock.timer</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.to_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlock.to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.unit"><code class="docutils literal notranslate"><span class="pre">ValueBlock.unit</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.validate_timer"><code class="docutils literal notranslate"><span class="pre">ValueBlock.validate_timer()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlock.value"><code class="docutils literal notranslate"><span class="pre">ValueBlock.value</span></code></a></li>
 </ul>
 </li>

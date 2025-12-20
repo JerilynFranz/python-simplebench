@@ -23,4 +23,5 @@ Submodules
    simplebench.report.base.results_info
    simplebench.report.base.stats_block
    simplebench.report.base.value_block
+   simplebench.report.base.value_block_dict
    simplebench.report.base.vcs_info
