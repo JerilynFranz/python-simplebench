@@ -1,13 +1,15 @@
 """Typed dictionaries for the V1 ValueBlock data structure.
 
-This module defines two distinct types for handling ValueBlock data:
-- `ValueBlockData`: For use as INPUT (e.g., to `from_dict`). It is more
-  lenient, accepting `int` or `float` for the `value` field and making
-  `type` and `version` optional.
-- `ValueBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is
-  stricter, guaranteeing that `value` is a `float` and that `type` and
-  `version` are present.
-"""
+This module defines two distinct dictionary types for handling ValueBlock data,
+both modeled on the JSON schema for version 1 ValueBlocks in
+version 1: :class:`~simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema`.
+
+    - `ValueBlockData`: For use as INPUT (e.g., to `from_dict`). It is more
+    lenient, accepting `int` or `float` for the `value` field and making `type` and `version` optional.
+    - `ValueBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is
+    stricter, guaranteeing that `value` is a `float` and that `type` and `version` are present.
+
+    These types ensure proper validation and serialization of ValueBlock data"""
 from simplebench.report.base import ValueBlockDataBase
 
 

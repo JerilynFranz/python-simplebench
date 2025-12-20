@@ -464,11 +464,102 @@ to be present and guarantees that the <cite>value</cite> field is a <cite>float<
 <dd><p>Get the JSON schema as a dictionary.</p>
 <p>It always returns a fresh copy of the schema dictionary to prevent accidental
 modifications.</p>
-<p>The caller can modify the returned dictionary as needed or cache it for performance.</p>
 <dl class="simple">
 <dt>Usage:</dt><dd><p>schema_dict = ValueBlockSchema.as_dict()</p>
 </dd>
 </dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return dict[str, object]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.value_block.ValueBlockSchema.as_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/value_block/value_block_schema.html#ValueBlockSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.value_block.ValueBlockSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a JSON-formatted string.</p>
+<blockquote>
+<div><p>It serializes the schema dictionary to a JSON string.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_json = ValueBlockSchema.as_json()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a JSON-formatted string.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The JSON schema is as follows:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/value-block.json&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Value Block (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Block containing a single value measurement.&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Schema Version&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Version of the schema. Must be &#39;1&#39; for Value Block version 1.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Block Type&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The type of the block. Must be &#39;SimpleBenchValueBlock::V1&#39; for Value Block version 1.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBenchValueBlock::V1&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;semantic_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Measurement Type&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The semantic type of the measurements, formatted as &#39;namespace::type_name&#39;. This dictates how the data should be interpreted. Standard types use the &#39;simplebench_std&#39; namespace. Users can define custom types using their own namespace.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;examples&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;simplebench_std::wallclock_time&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;simplebench_std::cpu_time&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="s2">&quot;my_plugin::context_switches&quot;</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;timer&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The timing function used for this measurement (e.g., &#39;perf_counter&#39;). Should be included for any timing-related metrics.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Measurement Unit&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Unit of the measurement value&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;minLength&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;scale&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Measurement Scale&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Scale of the measurement value&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;exclusiveMinimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Value&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The single measurement value.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;semantic_type&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;unit&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;scale&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;value&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -508,6 +599,7 @@ modifications.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block_schema.html#simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.TYPE</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block_schema.html#simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.VERSION</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block_schema.html#simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.as_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block_schema.html#simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.as_json()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -574,6 +666,7 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlockSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.TYPE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlockSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.VERSION</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlockSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.value_block.ValueBlockSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ValueBlockSchema.as_json()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>

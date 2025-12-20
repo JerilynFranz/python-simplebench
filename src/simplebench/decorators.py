@@ -16,6 +16,11 @@ def immutable(setter_method):
     same name as the property, but prefixed with an underscore (e.g., `_name`
     for a property named `name`).
 
+    .. note:: This is not a good general-purpose immutability solution. It is intended
+       for specific use cases within simplebench where certain properties with
+       complex validation requirements need to be set only once. For broader
+       immutability needs, consider using frozen dataclasses or other established patterns.
+
     :param setter_method: The setter method of the property to be decorated.
     :return: The wrapped setter method with immutability enforcement.
     :raise SimpleBenchAttributeError: If the property is set more than once.

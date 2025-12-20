@@ -270,6 +270,13 @@ a <cite>SimpleBenchAttributeError</cite>, preventing the property from being cha
 <p>It assumes the property’s value is stored in a private attribute with the
 same name as the property, but prefixed with an underscore (e.g., <cite>_name</cite>
 for a property named <cite>name</cite>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is not a good general-purpose immutability solution. It is intended
+for specific use cases within simplebench where certain properties with
+complex validation requirements need to be set only once. For broader
+immutability needs, consider using frozen dataclasses or other established patterns.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>setter_method</strong> – The setter method of the property to be decorated.</p>

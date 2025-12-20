@@ -6,8 +6,17 @@ from typing import Any, Callable, TypeVar, overload
 # both functions and class objects.
 T = TypeVar('T', bound=Callable[..., Any])
 
-_PLACEHOLDER_PATTERN = re.compile(r'\{(\w+)\}')
-"""A regex pattern to find {key} placeholders in docstrings."""
+_PLACEHOLDER_PATTERN = re.compile(r'\{([A-Za-z0-9_.:~ `]+)\}')
+"""A regex pattern to find {key} placeholders in docstrings.
+
+The pattern matches any sequence of characters that can form a valid Python
+identifier, including letters, digits, underscores, dots,
+and backticks, enclosed in curly braces.
+
+It also allows colons, tildes, spaces and backticks to be part of the key name
+to accommodate more complex placeholder names that might include formatting or
+special characters commonly used in RST documentation.
+"""
 
 
 # Overload 1: Called as @format_docstring(key='value')

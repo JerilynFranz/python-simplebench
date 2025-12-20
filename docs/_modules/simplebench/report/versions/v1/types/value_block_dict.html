@@ -253,14 +253,16 @@
           <h1>Source code for simplebench.report.versions.v1.types.value_block_dict</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Typed dictionaries for the V1 ValueBlock data structure.</span>
 
-<span class="sd">This module defines two distinct types for handling ValueBlock data:</span>
-<span class="sd">- `ValueBlockData`: For use as INPUT (e.g., to `from_dict`). It is more</span>
-<span class="sd">  lenient, accepting `int` or `float` for the `value` field and making</span>
-<span class="sd">  `type` and `version` optional.</span>
-<span class="sd">- `ValueBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is</span>
-<span class="sd">  stricter, guaranteeing that `value` is a `float` and that `type` and</span>
-<span class="sd">  `version` are present.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module defines two distinct dictionary types for handling ValueBlock data,</span>
+<span class="sd">both modeled on the JSON schema for version 1 ValueBlocks in</span>
+<span class="sd">version 1: :class:`~simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema`.</span>
+
+<span class="sd">    - `ValueBlockData`: For use as INPUT (e.g., to `from_dict`). It is more</span>
+<span class="sd">    lenient, accepting `int` or `float` for the `value` field and making `type` and `version` optional.</span>
+<span class="sd">    - `ValueBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is</span>
+<span class="sd">    stricter, guaranteeing that `value` is a `float` and that `type` and `version` are present.</span>
+
+<span class="sd">    These types ensure proper validation and serialization of ValueBlock data&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValueBlockDataBase</span>
 
 
