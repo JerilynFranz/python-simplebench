@@ -11,6 +11,7 @@ from .report import Report
 from .results_info import ResultsInfo
 from .stats_block import StatsBlock
 from .value_block import ValueBlock
+from .value_block_dict import ValueBlockDataBase, ValueBlockDictBase
 from .vcs_info import VCSInfo
 
 __all__ = [
@@ -25,5 +26,7 @@ __all__ = [
     "ResultsInfo",
     "StatsBlock",
     "ValueBlock",
+    "ValueBlockDataBase",
+    "ValueBlockDictBase",
     "VCSInfo",
 ]

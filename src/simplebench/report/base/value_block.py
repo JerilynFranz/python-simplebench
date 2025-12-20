@@ -1,12 +1,14 @@
 """Base class for JSON value block representation."""
 from abc import ABC, abstractmethod
+from collections.abc import Hashable
 
 from simplebench.base import Hydrator
 
 from .json_schema import JSONSchema
+from .value_block_dict import ValueBlockDataBase, ValueBlockDictBase
 
 
-class ValueBlock(Hydrator, ABC):
+class ValueBlock(Hydrator, ABC, Hashable):
     """Base class representing a value block."""
 
     VERSION: int = 0
@@ -23,7 +25,7 @@ class ValueBlock(Hydrator, ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> "ValueBlock":
+    def from_dict(cls, data: ValueBlockDataBase) -> "ValueBlock":
         """Create a ValueBlock instance from a dictionary.
 
         :param data: Dictionary containing the JSON results data.
@@ -37,5 +39,5 @@ class ValueBlock(Hydrator, ABC):
         """Initialize ValueBlock class."""
 
     @abstractmethod
-    def to_dict(self) -> dict:
+    def to_dict(self) -> ValueBlockDictBase:
         """Convert the ValueBlock instance to a dictionary."""
