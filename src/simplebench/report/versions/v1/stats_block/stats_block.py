@@ -21,9 +21,18 @@ The code has three basic paths for creating a stats block:
 3. Creation by using the `from_dict` class method to create a `StatsBlock` instance from a
    dictionary that matches the JSON schema.
 
-The created instance and all values available via properties are immutable once created.
+The created instance and all values available via properties are immutable once created
+and can be serialized back to a dictionary using the `to_dict` method.
+
+The class also implements equality and hashing methods to allow comparison
+and use in hash-based collections like sets and dictionaries. It also
+implements size-optimized pickling support for serialization/deserialization.
+
+The dictionary serialized representation matches the JSON schema for version 1 reports
+and can be used for JSON serialization and deserialization.
 """
 import statistics
+from copy import copy
 from math import sqrt
 from typing import Any, Sequence, overload
 
@@ -61,7 +70,7 @@ class StatsBlock(BaseStatsBlock):
     :param standard_deviation: The standard deviation of the stats block.
     :param relative_standard_deviation: The relative standard deviation of the stats block.
     :param percentiles: The list of percentiles for the stats block as a `Values` instance.
-    :param measurements: A list of raw measurements for initializing the stats block as a `Values` instance.
+    :param measurements: A list of raw measurements for initializing the stats block.
     :raise SimpleBenchTypeError: If any parameter is of an invalid type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -826,3 +835,82 @@ class StatsBlock(BaseStatsBlock):
             state = tuple(getattr(self, attr) for attr in self._COMPARISON_ATTRIBUTES)
             self._hash_cache = hash(state)   # pylint: disable=attribute-defined-outside-init
         return self._hash_cache
+
+    def __repr__(self) -> str:
+        """Get the string representation of the StatsBlock instance.
+
+        The representation is a string that can be used to recreate the object.
+        It triggers the lazy evaluation of any properties that have not been calculated yet.
+
+        :return str: The string representation of the StatsBlock.
+        """
+        # Get the constructor parameters, excluding 'measurements' as this repr
+        # should represent the object's state via its calculated statistical properties.
+        init_params = self.__class__.init_params()
+        if 'measurements' in init_params:
+            del init_params['measurements']
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f"{key}={getattr(self, key)!r}" for key in init_params)
+        return f"{self.__class__.__name__}({calling_args})"
+
+    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
+        """Prepare the object's state for pickling, prioritizing size.
+
+        This method ensures that the pickled representation of the StatsBlock
+        is compact. It achieves this by forcing the calculation of any lazy-evaluated
+        statistical properties and then excluding the potentially large `_measurements`
+        list from the pickled state.
+
+        This prioritizes a small pickled size and fast subsequent unpickling over
+        preserving the lazy-evaluation state across serialization.
+
+        :return: A state tuple for pickling.
+        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # Trigger all lazy calculations by accessing the public properties.
+        # This ensures the internal state (_mean, _median, etc.) is populated.
+        for attr in self._COMPARISON_ATTRIBUTES:
+            getattr(self, attr)
+
+        # Build the state tuple for a __slots__ class. The first element is for
+        # __dict__ (None in our case) and the second is a tuple of the slotted values.
+        state = tuple(
+            None if slot == '_measurements' else getattr(self, slot)
+            for slot in self.__slots__
+        )
+        return (None, state)
+
+    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
+        """Restore the object's state from a pickled representation.
+
+        This method is the counterpart to `__getstate__`. It takes the state
+        tuple and repopulates the instance's `__slots__`.
+
+        .. note::
+            This method bypasses `__init__`, which is standard for unpickling.
+
+        :param state: The state tuple from unpickling.
+        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # The first element of the state tuple is for __dict__, which is None for this class.
+        # The second element is a tuple of values for the __slots__.
+        slot_values = state[1]
+        for slot, value in zip(self.__slots__, slot_values):
+            # Use object.__setattr__ to bypass our immutable setters.
+            object.__setattr__(self, slot, value)
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> "StatsBlock":
+        """Return a shallow copy of the instance as an optimized deep copy.
+
+        Since the StatsBlock instance is immutable and composed of immutable components,
+        a shallow copy is functionally identical to a deep copy. This method overrides
+        the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.
+
+        :param memo: The memoization dictionary used by `copy.deepcopy`.
+                     It is not used in this optimized implementation.
+        :return StatsBlock: A new, shallow-copied instance of the StatsBlock.
+        """
+        # because the StatsBlock is immutable, we can return a copy of self
+        return copy(self)
