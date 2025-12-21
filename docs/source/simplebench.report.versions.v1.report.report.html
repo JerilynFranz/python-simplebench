@@ -319,6 +319,30 @@ and the schema set to the ReportSchema class for version 1 reports.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report.Report.from_case">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">include_raw_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report" title="simplebench.report.versions.v1.report.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.report.Report.from_case" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a Report instance from a Case instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>case</strong> – Case instance to create the Report from.</p></li>
+<li><p><strong>include_raw_data</strong> – Whether to include full results data. Defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Report instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report.Report.from_dict">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
@@ -437,6 +461,7 @@ and the schema set to the ReportSchema class for version 1 reports.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report.TYPE"><code class="docutils literal notranslate"><span class="pre">Report.TYPE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report.VERSION"><code class="docutils literal notranslate"><span class="pre">Report.VERSION</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report.description"><code class="docutils literal notranslate"><span class="pre">Report.description</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report.from_case"><code class="docutils literal notranslate"><span class="pre">Report.from_case()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report.from_dict"><code class="docutils literal notranslate"><span class="pre">Report.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report.group"><code class="docutils literal notranslate"><span class="pre">Report.group</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.report.Report.machine"><code class="docutils literal notranslate"><span class="pre">Report.machine</span></code></a></li>
