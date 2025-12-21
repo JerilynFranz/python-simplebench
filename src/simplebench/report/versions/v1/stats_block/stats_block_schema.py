@@ -1,5 +1,9 @@
 """Schema for JSON StatsBlock v1 validation."""
 # pylint: disable=line-too-long
+from copy import deepcopy
+from json import JSONEncoder
+
+from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report.base import JSONSchema
 
 
@@ -15,21 +19,9 @@ class StatsBlockSchema(JSONSchema):
     ID: str = "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json"
     """The JSON StatsBlock schema $id value for version 1 reports."""
 
-    @classmethod
-    def as_dict(cls) -> dict[str, object]:
-        """Get the JSON schema as a dictionary.
-
-        It always returns a fresh copy of the schema dictionary to prevent accidental
-        modifications.
-
-        The caller can modify the returned dictionary as needed or cache it for performance.
-
-        Usage:
-            schema_dict = StatsBlockSchema.as_dict()
-        """
-        return {
+    _JSON_SCHEMA_DICT: dict[str, object] = {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": cls.ID,
+            "$id": ID,
             "title": "Statistics Block (V1)",
             "description": "Block containing statistical measurements",
             "type": "object",
@@ -38,13 +30,13 @@ class StatsBlockSchema(JSONSchema):
                     "title": "Block Type",
                     "description": "The type of the block. Must be 'SimpleBenchStatsBlock::V1' for Statistics Block version 1.",
                     "type": "string",
-                    "const": cls.TYPE
+                    "const": TYPE
                 },
                 "version": {
                     "title": "Schema Version",
                     "description": "The version of the schema. Must be 1 for Statistics Block version 1.",
                     "type": "integer",
-                    "const": cls.VERSION
+                    "const": VERSION
                 },
                 "semantic_type": {
                     "title": "Measurement Type",
@@ -171,3 +163,49 @@ class StatsBlockSchema(JSONSchema):
             ],
             "additionalProperties": False
         }
+
+    _JSON_SCHEMA_TEXT: str = JSONEncoder(indent=2).encode(_JSON_SCHEMA_DICT)
+    """The JSON schema as a pretty-printed JSON string."""
+
+    _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
+        json_data=_JSON_SCHEMA_TEXT,
+        caption="JSON Schema for ValueBlock V1",
+        intro_text="The JSON schema is as follows:"
+    )
+    """Note containing the JSON schema for docstrings."""
+
+    @classmethod
+    def as_dict(cls) -> dict[str, object]:
+        """Get the JSON schema as a dictionary.
+
+        It always returns a fresh copy of the schema dictionary to prevent accidental
+        modifications.
+
+        The caller can modify the returned dictionary as needed or cache it for performance.
+
+        Usage:
+            schema_dict = StatsBlockSchema.as_dict()
+
+        :return dict[str, object]: The JSON schema as a dictionary.
+        """
+        return deepcopy(cls._JSON_SCHEMA_DICT)
+
+    @classmethod
+    @format_docstring(JSON_SCHEMA_NOTE=_JSON_SCHEMA_NOTE)
+    def as_json(cls) -> str:
+        # The `{JSON_SCHEMA_NOTE}` placeholder in the docstring below is
+        # dynamically replaced by the `@format_docstring` decorator
+        # for use in generated documentation. It is not a typo, but an intentional
+        # use of a placeholder.
+        """Get the JSON schema as a JSON-formatted string.
+
+        It serializes the schema dictionary to a JSON string.
+
+        Usage:
+            schema_json = StatsBlockSchema.as_json()
+
+        :return str: The JSON schema as a JSON-formatted string.
+
+        {JSON_SCHEMA_NOTE}
+        """
+        return cls._JSON_SCHEMA_TEXT
