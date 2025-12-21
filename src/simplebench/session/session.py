@@ -23,7 +23,7 @@ from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter_manager import ReporterManager
-from simplebench.utils import sanitize_filename
+from simplebench.utils import sanitize_filename, timestamp_to_iso8601
 
 from ._error_tags import _SessionErrorTag
 from .validators import validate_timer
@@ -108,6 +108,10 @@ class Session():
         """The Choices instance for managing registered reporters."""
 
         # backing fields for public read-only properties
+        self._timestamp: str = ''
+        """The timestamp property - backing field for the 'timestamp' attribute."""
+        self._epoch_timestamp: float = 0.0
+        """The epoch_timestamp property - backing field for the 'epoch_timestamp' attribute."""
         self._args: Optional[Namespace] = None
         """The command line arguments - backing field for the 'args' attribute."""
         self._console: Console = self._progress.console
@@ -295,10 +299,8 @@ class Session():
 
         if self.verbosity > Verbosity.NORMAL:
             self._console.print(f"Generating reports for {len(self.cases)} case(s)...")
-        now = datetime.now()
-        epoch_timestamp = now.timestamp()
-        timestamp = now.strftime('%Y%m%d%H%M%S')
-
+        timestamp = self.timestamp
+        epoch_timestamp = self.epoch_timestamp
         processed_choices: set[str] = set()
         report_keys: list[str] = self.report_keys()
         n_reports = len(report_keys)
@@ -660,3 +662,17 @@ class Session():
                 tag=_SessionErrorTag.PROPERTY_INVALID_CONSOLE_ARG
             )
         self._console = value
+
+    @property
+    def epoch_timestamp(self) -> float:
+        """The timestamp in seconds since epoch for the session."""
+        if not self._epoch_timestamp:
+            self._epoch_timestamp: float = datetime.now().timestamp()
+        return self._epoch_timestamp
+
+    @property
+    def timestamp(self) -> str:
+        """The ISO 8601 formatted timestamp string in UTC for the session."""
+        if not self._timestamp:
+            self._timestamp: str = timestamp_to_iso8601(self.epoch_timestamp)
+        return self._timestamp

@@ -12,13 +12,14 @@ As such, it largely is just a wrapper around the base Report class
 with the version number set to 1, the type set to "SimpleBenchReport::V1",
 and the schema set to the ReportSchema class for version 1 reports.
 """
-from typing import Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence, TypeAlias
 
 from simplebench.exceptions import SimpleBenchValueError
+from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report.base import JSONSchema, MachineInfo
 from simplebench.report.base import Report as BaseReport
 from simplebench.report.base import ResultsInfo
-from simplebench.report._error_tags import _ReportErrorTag
+from simplebench.type_proxies import is_case
 from simplebench.validators import (
     validate_iso8601_datetime,
     validate_sequence_of_str,
@@ -26,9 +27,17 @@ from simplebench.validators import (
     validate_string,
 )
 
-from ..machine_info import MachineInfo as MachineInfoV1
-from ..results_info import ResultsInfo as ResultsV1
+from .. import machine_info, results_info, types
+from . import validate
 from .report_schema import ReportSchema
+
+MachineInfoV1: TypeAlias = machine_info.MachineInfo
+ResultsInfoV1: TypeAlias = results_info.ResultsInfo
+MachineInfoDictV1: TypeAlias = types.MachineInfoDict
+ResultsInfoDictV1: TypeAlias = types.ResultsInfoDict
+
+if TYPE_CHECKING:
+    from simplebench.case import Case
 
 
 class Report(BaseReport):
@@ -64,6 +73,29 @@ class Report(BaseReport):
         self.machine = machine
 
     @classmethod
+    def from_case(cls, case: 'Case') -> 'Report':
+        """Create a Report instance from a Case instance.
+
+        :param case: The Case instance to create the Report from.
+        :return: Report instance.
+        """
+        validate.case(case)
+        validate.case_has_been_run(case)
+
+        results: ResultsInfo = ResultsInfoV1.from_results(case.results)
+        machine_info: MachineInfo = MachineInfoV1.from_system()
+
+        return cls(
+            timestamp=case.timestamp,
+            group=case.group,
+            title=case.title,
+            description=case.description,
+            variation_cols=case.variation_cols,
+            results=results,
+            machine=machine_info
+        )
+
+    @classmethod
     def from_dict(cls, data: dict) -> 'Report':
         """Create a Report instance from a dictionary.
 
@@ -81,7 +113,7 @@ class Report(BaseReport):
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE,
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT,
                 allow_empty=False)
-            return [ResultsV1.from_dict(item) for item in validated_list]
+            return [ResultsInfoV1.from_dict(item) for item in validated_list]
 
         kwargs = cls.import_data(
             data=data,

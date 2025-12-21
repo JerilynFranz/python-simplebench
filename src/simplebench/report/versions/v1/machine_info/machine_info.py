@@ -18,9 +18,10 @@ import re
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.report._error_tags import _MachineInfoErrorTag
 from simplebench.report.base import CPUInfo, ExecutionEnvironment, JSONSchema
 from simplebench.report.base import MachineInfo as BaseMachineInfo
-from simplebench.report._error_tags import _MachineInfoErrorTag
+from simplebench.utils import machine_info
 from simplebench.validators import validate_string, validate_type
 
 from ..cpu_info import CPUInfo as CPUInfoV1
@@ -73,6 +74,77 @@ class MachineInfo(BaseMachineInfo):
         self.node = node
         self.execution_environment = execution_environment
         self.cpu = cpu
+
+    @classmethod
+    def from_system(cls, node: str | None = '') -> 'MachineInfo':
+        """Create a MachineInfo instance from the current system information.
+
+        .. code-block:: python
+           :caption: Example
+              machine_info = MachineInfo.from_system()
+
+        :param node: The node name to include in the MachineInfo (optional).
+        :return MachineInfo: A MachineInfo instance with information about the current machine.
+        """
+        info = machine_info.get_machine_info()
+        if node is None:
+            node = info.get('node', '')
+
+        return cls(
+            processor=info['processor'],
+            machine=info['machine'],
+            system=info['system'],
+            release=info['release'],
+            node=node,
+            execution_environment=ExecutionEnvironmentV1.from_system(),
+            cpu=CPUInfoV1.from_system()
+        )
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> 'MachineInfo':
+        """Create a MachineInfo instance from a dictionary.
+
+        .. code-block:: python
+           :caption: Example
+
+           machine_info = MachineInfo.from_dict(data)
+
+        :param data: The dictionary containing machine information.
+        :return: A MachineInfo instance.
+        """
+        allowed_keys = cls.init_params()
+        allowed_keys['version'] = int
+        allowed_keys['type'] = str
+
+        kwargs = cls.import_data(
+            data=data,
+            allowed=allowed_keys,
+            skip={'version', 'type'},
+            optional={'hash_id', 'node', 'version', 'type'},
+            default={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+            process_as={
+                'execution_environment': ExecutionEnvironmentV1.from_dict,
+                'cpu': CPUInfoV1.from_dict
+            })
+        return cls(**kwargs)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert the MachineInfo to a dictionary.
+
+        :return: A dictionary representation of the MachineInfo.
+        """
+        data: dict[str, Any] = {}
+        for key in self.init_params():
+            value = getattr(self, key)
+            if hasattr(value, 'to_dict'):
+                data[key] = value.to_dict()
+            else:
+                data[key] = value
+
+        data['type'] = self.TYPE
+        data['version'] = self.VERSION
+        return data
 
     @property
     def hash_id(self) -> str:
@@ -255,49 +327,3 @@ class MachineInfo(BaseMachineInfo):
         self._cpu = validate_type(
             value, CPUInfo, "cpu",
             _MachineInfoErrorTag.INVALID_CPU_PROPERTY_TYPE)
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'MachineInfo':
-        """Create a MachineInfo instance from a dictionary.
-
-        .. code-block:: python
-           :caption: Example
-
-           machine_info = MachineInfo.from_dict(data)
-
-        :param data: The dictionary containing machine information.
-        :return: A MachineInfo instance.
-        """
-        allowed_keys = cls.init_params()
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
-
-        kwargs = cls.import_data(
-            data=data,
-            allowed=allowed_keys,
-            skip={'version', 'type'},
-            optional={'hash_id', 'node', 'version', 'type'},
-            default={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={
-                'execution_environment': ExecutionEnvironmentV1.from_dict,
-                'cpu': CPUInfoV1.from_dict
-            })
-        return cls(**kwargs)
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert the MachineInfo to a dictionary.
-
-        :return: A dictionary representation of the MachineInfo.
-        """
-        data: dict[str, Any] = {}
-        for key in self.init_params():
-            value = getattr(self, key)
-            if hasattr(value, 'to_dict'):
-                data[key] = value.to_dict()
-            else:
-                data[key] = value
-
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
-        return data

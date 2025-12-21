@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ReportErrorTag(ErrorTag):
     """Error tags for JSON report exceptions."""
+    INVALID_CASE = 'INVALID_CASE'
+    """The provided object is not a valid Case instance."""
+    CASE_HAS_NOT_BEEN_RUN = 'CASE_HAS_NOT_BEEN_RUN'
+    """The provided Case instance has not been run yet."""
     INVALID_TIMESTAMP_PROPERTY_TYPE = 'INVALID_TIMESTAMP_PROPERTY_TYPE'
     """Attempted to set the timestamp property to something other than a type str."""
     INVALID_TIMESTAMP_PROPERTY_VALUE = 'INVALID_TIMESTAMP_PROPERTY_VALUE'
