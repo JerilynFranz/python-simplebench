@@ -283,6 +283,7 @@ commands = [["pytest", "{posargs:tests/}"]]
 [tool.tox.env.py313]
 description = "Run the test suite on Python 3.13"
 requires = ["basetest"]
+dependency_groups = ["test"]
 allowlist_externals = ["pytest"]
 python_base = ["python3.13"]
 install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
