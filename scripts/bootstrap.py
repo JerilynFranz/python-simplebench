@@ -194,7 +194,8 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
 
 def print_instructions(is_windows: bool, template: str) -> None:
     """Prints instructions to the user on how to activate the virtual environment
-    
+    and use the installed tools.
+
     :param is_windows bool: Whether the current platform is Windows.
     :param template str: The instructions template to use.
     """

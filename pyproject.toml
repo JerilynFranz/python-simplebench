@@ -28,11 +28,12 @@ classifiers = [
     "Topic :: System :: Benchmark",
 ]
 
-# TODO: Install tox for testing multiple Python versions
-# See https://tox.wiki/en/latest/index.html
-# Revert requires-python to ">=3.10" when done
-# and in .python-version file as well
-requires-python = ">=3.12"
+# The package supports Python 3.10+, while development tasks
+# like docs and linting are enforced to use a newer version
+# via the tox configuration below.
+requires-python = ">=3.10"
+
+# TODO: Verify minimum versions of dependencies
 dependencies = [
     "numpy>=2.2.6",
     "py-cpuinfo>=9.0.0",
@@ -235,31 +236,78 @@ exclude_exact = [
     "simplebench.validators",
 ]
 
+[tool.tox]
+min_version = "4.22" # Minimum version that supports dependency_group
+env_list = ["py310", "py311", "py312", "py313", "py314", "lint", "docs"]
+
+[tool.tox.env]
+# Template for test environments (py310, py311, py312, py313, py314)
+package = "wheel"
+wheel_build_env = ".pkg"
+dependency_group = "test"
+commands = ["pytest {posargs:tests/}"]
+
+[tool.tox.env.docs]
+# Environment for building documentation, requires Python 3.12+
+base_python = "python3.12"
+dependency_group = "docs"
+commands = ["sphinx-build -b html documentation/ documentation/_build/html"]
+
+[tool.tox.env.lint]
+# Environment for running linters, requires Python 3.12+
+base_python = "python3.12"
+dependency_group = "lint"
+commands = [
+    "flake8 src tests",
+    "pylint src tests",
+    "mypy src tests",
+]
+
+
 [dependency-groups]
-dev = [
-    "coverage>=7.10.6",
-    "flake8>=7.3.0",
-    "Flake8-pyproject>=1.2.4",
-    "furo>=2025.09.25",
-    "graphviz>=0.21",
-    "hatch>=1.13",
-    "hatchling>=1.27",
-    "isort>=5.12.0",
-    "jsonschema>=4.0.0",
-    "mercurial>=6.1",
-    "mypy>=1.17.1",
-    "pandas-stubs>=2.3.2.250827",
-    "pydeps>=1.23.2",
-    "pylint>=3.3.8",
+# Dependencies for running the test suite
+test = [
     "pytest>=8.4.1,<9.0.0",
     "pytest-cov>=6.2.1",
+    "coverage>=7.10.6",
+]
+
+# Dependencies for linting and code style
+lint = [
+    "flake8>=7.3.0",
+    "Flake8-pyproject>=1.2.4",
+    "isort>=5.12.0",
+    "mypy>=1.17.1",
+    "pylint>=3.3.8",
+    "yapf>=0.40.0",
+]
+
+# Dependencies for building documentation
+docs = [
+    "furo>=2025.09.25",
     "sphinx>=8.2.3,<9.0.0",
     "sphinx-copybutton>=0.5.2",
     "sphinx-design>=0.6.1",
-    "testplan>=25.8.0",
-    "types-seaborn>=0.13.2.20250809",
-    "yapf>=0.40.0",
 ]
+
+# A group for all other development tools
+tools = [
+    "graphviz>=0.21",
+    "hatch>=1.13",
+    "hatchling>=1.27",
+    "mercurial>=6.1",
+    "pydeps>=1.23.2",
+    "testplan>=25.8.0",
+    "tox>=4.32.0",
+    "uv>=0.9.18",
+]
+
+# Type stubs for development
+types = [
+    "pandas-stubs>=2.3.2.250827",
+    "types-seaborn>=0.13.2.20250809",
+]
+
 
 [project.entry-points.pytest11]
 simplebench = "simplebench._pytest"
