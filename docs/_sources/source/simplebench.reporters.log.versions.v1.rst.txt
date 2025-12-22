@@ -1,11 +1,6 @@
 simplebench.reporters.log.versions.v1 package
 =============================================
 
-.. automodule:: simplebench.reporters.log.versions.v1
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -14,3 +9,11 @@ Subpackages
 
    simplebench.reporters.log.versions.v1.report_log_entry
    simplebench.reporters.log.versions.v1.report_log_entry_schema
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.log.versions.v1
+   :members:
+   :show-inheritance:
+   :undoc-members:

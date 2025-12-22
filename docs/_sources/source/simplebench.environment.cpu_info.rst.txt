@@ -1,15 +1,10 @@
 simplebench.environment.cpu\_info package
 =========================================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.environment.cpu_info
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.environment.cpu_info.cpu_info
+   :undoc-members:

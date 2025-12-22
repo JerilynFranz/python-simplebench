@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.timers package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,8 +257,152 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.timers">
-<span id="simplebench-timers-package"></span><h1>simplebench.timers package<a class="headerlink" href="#module-simplebench.timers" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-timers-package">
+<h1>simplebench.timers package<a class="headerlink" href="#simplebench-timers-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.timers.info">
+<span id="simplebench-timers-info-module"></span><h2>simplebench.timers.info module<a class="headerlink" href="#module-simplebench.timers.info" title="Link to this heading">🔗</a></h2>
+<p>Module providing timing utilities.</p>
+<p>All supported timers return the current time in nanoseconds as an integer.</p>
+<p>Supported timers include:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>time.monotonic_ns()</cite>: Monotonic clock, cannot go backwards.</p></li>
+<li><p><cite>time.perf_counter_ns()</cite>: High-resolution performance counter.</p></li>
+<li><p><cite>time.process_time_ns()</cite>: CPU process time.</p></li>
+<li><p><cite>time.thread_time_ns()</cite>: CPU thread time.</p></li>
+<li><p><cite>fake_timer()</cite>: A fake timer that always returns zero, used only for testing purposes.</p></li>
+</ul>
+</div></blockquote>
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.timers.info.fake_timer">
+<span class="sig-prename descclassname"><span class="pre">simplebench.timers.info.</span></span><span class="sig-name descname"><span class="pre">fake_timer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/simplebench/timers/info.html#fake_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timers.info.fake_timer" title="Link to this definition">🔗</a></dt>
+<dd><p>A fake timer function that always returns zero.</p>
+<p>This is used for testing purposes and not for actual timing measurements.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.timers.info.is_valid_timer">
+<span class="sig-prename descclassname"><span class="pre">simplebench.timers.info.</span></span><span class="sig-name descname"><span class="pre">is_valid_timer</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/simplebench/timers/info.html#is_valid_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timers.info.is_valid_timer" title="Link to this definition">🔗</a></dt>
+<dd><p>Checks if the provided timer is supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timer</strong> – The timer function to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the timer is supported, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.timers.info.timer_identifier">
+<span class="sig-prename descclassname"><span class="pre">simplebench.timers.info.</span></span><span class="sig-name descname"><span class="pre">timer_identifier</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/timers/info.html#timer_identifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timers.info.timer_identifier" title="Link to this definition">🔗</a></dt>
+<dd><p>Return a human-readable identifier for the given timer function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timer</strong> – The timer function to identify.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A string identifier for the timer.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided timer is not supported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.timers.info.timer_overhead_ns">
+<span class="sig-prename descclassname"><span class="pre">simplebench.timers.info.</span></span><span class="sig-name descname"><span class="pre">timer_overhead_ns</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50000</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../_modules/simplebench/timers/info.html#timer_overhead_ns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timers.info.timer_overhead_ns" title="Link to this definition">🔗</a></dt>
+<dd><p>Estimate the overhead of calling the timer function.</p>
+<p>This function measures the average time taken to call the provided
+timer function by collecting a large number of consecutive readings and
+analyzing the distribution of the differences. This provides a more
+accurate measurement than a simple bulk average.</p>
+<p>The overhead is returned in nanoseconds and represents the mean time taken
+for a single call to the timer function.</p>
+<p>The results are cached because the overhead of a timer function is expected
+to be fairly constant for a given system and timer on short timescales
+while computing it is expensive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timer</strong> – The timer function to measure.</p></li>
+<li><p><strong>samples</strong> – The number of samples to collect for the analysis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean overhead of calling the timer in nanoseconds.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided timer is not supported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.timers.info.timer_precision_ns">
+<span class="sig-prename descclassname"><span class="pre">simplebench.timers.info.</span></span><span class="sig-name descname"><span class="pre">timer_precision_ns</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../_modules/simplebench/timers/info.html#timer_precision_ns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.timers.info.timer_precision_ns" title="Link to this definition">🔗</a></dt>
+<dd><p>Returns the precison of the passed timer in nanoseconds.</p>
+<p>The precision of the timer is the smallest possible difference between
+two consecutive calls to the timer function. It is determined by calling
+the timer in a tight loop and analyzing the non-zero differences between
+consecutive readings using a Fourier Transform on a histogram of these
+differences.</p>
+<p>This reflects the fundamental resolution of the timer on the current system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timer</strong> – The timer function to analyze.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The precision of the timer in nanoseconds.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided timer is not supported.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchRuntimeError" title="simplebench.exceptions.SimpleBenchRuntimeError"><strong>SimpleBenchRuntimeError</strong></a> – If the timer does not advance during profiling.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-simplebench.timers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.timers" title="Link to this heading">🔗</a></h2>
 <p>Timer information functions for simplebench</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="simplebench.timers.is_valid_timer">
@@ -351,20 +495,6 @@ differences.</p>
 </dl>
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.timers.info.html">simplebench.timers.info module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.timers.info.html#simplebench.timers.info.fake_timer"><code class="docutils literal notranslate"><span class="pre">fake_timer()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.timers.info.html#simplebench.timers.info.is_valid_timer"><code class="docutils literal notranslate"><span class="pre">is_valid_timer()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.timers.info.html#simplebench.timers.info.timer_identifier"><code class="docutils literal notranslate"><span class="pre">timer_identifier()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.timers.info.html#simplebench.timers.info.timer_overhead_ns"><code class="docutils literal notranslate"><span class="pre">timer_overhead_ns()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.timers.info.html#simplebench.timers.info.timer_precision_ns"><code class="docutils literal notranslate"><span class="pre">timer_precision_ns()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -406,10 +536,21 @@ differences.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.timers package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.timers.info">simplebench.timers.info module</a><ul>
+<li><a class="reference internal" href="#simplebench.timers.info.fake_timer"><code class="docutils literal notranslate"><span class="pre">fake_timer()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timers.info.is_valid_timer"><code class="docutils literal notranslate"><span class="pre">is_valid_timer()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timers.info.timer_identifier"><code class="docutils literal notranslate"><span class="pre">timer_identifier()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timers.info.timer_overhead_ns"><code class="docutils literal notranslate"><span class="pre">timer_overhead_ns()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.timers.info.timer_precision_ns"><code class="docutils literal notranslate"><span class="pre">timer_precision_ns()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.timers">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.timers.is_valid_timer"><code class="docutils literal notranslate"><span class="pre">is_valid_timer()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timers.timer_overhead_ns"><code class="docutils literal notranslate"><span class="pre">timer_overhead_ns()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.timers.timer_precision_ns"><code class="docutils literal notranslate"><span class="pre">timer_precision_ns()</span></code></a></li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.choices package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,12 +257,141 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.reporters.choices">
-<span id="simplebench-reporters-choices-package"></span><h1>simplebench.reporters.choices package<a class="headerlink" href="#module-simplebench.reporters.choices" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-reporters-choices-package">
+<h1>simplebench.reporters.choices package<a class="headerlink" href="#simplebench-reporters-choices-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.reporters.choices.choices_conf">
+<span id="simplebench-reporters-choices-choices-conf-module"></span><h2>simplebench.reporters.choices.choices_conf module<a class="headerlink" href="#module-simplebench.reporters.choices.choices_conf" title="Link to this heading">🔗</a></h2>
+<p>ChoicesConf class for reporters.</p>
+<p>This module defines the <a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> class, which is a container for managing
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances used in reporter configurations.</p>
+<p>It ensures type safety by enforcing that only
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances can be added
+to the container, and provides methods for adding, retrieving, and managing
+these instances.</p>
+<p>It is designed to be used in the context of reporters that require
+a collection of <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances.</p>
+<p>It has no methods of its own; all functionality is inherited from
+<code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseChoices</span></code>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.reporters.choices.choices_conf.ChoicesConf">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.choices.choices_conf.</span></span><span class="sig-name descname"><span class="pre">ChoicesConf</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/choices/choices_conf.html#ChoicesConf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseChoices</span></code>[<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_ChoicesErrorTag</span></code>]</p>
+<p>A dictionary-like container for
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances.</p>
+<p>This class enforces that only <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
+instances can be added to it, and provides methods to manage and retrieve those
+instances.</p>
+<p>It is designed to be used in the context of reporters that require
+a collection of <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances.</p>
+<p>Construct a <a class="reference internal" href="#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><code class="xref py py-class docutils literal notranslate"><span class="pre">Choices</span></code></a> container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>choices</strong> (Iterable[<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>] |             <a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> | None) – An <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> of
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances
+or another <a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> instance to
+initialize the container with. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, an empty container
+is created.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.choices.choices_conf.ChoicesConf.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/choices/choices_conf.html#ChoicesConf.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.choices.choices_conf.ChoicesConf.add" title="Link to this definition">🔗</a></dt>
+<dd><p>Add a <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instance to the container.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">choice.name</span></code> attribute is used as the key in the container and
+is required to be unique withing the container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>choice</strong> (<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>) – The <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instance to add.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the argument is not a
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
+instance.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If a
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
+with the same name already exists in the container.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.choices.choices_conf.ChoicesConf.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/choices/choices_conf.html#ChoicesConf.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.choices.choices_conf.ChoicesConf.extend" title="Link to this definition">🔗</a></dt>
+<dd><p>Add <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances to the container.</p>
+<p>It does so by adding each <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> in the
+provided <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> of <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> or
+by adding the <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances from the
+provided <a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>choices</strong> (Iterable[<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>] |             <a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a>) – An <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> of
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances
+or an instance of <a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a>.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the <code class="docutils literal notranslate"><span class="pre">choices</span></code> argument is not an <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> of
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
+instances or a <a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> instance.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If any
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
+in the <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> has a duplicate name that already
+exists in the container.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.choices.choices_conf.ChoicesConf.remove">
+<span class="sig-name descname"><span class="pre">remove</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/choices/choices_conf.html#ChoicesConf.remove"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.choices.choices_conf.ChoicesConf.remove" title="Link to this definition">🔗</a></dt>
+<dd><p>Remove a <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instance from the
+container by its name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
+instance to remove.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchKeyError" title="simplebench.exceptions.SimpleBenchKeyError"><strong>SimpleBenchKeyError</strong></a> – If no
+<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
+under the given name exists in the container.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.reporters.choices">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.reporters.choices" title="Link to this heading">🔗</a></h2>
 <p>simplebench.reporters.choices package.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.choices.Choices">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.choices.</span></span><span class="sig-name descname"><span class="pre">Choices</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.choices.</span></span><span class="sig-name descname"><span class="pre">Choices</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.reporters.choices.Choices" title="simplebench.reporters.choices.Choices"><span class="pre">Choices</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -419,14 +548,14 @@ under the given name exists in the container.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.choices.ChoicesConf">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.choices.</span></span><span class="sig-name descname"><span class="pre">ChoicesConf</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.choices.</span></span><span class="sig-name descname"><span class="pre">ChoicesConf</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.choice_conf.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/choices/choices_conf.html#ChoicesConf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.choices.ChoicesConf" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseChoices</span></code>[<a class="reference internal" href="simplebench.reporters.choice.choice_conf.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_ChoicesErrorTag</span></code>]</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_BaseChoices</span></code>[<a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_ChoicesErrorTag</span></code>]</p>
 <p>A dictionary-like container for
 <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> instances.</p>
 <p>This class enforces that only <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a>
@@ -449,7 +578,7 @@ is created.</p>
 <span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.choice_conf.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/choices/choices_conf.html#ChoicesConf.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.choices.ChoicesConf.add" title="Link to this definition">🔗</a></dt>
@@ -478,7 +607,7 @@ with the same name already exists in the container.</p></li>
 <span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.choice_conf.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><span class="pre">ChoiceConf</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/choices/choices_conf.html#ChoicesConf.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.choices.ChoicesConf.extend" title="Link to this definition">🔗</a></dt>
@@ -527,34 +656,6 @@ under the given name exists in the container.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.choices.choices.html">simplebench.reporters.choices.choices module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices"><code class="docutils literal notranslate"><span class="pre">Choices</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices.add"><code class="docutils literal notranslate"><span class="pre">Choices.add()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices.all_choice_args"><code class="docutils literal notranslate"><span class="pre">Choices.all_choice_args()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices.all_choice_flags"><code class="docutils literal notranslate"><span class="pre">Choices.all_choice_flags()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices.extend"><code class="docutils literal notranslate"><span class="pre">Choices.extend()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices.get_choice_for_arg"><code class="docutils literal notranslate"><span class="pre">Choices.get_choice_for_arg()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.Choices.remove"><code class="docutils literal notranslate"><span class="pre">Choices.remove()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.choices.choices.html#simplebench.reporters.choices.choices.deferred_choice_import"><code class="docutils literal notranslate"><span class="pre">deferred_choice_import()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html">simplebench.reporters.choices.choices_conf module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf.add"><code class="docutils literal notranslate"><span class="pre">ChoicesConf.add()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf.extend"><code class="docutils literal notranslate"><span class="pre">ChoicesConf.extend()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf.remove"><code class="docutils literal notranslate"><span class="pre">ChoicesConf.remove()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -596,6 +697,17 @@ under the given name exists in the container.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.reporters.choices package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.reporters.choices.choices_conf">simplebench.reporters.choices.choices_conf module</a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf.add"><code class="docutils literal notranslate"><span class="pre">ChoicesConf.add()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf.extend"><code class="docutils literal notranslate"><span class="pre">ChoicesConf.extend()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.choices.choices_conf.ChoicesConf.remove"><code class="docutils literal notranslate"><span class="pre">ChoicesConf.remove()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.reporters.choices">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.choices.Choices"><code class="docutils literal notranslate"><span class="pre">Choices</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.choices.Choices.add"><code class="docutils literal notranslate"><span class="pre">Choices.add()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.choices.Choices.all_choice_args"><code class="docutils literal notranslate"><span class="pre">Choices.all_choice_args()</span></code></a></li>
@@ -611,7 +723,8 @@ under the given name exists in the container.</p>
 <li><a class="reference internal" href="#simplebench.reporters.choices.ChoicesConf.remove"><code class="docutils literal notranslate"><span class="pre">ChoicesConf.remove()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

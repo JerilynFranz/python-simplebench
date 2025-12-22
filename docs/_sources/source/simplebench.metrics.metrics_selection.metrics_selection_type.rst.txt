@@ -1,0 +1,7 @@
+simplebench.metrics.metrics\_selection.metrics\_selection\_type module
+======================================================================
+
+.. automodule:: simplebench.metrics.metrics_selection.metrics_selection_type
+   :members:
+   :undoc-members:
+   :show-inheritance:

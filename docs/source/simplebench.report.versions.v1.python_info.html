@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.report.versions.v1.python_info package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,211 +257,40 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.report.versions.v1.python_info">
-<span id="simplebench-report-versions-v1-python-info-package"></span><h1>simplebench.report.versions.v1.python_info package<a class="headerlink" href="#module-simplebench.report.versions.v1.python_info" title="Link to this heading">🔗</a></h1>
-<p>PythonInfo class to store and retrieve information about Python.</p>
+          <section id="simplebench-report-versions-v1-python-info-package">
+<h1>simplebench.report.versions.v1.python_info package<a class="headerlink" href="#simplebench-report-versions-v1-python-info-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.report.versions.v1.python_info.python_info_schema">
+<span id="simplebench-report-versions-v1-python-info-python-info-schema-module"></span><h2>simplebench.report.versions.v1.python_info.python_info_schema module<a class="headerlink" href="#module-simplebench.report.versions.v1.python_info.python_info_schema" title="Link to this heading">🔗</a></h2>
+<p>Schema for JSON PythonInfo v1 validation.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.python_info.</span></span><span class="sig-name descname"><span class="pre">PythonInfo</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">compiler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">implementation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">implementation_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">python_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">build</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">release</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info.html#PythonInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.python_info.html#simplebench.report.base.python_info.PythonInfo" title="simplebench.report.base.python_info.PythonInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonInfo</span></code></a></p>
-<p>Class representing machine information in a JSON report.</p>
-<p>Initialize the PythonInfo class.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.ID" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON PythonInfo identifier property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.SCHEMA">
-<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.SCHEMA" title="Link to this definition">🔗</a></dt>
-<dd><p>alias of <a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema" title="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonInfoSchema</span></code></a></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchPythonInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON PythonInfo type property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.VERSION" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON PythonInfo version number.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.build">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.build" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the build property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The build string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.compiler">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compiler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.compiler" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the compiler property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The compiler string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo" title="simplebench.report.versions.v1.python_info.python_info.PythonInfo"><span class="pre">PythonInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info.html#PythonInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.from_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Create a PythonInfo instance from a dictionary.</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span> <span class="n">python_info</span> <span class="o">=</span> <span class="n">PythonInfo</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>The dictionary must conform to the expected structure for the PythonInfo
-representation. The ‘version’ and ‘type’ properties are validated
-against the class’s VERSION and TYPE attributes if they are present.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – The dictionary containing PythonInfo information.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A PythonInfo instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.hash_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.hash_id" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the hash_id property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The hash_id string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.implementation">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">implementation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.implementation" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the implementation property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The implementation string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.implementation_version">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">implementation_version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.implementation_version" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the implementation_version property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The implementation_version string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.python_version">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">python_version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.python_version" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the python_version property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The python_version string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.release">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">release</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.release" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the release property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The release string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.system">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">system</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.system" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the system property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The system string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info.html#PythonInfo.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.to_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Convert the PythonInfo to a dictionary suitable for JSON serialization.</p>
-<p>This includes all properties defined in the <a class="reference internal" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema" title="simplebench.report.versions.v1.python_info.PythonInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonInfoSchema</span></code></a>
-for the version.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary representation of the PythonInfo.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.python_info.</span></span><span class="sig-name descname"><span class="pre">PythonInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.json_schema.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.python_info.python_info_schema.</span></span><span class="sig-name descname"><span class="pre">PythonInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
 <p>Schema for the JSON PythonInfo output (V1)</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.ID" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.ID" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON PythonInfo schema $id value for version 1 reports.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchPythonInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchPythonInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON PythonInfo schema type property value for version 1 reports.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON PythonInfo schema version number.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.as_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the JSON schema as a dictionary.</p>
 <p>It always returns a fresh copy of the schema dictionary to prevent accidental
 modifications.</p>
@@ -478,8 +307,8 @@ modifications.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.as_json">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_json">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the JSON schema as a JSON-formatted string.</p>
 <blockquote>
 <div><p>It serializes the schema dictionary to a JSON string.</p>
@@ -494,8 +323,8 @@ modifications.</p>
 </dl>
 </div></blockquote>
 <p>The JSON schema is as follows:</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id2" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json&quot;</span><span class="p">,</span>
@@ -582,43 +411,332 @@ modifications.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html">simplebench.report.versions.v1.python_info.python_info module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo"><code class="docutils literal notranslate"><span class="pre">PythonInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.ID"><code class="docutils literal notranslate"><span class="pre">PythonInfo.ID</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.SCHEMA"><code class="docutils literal notranslate"><span class="pre">PythonInfo.SCHEMA</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.TYPE"><code class="docutils literal notranslate"><span class="pre">PythonInfo.TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.VERSION"><code class="docutils literal notranslate"><span class="pre">PythonInfo.VERSION</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.build"><code class="docutils literal notranslate"><span class="pre">PythonInfo.build</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.compiler"><code class="docutils literal notranslate"><span class="pre">PythonInfo.compiler</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.from_dict"><code class="docutils literal notranslate"><span class="pre">PythonInfo.from_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.hash_id"><code class="docutils literal notranslate"><span class="pre">PythonInfo.hash_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.implementation"><code class="docutils literal notranslate"><span class="pre">PythonInfo.implementation</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.implementation_version"><code class="docutils literal notranslate"><span class="pre">PythonInfo.implementation_version</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.python_version"><code class="docutils literal notranslate"><span class="pre">PythonInfo.python_version</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.release"><code class="docutils literal notranslate"><span class="pre">PythonInfo.release</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.system"><code class="docutils literal notranslate"><span class="pre">PythonInfo.system</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">PythonInfo.to_dict()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html">simplebench.report.versions.v1.python_info.python_info_schema module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.ID"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.ID</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.VERSION</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.as_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info_schema.html#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.as_json()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+</section>
+<section id="module-simplebench.report.versions.v1.python_info">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.report.versions.v1.python_info" title="Link to this heading">🔗</a></h2>
+<p>PythonInfo class to store and retrieve information about Python.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.python_info.</span></span><span class="sig-name descname"><span class="pre">PythonInfo</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">compiler</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">implementation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">implementation_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">python_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">build</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">release</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info.html#PythonInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.python_info.PythonInfo" title="simplebench.report.base.python_info.PythonInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonInfo</span></code></a></p>
+<p>Class representing machine information in a JSON report.</p>
+<p>Initialize the PythonInfo class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.ID" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON PythonInfo identifier property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.SCHEMA">
+<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.SCHEMA" title="Link to this definition">🔗</a></dt>
+<dd><p>alias of <a class="reference internal" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema" title="simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonInfoSchema</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchPythonInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON PythonInfo type property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON PythonInfo version number.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.build">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.build" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the build property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The build string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.compiler">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compiler</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.compiler" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the compiler property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The compiler string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.from_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.python_info.PythonInfo" title="simplebench.report.versions.v1.python_info.python_info.PythonInfo"><span class="pre">PythonInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info.html#PythonInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.from_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a PythonInfo instance from a dictionary.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id2" title="Link to this code">🔗</a></div>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span> <span class="n">python_info</span> <span class="o">=</span> <span class="n">PythonInfo</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
 </div>
+</div>
+<p>The dictionary must conform to the expected structure for the PythonInfo
+representation. The ‘version’ and ‘type’ properties are validated
+against the class’s VERSION and TYPE attributes if they are present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – The dictionary containing PythonInfo information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A PythonInfo instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.hash_id">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.hash_id" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the hash_id property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hash_id string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.implementation">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">implementation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.implementation" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the implementation property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The implementation string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.implementation_version">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">implementation_version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.implementation_version" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the implementation_version property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The implementation_version string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.python_version">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">python_version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.python_version" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the python_version property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The python_version string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.release">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">release</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.release" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the release property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The release string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.system">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">system</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.system" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the system property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The system string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfo.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info.html#PythonInfo.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfo.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert the PythonInfo to a dictionary suitable for JSON serialization.</p>
+<p>This includes all properties defined in the <a class="reference internal" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema" title="simplebench.report.versions.v1.python_info.PythonInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonInfoSchema</span></code></a>
+for the version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary representation of the PythonInfo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.python_info.</span></span><span class="sig-name descname"><span class="pre">PythonInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
+<p>Schema for the JSON PythonInfo output (V1)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.ID" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON PythonInfo schema $id value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchPythonInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON PythonInfo schema type property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON PythonInfo schema version number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.as_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a dictionary.</p>
+<p>It always returns a fresh copy of the schema dictionary to prevent accidental
+modifications.</p>
+<p>The caller can modify the returned dictionary as needed or cache it for performance.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_dict = PythonInfoSchema.as_dict()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return dict[str, object]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.python_info.PythonInfoSchema.as_json">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info_schema.html#PythonInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a JSON-formatted string.</p>
+<blockquote>
+<div><p>It serializes the schema dictionary to a JSON string.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_json = PythonInfoSchema.as_json()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a JSON-formatted string.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The JSON schema is as follows:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id3" title="Link to this code">🔗</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python Info (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python interpreter information (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Version&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON schema version number.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;JSON schema type property value for version 1 reports.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBenchPythonInfo::V1&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;hash_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hash ID&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Unique 64 byte hexadecimal hash identifier for the Python interpreter information data. This can be used to identify identical Python interpreter configurations without revealing details.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^[a-f0-9]{64}$&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;compiler&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python Compiler&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python compiler information&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;implementation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python Implementation&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python implementation&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;implementation_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python Implementation Version&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Version of the Python implementation&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;python_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python Version&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python version&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;build&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python Build&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Python build information&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;release&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Release&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Release information&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;system&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;System&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;System information&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;hash_id&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;compiler&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;implementation&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;implementation_version&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;python_version&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;build&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;release&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;system&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -660,6 +778,19 @@ modifications.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.report.versions.v1.python_info package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.python_info.python_info_schema">simplebench.report.versions.v1.python_info.python_info_schema module</a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.ID"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.ID</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.TYPE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.VERSION</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.as_json()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.python_info">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.PythonInfo"><code class="docutils literal notranslate"><span class="pre">PythonInfo</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.PythonInfo.ID"><code class="docutils literal notranslate"><span class="pre">PythonInfo.ID</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.PythonInfo.SCHEMA"><code class="docutils literal notranslate"><span class="pre">PythonInfo.SCHEMA</span></code></a></li>
@@ -685,7 +816,8 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.python_info.PythonInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">PythonInfoSchema.as_json()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

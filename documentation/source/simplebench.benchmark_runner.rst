@@ -1,11 +1,6 @@
 simplebench.benchmark\_runner package
 =====================================
 
-.. automodule:: simplebench.benchmark_runner
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -14,10 +9,10 @@ Subpackages
 
    simplebench.benchmark_runner.simplerunner
 
-Submodules
-----------
+Module contents
+---------------
 
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.benchmark_runner.benchmark_runner
+.. automodule:: simplebench.benchmark_runner
+   :members:
+   :show-inheritance:
+   :undoc-members:

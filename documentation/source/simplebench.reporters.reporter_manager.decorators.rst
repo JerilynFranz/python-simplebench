@@ -1,11 +1,6 @@
 simplebench.reporters.reporter\_manager.decorators package
 ==========================================================
 
-.. automodule:: simplebench.reporters.reporter_manager.decorators
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -13,3 +8,11 @@ Subpackages
    :maxdepth: 4
 
    simplebench.reporters.reporter_manager.decorators.register_reporter
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.reporter_manager.decorators
+   :members:
+   :show-inheritance:
+   :undoc-members:

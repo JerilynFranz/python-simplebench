@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.csv.reporter package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,22 +257,143 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.reporters.csv.reporter">
-<span id="simplebench-reporters-csv-reporter-package"></span><h1>simplebench.reporters.csv.reporter package<a class="headerlink" href="#module-simplebench.reporters.csv.reporter" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-reporters-csv-reporter-package">
+<h1>simplebench.reporters.csv.reporter package<a class="headerlink" href="#simplebench-reporters-csv-reporter-package" title="Link to this heading">🔗</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html">simplebench.reporters.csv.reporter.options package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#module-simplebench.reporters.csv.reporter.options.fields">simplebench.reporters.csv.reporter.options.fields module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ELAPSED_SECONDS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.ITERATIONS"><code class="docutils literal notranslate"><span class="pre">CSVField.ITERATIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.MAX"><code class="docutils literal notranslate"><span class="pre">CSVField.MAX</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.MEAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEAN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.MEDIAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEDIAN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.MIN"><code class="docutils literal notranslate"><span class="pre">CSVField.MIN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.N"><code class="docutils literal notranslate"><span class="pre">CSVField.N</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.P5"><code class="docutils literal notranslate"><span class="pre">CSVField.P5</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.P95"><code class="docutils literal notranslate"><span class="pre">CSVField.P95</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.ROUNDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ROUNDS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.RSD_PERCENT"><code class="docutils literal notranslate"><span class="pre">CSVField.RSD_PERCENT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField.STD_DEV"><code class="docutils literal notranslate"><span class="pre">CSVField.STD_DEV</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#module-simplebench.reporters.csv.reporter.options">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ELAPSED_SECONDS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.ITERATIONS"><code class="docutils literal notranslate"><span class="pre">CSVField.ITERATIONS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MAX"><code class="docutils literal notranslate"><span class="pre">CSVField.MAX</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MEAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEAN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MEDIAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEDIAN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MIN"><code class="docutils literal notranslate"><span class="pre">CSVField.MIN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.N"><code class="docutils literal notranslate"><span class="pre">CSVField.N</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.P5"><code class="docutils literal notranslate"><span class="pre">CSVField.P5</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.P95"><code class="docutils literal notranslate"><span class="pre">CSVField.P95</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.ROUNDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ROUNDS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.RSD_PERCENT"><code class="docutils literal notranslate"><span class="pre">CSVField.RSD_PERCENT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.STD_DEV"><code class="docutils literal notranslate"><span class="pre">CSVField.STD_DEV</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions.fields"><code class="docutils literal notranslate"><span class="pre">CSVOptions.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">CSVOptions.variation_cols_last</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.reporters.csv.reporter.config">
+<span id="simplebench-reporters-csv-reporter-config-module"></span><h2>simplebench.reporters.csv.reporter.config module<a class="headerlink" href="#module-simplebench.reporters.csv.reporter.config" title="Link to this heading">🔗</a></h2>
+<p>Configuration for a CSVReporter.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.config.CSVConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.config.</span></span><span class="sig-name descname"><span class="pre">CSVConfig</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.metrics_selection.html#simplebench.metrics.metrics_selection.MetricsSelection" title="simplebench.metrics.metrics_selection.metrics_selection.MetricsSelection"><span class="pre">MetricsSelection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">default_targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.format.Format" title="simplebench.enums.format.Format"><span class="pre">Format</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">file_suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">file_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">file_append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">subdir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/config.html#CSVConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.config.CSVConfig" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.config.ReporterConfig" title="simplebench.reporters.reporter.config.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a></p>
+<p>Configuration for a <a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVReporter" title="simplebench.reporters.csv.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>.</p>
+<p>This class inherits from <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.config.ReporterConfig" title="simplebench.reporters.reporter.config.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a> and provides a
+type-safe, discoverable interface for overriding the default settings
+of a <a class="reference internal" href="simplebench.reporters.csv.html#simplebench.reporters.csv.CSVReporter" title="simplebench.reporters.csv.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>.</p>
+<p>By default, the CSVReporter is configured to output benchmark results
+to CSV files in the filesystem, with options to also output to console
+and via callback. The default metrics included are all registered statistical
+metrics.
+Attributes
+———-
+:ivar name: The name of the reporter. Default is ‘csv’.
+:ivar description: A brief description of the reporter. Default is</p>
+<blockquote>
+<div><p>‘Outputs benchmark results to CSV files.’.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metrics</strong> – The metrics to include in the report. Default includes all registered
+metrics.</p></li>
+<li><p><strong>targets</strong> – The output targets for the report. Default includes
+FILESYSTEM, CONSOLE, and CALLBACK.</p></li>
+<li><p><strong>default_targets</strong> – The default output target if none is specified. Default is FILESYSTEM.</p></li>
+<li><p><strong>formats</strong> – The output formats supported by the reporter. Default is CSV.</p></li>
+<li><p><strong>file_suffix</strong> – The file suffix to use for output files. Default is ‘csv’.</p></li>
+<li><p><strong>file_unique</strong> – Whether to generate unique filenames for each report. Default is True.</p></li>
+<li><p><strong>file_append</strong> – Whether to append to existing files. Default is False.</p></li>
+<li><p><strong>subdir</strong> – The subdirectory to place output files in. Default is ‘’ (current directory).</p></li>
+<li><p><strong>choices</strong> – The choice configurations available for this reporter. Default includes
+several pre-defined choices for different metrics of the report.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize the CSVReporter configuration.</p>
+<p>Accepts keyword arguments to override any of the default configurations.
+All arguments are optional. If not provided, the default value for
+CSVReporter will be used.</p>
+</dd></dl>
+
+</section>
+<section id="module-simplebench.reporters.csv.reporter">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.reporters.csv.reporter" title="Link to this heading">🔗</a></h2>
 <p>CSV Reporter package for simplebench.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVConfig</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVConfig</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.metrics_selection.metrics_selection.html#simplebench.metric.metrics_selection.metrics_selection.MetricsSelection" title="simplebench.metric.metrics_selection.metrics_selection.MetricsSelection"><span class="pre">MetricsSelection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">default_targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.target.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.format.html#simplebench.enums.format.Format" title="simplebench.enums.format.Format"><span class="pre">Format</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choices.choices_conf.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.metrics_selection.html#simplebench.metrics.metrics_selection.MetricsSelection" title="simplebench.metrics.metrics_selection.metrics_selection.MetricsSelection"><span class="pre">MetricsSelection</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">default_targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.target.Target" title="simplebench.enums.target.Target"><span class="pre">Target</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.enums.html#simplebench.enums.format.Format" title="simplebench.enums.format.Format"><span class="pre">Format</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">choices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><span class="pre">ChoicesConf</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">file_suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">file_unique</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">file_append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -280,19 +401,40 @@
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/config.html#CSVConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVConfig" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.config.html#simplebench.reporters.reporter.config.ReporterConfig" title="simplebench.reporters.reporter.config.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.config.ReporterConfig" title="simplebench.reporters.reporter.config.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a></p>
 <p>Configuration for a <a class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporter" title="simplebench.reporters.csv.reporter.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>.</p>
-<p>This class inherits from <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterConfig" title="simplebench.reporters.reporter.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a> and provides a
+<p>This class inherits from <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.config.ReporterConfig" title="simplebench.reporters.reporter.config.ReporterConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterConfig</span></code></a> and provides a
 type-safe, discoverable interface for overriding the default settings
 of a <a class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporter" title="simplebench.reporters.csv.reporter.CSVReporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVReporter</span></code></a>.</p>
 <p>By default, the CSVReporter is configured to output benchmark results
 to CSV files in the filesystem, with options to also output to console
 and via callback. The default metrics included are all registered statistical
 metrics.
-.. attribute:</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nb">type</span><span class="p">:</span> <span class="n">ivar</span> <span class="n">name</span><span class="p">:</span> <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">reporter</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="s1">&#39;csv&#39;</span><span class="o">.</span>
-</pre></div>
-</div>
+Attributes
+———-
+:ivar name: The name of the reporter. Default is ‘csv’.
+:ivar description: A brief description of the reporter. Default is</p>
+<blockquote>
+<div><p>‘Outputs benchmark results to CSV files.’.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metrics</strong> – The metrics to include in the report. Default includes all registered
+metrics.</p></li>
+<li><p><strong>targets</strong> – The output targets for the report. Default includes
+FILESYSTEM, CONSOLE, and CALLBACK.</p></li>
+<li><p><strong>default_targets</strong> – The default output target if none is specified. Default is FILESYSTEM.</p></li>
+<li><p><strong>formats</strong> – The output formats supported by the reporter. Default is CSV.</p></li>
+<li><p><strong>file_suffix</strong> – The file suffix to use for output files. Default is ‘csv’.</p></li>
+<li><p><strong>file_unique</strong> – Whether to generate unique filenames for each report. Default is True.</p></li>
+<li><p><strong>file_append</strong> – Whether to append to existing files. Default is False.</p></li>
+<li><p><strong>subdir</strong> – The subdirectory to place output files in. Default is ‘’ (current directory).</p></li>
+<li><p><strong>choices</strong> – The choice configurations available for this reporter. Default includes
+several pre-defined choices for different metrics of the report.</p></li>
+</ul>
+</dd>
+</dl>
 <p>Initialize the CSVReporter configuration.</p>
 <p>Accepts keyword arguments to override any of the default configurations.
 All arguments are optional. If not provided, the default value for
@@ -301,7 +443,7 @@ CSVReporter will be used.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVField">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/fields.html#CSVField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVField" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/fields.html#CSVField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVField" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Fields available for CSV reporter output.</p>
 <dl class="py attribute">
@@ -380,15 +522,15 @@ CSVReporter will be used.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVOptions">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVOptions</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVOptions</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.fields.html#simplebench.reporters.csv.reporter.options.fields.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">variation_cols_last</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/options/options.html#CSVOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVOptions" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.options.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReporterOptions</span></code></a></p>
 <p>Class for holding CSV reporter specific options in a Choice.</p>
 <p>This class provides additional configuration options specific to the JSON reporter.
 It is accessed via the <code class="docutils literal notranslate"><span class="pre">options</span></code> attribute of a
@@ -430,7 +572,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">False</
 <p>Initialize CSVOptions instance.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVOptions.fields">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.fields.html#simplebench.reporters.csv.reporter.options.fields.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVOptions.fields" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.fields.CSVField" title="simplebench.reporters.csv.reporter.options.fields.CSVField"><span class="pre">CSVField</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVOptions.fields" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the fields, in order, to include in the CSV table when rendering.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -441,7 +583,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">False</
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVOptions.variation_cols_last">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols_last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVOptions.variation_cols_last" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols_last</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVOptions.variation_cols_last" title="Link to this definition">🔗</a></dt>
 <dd><p>Return whether variation columns are placed at the end of the rows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -454,14 +596,14 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">False</
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.csv.reporter.CSVReporter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVReporter</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.csv.reporter.</span></span><span class="sig-name descname"><span class="pre">CSVReporter</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html#simplebench.reporters.csv.reporter.config.CSVConfig" title="simplebench.reporters.csv.reporter.config.CSVConfig"><span class="pre">CSVConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.reporters.csv.reporter.config.CSVConfig" title="simplebench.reporters.csv.reporter.config.CSVConfig"><span class="pre">CSVConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/reporter.html#CSVReporter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporter" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.reporter.html#simplebench.reporters.reporter.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.Reporter" title="simplebench.reporters.reporter.reporter.Reporter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reporter</span></code></a></p>
 <p>Class for outputting benchmark results to CSV files.</p>
 <p>It supports reporting statistics for various metrics,
 either separately or together, to the filesystem, via a callback function,
@@ -484,9 +626,9 @@ program.py<span class="w"> </span>--csv<span class="w"> </span>filesystem<span c
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The unique identifying name of the reporter.</p></li>
 <li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A brief description of the reporter.</p></li>
-<li><p><strong>choices</strong> (Iterable[<a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.ChoicesConf" title="simplebench.reporters.choices.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a>]) – Iterable of <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.ChoicesConf" title="simplebench.reporters.choices.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> instances defining
-the reporter instance, CLI flags, <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.ChoiceConf" title="simplebench.reporters.choice.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> name, supported
-<a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a> objects, supported output
+<li><p><strong>choices</strong> (Iterable[<a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a>]) – Iterable of <a class="reference internal" href="simplebench.reporters.choices.html#simplebench.reporters.choices.choices_conf.ChoicesConf" title="simplebench.reporters.choices.choices_conf.ChoicesConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoicesConf</span></code></a> instances defining
+the reporter instance, CLI flags, <a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.choice_conf.ChoiceConf" title="simplebench.reporters.choice.choice_conf.ChoiceConf"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChoiceConf</span></code></a> name, supported
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code> objects, supported output
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a> objects, and supported output
 <a class="reference internal" href="simplebench.enums.html#simplebench.enums.Format" title="simplebench.enums.Format"><code class="xref py py-class docutils literal notranslate"><span class="pre">Format</span></code></a> for the reporter.</p></li>
 <li><p><strong>targets</strong> (set[<a class="reference internal" href="simplebench.enums.html#simplebench.enums.Target" title="simplebench.enums.Target"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target</span></code></a>]) – The supported output targets for the reporter.</p></li>
@@ -519,10 +661,10 @@ If not provided, default settings will be used.</p>
 <span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metric.html#simplebench.metric.Metric" title="simplebench.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.ReporterOptions" title="simplebench.reporters.reporter.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.Metric" title="simplebench.metrics.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.reporter.html#simplebench.reporters.reporter.options.ReporterOptions" title="simplebench.reporters.reporter.options.ReporterOptions"><span class="pre">ReporterOptions</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/csv/reporter/reporter.html#CSVReporter.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.csv.reporter.CSVReporter.render" title="Link to this definition">🔗</a></dt>
@@ -548,64 +690,6 @@ benchmarked code.</p></li>
 
 </dd></dl>
 
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html">simplebench.reporters.csv.reporter.options package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ELAPSED_SECONDS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.ITERATIONS"><code class="docutils literal notranslate"><span class="pre">CSVField.ITERATIONS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MAX"><code class="docutils literal notranslate"><span class="pre">CSVField.MAX</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MEAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEAN</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MEDIAN"><code class="docutils literal notranslate"><span class="pre">CSVField.MEDIAN</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.MIN"><code class="docutils literal notranslate"><span class="pre">CSVField.MIN</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.N"><code class="docutils literal notranslate"><span class="pre">CSVField.N</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.P5"><code class="docutils literal notranslate"><span class="pre">CSVField.P5</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.P95"><code class="docutils literal notranslate"><span class="pre">CSVField.P95</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.ROUNDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ROUNDS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.RSD_PERCENT"><code class="docutils literal notranslate"><span class="pre">CSVField.RSD_PERCENT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVField.STD_DEV"><code class="docutils literal notranslate"><span class="pre">CSVField.STD_DEV</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions.fields"><code class="docutils literal notranslate"><span class="pre">CSVOptions.fields</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#simplebench.reporters.csv.reporter.options.CSVOptions.variation_cols_last"><code class="docutils literal notranslate"><span class="pre">CSVOptions.variation_cols_last</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.fields.html">simplebench.reporters.csv.reporter.options.fields module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.fields.html#simplebench.reporters.csv.reporter.options.fields.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.options.html">simplebench.reporters.csv.reporter.options.options module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.reporters.csv.reporter.options.options.html#simplebench.reporters.csv.reporter.options.options.CSVOptions"><code class="docutils literal notranslate"><span class="pre">CSVOptions</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html">simplebench.reporters.csv.reporter.config module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.config.html#simplebench.reporters.csv.reporter.config.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.csv.reporter.reporter.html">simplebench.reporters.csv.reporter.reporter module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.csv.reporter.reporter.html#simplebench.reporters.csv.reporter.reporter.CSVReporter"><code class="docutils literal notranslate"><span class="pre">CSVReporter</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.csv.reporter.reporter.html#simplebench.reporters.csv.reporter.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -647,6 +731,13 @@ benchmarked code.</p></li>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.reporters.csv.reporter package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.reporters.csv.reporter.config">simplebench.reporters.csv.reporter.config module</a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.csv.reporter.config.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.reporters.csv.reporter">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.csv.reporter.CSVConfig"><code class="docutils literal notranslate"><span class="pre">CSVConfig</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.csv.reporter.CSVField"><code class="docutils literal notranslate"><span class="pre">CSVField</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.csv.reporter.CSVField.ELAPSED_SECONDS"><code class="docutils literal notranslate"><span class="pre">CSVField.ELAPSED_SECONDS</span></code></a></li>
@@ -672,8 +763,8 @@ benchmarked code.</p></li>
 <li><a class="reference internal" href="#simplebench.reporters.csv.reporter.CSVReporter.render"><code class="docutils literal notranslate"><span class="pre">CSVReporter.render()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

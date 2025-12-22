@@ -1,17 +1,29 @@
 simplebench.timeout package
 ===========================
 
-.. automodule:: simplebench.timeout
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.timeout.enums module
+--------------------------------
 
-   simplebench.timeout.enums
-   simplebench.timeout.thread_id
-   simplebench.timeout.timeout
+.. automodule:: simplebench.timeout.enums
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.timeout.thread\_id module
+-------------------------------------
+
+.. automodule:: simplebench.timeout.thread_id
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.timeout
+   :members:
+   :show-inheritance:
+   :undoc-members:

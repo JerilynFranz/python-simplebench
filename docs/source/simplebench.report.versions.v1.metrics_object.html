@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.report.versions.v1.metrics_object package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,15 +257,17 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.report.versions.v1.metrics_object">
-<span id="simplebench-report-versions-v1-metrics-object-package"></span><h1>simplebench.report.versions.v1.metrics_object package<a class="headerlink" href="#module-simplebench.report.versions.v1.metrics_object" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-report-versions-v1-metrics-object-package">
+<h1>simplebench.report.versions.v1.metrics_object package<a class="headerlink" href="#simplebench-report-versions-v1-metrics-object-package" title="Link to this heading">🔗</a></h1>
+<section id="module-simplebench.report.versions.v1.metrics_object">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.report.versions.v1.metrics_object" title="Link to this heading">🔗</a></h2>
 <p>Metrics block for results</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.metrics_object.MetricsObject">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.metrics_object.</span></span><span class="sig-name descname"><span class="pre">MetricsObject</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.metrics_object.</span></span><span class="sig-name descname"><span class="pre">MetricsObject</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MetricsObject.MetricItem</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.stats_block.html#simplebench.report.versions.v1.stats_block.StatsBlock" title="simplebench.report.versions.v1.stats_block.stats_block.StatsBlock"><span class="pre">StatsBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.value_block.html#simplebench.report.versions.v1.value_block.ValueBlock" title="simplebench.report.versions.v1.value_block.value_block.ValueBlock"><span class="pre">ValueBlock</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.raw_data_block.html#simplebench.report.versions.v1.raw_data_block.RawDataBlock" title="simplebench.report.versions.v1.raw_data_block.raw_data_block.RawDataBlock"><span class="pre">RawDataBlock</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/metrics_object/metrics_object.html#MetricsObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.metrics_object.MetricsObject" title="Link to this definition">🔗</a></dt>
@@ -300,13 +302,13 @@ and can contain underscores in between.”</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.metrics_object.MetricsObject.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject" title="simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/metrics_object/metrics_object.html#MetricsObject.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.metrics_object.MetricsObject.from_dict" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.metrics_object.MetricsObject" title="simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/metrics_object/metrics_object.html#MetricsObject.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.metrics_object.MetricsObject.from_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a Metrics object instance from a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -320,20 +322,6 @@ and can contain underscores in between.”</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html">simplebench.report.versions.v1.metrics_object.metrics_object module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><code class="docutils literal notranslate"><span class="pre">MetricsObject</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject.MetricItem"><code class="docutils literal notranslate"><span class="pre">MetricsObject.MetricItem</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.metrics_object.metrics_object.html#simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject.from_dict"><code class="docutils literal notranslate"><span class="pre">MetricsObject.from_dict()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -375,12 +363,14 @@ and can contain underscores in between.”</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.report.versions.v1.metrics_object package</a><ul>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.metrics_object">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.metrics_object.MetricsObject"><code class="docutils literal notranslate"><span class="pre">MetricsObject</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.metrics_object.MetricsObject.MetricItem"><code class="docutils literal notranslate"><span class="pre">MetricsObject.MetricItem</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.metrics_object.MetricsObject.from_dict"><code class="docutils literal notranslate"><span class="pre">MetricsObject.from_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

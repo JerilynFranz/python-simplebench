@@ -1,11 +1,6 @@
 simplebench.reporters.rich\_table.reporter package
 ==================================================
 
-.. automodule:: simplebench.reporters.rich_table.reporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -17,8 +12,18 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.rich\_table.reporter.config module
+--------------------------------------------------------
 
-   simplebench.reporters.rich_table.reporter.config
-   simplebench.reporters.rich_table.reporter.reporter
+.. automodule:: simplebench.reporters.rich_table.reporter.config
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.rich_table.reporter
+   :members:
+   :show-inheritance:
+   :undoc-members:

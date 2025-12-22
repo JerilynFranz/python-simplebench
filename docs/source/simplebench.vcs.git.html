@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.vcs.git package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,12 +257,208 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.vcs.git">
-<span id="simplebench-vcs-git-package"></span><h1>simplebench.vcs.git package<a class="headerlink" href="#module-simplebench.vcs.git" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-vcs-git-package">
+<h1>simplebench.vcs.git package<a class="headerlink" href="#simplebench-vcs-git-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.vcs.git.exit_codes">
+<span id="simplebench-vcs-git-exit-codes-module"></span><h2>simplebench.vcs.git.exit_codes module<a class="headerlink" href="#module-simplebench.vcs.git.exit_codes" title="Link to this heading">🔗</a></h2>
+<p>Errors related to Git operations.</p>
+<p>This module defines Git-specific exit codes and error tags</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.BranchExitCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.exit_codes.</span></span><span class="sig-name descname"><span class="pre">BranchExitCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/exit_codes.html#BranchExitCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.exit_codes.BranchExitCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></a></p>
+<p>‘git branch’ command error codes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.BranchExitCode.NOT_A_REPOSITORY">
+<span class="sig-name descname"><span class="pre">NOT_A_REPOSITORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.BranchExitCode.NOT_A_REPOSITORY" title="Link to this definition">🔗</a></dt>
+<dd><p>The specified directory is not a Git repository.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.BranchExitCode.USER_INTERRUPT">
+<span class="sig-name descname"><span class="pre">USER_INTERRUPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">130</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.BranchExitCode.USER_INTERRUPT" title="Link to this definition">🔗</a></dt>
+<dd><p>The git branch command was interrupted by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.exit_codes.</span></span><span class="sig-name descname"><span class="pre">CommonCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/exit_codes.html#CommonCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Well-known Git exit codes across various commands.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode.COMMAND_NOT_FOUND">
+<span class="sig-name descname"><span class="pre">COMMAND_NOT_FOUND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'COMMAND_NOT_FOUND'</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode.COMMAND_NOT_FOUND" title="Link to this definition">🔗</a></dt>
+<dd><p>Command not found.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode.GENERAL_ERROR">
+<span class="sig-name descname"><span class="pre">GENERAL_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GENERAL_ERROR'</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode.GENERAL_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A general error occurred.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode.INVALID_ARGUMENTS">
+<span class="sig-name descname"><span class="pre">INVALID_ARGUMENTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INVALID_ARGUMENTS'</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode.INVALID_ARGUMENTS" title="Link to this definition">🔗</a></dt>
+<dd><p>Invalid arguments were provided to the command.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode.MISUSE_OF_SHELL_BUILTINS">
+<span class="sig-name descname"><span class="pre">MISUSE_OF_SHELL_BUILTINS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'MISUSE_OF_SHELL_BUILTINS'</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode.MISUSE_OF_SHELL_BUILTINS" title="Link to this definition">🔗</a></dt>
+<dd><p>Misuse of shell builtins.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode.NOT_A_REPOSITORY">
+<span class="sig-name descname"><span class="pre">NOT_A_REPOSITORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'NOT_A_REPOSITORY'</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode.NOT_A_REPOSITORY" title="Link to this definition">🔗</a></dt>
+<dd><p>The specified directory is not a Git repository.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode.SUCCESS">
+<span class="sig-name descname"><span class="pre">SUCCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SUCCESS'</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode.SUCCESS" title="Link to this definition">🔗</a></dt>
+<dd><p>The command completed successfully.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.CommonCode.USER_INTERRUPT">
+<span class="sig-name descname"><span class="pre">USER_INTERRUPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'USER_INTERRUPT'</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.CommonCode.USER_INTERRUPT" title="Link to this definition">🔗</a></dt>
+<dd><p>The git command was interrupted by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.GitExitCode">
+<span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.exit_codes.</span></span><span class="sig-name descname"><span class="pre">GitExitCode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.14)"><span class="pre">IntEnum</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'branch':</span> <span class="pre">&lt;enum</span> <span class="pre">'BranchExitCode'&gt;,</span> <span class="pre">'log':</span> <span class="pre">&lt;enum</span> <span class="pre">'LogExitCode'&gt;,</span> <span class="pre">'rev-parse':</span> <span class="pre">&lt;enum</span> <span class="pre">'RevParseExitCode'&gt;,</span> <span class="pre">'status':</span> <span class="pre">&lt;enum</span> <span class="pre">'StatusExitCode'&gt;}</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.GitExitCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Git CLI exit codes indexed by command.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.LogExitCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.exit_codes.</span></span><span class="sig-name descname"><span class="pre">LogExitCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/exit_codes.html#LogExitCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.exit_codes.LogExitCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></a></p>
+<p>‘git log’ command error codes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.LogExitCode.NOT_A_REPOSITORY">
+<span class="sig-name descname"><span class="pre">NOT_A_REPOSITORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.LogExitCode.NOT_A_REPOSITORY" title="Link to this definition">🔗</a></dt>
+<dd><p>The specified directory is not a Git repository.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.LogExitCode.USER_INTERRUPT">
+<span class="sig-name descname"><span class="pre">USER_INTERRUPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">130</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.LogExitCode.USER_INTERRUPT" title="Link to this definition">🔗</a></dt>
+<dd><p>The git log command was interrupted by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.RevParseExitCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.exit_codes.</span></span><span class="sig-name descname"><span class="pre">RevParseExitCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/exit_codes.html#RevParseExitCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.exit_codes.RevParseExitCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></a></p>
+<p>‘git rev-parse’ command error codes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.RevParseExitCode.NOT_A_REPOSITORY">
+<span class="sig-name descname"><span class="pre">NOT_A_REPOSITORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.RevParseExitCode.NOT_A_REPOSITORY" title="Link to this definition">🔗</a></dt>
+<dd><p>The specified directory is not a Git repository.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.RevParseExitCode.USER_INTERRUPT">
+<span class="sig-name descname"><span class="pre">USER_INTERRUPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">130</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.RevParseExitCode.USER_INTERRUPT" title="Link to this definition">🔗</a></dt>
+<dd><p>The git rev-parse command was interrupted by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.StatusExitCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.exit_codes.</span></span><span class="sig-name descname"><span class="pre">StatusExitCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/exit_codes.html#StatusExitCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.exit_codes.StatusExitCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></a></p>
+<p>‘git status’ command error codes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.StatusExitCode.NOT_A_REPOSITORY">
+<span class="sig-name descname"><span class="pre">NOT_A_REPOSITORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">128</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.StatusExitCode.NOT_A_REPOSITORY" title="Link to this definition">🔗</a></dt>
+<dd><p>The specified directory is not a Git repository.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.git.exit_codes.StatusExitCode.USER_INTERRUPT">
+<span class="sig-name descname"><span class="pre">USER_INTERRUPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">130</span></em><a class="headerlink" href="#simplebench.vcs.git.exit_codes.StatusExitCode.USER_INTERRUPT" title="Link to this definition">🔗</a></dt>
+<dd><p>The git status command was interrupted by the user.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.vcs.git.git_info">
+<span id="simplebench-vcs-git-git-info-module"></span><h2>simplebench.vcs.git.git_info module<a class="headerlink" href="#module-simplebench.vcs.git.git_info" title="Link to this heading">🔗</a></h2>
+<p>Version Control System record for Git.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.git.git_info.GitInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.git_info.</span></span><span class="sig-name descname"><span class="pre">GitInfo</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">commit_datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dirty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git_info.html#GitInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.git_info.GitInfo" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
+<p>Dataclass to hold Git repository information.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>branch (str): The current branch name.
+commit_id (str): The current commit hash.
+date (str): The date of the current commit in ISO format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
+</dd>
+</dl>
+<p>Initialize GitInfo with branch, commit_id, commit_datetime, and dirty status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>branch</strong> – The current branch name.</p></li>
+<li><p><strong>commit_id</strong> – The current commit hash.</p></li>
+<li><p><strong>commit_datetime</strong> – The date of the current commit in ISO format.</p></li>
+<li><p><strong>dirty</strong> – Whether there are uncommitted changes in the working directory.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.vcs.git.git_info.GitInfo.validate_commit_id">
+<span class="sig-name descname"><span class="pre">validate_commit_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git_info.html#GitInfo.validate_commit_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.git_info.GitInfo.validate_commit_id" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the commit_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>commit_id</strong> – The commit ID to validate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If commit_id is not a string or vcs_type is invalid.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If commit_id does not match expected format or length.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.vcs.git">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.vcs.git" title="Link to this heading">🔗</a></h2>
 <p>Git module for Version Control System operations.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.git.Git">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.</span></span><span class="sig-name descname"><span class="pre">Git</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.Git" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.</span></span><span class="sig-name descname"><span class="pre">Git</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.Git" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Git Version Control System facade.</p>
 <p>Initialize the Git facade.</p>
@@ -303,7 +499,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode" title="simplebench.vcs.git.exit_codes.CommonCode"><span class="pre">CommonCode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.common_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.Git.common_code" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode" title="simplebench.vcs.git.exit_codes.CommonCode"><span class="pre">CommonCode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.common_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.Git.common_code" title="Link to this definition">🔗</a></dt>
 <dd><p>Map a git command exit code to a CommonCode enum value.</p>
 <p>This is a two-step translation:
 1. The numeric <cite>code</cite> is mapped to its command-specific name (e.g., 128 -&gt; “NOT_A_REPOSITORY”).
@@ -323,7 +519,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.git.Git.git_cwd">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">git_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.git.Git.git_cwd" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">git_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.git.Git.git_cwd" title="Link to this definition">🔗</a></dt>
 <dd><p>The current git working directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -340,7 +536,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo" title="simplebench.vcs.git.git_info.GitInfo"><span class="pre">GitInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.Git.head" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.vcs.git.git_info.GitInfo" title="simplebench.vcs.git.git_info.GitInfo"><span class="pre">GitInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.Git.head" title="Link to this definition">🔗</a></dt>
 <dd><p>Fetch git repository information for the current HEAD.</p>
 <p>The result is parsed from ‘git id’ command</p>
 <dl class="field-list simple">
@@ -362,7 +558,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.git.Git.is_available">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.git.Git.is_available" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.git.Git.is_available" title="Link to this definition">🔗</a></dt>
 <dd><p>Return whether the ‘git’ command line tool is available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -569,7 +765,7 @@ valid git repository.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.git.Git.version">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.git.Git.version" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.git.Git.version" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the git version string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -588,7 +784,7 @@ valid git repository.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.</span></span><span class="sig-name descname"><span class="pre">GitInfo</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.git.</span></span><span class="sig-name descname"><span class="pre">GitInfo</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
@@ -598,52 +794,15 @@ valid git repository.</p>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git_info.html#GitInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.GitInfo" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
 <p>Dataclass to hold Git repository information.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.branch">
-<span class="sig-name descname"><span class="pre">branch</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.branch" title="Link to this definition">🔗</a></dt>
-<dd><p>The current branch name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>branch (str): The current branch name.
+commit_id (str): The current commit hash.
+date (str): The date of the current commit in ISO format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.commit_id">
-<span class="sig-name descname"><span class="pre">commit_id</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.commit_id" title="Link to this definition">🔗</a></dt>
-<dd><p>The current commit hash.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.date">
-<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.date" title="Link to this definition">🔗</a></dt>
-<dd><p>The date of the current commit in ISO format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.dirty">
-<span class="sig-name descname"><span class="pre">dirty</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.dirty" title="Link to this definition">🔗</a></dt>
-<dd><p>Whether there are uncommitted changes in the working directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize GitInfo with branch, commit_id, commit_datetime, and dirty status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -674,76 +833,6 @@ valid git repository.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html">simplebench.vcs.git.exit_codes module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.BranchExitCode"><code class="docutils literal notranslate"><span class="pre">BranchExitCode</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.BranchExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">BranchExitCode.NOT_A_REPOSITORY</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.BranchExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">BranchExitCode.USER_INTERRUPT</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode"><code class="docutils literal notranslate"><span class="pre">CommonCode</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode.COMMAND_NOT_FOUND"><code class="docutils literal notranslate"><span class="pre">CommonCode.COMMAND_NOT_FOUND</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode.GENERAL_ERROR"><code class="docutils literal notranslate"><span class="pre">CommonCode.GENERAL_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode.INVALID_ARGUMENTS"><code class="docutils literal notranslate"><span class="pre">CommonCode.INVALID_ARGUMENTS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode.MISUSE_OF_SHELL_BUILTINS"><code class="docutils literal notranslate"><span class="pre">CommonCode.MISUSE_OF_SHELL_BUILTINS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">CommonCode.NOT_A_REPOSITORY</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">CommonCode.SUCCESS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">CommonCode.USER_INTERRUPT</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.GitExitCode"><code class="docutils literal notranslate"><span class="pre">GitExitCode</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.LogExitCode"><code class="docutils literal notranslate"><span class="pre">LogExitCode</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.LogExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">LogExitCode.NOT_A_REPOSITORY</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.LogExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">LogExitCode.USER_INTERRUPT</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.RevParseExitCode"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.RevParseExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode.NOT_A_REPOSITORY</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.RevParseExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode.USER_INTERRUPT</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.StatusExitCode"><code class="docutils literal notranslate"><span class="pre">StatusExitCode</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.StatusExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">StatusExitCode.NOT_A_REPOSITORY</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.StatusExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">StatusExitCode.USER_INTERRUPT</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.git.git.html">simplebench.vcs.git.git module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git"><code class="docutils literal notranslate"><span class="pre">Git</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.branch"><code class="docutils literal notranslate"><span class="pre">Git.branch()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.common_code"><code class="docutils literal notranslate"><span class="pre">Git.common_code()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.git_cwd"><code class="docutils literal notranslate"><span class="pre">Git.git_cwd</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.head"><code class="docutils literal notranslate"><span class="pre">Git.head()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.is_available"><code class="docutils literal notranslate"><span class="pre">Git.is_available</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.is_dirty"><code class="docutils literal notranslate"><span class="pre">Git.is_dirty()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.is_repo"><code class="docutils literal notranslate"><span class="pre">Git.is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.root"><code class="docutils literal notranslate"><span class="pre">Git.root()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.run"><code class="docutils literal notranslate"><span class="pre">Git.run()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.status"><code class="docutils literal notranslate"><span class="pre">Git.status()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.validate_available"><code class="docutils literal notranslate"><span class="pre">Git.validate_available()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.validate_is_repo"><code class="docutils literal notranslate"><span class="pre">Git.validate_is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git.version"><code class="docutils literal notranslate"><span class="pre">Git.version</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.git.git_info.html">simplebench.vcs.git.git_info module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.branch"><code class="docutils literal notranslate"><span class="pre">GitInfo.branch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.date"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.dirty"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -785,6 +874,49 @@ valid git repository.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.vcs.git package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.vcs.git.exit_codes">simplebench.vcs.git.exit_codes module</a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.BranchExitCode"><code class="docutils literal notranslate"><span class="pre">BranchExitCode</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.BranchExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">BranchExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.BranchExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">BranchExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode"><code class="docutils literal notranslate"><span class="pre">CommonCode</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode.COMMAND_NOT_FOUND"><code class="docutils literal notranslate"><span class="pre">CommonCode.COMMAND_NOT_FOUND</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode.GENERAL_ERROR"><code class="docutils literal notranslate"><span class="pre">CommonCode.GENERAL_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode.INVALID_ARGUMENTS"><code class="docutils literal notranslate"><span class="pre">CommonCode.INVALID_ARGUMENTS</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode.MISUSE_OF_SHELL_BUILTINS"><code class="docutils literal notranslate"><span class="pre">CommonCode.MISUSE_OF_SHELL_BUILTINS</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">CommonCode.NOT_A_REPOSITORY</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">CommonCode.SUCCESS</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.CommonCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">CommonCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.GitExitCode"><code class="docutils literal notranslate"><span class="pre">GitExitCode</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.LogExitCode"><code class="docutils literal notranslate"><span class="pre">LogExitCode</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.LogExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">LogExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.LogExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">LogExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.RevParseExitCode"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.RevParseExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.RevParseExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.StatusExitCode"><code class="docutils literal notranslate"><span class="pre">StatusExitCode</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.StatusExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">StatusExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.git.exit_codes.StatusExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">StatusExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.vcs.git.git_info">simplebench.vcs.git.git_info module</a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.git_info.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.git.git_info.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.vcs.git">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.vcs.git.Git"><code class="docutils literal notranslate"><span class="pre">Git</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.vcs.git.Git.branch"><code class="docutils literal notranslate"><span class="pre">Git.branch()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.git.Git.common_code"><code class="docutils literal notranslate"><span class="pre">Git.common_code()</span></code></a></li>
@@ -802,14 +934,11 @@ valid git repository.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.git.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.branch"><code class="docutils literal notranslate"><span class="pre">GitInfo.branch</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit_id</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.date"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.dirty"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

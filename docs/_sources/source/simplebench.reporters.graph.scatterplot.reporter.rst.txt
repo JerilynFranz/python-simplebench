@@ -1,11 +1,6 @@
 simplebench.reporters.graph.scatterplot.reporter package
 ========================================================
 
-.. automodule:: simplebench.reporters.graph.scatterplot.reporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -17,8 +12,18 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.graph.scatterplot.reporter.config module
+--------------------------------------------------------------
 
-   simplebench.reporters.graph.scatterplot.reporter.config
-   simplebench.reporters.graph.scatterplot.reporter.reporter
+.. automodule:: simplebench.reporters.graph.scatterplot.reporter.config
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.graph.scatterplot.reporter
+   :members:
+   :show-inheritance:
+   :undoc-members:

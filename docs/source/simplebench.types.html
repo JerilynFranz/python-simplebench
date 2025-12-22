@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.types package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,12 +257,92 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.types">
-<span id="simplebench-types-package"></span><h1>simplebench.types package<a class="headerlink" href="#module-simplebench.types" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-types-package">
+<h1>simplebench.types package<a class="headerlink" href="#simplebench-types-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.types.values">
+<span id="simplebench-types-values-module"></span><h2>simplebench.types.values module<a class="headerlink" href="#module-simplebench.types.values" title="Link to this heading">🔗</a></h2>
+<p>Values - a validated tuple of float numbers.</p>
+<p>This module defines the Values class, which is an immutable tuple of float numbers
+that validates its contents upon creation.</p>
+<p>This class is useful for representing a collection of numeric values in a type-safe manner,
+ensuring that all elements are valid floats without requiring additional validation elsewhere in the code.</p>
+<p>Example usage:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Values</span>
+<span class="n">vals</span> <span class="o">=</span> <span class="n">Values</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">Values</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expected a Values instance&quot;</span><span class="p">)</span>
+
+<span class="c1"># The vals object is guaranteed to be a tuple containing only float numbers.</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.types.values.Values">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.types.values.</span></span><span class="sig-name descname"><span class="pre">Values</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/types/values.html#Values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.types.values.Values" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>An immutable tuple of float numbers that validates its contents upon creation.</p>
+<p>Inherits from tuple, so it behaves like a regular tuple otherwise.</p>
+<p>This class is useful for representing a collection of numeric values in a type-safe
+manner, ensuring that all elements are valid floats without requiring deep
+validation elsewhere in the code beyond checking that the type of the input iterable
+is a <cite>Values</cite> instance.</p>
+<p>Example usage:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Values</span>
+<span class="n">vals</span> <span class="o">=</span> <span class="n">Values</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">Values</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expected a Values instance&quot;</span><span class="p">)</span>
+
+<span class="c1"># The vals object is guaranteed to be a tuple containing only float numbers.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iterable</strong> – An iterable of float or int numbers.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If not an Iterable or contains non-numeric types.</p>
+</dd>
+</dl>
+<p>Create a new Values instance from an iterable of int or float numbers.</p>
+<p>Each item in the iterable is converted to a float. This method ensures
+that all elements are valid floats before the tuple is created.</p>
+<p>Example usage:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Values</span>
+<span class="n">vals</span> <span class="o">=</span> <span class="n">Values</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">Values</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expected a Values instance&quot;</span><span class="p">)</span>
+
+<span class="c1"># The vals object is guaranteed to be a tuple containing only float numbers.</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iterable</strong> – An iterable of float or int numbers.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If not an Iterable or contains non-numeric types.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-simplebench.types">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.types" title="Link to this heading">🔗</a></h2>
 <p>Types used by SimpleBench.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.types.Values">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.types.</span></span><span class="sig-name descname"><span class="pre">Values</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.types.</span></span><span class="sig-name descname"><span class="pre">Values</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>,</dd>
@@ -317,16 +397,6 @@ that all elements are valid floats before the tuple is created.</p>
 </dl>
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.types.values.html">simplebench.types.values module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.types.values.html#simplebench.types.values.Values"><code class="docutils literal notranslate"><span class="pre">Values</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -368,8 +438,15 @@ that all elements are valid floats before the tuple is created.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.types package</a><ul>
-<li><a class="reference internal" href="#simplebench.types.Values"><code class="docutils literal notranslate"><span class="pre">Values</span></code></a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.types.values">simplebench.types.values module</a><ul>
+<li><a class="reference internal" href="#simplebench.types.values.Values"><code class="docutils literal notranslate"><span class="pre">Values</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.types">Module contents</a><ul>
+<li><a class="reference internal" href="#simplebench.types.Values"><code class="docutils literal notranslate"><span class="pre">Values</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -1,17 +1,29 @@
 simplebench.report.versions.v1.raw\_data\_block package
 =======================================================
 
-.. automodule:: simplebench.report.versions.v1.raw_data_block
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.report.versions.v1.raw\_data\_block.raw\_data\_block\_schema module
+-------------------------------------------------------------------------------
 
-   simplebench.report.versions.v1.raw_data_block.raw_data_block
-   simplebench.report.versions.v1.raw_data_block.raw_data_block_schema
-   simplebench.report.versions.v1.raw_data_block.validate
+.. automodule:: simplebench.report.versions.v1.raw_data_block.raw_data_block_schema
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.report.versions.v1.raw\_data\_block.validate module
+---------------------------------------------------------------
+
+.. automodule:: simplebench.report.versions.v1.raw_data_block.validate
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.report.versions.v1.raw_data_block
+   :members:
+   :show-inheritance:
+   :undoc-members:

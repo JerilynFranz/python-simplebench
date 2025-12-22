@@ -1,17 +1,37 @@
 simplebench.reporters.protocols package
 =======================================
 
-.. automodule:: simplebench.reporters.protocols
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.protocols.choice\_protocol module
+-------------------------------------------------------
 
-   simplebench.reporters.protocols.choice_protocol
-   simplebench.reporters.protocols.report_renderer
-   simplebench.reporters.protocols.reporter_callback
+.. automodule:: simplebench.reporters.protocols.choice_protocol
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.reporters.protocols.report\_renderer module
+-------------------------------------------------------
+
+.. automodule:: simplebench.reporters.protocols.report_renderer
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.reporters.protocols.reporter\_callback module
+---------------------------------------------------------
+
+.. automodule:: simplebench.reporters.protocols.reporter_callback
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.protocols
+   :members:
+   :show-inheritance:
+   :undoc-members:

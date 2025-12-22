@@ -1,11 +1,6 @@
 simplebench.reporters.reporter package
 ======================================
 
-.. automodule:: simplebench.reporters.reporter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -17,11 +12,42 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.reporter.config module
+--------------------------------------------
 
-   simplebench.reporters.reporter.config
-   simplebench.reporters.reporter.options
-   simplebench.reporters.reporter.prioritized
-   simplebench.reporters.reporter.protocols
-   simplebench.reporters.reporter.reporter
+.. automodule:: simplebench.reporters.reporter.config
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.reporters.reporter.options module
+---------------------------------------------
+
+.. automodule:: simplebench.reporters.reporter.options
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.reporters.reporter.prioritized module
+-------------------------------------------------
+
+.. automodule:: simplebench.reporters.reporter.prioritized
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.reporters.reporter.protocols module
+-----------------------------------------------
+
+.. automodule:: simplebench.reporters.reporter.protocols
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.reporter
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,16 +1,29 @@
 simplebench.exceptions package
 ==============================
 
-.. automodule:: simplebench.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.exceptions.error\_tag module
+----------------------------------------
 
-   simplebench.exceptions.error_tag
-   simplebench.exceptions.tagged_exception
+.. automodule:: simplebench.exceptions.error_tag
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.exceptions.tagged\_exception module
+-----------------------------------------------
+
+.. automodule:: simplebench.exceptions.tagged_exception
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.exceptions
+   :members:
+   :show-inheritance:
+   :undoc-members:

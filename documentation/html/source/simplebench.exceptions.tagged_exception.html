@@ -292,29 +292,19 @@ with this base class.</p>
 <p>class MyTaggedException(TaggedException[ValueError]):
 ‘’’A tagged exception that is a specialized ValueError.’’’</p>
 <p>raise MyTaggedException(“An error occurred”, tag=MyErrorTags.SOME_ERROR)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tag</strong> (<em>Enum</em><em>, </em><em>keyword</em>) – An Enum member representing the error code.</p></li>
-<li><p><strong>*args</strong> – Positional arguments to pass to the base exception’s constructor.</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the base exception’s constructor.</p></li>
-</ul>
+<dl class="simple">
+<dt>Args:</dt><dd><p>tag (Enum, keyword): An Enum member representing the error code.
+<a href="#id1"><span class="problematic" id="id2">*</span></a>args: Positional arguments to pass to the base exception’s constructor.
+<a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs: Keyword arguments to pass to the base exception’s constructor.</p>
+</dd>
+<dt>Attributes:</dt><dd><p>tag_code: Enum</p>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.exceptions.tagged_exception.TaggedException.tag_code">
-<span class="sig-name descname"><span class="pre">tag_code</span></span><a class="headerlink" href="#simplebench.exceptions.tagged_exception.TaggedException.tag_code" title="Link to this definition">🔗</a></dt>
-<dd><p>Enum</p>
-</dd></dl>
-
 <p>Initializes the exception with a mandatory tag.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*args</strong> – Positional arguments to pass to the base exception’s constructor.</p></li>
-<li><p><strong>tag</strong> (<em>Enum</em><em>, </em><em>keyword</em>) – An Enum member representing the error code.</p></li>
-<li><p><strong>**kwargs</strong> – Keyword arguments to pass to the base exception’s constructor.</p></li>
-</ul>
+<dl class="simple">
+<dt>Args:</dt><dd><p><a href="#id5"><span class="problematic" id="id6">*</span></a>args: Positional arguments to pass to the base exception’s constructor.
+tag (Enum, keyword): An Enum member representing the error code.
+<a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs: Keyword arguments to pass to the base exception’s constructor.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -359,10 +349,7 @@ with this base class.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.exceptions.tagged_exception module</a><ul>
-<li><a class="reference internal" href="#simplebench.exceptions.tagged_exception.TaggedException"><code class="docutils literal notranslate"><span class="pre">TaggedException</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.exceptions.tagged_exception.TaggedException.tag_code"><code class="docutils literal notranslate"><span class="pre">TaggedException.tag_code</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#simplebench.exceptions.tagged_exception.TaggedException"><code class="docutils literal notranslate"><span class="pre">TaggedException</span></code></a></li>
 </ul>
 </li>
 </ul>

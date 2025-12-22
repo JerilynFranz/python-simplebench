@@ -1,5 +1,5 @@
-src
-===
+simplebench
+===========
 
 .. toctree::
    :maxdepth: 4

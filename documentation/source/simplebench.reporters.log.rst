@@ -1,11 +1,6 @@
 simplebench.reporters.log package
 =================================
 
-.. automodule:: simplebench.reporters.log
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -18,8 +13,26 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.log.log\_entry module
+-------------------------------------------
 
-   simplebench.reporters.log.log_entry
-   simplebench.reporters.log.reader
+.. automodule:: simplebench.reporters.log.log_entry
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.reporters.log.reader module
+---------------------------------------
+
+.. automodule:: simplebench.reporters.log.reader
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.log
+   :members:
+   :show-inheritance:
+   :undoc-members:

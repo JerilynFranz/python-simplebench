@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.report.versions.v1.cpu_info package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,196 +257,40 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.report.versions.v1.cpu_info">
-<span id="simplebench-report-versions-v1-cpu-info-package"></span><h1>simplebench.report.versions.v1.cpu_info package<a class="headerlink" href="#module-simplebench.report.versions.v1.cpu_info" title="Link to this heading">🔗</a></h1>
-<p>CPUInfo version 1 module for JSON report representation.</p>
+          <section id="simplebench-report-versions-v1-cpu-info-package">
+<h1>simplebench.report.versions.v1.cpu_info package<a class="headerlink" href="#simplebench-report-versions-v1-cpu-info-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.report.versions.v1.cpu_info.cpu_info_schema">
+<span id="simplebench-report-versions-v1-cpu-info-cpu-info-schema-module"></span><h2>simplebench.report.versions.v1.cpu_info.cpu_info_schema module<a class="headerlink" href="#module-simplebench.report.versions.v1.cpu_info.cpu_info_schema" title="Link to this heading">🔗</a></h2>
+<p>Schema for JSON CPUInfo v1 validation.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.cpu_info.</span></span><span class="sig-name descname"><span class="pre">CPUInfo</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">arch_string_raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">brand_raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info.html#CPUInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.cpu_info.html#simplebench.report.base.cpu_info.CPUInfo" title="simplebench.report.base.cpu_info.CPUInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">CPUInfo</span></code></a></p>
-<p>Class representing a JSON CPUInfo version 1.</p>
-<p>Initialize CPUInfo.
-:param hash_id: The unique hash identifier for the CPU information.</p>
-<blockquote>
-<div><p>If not provided, it defaults to None and will be computed automatically.</p>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>arch</strong> – The CPU architecture.</p></li>
-<li><p><strong>bits</strong> – The CPU bitness (e.g., 32 or 64).</p></li>
-<li><p><strong>count</strong> – The number of CPU cores.</p></li>
-<li><p><strong>arch_string_raw</strong> – The raw architecture string.</p></li>
-<li><p><strong>brand_raw</strong> – The raw brand string.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.SCHEMA">
-<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.SCHEMA" title="Link to this definition">🔗</a></dt>
-<dd><p>alias of <a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema" title="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">CPUInfoSchema</span></code></a></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchCPUInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON CPUInfo type property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.VERSION" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON CPUInfo version number.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.arch">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.arch" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the arch property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The arch string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.arch_string_raw">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arch_string_raw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.arch_string_raw" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the arch_string_raw property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The arch_string_raw string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.bits">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.bits" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the bits property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The bits integer.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.brand_raw">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">brand_raw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.brand_raw" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the brand_raw property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The brand_raw string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.count">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.count" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the CPU core count property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The core count integer.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo" title="simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo"><span class="pre">CPUInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info.html#CPUInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.from_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Create a CPUInfo instance from a dictionary.</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cpu_info</span> <span class="o">=</span> <span class="n">CPUInfo</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>The dictionary must conform to the expected structure for the CPUInfo
-representation. The ‘version’ and ‘type’ properties are validated
-against the class’s VERSION and TYPE attributes if they are present.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – The dictionary containing CPU information.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A CPUInfo instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.hash_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.hash_id" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the hash_id property.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The hash_id string.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info.html#CPUInfo.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.to_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Convert the CPUInfo to a dictionary suitable for JSON serialization.</p>
-<p>This includes all properties defined in the <a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema" title="simplebench.report.versions.v1.cpu_info.CPUInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">CPUInfoSchema</span></code></a>
-for the version.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A dictionary representation of the CPUInfo.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.cpu_info.</span></span><span class="sig-name descname"><span class="pre">CPUInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.json_schema.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.cpu_info.cpu_info_schema.</span></span><span class="sig-name descname"><span class="pre">CPUInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
 <p>Schema for the JSON CPUInfo output (V1)</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.ID" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.ID" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON CPUInfo schema $id value for version 1 reports.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchCPUInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchCPUInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON CPUInfo schema type property value for version 1 reports.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON CPUInfo schema version number.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the JSON schema as a dictionary.</p>
 <p>It always returns a fresh copy of the schema dictionary to prevent accidental
 modifications.</p>
@@ -463,8 +307,8 @@ modifications.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_json">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_json">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the JSON schema as a JSON-formatted string.</p>
 <blockquote>
 <div><p>It serializes the schema dictionary to a JSON string.</p>
@@ -479,8 +323,8 @@ modifications.</p>
 </dl>
 </div></blockquote>
 <p>The JSON schema is as follows:</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id2" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json&quot;</span><span class="p">,</span>
@@ -563,40 +407,313 @@ modifications.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html">simplebench.report.versions.v1.cpu_info.cpu_info module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo"><code class="docutils literal notranslate"><span class="pre">CPUInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.SCHEMA"><code class="docutils literal notranslate"><span class="pre">CPUInfo.SCHEMA</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.TYPE"><code class="docutils literal notranslate"><span class="pre">CPUInfo.TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.VERSION"><code class="docutils literal notranslate"><span class="pre">CPUInfo.VERSION</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.arch"><code class="docutils literal notranslate"><span class="pre">CPUInfo.arch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.arch_string_raw"><code class="docutils literal notranslate"><span class="pre">CPUInfo.arch_string_raw</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.bits"><code class="docutils literal notranslate"><span class="pre">CPUInfo.bits</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.brand_raw"><code class="docutils literal notranslate"><span class="pre">CPUInfo.brand_raw</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.count"><code class="docutils literal notranslate"><span class="pre">CPUInfo.count</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.from_dict"><code class="docutils literal notranslate"><span class="pre">CPUInfo.from_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.hash_id"><code class="docutils literal notranslate"><span class="pre">CPUInfo.hash_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info.html#simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">CPUInfo.to_dict()</span></code></a></li>
+</section>
+<section id="module-simplebench.report.versions.v1.cpu_info">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.report.versions.v1.cpu_info" title="Link to this heading">🔗</a></h2>
+<p>CPUInfo version 1 module for JSON report representation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.cpu_info.</span></span><span class="sig-name descname"><span class="pre">CPUInfo</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">hash_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">arch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">arch_string_raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">brand_raw</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info.html#CPUInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.cpu_info.CPUInfo" title="simplebench.report.base.cpu_info.CPUInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">CPUInfo</span></code></a></p>
+<p>Class representing a JSON CPUInfo version 1.</p>
+<p>Initialize CPUInfo.
+:param hash_id: The unique hash identifier for the CPU information.</p>
+<blockquote>
+<div><p>If not provided, it defaults to None and will be computed automatically.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arch</strong> – The CPU architecture.</p></li>
+<li><p><strong>bits</strong> – The CPU bitness (e.g., 32 or 64).</p></li>
+<li><p><strong>count</strong> – The number of CPU cores.</p></li>
+<li><p><strong>arch_string_raw</strong> – The raw architecture string.</p></li>
+<li><p><strong>brand_raw</strong> – The raw brand string.</p></li>
 </ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html">simplebench.report.versions.v1.cpu_info.cpu_info_schema module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.ID"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.ID</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.VERSION</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.as_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.cpu_info.cpu_info_schema.html#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.as_json()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.SCHEMA">
+<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.SCHEMA" title="Link to this definition">🔗</a></dt>
+<dd><p>alias of <a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema" title="simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">CPUInfoSchema</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchCPUInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON CPUInfo type property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON CPUInfo version number.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.arch">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.arch" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the arch property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The arch string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.arch_string_raw">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">arch_string_raw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.arch_string_raw" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the arch_string_raw property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The arch_string_raw string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.bits">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bits</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.bits" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the bits property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The bits integer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.brand_raw">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">brand_raw</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.brand_raw" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the brand_raw property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The brand_raw string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.count">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.count" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the CPU core count property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The core count integer.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.from_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.CPUInfo" title="simplebench.report.versions.v1.cpu_info.cpu_info.CPUInfo"><span class="pre">CPUInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info.html#CPUInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.from_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a CPUInfo instance from a dictionary.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id2" title="Link to this code">🔗</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cpu_info</span> <span class="o">=</span> <span class="n">CPUInfo</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
 </div>
+</div>
+<p>The dictionary must conform to the expected structure for the CPUInfo
+representation. The ‘version’ and ‘type’ properties are validated
+against the class’s VERSION and TYPE attributes if they are present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – The dictionary containing CPU information.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A CPUInfo instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.hash_id">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.hash_id" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the hash_id property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The hash_id string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfo.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info.html#CPUInfo.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert the CPUInfo to a dictionary suitable for JSON serialization.</p>
+<p>This includes all properties defined in the <a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema" title="simplebench.report.versions.v1.cpu_info.CPUInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">CPUInfoSchema</span></code></a>
+for the version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary representation of the CPUInfo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.cpu_info.</span></span><span class="sig-name descname"><span class="pre">CPUInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
+<p>Schema for the JSON CPUInfo output (V1)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.ID" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON CPUInfo schema $id value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchCPUInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON CPUInfo schema type property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON CPUInfo schema version number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a dictionary.</p>
+<p>It always returns a fresh copy of the schema dictionary to prevent accidental
+modifications.</p>
+<p>The caller can modify the returned dictionary as needed or cache it for performance.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_dict = CPUInfoSchema.as_dict()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return dict[str, object]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_json">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/cpu_info/cpu_info_schema.html#CPUInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a JSON-formatted string.</p>
+<blockquote>
+<div><p>It serializes the schema dictionary to a JSON string.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_json = CPUInfoSchema.as_json()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a JSON-formatted string.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The JSON schema is as follows:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id3" title="Link to this code">🔗</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CPU (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CPU information (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The version of the CPU information schema&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type of the CPU information schema&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBenchCPUInfo::V1&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;cpuinfo_version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CPU Info Version&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Optional version of the cpuinfo library&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;cpuinfo_version_string&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CPU Info Version String&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Optional version of the cpuinfo library as a string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;hash_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hash ID&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Unique 64 byte hexadecimal hash identifier for the CPU information data. This can be used to identify identical CPU configurations without revealing details.&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^[a-f0-9]{64}$&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;arch&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CPU architecture&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;bits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Bits&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Number of bits of the CPU&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Count&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Number of CPU cores&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;arch_string_raw&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Arch String Raw&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Raw architecture string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;brand_raw&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Brand Raw&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Raw brand string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;hash_id&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;arch&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;bits&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;count&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;arch_string_raw&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;brand_raw&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -638,6 +755,19 @@ modifications.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.report.versions.v1.cpu_info package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.cpu_info.cpu_info_schema">simplebench.report.versions.v1.cpu_info.cpu_info_schema module</a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.ID"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.ID</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.TYPE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.VERSION</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.as_json()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.cpu_info">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.CPUInfo"><code class="docutils literal notranslate"><span class="pre">CPUInfo</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.SCHEMA"><code class="docutils literal notranslate"><span class="pre">CPUInfo.SCHEMA</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.CPUInfo.TYPE"><code class="docutils literal notranslate"><span class="pre">CPUInfo.TYPE</span></code></a></li>
@@ -660,7 +790,8 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.cpu_info.CPUInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">CPUInfoSchema.as_json()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

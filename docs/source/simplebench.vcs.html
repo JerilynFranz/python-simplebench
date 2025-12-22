@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.vcs package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,12 +257,323 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.vcs">
-<span id="simplebench-vcs-package"></span><h1>simplebench.vcs package<a class="headerlink" href="#module-simplebench.vcs" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-vcs-package">
+<h1>simplebench.vcs package<a class="headerlink" href="#simplebench-vcs-package" title="Link to this heading">🔗</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.git.html">simplebench.vcs.git package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.html#module-simplebench.vcs.git.exit_codes">simplebench.vcs.git.exit_codes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.BranchExitCode"><code class="docutils literal notranslate"><span class="pre">BranchExitCode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.BranchExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">BranchExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.BranchExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">BranchExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode"><code class="docutils literal notranslate"><span class="pre">CommonCode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode.COMMAND_NOT_FOUND"><code class="docutils literal notranslate"><span class="pre">CommonCode.COMMAND_NOT_FOUND</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode.GENERAL_ERROR"><code class="docutils literal notranslate"><span class="pre">CommonCode.GENERAL_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode.INVALID_ARGUMENTS"><code class="docutils literal notranslate"><span class="pre">CommonCode.INVALID_ARGUMENTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode.MISUSE_OF_SHELL_BUILTINS"><code class="docutils literal notranslate"><span class="pre">CommonCode.MISUSE_OF_SHELL_BUILTINS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">CommonCode.NOT_A_REPOSITORY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">CommonCode.SUCCESS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">CommonCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.GitExitCode"><code class="docutils literal notranslate"><span class="pre">GitExitCode</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.LogExitCode"><code class="docutils literal notranslate"><span class="pre">LogExitCode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.LogExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">LogExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.LogExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">LogExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.RevParseExitCode"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.RevParseExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.RevParseExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.StatusExitCode"><code class="docutils literal notranslate"><span class="pre">StatusExitCode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.StatusExitCode.NOT_A_REPOSITORY"><code class="docutils literal notranslate"><span class="pre">StatusExitCode.NOT_A_REPOSITORY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.StatusExitCode.USER_INTERRUPT"><code class="docutils literal notranslate"><span class="pre">StatusExitCode.USER_INTERRUPT</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.html#module-simplebench.vcs.git.git_info">simplebench.vcs.git.git_info module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.git_info.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.git_info.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.html#module-simplebench.vcs.git">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git"><code class="docutils literal notranslate"><span class="pre">Git</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.branch"><code class="docutils literal notranslate"><span class="pre">Git.branch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.common_code"><code class="docutils literal notranslate"><span class="pre">Git.common_code()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.git_cwd"><code class="docutils literal notranslate"><span class="pre">Git.git_cwd</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.head"><code class="docutils literal notranslate"><span class="pre">Git.head()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.is_available"><code class="docutils literal notranslate"><span class="pre">Git.is_available</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.is_dirty"><code class="docutils literal notranslate"><span class="pre">Git.is_dirty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.is_repo"><code class="docutils literal notranslate"><span class="pre">Git.is_repo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.root"><code class="docutils literal notranslate"><span class="pre">Git.root()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.run"><code class="docutils literal notranslate"><span class="pre">Git.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.status"><code class="docutils literal notranslate"><span class="pre">Git.status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.validate_available"><code class="docutils literal notranslate"><span class="pre">Git.validate_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.validate_is_repo"><code class="docutils literal notranslate"><span class="pre">Git.validate_is_repo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.version"><code class="docutils literal notranslate"><span class="pre">Git.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.hg.html">simplebench.vcs.hg package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.html#module-simplebench.vcs.hg.exit_codes">simplebench.vcs.hg.exit_codes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode"><code class="docutils literal notranslate"><span class="pre">HgExitCode</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.CANCELLED"><code class="docutils literal notranslate"><span class="pre">HgExitCode.CANCELLED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.CONFIG_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.CONFIG_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.GENERAL_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.GENERAL_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.HOOK_ABORT_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.HOOK_ABORT_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.INPUT_OR_PARSE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.INPUT_OR_PARSE_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.INTERVENTION_REQUIRED"><code class="docutils literal notranslate"><span class="pre">HgExitCode.INTERVENTION_REQUIRED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.REMOTE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.REMOTE_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.REPO_NOT_FOUND"><code class="docutils literal notranslate"><span class="pre">HgExitCode.REPO_NOT_FOUND</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.SECURITY_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.SECURITY_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.STATE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.STATE_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.STORAGE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.STORAGE_ERROR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.HgExitCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">HgExitCode.SUCCESS</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.exit_codes.exit_code_to_name"><code class="docutils literal notranslate"><span class="pre">exit_code_to_name()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.html#module-simplebench.vcs.hg.hg_info">simplebench.vcs.hg.hg_info module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.hg_info.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.hg_info.HgInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.validate_commit_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.html#module-simplebench.vcs.hg">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg"><code class="docutils literal notranslate"><span class="pre">Hg</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.head"><code class="docutils literal notranslate"><span class="pre">Hg.head()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.hg_cwd"><code class="docutils literal notranslate"><span class="pre">Hg.hg_cwd</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.is_available"><code class="docutils literal notranslate"><span class="pre">Hg.is_available</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.is_dirty"><code class="docutils literal notranslate"><span class="pre">Hg.is_dirty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.is_repo"><code class="docutils literal notranslate"><span class="pre">Hg.is_repo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.root"><code class="docutils literal notranslate"><span class="pre">Hg.root()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.run"><code class="docutils literal notranslate"><span class="pre">Hg.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.status"><code class="docutils literal notranslate"><span class="pre">Hg.status()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.validate_available"><code class="docutils literal notranslate"><span class="pre">Hg.validate_available()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.validate_is_repo"><code class="docutils literal notranslate"><span class="pre">Hg.validate_is_repo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.version"><code class="docutils literal notranslate"><span class="pre">Hg.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.validate_commit_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.vcs.utils">
+<span id="simplebench-vcs-utils-module"></span><h2>simplebench.vcs.utils module<a class="headerlink" href="#module-simplebench.vcs.utils" title="Link to this heading">🔗</a></h2>
+<p>Utility functions for version control system operations.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.vcs.utils.resolve_vcs_path">
+<span class="sig-prename descclassname"><span class="pre">simplebench.vcs.utils.</span></span><span class="sig-name descname"><span class="pre">resolve_vcs_path</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">search_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/utils.html#resolve_vcs_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.utils.resolve_vcs_path" title="Link to this definition">🔗</a></dt>
+<dd><p>Identify the starting path for repository search.</p>
+<p>This function determines the appropriate starting directory
+for searching for a version control repository based on the provided path,
+the main script’s location, or the current working directory.</p>
+<p>Resolution order:
+1. If <cite>search_path</cite> is provided, use its parent if it’s a file,</p>
+<blockquote>
+<div><p>otherwise use <cite>search_path</cite> itself.</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>If the main script’s file is available, use its parent directory.</p></li>
+<li><p>Fallback to the current working directory.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>search_path</strong> – The path to start searching for the repository.
+If None, defaults to the directory of the main script
+or the current working directory.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The starting Path object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-simplebench.vcs.vcs_info">
+<span id="simplebench-vcs-vcs-info-module"></span><h2>simplebench.vcs.vcs_info module<a class="headerlink" href="#module-simplebench.vcs.vcs_info" title="Link to this heading">🔗</a></h2>
+<p>Hg (Mercurial) Info record.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.vcs_info.</span></span><span class="sig-name descname"><span class="pre">VCSInfo</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">vcs_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType" title="simplebench.vcs.vcs_type.VCSType"><span class="pre">VCSType</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">commit_datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dirty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_info.html#VCSInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Abstract base Dataclass to hold VCS Info about the repository.</p>
+<p>This a base class for holding version control system information that
+is common across different VCS types.</p>
+<p>The information is gathered from the appropriate VCS command line tools and
+gives basic information about the current repository state.</p>
+<p>It is intended to be serialized to JSON for reporting purposes
+and used in filtering benchmark results based on VCS matching.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>vcs_type (VCSType): The type of version control system (e.g., ‘git’, ‘hg’).
+branch (str): The current branch name.
+commit_id (str): The current changeset id for HEAD
+commit_datetime (str): The datetime of the current HEAD commit in ISO8601 format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.branch">
+<span class="sig-name descname"><span class="pre">branch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.branch" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.commit_datetime">
+<span class="sig-name descname"><span class="pre">commit_datetime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.commit_datetime" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.commit_id">
+<span class="sig-name descname"><span class="pre">commit_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.commit_id" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.dirty">
+<span class="sig-name descname"><span class="pre">dirty</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.dirty" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.post_init">
+<span class="sig-name descname"><span class="pre">post_init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_info.html#VCSInfo.post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.post_init" title="Link to this definition">🔗</a></dt>
+<dd><p>Post-initialization hook for additional validation or processing.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_info.html#VCSInfo.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert to dictionary for JSON serialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary representation of GitInfo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.validate_commit_id">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_commit_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_info.html#VCSInfo.validate_commit_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.validate_commit_id" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the commit_id. Abstraction to be implemented by subclasses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>commit_id</strong> – The commit ID to validate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If commit_id is not a string.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If commit_id does not match expected format.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_info.VCSInfo.vcs_type">
+<span class="sig-name descname"><span class="pre">vcs_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType" title="simplebench.vcs.vcs_type.VCSType"><span class="pre">VCSType</span></a></em><a class="headerlink" href="#simplebench.vcs.vcs_info.VCSInfo.vcs_type" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.vcs.vcs_type">
+<span id="simplebench-vcs-vcs-type-module"></span><h2>simplebench.vcs.vcs_type module<a class="headerlink" href="#module-simplebench.vcs.vcs_type" title="Link to this heading">🔗</a></h2>
+<p>VCS Types enumeration.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_type.VCSType">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.vcs_type.</span></span><span class="sig-name descname"><span class="pre">VCSType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_type.html#VCSType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.vcs_type.VCSType" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Enumeration of supported Version Control System types.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_type.VCSType.GIT">
+<span class="sig-name descname"><span class="pre">GIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'git'</span></em><a class="headerlink" href="#simplebench.vcs.vcs_type.VCSType.GIT" title="Link to this definition">🔗</a></dt>
+<dd><p>Git Version Control System.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_type.VCSType.HG">
+<span class="sig-name descname"><span class="pre">HG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'hg'</span></em><a class="headerlink" href="#simplebench.vcs.vcs_type.VCSType.HG" title="Link to this definition">🔗</a></dt>
+<dd><p>Mercurial (Hg) Version Control System.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_type.VCSType.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'none'</span></em><a class="headerlink" href="#simplebench.vcs.vcs_type.VCSType.NONE" title="Link to this definition">🔗</a></dt>
+<dd><p>No Version Control System detected.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_type.VCSType.PERFORCE">
+<span class="sig-name descname"><span class="pre">PERFORCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'perforce'</span></em><a class="headerlink" href="#simplebench.vcs.vcs_type.VCSType.PERFORCE" title="Link to this definition">🔗</a></dt>
+<dd><p>Perforce Version Control System.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_type.VCSType.SVN">
+<span class="sig-name descname"><span class="pre">SVN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'svn'</span></em><a class="headerlink" href="#simplebench.vcs.vcs_type.VCSType.SVN" title="Link to this definition">🔗</a></dt>
+<dd><p>Subversion (SVN) Version Control System.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.vcs_type.VCSType.TFVC">
+<span class="sig-name descname"><span class="pre">TFVC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'tfvc'</span></em><a class="headerlink" href="#simplebench.vcs.vcs_type.VCSType.TFVC" title="Link to this definition">🔗</a></dt>
+<dd><p>Team Foundation Version Control (TFVC) System.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.vcs">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.vcs" title="Link to this heading">🔗</a></h2>
 <p>VCS information collection module.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.Git">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">Git</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Git" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">Git</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Git" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Git Version Control System facade.</p>
 <p>Initialize the Git facade.</p>
@@ -303,7 +614,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">cmd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode" title="simplebench.vcs.git.exit_codes.CommonCode"><span class="pre">CommonCode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.common_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Git.common_code" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.exit_codes.CommonCode" title="simplebench.vcs.git.exit_codes.CommonCode"><span class="pre">CommonCode</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.common_code"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Git.common_code" title="Link to this definition">🔗</a></dt>
 <dd><p>Map a git command exit code to a CommonCode enum value.</p>
 <p>This is a two-step translation:
 1. The numeric <cite>code</cite> is mapped to its command-specific name (e.g., 128 -&gt; “NOT_A_REPOSITORY”).
@@ -323,7 +634,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.Git.git_cwd">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">git_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.Git.git_cwd" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">git_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.Git.git_cwd" title="Link to this definition">🔗</a></dt>
 <dd><p>The current git working directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -340,7 +651,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo" title="simplebench.vcs.git.git_info.GitInfo"><span class="pre">GitInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Git.head" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.git_info.GitInfo" title="simplebench.vcs.git.git_info.GitInfo"><span class="pre">GitInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/git/git.html#Git.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Git.head" title="Link to this definition">🔗</a></dt>
 <dd><p>Fetch git repository information for the current HEAD.</p>
 <p>The result is parsed from ‘git id’ command</p>
 <dl class="field-list simple">
@@ -362,7 +673,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.Git.is_available">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.Git.is_available" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.Git.is_available" title="Link to this definition">🔗</a></dt>
 <dd><p>Return whether the ‘git’ command line tool is available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -569,7 +880,7 @@ valid git repository.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.Git.version">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.Git.version" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.Git.version" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the git version string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -588,7 +899,7 @@ valid git repository.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.GitInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">GitInfo</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">GitInfo</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
@@ -598,52 +909,15 @@ valid git repository.</p>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git_info.html#GitInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.GitInfo" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
 <p>Dataclass to hold Git repository information.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.GitInfo.branch">
-<span class="sig-name descname"><span class="pre">branch</span></span><a class="headerlink" href="#simplebench.vcs.GitInfo.branch" title="Link to this definition">🔗</a></dt>
-<dd><p>The current branch name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>branch (str): The current branch name.
+commit_id (str): The current commit hash.
+date (str): The date of the current commit in ISO format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.GitInfo.commit_id">
-<span class="sig-name descname"><span class="pre">commit_id</span></span><a class="headerlink" href="#simplebench.vcs.GitInfo.commit_id" title="Link to this definition">🔗</a></dt>
-<dd><p>The current commit hash.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.GitInfo.date">
-<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#simplebench.vcs.GitInfo.date" title="Link to this definition">🔗</a></dt>
-<dd><p>The date of the current commit in ISO format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.GitInfo.dirty">
-<span class="sig-name descname"><span class="pre">dirty</span></span><a class="headerlink" href="#simplebench.vcs.GitInfo.dirty" title="Link to this definition">🔗</a></dt>
-<dd><p>Whether there are uncommitted changes in the working directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize GitInfo with branch, commit_id, commit_datetime, and dirty status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -676,7 +950,7 @@ valid git repository.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.Hg">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">Hg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Hg" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">Hg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Hg" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Mercurial (hg) Version Control System facade.</p>
 <p>Initialize the Hg facade.</p>
@@ -689,7 +963,7 @@ valid git repository.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo" title="simplebench.vcs.hg.hg_info.HgInfo"><span class="pre">HgInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Hg.head" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.hg_info.HgInfo" title="simplebench.vcs.hg.hg_info.HgInfo"><span class="pre">HgInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.Hg.head" title="Link to this definition">🔗</a></dt>
 <dd><p>Fetch hg repository information for the current HEAD.</p>
 <p>The result is parsed from ‘hg id’ command</p>
 <dl class="field-list simple">
@@ -710,7 +984,7 @@ valid git repository.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.Hg.hg_cwd">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hg_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.Hg.hg_cwd" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hg_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.Hg.hg_cwd" title="Link to this definition">🔗</a></dt>
 <dd><p>The current hg working directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -721,7 +995,7 @@ valid git repository.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.Hg.is_available">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.Hg.is_available" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.Hg.is_available" title="Link to this definition">🔗</a></dt>
 <dd><p>Return whether the ‘hg’ command line tool is available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -930,7 +1204,7 @@ valid hg repository.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.Hg.version">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.Hg.version" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.Hg.version" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the hg version string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -949,7 +1223,7 @@ valid hg repository.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.HgInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">HgInfo</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">HgInfo</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
@@ -959,52 +1233,15 @@ valid hg repository.</p>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg_info.html#HgInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.HgInfo" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
 <p>Dataclass to hold Hg (Mercurial) repository information.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.HgInfo.branch">
-<span class="sig-name descname"><span class="pre">branch</span></span><a class="headerlink" href="#simplebench.vcs.HgInfo.branch" title="Link to this definition">🔗</a></dt>
-<dd><p>The current branch name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>branch (str): The current branch name.
+commit_id (str): The current changeset hash.
+date (str): The date of the current commit in ISO format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.HgInfo.commit_id">
-<span class="sig-name descname"><span class="pre">commit_id</span></span><a class="headerlink" href="#simplebench.vcs.HgInfo.commit_id" title="Link to this definition">🔗</a></dt>
-<dd><p>The current changeset hash.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.HgInfo.date">
-<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#simplebench.vcs.HgInfo.date" title="Link to this definition">🔗</a></dt>
-<dd><p>The date of the current commit in ISO format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.HgInfo.dirty">
-<span class="sig-name descname"><span class="pre">dirty</span></span><a class="headerlink" href="#simplebench.vcs.HgInfo.dirty" title="Link to this definition">🔗</a></dt>
-<dd><p>Whether there are uncommitted changes in the working directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize HgInfo with branch, commit, commit_datetime, and dirty status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1037,11 +1274,11 @@ valid hg repository.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.VCSInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">VCSInfo</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">VCSInfo</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">vcs_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType" title="simplebench.vcs.vcs_type.VCSType"><span class="pre">VCSType</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">vcs_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType" title="simplebench.vcs.vcs_type.VCSType"><span class="pre">VCSType</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">commit_datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
@@ -1057,79 +1294,32 @@ is common across different VCS types.</p>
 gives basic information about the current repository state.</p>
 <p>It is intended to be serialized to JSON for reporting purposes
 and used in filtering benchmark results based on VCS matching.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.vcs_type">
-<span class="sig-name descname"><span class="pre">vcs_type</span></span><a class="headerlink" href="#simplebench.vcs.VCSInfo.vcs_type" title="Link to this definition">🔗</a></dt>
-<dd><p>The type of version control system (e.g., ‘git’, ‘hg’).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#simplebench.vcs.VCSType" title="simplebench.vcs.VCSType">VCSType</a></p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>vcs_type (VCSType): The type of version control system (e.g., ‘git’, ‘hg’).
+branch (str): The current branch name.
+commit_id (str): The current changeset id for HEAD
+commit_datetime (str): The datetime of the current HEAD commit in ISO8601 format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.branch">
-<span class="sig-name descname"><span class="pre">branch</span></span><a class="headerlink" href="#simplebench.vcs.VCSInfo.branch" title="Link to this definition">🔗</a></dt>
-<dd><p>The current branch name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.commit_id">
-<span class="sig-name descname"><span class="pre">commit_id</span></span><a class="headerlink" href="#simplebench.vcs.VCSInfo.commit_id" title="Link to this definition">🔗</a></dt>
-<dd><p>The current changeset id for HEAD</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">branch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.VCSInfo.branch" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.commit_datetime">
-<span class="sig-name descname"><span class="pre">commit_datetime</span></span><a class="headerlink" href="#simplebench.vcs.VCSInfo.commit_datetime" title="Link to this definition">🔗</a></dt>
-<dd><p>The datetime of the current HEAD commit in ISO8601 format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">commit_datetime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.VCSInfo.commit_datetime" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.commit_id">
+<span class="sig-name descname"><span class="pre">commit_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.VCSInfo.commit_id" title="Link to this definition">🔗</a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.dirty">
-<span class="sig-name descname"><span class="pre">dirty</span></span><a class="headerlink" href="#simplebench.vcs.VCSInfo.dirty" title="Link to this definition">🔗</a></dt>
-<dd><p>Whether there are uncommitted changes in the working directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id0">
-<span class="sig-name descname"><span class="pre">branch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id0" title="Link to this definition">🔗</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">commit_datetime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id1" title="Link to this definition">🔗</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">commit_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id2" title="Link to this definition">🔗</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">dirty</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#id3" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">dirty</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.VCSInfo.dirty" title="Link to this definition">🔗</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1151,7 +1341,7 @@ and used in filtering benchmark results based on VCS matching.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.validate_commit_id">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_commit_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_info.html#VCSInfo.validate_commit_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.VCSInfo.validate_commit_id" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_commit_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_info.html#VCSInfo.validate_commit_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.VCSInfo.validate_commit_id" title="Link to this definition">🔗</a></dt>
 <dd><p>Validate the commit_id. Abstraction to be implemented by subclasses.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1167,15 +1357,15 @@ and used in filtering benchmark results based on VCS matching.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">vcs_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType" title="simplebench.vcs.vcs_type.VCSType"><span class="pre">VCSType</span></a></em><a class="headerlink" href="#id4" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.vcs.VCSInfo.vcs_type">
+<span class="sig-name descname"><span class="pre">vcs_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType" title="simplebench.vcs.vcs_type.VCSType"><span class="pre">VCSType</span></a></em><a class="headerlink" href="#simplebench.vcs.VCSInfo.vcs_type" title="Link to this definition">🔗</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.VCSType">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">VCSType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_type.html#VCSType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.VCSType" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.</span></span><span class="sig-name descname"><span class="pre">VCSType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/vcs_type.html#VCSType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.VCSType" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>Enumeration of supported Version Control System types.</p>
 <dl class="py attribute">
@@ -1250,142 +1440,6 @@ or the current working directory.</p>
 </dl>
 </dd></dl>
 
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.git.html">simplebench.vcs.git package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git"><code class="docutils literal notranslate"><span class="pre">Git</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.branch"><code class="docutils literal notranslate"><span class="pre">Git.branch()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.common_code"><code class="docutils literal notranslate"><span class="pre">Git.common_code()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.git_cwd"><code class="docutils literal notranslate"><span class="pre">Git.git_cwd</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.head"><code class="docutils literal notranslate"><span class="pre">Git.head()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.is_available"><code class="docutils literal notranslate"><span class="pre">Git.is_available</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.is_dirty"><code class="docutils literal notranslate"><span class="pre">Git.is_dirty()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.is_repo"><code class="docutils literal notranslate"><span class="pre">Git.is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.root"><code class="docutils literal notranslate"><span class="pre">Git.root()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.run"><code class="docutils literal notranslate"><span class="pre">Git.run()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.status"><code class="docutils literal notranslate"><span class="pre">Git.status()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.validate_available"><code class="docutils literal notranslate"><span class="pre">Git.validate_available()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.validate_is_repo"><code class="docutils literal notranslate"><span class="pre">Git.validate_is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.Git.version"><code class="docutils literal notranslate"><span class="pre">Git.version</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo.branch"><code class="docutils literal notranslate"><span class="pre">GitInfo.branch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo.date"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo.dirty"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.html#simplebench.vcs.git.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html">simplebench.vcs.git.exit_codes module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.BranchExitCode"><code class="docutils literal notranslate"><span class="pre">BranchExitCode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.CommonCode"><code class="docutils literal notranslate"><span class="pre">CommonCode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.GitExitCode"><code class="docutils literal notranslate"><span class="pre">GitExitCode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.LogExitCode"><code class="docutils literal notranslate"><span class="pre">LogExitCode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.RevParseExitCode"><code class="docutils literal notranslate"><span class="pre">RevParseExitCode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.exit_codes.html#simplebench.vcs.git.exit_codes.StatusExitCode"><code class="docutils literal notranslate"><span class="pre">StatusExitCode</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git.html">simplebench.vcs.git.git module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.git.html#simplebench.vcs.git.git.Git"><code class="docutils literal notranslate"><span class="pre">Git</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html">simplebench.vcs.git.git_info module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.hg.html">simplebench.vcs.hg package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg"><code class="docutils literal notranslate"><span class="pre">Hg</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.head"><code class="docutils literal notranslate"><span class="pre">Hg.head()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.hg_cwd"><code class="docutils literal notranslate"><span class="pre">Hg.hg_cwd</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.is_available"><code class="docutils literal notranslate"><span class="pre">Hg.is_available</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.is_dirty"><code class="docutils literal notranslate"><span class="pre">Hg.is_dirty()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.is_repo"><code class="docutils literal notranslate"><span class="pre">Hg.is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.root"><code class="docutils literal notranslate"><span class="pre">Hg.root()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.run"><code class="docutils literal notranslate"><span class="pre">Hg.run()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.status"><code class="docutils literal notranslate"><span class="pre">Hg.status()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.validate_available"><code class="docutils literal notranslate"><span class="pre">Hg.validate_available()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.validate_is_repo"><code class="docutils literal notranslate"><span class="pre">Hg.validate_is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.Hg.version"><code class="docutils literal notranslate"><span class="pre">Hg.version</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo.branch"><code class="docutils literal notranslate"><span class="pre">HgInfo.branch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.commit_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo.date"><code class="docutils literal notranslate"><span class="pre">HgInfo.date</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo.dirty"><code class="docutils literal notranslate"><span class="pre">HgInfo.dirty</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.html#simplebench.vcs.hg.HgInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.validate_commit_id()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html">simplebench.vcs.hg.exit_codes module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode"><code class="docutils literal notranslate"><span class="pre">HgExitCode</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.exit_code_to_name"><code class="docutils literal notranslate"><span class="pre">exit_code_to_name()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html">simplebench.vcs.hg.hg module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg"><code class="docutils literal notranslate"><span class="pre">Hg</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html">simplebench.vcs.hg.hg_info module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.utils.html">simplebench.vcs.utils module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.utils.html#simplebench.vcs.utils.resolve_vcs_path"><code class="docutils literal notranslate"><span class="pre">resolve_vcs_path()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.vcs_info.html">simplebench.vcs.vcs_info module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo"><code class="docutils literal notranslate"><span class="pre">VCSInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.vcs_type"><code class="docutils literal notranslate"><span class="pre">VCSInfo.vcs_type</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.branch"><code class="docutils literal notranslate"><span class="pre">VCSInfo.branch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.commit_datetime"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_datetime</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.dirty"><code class="docutils literal notranslate"><span class="pre">VCSInfo.dirty</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#id0"><code class="docutils literal notranslate"><span class="pre">VCSInfo.branch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#id1"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_datetime</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#id2"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#id3"><code class="docutils literal notranslate"><span class="pre">VCSInfo.dirty</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.post_init"><code class="docutils literal notranslate"><span class="pre">VCSInfo.post_init()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">VCSInfo.to_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">VCSInfo.validate_commit_id()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_info.html#id4"><code class="docutils literal notranslate"><span class="pre">VCSInfo.vcs_type</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.vcs_type.html">simplebench.vcs.vcs_type module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType"><code class="docutils literal notranslate"><span class="pre">VCSType</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType.GIT"><code class="docutils literal notranslate"><span class="pre">VCSType.GIT</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType.HG"><code class="docutils literal notranslate"><span class="pre">VCSType.HG</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType.NONE"><code class="docutils literal notranslate"><span class="pre">VCSType.NONE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType.PERFORCE"><code class="docutils literal notranslate"><span class="pre">VCSType.PERFORCE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType.SVN"><code class="docutils literal notranslate"><span class="pre">VCSType.SVN</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.vcs_type.html#simplebench.vcs.vcs_type.VCSType.TFVC"><code class="docutils literal notranslate"><span class="pre">VCSType.TFVC</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -1427,6 +1481,39 @@ or the current working directory.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.vcs package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.vcs.utils">simplebench.vcs.utils module</a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.utils.resolve_vcs_path"><code class="docutils literal notranslate"><span class="pre">resolve_vcs_path()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.vcs.vcs_info">simplebench.vcs.vcs_info module</a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo"><code class="docutils literal notranslate"><span class="pre">VCSInfo</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.branch"><code class="docutils literal notranslate"><span class="pre">VCSInfo.branch</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.commit_datetime"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_datetime</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_id</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.dirty"><code class="docutils literal notranslate"><span class="pre">VCSInfo.dirty</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.post_init"><code class="docutils literal notranslate"><span class="pre">VCSInfo.post_init()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">VCSInfo.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">VCSInfo.validate_commit_id()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_info.VCSInfo.vcs_type"><code class="docutils literal notranslate"><span class="pre">VCSInfo.vcs_type</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.vcs.vcs_type">simplebench.vcs.vcs_type module</a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType"><code class="docutils literal notranslate"><span class="pre">VCSType</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType.GIT"><code class="docutils literal notranslate"><span class="pre">VCSType.GIT</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType.HG"><code class="docutils literal notranslate"><span class="pre">VCSType.HG</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType.NONE"><code class="docutils literal notranslate"><span class="pre">VCSType.NONE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType.PERFORCE"><code class="docutils literal notranslate"><span class="pre">VCSType.PERFORCE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType.SVN"><code class="docutils literal notranslate"><span class="pre">VCSType.SVN</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.vcs_type.VCSType.TFVC"><code class="docutils literal notranslate"><span class="pre">VCSType.TFVC</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.vcs">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.vcs.Git"><code class="docutils literal notranslate"><span class="pre">Git</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.vcs.Git.branch"><code class="docutils literal notranslate"><span class="pre">Git.branch()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.Git.common_code"><code class="docutils literal notranslate"><span class="pre">Git.common_code()</span></code></a></li>
@@ -1444,10 +1531,6 @@ or the current working directory.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.vcs.GitInfo.branch"><code class="docutils literal notranslate"><span class="pre">GitInfo.branch</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.GitInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit_id</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.GitInfo.date"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.GitInfo.dirty"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
 </ul>
 </li>
@@ -1466,27 +1549,18 @@ or the current working directory.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.vcs.HgInfo.branch"><code class="docutils literal notranslate"><span class="pre">HgInfo.branch</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.HgInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.commit_id</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.HgInfo.date"><code class="docutils literal notranslate"><span class="pre">HgInfo.date</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.HgInfo.dirty"><code class="docutils literal notranslate"><span class="pre">HgInfo.dirty</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.HgInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.validate_commit_id()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSInfo"><code class="docutils literal notranslate"><span class="pre">VCSInfo</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.vcs.VCSInfo.vcs_type"><code class="docutils literal notranslate"><span class="pre">VCSInfo.vcs_type</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSInfo.branch"><code class="docutils literal notranslate"><span class="pre">VCSInfo.branch</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.VCSInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_id</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSInfo.commit_datetime"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_datetime</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.VCSInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_id</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSInfo.dirty"><code class="docutils literal notranslate"><span class="pre">VCSInfo.dirty</span></code></a></li>
-<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">VCSInfo.branch</span></code></a></li>
-<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_datetime</span></code></a></li>
-<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">VCSInfo.commit_id</span></code></a></li>
-<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">VCSInfo.dirty</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSInfo.post_init"><code class="docutils literal notranslate"><span class="pre">VCSInfo.post_init()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">VCSInfo.to_dict()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">VCSInfo.validate_commit_id()</span></code></a></li>
-<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">VCSInfo.vcs_type</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.VCSInfo.vcs_type"><code class="docutils literal notranslate"><span class="pre">VCSInfo.vcs_type</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.VCSType"><code class="docutils literal notranslate"><span class="pre">VCSType</span></code></a><ul>
@@ -1499,8 +1573,8 @@ or the current working directory.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.resolve_vcs_path"><code class="docutils literal notranslate"><span class="pre">resolve_vcs_path()</span></code></a></li>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

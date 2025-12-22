@@ -1,11 +1,6 @@
 simplebench package
 ===================
 
-.. automodule:: simplebench
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -23,7 +18,7 @@ Subpackages
    simplebench.environment
    simplebench.exceptions
    simplebench.metadata
-   simplebench.metric
+   simplebench.metrics
    simplebench.report
    simplebench.reporters
    simplebench.session
@@ -39,8 +34,26 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.decorators module
+-----------------------------
 
-   simplebench.decorators
-   simplebench.defaults
+.. automodule:: simplebench.decorators
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.defaults module
+---------------------------
+
+.. automodule:: simplebench.defaults
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench
+   :members:
+   :show-inheritance:
+   :undoc-members:

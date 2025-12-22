@@ -600,50 +600,13 @@ valid git repository.</p>
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/git/git_info.html#GitInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.git.GitInfo" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
 <p>Dataclass to hold Git repository information.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.branch">
-<span class="sig-name descname"><span class="pre">branch</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.branch" title="Link to this definition">🔗</a></dt>
-<dd><p>The current branch name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>branch (str): The current branch name.
+commit_id (str): The current commit hash.
+date (str): The date of the current commit in ISO format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.commit_id">
-<span class="sig-name descname"><span class="pre">commit_id</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.commit_id" title="Link to this definition">🔗</a></dt>
-<dd><p>The current commit hash.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.date">
-<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.date" title="Link to this definition">🔗</a></dt>
-<dd><p>The date of the current commit in ISO format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.git.GitInfo.dirty">
-<span class="sig-name descname"><span class="pre">dirty</span></span><a class="headerlink" href="#simplebench.vcs.git.GitInfo.dirty" title="Link to this definition">🔗</a></dt>
-<dd><p>Whether there are uncommitted changes in the working directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize GitInfo with branch, commit_id, commit_datetime, and dirty status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -733,10 +696,6 @@ valid git repository.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.git.git_info.html">simplebench.vcs.git.git_info module</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.branch"><code class="docutils literal notranslate"><span class="pre">GitInfo.branch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.date"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.dirty"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.git.git_info.html#simplebench.vcs.git.git_info.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
 </ul>
 </li>
@@ -802,10 +761,6 @@ valid git repository.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.git.GitInfo"><code class="docutils literal notranslate"><span class="pre">GitInfo</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.branch"><code class="docutils literal notranslate"><span class="pre">GitInfo.branch</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.commit_id</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.date"><code class="docutils literal notranslate"><span class="pre">GitInfo.date</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.dirty"><code class="docutils literal notranslate"><span class="pre">GitInfo.dirty</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.git.GitInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">GitInfo.validate_commit_id()</span></code></a></li>
 </ul>
 </li>

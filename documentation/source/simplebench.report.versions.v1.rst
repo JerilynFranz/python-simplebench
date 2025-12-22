@@ -1,11 +1,6 @@
 simplebench.report.versions.v1 package
 ======================================
 
-.. automodule:: simplebench.report.versions.v1
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -24,3 +19,11 @@ Subpackages
    simplebench.report.versions.v1.types
    simplebench.report.versions.v1.value_block
    simplebench.report.versions.v1.vcs_info
+
+Module contents
+---------------
+
+.. automodule:: simplebench.report.versions.v1
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+simplebench.metrics.metric\_category module
+===========================================
+
+.. automodule:: simplebench.metrics.metric_category
+   :members:
+   :undoc-members:
+   :show-inheritance:

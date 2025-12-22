@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.base package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,20 +257,52 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.base">
-<span id="simplebench-base-package"></span><h1>simplebench.base package<a class="headerlink" href="#module-simplebench.base" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-base-package">
+<h1>simplebench.base package<a class="headerlink" href="#simplebench-base-package" title="Link to this heading">🔗</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">🔗</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.base.hydrator.html">simplebench.base.hydrator package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.base.hydrator.html#module-simplebench.base.hydrator">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.base.hydrator.html#simplebench.base.hydrator.Hydrator"><code class="docutils literal notranslate"><span class="pre">Hydrator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.base.hydrator.html#simplebench.base.hydrator.Hydrator.import_data"><code class="docutils literal notranslate"><span class="pre">Hydrator.import_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.base.hydrator.html#simplebench.base.hydrator.Hydrator.init_params"><code class="docutils literal notranslate"><span class="pre">Hydrator.init_params()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.base.lazy_property.html">simplebench.base.lazy_property package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.base.lazy_property.html#module-simplebench.base.lazy_property">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty"><code class="docutils literal notranslate"><span class="pre">LazyProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty.func"><code class="docutils literal notranslate"><span class="pre">LazyProperty.func</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty.lock"><code class="docutils literal notranslate"><span class="pre">LazyProperty.lock</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty.name"><code class="docutils literal notranslate"><span class="pre">LazyProperty.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-simplebench.base">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.base" title="Link to this heading">🔗</a></h2>
 <p>Broadly used base classes</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.base.Hydrator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.base.</span></span><span class="sig-name descname"><span class="pre">Hydrator</span></span><a class="reference internal" href="../_modules/simplebench/base/hydrator/hydrator.html#Hydrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.base.Hydrator" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.base.</span></span><span class="sig-name descname"><span class="pre">Hydrator</span></span><a class="reference internal" href="../_modules/simplebench/base/hydrator/hydrator.html#Hydrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.base.Hydrator" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Base class providing convience methods for processing a JSON object.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.base.Hydrator.import_data">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">import_data</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">allowed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -311,15 +343,16 @@ Only keys that are present in the <cite>allowed</cite> dictionary can have proce
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p>SimpleBenchTypeError if the data does not match the rules.</p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the data does not match the rules.</p>
+</dl>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>SimpleBenchValueError: If the data does not match the rules.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.base.Hydrator.init_params">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/base/hydrator/hydrator.html#Hydrator.init_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.base.Hydrator.init_params" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/base/hydrator/hydrator.html#Hydrator.init_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.base.Hydrator.init_params" title="Link to this definition">🔗</a></dt>
 <dd><p>Return a dictionary of the parameters that can be passed to the constructor.</p>
 <p>It is used to help determine which fields are required for the constructor
 and what their types are.</p>
@@ -332,7 +365,7 @@ resolve annotations, including simple and generic types.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.base.LazyProperty">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.base.</span></span><span class="sig-name descname"><span class="pre">LazyProperty</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.base.</span></span><span class="sig-name descname"><span class="pre">LazyProperty</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">_T</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
@@ -408,43 +441,6 @@ only argument.</p>
 
 </dd></dl>
 
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.base.hydrator.html">simplebench.base.hydrator package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.base.hydrator.html#simplebench.base.hydrator.Hydrator"><code class="docutils literal notranslate"><span class="pre">Hydrator</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.base.hydrator.html#simplebench.base.hydrator.Hydrator.import_data"><code class="docutils literal notranslate"><span class="pre">Hydrator.import_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.base.hydrator.html#simplebench.base.hydrator.Hydrator.init_params"><code class="docutils literal notranslate"><span class="pre">Hydrator.init_params()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.base.hydrator.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.base.hydrator.hydrator.html">simplebench.base.hydrator.hydrator module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.base.hydrator.hydrator.html#simplebench.base.hydrator.hydrator.Hydrator"><code class="docutils literal notranslate"><span class="pre">Hydrator</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.base.lazy_property.html">simplebench.base.lazy_property package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty"><code class="docutils literal notranslate"><span class="pre">LazyProperty</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty.func"><code class="docutils literal notranslate"><span class="pre">LazyProperty.func</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty.lock"><code class="docutils literal notranslate"><span class="pre">LazyProperty.lock</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.base.lazy_property.html#simplebench.base.lazy_property.LazyProperty.name"><code class="docutils literal notranslate"><span class="pre">LazyProperty.name</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.base.lazy_property.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.base.lazy_property.lazy_property.html">simplebench.base.lazy_property.lazy_property module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.base.lazy_property.lazy_property.html#simplebench.base.lazy_property.lazy_property.LazyProperty"><code class="docutils literal notranslate"><span class="pre">LazyProperty</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -486,6 +482,8 @@ only argument.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.base package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#module-simplebench.base">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.base.Hydrator"><code class="docutils literal notranslate"><span class="pre">Hydrator</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.base.Hydrator.import_data"><code class="docutils literal notranslate"><span class="pre">Hydrator.import_data()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.base.Hydrator.init_params"><code class="docutils literal notranslate"><span class="pre">Hydrator.init_params()</span></code></a></li>
@@ -497,7 +495,8 @@ only argument.</p>
 <li><a class="reference internal" href="#simplebench.base.LazyProperty.name"><code class="docutils literal notranslate"><span class="pre">LazyProperty.name</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

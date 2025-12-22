@@ -1,11 +1,6 @@
 simplebench.display package
 ===========================
 
-.. automodule:: simplebench.display
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -15,3 +10,11 @@ Subpackages
    simplebench.display.progress_tracker
    simplebench.display.rich_progress_tasks
    simplebench.display.rich_task
+
+Module contents
+---------------
+
+.. automodule:: simplebench.display
+   :members:
+   :show-inheritance:
+   :undoc-members:

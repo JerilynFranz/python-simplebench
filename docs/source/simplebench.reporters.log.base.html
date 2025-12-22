@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.reporters.log.base package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,15 +257,280 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.reporters.log.base">
-<span id="simplebench-reporters-log-base-package"></span><h1>simplebench.reporters.log.base package<a class="headerlink" href="#module-simplebench.reporters.log.base" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-reporters-log-base-package">
+<h1>simplebench.reporters.log.base package<a class="headerlink" href="#simplebench-reporters-log-base-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.reporters.log.base.report_log_entry">
+<span id="simplebench-reporters-log-base-report-log-entry-module"></span><h2>simplebench.reporters.log.base.report_log_entry module<a class="headerlink" href="#module-simplebench.reporters.log.base.report_log_entry" title="Link to this heading">🔗</a></h2>
+<p>Data structures for logging.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.log.base.report_log_entry.</span></span><span class="sig-name descname"><span class="pre">ReportLogEntry</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">reports_log_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">choice</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Container for report log entry metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> – The path to the generated report file.</p></li>
+<li><p><strong>timestamp</strong> – The timestamp of the report generation in ISO 8601 format.</p></li>
+<li><p><strong>reports_log_path</strong> – The path to the reports log file.</p></li>
+<li><p><strong>case</strong> – The Case instance containing benchmark results.</p></li>
+<li><p><strong>choice</strong> – The Choice instance specifying the report configuration.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialize ReportLogMetadata.</p>
+<p>The timestamp is expected to be in epoch seconds (float) but will be stored
+as an ISO 8601 formatted string in UTC.</p>
+<p>The filepath is stored as a URI string in the <a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.uri" title="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.uri"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uri</span></code></a> property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> – The path to the generated report file. If None, no file path is set.</p></li>
+<li><p><strong>timestamp</strong> – The timestamp of the report generation in epoch seconds.</p></li>
+<li><p><strong>reports_log_path</strong> – The path to the reports log file.</p></li>
+<li><p><strong>case</strong> – The Case instance containing benchmark results.</p></li>
+<li><p><strong>choice</strong> – The Choice instance specifying the report configuration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If any argument is of invalid type.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>The version of the ReportLogEntry schema.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.case">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">case</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.case" title="Link to this definition">🔗</a></dt>
+<dd><p>The Case instance containing benchmark results.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.choice">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choice</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.choice" title="Link to this definition">🔗</a></dt>
+<dd><p>The Choice instance specifying the report configuration.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.filepath">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filepath</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.filepath" title="Link to this definition">🔗</a></dt>
+<dd><p>The path to the generated report file as a Path object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.from_dict">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry" title="simplebench.reporters.log.base.report_log_entry.ReportLogEntry"><span class="pre">ReportLogEntry</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.from_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a JSONReport instance from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Dictionary containing the JSON report data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSONReport instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.reports_log_path">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reports_log_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.reports_log_path" title="Link to this definition">🔗</a></dt>
+<dd><p>The path to the reports log file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.save_to_log">
+<span class="sig-name descname"><span class="pre">save_to_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.save_to_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.save_to_log" title="Link to this definition">🔗</a></dt>
+<dd><p>Append the metadata as a JSON entry to the reports log file.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.timestamp">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.timestamp" title="Link to this definition">🔗</a></dt>
+<dd><p>The timestamp of the report generation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert metadata to a dictionary for JSON serialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary representation of the metadata.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_json">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_json" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert metadata to a one line JSON string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A JSON string representation of the metadata.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.uri">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.uri" title="Link to this definition">🔗</a></dt>
+<dd><p>The path to the generated report as a URI string.</p>
+<p>The URI is relative to the directory of the reports log file if possible.</p>
+<p>Read only property returning the file URI string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_schema_uri">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_schema_uri</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.validate_schema_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_schema_uri" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the $schema URI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – The $schema URI to validate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The validated $schema URI string.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the $schema URI is not a string.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the $schema URI is invalid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_type">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_type</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">found</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">expected</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.validate_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_type" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>found</strong> – The type string to validate.</p></li>
+<li><p><strong>expected</strong> – The expected type string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The validated type string.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the type is not a string.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the type is invalid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_version">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_version</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.validate_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_version" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – The version to validate.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The validated version integer.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the version is not an integer.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the version is invalid.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.reporters.log.base.report_log_entry_schema">
+<span id="simplebench-reporters-log-base-report-log-entry-schema-module"></span><h2>simplebench.reporters.log.base.report_log_entry_schema module<a class="headerlink" href="#module-simplebench.reporters.log.base.report_log_entry_schema" title="Link to this heading">🔗</a></h2>
+<p>Base report log entry schema class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.log.base.report_log_entry_schema.</span></span><span class="sig-name descname"><span class="pre">ReportLogEntrySchema</span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Abstract Base class representing a JSON report schema.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.json_schema_dict">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">json_schema_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema.json_schema_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.json_schema_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the JSON Report Log Entry Schema as a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>JSON schema dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.to_json_schema">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_json_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema.to_json_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.to_json_schema" title="Link to this definition">🔗</a></dt>
+<dd><p>Return the JSON Report Log Entry Schema as a string.
+:return: JSON schema string.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.reporters.log.base">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.reporters.log.base" title="Link to this heading">🔗</a></h2>
 <p>Base classes for logging.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.log.base.</span></span><span class="sig-name descname"><span class="pre">ReportLogEntry</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.log.base.</span></span><span class="sig-name descname"><span class="pre">ReportLogEntry</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">reports_log_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
@@ -313,31 +578,31 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.case">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">case</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.case" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">case</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.case" title="Link to this definition">🔗</a></dt>
 <dd><p>The Case instance containing benchmark results.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.choice">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choice</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.choice" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">choice</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.reporters.choice.html#simplebench.reporters.choice.Choice" title="simplebench.reporters.choice.Choice"><span class="pre">Choice</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.choice" title="Link to this definition">🔗</a></dt>
 <dd><p>The Choice instance specifying the report configuration.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.filepath">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filepath</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.filepath" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filepath</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.filepath" title="Link to this definition">🔗</a></dt>
 <dd><p>The path to the generated report file as a Path object.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.from_dict">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry" title="simplebench.reporters.log.base.report_log_entry.ReportLogEntry"><span class="pre">ReportLogEntry</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.from_dict" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry" title="simplebench.reporters.log.base.report_log_entry.ReportLogEntry"><span class="pre">ReportLogEntry</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry.html#ReportLogEntry.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.from_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a JSONReport instance from a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -351,7 +616,7 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.reports_log_path">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reports_log_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.reports_log_path" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reports_log_path</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.reports_log_path" title="Link to this definition">🔗</a></dt>
 <dd><p>The path to the reports log file.</p>
 </dd></dl>
 
@@ -363,7 +628,7 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.timestamp">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.timestamp" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.timestamp" title="Link to this definition">🔗</a></dt>
 <dd><p>The timestamp of the report generation.</p>
 </dd></dl>
 
@@ -397,7 +662,7 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.uri">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.uri" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntry.uri" title="Link to this definition">🔗</a></dt>
 <dd><p>The path to the generated report as a URI string.</p>
 <p>The URI is relative to the directory of the reports log file if possible.</p>
 <p>Read only property returning the file URI string.</p>
@@ -405,7 +670,7 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.validate_schema_uri">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_schema_uri</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_schema_uri</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
@@ -431,7 +696,7 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.validate_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_type</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_type</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">found</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
@@ -461,7 +726,7 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntry.validate_version">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_version</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_version</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em>,</dd>
@@ -489,12 +754,12 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntrySchema">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.log.base.</span></span><span class="sig-name descname"><span class="pre">ReportLogEntrySchema</span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntrySchema" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.reporters.log.base.</span></span><span class="sig-name descname"><span class="pre">ReportLogEntrySchema</span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntrySchema" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>Abstract Base class representing a JSON report schema.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntrySchema.json_schema_dict">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">json_schema_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema.json_schema_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntrySchema.json_schema_dict" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">json_schema_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema.json_schema_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntrySchema.json_schema_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the JSON Report Log Entry Schema as a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -505,47 +770,13 @@ as an ISO 8601 formatted string in UTC.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.reporters.log.base.ReportLogEntrySchema.to_json_schema">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_json_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema.to_json_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntrySchema.to_json_schema" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">to_json_schema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/reporters/log/base/report_log_entry_schema.html#ReportLogEntrySchema.to_json_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.reporters.log.base.ReportLogEntrySchema.to_json_schema" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the JSON Report Log Entry Schema as a string.
 :return: JSON schema string.</p>
 </dd></dl>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html">simplebench.reporters.log.base.report_log_entry module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.VERSION"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.VERSION</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.case"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.case</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.choice"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.choice</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.filepath"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.filepath</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.from_dict"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.from_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.reports_log_path"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.reports_log_path</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.save_to_log"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.save_to_log()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.timestamp"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.timestamp</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_dict"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.to_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_json"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.to_json()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.uri"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.uri</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_schema_uri"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.validate_schema_uri()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_type"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.validate_type()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry.html#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_version"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.validate_version()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry_schema.html">simplebench.reporters.log.base.report_log_entry_schema module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry_schema.html#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema"><code class="docutils literal notranslate"><span class="pre">ReportLogEntrySchema</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry_schema.html#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.json_schema_dict"><code class="docutils literal notranslate"><span class="pre">ReportLogEntrySchema.json_schema_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.reporters.log.base.report_log_entry_schema.html#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.to_json_schema"><code class="docutils literal notranslate"><span class="pre">ReportLogEntrySchema.to_json_schema()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -587,6 +818,36 @@ as an ISO 8601 formatted string in UTC.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.reporters.log.base package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.reporters.log.base.report_log_entry">simplebench.reporters.log.base.report_log_entry module</a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.VERSION"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.VERSION</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.case"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.case</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.choice"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.choice</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.filepath"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.filepath</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.from_dict"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.reports_log_path"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.reports_log_path</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.save_to_log"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.save_to_log()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.timestamp"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.timestamp</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_dict"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.to_json"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.to_json()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.uri"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.uri</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_schema_uri"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.validate_schema_uri()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_type"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.validate_type()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry.ReportLogEntry.validate_version"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.validate_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.reporters.log.base.report_log_entry_schema">simplebench.reporters.log.base.report_log_entry_schema module</a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema"><code class="docutils literal notranslate"><span class="pre">ReportLogEntrySchema</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.json_schema_dict"><code class="docutils literal notranslate"><span class="pre">ReportLogEntrySchema.json_schema_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.reporters.log.base.report_log_entry_schema.ReportLogEntrySchema.to_json_schema"><code class="docutils literal notranslate"><span class="pre">ReportLogEntrySchema.to_json_schema()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.reporters.log.base">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.log.base.ReportLogEntry"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.reporters.log.base.ReportLogEntry.VERSION"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.VERSION</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.reporters.log.base.ReportLogEntry.case"><code class="docutils literal notranslate"><span class="pre">ReportLogEntry.case</span></code></a></li>
@@ -609,7 +870,8 @@ as an ISO 8601 formatted string in UTC.</p>
 <li><a class="reference internal" href="#simplebench.reporters.log.base.ReportLogEntrySchema.to_json_schema"><code class="docutils literal notranslate"><span class="pre">ReportLogEntrySchema.to_json_schema()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

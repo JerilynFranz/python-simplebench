@@ -1,15 +1,10 @@
 simplebench.benchmark package
 =============================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.benchmark
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.benchmark.benchmark
+   :undoc-members:

@@ -1,15 +1,21 @@
 simplebench.types package
 =========================
 
-.. automodule:: simplebench.types
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.types.values module
+-------------------------------
 
-   simplebench.types.values
+.. automodule:: simplebench.types.values
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.types
+   :members:
+   :show-inheritance:
+   :undoc-members:

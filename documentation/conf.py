@@ -13,11 +13,20 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 # pylint: disable=invalid-name, missing-module-docstring
+from __future__ import annotations
+
 import sys
 from pathlib import Path
+from types import ModuleType
+from typing import TYPE_CHECKING, Literal, TypeAlias
 
 sys.path.insert(0, str(Path('..', 'src').resolve()))
 sys.path.insert(0, str(Path('.').resolve()))
+
+
+if TYPE_CHECKING:
+    from sphinx.application import Sphinx
+    from sphinx.ext.autodoc import Options
 
 import simplebench._meta as metadata  # pylint: disable=wrong-import-position  # noqa: E402
 
@@ -43,18 +52,76 @@ release: str = metadata.__release__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.duration',
+    # 'sphinx.ext.duration',
     'sphinx.ext.doctest',
+    'sphinx.ext.apidoc',
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary',
+    # 'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.napoleon',
+    # 'sphinx.ext.napoleon',
     'sphinx.ext.githubpages',
     'sphinx.ext.viewcode',
     'sphinx_copybutton',
     'sphinx_design',
 ]
 
+
+simplebench_src_path = Path('..', 'src', 'simplebench')
+
+# -- Custom file exclusions for apidoc --------------------------------------------
+
+
+def catalog_files(dir_path: Path) -> list[Path]:
+    """Catalog all files in a directory and subdirectories.
+    :param dir_path Path: The directory path to catalog.
+    :return list[Path]: A list of file paths in the directory.
+    """
+    # Use rglob to recursively find all python files and make them relative
+    return [p.relative_to(dir_path) for p in dir_path.rglob('*') if p.is_file() and p.suffix == '.py']
+
+
+def exclude_files(dir_path: Path) -> list[str]:
+    """Generate a list of file patterns to exclude from apidoc generation.
+
+    It excludes files where the file name stem matches its parent directory name,
+    e.g., metric/metric.py.
+
+    :param dir_path Path: The directory path to generate exclusions for.
+    :return list[str]: A list of file patterns to exclude.
+    """
+    files = catalog_files(dir_path)
+    exclusions: list[str] = []
+    for item in files:
+        if item.suffix == '.py' and item.parent != Path('.'):
+            if item.stem == item.parent.name:
+                # Create a posix-style path relative to the conf.py directory
+                rel_path_parts = list(dir_path.parts)
+                rel_path_parts.append(item.as_posix())
+                item_path = Path(*rel_path_parts).as_posix()
+                exclusions.append(item_path)
+    return exclusions
+
+
+# apidoc options
+apidoc_modules = [
+    {
+        'path': simplebench_src_path.as_posix(),
+        'destination': 'source/',
+        'exclude_patterns': exclude_files(simplebench_src_path),
+        'max_depth': 4,
+        'follow_links': False,
+        'separate_modules': False,
+        'include_private': False,
+        'no_headings': False,
+        'module_first': False,
+        'implicit_namespaces': False,
+        'automodule_options': {
+            'members', 'show-inheritance', 'undoc-members'
+        },
+    },
+]
+
+# print(f"apidoc_modules: {apidoc_modules}")
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
@@ -240,6 +307,10 @@ copybutton_prompt_is_regexp = True
 
 # -- Options for autodoc extension -------------------------------------------
 
+# This value determines whether module names are prepended to all
+# documented members. If true, the module name is prepended.
+# autodoc_canonical_imports = True
+
 # This value controls how to represent the signature of a class.
 # 'class' shows the class name, 'init' shows the __init__ signature.
 autodoc_class_signature = 'mixed'
@@ -258,3 +329,46 @@ autoclass_content = 'both'
 doctest_global_setup = """
 from _helpers.doctest_utils import run_script_and_get_raw_output, assert_benchmark_output
 """
+
+
+# -- Custom skip member function for autodoc --------------------------------
+
+
+What: TypeAlias = Literal['module', 'class', 'exception', 'function', 'method', 'attribute']
+
+
+def custom_skip_member(app: Sphinx, what: What, name: str, obj: object, skip: bool, options: Options) -> bool | None:  # pylint: disable=unused-argument
+    """Custom skip member function for autodoc.
+
+    :param app Sphinx: The Sphinx application object.
+    :param what What: The type of the object which the member belongs to.
+    :param name str: The name of the member.
+    :param obj object: The member object itself.
+    :param skip bool: A boolean indicating if Sphinx intends to skip this member.
+    :param options Options: The autodoc options given to the directive.
+    :return bool | None: True to skip the member, False to include it, or None to use default behavior.
+    """
+    print(f"custom_skip_member called: app={type(app)}, what={what}, name={name}, obj={repr(obj)}, skip={skip}, options={type(options)}")
+    if what != 'module' or not isinstance(obj, ModuleType):
+        return None
+
+    fqn = obj.__name__
+    print(f"Fully qualified name of the module: {fqn}")
+    path_elements = fqn.split('.')
+    if len(path_elements) < 2:
+        return None
+    module_name = path_elements[-2]
+    member_name = path_elements[-1]
+    # Don't skip if we don't have a pattern like metric.metric
+    if module_name != member_name:
+        return None
+
+    # This is a module that matches a pattern like metric.metric
+    # We consider these "private" implementation modules and skip them
+    print(f"************Skipping private implementation module: {fqn}")
+    return True  # Skip "private" implementation modules
+
+
+# def setup(app):
+#     """Register the custom skip function with Sphinx."""
+#     app.connect('autodoc-skip-member', custom_skip_member)

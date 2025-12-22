@@ -321,13 +321,13 @@ will be used. Defaults to None.</p></li>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.add_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.session.Session.add_case" title="Link to this definition">🔗</a></dt>
-<dd><p>Add a <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> to the Cases for this session.</p>
+<dd><p>Add a <a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> to the Cases for this session.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>case</strong> – benchmark case to add to the Session</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the value is not a <a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -510,7 +510,7 @@ by adding your own reporters or removing default ones.</p>
 <dt class="sig sig-object py" id="simplebench.session.session.Session.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/session/session.html#Session.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.session.session.Session.run" title="Link to this definition">🔗</a></dt>
 <dd><p>Run all benchmark cases in the session.</p>
-<p>This method iterates over all <a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instances in the session’s
+<p>This method iterates over all <a class="reference internal" href="simplebench.case.case.html#simplebench.case.case.Case" title="simplebench.case.case.Case"><code class="xref py py-class docutils literal notranslate"><span class="pre">Case</span></code></a> instances in the session’s
 cases and invokes their <a class="reference internal" href="simplebench.html#simplebench.Case.run" title="simplebench.Case.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method to execute the benchmarks.</p>
 <p>If the <a class="reference internal" href="#simplebench.session.session.Session.parse_args" title="simplebench.session.session.Session.parse_args"><code class="xref py py-meth docutils literal notranslate"><span class="pre">parse_args()</span></code></a> method has not been called prior to invoking this method,
 it will be called authomatically with no arguments to parse from <a class="reference external" href="https://docs.python.org/3/library/sys.html#sys.argv" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">sys.argv</span></code></a>.</p>

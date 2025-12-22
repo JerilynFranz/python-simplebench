@@ -1,16 +1,21 @@
 simplebench.reporters.rich\_table.reporter.options package
 ==========================================================
 
-.. automodule:: simplebench.reporters.rich_table.reporter.options
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.rich\_table.reporter.options.fields module
+----------------------------------------------------------------
 
-   simplebench.reporters.rich_table.reporter.options.fields
-   simplebench.reporters.rich_table.reporter.options.options
+.. automodule:: simplebench.reporters.rich_table.reporter.options.fields
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.rich_table.reporter.options
+   :members:
+   :show-inheritance:
+   :undoc-members:

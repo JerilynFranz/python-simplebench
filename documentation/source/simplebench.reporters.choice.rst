@@ -1,16 +1,21 @@
 simplebench.reporters.choice package
 ====================================
 
-.. automodule:: simplebench.reporters.choice
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.choice.choice\_conf module
+------------------------------------------------
 
-   simplebench.reporters.choice.choice
-   simplebench.reporters.choice.choice_conf
+.. automodule:: simplebench.reporters.choice.choice_conf
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.choice
+   :members:
+   :show-inheritance:
+   :undoc-members:

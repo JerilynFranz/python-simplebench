@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.report.versions.v1.report package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,171 +257,40 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.report.versions.v1.report">
-<span id="simplebench-report-versions-v1-report-package"></span><h1>simplebench.report.versions.v1.report package<a class="headerlink" href="#module-simplebench.report.versions.v1.report" title="Link to this heading">🔗</a></h1>
-<p>V1 JSONReport classes</p>
+          <section id="simplebench-report-versions-v1-report-package">
+<h1>simplebench.report.versions.v1.report package<a class="headerlink" href="#simplebench-report-versions-v1-report-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.report.versions.v1.report.report_schema">
+<span id="simplebench-report-versions-v1-report-report-schema-module"></span><h2>simplebench.report.versions.v1.report.report_schema module<a class="headerlink" href="#module-simplebench.report.versions.v1.report.report_schema" title="Link to this heading">🔗</a></h2>
+<p>Schema for JSON reporter v1 validation.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.report.</span></span><span class="sig-name descname"><span class="pre">Report</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">variation_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.report.base.results_info.html#simplebench.report.base.results_info.ResultsInfo" title="simplebench.report.base.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">machine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.base.machine_info.html#simplebench.report.base.machine_info.MachineInfo" title="simplebench.report.base.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.report.html#simplebench.report.base.report.Report" title="simplebench.report.base.report.Report"><code class="xref py py-class docutils literal notranslate"><span class="pre">Report</span></code></a></p>
-<p>Class representing a JSON report version 1.</p>
-<p>Initialize a Report base instance.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.ID" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON report ID property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.SCHEMA">
-<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.SCHEMA" title="Link to this definition">🔗</a></dt>
-<dd><p>alias of <a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema" title="simplebench.report.versions.v1.report.report_schema.ReportSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReportSchema</span></code></a></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchReport::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON report type property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.VERSION" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON report version number.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.description">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.description" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the description property.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.from_case">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.report.Report" title="simplebench.report.versions.v1.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.from_case" title="Link to this definition">🔗</a></dt>
-<dd><p>Create a Report instance from a Case instance.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>case</strong> – The Case instance to create the Report from.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Report instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report" title="simplebench.report.versions.v1.report.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.from_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Create a Report instance from a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> – Dictionary containing the JSON report data.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Report instance.</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the version is not 1.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.group">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.group" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the group property.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.machine">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">machine</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.base.machine_info.html#simplebench.report.base.machine_info.MachineInfo" title="simplebench.report.base.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.machine" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the machine property.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.results">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.report.base.results_info.html#simplebench.report.base.results_info.ResultsInfo" title="simplebench.report.base.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.results" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the results property.</p>
-<p>The results property is a list of Results instances.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.timestamp">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.timestamp" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the timestamp property.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.title">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.title" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the title property.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.to_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Convert the JSONReport instance to a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Dictionary containing the JSON report data.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.variation_cols">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.variation_cols" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the variation_cols property.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.report.</span></span><span class="sig-name descname"><span class="pre">ReportSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.json_schema.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report_schema.ReportSchema">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.report.report_schema.</span></span><span class="sig-name descname"><span class="pre">ReportSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
 <p>Schema for the JSON reporter output (V1)</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.ID" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report_schema.ReportSchema.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.ID" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON report schema ID URL for version 1 reports.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchReport::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.TYPE" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report_schema.ReportSchema.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchReport::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.TYPE" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON report schema type property value for version 1 reports.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.VERSION" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report_schema.ReportSchema.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.VERSION" title="Link to this definition">🔗</a></dt>
 <dd><p>The JSON report schema version number.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.as_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.as_dict" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report_schema.ReportSchema.as_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the JSON schema as a dictionary.</p>
 <p>It always returns a fresh copy of the schema dictionary to prevent accidental
 modifications.</p>
@@ -438,8 +307,8 @@ modifications.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.as_json">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.report_schema.ReportSchema.as_json">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_json" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the JSON schema as a JSON-formatted string.</p>
 <blockquote>
 <div><p>It serializes the schema dictionary to a JSON string.</p>
@@ -533,48 +402,315 @@ modifications.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html">simplebench.report.versions.v1.report.report module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.ID"><code class="docutils literal notranslate"><span class="pre">Report.ID</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.SCHEMA"><code class="docutils literal notranslate"><span class="pre">Report.SCHEMA</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.TYPE"><code class="docutils literal notranslate"><span class="pre">Report.TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.VERSION"><code class="docutils literal notranslate"><span class="pre">Report.VERSION</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.description"><code class="docutils literal notranslate"><span class="pre">Report.description</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.from_case"><code class="docutils literal notranslate"><span class="pre">Report.from_case()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.from_dict"><code class="docutils literal notranslate"><span class="pre">Report.from_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.group"><code class="docutils literal notranslate"><span class="pre">Report.group</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.machine"><code class="docutils literal notranslate"><span class="pre">Report.machine</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.results"><code class="docutils literal notranslate"><span class="pre">Report.results</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.timestamp"><code class="docutils literal notranslate"><span class="pre">Report.timestamp</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.title"><code class="docutils literal notranslate"><span class="pre">Report.title</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.to_dict"><code class="docutils literal notranslate"><span class="pre">Report.to_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.variation_cols"><code class="docutils literal notranslate"><span class="pre">Report.variation_cols</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html">simplebench.report.versions.v1.report.report_schema module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema"><code class="docutils literal notranslate"><span class="pre">ReportSchema</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.ID"><code class="docutils literal notranslate"><span class="pre">ReportSchema.ID</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ReportSchema.TYPE</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ReportSchema.VERSION</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_dict()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_json()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.report.validate.html">simplebench.report.versions.v1.report.validate module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.report.validate.html#simplebench.report.versions.v1.report.validate.case"><code class="docutils literal notranslate"><span class="pre">case()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.report.validate.html#simplebench.report.versions.v1.report.validate.case_has_been_run"><code class="docutils literal notranslate"><span class="pre">case_has_been_run()</span></code></a></li>
-</ul>
-</li>
-</ul>
+</section>
+<section id="module-simplebench.report.versions.v1.report.validate">
+<span id="simplebench-report-versions-v1-report-validate-module"></span><h2>simplebench.report.versions.v1.report.validate module<a class="headerlink" href="#module-simplebench.report.versions.v1.report.validate" title="Link to this heading">🔗</a></h2>
+<p>Validation functions for V1 report version.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.validate.case">
+<span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.report.validate.</span></span><span class="sig-name descname"><span class="pre">case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/validate.html#case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.validate.case" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate that the given object is a Case instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – The object to validate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the object is not a Case instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.validate.case_has_been_run">
+<span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.report.validate.</span></span><span class="sig-name descname"><span class="pre">case_has_been_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/validate.html#case_has_been_run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.validate.case_has_been_run" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate that the given Case instance has been run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>case</strong> – The Case instance to validate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the Case has not been run.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-simplebench.report.versions.v1.report">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.report.versions.v1.report" title="Link to this heading">🔗</a></h2>
+<p>V1 JSONReport classes</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.report.</span></span><span class="sig-name descname"><span class="pre">Report</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">variation_cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.results_info.ResultsInfo" title="simplebench.report.base.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">machine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.machine_info.MachineInfo" title="simplebench.report.base.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.report.Report" title="simplebench.report.base.report.Report"><code class="xref py py-class docutils literal notranslate"><span class="pre">Report</span></code></a></p>
+<p>Class representing a JSON report version 1.</p>
+<p>Initialize a Report base instance.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.ID" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON report ID property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.SCHEMA">
+<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.SCHEMA" title="Link to this definition">🔗</a></dt>
+<dd><p>alias of <a class="reference internal" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema" title="simplebench.report.versions.v1.report.report_schema.ReportSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReportSchema</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchReport::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON report type property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON report version number.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.description">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.description" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the description property.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.from_case">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.report.Report" title="simplebench.report.versions.v1.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.from_case" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a Report instance from a Case instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>case</strong> – The Case instance to create the Report from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Report instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.from_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.report.Report" title="simplebench.report.versions.v1.report.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.from_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a Report instance from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Dictionary containing the JSON report data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Report instance.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the version is not 1.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.group">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.group" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the group property.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.machine">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">machine</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.machine_info.MachineInfo" title="simplebench.report.base.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.machine" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the machine property.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.results">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">results</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.results_info.ResultsInfo" title="simplebench.report.base.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.results" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the results property.</p>
+<p>The results property is a list of Results instances.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.timestamp">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.timestamp" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the timestamp property.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.title">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.title" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the title property.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.to_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert the JSONReport instance to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary containing the JSON report data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.variation_cols">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_cols</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.variation_cols" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the variation_cols property.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.report.</span></span><span class="sig-name descname"><span class="pre">ReportSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.json_schema.JSONSchema" title="simplebench.report.base.json_schema.JSONSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></a></p>
+<p>Schema for the JSON reporter output (V1)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.ID">
+<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.ID" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON report schema ID URL for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.TYPE">
+<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchReport::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.TYPE" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON report schema type property value for version 1 reports.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.VERSION">
+<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.VERSION" title="Link to this definition">🔗</a></dt>
+<dd><p>The JSON report schema version number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.as_dict">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.as_dict" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a dictionary.</p>
+<p>It always returns a fresh copy of the schema dictionary to prevent accidental
+modifications.</p>
+<p>The caller can modify the returned dictionary as needed or cache it for performance.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_dict = ReportSchema.as_dict()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return dict[str, object]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.as_json">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a JSON-formatted string.</p>
+<blockquote>
+<div><p>It serializes the schema dictionary to a JSON string.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_json = ReportSchema.as_json()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a JSON-formatted string.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The JSON schema is as follows:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id2" title="Link to this code">🔗</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Report Schema (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBench JSON Report Schema (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The version of the JSON report schema&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type of the benchmark report&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBenchReport::V1&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timestamp of the benchmark report in ISO 8601 format (UTC)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;examples&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;2023-04-01T12:00:00Z&quot;</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group of the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title of the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description of the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;variation_cols&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation Columns&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation columns for the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Results&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Benchmark results&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;results-info.json&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;machine-info.json&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;title&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;description&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;variation_cols&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;results&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;machine&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
 </div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -616,6 +752,24 @@ modifications.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.report.versions.v1.report package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.report.report_schema">simplebench.report.versions.v1.report.report_schema module</a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema"><code class="docutils literal notranslate"><span class="pre">ReportSchema</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.ID"><code class="docutils literal notranslate"><span class="pre">ReportSchema.ID</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ReportSchema.TYPE</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ReportSchema.VERSION</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_json()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.report.validate">simplebench.report.versions.v1.report.validate module</a><ul>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.validate.case"><code class="docutils literal notranslate"><span class="pre">case()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.validate.case_has_been_run"><code class="docutils literal notranslate"><span class="pre">case_has_been_run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.report">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report"><code class="docutils literal notranslate"><span class="pre">Report</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.ID"><code class="docutils literal notranslate"><span class="pre">Report.ID</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.SCHEMA"><code class="docutils literal notranslate"><span class="pre">Report.SCHEMA</span></code></a></li>
@@ -641,7 +795,8 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.ReportSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_json()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

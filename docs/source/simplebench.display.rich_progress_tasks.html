@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.display.rich_progress_tasks package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,15 +257,17 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.display.rich_progress_tasks">
-<span id="simplebench-display-rich-progress-tasks-package"></span><h1>simplebench.display.rich_progress_tasks package<a class="headerlink" href="#module-simplebench.display.rich_progress_tasks" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-display-rich-progress-tasks-package">
+<h1>simplebench.display.rich_progress_tasks package<a class="headerlink" href="#simplebench-display-rich-progress-tasks-package" title="Link to this heading">🔗</a></h1>
+<section id="module-simplebench.display.rich_progress_tasks">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.display.rich_progress_tasks" title="Link to this heading">🔗</a></h2>
 <p>Rich progress tasks module.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.display.rich_progress_tasks.RichProgressTasks">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.display.rich_progress_tasks.</span></span><span class="sig-name descname"><span class="pre">RichProgressTasks</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.display.rich_progress_tasks.</span></span><span class="sig-name descname"><span class="pre">RichProgressTasks</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.verbosity.html#simplebench.enums.verbosity.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.enums.html#simplebench.enums.verbosity.Verbosity" title="simplebench.enums.verbosity.Verbosity"><span class="pre">Verbosity</span></a></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/console.html#rich.console.Console" title="(in Rich)"><span class="pre">Console</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
@@ -299,7 +301,7 @@ If None, a new Console will be created as needed. Defaults to None.</p></li>
 <dd><em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100.0</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.display.rich_task.rich_task.html#simplebench.display.rich_task.rich_task.RichTask" title="simplebench.display.rich_task.rich_task.RichTask"><span class="pre">RichTask</span></a></span></span><a class="reference internal" href="../_modules/simplebench/display/rich_progress_tasks/rich_progress_tasks.html#RichProgressTasks.add_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.add_task" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.display.rich_task.html#simplebench.display.rich_task.RichTask" title="simplebench.display.rich_task.rich_task.RichTask"><span class="pre">RichTask</span></a></span></span><a class="reference internal" href="../_modules/simplebench/display/rich_progress_tasks/rich_progress_tasks.html#RichProgressTasks.add_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.add_task" title="Link to this definition">🔗</a></dt>
 <dd><p>Add a new task to the Rich Progress display.</p>
 <p>If a task with the same name already exists, a <a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><code class="xref py py-exc docutils literal notranslate"><span class="pre">SimpleBenchValueError</span></code></a>
 is raised.</p>
@@ -338,7 +340,7 @@ is raised.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.display.rich_task.rich_task.html#simplebench.display.rich_task.rich_task.RichTask" title="simplebench.display.rich_task.rich_task.RichTask"><span class="pre">RichTask</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/display/rich_progress_tasks/rich_progress_tasks.html#RichProgressTasks.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.get" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.display.rich_task.html#simplebench.display.rich_task.RichTask" title="simplebench.display.rich_task.rich_task.RichTask"><span class="pre">RichTask</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/display/rich_progress_tasks/rich_progress_tasks.html#RichProgressTasks.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.get" title="Link to this definition">🔗</a></dt>
 <dd><p>Get a task by name or return None if not found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -355,7 +357,7 @@ is raised.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.display.rich_progress_tasks.RichProgressTasks.is_running">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_running</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.is_running" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_running</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.is_running" title="Link to this definition">🔗</a></dt>
 <dd><p>If the Rich Progress display is currently running.</p>
 <p>The display is considered running if the start() method has been called
 and the stop() method has not yet been called.</p>
@@ -373,7 +375,7 @@ and the stop() method has not yet been called.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">completed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.display.rich_task.rich_task.html#simplebench.display.rich_task.rich_task.RichTask" title="simplebench.display.rich_task.rich_task.RichTask"><span class="pre">RichTask</span></a></span></span><a class="reference internal" href="../_modules/simplebench/display/rich_progress_tasks/rich_progress_tasks.html#RichProgressTasks.new_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.new_task" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.display.rich_task.html#simplebench.display.rich_task.RichTask" title="simplebench.display.rich_task.rich_task.RichTask"><span class="pre">RichTask</span></a></span></span><a class="reference internal" href="../_modules/simplebench/display/rich_progress_tasks/rich_progress_tasks.html#RichProgressTasks.new_task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.new_task" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a new RichTask.</p>
 <p>The new task is initialized with the given parameters,
 added to the task manager index, and a <code class="xref py py-class docutils literal notranslate"><span class="pre">RichTask</span></code>
@@ -399,7 +401,7 @@ instance returned.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.display.rich_progress_tasks.RichProgressTasks.progress">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">progress</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/progress.html#rich.progress.Progress" title="(in Rich)"><span class="pre">Progress</span></a></em><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.progress" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">progress</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://rich.readthedocs.io/en/latest/reference/progress.html#rich.progress.Progress" title="(in Rich)"><span class="pre">Progress</span></a></em><a class="headerlink" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.progress" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the Rich Progress instance.</p>
 </dd></dl>
 
@@ -417,26 +419,6 @@ instance returned.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html">simplebench.display.rich_progress_tasks.rich_progress_tasks module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.add_task"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.add_task()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.clear"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.clear()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.get"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.get()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.is_running"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.is_running</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.new_task"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.new_task()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.progress"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.progress</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.start"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.start()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.display.rich_progress_tasks.rich_progress_tasks.html#simplebench.display.rich_progress_tasks.rich_progress_tasks.RichProgressTasks.stop"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.stop()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -478,6 +460,7 @@ instance returned.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.display.rich_progress_tasks package</a><ul>
+<li><a class="reference internal" href="#module-simplebench.display.rich_progress_tasks">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.display.rich_progress_tasks.RichProgressTasks"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.add_task"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.add_task()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.clear"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.clear()</span></code></a></li>
@@ -489,7 +472,8 @@ instance returned.</p>
 <li><a class="reference internal" href="#simplebench.display.rich_progress_tasks.RichProgressTasks.stop"><code class="docutils literal notranslate"><span class="pre">RichProgressTasks.stop()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

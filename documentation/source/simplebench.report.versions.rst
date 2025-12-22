@@ -1,11 +1,6 @@
 simplebench.report.versions package
 ===================================
 
-.. automodule:: simplebench.report.versions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -13,3 +8,11 @@ Subpackages
    :maxdepth: 4
 
    simplebench.report.versions.v1
+
+Module contents
+---------------
+
+.. automodule:: simplebench.report.versions
+   :members:
+   :show-inheritance:
+   :undoc-members:

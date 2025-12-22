@@ -1,17 +1,29 @@
 simplebench.vcs.git package
 ===========================
 
-.. automodule:: simplebench.vcs.git
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.vcs.git.exit\_codes module
+--------------------------------------
 
-   simplebench.vcs.git.exit_codes
-   simplebench.vcs.git.git
-   simplebench.vcs.git.git_info
+.. automodule:: simplebench.vcs.git.exit_codes
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.vcs.git.git\_info module
+------------------------------------
+
+.. automodule:: simplebench.vcs.git.git_info
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.vcs.git
+   :members:
+   :show-inheritance:
+   :undoc-members:

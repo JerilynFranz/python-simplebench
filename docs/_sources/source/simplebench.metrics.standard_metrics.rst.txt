@@ -1,0 +1,7 @@
+simplebench.metrics.standard\_metrics module
+============================================
+
+.. automodule:: simplebench.metrics.standard_metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:

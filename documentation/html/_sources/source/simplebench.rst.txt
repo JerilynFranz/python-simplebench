@@ -23,7 +23,7 @@ Subpackages
    simplebench.environment
    simplebench.exceptions
    simplebench.metadata
-   simplebench.metric
+   simplebench.metrics
    simplebench.report
    simplebench.reporters
    simplebench.session

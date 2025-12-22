@@ -1,11 +1,6 @@
 simplebench.case package
 ========================
 
-.. automodule:: simplebench.case
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -18,9 +13,26 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.case.function\_runner module
+----------------------------------------
 
-   simplebench.case.case
-   simplebench.case.function_runner
-   simplebench.case.validate
+.. automodule:: simplebench.case.function_runner
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.case.validate module
+--------------------------------
+
+.. automodule:: simplebench.case.validate
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.case
+   :members:
+   :show-inheritance:
+   :undoc-members:

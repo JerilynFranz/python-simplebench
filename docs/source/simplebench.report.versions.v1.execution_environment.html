@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.report.versions.v1.execution_environment package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,19 +257,21 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.report.versions.v1.execution_environment">
-<span id="simplebench-report-versions-v1-execution-environment-package"></span><h1>simplebench.report.versions.v1.execution_environment package<a class="headerlink" href="#module-simplebench.report.versions.v1.execution_environment" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-report-versions-v1-execution-environment-package">
+<h1>simplebench.report.versions.v1.execution_environment package<a class="headerlink" href="#simplebench-report-versions-v1-execution-environment-package" title="Link to this heading">🔗</a></h1>
+<section id="module-simplebench.report.versions.v1.execution_environment">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.report.versions.v1.execution_environment" title="Link to this heading">🔗</a></h2>
 <p>Execution environment for the MachineInfo class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.execution_environment.ExecutionEnvironment">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.execution_environment.</span></span><span class="sig-name descname"><span class="pre">ExecutionEnvironment</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.execution_environment.</span></span><span class="sig-name descname"><span class="pre">ExecutionEnvironment</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">python</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.base.python_info.html#simplebench.report.base.python_info.PythonInfo" title="simplebench.report.base.python_info.PythonInfo"><span class="pre">PythonInfo</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">python</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.python_info.PythonInfo" title="simplebench.report.base.python_info.PythonInfo"><span class="pre">PythonInfo</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/execution_environment/execution_environment.html#ExecutionEnvironment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.execution_environment.html#simplebench.report.base.execution_environment.ExecutionEnvironment" title="simplebench.report.base.execution_environment.ExecutionEnvironment"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExecutionEnvironment</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.execution_environment.ExecutionEnvironment" title="simplebench.report.base.execution_environment.ExecutionEnvironment"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExecutionEnvironment</span></code></a></p>
 <p>Implementation of the ExecutionEnvironment interface for V1.</p>
 <p>Initialize the ExecutionEnvironment with Python info.</p>
 <p>In the V1 implementation, the python parameter is required and must be of
@@ -284,14 +286,14 @@ type PythonInfo.</p>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.ALLOWED_ENVIRONMENTS">
-<span class="sig-name descname"><span class="pre">ALLOWED_ENVIRONMENTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.report.protocols.environment.html#simplebench.report.protocols.environment.Environment" title="simplebench.report.protocols.environment.Environment"><span class="pre">Environment</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'python':</span> <span class="pre">&lt;class</span> <span class="pre">'simplebench.report.versions.v1.python_info.python_info.PythonInfo'&gt;}</span></em><a class="headerlink" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.ALLOWED_ENVIRONMENTS" title="Link to this definition">🔗</a></dt>
+<span class="sig-name descname"><span class="pre">ALLOWED_ENVIRONMENTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.14)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.report.protocols.html#simplebench.report.protocols.environment.Environment" title="simplebench.report.protocols.environment.Environment"><span class="pre">Environment</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'python':</span> <span class="pre">&lt;class</span> <span class="pre">'simplebench.report.versions.v1.python_info.python_info.PythonInfo'&gt;}</span></em><a class="headerlink" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.ALLOWED_ENVIRONMENTS" title="Link to this definition">🔗</a></dt>
 <dd><p>Dictionary mapping known execution environment types to their corresponding Environment subclasses.</p>
 <p>This must be overridden by subclasses to include the allowed execution environment types.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.hash_id">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.hash_id" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.hash_id" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the hash_id property.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -302,7 +304,7 @@ type PythonInfo.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.python">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">python</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.base.python_info.html#simplebench.report.base.python_info.PythonInfo" title="simplebench.report.base.python_info.PythonInfo"><span class="pre">PythonInfo</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.python" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">python</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.base.html#simplebench.report.base.python_info.PythonInfo" title="simplebench.report.base.python_info.PythonInfo"><span class="pre">PythonInfo</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.python" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the Python property.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -324,22 +326,6 @@ type PythonInfo.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.execution_environment.execution_environment.html">simplebench.report.versions.v1.execution_environment.execution_environment module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.execution_environment.execution_environment.html#simplebench.report.versions.v1.execution_environment.execution_environment.ExecutionEnvironment"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.execution_environment.execution_environment.html#simplebench.report.versions.v1.execution_environment.execution_environment.ExecutionEnvironment.ALLOWED_ENVIRONMENTS"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment.ALLOWED_ENVIRONMENTS</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.execution_environment.execution_environment.html#simplebench.report.versions.v1.execution_environment.execution_environment.ExecutionEnvironment.hash_id"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment.hash_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.execution_environment.execution_environment.html#simplebench.report.versions.v1.execution_environment.execution_environment.ExecutionEnvironment.python"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment.python</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.execution_environment.execution_environment.html#simplebench.report.versions.v1.execution_environment.execution_environment.ExecutionEnvironment.to_dict"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment.to_dict()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -381,6 +367,7 @@ type PythonInfo.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.report.versions.v1.execution_environment package</a><ul>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.execution_environment">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.ALLOWED_ENVIRONMENTS"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment.ALLOWED_ENVIRONMENTS</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.hash_id"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment.hash_id</span></code></a></li>
@@ -388,7 +375,8 @@ type PythonInfo.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.execution_environment.ExecutionEnvironment.to_dict"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironment.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

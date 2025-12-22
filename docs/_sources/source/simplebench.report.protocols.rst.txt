@@ -1,15 +1,21 @@
 simplebench.report.protocols package
 ====================================
 
-.. automodule:: simplebench.report.protocols
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.report.protocols.environment module
+-----------------------------------------------
 
-   simplebench.report.protocols.environment
+.. automodule:: simplebench.report.protocols.environment
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.report.protocols
+   :members:
+   :show-inheritance:
+   :undoc-members:

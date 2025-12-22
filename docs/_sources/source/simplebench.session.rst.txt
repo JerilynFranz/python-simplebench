@@ -1,16 +1,21 @@
 simplebench.session package
 ===========================
 
-.. automodule:: simplebench.session
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.session.validators module
+-------------------------------------
 
-   simplebench.session.session
-   simplebench.session.validators
+.. automodule:: simplebench.session.validators
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.session
+   :members:
+   :show-inheritance:
+   :undoc-members:

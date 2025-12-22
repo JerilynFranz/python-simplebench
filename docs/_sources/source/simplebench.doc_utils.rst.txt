@@ -1,17 +1,37 @@
 simplebench.doc\_utils package
 ==============================
 
-.. automodule:: simplebench.doc_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.doc\_utils.enum\_docstrings module
+----------------------------------------------
 
-   simplebench.doc_utils.enum_docstrings
-   simplebench.doc_utils.format_docstring
-   simplebench.doc_utils.format_json_codeblock
+.. automodule:: simplebench.doc_utils.enum_docstrings
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.doc\_utils.format\_docstring module
+-----------------------------------------------
+
+.. automodule:: simplebench.doc_utils.format_docstring
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.doc\_utils.format\_json\_codeblock module
+-----------------------------------------------------
+
+.. automodule:: simplebench.doc_utils.format_json_codeblock
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.doc_utils
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,31 @@
+simplebench.metrics package
+===========================
+
+.. automodule:: simplebench.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   simplebench.metrics.metric
+   simplebench.metrics.metric_type
+   simplebench.metrics.metric_types
+   simplebench.metrics.metric_types_registry
+   simplebench.metrics.metrics
+   simplebench.metrics.metrics_registry
+   simplebench.metrics.metrics_selection
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   simplebench.metrics.metric_category
+   simplebench.metrics.standard_metric_types
+   simplebench.metrics.standard_metrics

@@ -674,8 +674,8 @@ returns list[Any] which can be narrowed with explicit type annotation.</p>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<p>Single type (automatic inference):</p>
+<dl>
+<dt>Examples:</dt><dd><p>Single type (automatic inference):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="n">validate_iterable_of_type</span><span class="p">([</span><span class="s1">&#39;Alice&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 <span class="c1"># Type: list[str]</span>
 </pre></div>
@@ -687,6 +687,8 @@ returns list[Any] which can be narrowed with explicit type annotation.</p>
 <span class="c1"># Type: list[str | int]</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1109,8 +1111,8 @@ returns list[Any] which can be narrowed with explicit type annotation.</p>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<p>Single type (automatic inference):</p>
+<dl>
+<dt>Examples:</dt><dd><p>Single type (automatic inference):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="n">validate_sequence_of_type</span><span class="p">([</span><span class="s1">&#39;Alice&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 <span class="c1"># Type: list[str]</span>
 </pre></div>
@@ -1122,6 +1124,8 @@ returns list[Any] which can be narrowed with explicit type annotation.</p>
 <span class="c1"># Type: list[str | int]</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1211,14 +1215,16 @@ the returned value for static type checking if a single type is provided.</p>
 type-narrow the type of the returned type by declaring the untupled types by
 assigning the return value to a variable with an explicit type annotation.</p>
 <p>The value itself is always returned unchanged if it passes the validation.</p>
-<p class="rubric">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mixed</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
+<p>Example:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mixed</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">validate_type</span><span class="p">(</span>
     <span class="n">value</span><span class="o">=</span><span class="n">some_value</span><span class="p">,</span>
     <span class="n">expected</span><span class="o">=</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mixed&#39;</span><span class="p">,</span>
     <span class="n">error_tag</span><span class="o">=</span><span class="n">ErrorTag</span><span class="o">.</span><span class="n">INVALID_EXPECTED_ARG_TYPE</span><span class="p">)</span>
 </pre></div>
 </div>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

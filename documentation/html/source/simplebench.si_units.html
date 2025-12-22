@@ -412,8 +412,10 @@ and the benefit of simplicity outweighs the risk of false positives.</p>
 <p>We could do a more complex check by looking for known SI base units, but this would
 require maintaining a list of known base units and would still not be exhaustive.</p>
 <p>If no valid SI prefix is found, the unit is assumed to already be the base unit.</p>
-<p class="rubric">Example</p>
-<p><code class="docutils literal notranslate"><span class="pre">si_unit_base('ns')</span></code> returns <code class="docutils literal notranslate"><span class="pre">'s'</span></code></p>
+<dl class="simple">
+<dt>Example:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">si_unit_base('ns')</span></code> returns <code class="docutils literal notranslate"><span class="pre">'s'</span></code></p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The SI unit to get the base unit from.</p>

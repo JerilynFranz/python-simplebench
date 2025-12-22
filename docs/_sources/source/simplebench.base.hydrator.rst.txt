@@ -1,15 +1,10 @@
 simplebench.base.hydrator package
 =================================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.base.hydrator
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.base.hydrator.hydrator
+   :undoc-members:

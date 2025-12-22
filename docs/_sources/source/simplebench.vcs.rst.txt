@@ -1,11 +1,6 @@
 simplebench.vcs package
 =======================
 
-.. automodule:: simplebench.vcs
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -18,9 +13,34 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.vcs.utils module
+----------------------------
 
-   simplebench.vcs.utils
-   simplebench.vcs.vcs_info
-   simplebench.vcs.vcs_type
+.. automodule:: simplebench.vcs.utils
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.vcs.vcs\_info module
+--------------------------------
+
+.. automodule:: simplebench.vcs.vcs_info
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.vcs.vcs\_type module
+--------------------------------
+
+.. automodule:: simplebench.vcs.vcs_type
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.vcs
+   :members:
+   :show-inheritance:
+   :undoc-members:

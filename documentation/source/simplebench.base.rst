@@ -1,11 +1,6 @@
 simplebench.base package
 ========================
 
-.. automodule:: simplebench.base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -14,3 +9,11 @@ Subpackages
 
    simplebench.base.hydrator
    simplebench.base.lazy_property
+
+Module contents
+---------------
+
+.. automodule:: simplebench.base
+   :members:
+   :show-inheritance:
+   :undoc-members:

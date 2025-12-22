@@ -1,15 +1,10 @@
 simplebench.cli package
 =======================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.cli
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.cli.cli
+   :undoc-members:

@@ -1,17 +1,29 @@
 simplebench.vcs.hg package
 ==========================
 
-.. automodule:: simplebench.vcs.hg
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.vcs.hg.exit\_codes module
+-------------------------------------
 
-   simplebench.vcs.hg.exit_codes
-   simplebench.vcs.hg.hg
-   simplebench.vcs.hg.hg_info
+.. automodule:: simplebench.vcs.hg.exit_codes
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.vcs.hg.hg\_info module
+----------------------------------
+
+.. automodule:: simplebench.vcs.hg.hg_info
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.vcs.hg
+   :members:
+   :show-inheritance:
+   :undoc-members:

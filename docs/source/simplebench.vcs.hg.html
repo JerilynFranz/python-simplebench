@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html">
         <link rel="prefetch" href="../_static/simplebench-logo.svg" as="image">
 
-    <!-- Generated with Sphinx 8.1.3 and Furo 2025.09.25 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.09.25 -->
         <title>simplebench.vcs.hg package - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=d998a142" />
@@ -257,12 +257,171 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="module-simplebench.vcs.hg">
-<span id="simplebench-vcs-hg-package"></span><h1>simplebench.vcs.hg package<a class="headerlink" href="#module-simplebench.vcs.hg" title="Link to this heading">🔗</a></h1>
+          <section id="simplebench-vcs-hg-package">
+<h1>simplebench.vcs.hg package<a class="headerlink" href="#simplebench-vcs-hg-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.vcs.hg.exit_codes">
+<span id="simplebench-vcs-hg-exit-codes-module"></span><h2>simplebench.vcs.hg.exit_codes module<a class="headerlink" href="#module-simplebench.vcs.hg.exit_codes" title="Link to this heading">🔗</a></h2>
+<p>Mercurial (Hg) exit codes and error tags.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.hg.exit_codes.</span></span><span class="sig-name descname"><span class="pre">HgExitCode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/exit_codes.html#HgExitCode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></a></p>
+<p>Exit codes for Mercurial (hg) commands.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.CANCELLED">
+<span class="sig-name descname"><span class="pre">CANCELLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">250</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.CANCELLED" title="Link to this definition">🔗</a></dt>
+<dd><p>The operation was cancelled by the user.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.CONFIG_ERROR">
+<span class="sig-name descname"><span class="pre">CONFIG_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.CONFIG_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A configuration-related error occurred.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.GENERAL_ERROR">
+<span class="sig-name descname"><span class="pre">GENERAL_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.GENERAL_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A general error occurred.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.HOOK_ABORT_ERROR">
+<span class="sig-name descname"><span class="pre">HOOK_ABORT_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">40</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.HOOK_ABORT_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A validation hook failed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.INPUT_OR_PARSE_ERROR">
+<span class="sig-name descname"><span class="pre">INPUT_OR_PARSE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.INPUT_OR_PARSE_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A user input or a configuration-related parsing error occurred.
+It means that the command was used incorrectly.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.INTERVENTION_REQUIRED">
+<span class="sig-name descname"><span class="pre">INTERVENTION_REQUIRED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">240</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.INTERVENTION_REQUIRED" title="Link to this definition">🔗</a></dt>
+<dd><p>User intervention is required to continue.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.REMOTE_ERROR">
+<span class="sig-name descname"><span class="pre">REMOTE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.REMOTE_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A remote repository related error occurred.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.REPO_NOT_FOUND">
+<span class="sig-name descname"><span class="pre">REPO_NOT_FOUND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">255</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.REPO_NOT_FOUND" title="Link to this definition">🔗</a></dt>
+<dd><p>The specified directory is not a Mercurial repository.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.SECURITY_ERROR">
+<span class="sig-name descname"><span class="pre">SECURITY_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">150</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.SECURITY_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A security-related error occurred.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.STATE_ERROR">
+<span class="sig-name descname"><span class="pre">STATE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.STATE_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>The repository is in an invalid state for the requested operation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.STORAGE_ERROR">
+<span class="sig-name descname"><span class="pre">STORAGE_ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.STORAGE_ERROR" title="Link to this definition">🔗</a></dt>
+<dd><p>A storage-related error occurred.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.HgExitCode.SUCCESS">
+<span class="sig-name descname"><span class="pre">SUCCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.HgExitCode.SUCCESS" title="Link to this definition">🔗</a></dt>
+<dd><p>The command completed successfully.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.exit_codes.exit_code_to_name">
+<span class="sig-prename descclassname"><span class="pre">simplebench.vcs.hg.exit_codes.</span></span><span class="sig-name descname"><span class="pre">exit_code_to_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/hg/exit_codes.html#exit_code_to_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.exit_codes.exit_code_to_name" title="Link to this definition">🔗</a></dt>
+<dd><p>Convert an hg exit code to its name.</p>
+<p>If known, returns the name of the exit code. If unknown, returns “UNKNOWN_EXIT_CODE: {value}”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>code</strong> – The exit code to convert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The name of the exit code, or “UKNOWN_EXIT_CODE: {value}” if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-simplebench.vcs.hg.hg_info">
+<span id="simplebench-vcs-hg-hg-info-module"></span><h2>simplebench.vcs.hg.hg_info module<a class="headerlink" href="#module-simplebench.vcs.hg.hg_info" title="Link to this heading">🔗</a></h2>
+<p>Version Control System record for Hg (Mercurial).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.hg_info.HgInfo">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.hg.hg_info.</span></span><span class="sig-name descname"><span class="pre">HgInfo</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">commit_datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dirty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg_info.html#HgInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.hg_info.HgInfo" title="Link to this definition">🔗</a></dt>
+<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
+<p>Dataclass to hold Hg (Mercurial) repository information.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>branch (str): The current branch name.
+commit_id (str): The current changeset hash.
+date (str): The date of the current commit in ISO format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
+</dd>
+</dl>
+<p>Initialize HgInfo with branch, commit, commit_datetime, and dirty status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>branch</strong> – The current branch name.</p></li>
+<li><p><strong>commit_id</strong> – The current commit hash.</p></li>
+<li><p><strong>commit_datetime</strong> – The date of the current commit in ISO format.</p></li>
+<li><p><strong>dirty</strong> – Whether there are uncommitted changes in the working directory.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.vcs.hg.hg_info.HgInfo.validate_commit_id">
+<span class="sig-name descname"><span class="pre">validate_commit_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commit_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg_info.html#HgInfo.validate_commit_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.hg_info.HgInfo.validate_commit_id" title="Link to this definition">🔗</a></dt>
+<dd><p>Validate the commit_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>commit_id</strong> – The commit ID to validate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If commit_id is not a string or vcs_type is invalid.</p></li>
+<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If commit_id does not match expected format or length.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-simplebench.vcs.hg">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.vcs.hg" title="Link to this heading">🔗</a></h2>
 <p>Hg (Mercurial) Version Control System utilities.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.hg.Hg">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.hg.</span></span><span class="sig-name descname"><span class="pre">Hg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.Hg" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.hg.</span></span><span class="sig-name descname"><span class="pre">Hg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.Hg" title="Link to this definition">🔗</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Mercurial (hg) Version Control System facade.</p>
 <p>Initialize the Hg facade.</p>
@@ -275,7 +434,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo" title="simplebench.vcs.hg.hg_info.HgInfo"><span class="pre">HgInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.Hg.head" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.vcs.hg.hg_info.HgInfo" title="simplebench.vcs.hg.hg_info.HgInfo"><span class="pre">HgInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg.html#Hg.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.Hg.head" title="Link to this definition">🔗</a></dt>
 <dd><p>Fetch hg repository information for the current HEAD.</p>
 <p>The result is parsed from ‘hg id’ command</p>
 <dl class="field-list simple">
@@ -296,7 +455,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.hg.Hg.hg_cwd">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hg_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.hg.Hg.hg_cwd" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hg_cwd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.vcs.hg.Hg.hg_cwd" title="Link to this definition">🔗</a></dt>
 <dd><p>The current hg working directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -307,7 +466,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.hg.Hg.is_available">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.hg.Hg.is_available" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_available</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></em><a class="headerlink" href="#simplebench.vcs.hg.Hg.is_available" title="Link to this definition">🔗</a></dt>
 <dd><p>Return whether the ‘hg’ command line tool is available.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -516,7 +675,7 @@ valid hg repository.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.vcs.hg.Hg.version">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.hg.Hg.version" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.vcs.hg.Hg.version" title="Link to this definition">🔗</a></dt>
 <dd><p>Return the hg version string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -535,7 +694,7 @@ valid hg repository.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.vcs.hg.HgInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.hg.</span></span><span class="sig-name descname"><span class="pre">HgInfo</span></span><span class="sig-paren">(</span>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.vcs.hg.</span></span><span class="sig-name descname"><span class="pre">HgInfo</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">branch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
@@ -545,52 +704,15 @@ valid hg repository.</p>
 </dl>
 
 <span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/vcs/hg/hg_info.html#HgInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.vcs.hg.HgInfo" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.vcs_info.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="simplebench.vcs.html#simplebench.vcs.vcs_info.VCSInfo" title="simplebench.vcs.vcs_info.VCSInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">VCSInfo</span></code></a></p>
 <p>Dataclass to hold Hg (Mercurial) repository information.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.hg.HgInfo.branch">
-<span class="sig-name descname"><span class="pre">branch</span></span><a class="headerlink" href="#simplebench.vcs.hg.HgInfo.branch" title="Link to this definition">🔗</a></dt>
-<dd><p>The current branch name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>branch (str): The current branch name.
+commit_id (str): The current changeset hash.
+date (str): The date of the current commit in ISO format.
+dirty (bool): Whether there are uncommitted changes in the working directory.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.hg.HgInfo.commit_id">
-<span class="sig-name descname"><span class="pre">commit_id</span></span><a class="headerlink" href="#simplebench.vcs.hg.HgInfo.commit_id" title="Link to this definition">🔗</a></dt>
-<dd><p>The current changeset hash.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.hg.HgInfo.date">
-<span class="sig-name descname"><span class="pre">date</span></span><a class="headerlink" href="#simplebench.vcs.hg.HgInfo.date" title="Link to this definition">🔗</a></dt>
-<dd><p>The date of the current commit in ISO format.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.vcs.hg.HgInfo.dirty">
-<span class="sig-name descname"><span class="pre">dirty</span></span><a class="headerlink" href="#simplebench.vcs.hg.HgInfo.dirty" title="Link to this definition">🔗</a></dt>
-<dd><p>Whether there are uncommitted changes in the working directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
-</dd>
-</dl>
-</dd></dl>
-
 <p>Initialize HgInfo with branch, commit, commit_datetime, and dirty status.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -621,59 +743,6 @@ valid hg repository.</p>
 
 </dd></dl>
 
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html">simplebench.vcs.hg.exit_codes module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode"><code class="docutils literal notranslate"><span class="pre">HgExitCode</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.CANCELLED"><code class="docutils literal notranslate"><span class="pre">HgExitCode.CANCELLED</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.CONFIG_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.CONFIG_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.GENERAL_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.GENERAL_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.HOOK_ABORT_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.HOOK_ABORT_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.INPUT_OR_PARSE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.INPUT_OR_PARSE_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.INTERVENTION_REQUIRED"><code class="docutils literal notranslate"><span class="pre">HgExitCode.INTERVENTION_REQUIRED</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.REMOTE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.REMOTE_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.REPO_NOT_FOUND"><code class="docutils literal notranslate"><span class="pre">HgExitCode.REPO_NOT_FOUND</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.SECURITY_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.SECURITY_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.STATE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.STATE_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.STORAGE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.STORAGE_ERROR</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.HgExitCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">HgExitCode.SUCCESS</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.exit_codes.html#simplebench.vcs.hg.exit_codes.exit_code_to_name"><code class="docutils literal notranslate"><span class="pre">exit_code_to_name()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.hg.hg.html">simplebench.vcs.hg.hg module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg"><code class="docutils literal notranslate"><span class="pre">Hg</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.head"><code class="docutils literal notranslate"><span class="pre">Hg.head()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.hg_cwd"><code class="docutils literal notranslate"><span class="pre">Hg.hg_cwd</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.is_available"><code class="docutils literal notranslate"><span class="pre">Hg.is_available</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.is_dirty"><code class="docutils literal notranslate"><span class="pre">Hg.is_dirty()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.is_repo"><code class="docutils literal notranslate"><span class="pre">Hg.is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.root"><code class="docutils literal notranslate"><span class="pre">Hg.root()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.run"><code class="docutils literal notranslate"><span class="pre">Hg.run()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.status"><code class="docutils literal notranslate"><span class="pre">Hg.status()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.validate_available"><code class="docutils literal notranslate"><span class="pre">Hg.validate_available()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.validate_is_repo"><code class="docutils literal notranslate"><span class="pre">Hg.validate_is_repo()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg.html#simplebench.vcs.hg.hg.Hg.version"><code class="docutils literal notranslate"><span class="pre">Hg.version</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html">simplebench.vcs.hg.hg_info module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo.branch"><code class="docutils literal notranslate"><span class="pre">HgInfo.branch</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.commit_id</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo.date"><code class="docutils literal notranslate"><span class="pre">HgInfo.date</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo.dirty"><code class="docutils literal notranslate"><span class="pre">HgInfo.dirty</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.vcs.hg.hg_info.html#simplebench.vcs.hg.hg_info.HgInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.validate_commit_id()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
 </section>
 </section>
 
@@ -715,6 +784,34 @@ valid hg repository.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.vcs.hg package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.vcs.hg.exit_codes">simplebench.vcs.hg.exit_codes module</a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode"><code class="docutils literal notranslate"><span class="pre">HgExitCode</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.CANCELLED"><code class="docutils literal notranslate"><span class="pre">HgExitCode.CANCELLED</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.CONFIG_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.CONFIG_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.GENERAL_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.GENERAL_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.HOOK_ABORT_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.HOOK_ABORT_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.INPUT_OR_PARSE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.INPUT_OR_PARSE_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.INTERVENTION_REQUIRED"><code class="docutils literal notranslate"><span class="pre">HgExitCode.INTERVENTION_REQUIRED</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.REMOTE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.REMOTE_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.REPO_NOT_FOUND"><code class="docutils literal notranslate"><span class="pre">HgExitCode.REPO_NOT_FOUND</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.SECURITY_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.SECURITY_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.STATE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.STATE_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.STORAGE_ERROR"><code class="docutils literal notranslate"><span class="pre">HgExitCode.STORAGE_ERROR</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.HgExitCode.SUCCESS"><code class="docutils literal notranslate"><span class="pre">HgExitCode.SUCCESS</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simplebench.vcs.hg.exit_codes.exit_code_to_name"><code class="docutils literal notranslate"><span class="pre">exit_code_to_name()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.vcs.hg.hg_info">simplebench.vcs.hg.hg_info module</a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.hg.hg_info.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a><ul>
+<li><a class="reference internal" href="#simplebench.vcs.hg.hg_info.HgInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.validate_commit_id()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-simplebench.vcs.hg">Module contents</a><ul>
 <li><a class="reference internal" href="#simplebench.vcs.hg.Hg"><code class="docutils literal notranslate"><span class="pre">Hg</span></code></a><ul>
 <li><a class="reference internal" href="#simplebench.vcs.hg.Hg.head"><code class="docutils literal notranslate"><span class="pre">Hg.head()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.hg.Hg.hg_cwd"><code class="docutils literal notranslate"><span class="pre">Hg.hg_cwd</span></code></a></li>
@@ -730,14 +827,11 @@ valid hg repository.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#simplebench.vcs.hg.HgInfo"><code class="docutils literal notranslate"><span class="pre">HgInfo</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.vcs.hg.HgInfo.branch"><code class="docutils literal notranslate"><span class="pre">HgInfo.branch</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.hg.HgInfo.commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.commit_id</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.hg.HgInfo.date"><code class="docutils literal notranslate"><span class="pre">HgInfo.date</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.vcs.hg.HgInfo.dirty"><code class="docutils literal notranslate"><span class="pre">HgInfo.dirty</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.vcs.hg.HgInfo.validate_commit_id"><code class="docutils literal notranslate"><span class="pre">HgInfo.validate_commit_id()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

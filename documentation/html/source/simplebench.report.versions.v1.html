@@ -1156,7 +1156,7 @@ JSON raw data block. It must conform to the <code class="xref py py-class docuti
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.Report.from_case">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.Report" title="simplebench.report.versions.v1.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.Report.from_case" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.Report" title="simplebench.report.versions.v1.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.Report.from_case" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a Report instance from a Case instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1747,8 +1747,10 @@ to use NaN or inf values that cannot be easily represented in JSON.</p>
 <dd><p>Get the semantic type of the stats block.</p>
 <p>The semantic type is a namespaced identifier that describes the type of
 the data being measured (e.g., “time/seconds”, “memory/bytes”).</p>
-<p class="rubric">Example</p>
-<p>simplebench_std::time_per_operation</p>
+<p>Example:</p>
+<blockquote>
+<div><p>simplebench_std::time_per_operation</p>
+</div></blockquote>
 <p>It must be a valid namespaced identifier, which means it must be a non-empty string
 that conforms to the namespaced identifier pattern:</p>
 <blockquote>
@@ -1990,7 +1992,7 @@ if omitted, they are assumed to be the V1 <code class="xref py py-attr docutils 
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">ValueBlockSchema.VERSION</span></code> constants.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="simplebench.report.versions.v1.types.value_block_dict.html#simplebench.report.versions.v1.types.value_block_dict.ValueBlockData" title="simplebench.report.versions.v1.types.value_block_dict.ValueBlockData"><em>ValueBlockData</em></a>) – Dictionary containing the JSON results data.</p>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ValueBlockData" title="simplebench.report.versions.v1.types.ValueBlockData"><em>ValueBlockData</em></a>) – Dictionary containing the JSON results data.</p>
 </dd>
 <dt class="field-even">Return ValueBlock<span class="colon">:</span></dt>
 <dd class="field-even"><p>A ValueBlock instance.</p>

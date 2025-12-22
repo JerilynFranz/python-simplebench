@@ -1,15 +1,21 @@
 simplebench.timers package
 ==========================
 
-.. automodule:: simplebench.timers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.timers.info module
+------------------------------
 
-   simplebench.timers.info
+.. automodule:: simplebench.timers.info
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.timers
+   :members:
+   :show-inheritance:
+   :undoc-members:

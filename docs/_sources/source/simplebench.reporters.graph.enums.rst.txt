@@ -1,15 +1,21 @@
 simplebench.reporters.graph.enums package
 =========================================
 
-.. automodule:: simplebench.reporters.graph.enums
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.graph.enums.image\_type module
+----------------------------------------------------
 
-   simplebench.reporters.graph.enums.image_type
+.. automodule:: simplebench.reporters.graph.enums.image_type
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.graph.enums
+   :members:
+   :show-inheritance:
+   :undoc-members:

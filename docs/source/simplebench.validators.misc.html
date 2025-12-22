@@ -912,8 +912,8 @@ returns list[Any] which can be narrowed with explicit type annotation.</p>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<p>Single type (automatic inference):</p>
+<dl>
+<dt>Examples:</dt><dd><p>Single type (automatic inference):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">names</span> <span class="o">=</span> <span class="n">validate_sequence_of_type</span><span class="p">([</span><span class="s1">&#39;Alice&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;names&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 <span class="c1"># Type: list[str]</span>
 </pre></div>
@@ -925,6 +925,8 @@ returns list[Any] which can be narrowed with explicit type annotation.</p>
 <span class="c1"># Type: list[str | int]</span>
 </pre></div>
 </div>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

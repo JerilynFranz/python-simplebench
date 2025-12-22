@@ -1,15 +1,10 @@
 simplebench.reporters.graph.scatterplot.reporter.options package
 ================================================================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.reporters.graph.scatterplot.reporter.options
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.reporters.graph.scatterplot.reporter.options.options
+   :undoc-members:

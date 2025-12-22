@@ -1,17 +1,29 @@
 simplebench.report.versions.v1.report package
 =============================================
 
-.. automodule:: simplebench.report.versions.v1.report
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.report.versions.v1.report.report\_schema module
+-----------------------------------------------------------
 
-   simplebench.report.versions.v1.report.report
-   simplebench.report.versions.v1.report.report_schema
-   simplebench.report.versions.v1.report.validate
+.. automodule:: simplebench.report.versions.v1.report.report_schema
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+simplebench.report.versions.v1.report.validate module
+-----------------------------------------------------
+
+.. automodule:: simplebench.report.versions.v1.report.validate
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.report.versions.v1.report
+   :members:
+   :show-inheritance:
+   :undoc-members:

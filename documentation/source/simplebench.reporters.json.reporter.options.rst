@@ -1,15 +1,10 @@
 simplebench.reporters.json.reporter.options package
 ===================================================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.reporters.json.reporter.options
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.reporters.json.reporter.options.options
+   :undoc-members:

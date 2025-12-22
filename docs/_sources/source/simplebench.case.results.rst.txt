@@ -1,11 +1,6 @@
 simplebench.case.results package
 ================================
 
-.. automodule:: simplebench.case.results
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Subpackages
 -----------
 
@@ -17,8 +12,18 @@ Subpackages
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.case.results.validate module
+----------------------------------------
 
-   simplebench.case.results.results
-   simplebench.case.results.validate
+.. automodule:: simplebench.case.results.validate
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.case.results
+   :members:
+   :show-inheritance:
+   :undoc-members:

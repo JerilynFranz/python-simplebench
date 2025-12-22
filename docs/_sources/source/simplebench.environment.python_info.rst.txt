@@ -1,15 +1,10 @@
 simplebench.environment.python\_info package
 ============================================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.environment.python_info
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.environment.python_info.python_info
+   :undoc-members:

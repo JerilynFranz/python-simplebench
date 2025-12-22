@@ -1,15 +1,10 @@
 simplebench.case.results.metrics.stats package
 ==============================================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.case.results.metrics.stats
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.case.results.metrics.stats.stats
+   :undoc-members:

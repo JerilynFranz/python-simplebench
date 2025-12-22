@@ -1,15 +1,21 @@
 simplebench.reporters.graph.matplotlib.enums package
 ====================================================
 
-.. automodule:: simplebench.reporters.graph.matplotlib.enums
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.graph.matplotlib.enums.style module
+---------------------------------------------------------
 
-   simplebench.reporters.graph.matplotlib.enums.style
+.. automodule:: simplebench.reporters.graph.matplotlib.enums.style
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.graph.matplotlib.enums
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,15 +1,10 @@
 simplebench.reporters.json.reader package
 =========================================
 
+Module contents
+---------------
+
 .. automodule:: simplebench.reporters.json.reader
    :members:
-   :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 4
-
-   simplebench.reporters.json.reader.reader
+   :undoc-members:

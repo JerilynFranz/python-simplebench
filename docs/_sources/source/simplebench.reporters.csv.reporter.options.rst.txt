@@ -1,16 +1,21 @@
 simplebench.reporters.csv.reporter.options package
 ==================================================
 
-.. automodule:: simplebench.reporters.csv.reporter.options
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Submodules
 ----------
 
-.. toctree::
-   :maxdepth: 4
+simplebench.reporters.csv.reporter.options.fields module
+--------------------------------------------------------
 
-   simplebench.reporters.csv.reporter.options.fields
-   simplebench.reporters.csv.reporter.options.options
+.. automodule:: simplebench.reporters.csv.reporter.options.fields
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: simplebench.reporters.csv.reporter.options
+   :members:
+   :show-inheritance:
+   :undoc-members:
