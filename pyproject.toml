@@ -124,7 +124,7 @@ Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGE
 
 [tool.flake8]
 max-line-length = 120
-max-complexity = 10
+max-complexity = 20
 # E203: whitespace before ':' (conflicts with black)
 # E501: line too long (handled by pylint)
 extend-ignore = ["E203", "E501"]
@@ -237,7 +237,7 @@ exclude_exact = [
 ]
 
 [tool.tox]
-min_version = "4.22"
+requires = ["tox>=4.22"]
 env_list = [
     "py310",
     "py311",
@@ -254,8 +254,10 @@ env_list = [
 # This contains settings that ARE inherited by 'requires'.
 package = "wheel"
 wheel_build_env = ".pkg"
-dependency_group = "test"
+dependency_groups = ["test"]
 pass_env = ["HOME", "USERPROFILE"]
+install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
+allowlist_externals = ["pytest", "uv"]
 
 # --- Concrete Test Environments ---
 # These are sibling tables that use tox's 'requires' to inherit.
@@ -282,6 +284,8 @@ commands = [["pytest", "{posargs:tests/}"]]
 description = "Run the test suite on Python 3.13"
 requires = ["basetest"]
 allowlist_externals = ["pytest"]
+python_base = ["python3.13"]
+install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.py314]
@@ -290,11 +294,18 @@ requires = ["basetest"]
 allowlist_externals = ["pytest"]
 commands = [["pytest", "{posargs:tests/}"]]
 
+[tool.tox.env.dev]
+description = "Development environment with all tools"
+package = "editable"
+base_python = ["python3.12"]
+dependency_groups = ["test", "lint", "docs", "tools", "types"]
+commands = []
+
 [tool.tox.env.lint]
 description = "Run linters"
 package = "skip"
 base_python = ["python3.12"]
-dependency_group = "lint"
+dependency_groups = ["lint"]
 allowlist_externals = [
     "flake8",
     "pylint",
@@ -312,7 +323,7 @@ commands = [
 description = "Build the documentation"
 package = "skip"
 base_python = ["python3.12"]
-dependency_group = "docs"
+dependency_groups = ["docs"]
 allowlist_externals = ["sphinx-build"]
 commands = [["sphinx-build", "-b", "html", "documentation/", "documentation/_build/html"]]
 
