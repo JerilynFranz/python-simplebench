@@ -302,7 +302,7 @@ commands = [["pytest", "{posargs:tests/}"]]
 [tool.tox.env.dev]
 description = "Development environment with all tools"
 package = "editable"
-base_python = ["python3.12"]
+base_python = ["python3.14"]
 dependency_groups = ["test", "lint", "docs", "tools", "types"]
 commands = []
 
