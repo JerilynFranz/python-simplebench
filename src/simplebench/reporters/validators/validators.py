@@ -8,7 +8,7 @@ from rich.text import Text
 
 from simplebench.enums import Format
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag

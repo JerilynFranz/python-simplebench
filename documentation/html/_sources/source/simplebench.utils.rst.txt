@@ -15,6 +15,5 @@ Submodules
    simplebench.utils.filenames
    simplebench.utils.flags_and_args
    simplebench.utils.kwargs_variations
-   simplebench.utils.machine_info
    simplebench.utils.significant_figures
    simplebench.utils.timestamp

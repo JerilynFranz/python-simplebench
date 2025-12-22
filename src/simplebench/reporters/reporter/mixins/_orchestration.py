@@ -16,7 +16,7 @@ from rich.text import Text
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag

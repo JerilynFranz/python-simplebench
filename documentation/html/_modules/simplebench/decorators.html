@@ -271,6 +271,11 @@
 <span class="sd">    same name as the property, but prefixed with an underscore (e.g., `_name`</span>
 <span class="sd">    for a property named `name`).</span>
 
+<span class="sd">    .. note:: This is not a good general-purpose immutability solution. It is intended</span>
+<span class="sd">       for specific use cases within simplebench where certain properties with</span>
+<span class="sd">       complex validation requirements need to be set only once. For broader</span>
+<span class="sd">       immutability needs, consider using frozen dataclasses or other established patterns.</span>
+
 <span class="sd">    :param setter_method: The setter method of the property to be decorated.</span>
 <span class="sd">    :return: The wrapped setter method with immutability enforcement.</span>
 <span class="sd">    :raise SimpleBenchAttributeError: If the property is set more than once.</span>

@@ -9,7 +9,7 @@ from rich.text import Text
 
 from simplebench.case import Case
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter

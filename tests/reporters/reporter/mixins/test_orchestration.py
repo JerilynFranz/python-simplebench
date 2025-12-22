@@ -8,7 +8,7 @@ from rich.text import Text
 from simplebench.case import Case
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag

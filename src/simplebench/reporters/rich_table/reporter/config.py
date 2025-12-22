@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import (
+from simplebench.metrics import (
     MetricCategory,
     Metrics,
     MetricsCollection,

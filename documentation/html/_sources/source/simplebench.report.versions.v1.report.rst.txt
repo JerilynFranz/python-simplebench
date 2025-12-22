@@ -14,3 +14,4 @@ Submodules
 
    simplebench.report.versions.v1.report.report
    simplebench.report.versions.v1.report.report_schema
+   simplebench.report.versions.v1.report.validate

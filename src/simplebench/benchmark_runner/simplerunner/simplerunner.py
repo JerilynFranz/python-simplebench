@@ -66,7 +66,7 @@ from simplebench.defaults import (
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
-from simplebench.metric import Metric, metrics_registry
+from simplebench.metrics import Metric, metrics_registry
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from simplebench.types import Values

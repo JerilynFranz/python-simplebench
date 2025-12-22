@@ -4,7 +4,7 @@ import pytest
 from simplebench.case.results import Iteration
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE, DEFAULT_INTERVAL_UNIT
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _IterationErrorTag
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 
 from .testspec import TestAction, idspec
 

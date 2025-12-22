@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.enums import Format
-    from simplebench.metric import Metric
+    from simplebench.metrics import Metric
 
 
 @runtime_checkable

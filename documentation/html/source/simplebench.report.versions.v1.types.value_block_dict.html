@@ -260,17 +260,18 @@
           <section id="module-simplebench.report.versions.v1.types.value_block_dict">
 <span id="simplebench-report-versions-v1-types-value-block-dict-module"></span><h1>simplebench.report.versions.v1.types.value_block_dict module<a class="headerlink" href="#module-simplebench.report.versions.v1.types.value_block_dict" title="Link to this heading">🔗</a></h1>
 <p>Typed dictionaries for the V1 ValueBlock data structure.</p>
-<p>This module defines two distinct types for handling ValueBlock data:
-- <cite>ValueBlockData</cite>: For use as INPUT (e.g., to <cite>from_dict</cite>). It is more</p>
+<p>This module defines two distinct dictionary types for handling ValueBlock data,
+both modeled on the JSON schema for version 1 ValueBlocks in
+version 1: <a class="reference internal" href="simplebench.report.versions.v1.value_block.value_block_schema.html#simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema" title="simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueBlockSchema</span></code></a>.</p>
 <blockquote>
-<div><p>lenient, accepting <cite>int</cite> or <cite>float</cite> for the <cite>value</cite> field and making
-<cite>type</cite> and <cite>version</cite> optional.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p><cite>ValueBlockDict</cite>: For use as OUTPUT (e.g., from <cite>to_dict</cite>). It is
-stricter, guaranteeing that <cite>value</cite> is a <cite>float</cite> and that <cite>type</cite> and
-<cite>version</cite> are present.</p></li>
+<div><ul class="simple">
+<li><p><cite>ValueBlockData</cite>: For use as INPUT (e.g., to <cite>from_dict</cite>). It is more</p></li>
 </ul>
+<p>lenient, accepting <cite>int</cite> or <cite>float</cite> for the <cite>value</cite> field and making <cite>type</cite> and <cite>version</cite> optional.
+- <cite>ValueBlockDict</cite>: For use as OUTPUT (e.g., from <cite>to_dict</cite>). It is
+stricter, guaranteeing that <cite>value</cite> is a <cite>float</cite> and that <cite>type</cite> and <cite>version</cite> are present.</p>
+<p>These types ensure proper validation and serialization of ValueBlock data</p>
+</div></blockquote>
 <dl class="py class">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.types.value_block_dict.ValueBlockData">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.types.value_block_dict.</span></span><span class="sig-name descname"><span class="pre">ValueBlockData</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/types/value_block_dict.html#ValueBlockData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.types.value_block_dict.ValueBlockData" title="Link to this definition">🔗</a></dt>

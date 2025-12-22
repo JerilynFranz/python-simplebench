@@ -12,7 +12,7 @@ import seaborn as sns
 
 from simplebench.case.results import Results
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.si_units import si_scale_for_largest
 from simplebench.type_proxies import is_case

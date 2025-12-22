@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Iterable
 
 from simplebench.enums import Format, Target
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 
 from ...factories import (

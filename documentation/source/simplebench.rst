@@ -20,6 +20,7 @@ Subpackages
    simplebench.display
    simplebench.doc_utils
    simplebench.enums
+   simplebench.environment
    simplebench.exceptions
    simplebench.metadata
    simplebench.metric

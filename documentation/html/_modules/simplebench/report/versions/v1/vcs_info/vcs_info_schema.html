@@ -253,6 +253,10 @@
           <h1>Source code for simplebench.report.versions.v1.vcs_info.vcs_info_schema</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Schema for JSON VCSInfo v1 validation.&quot;&quot;&quot;</span>
 <span class="c1"># pylint: disable=line-too-long</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONEncoder</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span><span class="p">,</span> <span class="n">format_json_for_docstring</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONSchema</span>
 
 
@@ -270,21 +274,7 @@
     <span class="n">ID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/vcs-info.json&quot;</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON VCSInfo schema $id value for version 1 reports.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="VCSInfoSchema.as_dict">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.vcs_info.vcs_info_schema.html#simplebench.report.versions.v1.vcs_info.VCSInfoSchema.as_dict">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the JSON schema as a dictionary.</span>
-
-<span class="sd">        It always returns a fresh copy of the schema dictionary to prevent accidental</span>
-<span class="sd">        modifications.</span>
-
-<span class="sd">        The caller can modify the returned dictionary as needed or cache it for performance.</span>
-
-<span class="sd">        Usage:</span>
-<span class="sd">            schema_dict = VCSInfoSchema.as_dict()</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span>
+    <span class="n">_JSON_SCHEMA_DICT</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;$schema&quot;</span><span class="p">:</span> <span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
             <span class="s2">&quot;$id&quot;</span><span class="p">:</span> <span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/vcs-info.json&quot;</span><span class="p">,</span>
             <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;VCS Info (V1)&quot;</span><span class="p">,</span>
@@ -349,7 +339,56 @@
                 <span class="s2">&quot;commit_datetime&quot;</span>
             <span class="p">],</span>
             <span class="s2">&quot;additionalProperties&quot;</span><span class="p">:</span> <span class="kc">False</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
+
+    <span class="n">_JSON_SCHEMA_TEXT</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">JSONEncoder</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">_JSON_SCHEMA_DICT</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON schema as a pretty-printed JSON string.&quot;&quot;&quot;</span>
+
+    <span class="n">_JSON_SCHEMA_NOTE</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">format_json_for_docstring</span><span class="p">(</span>
+        <span class="n">json_data</span><span class="o">=</span><span class="n">_JSON_SCHEMA_TEXT</span><span class="p">,</span>
+        <span class="n">caption</span><span class="o">=</span><span class="s2">&quot;JSON Schema for ValueBlock V1&quot;</span><span class="p">,</span>
+        <span class="n">intro_text</span><span class="o">=</span><span class="s2">&quot;The JSON schema is as follows:&quot;</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Note containing the JSON schema for docstrings.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="VCSInfoSchema.as_dict">
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.vcs_info.vcs_info_schema.html#simplebench.report.versions.v1.vcs_info.VCSInfoSchema.as_dict">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the JSON schema as a dictionary.</span>
+
+<span class="sd">        It always returns a fresh copy of the schema dictionary to prevent accidental</span>
+<span class="sd">        modifications.</span>
+
+<span class="sd">        The caller can modify the returned dictionary as needed or cache it for performance.</span>
+
+<span class="sd">        Usage:</span>
+<span class="sd">            schema_dict = VCSInfoSchema.as_dict()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_JSON_SCHEMA_DICT</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VCSInfoSchema.as_json">
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.vcs_info.vcs_info_schema.html#simplebench.report.versions.v1.vcs_info.VCSInfoSchema.as_json">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@format_docstring</span><span class="p">(</span><span class="n">JSON_SCHEMA_NOTE</span><span class="o">=</span><span class="n">_JSON_SCHEMA_NOTE</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># The `{JSON_SCHEMA_NOTE}` placeholder in the docstring below is</span>
+        <span class="c1"># dynamically replaced by the `@format_docstring` decorator</span>
+        <span class="c1"># for use in generated documentation. It is not a typo, but an intentional</span>
+        <span class="c1"># use of a placeholder.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the JSON schema as a JSON-formatted string.</span>
+
+<span class="sd">        It serializes the schema dictionary to a JSON string.</span>
+
+<span class="sd">        Usage:</span>
+<span class="sd">            schema_json = VCSInfoSchema.as_json()</span>
+
+<span class="sd">        :return str: The JSON schema as a JSON-formatted string.</span>
+
+<span class="sd">        {JSON_SCHEMA_NOTE}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_JSON_SCHEMA_TEXT</span></div>
 </div>
 
 </pre></div>

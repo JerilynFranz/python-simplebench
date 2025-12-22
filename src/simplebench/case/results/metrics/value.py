@@ -2,7 +2,7 @@
 
 from typing import NamedTuple
 
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 
 
 class Value(NamedTuple):

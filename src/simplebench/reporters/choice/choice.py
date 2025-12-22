@@ -5,7 +5,7 @@ from collections.abc import Hashable
 from typing import TYPE_CHECKING, Any
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.reporters.choice._error_tags import _ChoiceErrorTag
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.protocols import ChoiceProtocol

@@ -28,8 +28,8 @@ from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT, BASE_OPS_
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metric.metric import Metric
-from simplebench.metric.metric_types_registry import metric_types_registry as metric_registry
+from simplebench.metrics.metric import Metric
+from simplebench.metrics.metric_types_registry import metric_types_registry as metric_registry
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback

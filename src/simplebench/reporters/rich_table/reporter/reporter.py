@@ -8,7 +8,7 @@ from rich.table import Table
 from simplebench.case.results import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case

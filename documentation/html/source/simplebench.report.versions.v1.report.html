@@ -310,6 +310,20 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.from_case">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case" title="simplebench.case.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.report.Report" title="simplebench.report.versions.v1.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.Report.from_case" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a Report instance from a Case instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>case</strong> – The Case instance to create the Report from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Report instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.report.Report.from_dict">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
 
@@ -416,6 +430,105 @@ modifications.</p>
 <dt>Usage:</dt><dd><p>schema_dict = ReportSchema.as_dict()</p>
 </dd>
 </dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return dict[str, object]<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.report.ReportSchema.as_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report_schema.html#ReportSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.report.ReportSchema.as_json" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the JSON schema as a JSON-formatted string.</p>
+<blockquote>
+<div><p>It serializes the schema dictionary to a JSON string.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>schema_json = ReportSchema.as_json()</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">return str<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The JSON schema as a JSON-formatted string.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The JSON schema is as follows:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Report Schema (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBench JSON Report Schema (V1)&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The version of the JSON report schema&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type of the benchmark report&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBenchReport::V1&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timestamp&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Timestamp of the benchmark report in ISO 8601 format (UTC)&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;date-time&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;examples&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="s2">&quot;2023-04-01T12:00:00Z&quot;</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group of the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title of the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description of the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;variation_cols&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation Columns&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation columns for the benchmark&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;results&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Results&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Benchmark results&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;array&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;results-info.json&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;minItems&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;machine&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;machine-info.json&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;title&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;description&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;variation_cols&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;results&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;machine&quot;</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -431,6 +544,7 @@ modifications.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.TYPE"><code class="docutils literal notranslate"><span class="pre">Report.TYPE</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.VERSION"><code class="docutils literal notranslate"><span class="pre">Report.VERSION</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.description"><code class="docutils literal notranslate"><span class="pre">Report.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.from_case"><code class="docutils literal notranslate"><span class="pre">Report.from_case()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.from_dict"><code class="docutils literal notranslate"><span class="pre">Report.from_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.group"><code class="docutils literal notranslate"><span class="pre">Report.group</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.report.report.Report.machine"><code class="docutils literal notranslate"><span class="pre">Report.machine</span></code></a></li>
@@ -449,8 +563,14 @@ modifications.</p>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ReportSchema.TYPE</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ReportSchema.VERSION</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.report.report_schema.html#simplebench.report.versions.v1.report.report_schema.ReportSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_json()</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.report.validate.html">simplebench.report.versions.v1.report.validate module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.report.validate.html#simplebench.report.versions.v1.report.validate.case"><code class="docutils literal notranslate"><span class="pre">case()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.report.validate.html#simplebench.report.versions.v1.report.validate.case_has_been_run"><code class="docutils literal notranslate"><span class="pre">case_has_been_run()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -502,6 +622,7 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.TYPE"><code class="docutils literal notranslate"><span class="pre">Report.TYPE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.VERSION"><code class="docutils literal notranslate"><span class="pre">Report.VERSION</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.description"><code class="docutils literal notranslate"><span class="pre">Report.description</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.from_case"><code class="docutils literal notranslate"><span class="pre">Report.from_case()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.from_dict"><code class="docutils literal notranslate"><span class="pre">Report.from_dict()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.group"><code class="docutils literal notranslate"><span class="pre">Report.group</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.Report.machine"><code class="docutils literal notranslate"><span class="pre">Report.machine</span></code></a></li>
@@ -517,6 +638,7 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.ReportSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ReportSchema.TYPE</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.ReportSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ReportSchema.VERSION</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.report.ReportSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.report.ReportSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ReportSchema.as_json()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>

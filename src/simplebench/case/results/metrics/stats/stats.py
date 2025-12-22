@@ -6,7 +6,7 @@ from math import isclose, sqrt
 from typing import TypeAlias
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import Metric, metrics_registry
+from simplebench.metrics import Metric, metrics_registry
 from simplebench.report.versions import v1
 from simplebench.si_units import si_scale_to_unit, si_unit_base
 from simplebench.types import Values

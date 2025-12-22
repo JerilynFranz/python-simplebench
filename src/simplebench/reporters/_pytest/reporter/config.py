@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig

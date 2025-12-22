@@ -12,7 +12,7 @@ from rich.text import Text
 
 from simplebench.enums import Format, Target
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.config import ReporterConfig
 

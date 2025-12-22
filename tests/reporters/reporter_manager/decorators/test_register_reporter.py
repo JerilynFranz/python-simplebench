@@ -7,7 +7,7 @@ import pytest
 
 from simplebench.case import Case
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter

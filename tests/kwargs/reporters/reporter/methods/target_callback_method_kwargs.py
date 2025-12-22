@@ -1,7 +1,7 @@
 """KWArgs for Reporter.target_callback() method."""
 from simplebench.case import Case
 from simplebench.enums import Format
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 

@@ -9,7 +9,7 @@ from simplebench import utils
 from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter, ReporterOptions

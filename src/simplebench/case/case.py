@@ -13,7 +13,7 @@ from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.doc_utils import format_docstring
 from simplebench.enums import Color
-from simplebench.environment import MachineInfo
+from simplebench.environment import MachineInfo as EnvMachineInfo
 from simplebench.exceptions import (
     SimpleBenchAttributeError,
     SimpleBenchBenchmarkError,

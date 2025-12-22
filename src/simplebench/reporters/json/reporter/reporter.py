@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.report import (
     CURRENT_VERSION,
     cpu_info,

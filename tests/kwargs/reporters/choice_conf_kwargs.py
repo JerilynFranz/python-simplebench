@@ -9,7 +9,7 @@ from ..kwargs import KWArgs, NoDefaultValue
 
 if TYPE_CHECKING:
     from simplebench.enums import FlagType, Format, Target
-    from simplebench.metric import Metric
+    from simplebench.metrics import Metric
     from simplebench.reporters.reporter import ReporterOptions
 
 

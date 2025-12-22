@@ -376,6 +376,33 @@ If not provided, it defaults to an empty string and will be computed automatical
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.from_system">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_system</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo" title="simplebench.report.versions.v1.machine_info.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/machine_info/machine_info.html#MachineInfo.from_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.from_system" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a MachineInfo instance from the current system information.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Example
+machine_info = MachineInfo.from_system()</span><a class="headerlink" href="#id2" title="Link to this code">🔗</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> – The node name to include in the MachineInfo (optional).</p>
+</dd>
+<dt class="field-even">Return MachineInfo<span class="colon">:</span></dt>
+<dd class="field-even"><p>A MachineInfo instance with information about the current machine.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.hash_id">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.hash_id" title="Link to this definition">🔗</a></dt>
@@ -503,6 +530,7 @@ If not provided, it defaults to an empty string and will be computed automatical
 <li><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.execution_environment"><code class="docutils literal notranslate"><span class="pre">MachineInfo.execution_environment</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.from_dict"><code class="docutils literal notranslate"><span class="pre">MachineInfo.from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.from_system"><code class="docutils literal notranslate"><span class="pre">MachineInfo.from_system()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.hash_id"><code class="docutils literal notranslate"><span class="pre">MachineInfo.hash_id</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo.node"><code class="docutils literal notranslate"><span class="pre">MachineInfo.node</span></code></a></li>

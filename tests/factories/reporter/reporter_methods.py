@@ -17,7 +17,7 @@ from rich.text import Text
 
 from simplebench.enums import Format
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 
 from ...cache_factory import CacheId, cached_factory

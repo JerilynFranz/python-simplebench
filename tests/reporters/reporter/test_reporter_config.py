@@ -5,7 +5,7 @@ import pytest
 
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import metric_types_registry
+from simplebench.metrics import metric_types_registry
 from simplebench.reporters.reporter import ReporterConfig
 from simplebench.reporters.reporter._error_tags import _ReporterConfigErrorTag
 from simplebench.validators._error_tags import _ValidatorsErrorTag

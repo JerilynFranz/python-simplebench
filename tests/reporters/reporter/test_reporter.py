@@ -13,7 +13,7 @@ from simplebench.case.results import Iteration
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback

@@ -13,7 +13,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
 from .path import path_factory

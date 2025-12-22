@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.case import Case
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter, ReporterConfig, ReporterOptions

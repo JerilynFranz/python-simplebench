@@ -15,7 +15,7 @@ from simplebench.defaults import (
     DEFAULT_MEMORY_UNIT,
 )
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
 
 from .kwargs import ResultsKWArgs

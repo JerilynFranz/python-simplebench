@@ -9,7 +9,7 @@ import pytest
 
 from simplebench.case.results import Iteration
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import Metric, metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats, StatsSummary
 from simplebench.stats.exceptions import (
     _MemoryUsageErrorTag,

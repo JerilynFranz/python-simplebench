@@ -259,11 +259,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">MachineInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchNotImplementedError</span><span class="p">,</span> <span class="n">SimpleBenchTypeError</span><span class="p">,</span> <span class="n">SimpleBenchValueError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span><span class="p">,</span> <span class="n">is_choice</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_machine_info</span><span class="p">,</span> <span class="n">timestamp_to_iso8601</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timestamp_to_iso8601</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_type</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.vcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">GitInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.vcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">VCSInfo</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReportLogEntryErrorTag</span>
 
@@ -540,7 +541,7 @@
 <span class="sd">        :return: A dictionary representation of the metadata.</span>
 <span class="sd">        :rtype: dict[str, Any]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">git_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">git_info</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">git_info</span><span class="p">,</span> <span class="n">GitInfo</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">vcs_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">vcs_info</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">vcs_info</span><span class="p">,</span> <span class="n">VCSInfo</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -552,8 +553,8 @@
             <span class="s2">&quot;reporter_schema_version&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="o">.</span><span class="n">reporter</span><span class="o">.</span><span class="n">schema_version</span><span class="p">,</span>
             <span class="s2">&quot;output_format&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">choice</span><span class="o">.</span><span class="n">output_format</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="s2">&quot;benchmark_title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
-            <span class="s2">&quot;git&quot;</span><span class="p">:</span> <span class="n">git_info</span><span class="p">,</span>
-            <span class="s2">&quot;machine_info&quot;</span><span class="p">:</span> <span class="n">get_machine_info</span><span class="p">(),</span>
+            <span class="s2">&quot;vcs&quot;</span><span class="p">:</span> <span class="n">vcs_info</span><span class="p">,</span>
+            <span class="s2">&quot;machine_info&quot;</span><span class="p">:</span> <span class="n">MachineInfo</span><span class="p">()</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">output</span><span class="p">[</span><span class="s2">&quot;uri&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span>

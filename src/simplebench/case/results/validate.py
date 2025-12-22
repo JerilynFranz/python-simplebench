@@ -5,7 +5,7 @@ from types import MappingProxyType
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import Metric, MetricCategory
+from simplebench.metrics import Metric, MetricCategory
 from simplebench.types import Values
 from simplebench.validators import validate_type
 

@@ -254,44 +254,55 @@
 <span></span><span class="sd">&quot;&quot;&quot;Benchmark case declaration and execution.&quot;&quot;&quot;</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">vcs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.benchmark_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">BenchmarkRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.display.progress_tracker</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchAttributeError</span><span class="p">,</span> <span class="n">SimpleBenchBenchmarkError</span><span class="p">,</span> <span class="n">SimpleBenchTimeoutError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions</span><span class="w"> </span><span class="kn">import</span> <span class="n">v1</span> <span class="k">as</span> <span class="n">current_version</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">MachineInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SimpleBenchAttributeError</span><span class="p">,</span>
+    <span class="n">SimpleBenchBenchmarkError</span><span class="p">,</span>
+    <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span>
+    <span class="n">SimpleBenchValueError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions</span><span class="w"> </span><span class="kn">import</span> <span class="n">v1</span> <span class="k">as</span> <span class="n">current_report_version</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_reporter_callback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timestamp_to_iso8601</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_bool</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CaseErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.function_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mark</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mark</span>
 
+<span class="n">MachineInfo</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">current_report_version</span><span class="o">.</span><span class="n">MachineInfo</span>
+
+<span class="n">_DEFERRED_IMPORTS_DONE</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions.v1</span><span class="w"> </span><span class="kn">import</span> <span class="n">Report</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">Results</span>
+    <span class="n">_DEFERRED_IMPORTS_DONE</span> <span class="o">=</span> <span class="kc">True</span>
 
-<span class="c1"># Classes needed for report generation</span>
-<span class="n">CPUInfo</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">CPUInfo</span>
-<span class="n">ExecutionEnvironment</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">ExecutionEnvironment</span>
-<span class="n">MachineInfo</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">MachineInfo</span>
-<span class="n">Metrics</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">MetricsObject</span>
-<span class="n">MetricsItem</span> <span class="o">=</span> <span class="n">Metrics</span><span class="o">.</span><span class="n">MetricItem</span>
-<span class="n">Report</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">Report</span>
-<span class="n">ResultsInfo</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">ResultsInfo</span>
-<span class="n">StatsBlock</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">StatsBlock</span>
-<span class="n">ValueBlock</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">ValueBlock</span>
-<span class="n">VCSInfo</span> <span class="o">=</span> <span class="n">current_version</span><span class="o">.</span><span class="n">VCSInfo</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_deferred_imports</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform deferred imports to avoid circular dependencies.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_DEFERRED_IMPORTS_DONE</span><span class="p">,</span> <span class="n">Report</span>  <span class="c1"># pylint: disable=global-statement</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_DEFERRED_IMPORTS_DONE</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions.v1</span><span class="w"> </span><span class="kn">import</span> <span class="n">Report</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+        <span class="n">_DEFERRED_IMPORTS_DONE</span> <span class="o">=</span> <span class="kc">True</span>
 
 
 <div class="viewcode-block" id="generate_benchmark_id">
@@ -435,7 +446,9 @@
                  <span class="s1">&#39;_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_warmup_iterations&#39;</span><span class="p">,</span> <span class="s1">&#39;_min_time&#39;</span><span class="p">,</span> <span class="s1">&#39;_max_time&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_variation_cols&#39;</span><span class="p">,</span> <span class="s1">&#39;_kwargs_variations&#39;</span><span class="p">,</span> <span class="s1">&#39;_variation_marks&#39;</span><span class="p">,</span> <span class="s1">&#39;_runners&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;_callback&#39;</span><span class="p">,</span> <span class="s1">&#39;_results&#39;</span><span class="p">,</span> <span class="s1">&#39;_options&#39;</span><span class="p">,</span> <span class="s1">&#39;_rounds&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;_benchmark_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_vcs_info&#39;</span><span class="p">,</span> <span class="s1">&#39;_timeout&#39;</span><span class="p">,</span> <span class="s1">&#39;_timer&#39;</span><span class="p">,</span> <span class="s1">&#39;_cpu_timer&#39;</span><span class="p">)</span>
+                 <span class="s1">&#39;_benchmark_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_vcs_info&#39;</span><span class="p">,</span> <span class="s1">&#39;_timeout&#39;</span><span class="p">,</span> <span class="s1">&#39;_timer&#39;</span><span class="p">,</span> <span class="s1">&#39;_cpu_timer&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_report_cache&#39;</span><span class="p">,</span> <span class="s1">&#39;_report_cache_raw_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_benchmarks_have_run&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;_epoch_timestamp&#39;</span><span class="p">)</span>
 
     <span class="nd">@format_docstring</span><span class="p">(</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="o">=</span><span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT_GRACE_PERIOD</span><span class="p">,</span>
                       <span class="n">DEFAULT_TIMER</span><span class="o">=</span><span class="n">defaults</span><span class="o">.</span><span class="n">DEFAULT_TIMER</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -532,7 +545,7 @@
 <span class="sd">            than ``max_time`` if provided. This is a safety mechanism to prevent runaway benchmarks.</span>
 
 <span class="sd">            If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``</span>
-<span class="sd">            will be raised, and the benchmark case&#39;s state will be set to TIMED_OUT.</span>
+<span class="sd">            will be raised, and the benchmark case&#39;s state to TIMED_OUT.</span>
 <span class="sd">        :param variation_cols: kwargs to be used for cols to denote kwarg variations.</span>
 
 <span class="sd">            Each key is a keyword argument name, and the value is the column label to use for that</span>
@@ -610,6 +623,8 @@
 <span class="sd">        :raises SimpleBenchTypeError: If any parameter is of incorrect type.</span>
 <span class="sd">        :raises SimpleBenchValueError: If any parameter has an invalid value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_deferred_imports</span><span class="p">()</span>
+
         <span class="c1"># kwargs_variations processed first so it can be used for cross-validation of action signature</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_variations</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">kwargs_variations</span><span class="p">(</span><span class="n">kwargs_variations</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
@@ -633,6 +648,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ReporterOptions</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">options</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Results</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># No validation needed here</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vcs_info</span><span class="p">:</span> <span class="n">vcs</span><span class="o">.</span><span class="n">VCSInfo</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">vcs_info</span><span class="p">(</span><span class="n">vcs_info</span> <span class="ow">or</span> <span class="n">vcs</span><span class="o">.</span><span class="n">get_vcs_info</span><span class="p">())</span>
+
+        <span class="c1"># internal state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache</span><span class="p">:</span> <span class="n">Report</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache_raw_data</span><span class="p">:</span> <span class="n">Report</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_benchmarks_have_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_timestamp</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_generate_variation_marks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate variation marks for the kwarg variations.</span>
@@ -906,6 +928,8 @@
 <span class="sd">        This function should accept four arguments: the Case instance, the Metric,</span>
 <span class="sd">        the ReporterOption, and the output object. Leave as None if no callback is needed.</span>
 <span class="sd">        (default: None)</span>
+
+<span class="sd">        :return ReporterCallback | None: The callback function or None if not set.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span>
 
@@ -915,9 +939,10 @@
 
 <span class="sd">        This is a read-only attribute. To add results, use the `run` method.</span>
 
-<span class="sd">        :return: A list of Results objects for each variation run of the benchmark case.</span>
-<span class="sd">        :rtype: list[Results]</span>
+<span class="sd">        :return list[Results]: A list of Results objects. One for each variation run in the benchmark case.</span>
+<span class="sd">        :raises SimpleBenchValueError: If the benchmark case has not been run yet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_has_run</span><span class="p">()</span>
         <span class="c1"># shallow copy to prevent external modification of internal list</span>
         <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">)</span>
 
@@ -969,9 +994,32 @@
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs_variations</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">)]</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The ISO 8601 timestamp when the benchmark case was run.</span>
+
+<span class="sd">        This is a read-only attribute that is set when the `run` method is called.</span>
+<span class="sd">        If the benchmark case has not been run yet, it will be an empty string.</span>
+
+<span class="sd">        :return: The ISO 8601 timestamp as a string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_has_run</span><span class="p">(</span><span class="s1">&#39;Cannot get timestamp: benchmark case has not been run yet.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">epoch_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The epoch timestamp when the benchmark case was run.</span>
+
+<span class="sd">        This is a read-only attribute that is set when the `run` method is called.</span>
+<span class="sd">        If the benchmark case has not been run yet, it will be 0.</span>
+
+<span class="sd">        :return: The epoch timestamp as an integer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_timestamp</span>
+
 <div class="viewcode-block" id="Case.run">
 <a class="viewcode-back" href="../../../source/simplebench.case.case.html#simplebench.Case.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Session</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the benchmark tests.</span>
 
 <span class="sd">        This method will execute the benchmark for each combination of</span>
@@ -985,6 +1033,8 @@
 <span class="sd">        :raises SimpleBenchTimeoutError: If a timeout occurs during the benchmark action.</span>
 <span class="sd">        :raises SimpleBenchBenchmarkError: If an error occurs during the benchmark action.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_timestamp</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+
         <span class="n">all_variations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expanded_kwargs_variations</span>
         <span class="n">progress_tracker</span> <span class="o">=</span> <span class="n">ProgressTracker</span><span class="p">(</span>
             <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
@@ -1029,12 +1079,66 @@
                     <span class="sa">f</span><span class="s1">&#39;Running case </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">variations_counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">all_variations</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">),</span>
                 <span class="n">completed</span><span class="o">=</span><span class="n">variations_counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="n">refresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+        <span class="n">progress_tracker</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mark_case_as_run</span><span class="p">()</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the timestamp for the benchmark case.</span>
+
+<span class="sd">        This method sets the timestamp for the benchmark case to the current time.</span>
+<span class="sd">        If a session is provided, it uses the session&#39;s timestamp. Otherwise, it</span>
+<span class="sd">        uses the current UTC time.</span>
+
+<span class="sd">        :param session: The session in which the case is being run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">timestamp</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_timestamp</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">epoch_timestamp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_epoch_timestamp</span> <span class="o">=</span> <span class="n">timestamp_to_iso8601</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch_timestamp</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_mark_case_as_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Mark the case as having been run.</span>
+
+<span class="sd">        This method sets the internal flag to indicate that the benchmarks</span>
+<span class="sd">        for this case have been executed.</span>
+
+<span class="sd">        It also clears any cached report data to ensure that subsequent report generation reflects the latest</span>
+<span class="sd">        results.</span>
+
+<span class="sd">        :param session: The session in which the case was run.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_benchmarks_have_run</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache_raw_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span><span class="p">:</span> <span class="n">MachineInfo</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Reset machine info cache</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">machine_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MachineInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the MachineInfo for the benchmark case.</span>
+
+<span class="sd">        This property retrieves the MachineInfo associated with the benchmark case.</span>
+<span class="sd">        If the MachineInfo has not been set yet, it will be created and cached</span>
+<span class="sd">        for future access.</span>
+
+<span class="sd">        :return: The MachineInfo instance for the benchmark case.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span> <span class="o">=</span> <span class="n">MachineInfo</span><span class="o">.</span><span class="n">from_system</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether the benchmarks for this case have been run.</span>
+
+<span class="sd">        :return: True if the benchmarks have been run, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_benchmarks_have_run</span>
 
 <div class="viewcode-block" id="Case.report">
 <a class="viewcode-back" href="../../../source/simplebench.case.case.html#simplebench.Case.report">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_raw_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Report</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the benchmark case and results as a Report object.</span>
 
 <span class="sd">        The Report format is a JSON serializable object that includes all the necessary</span>
@@ -1044,9 +1148,39 @@
 <span class="sd">        It conforms to the JSON Schema defined at</span>
 <span class="sd">        https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/report-info.json</span>
 
-<span class="sd">        :param full_data: Whether to include full results data. Defaults to False.</span>
+<span class="sd">        :param include_raw_data: Whether to include raw data. Defaults to False.</span>
 <span class="sd">        :return: A JSON serializable representation of the benchmark case and results.</span>
-<span class="sd">        &quot;&quot;&quot;</span></div>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_has_run</span><span class="p">()</span>
+        <span class="n">validate_bool</span><span class="p">(</span>
+            <span class="n">include_raw_data</span><span class="p">,</span> <span class="s1">&#39;include_raw_data&#39;</span><span class="p">,</span>
+            <span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">include_raw_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache_raw_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache_raw_data</span> <span class="o">=</span> <span class="n">Report</span><span class="o">.</span><span class="n">from_case</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_raw_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache_raw_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache</span> <span class="o">=</span> <span class="n">Report</span><span class="o">.</span><span class="n">from_case</span><span class="p">(</span><span class="n">case</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_raw_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache</span></div>
+
+
+<div class="viewcode-block" id="Case.validate_has_run">
+<a class="viewcode-back" href="../../../source/simplebench.case.case.html#simplebench.Case.validate_has_run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_has_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate the has_run state of the benchmark case.</span>
+
+<span class="sd">        If the :attr:`has_run` state is not True, raises a SimpleBenchValueError.</span>
+
+<span class="sd">        :param message: Optional custom error message to use if the has_run state is not True.</span>
+<span class="sd">        :raises SimpleBenchValueError: If :attr:`has_run` is not True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_run</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SimpleBenchValueError</span><span class="p">(</span>
+                    <span class="n">message</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">&#39;Cannot generate report for case &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1">&quot; because benchmarks have not been run yet. &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;Please run the benchmarks using the `run()` method before generating a report.&#39;</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_CaseErrorTag</span><span class="o">.</span><span class="n">HAVE_NOT_RUN_CASE</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

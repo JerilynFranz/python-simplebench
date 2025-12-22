@@ -14,3 +14,4 @@ Submodules
 
    simplebench.doc_utils.enum_docstrings
    simplebench.doc_utils.format_docstring
+   simplebench.doc_utils.format_json_codeblock

@@ -14,7 +14,7 @@ from simplebench.case import Case, Results
 from simplebench.case._error_tags import _CaseErrorTag
 from simplebench.enums import Format, Verbosity
 from simplebench.exceptions import SimpleBenchBenchmarkError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metric import Metric
+from simplebench.metrics import Metric
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.case.results import Iteration
