@@ -17,9 +17,11 @@ class InstallSpec(NamedTuple):
 
     :param str name: The name of the module to install.
     :param str version: An optional version specifier (e.g., ">=1.0.0").
+    :param str extras: An optional extras specifier (e.g., "[dev]").
     """
     name: str
     version: str | None = None
+    extras: str | None = None
 
 
 # --- Modules to install during bootstrap ---
@@ -188,8 +190,11 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
     """
     command = base_command + ["install", "--quiet", "-U"]
     for module in modules:
-        print(f"  - {module.name}, {module.version or 'latest'}")
+        extras_str = f", extras: {module.extras}" if module.extras else ""
+        print(f"  - {module.name}, {module.version or 'latest'}{extras_str}")
         spec_str = module.name
+        if module.extras:
+            spec_str += module.extras
         if module.version:
             spec_str += module.version
         command.append(spec_str)
