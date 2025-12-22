@@ -50,8 +50,12 @@ def get_git_root() -> Path:
         )
         git_root = Path(git_root_bytes.decode('utf-8').strip())
         return git_root
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        print("Error: This script must be run from within a git repository.")
+    except FileNotFoundError:
+        print("Error: 'git' command not found. Please install Git and ensure it is in your PATH.")
+        sys.exit(1)
+    except subprocess.CalledProcessError:
+        print("Error: This does not appear to be a git repository. "
+              "Please run from within the cloned project directory.")
         sys.exit(1)
 
 
