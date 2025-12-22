@@ -8,7 +8,37 @@ import subprocess
 import sys
 from functools import cache
 from pathlib import Path
+from typing import NamedTuple
 from venv import create as create_venv
+
+POST_INSTALL_MESSAGE = """
+--- Bootstrap complete! ---
+To activate the development environment, run:
+
+  {activate}
+
+You can then use 'tox' to run tasks, for example:
+  tox -e lint
+  tox -e docs
+To deactivate the virtual environment, run:
+  deactivate
+"""
+
+
+class InstallSpec(NamedTuple):
+    """Specification for modules to install in the virtual environment.
+
+    :param str name: The name of the module to install.
+    :param str version: An optional version specifier (e.g., ">=1.0.0").
+    """
+    name: str
+    version: str | None = None
+
+
+BOOTSTRAP_MODULES: list[InstallSpec] = [
+    InstallSpec(name="uv", version=">=0.9.18"),
+    InstallSpec(name="tox", version=">=4.32.0"),
+]
 
 
 def run_command(command, check=True, **kwargs):
@@ -77,35 +107,95 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
         print(f"Virtual environment '{venv_dir}' already exists. Skipping creation.")
 
 
-def install_tools(python_exe: Path) -> None:
+def install_tools(python_exe: Path, modules: list[InstallSpec]) -> None:
     """
     Installs core development tools into the virtual environment.
+
+    It uses pip to install uv, then uses uv to install all modules
+    (including itself) in a single, efficient batch operation.
+
     :param python_exe Path: The path to the Python executable within the venv.
+    :param modules: A list of InstallSpec objects to install.
     """
-    print("Installing/updating core tools (uv, tox) with uv...")
-    run_command([python_exe, "-m", "pip", "install", "uv"])
-    run_command([python_exe, "-m", "uv", "pip", "install", "--quiet", "-U", "tox"])
+    if not modules:
+        return
+
+    print("Installing/updating core development tools...")
+    using_uv = any(mod.name == "uv" for mod in modules)
+    if using_uv:
+        install_with_uv(python_exe, modules)
+    else:
+        install_with_pip(python_exe, modules)
 
 
-def print_instructions(is_windows: bool):
-    """Prints instructions to the user on how to activate the virtual environment"""
+def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
+    """Installs the 'uv' package using pip, then installs the remaining modules using 'uv'.
+
+    :param python_exe Path: The path to the Python executable within the venv.
+    :param modules: A list of InstallSpec objects to install.
+    """
+    # Making a copy to avoid modifying the original list
+    requested_modules = list(modules)
+
+    uv_install_index = next(
+            (i for i, mod in enumerate(requested_modules) if mod.name == "uv"), -1)
+    uv_spec = requested_modules.pop(uv_install_index)
+
+    print(f"--> Installing 'uv' using 'pip': {uv_spec.name}, "
+          f"{uv_spec.version or 'latest'}")
+    install_with_pip(python_exe, [uv_spec])
+
+    if not requested_modules:
+        return
+
+    print("--> Installing remaining modules using 'uv'")
+    command = _build_install_command(
+        [python_exe, "-m", "uv", "pip"], requested_modules
+    )
+    run_command(command)
+
+
+def install_with_pip(python_exe: Path, modules: list[InstallSpec]) -> None:
+    """Installs the specified modules using 'pip'.
+
+    :param python_exe Path: The path to the Python executable within the venv.
+    :param modules: A list of InstallSpec objects to install.
+    """
+    print("--> Installing modules using 'pip'")
+    command = _build_install_command(
+        [python_exe, "-m", "pip"], modules
+    )
+    run_command(command)
+
+
+def _build_install_command(base_command: list, modules: list[InstallSpec]) -> list:
+    """Builds a complete installation command list.
+
+    :param base_command list: The base command to start with (e.g., pip or uv pip).
+    :param modules: A list of InstallSpec objects to install.
+    :return: The complete command list to run.
+    """
+    command = base_command + ["install", "--quiet", "-U"]
+    for module in modules:
+        print(f"  - {module.name}, {module.version or 'latest'}")
+        spec_str = module.name
+        if module.version:
+            spec_str += module.version
+        command.append(spec_str)
+    return command
+
+
+def print_instructions(is_windows: bool, template: str) -> None:
+    """Prints instructions to the user on how to activate the virtual environment
+    
+    :param is_windows bool: Whether the current platform is Windows.
+    :param template str: The instructions template to use.
+    """
     activate_script = "source .venv/bin/activate"
     if is_windows:
         activate_script = ".venv\\Scripts\\activate.bat"
 
-    instructions = f"""
---- Bootstrap complete! ---
-
-To activate the development environment, run:
-  {activate_script}
-
-You can then use 'tox' to run tasks, for example:
-  tox -e lint
-  tox -e docs
-
-To deactivate the virtual environment, run:
-  deactivate
-"""
+    instructions = template.format(activate=activate_script)
     print(instructions)
 
 
@@ -130,8 +220,8 @@ def main():
     python_exe = bin_dir / ("python.exe" if is_windows else "python")
 
     create_virtual_environment(venv_dir, python_exe)
-    install_tools(python_exe)
-    print_instructions(is_windows)
+    install_tools(python_exe, BOOTSTRAP_MODULES)
+    print_instructions(is_windows, POST_INSTALL_MESSAGE)
 
 
 if __name__ == "__main__":
