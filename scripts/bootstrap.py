@@ -26,7 +26,7 @@ class InstallSpec(NamedTuple):
 
 BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="uv", version=">=0.9.18"),
-    InstallSpec(name="tox[uv]", version=">=4.32.0"),
+    # tox and tox-uv are handled specially via 'uv tool install'
 ]
 
 # --- Post-install instructions template ---
@@ -136,20 +136,32 @@ def install_tools(python_exe: Path, modules: list[InstallSpec]) -> None:
 
 
 def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
-    """Installs the 'uv' package using pip, then installs the remaining modules using 'uv'.
+    """Installs 'uv' using pip, then uses 'uv' to install tox and tox-uv as a tool.
 
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
     """
-    uv_spec = [mod for mod in modules if mod.name == "uv"][0]
+    uv_module = [mod for mod in modules if mod.name == "uv"][0]
     other_modules = [mod for mod in modules if mod.name != "uv"]
 
-    print(f"--> Installing 'uv' using 'pip': {uv_spec.name}, "
-          f"{uv_spec.version or 'latest'}")
-    install_with_pip(python_exe, [uv_spec])
+    print(f"--> Bootstrapping 'uv' using 'pip': {uv_module.name}, "
+          f"{uv_module.version or 'latest'}")
+    install_with_pip(python_exe, [uv_module])
+
+    tox_modules = [mod for mod in other_modules if mod.name == "tox"]
+    other_modules = [mod for mod in other_modules if mod.name != "tox"]
+
+    if tox_modules:
+        tox_module = tox_modules[0]
+        print("--> Installing 'tox' and 'tox-uv' using 'uv tool install'")
+        command = [
+            python_exe, "-m", "uv", "tool", "install",
+            f"tox{tox_module.version or ''}", "--with", "tox-uv"
+        ]
+        run_command(command)
 
     if other_modules:
-        print("--> Installing remaining modules using 'uv'")
+        print("--> Installing remaining modules using 'uv pip'")
         command = _build_install_command(
             [python_exe, "-m", "uv", "pip"], other_modules
         )
@@ -163,9 +175,7 @@ def install_with_pip(python_exe: Path, modules: list[InstallSpec]) -> None:
     :param modules: A list of InstallSpec objects to install.
     """
     print("--> Installing modules using 'pip'")
-    command = _build_install_command(
-        [python_exe, "-m", "pip"], modules
-    )
+    command = _build_install_command([python_exe, "-m", "pip"], modules)
     run_command(command)
 
 
