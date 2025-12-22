@@ -247,6 +247,8 @@ env_list = [
     "lint",
     "docs",
 ]
+install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
+
 
 [tool.tox.env]
 
@@ -254,9 +256,7 @@ env_list = [
 # This contains settings that ARE inherited by 'requires'.
 package = "wheel"
 wheel_build_env = ".pkg"
-dependency_groups = ["test"]
 pass_env = ["HOME", "USERPROFILE"]
-install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
 allowlist_externals = ["pytest", "uv"]
 
 # --- Concrete Test Environments ---
@@ -265,18 +265,21 @@ allowlist_externals = ["pytest", "uv"]
 description = "Run the test suite on Python 3.10"
 requires = ["basetest"]
 # These settings are NOT inherited and must be explicit.
+dependency_groups = ["test"]
 allowlist_externals = ["pytest"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.py311]
 description = "Run the test suite on Python 3.11"
 requires = ["basetest"]
+dependency_groups = ["test"]
 allowlist_externals = ["pytest"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.py312]
 description = "Run the test suite on Python 3.12"
 requires = ["basetest"]
+dependency_groups = ["test"]
 allowlist_externals = ["pytest"]
 commands = [["pytest", "{posargs:tests/}"]]
 
@@ -292,6 +295,7 @@ commands = [["pytest", "{posargs:tests/}"]]
 [tool.tox.env.py314]
 description = "Run the test suite on Python 3.14"
 requires = ["basetest"]
+dependency_groups = ["test"]
 allowlist_externals = ["pytest"]
 commands = [["pytest", "{posargs:tests/}"]]
 
