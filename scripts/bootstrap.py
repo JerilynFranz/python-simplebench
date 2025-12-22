@@ -11,19 +11,6 @@ from pathlib import Path
 from typing import NamedTuple
 from venv import create as create_venv
 
-POST_INSTALL_MESSAGE = """
---- Bootstrap complete! ---
-To activate the development environment, run:
-
-  {activate}
-
-You can then use 'tox' to run tasks, for example:
-  tox -e lint
-  tox -e docs
-To deactivate the virtual environment, run:
-  deactivate
-"""
-
 
 class InstallSpec(NamedTuple):
     """Specification for modules to install in the virtual environment.
@@ -35,10 +22,30 @@ class InstallSpec(NamedTuple):
     version: str | None = None
 
 
+# --- Modules to install during bootstrap ---
+
 BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="uv", version=">=0.9.18"),
     InstallSpec(name="tox", version=">=4.32.0"),
 ]
+
+# --- Post-install instructions template ---
+
+POST_INSTALL_MESSAGE = """
+--- Bootstrap complete! ---
+To activate the development environment, run:
+
+  {activate}
+
+You can then use 'tox' to run tasks, for example:
+  tox -e lint
+  tox -e docs
+
+If you are not familiar with using 'tox' see https://tox.wiki/en/latest/
+
+To deactivate the virtual environment, run:
+  deactivate
+"""
 
 
 def run_command(command, check=True, **kwargs):
