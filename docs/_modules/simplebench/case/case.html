@@ -259,19 +259,21 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">vcs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.benchmark_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">BenchmarkRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.display.progress_tracker</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressTracker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">Color</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">MachineInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">SimpleBenchAttributeError</span><span class="p">,</span>
     <span class="n">SimpleBenchBenchmarkError</span><span class="p">,</span>
     <span class="n">SimpleBenchTimeoutError</span><span class="p">,</span>
     <span class="n">SimpleBenchValueError</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions</span><span class="w"> </span><span class="kn">import</span> <span class="n">v1</span> <span class="k">as</span> <span class="n">current_report_version</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.protocols</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterCallback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.reporter.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReporterOptions</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.reporters.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_reporter_callback</span>
@@ -282,6 +284,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CaseErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.function_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionRunner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.mark</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mark</span>
+
+<span class="n">MachineInfo</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">current_report_version</span><span class="o">.</span><span class="n">MachineInfo</span>
 
 <span class="n">_DEFERRED_IMPORTS_DONE</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -1109,7 +1113,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_benchmarks_have_run</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_report_cache_raw_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span><span class="p">:</span> <span class="n">MachineInfo</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Reset machine info cache</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">machine_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MachineInfo</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the MachineInfo for the benchmark case.</span>
+
+<span class="sd">        This property retrieves the MachineInfo associated with the benchmark case.</span>
+<span class="sd">        If the MachineInfo has not been set yet, it will be created and cached</span>
+<span class="sd">        for future access.</span>
+
+<span class="sd">        :return: The MachineInfo instance for the benchmark case.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span> <span class="o">=</span> <span class="n">MachineInfo</span><span class="o">.</span><span class="n">from_system</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_machine_info</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns whether the benchmarks for this case have been run.</span>

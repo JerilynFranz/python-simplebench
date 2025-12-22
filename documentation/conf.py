@@ -63,7 +63,7 @@ intersphinx_mapping = {
     'matplotlib': ('https://matplotlib.org/stable/', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
     'seaborn': ('https://seaborn.pydata.org/', None),
-    'dulwich': ('https://www.dulwich.io/docs/', None),
+    'psutil': ('https://psutil.readthedocs.io/en/latest/', None),
     'pytest': ('https://docs.pytest.org/en/latest/', None),
     'jsonschema': ('https://python-jsonschema.readthedocs.io/en/stable/', None),
 }

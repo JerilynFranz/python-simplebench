@@ -13,6 +13,7 @@ from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.doc_utils import format_docstring
 from simplebench.enums import Color
+from simplebench.environment import MachineInfo
 from simplebench.exceptions import (
     SimpleBenchAttributeError,
     SimpleBenchBenchmarkError,
@@ -23,7 +24,7 @@ from simplebench.report.versions import v1 as current_report_version
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
-from simplebench.utils import machine_info, timestamp_to_iso8601
+from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_bool
 
 from . import validate

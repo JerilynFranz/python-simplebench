@@ -265,14 +265,14 @@
 <span class="sd">with the version number set to 1, the type set to &quot;SimpleBenchReport::V1&quot;,</span>
 <span class="sd">and the schema set to the ReportSchema class for version 1 reports.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchValueError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReportErrorTag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONSchema</span><span class="p">,</span> <span class="n">MachineInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Report</span> <span class="k">as</span> <span class="n">BaseReport</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">CaseTypeProxy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.type_proxies</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_case</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">validate_iso8601_datetime</span><span class="p">,</span>
     <span class="n">validate_sequence_of_str</span><span class="p">,</span>
@@ -280,9 +280,14 @@
     <span class="n">validate_string</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..machine_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">MachineInfo</span> <span class="k">as</span> <span class="n">MachineInfoV1</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..results_info</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span> <span class="k">as</span> <span class="n">ResultsV1</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">machine_info</span><span class="p">,</span> <span class="n">results_info</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.report_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportSchema</span>
+
+<span class="n">MachineInfoV1</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">machine_info</span><span class="o">.</span><span class="n">MachineInfo</span>
+<span class="n">ResultsInfoV1</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">results_info</span><span class="o">.</span><span class="n">ResultsInfo</span>
+<span class="n">MachineInfoDictV1</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">MachineInfoDict</span>
+<span class="n">ResultsInfoDictV1</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">ResultsInfoDict</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.case</span><span class="w"> </span><span class="kn">import</span> <span class="n">Case</span>
@@ -325,23 +330,26 @@
 <div class="viewcode-block" id="Report.from_case">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.report.report.html#simplebench.report.versions.v1.Report.from_case">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_case</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="s1">&#39;Case&#39;</span><span class="p">,</span> <span class="n">include_raw_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Report&#39;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_case</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">case</span><span class="p">:</span> <span class="s1">&#39;Case&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Report&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Report instance from a Case instance.</span>
 
-<span class="sd">        :param case: Case instance to create the Report from.</span>
-<span class="sd">        :param include_raw_data: Whether to include full results data. Defaults to False.</span>
+<span class="sd">        :param case: The Case instance to create the Report from.</span>
 <span class="sd">        :return: Report instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">case</span><span class="p">(</span><span class="n">case</span><span class="p">)</span>
+        <span class="n">validate</span><span class="o">.</span><span class="n">case_has_been_run</span><span class="p">(</span><span class="n">case</span><span class="p">)</span>
+
+        <span class="n">results</span><span class="p">:</span> <span class="n">ResultsInfo</span> <span class="o">=</span> <span class="n">ResultsInfoV1</span><span class="o">.</span><span class="n">from_results</span><span class="p">(</span><span class="n">case</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">machine_info</span><span class="p">:</span> <span class="n">MachineInfo</span> <span class="o">=</span> <span class="n">MachineInfoV1</span><span class="o">.</span><span class="n">from_system</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">timestamp</span><span class="o">=</span><span class="n">case</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
             <span class="n">group</span><span class="o">=</span><span class="n">case</span><span class="o">.</span><span class="n">group</span><span class="p">,</span>
             <span class="n">title</span><span class="o">=</span><span class="n">case</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
             <span class="n">description</span><span class="o">=</span><span class="n">case</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
             <span class="n">variation_cols</span><span class="o">=</span><span class="n">case</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">,</span>
-            <span class="n">results</span><span class="o">=</span><span class="p">[</span><span class="n">ResultsV1</span><span class="o">.</span><span class="n">from_case_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-                     <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">case</span><span class="o">.</span><span class="n">results</span><span class="p">],</span>
-            <span class="n">machine</span><span class="o">=</span><span class="n">MachineInfoV1</span><span class="o">.</span><span class="n">from_case_machine_info</span><span class="p">(</span>
-                <span class="k">case</span><span class="o">.</span><span class="n">machine_info</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+            <span class="n">machine</span><span class="o">=</span><span class="n">machine_info</span>
         <span class="p">)</span></div>
 
 
@@ -365,7 +373,7 @@
                 <span class="n">_ReportErrorTag</span><span class="o">.</span><span class="n">INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE</span><span class="p">,</span>
                 <span class="n">_ReportErrorTag</span><span class="o">.</span><span class="n">INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT</span><span class="p">,</span>
                 <span class="n">allow_empty</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">ResultsV1</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">validated_list</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">ResultsInfoV1</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">validated_list</span><span class="p">]</span>
 
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">import_data</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>

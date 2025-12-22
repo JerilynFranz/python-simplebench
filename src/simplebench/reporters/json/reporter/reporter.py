@@ -7,6 +7,7 @@ from io import StringIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
+from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metadata import Metadata
 from simplebench.metric import Metric
@@ -23,7 +24,6 @@ from simplebench.report import (
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.type_proxies import is_case
-from simplebench.utils import get_machine_info
 from simplebench.validators import validate_type
 
 from ._error_tags import _JSONReporterErrorTag
@@ -198,7 +198,7 @@ class JSONReporter(Reporter):
             case_dict = case.as_dict(full_data=full_data)
             try:
                 case_dict['version'] = self.schema_version
-                case_dict['metadata'] = get_machine_info()
+                case_dict['metadata'] = MachineInfo()
                 json.dump(case_dict, jsonfile, indent=4)
                 jsonfile.seek(0)
             except Exception as exc:

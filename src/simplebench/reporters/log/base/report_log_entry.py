@@ -6,11 +6,12 @@ from json import JSONEncoder
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies import is_case, is_choice
-from simplebench.utils import get_machine_info, timestamp_to_iso8601
+from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_type
-from simplebench.vcs import GitInfo
+from simplebench.vcs import VCSInfo
 
 from .._error_tags import _ReportLogEntryErrorTag
 
@@ -268,7 +269,7 @@ class ReportLogEntry(ABC):
         :return: A dictionary representation of the metadata.
         :rtype: dict[str, Any]
         """
-        git_info = self.case.git_info.to_dict() if isinstance(self.case.git_info, GitInfo) else None
+        vcs_info = self.case.vcs_info.to_dict() if isinstance(self.case.vcs_info, VCSInfo) else None
 
         output = {
             "version": 1,
@@ -280,8 +281,8 @@ class ReportLogEntry(ABC):
             "reporter_schema_version": self.choice.reporter.schema_version,
             "output_format": self.choice.output_format.name,
             "benchmark_title": self.case.title,
-            "git": git_info,
-            "machine_info": get_machine_info(),
+            "vcs": vcs_info,
+            "machine_info": MachineInfo()
         }
         if self.uri is not None:
             output["uri"] = self.uri

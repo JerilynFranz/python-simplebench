@@ -592,6 +592,33 @@ If not provided, it defaults to an empty string and will be computed automatical
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="simplebench.report.versions.v1.MachineInfo.from_system">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_system</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.machine_info.html#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo" title="simplebench.report.versions.v1.machine_info.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/machine_info/machine_info.html#MachineInfo.from_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.MachineInfo.from_system" title="Link to this definition">🔗</a></dt>
+<dd><p>Create a MachineInfo instance from the current system information.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Example
+machine_info = MachineInfo.from_system()</span><a class="headerlink" href="#id3" title="Link to this code">🔗</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>node</strong> – The node name to include in the MachineInfo (optional).</p>
+</dd>
+<dt class="field-even">Return MachineInfo<span class="colon">:</span></dt>
+<dd class="field-even"><p>A MachineInfo instance with information about the current machine.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.MachineInfo.hash_id">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hash_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.MachineInfo.hash_id" title="Link to this definition">🔗</a></dt>
@@ -807,8 +834,8 @@ and can contain underscores in between.”</p>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.python_info.python_info.html#simplebench.report.versions.v1.python_info.python_info.PythonInfo" title="simplebench.report.versions.v1.python_info.python_info.PythonInfo"><span class="pre">PythonInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/python_info/python_info.html#PythonInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.PythonInfo.from_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a PythonInfo instance from a dictionary.</p>
-<div class="literal-block-wrapper docutils container" id="id3">
-<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id3" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id4" title="Link to this code">🔗</a></div>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span> <span class="n">python_info</span> <span class="o">=</span> <span class="n">PythonInfo</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1129,21 +1156,11 @@ JSON raw data block. It must conform to the <code class="xref py py-class docuti
 
 <dl class="py method">
 <dt class="sig sig-object py" id="simplebench.report.versions.v1.Report.from_case">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">include_raw_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.Report" title="simplebench.report.versions.v1.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.Report.from_case" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.html#simplebench.Case" title="simplebench.Case"><span class="pre">Case</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.Report" title="simplebench.report.versions.v1.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/report/report.html#Report.from_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.Report.from_case" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a Report instance from a Case instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>case</strong> – Case instance to create the Report from.</p></li>
-<li><p><strong>include_raw_data</strong> – Whether to include full results data. Defaults to False.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>case</strong> – The Case instance to create the Report from.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Report instance.</p>
@@ -1842,8 +1859,8 @@ If not provided, it defaults to an empty string and will be computed automatical
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.vcs_info.vcs_info.html#simplebench.report.versions.v1.vcs_info.vcs_info.VCSInfo" title="simplebench.report.versions.v1.vcs_info.vcs_info.VCSInfo"><span class="pre">VCSInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/vcs_info/vcs_info.html#VCSInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.VCSInfo.from_dict" title="Link to this definition">🔗</a></dt>
 <dd><p>Create a VCSInfo instance from a dictionary.</p>
-<div class="literal-block-wrapper docutils container" id="id4">
-<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id4" title="Link to this code">🔗</a></div>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Example</span><a class="headerlink" href="#id5" title="Link to this code">🔗</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vcs_info</span> <span class="o">=</span> <span class="n">VCSInfo</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -2123,6 +2140,7 @@ to be present and guarantees that the <cite>value</cite> field is a <cite>float<
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.html#simplebench.report.versions.v1.machine_info.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.html#simplebench.report.versions.v1.machine_info.MachineInfo.execution_environment"><code class="docutils literal notranslate"><span class="pre">MachineInfo.execution_environment</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.html#simplebench.report.versions.v1.machine_info.MachineInfo.from_dict"><code class="docutils literal notranslate"><span class="pre">MachineInfo.from_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.html#simplebench.report.versions.v1.machine_info.MachineInfo.from_system"><code class="docutils literal notranslate"><span class="pre">MachineInfo.from_system()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.html#simplebench.report.versions.v1.machine_info.MachineInfo.hash_id"><code class="docutils literal notranslate"><span class="pre">MachineInfo.hash_id</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.html#simplebench.report.versions.v1.machine_info.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.machine_info.html#simplebench.report.versions.v1.machine_info.MachineInfo.node"><code class="docutils literal notranslate"><span class="pre">MachineInfo.node</span></code></a></li>
@@ -2386,6 +2404,124 @@ to be present and guarantees that the <cite>value</cite> field is a <cite>float<
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.report.versions.v1.types.html">simplebench.report.versions.v1.types package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData"><code class="docutils literal notranslate"><span class="pre">CPUInfoData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.arch"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.arch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.arch_string_raw"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.arch_string_raw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.bits"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.bits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.brand_raw"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.brand_raw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.count"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.hash_id"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.hash_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.type"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoData.version"><code class="docutils literal notranslate"><span class="pre">CPUInfoData.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.arch"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.arch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.arch_string_raw"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.arch_string_raw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.bits"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.bits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.brand_raw"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.brand_raw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.count"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.hash_id"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.hash_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.type"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.CPUInfoDict.version"><code class="docutils literal notranslate"><span class="pre">CPUInfoDict.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ExecutionEnvironmentData"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironmentData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ExecutionEnvironmentData.python"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironmentData.python</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ExecutionEnvironmentDict"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironmentDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ExecutionEnvironmentDict.python"><code class="docutils literal notranslate"><span class="pre">ExecutionEnvironmentDict.python</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData"><code class="docutils literal notranslate"><span class="pre">MachineInfoData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.cpu</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.execution_environment"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.execution_environment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.hash_id"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.hash_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.machine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.node"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.node</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.processor"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.processor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.release"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.release</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.system"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.system</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.type"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoData.version"><code class="docutils literal notranslate"><span class="pre">MachineInfoData.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.cpu</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.execution_environment"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.execution_environment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.hash_id"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.hash_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.machine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.node"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.node</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.processor"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.processor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.release"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.release</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.system"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.system</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.type"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.MachineInfoDict.version"><code class="docutils literal notranslate"><span class="pre">MachineInfoDict.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData"><code class="docutils literal notranslate"><span class="pre">PythonInfoData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.build"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.build</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.compiler"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.compiler</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.hash_id"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.hash_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.implementation"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.implementation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.implementation_version"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.implementation_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.python_version"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.python_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.release"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.release</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.system"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.system</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.type"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoData.version"><code class="docutils literal notranslate"><span class="pre">PythonInfoData.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.build"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.build</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.compiler"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.compiler</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.hash_id"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.hash_id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.implementation"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.implementation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.implementation_version"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.implementation_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.python_version"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.python_version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.release"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.release</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.system"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.system</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.type"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.PythonInfoDict.version"><code class="docutils literal notranslate"><span class="pre">PythonInfoDict.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData"><code class="docutils literal notranslate"><span class="pre">ReportData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.description"><code class="docutils literal notranslate"><span class="pre">ReportData.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.group"><code class="docutils literal notranslate"><span class="pre">ReportData.group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.machine"><code class="docutils literal notranslate"><span class="pre">ReportData.machine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.results"><code class="docutils literal notranslate"><span class="pre">ReportData.results</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.timestamp"><code class="docutils literal notranslate"><span class="pre">ReportData.timestamp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.title"><code class="docutils literal notranslate"><span class="pre">ReportData.title</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.type"><code class="docutils literal notranslate"><span class="pre">ReportData.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.variation_cols"><code class="docutils literal notranslate"><span class="pre">ReportData.variation_cols</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportData.version"><code class="docutils literal notranslate"><span class="pre">ReportData.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict"><code class="docutils literal notranslate"><span class="pre">ReportDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.description"><code class="docutils literal notranslate"><span class="pre">ReportDict.description</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.group"><code class="docutils literal notranslate"><span class="pre">ReportDict.group</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.machine"><code class="docutils literal notranslate"><span class="pre">ReportDict.machine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.results"><code class="docutils literal notranslate"><span class="pre">ReportDict.results</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.timestamp"><code class="docutils literal notranslate"><span class="pre">ReportDict.timestamp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.title"><code class="docutils literal notranslate"><span class="pre">ReportDict.title</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.type"><code class="docutils literal notranslate"><span class="pre">ReportDict.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.variation_cols"><code class="docutils literal notranslate"><span class="pre">ReportDict.variation_cols</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ReportDict.version"><code class="docutils literal notranslate"><span class="pre">ReportDict.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoData"><code class="docutils literal notranslate"><span class="pre">ResultsInfoData</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoData.kwargs"><code class="docutils literal notranslate"><span class="pre">ResultsInfoData.kwargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoData.raw_results"><code class="docutils literal notranslate"><span class="pre">ResultsInfoData.raw_results</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoData.stats"><code class="docutils literal notranslate"><span class="pre">ResultsInfoData.stats</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoDict"><code class="docutils literal notranslate"><span class="pre">ResultsInfoDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoDict.kwargs"><code class="docutils literal notranslate"><span class="pre">ResultsInfoDict.kwargs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoDict.raw_results"><code class="docutils literal notranslate"><span class="pre">ResultsInfoDict.raw_results</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ResultsInfoDict.stats"><code class="docutils literal notranslate"><span class="pre">ResultsInfoDict.stats</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ValueBlockData"><code class="docutils literal notranslate"><span class="pre">ValueBlockData</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ValueBlockData.scale"><code class="docutils literal notranslate"><span class="pre">ValueBlockData.scale</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.versions.v1.types.html#simplebench.report.versions.v1.types.ValueBlockData.semantic_type"><code class="docutils literal notranslate"><span class="pre">ValueBlockData.semantic_type</span></code></a></li>
@@ -2564,6 +2700,7 @@ to be present and guarantees that the <cite>value</cite> field is a <cite>float<
 <li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.execution_environment"><code class="docutils literal notranslate"><span class="pre">MachineInfo.execution_environment</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.from_dict"><code class="docutils literal notranslate"><span class="pre">MachineInfo.from_dict()</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.from_system"><code class="docutils literal notranslate"><span class="pre">MachineInfo.from_system()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.hash_id"><code class="docutils literal notranslate"><span class="pre">MachineInfo.hash_id</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.MachineInfo.node"><code class="docutils literal notranslate"><span class="pre">MachineInfo.node</span></code></a></li>

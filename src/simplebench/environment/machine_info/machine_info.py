@@ -3,9 +3,12 @@ import platform
 from dataclasses import dataclass
 from typing import ClassVar
 
+from simplebench.environment.cpu_info import CPUInfo
+from simplebench.environment.memory_info import MemoryInfo
+from simplebench.environment.python_info import PythonInfo
+from simplebench.environment.system_info import SystemInfo
 from simplebench.validators import validate_string
 
-from .. import CPUInfo, PythonInfo, SystemInfo
 from ._error_tags import _MachineInfoErrorTag
 
 
@@ -15,6 +18,7 @@ class _MachineCoreInfo:
     cpu: CPUInfo
     python: PythonInfo
     system: SystemInfo
+    memory: MemoryInfo
 
 
 class MachineInfo:
@@ -43,6 +47,7 @@ class MachineInfo:
                 cpu=CPUInfo(),
                 python=PythonInfo(),
                 system=SystemInfo(),
+                memory=MemoryInfo(),
             )
 
         if node is None:
@@ -77,3 +82,8 @@ class MachineInfo:
     def system(self) -> SystemInfo:
         """System information."""
         return self._core.system
+
+    @property
+    def memory(self) -> MemoryInfo:
+        """Memory information."""
+        return self._core.memory

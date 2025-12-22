@@ -10,9 +10,10 @@ from abc import ABC
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies import is_case, is_choice
-from simplebench.utils import get_machine_info, timestamp_to_iso8601
+from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_type
 from simplebench.vcs import GitInfo
 
@@ -208,6 +209,6 @@ class Metadata(ABC):
             output_format=self.choice.output_format.name,
             benchmark_title=self.case.title,
             git=git_info,
-            machine_info=get_machine_info(),
+            machine_info=MachineInfo()
         )
 

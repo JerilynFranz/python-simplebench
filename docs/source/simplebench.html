@@ -923,6 +923,20 @@ accept them.</p>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="simplebench.Case.machine_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">machine_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.machine_info.machine_info.html#simplebench.report.versions.v1.machine_info.machine_info.MachineInfo" title="simplebench.report.versions.v1.machine_info.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></em><a class="headerlink" href="#simplebench.Case.machine_info" title="Link to this definition">🔗</a></dt>
+<dd><p>Get the MachineInfo for the benchmark case.</p>
+<p>This property retrieves the MachineInfo associated with the benchmark case.
+If the MachineInfo has not been set yet, it will be created and cached
+for future access.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The MachineInfo instance for the benchmark case.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Case.max_time">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.Case.max_time" title="Link to this definition">🔗</a></dt>
 <dd><p>The maximum time for the benchmark in seconds.</p>
@@ -2587,6 +2601,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.has_run"><code class="docutils literal notranslate"><span class="pre">Case.has_run</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.iterations"><code class="docutils literal notranslate"><span class="pre">Case.iterations</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.kwargs_variations</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.machine_info"><code class="docutils literal notranslate"><span class="pre">Case.machine_info</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.max_time"><code class="docutils literal notranslate"><span class="pre">Case.max_time</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.min_time"><code class="docutils literal notranslate"><span class="pre">Case.min_time</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.case.html#simplebench.case.Case.options"><code class="docutils literal notranslate"><span class="pre">Case.options</span></code></a></li>
@@ -3352,33 +3367,11 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.utils.html">simplebench.utils package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo"><code class="docutils literal notranslate"><span class="pre">MachineInfo</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.cpu"><code class="docutils literal notranslate"><span class="pre">MachineInfo.cpu</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.machine"><code class="docutils literal notranslate"><span class="pre">MachineInfo.machine</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.processor"><code class="docutils literal notranslate"><span class="pre">MachineInfo.processor</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.python_build"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_build</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.python_compiler"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_compiler</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.python_implementation"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_implementation</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_implementation_version</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.python_version"><code class="docutils literal notranslate"><span class="pre">MachineInfo.python_version</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.release"><code class="docutils literal notranslate"><span class="pre">MachineInfo.release</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.MachineInfo.system"><code class="docutils literal notranslate"><span class="pre">MachineInfo.system</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.arg_to_flag"><code class="docutils literal notranslate"><span class="pre">arg_to_flag()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.collect_arg_list"><code class="docutils literal notranslate"><span class="pre">collect_arg_list()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.flag_to_arg"><code class="docutils literal notranslate"><span class="pre">flag_to_arg()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.get_machine_info"><code class="docutils literal notranslate"><span class="pre">get_machine_info()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.iso8601_to_timestamp"><code class="docutils literal notranslate"><span class="pre">iso8601_to_timestamp()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">kwargs_variations()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_architecture"><code class="docutils literal notranslate"><span class="pre">platform_architecture()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_id"><code class="docutils literal notranslate"><span class="pre">platform_id()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_implementation"><code class="docutils literal notranslate"><span class="pre">platform_implementation()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_machine"><code class="docutils literal notranslate"><span class="pre">platform_machine()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_processor"><code class="docutils literal notranslate"><span class="pre">platform_processor()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_system"><code class="docutils literal notranslate"><span class="pre">platform_system()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.platform_version"><code class="docutils literal notranslate"><span class="pre">platform_version()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">python_implementation_version()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.sanitize_filename"><code class="docutils literal notranslate"><span class="pre">sanitize_filename()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.sigfigs"><code class="docutils literal notranslate"><span class="pre">sigfigs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.utils.html#simplebench.utils.timestamp_to_iso8601"><code class="docutils literal notranslate"><span class="pre">timestamp_to_iso8601()</span></code></a></li>
@@ -3397,19 +3390,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li class="toctree-l4"><a class="reference internal" href="simplebench.utils.kwargs_variations.html#simplebench.utils.kwargs_variations.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">kwargs_variations()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html">simplebench.utils.machine_info module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.MachineInfo"><code class="docutils literal notranslate"><span class="pre">MachineInfo</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.get_machine_info"><code class="docutils literal notranslate"><span class="pre">get_machine_info()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_architecture"><code class="docutils literal notranslate"><span class="pre">platform_architecture()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_id"><code class="docutils literal notranslate"><span class="pre">platform_id()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_implementation"><code class="docutils literal notranslate"><span class="pre">platform_implementation()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_machine"><code class="docutils literal notranslate"><span class="pre">platform_machine()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_processor"><code class="docutils literal notranslate"><span class="pre">platform_processor()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_system"><code class="docutils literal notranslate"><span class="pre">platform_system()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.platform_version"><code class="docutils literal notranslate"><span class="pre">platform_version()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="simplebench.utils.machine_info.html#simplebench.utils.machine_info.python_implementation_version"><code class="docutils literal notranslate"><span class="pre">python_implementation_version()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.utils.machine_info.html">simplebench.utils.machine_info module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.utils.significant_figures.html">simplebench.utils.significant_figures module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.utils.significant_figures.html#simplebench.utils.significant_figures.sigfigs"><code class="docutils literal notranslate"><span class="pre">sigfigs()</span></code></a></li>
 </ul>
@@ -3684,6 +3665,7 @@ if <code class="docutils literal notranslate"><span class="pre">argv</span></cod
 <li><a class="reference internal" href="#simplebench.Case.has_run"><code class="docutils literal notranslate"><span class="pre">Case.has_run</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.iterations"><code class="docutils literal notranslate"><span class="pre">Case.iterations</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.kwargs_variations"><code class="docutils literal notranslate"><span class="pre">Case.kwargs_variations</span></code></a></li>
+<li><a class="reference internal" href="#simplebench.Case.machine_info"><code class="docutils literal notranslate"><span class="pre">Case.machine_info</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.max_time"><code class="docutils literal notranslate"><span class="pre">Case.max_time</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.min_time"><code class="docutils literal notranslate"><span class="pre">Case.min_time</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.Case.options"><code class="docutils literal notranslate"><span class="pre">Case.options</span></code></a></li>

@@ -21,7 +21,6 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _MachineInfoErrorTag
 from simplebench.report.base import CPUInfo, ExecutionEnvironment, JSONSchema
 from simplebench.report.base import MachineInfo as BaseMachineInfo
-from simplebench.utils import machine_info
 from simplebench.validators import validate_string, validate_type
 
 from ..cpu_info import CPUInfo as CPUInfoV1
