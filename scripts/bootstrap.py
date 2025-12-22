@@ -68,12 +68,10 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
     """
     if not venv_dir.exists():
         print(f"Creating virtual environment in '{venv_dir}'...")
-        # Create venv without default pip; we will ensure it ourselves for robustness.
+        # Create venv without default pip; we ensure it ourselves for robustness.
         create_venv(venv_dir, with_pip=False)
 
         print("Ensuring pip is installed in the virtual environment...")
-        # Explicitly run ensurepip to handle systems where venv doesn't install it.
-        # This is more reliable than relying on with_pip=True.
         run_command([python_exe, "-m", "ensurepip", "--upgrade"])
     else:
         print(f"Virtual environment '{venv_dir}' already exists. Skipping creation.")
