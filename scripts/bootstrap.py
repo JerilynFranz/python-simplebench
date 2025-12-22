@@ -219,7 +219,7 @@ def main():
     git_root = get_git_root()
     os.chdir(git_root)
 
-    print(f"--- Bootstrapping development environment (in {os.getcwd()}) ---")
+    print(f"--- Bootstrapping development environment (in {git_root}) ---")
 
     # --- Define Paths ---
     venv_dir = git_root / ".venv"

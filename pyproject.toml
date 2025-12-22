@@ -249,12 +249,14 @@ commands = ["pytest {posargs:tests/}"]
 
 [tool.tox.env.docs]
 # Environment for building documentation, requires Python 3.12+
+package = "skip"
 base_python = "python3.12"
 dependency_group = "docs"
 commands = ["sphinx-build -b html documentation/ documentation/_build/html"]
 
 [tool.tox.env.lint]
 # Environment for running linters, requires Python 3.12+
+package = "skip"
 base_python = "python3.12"
 dependency_group = "lint"
 commands = [
