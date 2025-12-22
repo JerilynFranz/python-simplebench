@@ -26,7 +26,7 @@ class InstallSpec(NamedTuple):
 
 BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="uv", version=">=0.9.18"),
-    InstallSpec(name="tox", version=">=4.32.0"),
+    InstallSpec(name="tox[uv]", version=">=4.32.0"),
 ]
 
 # --- Post-install instructions template ---
@@ -141,25 +141,19 @@ def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
     """
-    # Making a copy to avoid modifying the original list
-    requested_modules = list(modules)
-
-    uv_install_index = next(
-            (i for i, mod in enumerate(requested_modules) if mod.name == "uv"), -1)
-    uv_spec = requested_modules.pop(uv_install_index)
+    uv_spec = [mod for mod in modules if mod.name == "uv"][0]
+    other_modules = [mod for mod in modules if mod.name != "uv"]
 
     print(f"--> Installing 'uv' using 'pip': {uv_spec.name}, "
           f"{uv_spec.version or 'latest'}")
     install_with_pip(python_exe, [uv_spec])
 
-    if not requested_modules:
-        return
-
-    print("--> Installing remaining modules using 'uv'")
-    command = _build_install_command(
-        [python_exe, "-m", "uv", "pip"], requested_modules
-    )
-    run_command(command)
+    if other_modules:
+        print("--> Installing remaining modules using 'uv'")
+        command = _build_install_command(
+            [python_exe, "-m", "uv", "pip"], other_modules
+        )
+        run_command(command)
 
 
 def install_with_pip(python_exe: Path, modules: list[InstallSpec]) -> None:
