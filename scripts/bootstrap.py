@@ -376,8 +376,9 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
         # run ensurepip and then upgrade pip, setuptools, and wheel.
         print("Ensuring pip is installed in the virtual environment...")
         run_command([python_exe, "-m", "ensurepip", "--upgrade"])
-        print("Upgrading pip, setuptools, and wheel in the virtual environment...")
-        run_command([python_exe, "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"])
+        print("Upgrading pip, setuptools, and wheel to latest versions...")
+        run_command([
+            python_exe, "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel", "--require-virtualenv"])
     else:
         print(f"Virtual environment '{venv_dir}' already exists. Skipping creation.")
 
