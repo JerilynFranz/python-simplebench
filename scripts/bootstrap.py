@@ -40,7 +40,7 @@ BOOTSTRAP_MODULES: list[InstallSpec] = [
 ]
 
 
-TOX_INSTRUCTIONS = """
+TOOL_USAGE_INSTRUCTIONS = """
 You use 'tox' to run tasks that set up and manage the development environment,
 run tests, linters, and build documentation:
 
@@ -57,6 +57,28 @@ The list of available 'tox' environments can be found by running:
   tox list
 
 If you are not familiar with using 'tox' see https://tox.wiki/en/latest/
+
+You use 'uv' to manage Python packages within the virtual environment and to
+update pyproject dependencies:
+
+Examples:
+
+    # Add a new package to the 'dev' dependency group
+    uv add --dev --group=dev 'package_name>=1.2.3'
+
+    # Add a new package to the default dependency group
+    uv add 'package_name>=1.2.3'
+
+    # Add a package to specified extras
+    uv add 'package_name[extra1,extra2]'
+
+    # install all dependencies from pyproject.toml
+    uv sync --all-extras
+
+    # install a package from PyPI
+    uv pip install 'package_name>=1.2.3'
+
+See https://docs.astral.sh/uv/ for more information on using 'uv'.
 """
 
 # --- Post-install instructions template ---
@@ -71,7 +93,7 @@ To deactivate the virtual environment, run:
 
   deactivate
 
-{TOX_INSTRUCTIONS}
+{TOOL_USAGE_INSTRUCTIONS}
 """
 
 
@@ -457,7 +479,7 @@ def main():
         print("All required development tools are already installed in the system environment.")
         print("No action is necessary.")
         print()
-        print(TOX_INSTRUCTIONS)
+        print(TOOL_USAGE_INSTRUCTIONS)
         return
 
     if not confirmation_prompt():
