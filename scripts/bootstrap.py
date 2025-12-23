@@ -18,8 +18,8 @@ from pathlib import Path
 from typing import NamedTuple
 from venv import create as create_venv
 
-DEBUG: bool = True
-"""Enable debug logging if True."""
+DEBUG: bool = False
+"""Enable debug output if True."""
 
 
 class InstallSpec(NamedTuple):
