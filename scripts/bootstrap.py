@@ -401,15 +401,14 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
         print("---> Ensuring pip CLI script is installed in the virtual environment...")
         run_command([python_exe, "-m", "ensurepip", "--upgrade"])
 
-        print("---> Upgrading pip to latest version...")
+        print("---> Upgrading pip, setuptools, and wheel in the virtual environment to latest versions...")
         if not pip_module_is_available(python_exe):
             pip_path = venv_dir / "Scripts" / "pip.exe" if _is_windows() else venv_dir / "bin" / "pip"
             if not pip_path.exists():
                 print("Error: 'pip' is not available in the virtual environment after ensurepip.")
                 print("Please check your Python installation.")
                 sys.exit(1)
-            print("---> Upgrading pip in the virtual environment to latest...")
-            run_command([pip_path, "install", "--upgrade", "pip"])
+            run_command([pip_path, "install", "--upgrade", "pip", "setuptools", "wheel"])
         else:
             run_command([
                 python_exe, "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel", "--require-virtualenv"])
