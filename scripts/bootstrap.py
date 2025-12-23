@@ -204,8 +204,6 @@ def install_tools(python_exe: Path, modules: list[InstallSpec]) -> None:
 def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
     """Installs 'uv' using pip, then uses 'uv' to install the specified modules.
 
-    If modules with uv tools are specified, they are installed using 'uv tool install'.
-
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
     """
@@ -243,7 +241,7 @@ def install_with_pip(python_exe: Path, modules: list[InstallSpec], message: str 
 
 
 def _build_install_command(base_command: list, modules: list[InstallSpec]) -> list:
-    """Builds a complete installation command list.
+    """Builds a complete installation command list for either 'pip' or 'uv pip'.
 
     :param base_command list: The base command to start with (e.g., pip or uv pip).
     :param modules: A list of InstallSpec objects to install.
