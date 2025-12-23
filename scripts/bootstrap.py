@@ -7,7 +7,7 @@ If the required tools are not found in the system environment,
 the script creates a local virtual environment in the git repository
 root directory (in a folder named `.venv`) and installs the tools there.
 
-If the tools are already installed in the system environment, no action is taken.
+If the necessary tools are already installed in the system environment, no action is taken.
 """
 import os
 import re
