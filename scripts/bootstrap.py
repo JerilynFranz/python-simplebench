@@ -241,6 +241,8 @@ def check_requirements() -> None:
     Currently checks for 'git' command.
     """
     try:
+        if DEBUG:
+            print("DEBUG: Running 'git --version' to check for git availability")
         subprocess.run(['git', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except FileNotFoundError:
         print("Error: 'git' command not found. Please install Git and ensure it is in your PATH.")
@@ -270,6 +272,8 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
     required_mods: set[str] = set(mod.name for mod in modules)
     print("--> Checking for required modules in the system environment...")
     try:
+        if DEBUG:
+            print(f"DEBUG: Running {command} to check installed modules")
         result = subprocess.run(
             command,
             capture_output=True,
