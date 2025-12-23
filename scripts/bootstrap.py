@@ -68,12 +68,16 @@ To activate the development environment, run:
   {{activate}}
 
 To deactivate the virtual environment, run:
+
   deactivate
 
 {TOX_INSTRUCTIONS}
 """
 
-IS_WINDOWS = sys.platform == "win32"
+
+def _is_windows() -> bool:
+    """Determines if the current platform is Windows."""
+    return sys.platform == "win32"
 
 
 def _validate_string(value: str, name: str) -> None:
@@ -111,7 +115,7 @@ def _validate_module_list(modules: list[InstallSpec], name: str) -> None:
         raise TypeError(f"{name} must be a list")
     for module in modules:
         if not isinstance(module, InstallSpec):
-            raise TypeError(f"all items in {name} must be InstallSpec instances")    
+            raise TypeError(f"all items in {name} must be InstallSpec instances")
 
 
 def _validate_command(lst: list[str | Path], name: str) -> None:
@@ -176,7 +180,15 @@ def _validate_path(path: Path, name: str, exists: bool = False) -> None:
 
 
 def run_command(command: list[str | Path], check=True, **kwargs):
-    """Helper to run a command and print its output."""
+    """Helper to run a command and print its output.
+
+    If the command is not found, or returns a non-zero exit code,
+    prints an error message and exits the script.
+
+    :param command list[str | Path]: The command to run as a list.
+    :param check bool: Whether to raise an exception on non-zero exit code.
+    :param kwargs: Additional keyword arguments to pass to subprocess.run().
+    """
     _validate_command(command, "command")
     _validate_boolean(check, "check")
     _validate_kwarg_keys_are_strings(kwargs, "kwargs")
@@ -193,7 +205,11 @@ def run_command(command: list[str | Path], check=True, **kwargs):
 
 
 def check_requirements() -> None:
-    """Checks that required system dependencies are available."""
+    """Checks that required system dependencies are available.
+
+    If any are missing, prints an error message and exits the script.
+    Currently checks for 'git' command.
+    """
     try:
         subprocess.run(['git', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except FileNotFoundError:
@@ -231,7 +247,7 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
         )
         output = result.stdout + result.stderr
         output_lines = output.splitlines()
-        already_satisfied_re: re.Pattern = re.compile(         
+        already_satisfied_re: re.Pattern = re.compile(
             r"Requirement\s+already\s+satisfied:\s+(?P<mod_name>[^\s<>=!~\[]+)[\s<>=!~\[]")
         for line in output_lines:
             match = already_satisfied_re.search(line)
@@ -265,7 +281,10 @@ def confirmation_prompt() -> bool:
 
 @cache
 def get_git_root() -> Path:
-    """Finds the root directory of the git repository and caches the result."""
+    """Finds the root directory of the git repository and caches the result.
+
+    If not in a git repository, prints an error message and exits.
+    """
     try:
         git_root_bytes = subprocess.check_output(
             ['git', 'rev-parse', '--show-toplevel'],
@@ -282,7 +301,7 @@ def get_git_root() -> Path:
         sys.exit(1)
 
 
-def path_to_venv_python(venv_dir: Path, is_windows: bool) -> Path:
+def path_to_venv_python(venv_dir: Path) -> Path:
     """Returns the path to the Python executable within the virtual environment.
 
     :param venv_dir Path: The directory of the virtual environment.
@@ -290,8 +309,7 @@ def path_to_venv_python(venv_dir: Path, is_windows: bool) -> Path:
     :return: The path to the Python executable.
     """
     _validate_path(venv_dir, "venv_dir", exists=False)
-    _validate_boolean(is_windows, "is_windows")
-
+    is_windows = _is_windows()
     bin_dir = venv_dir / ("Scripts" if is_windows else "bin")
     python_exe = bin_dir / ("python.exe" if is_windows else "python")
     return python_exe
@@ -411,18 +429,16 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
     return command
 
 
-def print_instructions(is_windows: bool, template: str) -> None:
+def print_instructions(template: str) -> None:
     """Prints instructions to the user on how to activate the virtual environment
     and use the installed tools.
 
-    :param is_windows bool: Whether the current platform is Windows.
     :param template str: The instructions template to use.
     """
-    _validate_boolean(is_windows, "is_windows")
     _validate_string(template, "template")
 
     activate_script = "source .venv/bin/activate"
-    if is_windows:
+    if _is_windows():
         activate_script = ".venv\\Scripts\\activate.bat"
 
     instructions = template.format(activate=activate_script)
@@ -440,6 +456,7 @@ def main():
             modules=BOOTSTRAP_MODULES):
         print("All required development tools are already installed in the system environment.")
         print("No action is necessary.")
+        print()
         print(TOX_INSTRUCTIONS)
         return
 
@@ -452,10 +469,10 @@ def main():
     print(f"--- Bootstrapping development environment (in {git_root}) ---")
 
     venv_dir = git_root / ".venv"
-    python_exe: Path = path_to_venv_python(venv_dir, IS_WINDOWS)
+    python_exe: Path = path_to_venv_python(venv_dir)
     create_virtual_environment(venv_dir, python_exe)
     install_tools(python_exe, BOOTSTRAP_MODULES)
-    print_instructions(IS_WINDOWS, POST_INSTALL_MESSAGE)
+    print_instructions(POST_INSTALL_MESSAGE)
 
 
 if __name__ == "__main__":
