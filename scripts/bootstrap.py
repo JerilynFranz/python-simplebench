@@ -11,8 +11,6 @@ from pathlib import Path
 from typing import NamedTuple
 from venv import create as create_venv
 
-DEBUG: bool = False
-
 
 class InstallSpec(NamedTuple):
     """Specification for modules to install in the virtual environment.
@@ -57,8 +55,6 @@ def run_command(command, check=True, **kwargs):
     """Helper to run a command and print its output."""
     print(f"--> Running: {' '.join(map(str, command))}")
     try:
-        if DEBUG:
-            print(f"{command}, kwargs={kwargs}")
         subprocess.run(command, check=check, **kwargs)
     except FileNotFoundError:
         print(f"Error: Command '{command[0]}' not found. Is it in your PATH?")
