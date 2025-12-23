@@ -14,7 +14,8 @@ import sys
 
 if sys.version_info < (3, 10):
     major, minor = sys.version_info.major, sys.version_info.minor
-    sys.exit(f"This script requires Python 3.10 or later. You are using Python {major}.{minor}.")
+    print(f"Error: Python 3.10 or later is required to run this script. You are using Python {major}.{minor}.")
+    sys.exit(2)
 
 import os
 import re
