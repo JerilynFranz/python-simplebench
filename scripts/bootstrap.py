@@ -20,7 +20,7 @@ from venv import create as create_venv
 
 
 class InstallSpec(NamedTuple):
-    """Specification for modules to install in the virtual environment.
+    """Specification for modules required to be installed.
 
     :param str name: The name of the module to install.
     :param str version: An optional version specifier (e.g., ">=1.0.0").
