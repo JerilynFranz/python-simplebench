@@ -18,18 +18,19 @@ class InstallSpec(NamedTuple):
     :param str name: The name of the module to install.
     :param str version: An optional version specifier (e.g., ">=1.0.0").
     :param str extras: An optional extras specifier (e.g., "[dev]").
+    :param str uv_tools: An optional list of uv tools to install with the module.
     """
     name: str
     version: str | None = None
     extras: str | None = None
+    uv_tools: list[str] | None = None
 
 
 # --- Modules to install during bootstrap ---
 
 BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="uv", version=">=0.9.18"),
-    # tox and tox-uv are handled specially via 'uv tool install'
-]
+    InstallSpec(name="tox", version=">=4.32.0", uv_tools=["tox-uv"]),]
 
 # --- Post-install instructions template ---
 
@@ -117,11 +118,11 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
 
 
 def install_tools(python_exe: Path, modules: list[InstallSpec]) -> None:
-    """
-    Installs core development tools into the virtual environment.
+    """Installs core development tools into the virtual environment.
 
-    It uses pip to install uv, then uses uv to install all modules
-    (including itself) in a single, efficient batch operation.
+    If 'uv' is specified in the modules, it is bootstrapped with pip
+    and used to install all the other modules; otherwise, the installation
+    falls back to 'pip' for all modules.
 
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
@@ -138,35 +139,51 @@ def install_tools(python_exe: Path, modules: list[InstallSpec]) -> None:
 
 
 def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
-    """Installs 'uv' using pip, then uses 'uv' to install tox and tox-uv as a tool.
+    """Installs 'uv' using pip, then uses 'uv' to install the specified modules.
+
+    If modules with uv tools are specified, they are installed using 'uv tool install'.
 
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
     """
-    uv_module = [mod for mod in modules if mod.name == "uv"][0]
-    other_modules = [mod for mod in modules if mod.name != "uv"]
+    uv_module: InstallSpec = [mod for mod in modules if mod.name == "uv"][0]
+    other_modules: list[InstallSpec] = [mod for mod in modules if mod.name != "uv"]
 
     print(f"--> Bootstrapping 'uv' using 'pip': {uv_module.name}, "
           f"{uv_module.version or 'latest'}")
     install_with_pip(python_exe, [uv_module])
 
-    tox_modules = [mod for mod in other_modules if mod.name == "tox"]
-    other_modules = [mod for mod in other_modules if mod.name != "tox"]
+    uv_tools_to_install: list[InstallSpec] = []
+    uv_modules_to_install: list[InstallSpec] = []
+    for mod in other_modules:
+        if mod.uv_tools:
+            uv_tools_to_install.append(mod)
+        else:
+            uv_modules_to_install.append(mod)
 
-    if tox_modules:
-        tox_module = tox_modules[0]
-        print("--> Installing 'tox' and 'tox-uv' using 'uv tool install'")
-        command = [
-            python_exe, "-m", "uv", "tool", "install",
-            f"tox{tox_module.version or ''}", "--with", "tox-uv"
-        ]
-        run_command(command)
+    if uv_tools_to_install:
+        install_uv_tools(python_exe, uv_tools_to_install)
 
-    if other_modules:
+    if uv_modules_to_install:
         print("--> Installing remaining modules using 'uv pip'")
         command = _build_install_command(
-            [python_exe, "-m", "uv", "pip"], other_modules
+            [python_exe, "-m", "uv", "pip"], uv_modules_to_install
         )
+        run_command(command)
+
+
+def install_uv_tools(python_exe: Path, tools: list[InstallSpec]) -> None:
+    """Installs the specified modules and tools using 'uv tool install'.
+
+    :param python_exe Path: The path to the Python executable within the venv.
+    :param tools: A list of uv module and tool names to install.
+    """
+    print("--> Installing tools using 'uv tool install'")
+    for mod in tools:
+        tools_str = ', with tools: ' + ', '.join(mod.uv_tools) if mod.uv_tools else ''
+        print(f"  - {mod.name}, {mod.version or 'latest'}{tools_str}")
+        command = [python_exe, "-m", "uv", "tool", "install", f"{mod.name}{mod.version or ''}",
+                   "--with", ",".join(mod.uv_tools or [])]
         run_command(command)
 
 
