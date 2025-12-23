@@ -294,12 +294,12 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
         print(" - 'pip' command not found or failed. Assuming required modules are not installed.")
         return False
     for mod in sorted(modules):
-        if mod.name in required_mods:
+        if mod.name not in required_mods:
             print(f" - Module '{mod}' already installed.")
         else:
             print(f" - Module '{mod}' NOT already installed.")
 
-    return not required_mods
+    return not required_mods  # True if all required modules are installed
 
 
 def confirmation_prompt() -> bool:
