@@ -232,6 +232,7 @@ def install_with_pip(python_exe: Path, modules: list[InstallSpec], message: str 
 
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
+    :param message str: An optional message to print before installation.
     """
     if message:
         print(message)
@@ -278,8 +279,8 @@ def print_instructions(is_windows: bool, template: str) -> None:
 
 def main():
     """
-    Creates a local, isolated virtual environment in ./.venv and installs
-    core development tools (uv and tox) into it.
+    Checks for required development tools and bootstraps a local virtual
+    environment with them if necessary.
     """
     check_requirements()
     if modules_already_installed(
