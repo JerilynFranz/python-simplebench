@@ -267,7 +267,7 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
     _validate_path(python_exe, "python_exe", exists=True)
     _validate_module_list(modules, "modules")
 
-    command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run"]
+    command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run", "--break-system-packages"]
 
     required_mods: set[str] = set(mod.name for mod in modules)
     print("--> Checking for required modules in the system environment...")
@@ -457,7 +457,7 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
     _validate_command(base_command, "base_command")
     _validate_module_list(modules, "modules")
 
-    command = base_command + ["install", "--quiet", "-U"]
+    command = base_command + ["install", "-U"]
     for module in modules:
         spec_str = module.name
         if module.extras:
