@@ -72,8 +72,111 @@ To deactivate the virtual environment, run:
 IS_WINDOWS = sys.platform == "win32"
 
 
-def run_command(command, check=True, **kwargs):
+def _validate_string(value: str, name: str) -> None:
+    """Validates that the input is a string.
+
+    :param value str: The value to validate.
+    :param name str: The name of the value (for error messages).
+    :raises TypeError: If validation fails.
+    """
+    if not isinstance(value, str):
+        raise TypeError(f"{name} must be a string")
+
+
+def _validate_string_list(lst: list, name: str) -> None:
+    """Validates that the input is a list of strings.
+
+    :param lst list: The list to validate.
+    :param name str: The name of the list (for error messages).
+    :raises TypeError: If validation fails.
+    """
+    if not isinstance(lst, list):
+        raise TypeError(f"{name} must be a list")
+    if not all(isinstance(item, str) for item in lst):
+        raise TypeError(f"all items in {name} must be strings")
+
+
+def _validate_module_list(modules: list[InstallSpec], name: str) -> None:
+    """Validates that the input is a list of InstallSpec instances.
+
+    :param modules list: The list to validate.
+    :param name str: The name of the list (for error messages).
+    :raises TypeError: If validation fails.
+    """
+    if not isinstance(modules, list):
+        raise TypeError(f"{name} must be a list")
+    for module in modules:
+        if not isinstance(module, InstallSpec):
+            raise TypeError(f"all items in {name} must be InstallSpec instances")    
+
+
+def _validate_command(lst: list[str | Path], name: str) -> None:
+    """Validates that the input is a list of that starts with
+    either a string or Path, and contains only strings for all other items.
+
+    It must contain at least one item.
+
+    :param lst list[str | Path]: The list to validate.
+    :param name str: The name of the list (for error messages).
+    :raises TypeError: If validation fails.
+    """
+    if not isinstance(lst, list):
+        raise TypeError(f"{name} must be a list")
+    if not lst:
+        raise ValueError(f"{name} must not be empty")
+    if not isinstance(lst[0], (str, Path)):
+        raise TypeError(f"the first item in {name} must be a string or Path")
+    if not all(isinstance(item, str) for item in lst[1:]):
+        raise TypeError(f"all items after the first in {name} must be strings")
+
+
+def _validate_boolean(value: bool, name: str) -> None:
+    """Validates that the input is a boolean.
+
+    :param value bool: The value to validate.
+    :param name str: The name of the value (for error messages).
+    :raises TypeError: If validation fails.
+    """
+    if not isinstance(value, bool):
+        raise TypeError(f"{name} must be a boolean")
+
+
+def _validate_kwarg_keys_are_strings(kwargs: dict, name: str) -> None:
+    """Validates that all keys in the input dictionary are strings.
+
+    :param kwargs dict: The dictionary to validate.
+    :param name str: The name of the dictionary (for error messages).
+    :raises TypeError: If validation fails.
+    """
+    if not isinstance(kwargs, dict):
+        raise TypeError(f"{name} must be a dictionary")
+    if not all(isinstance(k, str) for k in kwargs.keys()):
+        raise TypeError(f"all keys in {name} must be strings")
+
+
+def _validate_path(path: Path, name: str, exists: bool = False) -> None:
+    """Validates that the input is a Path instance.
+
+    Optionally checks that the path exists.
+
+    :param path Path: The path to validate.
+    :param name str: The name of the path (for error messages).
+    :param exists bool: Whether to check that the path exists.
+    :raises TypeError: If validation fails.
+    :raises FileNotFoundError: If exists is True and the path does not exist.
+    """
+    if not isinstance(path, Path):
+        raise TypeError(f"{name} must be a Path instance")
+    if exists and not path.exists():
+        raise FileNotFoundError(f"{name} does not exist: {path}")
+
+
+def run_command(command: list[str | Path], check=True, **kwargs):
     """Helper to run a command and print its output."""
+    _validate_command(command, "command")
+    _validate_boolean(check, "check")
+    _validate_kwarg_keys_are_strings(kwargs, "kwargs")
+
     print(f"--> Running: {' '.join(map(str, command))}")
     try:
         subprocess.run(command, check=check, **kwargs)
@@ -109,6 +212,9 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
     :param modules: A list of InstallSpec objects to check.
     :return: True if all modules are installed, False otherwise.
     """
+    _validate_path(python_exe, "python_exe", exists=True)
+    _validate_module_list(modules, "modules")
+
     command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run"]
 
     required_mods: set[str] = set(mod.name for mod in modules)
@@ -121,8 +227,8 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
         )
         output = result.stdout + result.stderr
         output_lines = output.splitlines()
-        already_satisfied_re: re.Pattern = re.compile(
-            r"Requirement\s+already\s+satisfied:\s+(?P<mod_name>[^\s<>=!]+)[\s<>=!]")
+        already_satisfied_re: re.Pattern = re.compile(         
+            r"Requirement\s+already\s+satisfied:\s+(?P<mod_name>[^\s<>=!~\[]+)[\s<>=!~\[]")
         for line in output_lines:
             match = already_satisfied_re.search(line)
             if match:
@@ -179,6 +285,9 @@ def path_to_venv_python(venv_dir: Path, is_windows: bool) -> Path:
     :param is_windows bool: Whether the platform is Windows.
     :return: The path to the Python executable.
     """
+    _validate_path(venv_dir, "venv_dir", exists=False)
+    _validate_boolean(is_windows, "is_windows")
+
     bin_dir = venv_dir / ("Scripts" if is_windows else "bin")
     python_exe = bin_dir / ("python.exe" if is_windows else "python")
     return python_exe
@@ -191,6 +300,9 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
     :param venv_dir Path: The directory to create the virtual environment in.
     :param python_exe Path: The path to the Python executable within the venv.
     """
+    _validate_path(venv_dir, "venv_dir", exists=False)
+    _validate_path(python_exe, "python_exe", exists=False)
+
     if not venv_dir.exists():
         print(f"Creating virtual environment in '{venv_dir}'...")
         # Create venv without default pip; we ensure it ourselves for robustness.
@@ -212,6 +324,9 @@ def install_tools(python_exe: Path, modules: list[InstallSpec]) -> None:
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
     """
+    _validate_path(python_exe, "python_exe", exists=True)
+    _validate_module_list(modules, "modules")
+
     if not modules:
         return
 
@@ -229,6 +344,9 @@ def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
     """
+    _validate_path(python_exe, "python_exe", exists=True)
+    _validate_module_list(modules, "modules")
+
     uv_module: InstallSpec = [mod for mod in modules if mod.name == "uv"][0]
     other_modules: list[InstallSpec] = [mod for mod in modules if mod.name != "uv"]
 
@@ -254,6 +372,10 @@ def install_with_pip(python_exe: Path, modules: list[InstallSpec], message: str 
     :param modules: A list of InstallSpec objects to install.
     :param message str: An optional message to print before installation.
     """
+    _validate_path(python_exe, "python_exe", exists=True)
+    _validate_module_list(modules, "modules")
+    _validate_string(message, "message")
+
     if message:
         print(message)
     else:
@@ -269,6 +391,9 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
     :param modules: A list of InstallSpec objects to install.
     :return: The complete command list to run.
     """
+    _validate_command(base_command, "base_command")
+    _validate_module_list(modules, "modules")
+
     command = base_command + ["install", "--quiet", "-U", "--require-virtualenv"]
     for module in modules:
         extras_str = f", extras: {module.extras}" if module.extras else ""
@@ -289,6 +414,9 @@ def print_instructions(is_windows: bool, template: str) -> None:
     :param is_windows bool: Whether the current platform is Windows.
     :param template str: The instructions template to use.
     """
+    _validate_boolean(is_windows, "is_windows")
+    _validate_string(template, "template")
+
     activate_script = "source .venv/bin/activate"
     if is_windows:
         activate_script = ".venv\\Scripts\\activate.bat"
