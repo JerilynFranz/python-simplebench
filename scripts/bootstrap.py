@@ -41,8 +41,8 @@ To activate the development environment, run:
   {activate}
 
 You can then use 'tox' to run tasks, for example:
-  tox -e lint
-  tox -e docs
+  tox run -e lint
+  tox run -e docs
 
 If you are not familiar with using 'tox' see https://tox.wiki/en/latest/
 
