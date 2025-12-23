@@ -9,10 +9,15 @@ root directory (in a folder named `.venv`) and installs the tools there.
 
 If the necessary tools are already installed in the system environment, no action is taken.
 """
+import sys
+
+if sys.version_info < (3, 10):
+    major, minor = sys.version_info.major, sys.version_info.minor
+    sys.exit(f"This script requires Python 3.10 or later. You are using Python {major}.{minor}.")
+
 import os
 import re
 import subprocess
-import sys
 from functools import cache
 from pathlib import Path
 from typing import NamedTuple
