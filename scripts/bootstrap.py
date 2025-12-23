@@ -30,7 +30,9 @@ class InstallSpec(NamedTuple):
 
 BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="uv", version=">=0.9.18"),
-    InstallSpec(name="tox", version=">=4.32.0", uv_tools=["tox-uv"]),]
+    InstallSpec(name="tox", version=">=4.32.0"),
+    InstallSpec(name="tox-uv", version=">=1.29.0"),
+]
 
 # --- Post-install instructions template ---
 
@@ -257,7 +259,6 @@ def main():
 
     print(f"--- Bootstrapping development environment (in {git_root}) ---")
 
-    # --- Define Paths ---
     venv_dir = git_root / ".venv"
     is_windows = sys.platform == "win32"
     bin_dir = venv_dir / ("Scripts" if is_windows else "bin")
