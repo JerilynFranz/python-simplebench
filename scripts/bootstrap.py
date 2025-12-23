@@ -63,20 +63,20 @@ update pyproject dependencies:
 
 Examples:
 
-    # Add a new package to the 'dev' dependency group
-    uv add --dev --group=dev 'package_name>=1.2.3'
+  # Add a new package to the 'dev' dependency group
+  uv add --dev --group=dev 'package_name>=1.2.3'
 
-    # Add a new package to the default dependency group
-    uv add 'package_name>=1.2.3'
+  # Add a new package to the default dependency group
+  uv add 'package_name>=1.2.3'
 
-    # Add a package to specified extras
-    uv add 'package_name[extra1,extra2]'
+  # Add a package to specified extras
+  uv add 'package_name[extra1,extra2]'
 
-    # Sync all dependencies from pyproject.toml to the virtual environment
-    uv sync --all-extras
+  # Sync all dependencies from pyproject.toml to the virtual environment
+  uv sync --all-extras
 
-    # install a package from PyPI to the virtual environment
-    uv pip install 'package_name>=1.2.3'
+  # install a package from PyPI to the virtual environment
+  uv pip install 'package_name>=1.2.3'
 
 See https://docs.astral.sh/uv/ for more information on using 'uv'.
 """
