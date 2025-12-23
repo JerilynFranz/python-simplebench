@@ -34,7 +34,7 @@ class InstallSpec(NamedTuple):
     extras: str = ''
 
     def __str__(self):
-        return f"{self.name}{self.extras}{self.version or '[latest]'}"
+        return f"{self.name}{self.extras}{self.version or ' (latest)'}"
 
 
 # --- Modules to install during bootstrap ---
