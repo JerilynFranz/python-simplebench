@@ -260,6 +260,7 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
     command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run"]
 
     required_mods: set[str] = set(mod.name for mod in modules)
+    print("--> Checking for required modules in the system environment...")
     try:
         result = subprocess.run(
             command,
