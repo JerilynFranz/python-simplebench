@@ -20,7 +20,7 @@ if sys.version_info < (3, 8):
 import os
 import re
 import subprocess
-from functools import cache
+from functools import lru_cache as cache
 from pathlib import Path
 from typing import NamedTuple, Union
 from venv import create as create_venv
