@@ -8,6 +8,15 @@ the script creates a local virtual environment in the git repository
 root directory (in a folder named `.venv`) and installs the tools there.
 
 If the necessary tools are already installed in the system environment, no action is taken.
+
+Requires Python 3.8 or later.
+
+This does not mean that it will use Python 3.8 for development; the virtual
+environment can use any Python version installed on the system and any
+modules and version that are supported by that Python version.
+
+It only means that the bootstrap script itself needs at least Python 3.8 to run,
+due to its use of certain language features.
 """
 # pylint: disable=wrong-import-position
 import sys
