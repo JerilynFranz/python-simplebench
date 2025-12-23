@@ -97,8 +97,8 @@ def check_requirements() -> None:
 def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> bool:
     """Checks if the specified modules are already installed in the system environment.
 
-    Tries to use 'pip freeze' to get the list of installed packages
-    and checks if the required modules are present with satisfying versions.
+    Tries to use 'pip install ... --dry-run' to simulate installation
+    and checks if they can be installed with satisfying versions.
 
     If 'pip' is not available or returns errors, assumes modules are not installed.
 
