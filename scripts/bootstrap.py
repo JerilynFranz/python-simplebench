@@ -6,6 +6,7 @@ development tools into it.
 If the tools are already installed in the system environment, no action is taken.
 """
 import os
+import re
 import subprocess
 import sys
 from functools import cache
@@ -68,6 +69,8 @@ To deactivate the virtual environment, run:
 {TOX_INSTRUCTIONS}
 """
 
+IS_WINDOWS = sys.platform == "win32"
+
 
 def run_command(command, check=True, **kwargs):
     """Helper to run a command and print its output."""
@@ -95,10 +98,10 @@ def check_requirements() -> None:
 
 
 def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> bool:
-    """Checks if the specified modules are already installed in the system environment.
+    """Checks if the required modules are already installed in the system environment.
 
     Tries to use 'pip install ... --dry-run' to simulate installation
-    and checks if they can be installed with satisfying versions.
+    and checks if all required modules are already satisfied.
 
     If 'pip' is not available or returns errors, assumes modules are not installed.
 
@@ -107,6 +110,8 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
     :return: True if all modules are installed, False otherwise.
     """
     command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run"]
+
+    required_mods: set[str] = set(mod.name for mod in modules)
     try:
         result = subprocess.run(
             command,
@@ -115,14 +120,19 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
             check=False
         )
         output = result.stdout + result.stderr
-        if result.returncode != 0 or "ERROR:" in output:
-            return False
-
-    # any errors and we assume pip and/or modules are not installed
+        output_lines = output.splitlines()
+        already_satisfied_re: re.Pattern = re.compile(
+            r"Requirement\s+already\s+satisfied:\s+(?P<mod_name>[^\s<>=!]+)[\s<>=!]")
+        for line in output_lines:
+            match = already_satisfied_re.search(line)
+            if match:
+                mod_name = match.group("mod_name")
+                required_mods.discard(mod_name)
     except (FileNotFoundError, subprocess.CalledProcessError):
+        # 'pip' command not found or returned non-zero exit code; treat as not installed
         return False
 
-    return True
+    return not required_mods
 
 
 def confirmation_prompt() -> bool:
@@ -160,6 +170,18 @@ def get_git_root() -> Path:
         print("Error: This does not appear to be a git repository. "
               "Please run from within the cloned project directory.")
         sys.exit(1)
+
+
+def path_to_venv_python(venv_dir: Path, is_windows: bool) -> Path:
+    """Returns the path to the Python executable within the virtual environment.
+
+    :param venv_dir Path: The directory of the virtual environment.
+    :param is_windows bool: Whether the platform is Windows.
+    :return: The path to the Python executable.
+    """
+    bin_dir = venv_dir / ("Scripts" if is_windows else "bin")
+    python_exe = bin_dir / ("python.exe" if is_windows else "python")
+    return python_exe
 
 
 def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
@@ -247,7 +269,7 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
     :param modules: A list of InstallSpec objects to install.
     :return: The complete command list to run.
     """
-    command = base_command + ["install", "--quiet", "-U"]
+    command = base_command + ["install", "--quiet", "-U", "--require-virtualenv"]
     for module in modules:
         extras_str = f", extras: {module.extras}" if module.extras else ""
         print(f"  - {module.name}, {module.version or 'latest'}{extras_str}")
@@ -298,13 +320,10 @@ def main():
     print(f"--- Bootstrapping development environment (in {git_root}) ---")
 
     venv_dir = git_root / ".venv"
-    is_windows = sys.platform == "win32"
-    bin_dir = venv_dir / ("Scripts" if is_windows else "bin")
-    python_exe = bin_dir / ("python.exe" if is_windows else "python")
-
+    python_exe: Path = path_to_venv_python(venv_dir, IS_WINDOWS)
     create_virtual_environment(venv_dir, python_exe)
     install_tools(python_exe, BOOTSTRAP_MODULES)
-    print_instructions(is_windows, POST_INSTALL_MESSAGE)
+    print_instructions(IS_WINDOWS, POST_INSTALL_MESSAGE)
 
 
 if __name__ == "__main__":
