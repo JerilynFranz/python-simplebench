@@ -1,7 +1,11 @@
-"""Bootstrap script to set up a development environment.
+"""Bootstrap script to set up a Python development environment.
 
-If necessary, creates a local virtual environment and installs core
-development tools into it.
+It is designed to be run after cloning the repository, to ensure that
+all necessary development tools for working with this project are installed.
+
+If the required tools are not found in the system environment,
+the script creates a local virtual environment in the git repository
+root directory (in a folder named `.venv`) and installs the tools there.
 
 If the tools are already installed in the system environment, no action is taken.
 """
