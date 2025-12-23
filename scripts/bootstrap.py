@@ -96,6 +96,7 @@ See https://docs.astral.sh/uv/ for more information on using 'uv'.
 
 POST_INSTALL_MESSAGE = f"""
 --- Bootstrap complete! ---
+
 To activate the development environment, run:
 
   {{activate}}
