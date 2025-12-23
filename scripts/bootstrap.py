@@ -72,10 +72,10 @@ Examples:
     # Add a package to specified extras
     uv add 'package_name[extra1,extra2]'
 
-    # install all dependencies from pyproject.toml
+    # Sync all dependencies from pyproject.toml to the virtual environment
     uv sync --all-extras
 
-    # install a package from PyPI
+    # install a package from PyPI to the virtual environment
     uv pip install 'package_name>=1.2.3'
 
 See https://docs.astral.sh/uv/ for more information on using 'uv'.
