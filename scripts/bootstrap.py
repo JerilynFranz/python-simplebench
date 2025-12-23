@@ -18,6 +18,9 @@ from pathlib import Path
 from typing import NamedTuple
 from venv import create as create_venv
 
+DEBUG: bool = True
+"""Enable debug logging if True."""
+
 
 class InstallSpec(NamedTuple):
     """Specification for modules required to be installed.
@@ -220,6 +223,8 @@ def run_command(command: list[str | Path], check=True, **kwargs):
 
     print(f"--> Running: {' '.join(map(str, command))}")
     try:
+        if DEBUG:
+            print(f"DEBUG: Running {command} with kwargs: {kwargs}")
         subprocess.run(command, check=check, **kwargs)
     except FileNotFoundError:
         print(f"Error: Command '{command[0]}' not found. Is it in your PATH?")
