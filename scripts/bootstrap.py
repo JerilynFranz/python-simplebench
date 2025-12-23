@@ -369,8 +369,7 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
 
     if not venv_dir.exists():
         print(f"Creating virtual environment in '{venv_dir}'...")
-        # Create venv without default pip; we ensure it ourselves for robustness.
-        create_venv(venv_dir, with_pip=False)
+        create_venv(venv_dir, with_pip=True)
 
         # This SHOULD get pip installed and upgraded. But to be sure, we explicitly
         # run ensurepip and then upgrade pip, setuptools, and wheel.
