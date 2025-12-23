@@ -284,11 +284,11 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
         # 'pip' command not found or returned non-zero exit code; treat as not installed
         print(" - 'pip' command not found or failed. Assuming required modules are not installed.")
         return False
-    for mod_name in sorted(str(mod) for mod in modules):
-        if mod_name in required_mods:
-            print(f" - Module '{mod_name}' already installed.")
+    for mod in sorted(modules):
+        if mod.name in required_mods:
+            print(f" - Module '{mod}' already installed.")
         else:
-            print(f" - Module '{mod_name}' NOT installed.")
+            print(f" - Module '{mod}' NOT already installed.")
 
     return not required_mods
 
@@ -405,7 +405,7 @@ def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
     other_modules: list[InstallSpec] = [mod for mod in modules if mod.name != "uv"]
 
     bootstrap_message = (
-        f"--> Bootstrapping 'uv' using 'pip': {uv_module.name}, "
+        f"--> Bootstrapping 'uv' using 'pip': {uv_module}, "
         f"{uv_module.version or 'latest'}")
     install_with_pip(python_exe, [uv_module], message=bootstrap_message)
 
