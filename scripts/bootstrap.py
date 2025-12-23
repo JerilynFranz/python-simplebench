@@ -9,6 +9,7 @@ root directory (in a folder named `.venv`) and installs the tools there.
 
 If the necessary tools are already installed in the system environment, no action is taken.
 """
+# pylint: disable=wrong-import-position
 import sys
 
 if sys.version_info < (3, 10):
