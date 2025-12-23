@@ -40,9 +40,19 @@ To activate the development environment, run:
 
   {activate}
 
-You can then use 'tox' to run tasks, for example:
-  tox run -e lint
-  tox run -e docs
+You can then use 'tox' to run tasks:
+
+Examples:
+
+  tox run -e lint     # Run linters on the codebase
+  tox run -e docs     # Build documentation
+  tox run -e py310    # Run the test suite using Python 3.10
+  tox run -e py314    # Run the test suite using Python 3.14
+  tox devenv -e dev   # Start an interactive dev environment with Python 3.12
+
+The list of available 'tox' environments can be found by running:
+
+  tox list
 
 If you are not familiar with using 'tox' see https://tox.wiki/en/latest/
 
