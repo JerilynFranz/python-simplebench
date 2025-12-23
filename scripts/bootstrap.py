@@ -434,7 +434,7 @@ def install_with_pip(python_exe: Path, modules: list[InstallSpec], message: str 
         print(message)
     else:
         print("--> Installing modules using 'pip'")
-    command = _build_install_command([python_exe, "-m", "pip"], modules)
+    command = _build_install_command([python_exe, "-m", "pip", "--require-virtualenv"], modules)
     run_command(command)
 
 
@@ -448,7 +448,7 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
     _validate_command(base_command, "base_command")
     _validate_module_list(modules, "modules")
 
-    command = base_command + ["install", "--quiet", "-U", "--require-virtualenv"]
+    command = base_command + ["install", "--quiet", "-U"]
     for module in modules:
         spec_str = module.name
         if module.extras:
