@@ -12,9 +12,9 @@ If the necessary tools are already installed in the system environment, no actio
 # pylint: disable=wrong-import-position
 import sys
 
-if sys.version_info < (3, 9):
+if sys.version_info < (3, 8):
     major, minor = sys.version_info.major, sys.version_info.minor
-    print(f"Error: Python 3.9 or later is required to run this script. You are using Python {major}.{minor}.")
+    print(f"Error: Python 3.8 or later is required to run this script. You are using Python {major}.{minor}.")
     sys.exit(2)
 
 import os
