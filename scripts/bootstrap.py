@@ -1,7 +1,9 @@
 """Bootstrap script to set up a development environment.
 
-This script creates a local virtual environment in the `.venv` directory
-and installs core development tools such as `uv` and `tox`.
+If necessary, creates a local virtual environment and installs core
+development tools into it.
+
+If the tools are already installed in the system environment, no action is taken.
 """
 import os
 import subprocess
@@ -32,15 +34,10 @@ BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="tox-uv", version=">=1.29.0"),
 ]
 
-# --- Post-install instructions template ---
 
-POST_INSTALL_MESSAGE = """
---- Bootstrap complete! ---
-To activate the development environment, run:
-
-  {activate}
-
-You can then use 'tox' to run tasks:
+TOX_INSTRUCTIONS = """
+You use 'tox' to run tasks that set up and manage your development environment,
+run tests, linters, and build documentation:
 
 Examples:
 
@@ -55,9 +52,20 @@ The list of available 'tox' environments can be found by running:
   tox list
 
 If you are not familiar with using 'tox' see https://tox.wiki/en/latest/
+"""
+
+# --- Post-install instructions template ---
+
+POST_INSTALL_MESSAGE = f"""
+--- Bootstrap complete! ---
+To activate the development environment, run:
+
+  {{activate}}
 
 To deactivate the virtual environment, run:
   deactivate
+
+{TOX_INSTRUCTIONS}
 """
 
 
@@ -279,6 +287,7 @@ def main():
             modules=BOOTSTRAP_MODULES):
         print("All required development tools are already installed in the system environment.")
         print("No action is necessary.")
+        print(TOX_INSTRUCTIONS)
         return
 
     if not confirmation_prompt():
