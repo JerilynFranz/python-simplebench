@@ -12,9 +12,9 @@ If the necessary tools are already installed in the system environment, no actio
 # pylint: disable=wrong-import-position
 import sys
 
-if sys.version_info < (3, 10):
+if sys.version_info < (3, 9):
     major, minor = sys.version_info.major, sys.version_info.minor
-    print(f"Error: Python 3.10 or later is required to run this script. You are using Python {major}.{minor}.")
+    print(f"Error: Python 3.9 or later is required to run this script. You are using Python {major}.{minor}.")
     sys.exit(2)
 
 import os
@@ -22,7 +22,7 @@ import re
 import subprocess
 from functools import cache
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Union
 from venv import create as create_venv
 
 DEBUG: bool = False
@@ -152,13 +152,13 @@ def _validate_module_list(modules: list[InstallSpec], name: str) -> None:
             raise TypeError(f"all items in {name} must be InstallSpec instances")
 
 
-def _validate_command(lst: list[str | Path], name: str) -> None:
+def _validate_command(lst: list[Union[str, Path]], name: str) -> None:
     """Validates that the input is a list of that starts with
     either a string or Path, and contains only strings for all other items.
 
     It must contain at least one item.
 
-    :param lst list[str | Path]: The list to validate.
+    :param lst list[Union[str, Path]]: The list to validate.
     :param name str: The name of the list (for error messages).
     :raises TypeError: If validation fails.
     """
@@ -213,13 +213,13 @@ def _validate_path(path: Path, name: str, exists: bool = False) -> None:
         raise FileNotFoundError(f"{name} does not exist: {path}")
 
 
-def run_command(command: list[str | Path], check=True, **kwargs):
+def run_command(command: list[Union[str, Path]], check=True, **kwargs):
     """Helper to run a command and print its output.
 
     If the command is not found, or returns a non-zero exit code,
     prints an error message and exits the script.
 
-    :param command list[str | Path]: The command to run as a list.
+    :param command list[Union[str, Path]]: The command to run as a list.
     :param check bool: Whether to raise an exception on non-zero exit code.
     :param kwargs: Additional keyword arguments to pass to subprocess.run().
     """
