@@ -36,7 +36,7 @@ BOOTSTRAP_MODULES: list[InstallSpec] = [
 
 
 TOX_INSTRUCTIONS = """
-You use 'tox' to run tasks that set up and manage your development environment,
+You use 'tox' to run tasks that set up and manage the development environment,
 run tests, linters, and build documentation:
 
 Examples:
