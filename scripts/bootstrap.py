@@ -221,7 +221,6 @@ def run_command(command: list[str | Path], check=True, **kwargs):
     _validate_boolean(check, "check")
     _validate_kwarg_keys_are_strings(kwargs, "kwargs")
 
-    print(f"--> Running: {' '.join(map(str, command))}")
     try:
         if DEBUG:
             print(f"DEBUG: Running {command} with kwargs: {kwargs}")
