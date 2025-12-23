@@ -266,6 +266,10 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
     _validate_path(python_exe, "python_exe", exists=True)
     _validate_module_list(modules, "modules")
 
+    # '--break-system-packages' is used to allow checking in system envs
+    # where packages may be managed by the system package manager.
+    # It prevents pip from refusing to run in such environments.
+    # We only want to check, not actually install anything.
     command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run", "--break-system-packages"]
 
     required_mods: set[str] = set(mod.name for mod in modules)
