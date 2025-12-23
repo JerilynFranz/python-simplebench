@@ -18,12 +18,10 @@ class InstallSpec(NamedTuple):
     :param str name: The name of the module to install.
     :param str version: An optional version specifier (e.g., ">=1.0.0").
     :param str extras: An optional extras specifier (e.g., "[dev]").
-    :param str uv_tools: An optional list of uv tools to install with the module.
     """
     name: str
-    version: str | None = None
-    extras: str | None = None
-    uv_tools: list[str] | None = None
+    version: str = ''
+    extras: str = ''
 
 
 # --- Modules to install during bootstrap ---
@@ -76,15 +74,60 @@ def run_command(command, check=True, **kwargs):
         sys.exit(e.returncode)
 
 
+def check_requirements() -> None:
+    """Checks that required system dependencies are available."""
+    try:
+        subprocess.run(['git', '--version'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except FileNotFoundError:
+        print("Error: 'git' command not found. Please install Git and ensure it is in your PATH.")
+        sys.exit(1)
+    except subprocess.CalledProcessError:
+        print("Error: 'git' command is not functioning properly.")
+        sys.exit(1)
+
+
+def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> bool:
+    """Checks if the specified modules are already installed in the system environment.
+
+    Tries to use 'pip freeze' to get the list of installed packages
+    and checks if the required modules are present with satisfying versions.
+
+    If 'pip' is not available or returns errors, assumes modules are not installed.
+
+    :param python_exe Path: The path to the Python executable within the venv.
+    :param modules: A list of InstallSpec objects to check.
+    :return: True if all modules are installed, False otherwise.
+    """
+    command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run"]
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        output = result.stdout + result.stderr
+        if result.returncode != 0 or "ERROR:" in output:
+            return False
+
+    # any errors and we assume pip and/or modules are not installed
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+    return True
+
+
 def confirmation_prompt() -> bool:
     """Prompts the user for confirmation to proceed."""
     try:
         git_root = get_git_root()
         print(f"Current working directory: {os.getcwd()}")
         print(f"Git repo root directory: {git_root}")
-        choice = input(
-            "This script will create a .venv directory in the git repo root "
-            "directory and install tools for development. Continue? [Y/n] ")
+        choice = ''
+        while choice.lower().strip() not in ('y', 'yes', 'n', 'no'):
+            choice = input(
+                "This script will create a .venv directory in the git repo root "
+                "directory and install tools into it for development. Continue? [y/n] ")
     except KeyboardInterrupt:
         print()
         return False
@@ -161,51 +204,31 @@ def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
     uv_module: InstallSpec = [mod for mod in modules if mod.name == "uv"][0]
     other_modules: list[InstallSpec] = [mod for mod in modules if mod.name != "uv"]
 
-    print(f"--> Bootstrapping 'uv' using 'pip': {uv_module.name}, "
-          f"{uv_module.version or 'latest'}")
-    install_with_pip(python_exe, [uv_module])
+    bootstrap_message = (
+        f"--> Bootstrapping 'uv' using 'pip': {uv_module.name}, "
+        f"{uv_module.version or 'latest'}")
+    install_with_pip(python_exe, [uv_module], message=bootstrap_message)
 
-    uv_tools_to_install: list[InstallSpec] = []
-    uv_modules_to_install: list[InstallSpec] = []
-    for mod in other_modules:
-        if mod.uv_tools:
-            uv_tools_to_install.append(mod)
-        else:
-            uv_modules_to_install.append(mod)
+    if not other_modules:
+        return
 
-    if uv_tools_to_install:
-        install_uv_tools(python_exe, uv_tools_to_install)
-
-    if uv_modules_to_install:
-        print("--> Installing remaining modules using 'uv pip'")
-        command = _build_install_command(
-            [python_exe, "-m", "uv", "pip"], uv_modules_to_install
-        )
-        run_command(command)
+    print("--> Installing remaining modules using 'uv pip'")
+    command = _build_install_command(
+        [python_exe, "-m", "uv", "pip"], other_modules
+    )
+    run_command(command)
 
 
-def install_uv_tools(python_exe: Path, tools: list[InstallSpec]) -> None:
-    """Installs the specified modules and tools using 'uv tool install'.
-
-    :param python_exe Path: The path to the Python executable within the venv.
-    :param tools: A list of uv module and tool names to install.
-    """
-    print("--> Installing tools using 'uv tool install'")
-    for mod in tools:
-        tools_str = ', with tools: ' + ', '.join(mod.uv_tools) if mod.uv_tools else ''
-        print(f"  - {mod.name}, {mod.version or 'latest'}{tools_str}")
-        command = [python_exe, "-m", "uv", "tool", "install", f"{mod.name}{mod.version or ''}",
-                   "--with", ",".join(mod.uv_tools or [])]
-        run_command(command)
-
-
-def install_with_pip(python_exe: Path, modules: list[InstallSpec]) -> None:
+def install_with_pip(python_exe: Path, modules: list[InstallSpec], message: str = '') -> None:
     """Installs the specified modules using 'pip'.
 
     :param python_exe Path: The path to the Python executable within the venv.
     :param modules: A list of InstallSpec objects to install.
     """
-    print("--> Installing modules using 'pip'")
+    if message:
+        print(message)
+    else:
+        print("--> Installing modules using 'pip'")
     command = _build_install_command([python_exe, "-m", "pip"], modules)
     run_command(command)
 
@@ -250,12 +273,19 @@ def main():
     Creates a local, isolated virtual environment in ./.venv and installs
     core development tools (uv and tox) into it.
     """
+    check_requirements()
+    if modules_already_installed(
+            python_exe=Path(sys.executable),
+            modules=BOOTSTRAP_MODULES):
+        print("All required development tools are already installed in the system environment.")
+        print("No action is necessary.")
+        return
+
     if not confirmation_prompt():
         print("Aborted by user.")
         sys.exit(0)
 
     git_root = get_git_root()
-    os.chdir(git_root)
 
     print(f"--- Bootstrapping development environment (in {git_root}) ---")
 
