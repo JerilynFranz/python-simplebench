@@ -45,6 +45,7 @@ BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="tox-uv", version=">=1.29.0"),
 ]
 
+# --- Tool usage instructions template ---
 
 TOOL_USAGE_INSTRUCTIONS = """
 You use 'tox' to run tasks that set up and manage the development environment,
