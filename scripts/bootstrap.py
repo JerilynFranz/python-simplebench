@@ -357,6 +357,29 @@ def path_to_venv_python(venv_dir: Path) -> Path:
     return python_exe
 
 
+@cache
+def pip_module_is_available(python_exe: Path) -> bool:
+    """Checks if 'pip' is available in the given Python executable.
+
+    :param python_exe Path: The path to the Python executable.
+    :return: True if 'pip' is available, False otherwise.
+    """
+    _validate_path(python_exe, "python_exe", exists=True)
+
+    try:
+        if DEBUG:
+            print(f"DEBUG: Running '{python_exe} -m pip --version' to check for pip availability")
+        subprocess.run(
+            [python_exe, "-m", "pip", "--version"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        return True
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+
 def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
     """
     Creates a virtual environment at the specified directory.
@@ -370,14 +393,21 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
     if not venv_dir.exists():
         print(f"Creating virtual environment in '{venv_dir}'...")
         create_venv(venv_dir, with_pip=True)
-
-        # This SHOULD get pip installed and upgraded. But to be sure, we explicitly
-        # run ensurepip and then upgrade pip, setuptools, and wheel.
-        print("Ensuring pip is installed in the virtual environment...")
+        print("---> Ensuring pip CLI script is installed in the virtual environment...")
         run_command([python_exe, "-m", "ensurepip", "--upgrade"])
-        print("Upgrading pip, setuptools, and wheel to latest versions...")
-        run_command([
-            python_exe, "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel", "--require-virtualenv"])
+
+        print("---> Upgrading pip to latest version...")
+        if not pip_module_is_available(python_exe):
+            pip_path = venv_dir / "Scripts" / "pip.exe" if _is_windows() else venv_dir / "bin" / "pip"
+            if not pip_path.exists():
+                print("Error: 'pip' is not available in the virtual environment after ensurepip.")
+                print("Please check your Python installation.")
+                sys.exit(1)
+            print("---> Upgrading pip in the virtual environment to latest...")
+            run_command([pip_path, "install", "--upgrade", "pip"])
+        else:
+            run_command([
+                python_exe, "-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel", "--require-virtualenv"])
     else:
         print(f"Virtual environment '{venv_dir}' already exists. Skipping creation.")
 
