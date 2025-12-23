@@ -30,6 +30,9 @@ class InstallSpec(NamedTuple):
     version: str = ''
     extras: str = ''
 
+    def __str__(self):
+        return f"{self.name}{self.extras}{self.version or '[latest]'}"
+
 
 # --- Modules to install during bootstrap ---
 
@@ -279,7 +282,13 @@ def modules_already_installed(python_exe: Path, modules: list[InstallSpec]) -> b
                 required_mods.discard(mod_name)
     except (FileNotFoundError, subprocess.CalledProcessError):
         # 'pip' command not found or returned non-zero exit code; treat as not installed
+        print(" - 'pip' command not found or failed. Assuming required modules are not installed.")
         return False
+    for mod_name in sorted(str(mod) for mod in modules):
+        if mod_name in required_mods:
+            print(f" - Module '{mod_name}' already installed.")
+        else:
+            print(f" - Module '{mod_name}' NOT installed.")
 
     return not required_mods
 
