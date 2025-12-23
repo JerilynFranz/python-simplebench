@@ -450,8 +450,6 @@ def _build_install_command(base_command: list, modules: list[InstallSpec]) -> li
 
     command = base_command + ["install", "--quiet", "-U", "--require-virtualenv"]
     for module in modules:
-        extras_str = f", extras: {module.extras}" if module.extras else ""
-        print(f"  - {module.name}, {module.version or 'latest'}{extras_str}")
         spec_str = module.name
         if module.extras:
             spec_str += module.extras
