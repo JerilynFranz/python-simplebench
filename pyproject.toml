@@ -248,49 +248,31 @@ env_list = [
     "doctest",
 ]
 install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
-labels = { test = ["py310", "py311", "py312", "py313", "py314", "doctest", "lint"] }
 
-[tool.tox.env]
+# labels table for grouping environments
+[tool.tox.labels]
+test = ["py310", "py311", "py312", "py313", "py314", "doctest", "lint"]
 
-# --- Base Test Environment ---
+# --- Base Test Environment for automation from env_list ---
 
 [tool.tox.env_run_base]
+description = "Run test under {base_python}"
 allowlist_externals = ["pytest", "flake8", "pylint", "mypy", "sphinx-build"]
 dependency_groups = ["test", "lint", "tools", "types"]
 extras = ["all"]
+commands = [["pytest", "{posargs:tests/}"]]
 
 # --- Concrete Test Environments ---
 
-# Basic test environment that other test envs can inherit from
+# environments table
+[tool.tox.env]
+
+# Basic defined test environment that other test envs can inherit from
 [tool.tox.env.testenv]
 description = "Base for test environments"
 allowlist_externals = ["pytest", "mypy", "flake8", "pylint"]
 dependency_groups = ["test", "lint", "tools", "types"]
 
-[tool.tox.env.py310]
-description = "Run the test suite on Python 3.10"
-base = ["testenv"]
-commands = [["pytest", "{posargs:tests/}"]]
-
-[tool.tox.env.py311]
-description = "Run the test suite on Python 3.11"
-base = ["testenv"]
-commands = [["pytest", "{posargs:tests/}"]]
-
-[tool.tox.env.py312]
-description = "Run the test suite on Python 3.12"
-base = ["testenv"]
-commands = [["pytest", "{posargs:tests/}"]]
-
-[tool.tox.env.py313]
-description = "Run the test suite on Python 3.13"
-base = ["testenv"]
-commands = [["pytest", "{posargs:tests/}"]]
-
-[tool.tox.env.py314]
-description = "Run the test suite on Python 3.14"
-base = ["testenv"]
-commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.dev]
 description = "Development environment with all tools"
