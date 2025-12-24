@@ -13,6 +13,8 @@ This script installs the following tools by default:
 - uv (for managing Python packages and dependencies)
 - tox (for running tests, linters, and building documentation)
 - tox-uv (to integrate uv with tox)
+
+That is the minimum set of tools required to start development in this project.
 """
 # pylint: disable=wrong-import-position
 import sys
