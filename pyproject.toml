@@ -35,7 +35,7 @@ requires-python = ">=3.10"
 
 # TODO: Verify minimum versions of dependencies
 dependencies = [
-    "numpy>=2.2.6",
+    "numpy>=1.26.4",
     "py-cpuinfo>=9.0.0",
     "rich>=14.1.0",
 ]
@@ -94,7 +94,7 @@ reportUnnecessaryIsInstance = false
 [project.optional-dependencies]
 graphs = [
     "matplotlib>=3.10.6",
-    "pandas>=2.3.2",
+    "pandas>=2.2.1",
     "seaborn>=0.13.2",
 ]
 jsonschema = [
@@ -239,11 +239,7 @@ exclude_exact = [
 [tool.tox]
 requires = ["tox>=4.22"]
 env_list = [
-    "py310",
-    "py311",
-    "py312",
-    "py313",
-    "py314",
+    "py31{0-4}",
     "lint",
     "doctest",
 ]
