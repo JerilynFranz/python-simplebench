@@ -327,7 +327,6 @@ allowlist_externals = ["sphinx-build", "pytest"]
 extras = ["all"]
 commands = [
     ["sphinx-build", "-b", "doctest", "documentation/", "documentation/_build/doctest"],
-    # ["pytest", "documentation/_build/doctest"],
 ]
 
 [dependency-groups]
