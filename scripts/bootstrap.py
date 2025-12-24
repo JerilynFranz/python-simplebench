@@ -12,26 +12,27 @@ root directory (in a folder named `.venv`) and installs the tools there.
 If the necessary tools are already installed in the system environment,
 no action is taken.
 
-Requires Python 3.8 or later.
+Requires Python 3.9 or later.
 
-This does not mean that it will use Python 3.8 for development; the virtual
-environment can use any Python version installed on the system and any
+This does not mean that it will use Python 3.9 for development; the virtual
+environments can use any Python version installed on the system and any
 modules and versions that support that Python version.
 
-It only means that the bootstrap script itself needs at least Python 3.8 to run,
-due to its use of certain language features.
+This script installs the following tools by default:
+- uv (for managing Python packages and dependencies)
+- tox (for running tests, linters, and building documentation)
+- tox-uv (to integrate uv with tox)
 """
 # pylint: disable=wrong-import-position
 import sys
 
 # Check for minimum Python version
-if sys.version_info < (3, 8):
+if sys.version_info < (3, 9):
     major, minor = sys.version_info.major, sys.version_info.minor
-    print(f"Error: Python 3.8 or later is required to run this script. You are using Python {major}.{minor}.")
+    print(f"Error: Python 3.9 or later is required to run this project. You are using Python {major}.{minor}.")
     sys.exit(2)
 
 import os
-import re
 import subprocess
 from functools import lru_cache as cache
 from pathlib import Path
@@ -226,7 +227,10 @@ def _validate_path(path: Path, name: str, exists: bool = False) -> None:
         raise FileNotFoundError(f"{name} does not exist: {path}")
 
 
-def run_command(command: List[Union[str, Path]], check=True, **kwargs):
+def run_command(command: List[Union[str, Path]], *,
+                check: bool = True,
+                cwd: Union[str, Path, None] = None,
+                **kwargs):
     """Helper to run a command and print its output.
 
     If the command is not found, or returns a non-zero exit code,
@@ -234,16 +238,22 @@ def run_command(command: List[Union[str, Path]], check=True, **kwargs):
 
     :param command List[Union[str, Path]]: The command to run as a list.
     :param check bool: Whether to raise an exception on non-zero exit code.
+    :param cwd Union[str, Path, None]: The working directory for the command.
     :param kwargs: Additional keyword arguments to pass to subprocess.run().
     """
     _validate_command(command, "command")
     _validate_boolean(check, "check")
+    if cwd:
+        _validate_path(Path(cwd), "cwd", exists=True)
     _validate_kwarg_keys_are_strings(kwargs, "kwargs")
 
     try:
         if DEBUG:
-            print(f"DEBUG: Running {command} with kwargs: {kwargs}")
-        subprocess.run(command, check=check, **kwargs)
+            debug_kwargs = kwargs.copy()
+            if cwd:
+                debug_kwargs['cwd'] = cwd
+            print(f"DEBUG: Running {command} with kwargs: {debug_kwargs}")
+        subprocess.run(command, check=check, cwd=cwd, **kwargs)
     except FileNotFoundError:
         print(f"Error: Command '{command[0]}' not found. Is it in your PATH?")
         sys.exit(1)
@@ -252,58 +262,21 @@ def run_command(command: List[Union[str, Path]], check=True, **kwargs):
         sys.exit(e.returncode)
 
 
-def modules_already_installed(python_exe: Path, modules: List[InstallSpec]) -> bool:
-    """Checks if the required modules are already installed in the system environment.
-
-    Tries to use 'pip install ... --dry-run' to simulate installation
-    and checks if all required modules are already satisfied.
-
-    If 'pip' is not available or returns errors, assumes modules are not installed.
+def run_post_install_steps(python_exe: Path, root_path: Path) -> None:
+    """Runs any post-installation steps required after installing tools.
 
     :param python_exe Path: The path to the Python executable within the venv.
-    :param modules: A list of InstallSpec objects to check.
-    :return: True if all modules are installed, False otherwise.
+    :param root_path Path: The path to the root of the git repository.
     """
     _validate_path(python_exe, "python_exe", exists=True)
-    _validate_module_list(modules, "modules")
+    _validate_path(root_path, "root_path", exists=True)
 
-    # '--break-system-packages' is used to allow checking in system envs
-    # where packages may be managed by the system package manager.
-    # It prevents pip from refusing to run in such environments.
-    # We only want to check, not actually install anything.
-    command = _build_install_command([python_exe, "-m", "pip"], modules) + ["--dry-run", "--break-system-packages"]
-
-    required_mods: set[str] = set(mod.name for mod in modules)
-    print("--> Checking for required modules in the system environment...")
-    try:
-        if DEBUG:
-            print(f"DEBUG: Running {command} to check installed modules")
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            check=False
-        )
-        output = result.stdout + result.stderr
-        output_lines = output.splitlines()
-        already_satisfied_re: re.Pattern = re.compile(
-            r"Requirement\s+already\s+satisfied:\s+(?P<mod_name>[^\s<>=!~\[]+)[\s<>=!~\[]")
-        for line in output_lines:
-            match = already_satisfied_re.search(line)
-            if match:
-                mod_name = match.group("mod_name")
-                required_mods.discard(mod_name)
-    except (FileNotFoundError, subprocess.CalledProcessError):
-        # 'pip' command not found or returned non-zero exit code; treat as not installed
-        print(" - 'pip' command not found or failed. Assuming required modules are not installed.")
-        return False
-    for mod in sorted(modules):
-        if mod.name not in required_mods:
-            print(f" - Module '{mod}' already installed.")
-        else:
-            print(f" - Module '{mod}' NOT already installed.")
-
-    return not required_mods  # True if all required modules are installed
+    print("Running post-installation steps...")
+    print("---> Installing the project in editable mode...")
+    run_command(
+        [python_exe, "-m", "pip", "install", "-e", "."],
+        cwd=root_path
+    )
 
 
 def confirmation_prompt() -> bool:
@@ -535,15 +508,6 @@ def main():
     Checks for required development tools and bootstraps a local virtual
     environment with them if necessary.
     """
-    if modules_already_installed(
-            python_exe=Path(sys.executable),
-            modules=BOOTSTRAP_MODULES):
-        print("All required development tools are already installed in the system environment.")
-        print("No action is necessary.")
-        print()
-        print(TOOL_USAGE_INSTRUCTIONS)
-        return
-
     if not confirmation_prompt():
         print("Aborted by user.")
         sys.exit(0)
@@ -556,6 +520,7 @@ def main():
     python_exe: Path = path_to_venv_python(venv_dir)
     create_virtual_environment(venv_dir, python_exe)
     install_tools(python_exe, BOOTSTRAP_MODULES)
+    run_post_install_steps(python_exe=python_exe, root_path=git_root)
     print_instructions(POST_INSTALL_MESSAGE)
 
 
