@@ -1,22 +1,13 @@
-"""Zero-dependency, cross-platform bootstrap script to set up a Python development environment.
+"""Zero-dependency, cross-platform bootstrap script to set up a Python
+development environment.
 
-It is designed to be run after cloning a git repository, to ensure that
-all necessary development tools for working with this project are installed.
+It is designed to be run after cloning a git repository, to create
+a local virtual environment (.venv), install necessary development tools.
 
 It relies only on the Python standard library and network access to PyPI.
 
-If the required python tools are not found in the system environment,
-the script creates a local virtual environment in the git repository
-root directory (in a folder named `.venv`) and installs the tools there.
-
-If the necessary tools are already installed in the system environment,
-no action is taken.
-
-Requires Python 3.9 or later.
-
-This does not mean that it will use Python 3.9 for development; the virtual
-environments can use any Python version installed on the system and any
-modules and versions that support that Python version.
+The python-simplebench project requires Python 3.10 or later, so this script
+also checks the Python version meets that requirement before proceeding.
 
 This script installs the following tools by default:
 - uv (for managing Python packages and dependencies)
@@ -27,16 +18,17 @@ This script installs the following tools by default:
 import sys
 
 # Check for minimum Python version
-if sys.version_info < (3, 9):
+if sys.version_info < (3, 10):
     major, minor = sys.version_info.major, sys.version_info.minor
-    print(f"Error: Python 3.9 or later is required to run this project. You are using Python {major}.{minor}.")
+    print("Error: Python 3.10 or later is required to run this project. "
+          f"You are using Python {major}.{minor}.")
     sys.exit(2)
 
 import os
 import subprocess
 from functools import lru_cache as cache
 from pathlib import Path
-from typing import List, NamedTuple, Union
+from typing import NamedTuple
 from venv import create as create_venv
 
 DEBUG: bool = False
@@ -60,7 +52,7 @@ class InstallSpec(NamedTuple):
 
 # --- Modules to install during bootstrap ---
 
-BOOTSTRAP_MODULES: List[InstallSpec] = [
+BOOTSTRAP_MODULES: list[InstallSpec] = [
     InstallSpec(name="uv", version=">=0.9.18"),
     InstallSpec(name="tox", version=">=4.32.0"),
     InstallSpec(name="tox-uv", version=">=1.29.0"),
@@ -152,7 +144,7 @@ def _validate_string_list(lst: list, name: str) -> None:
         raise TypeError(f"all items in {name} must be strings")
 
 
-def _validate_module_list(modules: List[InstallSpec], name: str) -> None:
+def _validate_module_list(modules: list[InstallSpec], name: str) -> None:
     """Validates that the input is a list of InstallSpec instances.
 
     :param modules list: The list to validate.
@@ -166,13 +158,13 @@ def _validate_module_list(modules: List[InstallSpec], name: str) -> None:
             raise TypeError(f"all items in {name} must be InstallSpec instances")
 
 
-def _validate_command(lst: List[Union[str, Path]], name: str) -> None:
+def _validate_command(lst: list[str | Path], name: str) -> None:
     """Validates that the input is a list of that starts with
     either a string or Path, and contains only strings for all other items.
 
     It must contain at least one item.
 
-    :param lst List[Union[str, Path]]: The list to validate.
+    :param lst list[str | Path]: The list to validate.
     :param name str: The name of the list (for error messages).
     :raises TypeError: If validation fails.
     """
@@ -227,18 +219,18 @@ def _validate_path(path: Path, name: str, exists: bool = False) -> None:
         raise FileNotFoundError(f"{name} does not exist: {path}")
 
 
-def run_command(command: List[Union[str, Path]], *,
+def run_command(command: list[str | Path], *,
                 check: bool = True,
-                cwd: Union[str, Path, None] = None,
+                cwd: str | Path | None = None,
                 **kwargs):
     """Helper to run a command and print its output.
 
     If the command is not found, or returns a non-zero exit code,
     prints an error message and exits the script.
 
-    :param command List[Union[str, Path]]: The command to run as a list.
+    :param command list[str | Path]: The command to run as a list.
     :param check bool: Whether to raise an exception on non-zero exit code.
-    :param cwd Union[str, Path, None]: The working directory for the command.
+    :param cwd str | Path | None: The working directory for the command.
     :param kwargs: Additional keyword arguments to pass to subprocess.run().
     """
     _validate_command(command, "command")
@@ -270,13 +262,7 @@ def run_post_install_steps(python_exe: Path, root_path: Path) -> None:
     """
     _validate_path(python_exe, "python_exe", exists=True)
     _validate_path(root_path, "root_path", exists=True)
-
-    print("Running post-installation steps...")
-    print("---> Installing the project in editable mode...")
-    run_command(
-        [python_exe, "-m", "pip", "install", "-e", "."],
-        cwd=root_path
-    )
+    # No post-install steps needed currently
 
 
 def confirmation_prompt() -> bool:
@@ -304,7 +290,8 @@ def get_git_root() -> Path:
     If not in a git repository, prints an error message and exits.
 
     It tries to use 'git rev-parse --show-toplevel' first, and falls back
-    to searching parent directories for a '.git' folder if the git command is not found.
+    to searching parent directories for a '.git' folder if the git command
+    is not found.
     """
     try:
         git_root_bytes = subprocess.check_output(
@@ -313,18 +300,14 @@ def get_git_root() -> Path:
         )
         git_root = Path(git_root_bytes.decode('utf-8').strip())
         return git_root
-    except FileNotFoundError:
-        # No git command found...so we do it the hard way
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        # No git command or something is broken...so we do it the hard way
         current_dir = Path.cwd()
         for parent in [current_dir] + list(current_dir.parents):
             if (parent / ".git").is_dir():
                 return parent
 
         print("Error: .git directory not found in any parent directories.")
-        sys.exit(1)
-    except subprocess.CalledProcessError:
-        print("Error: This does not appear to be a git repository. "
-              "Please run from within the cloned project directory.")
         sys.exit(1)
 
 
@@ -353,7 +336,8 @@ def pip_module_is_available(python_exe: Path) -> bool:
 
     try:
         if DEBUG:
-            print(f"DEBUG: Running '{python_exe} -m pip --version' to check for pip availability")
+            print(f"DEBUG: Running '{python_exe} -m pip --version' to check "
+                  "for pip availability")
         subprocess.run(
             [python_exe, "-m", "pip", "--version"],
             check=True,
@@ -396,7 +380,7 @@ def create_virtual_environment(venv_dir: Path, python_exe: Path) -> None:
         print(f"Virtual environment '{venv_dir}' already exists. Skipping creation.")
 
 
-def install_tools(python_exe: Path, modules: List[InstallSpec]) -> None:
+def install_tools(python_exe: Path, modules: list[InstallSpec]) -> None:
     """Installs core development tools into the virtual environment.
 
     If 'uv' is specified in the modules, it is bootstrapped with pip
@@ -420,7 +404,7 @@ def install_tools(python_exe: Path, modules: List[InstallSpec]) -> None:
         install_with_pip(python_exe, modules)
 
 
-def install_with_uv(python_exe: Path, modules: List[InstallSpec]) -> None:
+def install_with_uv(python_exe: Path, modules: list[InstallSpec]) -> None:
     """Installs 'uv' using pip, then uses 'uv' to install the specified modules.
 
     :param python_exe Path: The path to the Python executable within the venv.
@@ -430,7 +414,7 @@ def install_with_uv(python_exe: Path, modules: List[InstallSpec]) -> None:
     _validate_module_list(modules, "modules")
 
     uv_module: InstallSpec = [mod for mod in modules if mod.name == "uv"][0]
-    other_modules: List[InstallSpec] = [mod for mod in modules if mod.name != "uv"]
+    other_modules: list[InstallSpec] = [mod for mod in modules if mod.name != "uv"]
 
     bootstrap_message = (
         f"--> Bootstrapping 'uv' using 'pip': {uv_module}, "
@@ -447,7 +431,7 @@ def install_with_uv(python_exe: Path, modules: List[InstallSpec]) -> None:
     run_command(command)
 
 
-def install_with_pip(python_exe: Path, modules: List[InstallSpec], message: str = '') -> None:
+def install_with_pip(python_exe: Path, modules: list[InstallSpec], message: str = '') -> None:
     """Installs the specified modules using 'pip'.
 
     :param python_exe Path: The path to the Python executable within the venv.
@@ -466,10 +450,11 @@ def install_with_pip(python_exe: Path, modules: List[InstallSpec], message: str 
     run_command(command)
 
 
-def _build_install_command(base_command: List[Union[str, Path]], modules: List[InstallSpec]) -> List:
+def _build_install_command(base_command: list[str | Path],
+                           modules: list[InstallSpec]) -> list[str | Path]:
     """Builds a complete installation command list for either 'pip' or 'uv pip'.
 
-    :param base_command List[Union[str, Path]]: The base command to start with (e.g., pip or uv pip).
+    :param base_command list[str | Path]: The base command to start with (e.g., pip or uv pip).
     :param modules: A list of InstallSpec objects to install.
     :return: The complete command list to run.
     """
