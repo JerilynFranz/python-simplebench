@@ -245,12 +245,10 @@ env_list = [
     "py313",
     "py314",
     "lint",
-    "docs",
     "doctest",
-    "dev",
 ]
 install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
-labels = { test = ["py310", "py311", "py312", "py313", "py314"] }
+labels = { test = ["py310", "py311", "py312", "py313", "py314", "doctest", "lint"] }
 
 [tool.tox.env]
 
@@ -265,6 +263,7 @@ extras = ["all"]
 
 # Basic test environment that other test envs can inherit from
 [tool.tox.env.testenv]
+description = "Base for test environments"
 allowlist_externals = ["pytest", "mypy", "flake8", "pylint"]
 dependency_groups = ["test", "lint", "tools", "types"]
 
