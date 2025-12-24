@@ -246,77 +246,65 @@ env_list = [
     "py314",
     "lint",
     "docs",
+    "doctest",
+    "dev",
 ]
 install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
-
+labels = { test = ["py310", "py311", "py312", "py313", "py314"] }
 
 [tool.tox.env]
 
-[tool.tox.env.basetest]
-# This contains settings that ARE inherited by 'requires'.
-package = "wheel"
-wheel_build_env = ".pkg"
-pass_env = ["HOME", "USERPROFILE"]
-allowlist_externals = ["pytest", "uv"]
+# --- Base Test Environment ---
+
+[tool.tox.env_run_base]
+allowlist_externals = ["pytest", "flake8", "pylint", "mypy", "sphinx-build"]
+dependency_groups = ["test", "lint", "tools", "types"]
+extras = ["all"]
 
 # --- Concrete Test Environments ---
-# These are sibling tables that use tox's 'requires' to inherit.
+
+# Basic test environment that other test envs can inherit from
+[tool.tox.env.testenv]
+allowlist_externals = ["pytest", "mypy", "flake8", "pylint"]
+dependency_groups = ["test", "lint", "tools", "types"]
+
 [tool.tox.env.py310]
 description = "Run the test suite on Python 3.10"
-requires = ["basetest"]
-# These settings are NOT inherited and must be explicit.
-dependency_groups = ["test"]
-allowlist_externals = ["pytest"]
+base = ["testenv"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.py311]
 description = "Run the test suite on Python 3.11"
-requires = ["basetest"]
-dependency_groups = ["test"]
-allowlist_externals = ["pytest"]
+base = ["testenv"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.py312]
 description = "Run the test suite on Python 3.12"
-requires = ["basetest"]
-dependency_groups = ["test"]
-allowlist_externals = ["pytest"]
+base = ["testenv"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.py313]
 description = "Run the test suite on Python 3.13"
-requires = ["basetest"]
-dependency_groups = ["test"]
-allowlist_externals = ["pytest"]
-python_base = ["python3.13"]
-install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
+base = ["testenv"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.py314]
 description = "Run the test suite on Python 3.14"
-requires = ["basetest"]
-dependency_groups = ["test"]
-allowlist_externals = ["pytest"]
+base = ["testenv"]
 commands = [["pytest", "{posargs:tests/}"]]
 
 [tool.tox.env.dev]
 description = "Development environment with all tools"
 package = "editable"
+base = ["testenv"]
 base_python = ["python3.14"]
-dependency_groups = ["test", "lint", "docs", "tools", "types"]
 commands = []
 
 [tool.tox.env.lint]
 description = "Run linters"
 package = "skip"
 base_python = ["python3.12"]
-dependency_groups = ["lint"]
-allowlist_externals = [
-    "flake8",
-    "pylint",
-    "mypy",
-]
-# Correct format for multiple commands
+dependency_groups = ["lint", "types"]
 commands = [
     ["flake8", "src", "tests"],
     ["pylint", "src", "tests"],
@@ -326,12 +314,22 @@ commands = [
 [tool.tox.env.docs]
 # This environment is self-contained and does NOT inherit from basetest.
 description = "Build the documentation"
-package = "skip"
 base_python = ["python3.12"]
-dependency_groups = ["docs"]
+dependency_groups = ["docs", "test", "types"]
+extras = ["all"]
 allowlist_externals = ["sphinx-build"]
-commands = [["sphinx-build", "-b", "html", "documentation/", "documentation/_build/html"]]
+commands = [["sphinx-build", "-b", "html", "documentation/", "documentation/docs"]]
 
+[tool.tox.env.doctest]
+description = "Run doctests in the documentation"
+base_python = ["python3.12"]
+dependency_groups = ["docs", "test", "types"]
+allowlist_externals = ["sphinx-build", "pytest"]
+extras = ["all"]
+commands = [
+    ["sphinx-build", "-b", "doctest", "documentation/", "documentation/_build/doctest"],
+    # ["pytest", "documentation/_build/doctest"],
+]
 
 [dependency-groups]
 # Dependencies for running the test suite
@@ -372,7 +370,7 @@ tools = [
     "uv>=0.9.18",
 ]
 
-# Type stubs for development
+# Type stubs for development and type checking
 types = [
     "pandas-stubs>=2.3.2.250827",
     "types-seaborn>=0.13.2.20250809",
