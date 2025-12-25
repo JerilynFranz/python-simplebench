@@ -5,10 +5,9 @@ and return the validated and/or normalized value.
 """
 import re
 from pathlib import Path
-from typing import Any, Sequence, TypeVar, cast, overload
+from typing import Any, Sequence, TypeVar, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.type_proxies.lazy_type_proxy import LazyTypeProxy
 from simplebench.validators._error_tags import _ValidatorsErrorTag
 
 T = TypeVar('T')
@@ -20,6 +19,8 @@ def validate_bool(
         name: str,
         error_tag: ErrorTag) -> bool:
     """Validate that the passed value is either a boolean (bool) value.
+
+        (validation primitive - does not depend on other validators)
 
     If the value passes, type checkers will annotate the returned value
     as `bool`.
@@ -42,6 +43,8 @@ def validate_bool(
         allow_none: bool) -> bool | None:
     """Validate that the passed value is either a bool or None.
 
+        (validation primitive - does not depend on other validators)
+
     If the value passes, type checkers will annotate the returned value
     as `bool | None`.
 
@@ -62,6 +65,8 @@ def validate_bool(
         *,
         allow_none: bool = False) -> bool | None:
     """Validate that a value is a boolean.
+
+            (validation primitive - does not depend on other validators)
 
     If allow_none is True, None is also accepted.
 
@@ -114,283 +119,13 @@ def validate_bool(
     return value
 
 
-@overload
-def validate_type(
-        value: Any,
-        types: tuple[type | LazyTypeProxy[Any], ...],
-        field_name: str,
-        error_tag: ErrorTag) -> Any:
-    ...
-
-
-@overload
-def validate_type(
-        value: Any,
-        types: type[T],
-        field_name: str,
-        error_tag: ErrorTag) -> T:
-    ...
-
-
-@overload
-def validate_type(
-        value: Any,
-        types: LazyTypeProxy[T],
-        field_name: str,
-        error_tag: ErrorTag) -> T:
-    ...
-
-
-def validate_type(
-        value: Any,
-        types: type[T] | tuple[type | LazyTypeProxy[Any], ...] | LazyTypeProxy[T],
-        field_name: str,
-        error_tag: ErrorTag) -> T | Any:
-    """Validate that a value is of the expected type.
-
-    The returned value is guaranteed to be of type expected and acts to type-narrow
-    the returned value for static type checking if a single type is provided.
-
-    If multiple types are provided in a tuple for the expected type, the caller can
-    type-narrow the type of the returned type by declaring the untupled types by
-    assigning the return value to a variable with an explicit type annotation.
-
-    The value itself is always returned unchanged if it passes the validation.
-
-    Example:
-
-        .. code-block:: python
-
-            mixed: str | int = validate_type(
-                value=some_value,
-                expected=(str, int),
-                name='mixed',
-                error_tag=ErrorTag.INVALID_EXPECTED_ARG_TYPE)
-
-    :param Any value: The value to validate.
-    :param types: The expected type of the value.
-    :type types: type[T] | tuple[type, ...] | LazyType[T]
-    :param str field_name: The name of the field being validated (for error messages).
-    :param ErrorTag error_tag: The error tag to use for type errors.
-    :return: The validated (unmodifed) value.
-    :rtype: T | Any
-    :raises SimpleBenchTypeError: If the value is not of the expected type.
-    """
-    if not isinstance(types, (type, tuple, LazyTypeProxy)):
-        raise SimpleBenchTypeError(
-            f'Invalid expected argument type: {type(types)}. Must be a type, tuple of types, or LazyType.',
-            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE
-        )
-    if isinstance(types, tuple):
-        for item in types:
-            if not isinstance(item, (type, LazyTypeProxy)):
-                raise SimpleBenchTypeError(
-                    f'Invalid expected argument item type in tuple: {type(item)}. Must be a type or LazyType.',
-                    tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE
-                )
-    if not isinstance(field_name, str):
-        raise SimpleBenchTypeError(
-            f'Invalid name argument type: {type(field_name)}. Must be a str.',
-            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE
-        )
-    if not isinstance(error_tag, ErrorTag):
-        raise SimpleBenchTypeError(
-            f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
-            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)
-
-    # We use `cast` here to inform the static type checker that we know
-    # LazyTypeProxy is a valid type for `isinstance` due to its metaclass.
-    # This suppresses the Pylance warning without affecting runtime behavior.
-    if not isinstance(value, cast(type, types)):
-        raise SimpleBenchTypeError(
-            f'Invalid "{field_name}" type: {type(value)}. Must be {repr(types)}.',
-            tag=error_tag
-        )
-    return value  # type: ignore[return-value]
-
-
-def validate_string(  # noqa: C901
-        value: Any,
-        field_name: str,
-        type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag, *,
-        strip: bool = False,
-        allow_empty: bool = True,
-        allow_blank: bool = True,
-        alphanumeric_only: bool = False) -> str:
-    """Validate and normalize a string field.
-
-    Validates that the value is a string. Optionally strips leading/trailing whitespace,
-    checks for emptiness, blankness (whitespace-only strings), and alphanumeric content.
-
-    The returned value is guaranteed to be of type str and acts to type-narrow
-    the returned value.
-
-    Following the principle of 'least astonishment', the validator does not modify
-    the input string unless strip=True is set. If strip=True is set, the string is
-    stripped of leading and trailing whitespace before other checks are applied.
-
-    Explanation of options:
-        strip=True means leading/trailing whitespace is removed before other checks.
-        allow_empty=True means the string cannot be empty ("").
-        allow_blank=True means the string can contain only whitespace characters.
-        alphanumeric_only=True means the string only contain alphanumeric characters (a-z, A-Z, 0-9).
-
-    Interaction of options:
-
-    If `strip=True, allow_empty=True, allow_blank=False` is provided, `allow_empty=False`
-    takes precedence over `allow_blank=True` as the more specific check. Therefore '   ' would be
-    stripped to '' and then accepted as empty.
-
-    If `strip=True, allow_blank=True, allow_empty=False` is provided, `allow_empty=False`
-    takes precedence over `allow_blank=True` because after stripping a blank string becomes
-    an empty string and `allow_empty=False` is the more specific check.
-    Therefore ' ' would be stripped to '' and then rejected as empty.
-
-    If `strip=False, allow_blank=True, alphanumeric_only=True` is provided, `alphanumeric_only=True`
-    takes precedence over `allow_blank=True` because a blank string with whitespace is not alphanumeric
-    by definition.
-
-    `alphanumeric_only=True` behaves differently than `str().isalnum()` in that it allows empty strings if
-    `allow_empty=True` is also provided.
-
-    :param Any value: The value to validate as being a string.
-    :param str field_name: The name of the field being validated (for error messages).
-    :param ErrorTag type_error_tag: The error tag to use for type errors.
-    :param ErrorTag value_error_tag: The error tag to use for value errors.
-    :param bool strip: Whether to strip leading/trailing whitespace.
-    :param bool allow_empty: Whether to allow empty strings.
-    :param bool allow_blank: Whether to allow blank strings (strings that consist
-        only of whitespace).
-    :param bool alphanumeric_only: Whether to allow only alphanumeric characters.
-    :raises SimpleBenchTypeError: If the value is not a str.
-    :raises SimpleBenchValueError: If the string fails any of the specified checks or if options contradict.
-    """
-    if not isinstance(strip, bool):
-        raise SimpleBenchTypeError(
-            f'Invalid strip type: {type(strip)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_STRIP_ARG_TYPE
-        )
-    if not isinstance(allow_empty, bool):
-        raise SimpleBenchTypeError(
-            f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_ALLOW_EMPTY_ARG_TYPE
-        )
-    if not isinstance(allow_blank, bool):
-        raise SimpleBenchTypeError(
-            f'Invalid allow_blank type: {type(allow_blank)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_ALLOW_BLANK_ARG_TYPE
-        )
-    if not isinstance(alphanumeric_only, bool):
-        raise SimpleBenchTypeError(
-            f'Invalid alphanumeric_only type: {type(alphanumeric_only)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE
-        )
-    if not isinstance(value, str):
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be a str.',
-            tag=type_error_tag
-        )
-
-    if strip:
-        value = value.strip()
-
-    if value == '':  # Empty string
-        if allow_empty:
-            return value
-        raise SimpleBenchValueError(f'Invalid {field_name}: cannot be empty string.', tag=value_error_tag)
-
-    if value.strip() == '':  # Blank string (only whitespace)
-        if allow_blank and not alphanumeric_only:
-            return value
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: cannot be blank string (consist only of whitespace).', tag=value_error_tag)
-
-    if alphanumeric_only:
-        if value.isalnum():
-            return value
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: must consist only of alphanumeric characters [A-Za-z0-9]: "{value}".',
-            tag=value_error_tag)
-
-    return value
-
-
-def validate_non_blank_string(
-        value: Any,
-        field_name: str,
-        type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag) -> str:
-    """Validate and normalize a non-blank string field.
-
-    Any leading or trailing whitespace is stripped from the string before returning it.
-
-    The validation checks that the value is a string and that it is not blank or only whitespace.
-    The returned value is guaranteed to be non-blank and non-blank and to be of type str.
-
-    :param str value: The string value to validate.
-    :param str field_name: The name of the field being validated (for error messages).
-    :param ErrorTag type_error_tag: The error tag to use for type errors.
-    :param ErrorTag value_error_tag: The error tag to use for value errors.
-    :return: The stripped string value.
-    :rtype: str
-    :raises SimpleBenchTypeError: If the value is not a string.
-    :raises SimpleBenchValueError: If the string is blank or only whitespace.
-    """
-    if not isinstance(value, str):
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be a string.',
-            tag=type_error_tag
-        )
-    stripped_value = value.strip()
-    if not stripped_value:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: cannot be blank or whitespace.',
-            tag=value_error_tag
-        )
-    return stripped_value
-
-
-def validate_non_blank_string_or_is_none(
-        value: Any,
-        field_name: str,
-        type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag,
-        allow_none: bool = True) -> str | None:
-    """Validate and normalize a non-blank string field.
-
-    Any leading or trailing whitespace is stripped from the string before returning it.
-    The validation checks that the value is a string and that it is not blank or only whitespace.
-    If the value is None and allow_none is True, None is returned.
-
-    The validated value is guaranteed to either be non-blank and non-blank and of type str, or
-    None if allow_none is True and None is provided as the value.
-
-    :param str value: The string value to validate.
-    :param str field_name: The name of the field being validated (for error messages).
-    :param ErrorTag type_error_tag: The error tag to use for type errors.
-    :param ErrorTag value_error_tag: The error tag to use for value errors.
-    :param bool allow_none: Whether to allow None as a valid value. Defaults to True.
-    :return: The stripped string value or None if allowed and provided.
-    :rtype: str | None
-    :raises SimpleBenchTypeError: If the value is not a str, or None (if allow_none is False).
-    :raises SimpleBenchValueError: If the string is blank or only whitespace.
-    """
-    if value is None:
-        if allow_none:
-            return None
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name}: cannot be None.',
-            tag=value_error_tag
-        )
-    return validate_non_blank_string(value, field_name, type_error_tag, value_error_tag)
-
-
-def validate_int(value: Any, field_name: str, type_tag: ErrorTag) -> int:
+def validate_int(value: Any, name: str, type_tag: ErrorTag) -> int:
     """Validate that a value is an integer.
 
+        (validation primitive - does not depend on other validators)
+
     :param int value: The value to validate.
-    :param str field_name: The name of the field being validated (for error messages).
+    :param str name: The name of the field being validated (for error messages).
     :param ErrorTag type_tag: The error tag to use for type errors.
     :return: The validated integer.
     :rtype: int
@@ -398,14 +133,16 @@ def validate_int(value: Any, field_name: str, type_tag: ErrorTag) -> int:
     """
     if not isinstance(value, int):
         raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be an int.',
+            f'Invalid {name} type: {type(value)}. Must be an int.',
             tag=type_tag
         )
     return value
 
 
-def validate_float(value: Any, field_name: str, type_tag: ErrorTag) -> float:
+def validate_float(value: Any, name: str, type_tag: ErrorTag) -> float:
     """Validate that a value is a float or integer.
+
+            (validation primitive - does not depend on other validators)
 
     Validates that the value is either a float or an int.
     The return type is always a float.
@@ -419,7 +156,7 @@ def validate_float(value: Any, field_name: str, type_tag: ErrorTag) -> float:
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
         raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be a float or int.',
+            f'Invalid {name} type: {type(value)}. Must be a float or int.',
             tag=type_tag
         )
     return float(value)
@@ -427,6 +164,8 @@ def validate_float(value: Any, field_name: str, type_tag: ErrorTag) -> float:
 
 def validate_positive_int(value: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> int:
     """Validate that a value is a positive integer.
+
+        (validation primitive - does not depend on other validators)
 
     :param int value: The value to validate.
     :param str field_name: The name of the field being validated (for error messages).
@@ -452,6 +191,8 @@ def validate_positive_int(value: Any, field_name: str, type_tag: ErrorTag, value
 
 def validate_non_negative_int(value: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> int:
     """Validate that a value is a non-negative integer.
+
+        (validation primitive - does not depend on other validators)
 
     :param int value: The value to validate.
     :param str field_name: The name of the field being validated (for error messages).
@@ -507,6 +248,8 @@ def validate_positive_float(
 def validate_non_negative_float(
         value: float | int, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> float:
     """Validate that a value is a non-negative float or integer.
+
+        (validation primitive - does not depend on other validators)
 
     Validates that the value is either a float or an int and that it is non-negative.
     The return type is always a float.
@@ -564,6 +307,8 @@ def validate_sequence_of_type(
         *,
         allow_empty: bool = True) -> list[T] | list[Any]:
     """Validate that a value is a sequence of specified type(s).
+
+        (validation primitive - does not depend on other validators)
 
     When a single type is provided, the return type is automatically inferred as list[T].
     When multiple types are provided, the return type is list[Any], which allows the
@@ -660,6 +405,8 @@ def validate_frozenset_of_type(
         allow_empty: bool = True) -> frozenset[T] | frozenset[Any]:
     """Validate that a value is a frozenset of specified type(s).
 
+        (validation primitive - does not depend on other validators)
+
     When a single type is provided, the return type is automatically inferred as frozenset[T].
     When multiple types are provided, the return type is frozenset[Any], which allows the
     caller to narrow the type with an explicit annotation.
@@ -741,6 +488,8 @@ def validate_sequence_of_numbers(
         allow_empty: bool = True) -> Sequence[int | float]:
     """Validate that a value is a sequence of numbers (ints or floats).
 
+        (validation primitive - does not depend on other validators)
+
     Because this function checks for Sequence[int | float], it will accept lists, tuples, sets, and other
     sequence types, but not str or bytes.
 
@@ -790,7 +539,7 @@ def validate_sequence_of_numbers(
 
 def validate_sequence_of_str(
         value: Any,
-        field_name: str,
+        name: str,
         type_tag: ErrorTag,
         value_tag: ErrorTag,
         *,
@@ -799,6 +548,8 @@ def validate_sequence_of_str(
         allow_whitespace: bool = True) -> list[str]:
     """Validate that a value is a sequence of strings.
 
+        (validation primitive - does not depend on other validators)
+
     This function checks that the input is a sequence (list, tuple, etc.) of strings,
     and that each string meets the specified criteria.
 
@@ -806,7 +557,7 @@ def validate_sequence_of_str(
     or do not contain any whitespace, based on the provided flags.
 
     :param Sequence[Any] value: The sequence of values to validate.
-    :param str field_name: The name of the field being validated (for error messages).
+    :param str name: The name of the field being validated (for error messages).
     :param ErrorTag type_tag: The error tag to use for type errors.
     :param ErrorTag value_tag: The error tag to use for value errors.
     :param bool allow_empty: Whether to allow an empty sequence. Defaults to True.
@@ -818,37 +569,47 @@ def validate_sequence_of_str(
     :raises SimpleBenchValueError: If the sequence is empty and allow_empty is False or an element is
             blank and allow_blank is False.
     """
-    list_of_str: list[str] = validate_sequence_of_type(
-                                value, str, field_name,
-                                type_tag, value_tag,
-                                allow_empty=allow_empty)
+    if not all(isinstance(item, str) for item in value):
+        raise SimpleBenchTypeError(
+            f'Invalid {name} type: {type(value)}. Must be a sequence of strings.',
+            tag=type_tag
+        )
+    if not allow_empty and len(value) == 0:
+        raise SimpleBenchValueError(
+            f'Invalid {name}: sequence cannot be empty.',
+            tag=value_tag
+        )
+
+    list_of_str: list[str] = list(value)
     if not allow_blank:
         for i, item in enumerate(list_of_str):
             if item.strip() == '':
                 raise SimpleBenchValueError(
-                    f'Invalid {field_name} element at index {i}: cannot be blank or whitespace.',
+                    f'Invalid {name} element at index {i}: cannot be blank or whitespace.',
                     tag=value_tag
                 )
     if not allow_whitespace:
         for i, item in enumerate(list_of_str):
             if any(c.isspace() for c in item):
                 raise SimpleBenchValueError(
-                    f'Invalid {field_name} element at index {i}: cannot contain whitespace characters.',
+                    f'Invalid {name} element at index {i}: cannot contain whitespace characters.',
                     tag=value_tag
                 )
     return list_of_str
 
 
 def validate_int_range(number: Any,
-                       field_name: str,
+                       name: str,
                        type_tag: ErrorTag,
                        value_tag: ErrorTag,
                        min_value: int,
                        max_value: int) -> int:
     """Validate that a value is an integer within a specified range.
 
+        (validation primitive - does not depend on other validators)
+
     :param Any number: The value to validate.
-    :param str field_name: The name of the field being validated (for error messages).
+    :param str name: The name of the field being validated (for error messages).
     :param ErrorTag type_tag: The error tag to use for type errors.
     :param ErrorTag value_tag: The error tag to use for value errors.
     :param int min_value: The minimum value of the range.
@@ -859,9 +620,9 @@ def validate_int_range(number: Any,
     :raises SimpleBenchTypeError: If number, min_value, or max_value is not an int.
     :raises SimpleBenchValueError: If number is not within the specified range.
     """
-    if not isinstance(field_name, str):
+    if not isinstance(name, str):
         raise SimpleBenchTypeError(
-            f'Invalid call to validate_int_range: field_name type: {type(field_name)}. Must be a str.',
+            f'Invalid call to validate_int_range: field_name type: {type(name)}. Must be a str.',
             tag=_ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
     if not isinstance(min_value, int):
         raise SimpleBenchTypeError(
@@ -878,11 +639,11 @@ def validate_int_range(number: Any,
             tag=_ValidatorsErrorTag.INVALID_RANGE)
     if not isinstance(number, int):
         raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(number)}. Must be an int.',
+            f'Invalid {name} type: {type(number)}. Must be an int.',
             tag=type_tag)
     if not min_value <= number <= max_value:
         raise SimpleBenchValueError(
-            f'Invalid {field_name}: {number}. Must be an int between {min_value} and {max_value}, inclusive.',
+            f'Invalid {name}: {number}. Must be an int between {min_value} and {max_value}, inclusive.',
             tag=value_tag)
 
     return number
@@ -896,6 +657,8 @@ def validate_float_range(
         min_value: float,
         max_value: float) -> float:
     """Validate that a value is a float within a specified range.
+
+        (validation primitive - does not depend on other validators)
 
     :param float number: The value to validate.
     :param str field_name: The name of the field being validated (for error messages).
@@ -947,6 +710,8 @@ _FILENAME_STEM_RE = re.compile(r'^[A-Za-z0-9](?:[-_A-Za-z0-9]*[A-Za-z0-9])?$')
 def validate_filename(filename: Any) -> str:
     """Validate a filename for use in the filesystem.
 
+        (validation primitive - does not depend on other validators)
+
     It validates that:
         - The filename is a string.
         - The filename suffix (if present) is alphanumeric and no longer than 10 characters.
@@ -961,9 +726,10 @@ def validate_filename(filename: Any) -> str:
     :raises SimpleBenchTypeError: If the filename is not a string.
     :raises SimpleBenchValueError: If the filename is invalid.
     """
-    filename = validate_type(
-        filename, str, 'filename',
-        _ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
+    if not isinstance(filename, str):
+        raise SimpleBenchTypeError(
+            f'Invalid filename type: {type(filename)}. Must be a str.',
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
 
     file = Path(filename)
     file_suffix = file.suffix.replace('.', '', 1)
@@ -1030,38 +796,42 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
             f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
             tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE)
 
-    dir_string = validate_string(
-        dirpath, 'dirpath',
-        _ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE,
-        _ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE,
-        allow_empty=allow_empty)
+    if not isinstance(dirpath, str):
+        raise SimpleBenchTypeError(
+            f'Invalid dirpath type: {type(dirpath)}. Must be a str.',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE)
 
-    if not dir_string and allow_empty:
+    if not allow_empty and dirpath == '':
+        raise SimpleBenchValueError(
+            "Directory path cannot be an empty string.",
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE)
+
+    if not dirpath and allow_empty:
         return ""
 
-    if len(dir_string) > 255:
+    if len(dirpath) > 255:
         raise SimpleBenchValueError(
-            f"Directory path cannot be longer than 255 characters (passed directory path was '{dir_string}')",
+            f"Directory path cannot be longer than 255 characters (passed directory path was '{dirpath}')",
             tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_TOO_LONG)
 
-    if not re.match(r'^[A-Za-z0-9_\\/-]+$', dir_string):
+    if not re.match(r'^[A-Za-z0-9_\\/-]+$', dirpath):
         raise SimpleBenchValueError(
             "Directory path must consist of only alphanumeric characters (A-Za-z0-9), underscores (_), dashes (-), "
-            f"slashes (/) or backslashes (\\) (passed directory path was '{dir_string}')",
+            f"slashes (/) or backslashes (\\) (passed directory path was '{dirpath}')",
             tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)
 
-    # Use the validated 'dir_string' variable consistently and simplify the check.
-    if dir_string.startswith(('/', '\\')) or dir_string.endswith(('/', '\\')):
+    # Use the validated 'dirpath' variable consistently and simplify the check.
+    if dirpath.startswith(('/', '\\')) or dirpath.endswith(('/', '\\')):
         raise SimpleBenchValueError(
             "Directory path cannot start or end with a slash (/) or backslash (\\)",
             tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_START_END)
 
-    path = Path(dir_string)
+    path = Path(dirpath)
     for element in path.parts:
         if not element:
             raise SimpleBenchValueError(
                 "Directory path cannot contain empty elements, which can be caused by "
-                f"consecutive slashes (e.g., '//') (passed directory path was '{dir_string}')",
+                f"consecutive slashes (e.g., '//') (passed directory path was '{dirpath}')",
                 tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_EMPTY)
 
         if not re.match(_DIRPATH_ELEMENT_RE, element):
@@ -1078,22 +848,3 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
                 tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)
 
     return path.as_posix()
-
-
-__all__ = [
-    'validate_non_blank_string',
-    'validate_non_blank_string_or_is_none',
-    'validate_int',
-    'validate_float',
-    'validate_positive_int',
-    'validate_non_negative_int',
-    'validate_positive_float',
-    'validate_non_negative_float',
-    'validate_sequence_of_type',
-    'validate_frozenset_of_type',
-    'validate_sequence_of_numbers',
-    'validate_sequence_of_str',
-    'validate_int_range',
-    'validate_float_range',
-    'validate_filename',
-]

@@ -37,60 +37,24 @@ class CPUInfoSchema(JSONSchema):
                     "type": "string",
                     "const": TYPE
                 },
-                "cpuinfo_version": {
-                    "title": "CPU Info Version",
-                    "description": "Optional version of the cpuinfo library",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    },
-                    "minItems": 3
-                },
-                "cpuinfo_version_string": {
-                    "title": "CPU Info Version String",
-                    "description": "Optional version of the cpuinfo library as a string",
-                    "type": "string"
-                },
                 "hash_id": {
                     "title": "Hash ID",
                     "description": "Unique 64 byte hexadecimal hash identifier for the CPU information data. This can be used to identify identical CPU configurations without revealing details.",
                     "type": "string",
                     "pattern": "^[a-f0-9]{64}$"
                 },
-                "arch": {
-                    "description": "CPU architecture",
-                    "type": "string"
+                "data": {
+                    "title": "CPU Info Data",
+                    "description": "Raw CPU information data collected from the system using the cpuinfo library.",
+                    "type": "object",
+                    "additionalProperties": True
                 },
-                "bits": {
-                    "title": "Bits",
-                    "description": "Number of bits of the CPU",
-                    "type": "integer",
-                    "minimum": 16
-                },
-                "count": {
-                    "title": "Count",
-                    "description": "Number of CPU cores",
-                    "type": "integer",
-                    "minimum": 1
-                },
-                "arch_string_raw": {
-                    "title": "Arch String Raw",
-                    "description": "Raw architecture string",
-                    "type": "string"
-                },
-                "brand_raw": {
-                    "title": "Brand Raw",
-                    "description": "Raw brand string",
-                    "type": "string"
-                }
             },
             "required": [
                 "hash_id",
-                "arch",
-                "bits",
-                "count",
-                "arch_string_raw",
-                "brand_raw"
+                "type",
+                "version",
+                "data"
             ],
             "additionalProperties": False
         }

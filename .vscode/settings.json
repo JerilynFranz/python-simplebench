@@ -47,7 +47,8 @@
   },
   "python.REPL.enableREPLSmartSend": false,
   "flake8.args": [
-    "--max-line-length=120"
+    "--max-line-length=120",
+    "--disable=E501"
   ],
   "python.createEnvironment.contentButton": "show",
   "python.envFile": "${workspaceFolder}/.env",

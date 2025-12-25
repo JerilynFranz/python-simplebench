@@ -14,14 +14,16 @@ will not be changed.
 """
 import hashlib
 import re
-from typing import Any
+from types import NoneType
+from typing import Any, TypeAlias
 
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.report.base import CPUInfo as BaseCPUInfo
 from simplebench.report.base import JSONSchema
-from simplebench.report._error_tags import _CPUInfoErrorTag
-from simplebench.validators import validate_int, validate_string
+from simplebench.validators import validate_string
 
+from . import validate
 from .cpu_info_schema import CPUInfoSchema
 
 
@@ -36,29 +38,26 @@ class CPUInfo(BaseCPUInfo):
     SCHEMA: type[JSONSchema] = CPUInfoSchema
     """The JSON schema class for version 1 reports."""
 
+    DataTypes: TypeAlias = dict[str, "DataTypes"] | list["DataTypes"] | str | int | float | bool | NoneType
+
     def __init__(self,
                  *,
                  hash_id: str = '',
-                 arch: str,
-                 bits: int,
-                 count: int,
-                 arch_string_raw: str,
-                 brand_raw: str) -> None:
+                 data: dict[str, DataTypes]) -> None:
         """Initialize CPUInfo.
-        :param hash_id: The unique hash identifier for the CPU information.
+
+        :param str hash_id: The unique hash identifier for the CPU information.
             If not provided, it defaults to None and will be computed automatically.
-        :param arch: The CPU architecture.
-        :param bits: The CPU bitness (e.g., 32 or 64).
-        :param count: The number of CPU cores.
-        :param arch_string_raw: The raw architecture string.
-        :param brand_raw: The raw brand string.
+        :param dict[str, DataTypes] data: The raw CPU information data collected from the system
+            using the :package:`cpuinfo` library. It must be a dictionary.
+
+            The dictionary must conform to the following rules:
+            - It can have arbitrary keys and values but must be a tree composed of
+              dictionaries, lists, strings, numbers, booleans, and nulls.
+            - All keys in dictionaries must be non-blank, non-empty strings.
         """
-        self.hash_id = hash_id
-        self.arch = arch
-        self.bits = bits
-        self.count = count
-        self.arch_string_raw = arch_string_raw
-        self.brand_raw = brand_raw
+        self._hash_id = validate.hash_id(hash_id)
+        self._data = validate.data(data)
 
     @property
     def hash_id(self) -> str:
@@ -101,110 +100,6 @@ class CPUInfo(BaseCPUInfo):
                 "hash_id must be a valid SHA-256 hexadecimal string",
                 tag=_CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE)
         self._hash_id: str = hash_string
-
-    @property
-    def arch(self) -> str:
-        """Get the arch property.
-
-        :return: The arch string.
-        """
-        return self._arch
-
-    @arch.setter
-    def arch(self, value: str) -> None:
-        """Set the arch property.
-
-        :param value: The arch string to set.
-        """
-        self._arch: str = validate_string(
-            value, "arch",
-            _CPUInfoErrorTag.INVALID_ARCH_TYPE,
-            _CPUInfoErrorTag.INVALID_ARCH_VALUE_EMPTY_OR_BLANK_STRING,
-            allow_empty=False, allow_blank=False, strip=True)
-
-    @property
-    def bits(self) -> int:
-        """Get the bits property.
-
-        :return: The bits integer.
-        """
-        return self._bits
-
-    @bits.setter
-    def bits(self, value: int) -> None:
-        """Set the bits property.
-
-        :param value: The bits integer to set.
-        """
-        self._bits: int = validate_int(
-            value, "bits",
-            _CPUInfoErrorTag.INVALID_BITS_TYPE)
-        if self._bits < 16:
-            raise SimpleBenchTypeError(
-                "bits must be greater than or equal to 16",
-                tag=_CPUInfoErrorTag.INVALID_BITS_VALUE)
-
-    @property
-    def count(self) -> int:
-        """Get the CPU core count property.
-
-        :return: The core count integer.
-        """
-        return self._count
-
-    @count.setter
-    def count(self, value: int) -> None:
-        """Set the CPU core count property.
-
-        :param value: The core count integer to set.
-        """
-        self._count: int = validate_int(
-            value, "count",
-            _CPUInfoErrorTag.INVALID_COUNT_TYPE)
-        if self._count < 1:
-            raise SimpleBenchTypeError(
-                "count must be greater than or equal to 1",
-                tag=_CPUInfoErrorTag.INVALID_COUNT_VALUE)
-
-    @property
-    def arch_string_raw(self) -> str:
-        """Get the arch_string_raw property.
-
-        :return: The arch_string_raw string.
-        """
-        return self._arch_string_raw
-
-    @arch_string_raw.setter
-    def arch_string_raw(self, value: str) -> None:
-        """Set the arch_string_raw property.
-
-        :param value: The arch_string_raw string to set.
-        """
-        self._arch_string_raw: str = validate_string(
-            value, "arch_string_raw",
-            _CPUInfoErrorTag.INVALID_ARCH_STRING_RAW_TYPE,
-            _CPUInfoErrorTag.INVALID_ARCH_STRING_RAW_VALUE_BLANK_STRING,
-            allow_empty=True, allow_blank=False, strip=True)
-
-    @property
-    def brand_raw(self) -> str:
-        """Get the brand_raw property.
-
-        :return: The brand_raw string.
-        """
-        return self._brand_raw
-
-    @brand_raw.setter
-    def brand_raw(self, value: str) -> None:
-        """Set the brand_raw property.
-
-        :param value: The brand_raw string to set.
-        """
-        self._brand_raw: str = validate_string(
-            value, "brand_raw",
-            _CPUInfoErrorTag.INVALID_BRAND_RAW_TYPE,
-            _CPUInfoErrorTag.INVALID_BRAND_RAW_VALUE_BLANK_STRING,
-            allow_empty=True, allow_blank=False, strip=True)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> 'CPUInfo':

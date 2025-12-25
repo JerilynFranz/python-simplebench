@@ -86,6 +86,8 @@ class _ValidatorsErrorTag(ErrorTag):
     CONFLICTING_STRING_VALIDATION_OPTIONS_ALPHANUMERIC_ONLY = (
         "CONFLICTING_STRING_VALIDATION_OPTIONS_ALPHANUMERIC_ONLY")
     """Cannot have strip=True, allow_blank=True, and alphanumeric_only=True set together."""
+    INVALID_MESSAGE_ARG_TYPE = "INVALID_MESSAGE_ARG_TYPE"
+    """The 'message' argument must be a str."""
 
     # validate_filename() tags
     VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE = "VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE"
