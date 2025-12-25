@@ -42,68 +42,38 @@ class CPUInfo:
     Note that both ``use_cache`` and ``detached`` cannot be set to ``False``
     at the same time, as this combination does not make sense.
     """
-    __slots__ = ('_use_cache', '_detached', '_info')
+    __slots__ = ('_cache_key', '_info')
 
-    _cpu_info_cache: CPUInfoDictType = {}
+    _cpu_info_cache: dict[str, CPUInfoDictType] = {}
 
-    def __init__(self, *,
-                 use_cache: bool = True,
-                 detached: bool = False,
-                ) -> None:
+    def __init__(self, *, cache_key: str | None = None) -> None:
         """Initializes the instance by gathering data from the `cpuinfo` module.
         
-        - If ``use_cache`` is ``True`` and ``detached`` is ``False``, the instance uses the
-          cached CPU information from the `cpuinfo` module.
-        - If ``use_cache`` is ``True`` and ``detached`` is ``True``, the instance makes a deep copy
-          of the cached CPU information to ensure it is detached from future changes.
-        - If ``use_cache`` is ``False`` and ``detached`` is ``True``, the instance gathers fresh CPU information
-          and uses it directly. This instance will not be affected by future changes to the cache.
-        - If both ``use_cache`` and ``detached`` are ``False``, a ``SimpleBenchValueError`` is raised
-          because this combination does not make sense.
-
-        The FIRST time this class is instantiated it will populate the class-level cache.
-
-        :param bool use_cache: If ``True``, class-level cached CPU information is used
-            to initialized the CPUInfo instance if available; otherwise, fresh
-            information is gathered. It cannot be set to ``False`` if ``detached``
-            is also set to ``False``. (default: ``True``)
-        :param bool detached: If ``True``, the CPU information in this instance
-            will be detached from any changes to the class-level cache
-            for CPU information in the `cpuinfo` module. This means that even if the
-            class-level cache is updated later, this instance will retain the
-            CPU information as it was at the time of initialization. It cannot
-            be set to ``False`` if ``use_cache`` is also set to ``False``.
-        :raises SimpleBenchValueError: If both ``use_cache`` and ``detached`` are set to ``False``.
-
+        :param str | None cache_key: An optional key to identify a cache entry.
+            If provided, this key can be used to manage multiple cache entries
+            for different CPU configurations or environments. If ``None``,
+            the a new value is always gathered. (default: ``None``)
+       
+        :raises SimpleBenchTypeError: If cache_key is not a string or ``None``.
+        :raises SimpleBenchValueError: If cache_key is an empty string or contains non-alphanumeric characters.
         """
-        validate.use_cache_and_detached(use_cache, detached)
+        self._cache_key: str | None = validate.cache_key(cache_key)
+        self._info = self._get_cached_cpu_info(cache_key)
 
-        self._detached: bool = detached
-        self._use_cache: bool = use_cache
-        self._info: CPUInfoDictType = {}
-
-        self._get_cached_cpu_info()  # Ensure cache is populated at first use
-
-        if detached:
-            if use_cache:
-                self._info = deepcopy(self._get_cached_cpu_info())
-            else:
-                self._info = get_cpu_info()
 
     @classmethod
-    def _get_cached_cpu_info(cls) -> CPUInfoDictType:
+    def _get_cached_cpu_info(cls, cache_key: str | None) -> CPUInfoDictType:
         """Get the cached CPU information from the `cpuinfo` module.
 
-        If the class-level cache is empty, this method gathers fresh CPU information
-        and populates the cache.
-
+        :param str | None cache_key: An optional key to identify a cache entry.
         :return CPUInfoDictType: The cached CPU information.
         """
-        if not cls._cpu_info_cache:
-            cls._cpu_info_cache = validate.cpu_info_dict(
-                                        name="info",
-                                        value=get_cpu_info())
-        return cls._cpu_info_cache
+        if cache_key is None:
+            return get_cpu_info()
+
+        if cache_key not in cls._cpu_info_cache:
+            cls._cpu_info_cache[cache_key] = validate.cpu_info_dict(name="info", value=get_cpu_info())
+        return cls._cpu_info_cache[cache_key]
 
     @property
     def info(self) -> CPUInfoDictType:
@@ -117,18 +87,41 @@ class CPUInfo:
 
         :return CPUInfoDictType: The CPU information dictionary.
         """
-        if self._detached:
+        if self._cache_key is None:
             return deepcopy(self._info)
 
-        # This is necessary to ensure cache refreshes if not detached
-        return deepcopy(self._get_cached_cpu_info())
+        # This is necessary to ensure cache refreshes in a shared cache
+        return deepcopy(self._get_cached_cpu_info(self._cache_key))
 
     @classmethod
-    def refresh_cache(cls) -> None:
-        """Refresh the class-level cached CPU information.
+    def _refresh_cache_key(cls, cache_key: str) -> None:
+        """Private method to refresh the class-level keyed cache CPU information."""
+        cls._cpu_info_cache[cache_key] = validate.cpu_info_dict(name="cpu_info",
+                                                                value=get_cpu_info())
 
-        This method gathers fresh CPU information from the `cpuinfo` module
-        and updates the class-level cache. Instances of `CPUInfo` that are not detached
-        will reflect the updated cache when their `info` property is accessed.
+    def refresh_cache(self) -> None:
+        """Refresh the CPU information.
+
+        This method forces a refresh of the CPU information
+        from the :module:`cpuinfo` module.
+
+        - If the instance is detached (was created with no ``cache_key``),
+          only its internal state is updated.
+        - If the instance is attached to a shared cache (was created with a ``cache_key``),
+          the corresponding cache entry is updated, affecting all other instances
+          attached to the same key.
         """
-        cls._cpu_info_cache = get_cpu_info()
+        if self._cache_key is None:
+            self._info = validate.cpu_info_dict(name="cpu_info", value=get_cpu_info())
+            return
+        self._refresh_cache_key(self._cache_key)
+
+    def detach_from_cache(self) -> None:
+        """Detach this instance from the class-level cache.
+
+        After calling this method, the instance will retain its current
+        CPU information independently of any future changes to any
+        class-level cache in the :module:`cpuinfo` module.
+        """
+        self._info = deepcopy(self._get_cached_cpu_info(self._cache_key))
+        self._cache_key = None

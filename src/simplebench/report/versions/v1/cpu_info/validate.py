@@ -1,13 +1,10 @@
 """Validation functions for CPUInfo report version v1"""
-import math
 import re
-from typing import NamedTuple
 
 from simplebench.environment.cpu_info import validate as cpu_info_validate
-from simplebench.environment.cpu_info.types import CPUInfoDataTypes, CPUInfoDictType
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.environment.cpu_info.types import CPUInfoDictType
 from simplebench.report._error_tags import _CPUInfoErrorTag
-from simplebench.validators import validate_string, validate_string_with_regex, validate_type
+from simplebench.validators import validate_string, validate_string_with_regex
 
 _HASH_RE = re.compile(r'^[a-f0-9]{64}$')
 
@@ -57,16 +54,6 @@ def hash_id(value: str | None,
               _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
               _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
               message=f"{name} must be a 64-character hexadecimal string")
-
-
-class PendingItem(NamedTuple):
-    """A pending item for data validation.
-    
-    :param DataTypes item: The data item to validate.
-    :param int depth: The current depth of the item in the data structure.
-    """
-    item: CPUInfoDataTypes
-    depth: int
 
 
 def data(value: CPUInfoDictType) -> CPUInfoDictType:

@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _CPUInfoErrorTag(ErrorTag):
     """Error tags for CPU information retrieval issues."""
+    INVALID_CACHE_KEY_PARAM_TYPE = "INVALID_CACHE_KEY_PARAM_TYPE"
+    """The 'cache_key' argument is not of type 'str'."""
+    INVALID_CACHE_KEY_PARAM_VALUE = "INVALID_CACHE_KEY_PARAM_VALUE"
+    """The 'cache_key' argument is a blank or empty string."""
     INVALID_NAME_PARAM_TYPE = "INVALID_NAME_PARAM_TYPE"
     """The 'name' argument is not of type 'str'."""
     INVALID_NAME_PARAM_VALUE = "INVALID_NAME_PARAM_VALUE"

@@ -8,6 +8,25 @@ from ._error_tags import _CPUInfoErrorTag
 from .types import CPUInfoDataTypes, CPUInfoDictType
 
 
+def cache_key(value: str | None) -> str | None:
+    """Validate the cache_key parameter.
+
+    The cache_key must be a non-blank string containing only alphanumeric characters.
+
+    :param str | None value: The cache_key string to validate.
+    :return str | None: The validated cache_key string.
+    :raises SimpleBenchTypeError: If the value is not a string or ``None``.
+    :raises SimpleBenchValueError: If the value is not a non-blank alphanumeric string.
+    """
+    if value is None:
+        return None
+    return validate_string(
+        value, "cache_key",
+        _CPUInfoErrorTag.INVALID_CACHE_KEY_PARAM_TYPE,
+        _CPUInfoErrorTag.INVALID_CACHE_KEY_PARAM_VALUE,
+        strip=False, allow_empty=False, alphanumeric_only=True,
+        message="cache_key must be a non-empty string containing only alphanumeric characters.")
+
 class PendingItem:
     """Helper class to represent an item pending validation in the data tree."""
 
@@ -19,54 +38,6 @@ class PendingItem:
         """
         self.item: CPUInfoDataTypes = item
         self.depth: int = depth
-
-def use_cache(value: bool) -> bool:
-    """Validate the use_cache parameter.
-
-    This function checks if the `use_cache` parameter is a boolean value.
-    
-    :param bool value: Indicates whether to use cached CPU information.
-    :return bool: The validated `use_cache` value.
-    :raises SimpleBenchTypeError: If `use_cache` is not a boolean.
-    """
-    return validate_bool(
-        value, "use_cache",
-        _CPUInfoErrorTag.INVALID_USE_CACHE_TYPE)
-
-def detached(value: bool) -> bool:
-    """Validate the detached parameter.
-
-    This function checks if the `detached` parameter is a boolean value.
-    
-    :param bool value: Indicates whether the CPU information should be detached from future changes.
-    :return bool: The validated `detached` value.
-    :raises SimpleBenchTypeError: If `detached` is not a boolean.
-    """
-    return validate_bool(
-        value, "detached",
-        _CPUInfoErrorTag.INVALID_DETACHED_TYPE)
-
-def use_cache_and_detached(use_cache_value: bool, detached_value: bool) -> None:
-    """Validate the use_cache and detached parameters for CPUInfo initialization.
-
-    This function checks the types and the combination of `use_cache` and `detached`
-    parameters to ensure they are valid according to the following rules:
-    - `use_cache` and `detached` must both be boolean values.
-    - If `use_cache` is `False` and `detached` is `False`, a `SimpleBenchValueError` is raised
-      because this combination does not make sense.
-    
-    :param bool use_cache_value: Indicates whether to use cached CPU information.
-    :param bool detached: Indicates whether the CPU information should be detached from future changes.
-    :raises SimpleBenchValueError: If the combination of parameters is invalid.
-    """
-    use_cache(use_cache_value)
-    detached(detached_value)
-
-    if not use_cache and not detached:
-        raise SimpleBenchValueError(
-            "Invalid combination: 'use_cache' cannot be False when 'detached' is also False.",
-            tag=_CPUInfoErrorTag.INVALID_USE_CACHE_AND_DETACHED_COMBINATION)
-
 
 def cpu_info_dict(name: str, value: CPUInfoDictType) -> CPUInfoDictType:
     """Validate a CPUInfoDictType.
