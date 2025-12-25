@@ -15,9 +15,9 @@ will not be changed.
 import copy
 import hashlib
 import json
-from types import NoneType
-from typing import TypeAlias
 
+import simplebench.environment.cpu_info as cpu_info
+from simplebench.environment import CPUInfoDictType
 from simplebench.report.base import CPUInfo as BaseCPUInfo
 from simplebench.report.base import JSONSchema
 
@@ -27,6 +27,7 @@ from .cpu_info_schema import CPUInfoSchema
 
 class CPUInfo(BaseCPUInfo):
     """Class representing a JSON CPUInfo version 1."""
+
     TYPE: str = CPUInfoSchema.TYPE
     """The JSON CPUInfo type property value for version 1 reports."""
 
@@ -36,12 +37,11 @@ class CPUInfo(BaseCPUInfo):
     SCHEMA: type[JSONSchema] = CPUInfoSchema
     """The JSON schema class for version 1 reports."""
 
-    DataTypes: TypeAlias = dict[str, "DataTypes"] | list["DataTypes"] | str | int | float | bool | NoneType
 
     def __init__(self,
                  *,
                  hash_id: str | None = None,
-                 data: dict[str, DataTypes]) -> None:
+                 data: CPUInfoDictType) -> None:
         """Initialize CPUInfo.
 
         :param str | None hash_id: The unique hash identifier for the CPU information.
@@ -70,7 +70,7 @@ class CPUInfo(BaseCPUInfo):
             hash_id values are NOT validated against the data content on initialization
             because it is only an opaque identifier, not a data validation mechanism.
 
-        :param dict[str, DataTypes] data: The raw CPU information data collected from the system
+        :param CPUInfoDictType data: The raw CPU information data collected from the system
             using the :package:`cpuinfo` library. It must be a dictionary.
 
             The dictionary must conform to the following rules:
@@ -93,15 +93,29 @@ class CPUInfo(BaseCPUInfo):
         return self._hash_id
 
     @property
-    def data(self) -> dict[str, DataTypes]:
+    def data(self) -> CPUInfoDictType:
         """Get the data property.
 
-        :return dict[str, DataTypes]: A deep copy of the data dictionary to ensure immutability.
+        :return CPUInfoDictType: A deep copy of the data dictionary to ensure immutability.
         """
         return copy.deepcopy(self._data)
 
     @classmethod
-    def from_dict(cls, data: dict[str, DataTypes]) -> 'CPUInfo':
+    def from_system(cls) -> 'CPUInfo':
+        """Create a CPUInfo instance from the current system's CPU information.
+
+        This method collects CPU information using the
+        :package:`~simplebench.environment.CPUInfo` library class
+        and constructs a CPUInfo instance with the collected data.
+
+        :return CPUInfo: A CPUInfo instance containing the current system's CPU information.
+        """
+
+        cpu_data = cpu_info.CPUInfo().info
+        return cls(data=cpu_data)
+
+    @classmethod
+    def from_dict(cls, data: CPUInfoDictType) -> 'CPUInfo':
         """Create a CPUInfo instance from a dictionary.
 
         .. code-block:: python
@@ -114,7 +128,7 @@ class CPUInfo(BaseCPUInfo):
         representation. The 'version' and 'type' properties are validated
         against the class's VERSION and TYPE attributes if they are present.
 
-        :param dict[str, DataTypes] data: The dictionary containing CPU information.
+        :param CPUInfoDictType data: The dictionary containing CPU information.
         :return CPUInfo: A CPUInfo instance.
         """
         allowed_keys = cls.init_params()
@@ -130,7 +144,7 @@ class CPUInfo(BaseCPUInfo):
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, DataTypes]:
+    def to_dict(self) -> CPUInfoDictType:
         """Convert the CPUInfo to a dictionary suitable for JSON serialization.
 
         This includes all properties defined in the :class:`CPUInfoSchema`

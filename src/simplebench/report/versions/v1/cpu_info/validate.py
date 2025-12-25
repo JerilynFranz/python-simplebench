@@ -1,9 +1,10 @@
 """Validation functions for CPUInfo report version v1"""
 import math
 import re
-from types import NoneType
-from typing import NamedTuple, TypeAlias
+from typing import NamedTuple
 
+from simplebench.environment.cpu_info import validate as cpu_info_validate
+from simplebench.environment.cpu_info.types import CPUInfoDataTypes, CPUInfoDictType
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.validators import validate_string, validate_string_with_regex, validate_type
@@ -57,8 +58,6 @@ def hash_id(value: str | None,
               _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
               message=f"{name} must be a 64-character hexadecimal string")
 
-DataTypes: TypeAlias = dict[str, "DataTypes"] | list["DataTypes"] | str | int | float | bool | NoneType
-
 
 class PendingItem(NamedTuple):
     """A pending item for data validation.
@@ -66,11 +65,11 @@ class PendingItem(NamedTuple):
     :param DataTypes item: The data item to validate.
     :param int depth: The current depth of the item in the data structure.
     """
-    item: DataTypes
+    item: CPUInfoDataTypes
     depth: int
 
 
-def data(value: dict[str, DataTypes]) -> dict[str, DataTypes]:
+def data(value: CPUInfoDictType) -> CPUInfoDictType:
     """Validate the data property of CPUInfo.
 
     The data property must be a dictionary that contains the raw CPU information.
@@ -90,68 +89,9 @@ def data(value: dict[str, DataTypes]) -> dict[str, DataTypes]:
         non-finite floats (NaN, Infinity) or be deeply nested beyond reasonable limits
         (10 levels deep).
     
-    :param dict[str, DataTypes] value: The data dictionary to validate.
-    :return dict[str, DataTypes]: The validated data dictionary.
+    :param CPUInfoDictType value: The data dictionary to validate.
+    :return CPUInfoDictType: The validated data dictionary.
     :raises SimpleBenchTypeError: If the tree structure contains invalid types.
     :raises SimpleBenchValueError: If any dictionary key is a blank or empty string.
     """
-    validate_type(
-        value, dict, "data",
-        _CPUInfoErrorTag.INVALID_DATA_PARAM_TYPE,
-        message="{name} must be a dictionary.")
-
-    max_depth: int = 10  # Arbitrary limit to prevent excessively deep nesting
-
-    # Walk the data structure to ensure all elements are of allowed types
-    pending_items: list[PendingItem] = [PendingItem(value, 0)]
-    previously_seen: set[int] = set()
-    while pending_items:
-        current_item = pending_items.pop()
-        depth = current_item.depth
-        if depth > max_depth:
-            raise SimpleBenchValueError(
-                f"The data dictionary is too deeply nested (maximum depth is {max_depth}).",
-                tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_NESTING_DEPTH)
-        item = current_item.item
-        item_type = type(item)
-        item_id = id(item)
-        # Detect cyclic references
-        if item_id in previously_seen:
-            raise SimpleBenchTypeError(
-                "Cyclic references are not allowed in the data dictionary.",
-                tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_CYCLIC_REFERENCE)
-        previously_seen.add(item_id)
-        if isinstance(item, (str, int, float, bool)) or item is None:
-            # Check for non-finite floats (NaN, Infinity)
-            if isinstance(item, float):
-                if math.isnan(item) or math.isinf(item):
-                    raise SimpleBenchValueError(
-                        "Float values in the data dictionary cannot be NaN or Infinity.",
-                        tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_NON_FINITE_FLOAT)
-            continue
-
-        elif isinstance(item, list):
-            for element in item:
-                pending_items.append(PendingItem(element, depth + 1))
-
-        elif isinstance(item, dict):
-            for key, element in item.items():
-                if not isinstance(key, str):
-                    raise SimpleBenchTypeError(
-                        f"All keys in the data dictionary must be strings. "
-                        f"Invalid key: {key} of type {type(key).__name__}",
-                        tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_KEYS_TYPE)
-                if key.strip() == '':
-                    raise SimpleBenchValueError(
-                        f"All keys in the data dictionary must be non-blank strings. "
-                        f"Invalid key: '{key}'",
-                        tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_KEYS_VALUE)
-                pending_items.append(PendingItem(element, depth + 1))
-
-        else:
-            raise SimpleBenchTypeError(
-                f"Invalid data type for element in data dictionary: {item_type.__name__}. "
-                f"Allowed types are dict, list, str, int, float, bool, and None.",
-                tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_TYPE)
-
-    return value
+    return cpu_info_validate.cpu_info_dict("data", value)
