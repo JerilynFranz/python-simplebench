@@ -16,6 +16,7 @@ test_repos/
 
 # Virtual environments
 .venv
+.venv*
 .venv-3*
 
 # Sphinx stuff
