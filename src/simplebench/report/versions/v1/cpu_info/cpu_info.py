@@ -62,12 +62,13 @@ class CPUInfo(BaseCPUInfo):
             Because the hash_id is derived from the data content, any change to the data
             will result in a different hash_id. This means that the hash_id can be used
             to quickly check if two CPUInfo instances are identical in terms of their
-            CPU information.
+            CPU information and originating source.
 
             It is recommended to let the hash_id be computed automatically to ensure
             consistency and correctness unless importing data from an external source.
             
-            hash_id values are NOT validated against the data content on initialization.
+            hash_id values are NOT validated against the data content on initialization
+            because it is only an opaque identifier, not a data validation mechanism.
 
         :param dict[str, DataTypes] data: The raw CPU information data collected from the system
             using the :package:`cpuinfo` library. It must be a dictionary.
