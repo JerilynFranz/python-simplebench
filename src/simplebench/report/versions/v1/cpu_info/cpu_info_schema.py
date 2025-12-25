@@ -39,7 +39,7 @@ class CPUInfoSchema(JSONSchema):
                 },
                 "hash_id": {
                     "title": "Hash ID",
-                    "description": "Unique 64 byte hexadecimal hash identifier for the CPU information data. This can be used to identify identical CPU configurations without revealing details.",
+                    "description": "Unique 64 byte hexadecimal hash identifier for the CPU information data. This can be used to identify the generator and uniqueness of the data.",
                     "type": "string",
                     "pattern": "^[a-f0-9]{64}$"
                 },
