@@ -2,7 +2,7 @@
 development environment.
 
 It is designed to be run after cloning a git repository, to create
-a local virtual environment (.venv), install necessary development tools.
+a local virtual environment (.venvtools), install necessary development tools.
 
 It relies only on the Python standard library and network access to PyPI.
 
@@ -36,6 +36,9 @@ from venv import create as create_venv
 DEBUG: bool = False
 """Enable debug output if True."""
 
+
+VENV_DIR: str = ".venvtools"
+"""The name of the virtual environment directory to create in the git repo root."""
 
 class InstallSpec(NamedTuple):
     """Specification for modules required to be installed.
@@ -276,7 +279,7 @@ def confirmation_prompt() -> bool:
         choice = ''
         while choice.lower().strip() not in ('y', 'yes', 'n', 'no'):
             choice = input(
-                "This script will create a .venv directory in the git repo root "
+                f"This script will create a {VENV_DIR} directory in the git repo root "
                 "directory and install tools into it for development. Continue? [y/n] ")
     except KeyboardInterrupt:
         print()
@@ -482,9 +485,9 @@ def print_instructions(template: str) -> None:
     """
     _validate_string(template, "template")
 
-    activate_script = "source .venv/bin/activate"
+    activate_script = f"source {VENV_DIR}/bin/activate"
     if _is_windows():
-        activate_script = ".venv\\Scripts\\activate.bat"
+        activate_script = f"{VENV_DIR}\\Scripts\\activate.bat"
 
     instructions = template.format(activate=activate_script)
     print(instructions)
@@ -503,7 +506,7 @@ def main():
 
     print(f"--- Bootstrapping development environment (in {git_root}) ---")
 
-    venv_dir = git_root / ".venv"
+    venv_dir = git_root / VENV_DIR
     python_exe: Path = path_to_venv_python(venv_dir)
     create_virtual_environment(venv_dir, python_exe)
     install_tools(python_exe, BOOTSTRAP_MODULES)
