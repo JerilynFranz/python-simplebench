@@ -2,7 +2,7 @@
 import math
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators import validate_bool, validate_string, validate_type
+from simplebench.validators import validate_string, validate_type
 
 from ._error_tags import _CPUInfoErrorTag
 from .types import CPUInfoDataTypes, CPUInfoDictType
