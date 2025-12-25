@@ -6,6 +6,14 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _CPUInfoErrorTag(ErrorTag):
     """Error tags for JSONCPUInfo reporter base class."""
+    INVALID_DATA_PARAM_NON_FINITE_FLOAT = "INVALID_DATA_PARAM_NON_FINITE_FLOAT"
+    """The 'data' argument contains non-finite float values (NaN, Infinity)."""
+    INVALID_DATA_PARAM_KEYS_VALUE = "INVALID_DATA_PARAM_KEYS_VALUE"
+    """One or more keys in the 'data' argument are blank strings."""
+    INVALID_DATA_PARAM_CYCLIC_REFERENCE = "INVALID_DATA_PARAM_CYCLIC_REFERENCE"
+    """The 'data' argument contains cyclic references."""
+    INVALID_DATA_PARAM_NESTING_DEPTH = "INVALID_DATA_PARAM_NESTING_DEPTH"
+    """The 'data' argument is nested too deeply."""
     INVALID_DATA_PARAM_TYPE = "INVALID_DATA_PARAM_TYPE"
     """The 'data' argument is not of type 'dict'."""
     INVALID_DATA_PARAM_KEYS_TYPE = "INVALID_DATA_PARAM_KEYS_TYPE"
