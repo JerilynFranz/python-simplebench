@@ -99,11 +99,11 @@ class CPUInfo:
         cls._cpu_info_cache[cache_key] = validate.cpu_info_dict(name="cpu_info",
                                                                 value=get_cpu_info())
 
-    def refresh_cache(self) -> None:
+    def refresh_info(self) -> None:
         """Refresh the CPU information.
 
         This method forces a refresh of the CPU information
-        from the :module:`cpuinfo` module.
+        from the :module:`cpu_info` module.
 
         - If the instance is detached (was created with no ``cache_key``),
           only its internal state is updated.
@@ -121,7 +121,9 @@ class CPUInfo:
 
         After calling this method, the instance will retain its current
         CPU information independently of any future changes to any
-        class-level cache in the :module:`cpuinfo` module.
+        class-level cache in the :module:`cpu_info` module.
         """
+        if self._cache_key is None:
+            return
         self._info = deepcopy(self._get_cached_cpu_info(self._cache_key))
         self._cache_key = None
