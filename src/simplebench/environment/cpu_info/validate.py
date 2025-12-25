@@ -27,7 +27,7 @@ def cache_key(value: str | None) -> str | None:
         strip=False, allow_empty=False, alphanumeric_only=True,
         message="cache_key must be a non-empty string containing only alphanumeric characters.")
 
-class PendingItem:
+class _PendingItem:
     """Helper class to represent an item pending validation in the data tree."""
 
     def __init__(self, item: CPUInfoDataTypes, depth: int) -> None:
@@ -77,7 +77,7 @@ def cpu_info_dict(name: str, value: CPUInfoDictType) -> CPUInfoDictType:
     max_depth: int = 10  # Arbitrary limit to prevent excessively deep nesting
 
     # Walk the data structure to ensure all elements are of allowed types
-    pending_items: list[PendingItem] = [PendingItem(value, 0)]
+    pending_items: list[_PendingItem] = [_PendingItem(value, 0)]
     previously_seen: set[int] = set()
     while pending_items:
         current_item = pending_items.pop()
@@ -106,7 +106,7 @@ def cpu_info_dict(name: str, value: CPUInfoDictType) -> CPUInfoDictType:
 
         elif isinstance(item, list):
             for element in item:
-                pending_items.append(PendingItem(element, depth + 1))
+                pending_items.append(_PendingItem(element, depth + 1))
 
         elif isinstance(item, dict):
             for key, element in item.items():
@@ -120,7 +120,7 @@ def cpu_info_dict(name: str, value: CPUInfoDictType) -> CPUInfoDictType:
                         f"All keys in the data dictionary must be non-blank strings. "
                         f"Invalid key: '{key}'",
                         tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_KEYS_VALUE)
-                pending_items.append(PendingItem(element, depth + 1))
+                pending_items.append(_PendingItem(element, depth + 1))
 
         else:
             raise SimpleBenchTypeError(
