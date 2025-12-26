@@ -16,7 +16,7 @@ import copy
 import hashlib
 import json
 
-import simplebench.environment.cpu_info as cpu_info
+from simplebench import environment
 from simplebench.environment import CPUInfoDictType
 from simplebench.report.base import CPUInfo as BaseCPUInfo
 from simplebench.report.base import JSONSchema
@@ -41,7 +41,7 @@ class CPUInfo(BaseCPUInfo):
     def __init__(self,
                  *,
                  hash_id: str | None = None,
-                 data: CPUInfoDictType) -> None:
+                 data: CPUInfoDictType | environment.CPUInfo) -> None:
         """Initialize CPUInfo.
 
         :param str | None hash_id: The unique hash identifier for the CPU information.
@@ -70,14 +70,17 @@ class CPUInfo(BaseCPUInfo):
             hash_id values are NOT validated against the data content on initialization
             because it is only an opaque identifier, not a data validation mechanism.
 
-        :param CPUInfoDictType data: The raw CPU information data collected from the system
-            using the :package:`cpuinfo` library. It must be a dictionary.
+        :param CPUInfoDictType | environment.CPUInfo data: The raw CPU information data collected from the system
+            using the :package:`cpuinfo` library. It must either be a dictionary or
+            an instance of `simplebench.environment.CPUInfo`.
 
             The dictionary must conform to the following rules:
             - It can have arbitrary keys and values but must be a tree composed of
               dictionaries, lists, strings, numbers, booleans, and nulls.
             - All keys in dictionaries must be non-blank, non-empty strings.
         """
+        if isinstance(data, environment.CPUInfo):
+            data = data.info
         self._data = validate.data(data)
         self._hash_id = validate.hash_id(hash_id, allow_none=True)
 
@@ -111,7 +114,7 @@ class CPUInfo(BaseCPUInfo):
         :return CPUInfo: A CPUInfo instance containing the current system's CPU information.
         """
 
-        cpu_data = cpu_info.CPUInfo().info
+        cpu_data = environment.CPUInfo().info
         return cls(data=cpu_data)
 
     @classmethod
