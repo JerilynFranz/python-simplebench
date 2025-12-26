@@ -263,18 +263,16 @@ commands = [["pytest", "{posargs:tests/}"]]
 # environments table
 [tool.tox.env]
 
-# Basic defined test environment that other test envs can inherit from
-[tool.tox.env.testenv]
-description = "Base for test environments"
-allowlist_externals = ["pytest", "mypy", "flake8", "pylint"]
-dependency_groups = ["test", "lint", "tools", "types"]
 
-
+# tox devenv -e dev
 [tool.tox.env.dev]
 description = "Development environment with all tools"
 package = "editable"
+dependency_groups = ["test", "types", "tools", "lint"]
 base = ["testenv"]
 base_python = ["python3.14"]
+allowlist_externals = ["pytest", "mypy", "flake8", "pylint"]
+
 commands = []
 
 [tool.tox.env.lint]
