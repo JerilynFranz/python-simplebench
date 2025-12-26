@@ -83,9 +83,9 @@ def _internal_validate_core_data_mapping(            *,
     return MappingProxyType(validated_dict)
 
 def validate_core_data_mapping(
-            *,
             item: Mapping[str, CoreDataTypes],
             name: str,
+            *,
             max_depth: int = _DEFAULT_MAX_DEPTH) -> MappingProxyType[str, ImmutableCoreDataTypes]:
     """Validate a CoreDataTypes mapping.
 
@@ -191,9 +191,9 @@ def _internal_validate_core_data_sequence(
     return validated_elements
 
 def validate_core_data_sequence(
-        *,
         item: Sequence[CoreDataTypes],
         name: str,
+        *,
         max_depth: int = _DEFAULT_MAX_DEPTH) -> tuple[ImmutableCoreDataTypes, ...]:
     """Validate a CoreDataTypes sequence.
     The `value` parameter must be a `Sequence[CoreDataTypes]` conformant sequence.
@@ -286,9 +286,9 @@ def _internal_validate_core_data_set(
     return validated_elements
 
 def validate_core_data_set(
-            *,
             item: Set[CoreDataTypes],
             name: str,
+            *,
             max_depth: int = _DEFAULT_MAX_DEPTH) -> frozenset[ImmutableCoreDataTypes]:
     """Validate a CoreDataTypes set.
 
@@ -412,9 +412,9 @@ def _internal_validate_core_data(
         tag=_ValidatorsErrorTag.INVALID_CORE_MAPPING_PARAM_VALUE)
 
 def validate_core_data(
-        *,
         item: CoreDataTypes,
         name: str,
+        *,
         max_depth: int = _DEFAULT_MAX_DEPTH) -> ImmutableCoreDataTypes:
     """Validate a CoreDataTypes item.
 
