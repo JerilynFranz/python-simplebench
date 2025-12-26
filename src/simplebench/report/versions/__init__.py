@@ -15,11 +15,11 @@ from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchVa
 from simplebench.validators import validate_int
 
 from ..base import (
+    BasePythonInfo,
     CPUInfo,
     ExecutionEnvironment,
     MachineInfo,
     Metrics,
-    PythonInfo,
     RawDataBlock,
     Report,
     ResultsInfo,
@@ -34,7 +34,7 @@ T = TypeVar('T',
             type[ExecutionEnvironment],
             type[MachineInfo],
             type[Metrics],
-            type[PythonInfo],
+            type[BasePythonInfo],
             type[RawDataBlock],
             type[Report],
             type[ResultsInfo],

@@ -4,16 +4,16 @@ import re
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.report.base import JSONSchema
-from simplebench.report.base import PythonInfo as BasePythonInfo
 from simplebench.report._error_tags import _PythonInfoErrorTag
+from simplebench.report.base import BasePythonInfo as BasePythonInfo
+from simplebench.report.base import JSONSchema
 from simplebench.validators import validate_string
 
 from .python_info_schema import PythonInfoSchema
 
 
 class PythonInfo(BasePythonInfo):
-    """Class representing machine information in a JSON report."""
+    """Class representing python execution environment in a report (V1)."""
 
     SCHEMA: type[JSONSchema] = PythonInfoSchema
     """The JSON schema class for version 1 reports."""

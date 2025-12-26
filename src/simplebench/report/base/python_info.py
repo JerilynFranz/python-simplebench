@@ -8,7 +8,7 @@ from ..protocols import Environment
 from .json_schema import JSONSchema
 
 
-class PythonInfo(ABC, Environment, Hydrator):
+class BasePythonInfo(ABC, Environment, Hydrator):
     """Base class for all PythonInfo classes."""
 
     SCHEMA: type[JSONSchema] = JSONSchema
@@ -42,7 +42,7 @@ class PythonInfo(ABC, Environment, Hydrator):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'PythonInfo':
+    def from_dict(cls, data: dict[str, Any]) -> 'BasePythonInfo':
         """Create a PythonInfo object from a dictionary."""
         raise NotImplementedError("This method should be overridden by subclasses")
 

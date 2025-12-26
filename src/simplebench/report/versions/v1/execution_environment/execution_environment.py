@@ -3,19 +3,17 @@ import hashlib
 from typing import Any
 
 from simplebench.report.base import ExecutionEnvironment as BaseExecutionEnvironment
-from simplebench.report.base import PythonInfo
-from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.report.protocols import Environment
-from simplebench.validators import validate_type
 
-from ..python_info import PythonInfo as PythonInfoV1
+from ..python_info import PythonInfo
+from . import validate
 
 
 class ExecutionEnvironment(BaseExecutionEnvironment):
     """Implementation of the ExecutionEnvironment interface for V1."""
 
     ALLOWED_ENVIRONMENTS: dict[str, type[Environment]] = {
-        'python': PythonInfoV1,
+        'python': PythonInfo,
     }
 
     def __init__(self, python: PythonInfo) -> None:
@@ -28,7 +26,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment):
         :raises TypeError: If the python parameter is not of type PythonInfo.
         """
         self._hash_id: str = ''
-        self.python = python
+        self._python = validate.python(python)
 
     @property
     def python(self) -> PythonInfo:
@@ -37,16 +35,6 @@ class ExecutionEnvironment(BaseExecutionEnvironment):
         :return: The Python info.
         """
         return self._python
-
-    @python.setter
-    def python(self, value: PythonInfo) -> None:
-        """Set the Python property.
-
-        :param value: The Python info to set.
-        """
-        self._python = validate_type(
-            value, PythonInfo, "python",
-            _ExecutionEnvironmentErrorTag.INVALID_PYTHON_PROPERTY_TYPE)
 
     def to_dict(self) -> dict[str, dict[str, Any]]:
         """Convert the ExecutionEnvironment to a dictionary.
@@ -61,7 +49,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment):
     def hash_id(self) -> str:
         """Get the hash_id property.
 
-        :return: The hash_id string.
+        :return: A 64-character hexadecimal hash_id string.
         """
         if self._hash_id == '':
             hash_input = (

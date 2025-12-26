@@ -1,10 +1,10 @@
 """Tests for simplebench.validators validate_iterable_of_type() function."""
 import pytest
 
-from tests.testspec import TestSpec, idspec, TestAction
-
 from simplebench.exceptions import ErrorTag
 from simplebench.validators import validate_iterable_of_type
+
+from ..testspec import TestAction, TestSpec, idspec
 
 
 class GenericErrorTag(ErrorTag):

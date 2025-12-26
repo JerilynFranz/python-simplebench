@@ -45,18 +45,21 @@
     "coverage.lcov": true
   },
   "markiscodecoverage.searchCriteria": "${workspace_dir}/coverage/*dat",
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}/src;${workspaceFolder}/tests"
+  },
   "terminal.integrated.env.osx": {
-    "PYTHONPATH": "${workspaceFolder}/src"
+    "PYTHONPATH": "${workspaceFolder}/src;${workspaceFolder}/tests"
   },
   "terminal.integrated.env.windows": {
-    "PYTHONPATH": "${workspaceFolder}\\src"
+    "PYTHONPATH": "${workspaceFolder}\\src;${workspaceFolder}\\tests"
   },
   "python.REPL.enableREPLSmartSend": false,
   "flake8.args": [
     "--max-line-length=120",
     "--disable=E501"
   ],
-  "python.createEnvironment.contentButton": "show",
+  "python.createEnvironment.contentButton": "hide",
   "python.envFile": "${workspaceFolder}/.env",
   "python.terminal.launchArgs": [],
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
@@ -68,5 +71,9 @@
     }
   },
   "mypy-type-checker.preferDaemon": true,
+  "python.terminal.useEnvFile": true,
+  "python-env.workspaceSearchPaths": [
+    "env"
+  ],
 }
 

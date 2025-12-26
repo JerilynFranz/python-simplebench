@@ -5,7 +5,7 @@ from .execution_environment import ExecutionEnvironment
 from .json_schema import JSONSchema
 from .machine_info import MachineInfo
 from .metrics import Metrics
-from .python_info import PythonInfo
+from .python_info import BasePythonInfo
 from .raw_data_block import RawDataBlock
 from .report import Report
 from .results_info import ResultsInfo
@@ -20,7 +20,7 @@ __all__ = [
     "JSONSchema",
     "MachineInfo",
     "Metrics",
-    "PythonInfo",
+    "BasePythonInfo",
     "RawDataBlock",
     "Report",
     "ResultsInfo",

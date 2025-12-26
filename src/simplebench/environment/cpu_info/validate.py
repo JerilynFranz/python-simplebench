@@ -39,6 +39,10 @@ class _PendingItem:
         self.item: CPUInfoDataTypes = item
         self.depth: int = depth
 
+    def __repr__(self) -> str:
+        """Return a string representation of the PendingItem."""
+        return f"_PendingItem(item={self.item}, depth={self.depth}, item id={id(self.item)})"
+
 def cpu_info_dict(name: str, value: CPUInfoDictType) -> CPUInfoDictType:
     """Validate a CPUInfoDictType.
 
@@ -89,13 +93,16 @@ def cpu_info_dict(name: str, value: CPUInfoDictType) -> CPUInfoDictType:
         item = current_item.item
         item_type = type(item)
         item_id = id(item)
-        # Detect cyclic references
+
+        # Detects cyclic references in lists and dictionaries
         if item_id in previously_seen:
             raise SimpleBenchTypeError(
-                "Cyclic references are not allowed in the data dictionary.",
+                "Cyclic references are not allowed in the data dictionary",
                 tag=_CPUInfoErrorTag.INVALID_DATA_PARAM_CYCLIC_REFERENCE)
-        previously_seen.add(item_id)
+
         if isinstance(item, (str, int, float, bool)) or item is None:
+            # No 'previously_seen' addition for immutable primitive types
+            # because they cannot form cyclic references and can share ids.
             # Check for non-finite floats (NaN, Infinity)
             if isinstance(item, float):
                 if math.isnan(item) or math.isinf(item):
@@ -105,10 +112,12 @@ def cpu_info_dict(name: str, value: CPUInfoDictType) -> CPUInfoDictType:
             continue
 
         elif isinstance(item, list):
+            previously_seen.add(item_id)
             for element in item:
                 pending_items.append(_PendingItem(element, depth + 1))
 
         elif isinstance(item, dict):
+            previously_seen.add(item_id)
             for key, element in item.items():
                 if not isinstance(key, str):
                     raise SimpleBenchTypeError(

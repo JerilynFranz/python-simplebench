@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .base import JSONSchema, PythonInfo
 from ._error_tags import _PythonInfoErrorTag
+from .base import BasePythonInfo, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def python_info(version: int) -> type[PythonInfo]:
+def python_info(version: int) -> type[BasePythonInfo]:
     """Retrieve a PythonInfo class for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +42,13 @@ def python_info(version: int) -> type[PythonInfo]:
 
     return json_class(
         version,
-        PythonInfo,
+        BasePythonInfo,
         _PythonInfoErrorTag.INVALID_VERSION_TYPE,
         _PythonInfoErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> PythonInfo:
+def from_dict(data: dict) -> BasePythonInfo:
     """Create a json PythonInfo instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +60,9 @@ def from_dict(data: dict) -> PythonInfo:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[PythonInfo] = json_class(
+    report_class: type[BasePythonInfo] = json_class(
         version,
-        PythonInfo,
+        BasePythonInfo,
         _PythonInfoErrorTag.INVALID_VERSION_TYPE,
         _PythonInfoErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +93,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        PythonInfo,
+        BasePythonInfo,
         _PythonInfoErrorTag.INVALID_VERSION_TYPE,
         _PythonInfoErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA
