@@ -6,6 +6,24 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ValidatorsErrorTag(ErrorTag):
     """ErrorTags for validator-related exceptions."""
+    # general tags
+    INVALID_NAME_PARAM_TYPE = "INVALID_NAME_PARAM_TYPE"
+    """The 'name' parameter is not of type str."""
+    INVALID_NAME_PARAM_VALUE = "INVALID_NAME_PARAM_VALUE"
+    """The 'name' parameter is an empty or blank string."""
+    INVALID_KEY_TYPE = "INVALID_KEY_TYPE"
+    """A key in a mapping is not of type str."""
+    INVALID_KEY_VALUE = "INVALID_KEY_VALUE"
+    """A key in a mapping is an empty or blank string."""
+    INVALID_PREVIOUSLY_SEEN_PARAM_TYPE = "INVALID_PREVIOUSLY_SEEN_PARAM_TYPE"
+    """The 'previously_seen' parameter is not of type set."""
+
+    # validate_core_mapping() tags
+    INVALID_CORE_MAPPING_PARAM_TYPE = "INVALID_CORE_MAPPING_PARAM_TYPE"
+    """The 'value' parameter is not of type Mapping[str, CoreDataTypes]."""
+    INVALID_CORE_MAPPING_PARAM_VALUE = "INVALID_CORE_MAPPING_PARAM_VALUE"
+    """The 'value' parameter contains invalid CoreDataTypes elements."""
+
     # validate_namespaced_identifier() tags
     INVALID_TYPE_ERROR_TAG_TYPE = "INVALID_TYPERROR_TAG_TYPE"
     """The type_error_tag is not of type ErrorTag."""
