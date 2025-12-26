@@ -46,7 +46,7 @@ class CPUInfo:
 
     _cpu_info_cache: dict[str, CPUInfoDictType] = {}
 
-    def __init__(self, *, cache_key: str | None = None) -> None:
+    def __init__(self, cache_key: str | None = None) -> None:
         """Initializes the instance by gathering data from the `cpuinfo` module.
         
         :param str | None cache_key: An optional key to identify a cache entry.
