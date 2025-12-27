@@ -48,3 +48,54 @@ Allowed types are:
     - `frozenset[ImmutableCoreDataTypes]`
     - `MappingProxyType[str, ImmutableCoreDataTypes]`
 """
+
+CoreDataMappingType: TypeAlias = Mapping[str, CoreDataTypes]
+"""Type alias for a mapping from strings to core data types.
+
+This type represents a mapping where the keys are non-empty, non-blank strings
+and the values are core data types as defined by `CoreDataTypes`.
+
+It is serializable.
+"""
+
+ImmutableCoreDataMappingType: TypeAlias = MappingProxyType[str, ImmutableCoreDataTypes]
+"""Type alias for an immutable mapping from strings to immutable core data types.
+
+This type represents a mapping where the keys are non-empty, non-blank strings
+and the values are immutable core data types as defined by `ImmutableCoreDataTypes`.
+
+It is both serializable and immutable.
+"""
+
+CoreDataSequenceType: TypeAlias = Sequence[CoreDataTypes]
+"""Type alias for a sequence of core data types.
+
+This type represents a sequence (like a list or tuple) where each element
+is a core data type as defined by `CoreDataTypes`.
+It is serializable.
+"""
+
+ImmutableCoreDataSequenceType: TypeAlias = tuple[ImmutableCoreDataTypes, ...]
+"""Type alias for an immutable sequence of immutable core data types.
+
+This type represents an immutable sequence (tuple) where each element
+is an immutable core data type as defined by `ImmutableCoreDataTypes`.
+It is both serializable and immutable.
+"""
+
+CoreDataSetType: TypeAlias = Set[CoreDataTypes]
+"""Type alias for a set of core data types.
+
+This type represents a set where each element is a core data type
+as defined by `CoreDataTypes`.
+It is serializable.
+"""
+
+ImmutableCoreDataSetType: TypeAlias = frozenset[ImmutableCoreDataTypes]
+"""Type alias for an immutable set of immutable core data types.
+
+This type represents an immutable set (frozenset) where each element
+is an immutable core data type as defined by `ImmutableCoreDataTypes`.
+
+It is both serializable and immutable.
+"""

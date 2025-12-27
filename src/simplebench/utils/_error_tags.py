@@ -6,6 +6,32 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _UtilsErrorTag(ErrorTag):
     """ErrorTags for simplebench.utils in SimpleBench."""
+    # utils.serialize_to_json() tags
+    INVALID_SKIPKEYS_ARG_TYPE = "INVALID_SKIPKEYS_ARG_TYPE"
+    """The skipkeys argument was not a bool"""
+    INVALID_ENSURE_ASCII_ARG_TYPE = "INVALID_ENSURE_ASCII_ARG_TYPE"
+    """The ensure_ascii argument was not a bool"""
+    INVALID_CHECK_CIRCULAR_ARG_TYPE = "INVALID_CHECK_CIRCULAR_ARG_TYPE"
+    """The check_circular argument was not a bool"""
+    INVALID_ALLOW_NAN_ARG_TYPE = "INVALID_ALLOW_NAN_ARG_TYPE"
+    """The allow_nan argument was not a bool"""
+    INVALID_JSON_ENCODER_CLASS_ARG_TYPE = "INVALID_JSON_ENCODER_CLASS_ARG_TYPE"
+    """The cls argument was not a subclass of json.JSONEncoder"""
+    INVALID_INDENT_ARG_TYPE = "INVALID_INDENT_ARG_TYPE"
+    """The indent argument was not an int or str"""
+    INVALID_SEPARATORS_ARG_TYPE = "INVALID_SEPARATORS_ARG_TYPE"
+    """The separators argument was not a tuple"""
+    INVALID_SEPARATORS_ARG_VALUE = "INVALID_SEPARATORS_ARG_VALUE"
+    """The separators argument was not a tuple of two strings"""
+    INVALID_DEFAULT_ARG_TYPE = "INVALID_DEFAULT_ARG_TYPE"
+    """The default argument was not a callable"""
+    INVALID_SORT_KEYS_ARG_TYPE = "INVALID_SORT_KEYS_ARG_TYPE"
+    """The sort_keys argument was not a bool"""
+    #utils.serialize_to_dict() tags
+    SERIALIZATION_INVALID_OBJ_TYPE = "SERIALIZATION_INVALID_OBJ_TYPE"
+    """The object to serialize was not a mapping type"""
+    SERIALIZATION_CYCLIC_REFERENCE_DETECTED = "SERIALIZATION_CYCLIC_REFERENCE_DETECTED"
+    """A cyclic reference was detected during serialization"""
 
     # utils.timestamp_to_iso8601() tags
     TIMESTAMP_TO_ISO8601_INVALID_TIMESTAMP_ARG_TYPE = "TIMESTAMP_TO_ISO8601_INVALID_TIMESTAMP_ARG_TYPE"

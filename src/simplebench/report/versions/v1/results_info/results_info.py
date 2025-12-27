@@ -3,29 +3,24 @@
 The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
-from collections.abc import Hashable, Mapping
+from collections.abc import Mapping
+from types import MappingProxyType
 from typing import Any
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.report._error_tags import _ResultsInfoErrorTag
 from simplebench.report.base import ResultsInfo as BaseResultsInfo
-from simplebench.validators import validate_float, validate_string
+from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
+from simplebench.validators import validate_core_data_mapping
 
 from .. import MetricsObject
+from . import validate
 from .results_info_schema import ResultsInfoSchema
 
 
 class ResultsInfo(BaseResultsInfo):
-    """Class representing JSON results object for V1 reports.
+    """An immutable class representing the results-info object for V1 reports.
 
-    :param group: The group name of the results.
-    :param title: The title of the results.
-    :param description: The description of the results.
-    :param n: The number of iterations.
-    :param variation_cols: The variation columns.
-    :param marks: The variation marks.
-    :param metrics: The list of metrics.
-    :param extra_info: Additional information.
+    This class encapsulates the structure and validation logic
+    of the results-info section.
     """
     SCHEMA = ResultsInfoSchema
     """The JSON report schema for version 1 reports."""
@@ -46,33 +41,40 @@ class ResultsInfo(BaseResultsInfo):
                  description: str,
                  n: float,
                  variation_cols: Mapping[str, str],
+                 variation_marks: Mapping[str, str],
                  metrics: MetricsObject,
-                 extra_info: Mapping[str, Hashable],
-                 ):  # pylint: disable=super-init-not-called
+                 extra_info: CoreDataMappingType,
+                 ):
         """Initialize a Results v1 instance.
 
-        :param group: The group name of the results.
-        :param title: The title of the results.
-        :param description: The description of the results.
-        :param n: The number of iterations.
-        :param variation_cols: The variation columns.
-        :param metrics: The list of metrics.
-        :param extra_info: Additional information.
+        The input parameters are validated, converted to immutable types as needed,
+        and stored as private attributes that are accessible via read-only properties.
+
+        :param str group: The group name of the results.
+        :param str title: The title of the results.
+        :param str description: The description of the results.
+        :param n: The complexity analysis n value.
+        :param float n: The n value.
+        :param Mapping[str, str] variation_cols: The variation columns.
+        :param MetricsObject metrics: The list of metrics.
+        :param CoreDataMappingType extra_info: Additional information.
         """
-        self.group = group
-        self.title = title
-        self.description = description
-        self.n = n
-        self.variation_cols = variation_cols
-        self.metrics = metrics
-        self.extra_info = extra_info
+        self._group: str = validate.group(group)
+        self._title: str = validate.title(title)
+        self._description: str = validate.description(description)
+        self._n: float = validate.n(n)
+        self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(variation_cols)
+        self._variation_marks: MappingProxyType[str, str] = validate.variation_marks(variation_marks)
+        self._metrics: MetricsObject = validate.metrics(metrics)
+        self._extra_info: ImmutableCoreDataMappingType = validate.extra_info(extra_info)
 
     @classmethod
-    def from_dict(cls, data: Mapping) -> 'ResultsInfo':
-        """Create a JSON Results object instance from a mapping.
+    def from_dict(cls, data: CoreDataMappingType) -> 'ResultsInfo':
+        """Create a ResultsInfo object instance from a mapping of data conformant
+        to the V1 results-info JSON schema.
 
-        :param data: Mapping containing the JSON results object data.
-        :return: JSON Results object instance.
+        :param CoreDataMappingType data: Mapping containing the results-info object data.
+        :return ResultsInfo: ResultsInfo instance.
         """
         allowed_keys = cls.init_params()
         allowed_keys['version'] = int
@@ -88,10 +90,10 @@ class ResultsInfo(BaseResultsInfo):
             process_as={'metrics': MetricsObject.from_dict})
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
-        """Convert the JSON Results object instance to a dictionary.
+    def to_dict(self) -> CoreDataMappingType:
+        """Convert the ResultsInfo instance to a mapping suitable for serialization.
 
-        :return: Dictionary containing the JSON results object data.
+        :return CoreDataMappingType: Mapping containing the ResultsInfo object data.
         """
         data: dict[str, Any] = {}
         for key in self.init_params():
@@ -103,90 +105,36 @@ class ResultsInfo(BaseResultsInfo):
 
         data['type'] = self.TYPE
         data['version'] = self.VERSION
-        return data
+        return validate_core_data_mapping(data, 'ResultsInfo.to_dict output',
+                                          max_depth=10)
 
     @property
     def group(self) -> str:
         """Get the group property."""
         return self._group
 
-    @group.setter
-    def group(self, value: str) -> None:
-        """Set the group property."""
-        self._group: str = validate_string(
-            value, 'group',
-            _ResultsInfoErrorTag.INVALID_GROUP_TYPE,
-            _ResultsInfoErrorTag.INVALID_GROUP_VALUE_EMPTY_STRING,
-            allow_empty=False)
-
     @property
     def title(self) -> str:
         """Get the title property."""
         return self._title
-
-    @title.setter
-    def title(self, value: str) -> None:
-        """Set the title property."""
-        self._title: str = validate_string(
-            value, 'title',
-            _ResultsInfoErrorTag.INVALID_TITLE_TYPE,
-            _ResultsInfoErrorTag.INVALID_TITLE_VALUE_EMPTY_STRING,
-            allow_empty=False)
 
     @property
     def description(self) -> str:
         """Get the description property."""
         return self._description
 
-    @description.setter
-    def description(self, value: str) -> None:
-        """Set the description property."""
-        self._description: str = validate_string(
-            value, 'description',
-            _ResultsInfoErrorTag.INVALID_DESCRIPTION_TYPE,
-            _ResultsInfoErrorTag.INVALID_DESCRIPTION_EMPTY_STRING,
-            allow_empty=False)
-
     @property
     def n(self) -> float:
         """Get the n property."""
         return self._n
 
-    @n.setter
-    def n(self, value: float) -> None:
-        """Set the n property."""
-        self._n: float = validate_float(
-            value, 'n', _ResultsInfoErrorTag.INVALID_N_TYPE)
-        if self._n < 1:
-            raise SimpleBenchValueError(
-                f"n must be >= 1, got {self._n}",
-                tag=_ResultsInfoErrorTag.INVALID_N_VALUE)
-
     @property
-    def variation_cols(self) -> Mapping[str, str]:
+    def variation_cols(self) -> MappingProxyType[str, str]:
         """Get the variation columns.
 
         :return: A mapping of variation columns.
         """
         return self._variation_cols
-
-    @variation_cols.setter
-    def variation_cols(self, value: Mapping[str, str]) -> None:
-        """Set the variation columns.
-
-        :param value: A mapping of variation columns.
-        """
-        if not isinstance(value, Mapping):
-            raise SimpleBenchTypeError(
-                f"variation_cols must be a Mapping[str, str], got {type(value)}",
-                tag=_ResultsInfoErrorTag.INVALID_VARIATION_COLS_TYPE)
-
-        if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
-            raise SimpleBenchTypeError(
-                "All keys and values in variation_cols must be strings",
-                tag=_ResultsInfoErrorTag.INVALID_VARIATION_COLS_CONTENT)
-
-        self._variation_cols: Mapping[str, str] = value
 
     @property
     def metrics(self) -> MetricsObject:
@@ -196,39 +144,12 @@ class ResultsInfo(BaseResultsInfo):
         """
         return self._metrics
 
-    @metrics.setter
-    def metrics(self, value: MetricsObject) -> None:
-        """Set the metrics.
-
-        :param value: The metrics.
-        """
-        if not isinstance(value, MetricsObject):
-            raise SimpleBenchTypeError(
-                f"metrics must be a Metrics instance, got {type(value)}",
-                tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
-
-        self._metrics: MetricsObject = value
-
     @property
-    def extra_info(self) -> Mapping[str, Hashable]:
+    def extra_info(self) -> ImmutableCoreDataMappingType:
         """Get the extra info.
 
-        :return: The extra info mapping.
+        The extra info immutable mapping is returned.
+
+        :return ImmutableCoreDataMappingType: The extra info immutable mapping.
         """
         return self._extra_info
-
-    @extra_info.setter
-    def extra_info(self, value: Mapping[str, Hashable]) -> None:
-        """Set the extra info.
-
-        :param value: The extra info mapping.
-        """
-        if not isinstance(value, Mapping):
-            raise SimpleBenchTypeError(
-                f"extra_info must be a Mapping[str, Hashable], got {type(value)}",
-                tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
-        if not all(isinstance(k, str) and isinstance(v, Hashable) for k, v in value.items()):
-            raise SimpleBenchTypeError(
-                "All keys in extra_info must be strings and all values must be hashable",
-                tag=_ResultsInfoErrorTag.INVALID_TYPE_TYPE)
-        self._extra_info: Mapping[str, Hashable] = value

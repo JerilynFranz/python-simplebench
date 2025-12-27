@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ReportErrorTag(ErrorTag):
     """Error tags for JSON report exceptions."""
+    INVALID_RESULTS_TYPE = 'INVALID_RESULTS_TYPE'
+    """The results is not of type Sequence[ResultsInfo]."""
+    INVALID_RESULTS_VALUE = 'INVALID_RESULTS_VALUE'
+    """Content of results does not match specified restrictions such as number of items."""
     INVALID_CASE = 'INVALID_CASE'
     """The provided object is not a valid Case instance."""
     CASE_HAS_NOT_BEEN_RUN = 'CASE_HAS_NOT_BEEN_RUN'

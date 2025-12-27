@@ -32,7 +32,7 @@ class MetricsObject(UserDict):
     """Base class representing the 'metrics' object in a JSON report ResultsInfo object.
 
     This is a dictionary where the keys are metric names (strings) and the values
-    are MetricItem objects (either a StatsBlock or a ValueBlock).
+    are MetricItem objects (a StatsBlock, a ValueBlock, or a RawDataBlock).
 
     It is not a standalone JSON schema object, but rather a subcomponent
     of the results-info JSON schema object.

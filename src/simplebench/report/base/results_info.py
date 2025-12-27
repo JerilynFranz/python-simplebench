@@ -15,6 +15,7 @@ of the results object representation at the time of the V1 schema release."""
 from abc import ABC, abstractmethod
 
 from simplebench.base import Hydrator
+from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 
 from .json_schema import JSONSchema
 
@@ -44,26 +45,25 @@ class ResultsInfo(Hydrator, ABC):
     :note: This should be overridden in sub-classes.
     """
 
-    @abstractmethod
     def __init__(self) -> None:
         """Initialize a ResultsInfo instance.
 
         :note: This should be overridden in sub-classes.
         """
-        raise NotImplementedError("This method should be overridden in sub-classes")
+        raise NotImplementedError("This method must be overridden in sub-classes")
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> 'ResultsInfo':
+    def from_dict(cls, data: CoreDataMappingType) -> 'ResultsInfo':
         """Create a JSON Results object instance from a dictionary.
 
-        :param data: Dictionary containing the JSON results object data.
+        :param CoreDataMappingType data: Mapping containing the JSON results object data.
         :return: JSON Results object instance.
         """
         raise NotImplementedError("This method should be overridden in sub-classes")
 
     @abstractmethod
-    def to_dict(self) -> dict:
+    def to_dict(self) -> ImmutableCoreDataMappingType:
         """Convert the JSON Results object instance to a dictionary.
 
         :return: Dictionary containing the JSON results object data.

@@ -61,7 +61,7 @@ class Report(BaseReport):
                  title: str,
                  description: str,
                  variation_cols: dict[str, str],
-                 results: list[ResultsInfo],
+                 results_info: Sequence[ResultsInfo],
                  machine: MachineInfo) -> None:
         """Initialize a Report base instance."""
         self.timestamp = timestamp
@@ -69,31 +69,8 @@ class Report(BaseReport):
         self.title = title
         self.description = description
         self.variation_cols = variation_cols
-        self.results = results
+        self._results: tuple[ResultsInfo, ...] = validate.results_info(results)
         self.machine = machine
-
-    @classmethod
-    def from_case(cls, case: 'Case') -> 'Report':
-        """Create a Report instance from a Case instance.
-
-        :param case: The Case instance to create the Report from.
-        :return: Report instance.
-        """
-        validate.case(case)
-        validate.case_has_been_run(case)
-
-        results: ResultsInfo = ResultsInfoV1.from_results(case.results)
-        machine_info: MachineInfo = MachineInfoV1.from_system()
-
-        return cls(
-            timestamp=case.timestamp,
-            group=case.group,
-            title=case.title,
-            description=case.description,
-            variation_cols=case.variation_cols,
-            results=results,
-            machine=machine_info
-        )
 
     @classmethod
     def from_dict(cls, data: dict) -> 'Report':
@@ -245,26 +222,12 @@ class Report(BaseReport):
         self._variation_cols: dict[str, str] = value
 
     @property
-    def results(self) -> list[ResultsInfo]:
+    def results(self) -> tuple[ResultsInfo]:
         """Get the results property.
 
-        The results property is a list of Results instances.
+        The results property is a tuple of ResultsInfo instances.
         """
         return self._results
-
-    @results.setter
-    def results(self, value: Sequence[ResultsInfo]) -> None:
-        """Set the results property.
-
-        :param value: A sequence of Results values to set.
-        """
-        validated_results: list[ResultsInfo] = validate_sequence_of_type(
-            value, ResultsInfo, 'results',
-            _ReportErrorTag.INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE,
-            _ReportErrorTag.INVALID_RESULTS_PROPERTY_ELEMENT_NOT_RESULTS_INSTANCE,
-            allow_empty=True)
-
-        self._results: list[ResultsInfo] = validated_results
 
     @property
     def machine(self) -> MachineInfo:

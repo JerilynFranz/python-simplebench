@@ -6,6 +6,14 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ResultsInfoErrorTag(ErrorTag):
     """Error tags for JSONResults v1 exceptions."""
+    INVALID_VARIATION_MARKS_TYPE = "INVALID_VARIATION_MARKS_TYPE"
+    """The variation_marks is not of type dict."""
+    INVALID_VARIATION_MARKS_CONTENT = "INVALID_VARIATION_MARKS_CONTENT"
+    """One or more keys or values in variation_marks are not strings."""
+    INVALID_RESULTS_TYPE = "INVALID_RESULTS_TYPE"
+    """The results is not of type Sequence[case.Results]."""
+    INVALID_RESULTS_VALUE = "INVALID_RESULTS_VALUE"
+    """Content of results does not match specified restrictions such as number of items."""
     INVALID_DATA_ARG_TYPE = "INVALID_DATA_ARG_TYPE"
     """The data is not of type dict."""
     UNSUPPORTED_VERSION = "UNSUPPORTED_VERSION"
