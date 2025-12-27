@@ -14,7 +14,7 @@ _T = TypeVar("_T")
 
 
 class LazyProperty(Generic[_T]):
-    """A descriptor that implements lazy evaluation for a property.
+    """A descriptor that implements lazy evaluation for a settable property.
 
     This is used to defer the computation of an expensive property until it
     is accessed for the first time. After the first access, the result is
