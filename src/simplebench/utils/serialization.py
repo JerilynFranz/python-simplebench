@@ -34,7 +34,10 @@ def serialize_to_json(
 
     It uses `serialize_to_dict` to convert the object to a JSON-compatible dictionary
     representation, then serializes that dictionary to a JSON string using the built-in
-    `json` module.
+    :func:`json.dumps()` function.
+
+    It requires that all mappings have string keys and that there are no cyclic references
+    in the object graph. It takes the same arguments as :func:`json.dumps()`.
 
     :param object obj: The object to serialize.
     :param bool skipkeys: If True, skip keys that are not basic types (str, int, float, bool).
@@ -204,8 +207,14 @@ def _internal_serialize_to_list(current: Sequence | Set, parents: set[int]) -> J
             "Cyclic reference detected during serialization",
             tag=_UtilsErrorTag.SERIALIZATION_CYCLIC_REFERENCE_DETECTED)
     parents.add(current_id)
-    if isinstance(current, Set):  # Sort sets to ensure consistent ordering
-        current = sorted(current, key=lambda x: str(x))
+
+    try:
+        if isinstance(current, Set):  # Sort sets to ensure consistent ordering
+            sorted_current = sorted(current, key=lambda x: str(x))  # pylint: disable=unnecessary-lambda
+            current = sorted_current
+    except Exception:  # pylint: disable=broad-exception-caught
+        pass  # If sorting fails, just proceed without sorting
+
     lst: JSONListTypes = []
     for item in current:
         if isinstance(item, (str, int, float, bool)) or item is None:

@@ -2,6 +2,7 @@
 from .filenames import sanitize_filename
 from .flags_and_args import arg_to_flag, collect_arg_list, flag_to_arg
 from .kwargs_variations import kwargs_variations
+from .serialization import serialize_to_dict_list_or_primitive, serialize_to_json
 from .significant_figures import sigfigs
 from .timestamp import iso8601_to_timestamp, timestamp_to_iso8601
 
@@ -16,6 +17,10 @@ __all__ = [
 
     # kwargs_variations.py
     'kwargs_variations',
+
+    # serialization.py
+    'serialize_to_dict_list_or_primitive',
+    'serialize_to_json',
 
     # significant_figures.py
     'sigfigs',
