@@ -18,8 +18,7 @@ import json
 
 from simplebench import environment
 from simplebench.environment import CPUInfoDictType
-from simplebench.report.base import CPUInfo as BaseCPUInfo
-from simplebench.report.base import JSONSchema
+from simplebench.report.base import BaseCPUInfo, JSONSchema
 
 from . import validate
 from .cpu_info_schema import CPUInfoSchema

@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .base import JSONSchema, VCSInfo
 from ._error_tags import _VCSInfoErrorTag
+from .base import BaseVCSInfo, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def vcs_info(version: int) -> type[VCSInfo]:
+def vcs_info_by_version(version: int) -> type[BaseVCSInfo]:
     """Retrieve a VCSInfo class for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +42,13 @@ def vcs_info(version: int) -> type[VCSInfo]:
 
     return json_class(
         version,
-        VCSInfo,
+        BaseVCSInfo,
         _VCSInfoErrorTag.INVALID_VERSION_TYPE,
         _VCSInfoErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> VCSInfo:
+def from_dict(data: dict) -> BaseVCSInfo:
     """Create a json VCSInfo instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +60,9 @@ def from_dict(data: dict) -> VCSInfo:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[VCSInfo] = json_class(
+    report_class: type[BaseVCSInfo] = json_class(
         version,
-        VCSInfo,
+        BaseVCSInfo,
         _VCSInfoErrorTag.INVALID_VERSION_TYPE,
         _VCSInfoErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +93,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        VCSInfo,
+        BaseVCSInfo,
         _VCSInfoErrorTag.INVALID_VERSION_TYPE,
         _VCSInfoErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

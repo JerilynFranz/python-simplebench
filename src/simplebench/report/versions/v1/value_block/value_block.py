@@ -23,15 +23,14 @@ comparison, use in hash-based collections, and efficient copying.
 from copy import copy
 from typing import Any
 
-from simplebench.report.base import JSONSchema
-from simplebench.report.base import ValueBlock as ValueBlockBase
+from simplebench.report.base import BaseValueBlock, JSONSchema
 from simplebench.report.versions.v1.types import ValueBlockData, ValueBlockDict
 
 from . import validate
 from .value_block_schema import ValueBlockSchema
 
 
-class ValueBlock(ValueBlockBase):
+class ValueBlock(BaseValueBlock):
     """Class representing a value block (V1).
 
     :param str semantic_type: The semantic type string for the value block.

@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .base import JSONSchema, StatsBlock
 from ._error_tags import _StatsBlockErrorTag
+from .base import BaseStatsBlock, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def stats_block(version: int) -> type[StatsBlock]:
+def stats_block_by_version(version: int) -> type[BaseStatsBlock]:
     """Retrieve a StatsBlock class for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +42,13 @@ def stats_block(version: int) -> type[StatsBlock]:
 
     return json_class(
         version,
-        StatsBlock,
+        BaseStatsBlock,
         _StatsBlockErrorTag.INVALID_VERSION_TYPE,
         _StatsBlockErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> StatsBlock:
+def from_dict(data: dict) -> BaseStatsBlock:
     """Create a json StatsBlock instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +60,9 @@ def from_dict(data: dict) -> StatsBlock:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[StatsBlock] = json_class(
+    report_class: type[BaseStatsBlock] = json_class(
         version,
-        StatsBlock,
+        BaseStatsBlock,
         _StatsBlockErrorTag.INVALID_VERSION_TYPE,
         _StatsBlockErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +93,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        StatsBlock,
+        BaseStatsBlock,
         _StatsBlockErrorTag.INVALID_VERSION_TYPE,
         _StatsBlockErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

@@ -2,9 +2,10 @@
 from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
+from simplebench.validators import validate_positive_int
 
-from .base import JSONSchema, Report
 from ._error_tags import _ReportErrorTag
+from .base import BaseReport, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +33,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def report(version: int) -> type[Report]:
+def report_by_version(version: int) -> type[BaseReport]:
     """Retrieve a Report class for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +43,13 @@ def report(version: int) -> type[Report]:
 
     return json_class(
         version,
-        Report,
+        BaseReport,
         _ReportErrorTag.INVALID_VERSION_TYPE,
         _ReportErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> Report:
+def from_dict(data: dict) -> BaseReport:
     """Create a json Report instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +61,9 @@ def from_dict(data: dict) -> Report:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[Report] = json_class(
+    report_class: type[BaseReport] = json_class(
         version,
-        Report,
+        BaseReport,
         _ReportErrorTag.INVALID_VERSION_TYPE,
         _ReportErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +94,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        Report,
+        BaseReport,
         _ReportErrorTag.INVALID_VERSION_TYPE,
         _ReportErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

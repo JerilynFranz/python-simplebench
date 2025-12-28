@@ -1,26 +1,27 @@
 """Benchmark case declaration and execution."""
 from __future__ import annotations
 
-import datetime
 import inspect
 import itertools
 from copy import copy
+from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, Sequence, TypeAlias
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional, Sequence
 
-from simplebench import defaults, vcs
+import simplebench.defaults as defaults
+import simplebench.environment as env
+import simplebench.vcs as vcs
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.doc_utils import format_docstring
 from simplebench.enums import Color
-from simplebench.environment import MachineInfo as EnvMachineInfo
 from simplebench.exceptions import (
     SimpleBenchAttributeError,
     SimpleBenchBenchmarkError,
     SimpleBenchTimeoutError,
     SimpleBenchValueError,
 )
-from simplebench.report.versions import v1 as current_report_version
+from simplebench.report.versions import v1 as reports
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
@@ -31,8 +32,6 @@ from . import validate
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 from .mark import Mark
-
-MachineInfo: TypeAlias = current_report_version.MachineInfo
 
 _DEFERRED_IMPORTS_DONE: bool = False
 
@@ -190,7 +189,7 @@ class Case:
                  '_callback', '_results', '_options', '_rounds',
                  '_benchmark_id', '_vcs_info', '_timeout', '_timer', '_cpu_timer',
                  '_report_cache', '_report_cache_raw_data', '_benchmarks_have_run',
-                 '_timestamp', '_epoch_timestamp')
+                 '_timestamp', '_epoch_timestamp', '_machine_info', '_node')
 
     @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD,
                       DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,
@@ -214,8 +213,9 @@ class Case:
                  variation_cols: Optional[dict[str, str]] = None,
                  kwargs_variations: Optional[dict[str, list[Any]]] = None,
                  runners: Sequence[type[BenchmarkRunner]] | None = None,
-                 callback: Optional[ReporterCallback] = None,
-                 options: Optional[Iterable[ReporterOptions]] = None) -> None:
+                 callback: ReporterCallback | None = None,
+                 options: Optional[Iterable[ReporterOptions]] = None,
+                 node: str | None = '') -> None:
         """The only REQUIRED parameter is `action`.
 
         :param benchmark_id: An optional unique identifier for the benchmark case.
@@ -362,6 +362,11 @@ class Case:
             specific reporters. Reporters are responsible for extracting applicable ReporterOptions
             from the list of options themselves.
             If None, an empty list is used.
+        :param node: An optional identifier for the node where the benchmark is run.
+            This can be used in distributed benchmarking scenarios to identify
+            the source of the benchmark data. If None, the actual node name
+            from the environment will be used. Default is '' for privacy and
+            security reasons.
         :raises SimpleBenchTypeError: If any parameter is of incorrect type.
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
@@ -396,7 +401,8 @@ class Case:
         self._report_cache_raw_data: Report | None = None
         self._benchmarks_have_run: bool = False
         self._timestamp: str = ''
-        self._epoch_timestamp: int = 0
+        self._epoch_timestamp: float = 0.0
+        self._machine_info: reports.MachineInfo | None = None
 
     def _generate_variation_marks(self) -> dict[str, tuple[str, ...]]:
         """Generate variation marks for the kwarg variations.
@@ -749,7 +755,7 @@ class Case:
         return self._timestamp
 
     @property
-    def epoch_timestamp(self) -> int:
+    def epoch_timestamp(self) -> float:
         """The epoch timestamp when the benchmark case was run.
 
         This is a read-only attribute that is set when the `run` method is called.
@@ -832,11 +838,11 @@ class Case:
         :param session: The session in which the case is being run.
         """
         if session is not None:
-            self._timestamp = session.timestamp
             self._epoch_timestamp = session.epoch_timestamp
+            self._timestamp = session.timestamp
         else:
-            self._timestamp = datetime.now().timestamp()
-            self._epoch_timestamp = timestamp_to_iso8601(self.epoch_timestamp)
+            self._epoch_timestamp = datetime.now().timestamp()
+            self._timestamp = timestamp_to_iso8601(self.epoch_timestamp)
 
     def _mark_case_as_run(self) -> None:
         """Mark the case as having been run.
@@ -852,10 +858,10 @@ class Case:
         self._benchmarks_have_run = True
         self._report_cache = None
         self._report_cache_raw_data = None
-        self._machine_info: MachineInfo | None = None  # Reset machine info cache
+        self._machine_info: env.MachineInfo | None = None  # Reset machine info cache
 
     @property
-    def machine_info(self) -> MachineInfo:
+    def machine_info(self) -> reports.MachineInfo:
         """Get the MachineInfo for the benchmark case.
 
         This property retrieves the MachineInfo associated with the benchmark case.
@@ -865,7 +871,10 @@ class Case:
         :return: The MachineInfo instance for the benchmark case.
         """
         if self._machine_info is None:
-            self._machine_info = MachineInfo.from_system()
+            self._machine_info = reports.MachineInfo(
+                
+            )
+
         return self._machine_info
     @property
     def has_run(self) -> bool:
@@ -894,13 +903,20 @@ class Case:
             _CaseErrorTag.INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL)
 
         if include_raw_data:
-            if self._report_cache_raw_data is None:
-                self._report_cache_raw_data = Report.from_case(case=self, include_raw_data=True)
-            return self._report_cache_raw_data
+            return self._report_with_raw_data()
         else:
-            if self._report_cache is None:
-                self._report_cache = Report.from_case(case=self, include_raw_data=False)
+            return self._report()
+
+    def _report(self) -> Report:
+        """Generate or retrieve the cached report without raw data.
+
+        :return: The Report object without raw data.
+        """
+        if self._report_cache is not None:
             return self._report_cache
+
+        results
+        return report
 
     def validate_has_run(self, message: str = '') -> None:
         """Validate the has_run state of the benchmark case.

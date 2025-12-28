@@ -1,15 +1,14 @@
 """Class for JSON raw data block representation."""
 from typing import Any
 
-from simplebench.report.base import JSONSchema
-from simplebench.report.base import RawDataBlock as RawDataBlockBase
+from simplebench.report.base import BaseRawDataBlock, JSONSchema
 from simplebench.types import Values
 
 from . import validate
 from .raw_data_block_schema import RawDataBlockSchema
 
 
-class RawDataBlock(RawDataBlockBase):
+class RawDataBlock(BaseRawDataBlock):
     """Class representing a raw data block (V1).
     :param str semantic_type: The semantic type string for the raw data block. ('type' field in JSON data)
     :param (str | None) timer: The timer string or None.

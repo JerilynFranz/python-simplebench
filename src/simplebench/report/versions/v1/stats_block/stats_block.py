@@ -39,8 +39,8 @@ from typing import Any, Sequence, overload
 from simplebench.decorators import immutable
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
+from simplebench.report.base import BaseStatsBlock
 from simplebench.report.base import JSONSchema
-from simplebench.report.base import StatsBlock as BaseStatsBlock
 from simplebench.types.values import Values
 
 from . import validate

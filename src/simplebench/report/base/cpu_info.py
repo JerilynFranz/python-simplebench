@@ -21,7 +21,7 @@ from simplebench.base import Hydrator
 from .json_schema import JSONSchema
 
 
-class CPUInfo(Hydrator, ABC):
+class BaseCPUInfo(Hydrator, ABC):
     """Class representing CPU information in a JSON report."""
 
     VERSION: int = 0
@@ -57,7 +57,7 @@ class CPUInfo(Hydrator, ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'CPUInfo':
+    def from_dict(cls, data: dict[str, Any]) -> 'BaseCPUInfo':
         """Create a CPUInfo instance from a dictionary."""
         raise NotImplementedError(
                 "from_dict is an abstract class method and must be implemented by a subclass")

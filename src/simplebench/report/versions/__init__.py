@@ -15,32 +15,34 @@ from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchVa
 from simplebench.validators import validate_int
 
 from ..base import (
+    BaseCPUInfo,
+    BaseMachineInfo,
+    BaseMemoryInfo,
     BasePythonInfo,
-    CPUInfo,
+    BaseRawDataBlock,
+    BaseReport,
+    BaseResultsInfo,
+    BaseStatsBlock,
+    BaseValueBlock,
+    BaseVCSInfo,
     ExecutionEnvironment,
-    MachineInfo,
     Metrics,
-    RawDataBlock,
-    Report,
-    ResultsInfo,
-    StatsBlock,
-    ValueBlock,
-    VCSInfo,
 )
 from . import v1
 
 T = TypeVar('T',
-            type[CPUInfo],
+            type[BaseCPUInfo],
             type[ExecutionEnvironment],
-            type[MachineInfo],
+            type[BaseMachineInfo],
+            type[BaseMemoryInfo],
             type[Metrics],
             type[BasePythonInfo],
-            type[RawDataBlock],
-            type[Report],
-            type[ResultsInfo],
-            type[StatsBlock],
-            type[ValueBlock],
-            type[VCSInfo])
+            type[BaseRawDataBlock],
+            type[BaseReport],
+            type[BaseResultsInfo],
+            type[BaseStatsBlock],
+            type[BaseValueBlock],
+            type[BaseVCSInfo])
 """Type variable for JSON report related class types."""
 
 _known_versions: dict[int, ModuleType] = {

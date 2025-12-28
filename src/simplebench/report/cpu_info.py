@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .base import CPUInfo, JSONSchema
 from ._error_tags import _CPUInfoErrorTag
+from .base import BaseCPUInfo, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def cpu_info(version: int) -> type[CPUInfo]:
+def cpu_info_by_version(version: int) -> type[BaseCPUInfo]:
     """Retrieve a CPUInfo instance for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +42,13 @@ def cpu_info(version: int) -> type[CPUInfo]:
 
     return json_class(
         version,
-        CPUInfo,
+        BaseCPUInfo,
         _CPUInfoErrorTag.INVALID_VERSION_TYPE,
         _CPUInfoErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> CPUInfo:
+def from_dict(data: dict) -> BaseCPUInfo:
     """Create a json CPUInfo instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +60,9 @@ def from_dict(data: dict) -> CPUInfo:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[CPUInfo] = json_class(
+    report_class: type[BaseCPUInfo] = json_class(
         version,
-        CPUInfo,
+        BaseCPUInfo,
         _CPUInfoErrorTag.INVALID_VERSION_TYPE,
         _CPUInfoErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +93,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        CPUInfo,
+        BaseCPUInfo,
         _CPUInfoErrorTag.INVALID_VERSION_TYPE,
         _CPUInfoErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

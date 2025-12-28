@@ -7,7 +7,7 @@ from simplebench.base import Hydrator
 from .json_schema import JSONSchema
 
 
-class RawDataBlock(Hydrator, Hashable, ABC):
+class BaseRawDataBlock(Hydrator, Hashable, ABC):
     """Base class representing a raw data block."""
 
     VERSION: int = 0
@@ -24,7 +24,7 @@ class RawDataBlock(Hydrator, Hashable, ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> "RawDataBlock":
+    def from_dict(cls, data: dict) -> "BaseRawDataBlock":
         """Create a RawDataBlock instance from a dictionary.
 
         :param data: Dictionary containing the JSON results data.

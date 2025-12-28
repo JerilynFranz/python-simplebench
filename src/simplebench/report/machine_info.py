@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .base import JSONSchema, MachineInfo
 from ._error_tags import _MachineInfoErrorTag
+from .base import BaseMachineInfo, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def machine_info(version: int) -> type[MachineInfo]:
+def machine_info_by_version(version: int) -> type[BaseMachineInfo]:
     """Retrieve a MachineInfo class for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +42,13 @@ def machine_info(version: int) -> type[MachineInfo]:
 
     return json_class(
         version,
-        MachineInfo,
+        BaseMachineInfo,
         _MachineInfoErrorTag.INVALID_VERSION_TYPE,
         _MachineInfoErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> MachineInfo:
+def from_dict(data: dict) -> BaseMachineInfo:
     """Create a json MachineInfo instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +60,9 @@ def from_dict(data: dict) -> MachineInfo:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[MachineInfo] = json_class(
+    report_class: type[BaseMachineInfo] = json_class(
         version,
-        MachineInfo,
+        BaseMachineInfo,
         _MachineInfoErrorTag.INVALID_VERSION_TYPE,
         _MachineInfoErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +93,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        MachineInfo,
+        BaseMachineInfo,
         _MachineInfoErrorTag.INVALID_VERSION_TYPE,
         _MachineInfoErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

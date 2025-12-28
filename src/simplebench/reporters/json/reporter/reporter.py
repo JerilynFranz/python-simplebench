@@ -13,13 +13,13 @@ from simplebench.metadata import Metadata
 from simplebench.metrics import Metric
 from simplebench.report import (
     CURRENT_VERSION,
-    cpu_info,
-    machine_info,
-    python_info,
+    cpu_info_by_version,
+    machine_info_by_version,
+    python_info_by_version,
     report,
-    results_info,
-    stats_block,
-    value_block,
+    results_info_by_version,
+    stats_block_by_version,
+    value_block_by_version,
 )
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions

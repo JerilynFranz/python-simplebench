@@ -1,8 +1,8 @@
 """JSON Results classes"""
 from typing import TYPE_CHECKING
 
-from .base import JSONSchema, ResultsInfo
 from ._error_tags import _ResultsInfoErrorTag
+from .base import BaseResultsInfo, JSONSchema
 
 _JSON_CLASS_LOADED: bool = False
 
@@ -21,7 +21,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def results_info(version: int) -> type[ResultsInfo]:
+def results_info_by_version(version: int) -> type[BaseResultsInfo]:
     """Retrieve a ResultsInfo class for the specified version.
 
     :param version: The JSON report version number.
@@ -31,13 +31,13 @@ def results_info(version: int) -> type[ResultsInfo]:
 
     return json_class(
         version,
-        ResultsInfo,
+        BaseResultsInfo,
         _ResultsInfoErrorTag.INVALID_VERSION_TYPE,
         _ResultsInfoErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict, version: int) -> ResultsInfo:
+def from_dict(data: dict, version: int) -> BaseResultsInfo:
     """Create a JSONResults instance from a dictionary.
 
     It checks the version and instantates the appropriate sub-class
@@ -49,7 +49,7 @@ def from_dict(data: dict, version: int) -> ResultsInfo:
     _load_deferred_imports()
     return json_class(
         version,
-        ResultsInfo,
+        BaseResultsInfo,
         _ResultsInfoErrorTag.INVALID_VERSION_TYPE,
         _ResultsInfoErrorTag.UNSUPPORTED_VERSION).from_dict(data)
 
@@ -64,7 +64,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        ResultsInfo,
+        BaseResultsInfo,
         _ResultsInfoErrorTag.INVALID_VERSION_TYPE,
         _ResultsInfoErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

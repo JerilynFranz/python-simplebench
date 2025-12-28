@@ -1,8 +1,8 @@
 """JSON execution environment classes"""
 from typing import TYPE_CHECKING
 
-from .base import ExecutionEnvironment
 from ._error_tags import _ExecutionEnvironmentErrorTag
+from .base import ExecutionEnvironment
 
 _JSON_CLASS_LOADED: bool = False
 
@@ -21,7 +21,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def execution_environment(version: int) -> type[ExecutionEnvironment]:
+def execution_environment_by_version(version: int) -> type[ExecutionEnvironment]:
     """Retrieve a ExecutionEnvironment class for the specified version.
 
     :param version: The JSON report version number.

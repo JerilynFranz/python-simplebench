@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from .base import JSONSchema, ValueBlock
 from ._error_tags import _ValueBlockErrorTag
+from .base import BaseValueBlock, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def value_block(version: int) -> type[ValueBlock]:
+def value_block_by_version(version: int) -> type[BaseValueBlock]:
     """Retrieve a ValueBlock class for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +42,13 @@ def value_block(version: int) -> type[ValueBlock]:
 
     return json_class(
         version,
-        ValueBlock,
+        BaseValueBlock,
         _ValueBlockErrorTag.INVALID_VERSION_TYPE,
         _ValueBlockErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> ValueBlock:
+def from_dict(data: dict) -> BaseValueBlock:
     """Create a json ValueBlock instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +60,9 @@ def from_dict(data: dict) -> ValueBlock:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[ValueBlock] = json_class(
+    report_class: type[BaseValueBlock] = json_class(
         version,
-        ValueBlock,
+        BaseValueBlock,
         _ValueBlockErrorTag.INVALID_VERSION_TYPE,
         _ValueBlockErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +93,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        ValueBlock,
+        BaseValueBlock,
         _ValueBlockErrorTag.INVALID_VERSION_TYPE,
         _ValueBlockErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA

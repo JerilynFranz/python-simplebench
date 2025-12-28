@@ -1,4 +1,4 @@
-"""Schema for JSON MachineInfo v1 validation."""
+"""Schema for JSON SystemInfo v1 validation."""
 # pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
@@ -7,79 +7,74 @@ from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report.base import JSONSchema
 
 
-class MachineInfoSchema(JSONSchema):
-    """Schema for the JSON MachineInfo output (V1)"""
+class SystemInfoSchema(JSONSchema):
+    """Schema for the JSON SystemInfo output (V1)"""
 
     VERSION: int = 1
-    """The JSON MachineInfo schema version number."""
+    """The JSON SystemInfo schema version number."""
+    TYPE: str = "SimpleBenchSystemInfo::V1"
+    """The JSON SystemInfo schema type property value for version 1 reports."""
 
-    TYPE: str = "SimpleBenchMachineInfo::V1"
-    """The JSON MachineInfo schema type property value for version 1 reports."""
-
-    ID: str = "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/machine-info.json"
-    """The JSON MachineInfo schema $id value for version 1 reports."""
-
+    ID: str = "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/system-info.json"
+    """The JSON SystemInfo schema $id value for version 1 reports."""
     _JSON_SCHEMA_DICT: dict[str, object] = {
             "$schema": "https://json-schema.org/draft/2020-12/schema",
             "$id": ID,
-            "title": "Machine Info (V1)",
-            "description": "Machine information (V1)",
+            "title": "System Info (V1)",
             "type": "object",
+            "description": "System information (V1)",
             "properties": {
                 "version": {
                     "title": "Version",
-                    "description": "Version of the machine information schema",
+                    "description": "JSON schema version number.",
                     "type": "integer",
                     "const": VERSION
                 },
                 "type": {
                     "title": "Type",
-                    "description": "Type of the machine information",
+                    "description": "JSON schema type property value for version 1 reports.",
                     "type": "string",
                     "const": TYPE
                 },
                 "hash_id": {
                     "title": "Hash ID",
-                    "description": "Unique 64 byte hexadecimal hash identifier for the machine information data. This can be used to identify identical machine configurations without revealing details.",
+                    "description": "Unique 64 byte hexadecimal hash identifier for the system information data. This can be used to identify identical system configurations without revealing details.",
                     "type": "string",
                     "pattern": "^[a-f0-9]{64}$"
                 },
-                "node": {
-                    "title": "Node",
-                    "description": "Identifier for the machine (blank by default)",
-                    "type": "string",
-                    "default": ""
-                },
-                "execution_environment": {
-                    "title": "Execution Environment",
-                    "description": "Information about the execution environment(s) or runtime(s).",
-                    "type": "object",
-                    "properties": {
-                        "python": {
-                            "$ref": "python-info.json"
-                        }
-                    },
-                    "additionalProperties": True
-                },
-                "cpu": {
-                    "$ref": "cpu-info.json"
-                },
-                "memory": {
-                    "$ref": "memory-info.json"
-                },
                 "system": {
-                    "$ref": "system-info.json"
+                    "title": "System",
+                    "description": "The system OS identifier string.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "system_version": {
+                    "title": "System Version",
+                    "description": "The system version string.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "release": {
+                    "title": "Release",
+                    "description": "The system release string.",
+                    "type": "string",
+                    "minLength": 1
+                },
+                "machine": {
+                    "title": "Machine",
+                    "description": "The machine type string.",
+                    "type": "string",
+                    "minLength": 1
                 }
             },
             "required": [
                 "version",
                 "type",
                 "hash_id",
-                "node",
-                "execution_environment",
-                "cpu",
-                "memory",
-                "system"
+                "system",
+                "system_version",
+                "release",
+                "machine"
             ],
             "additionalProperties": False
         }
@@ -89,7 +84,7 @@ class MachineInfoSchema(JSONSchema):
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption="JSON Schema for ValueBlock V1",
+        caption="JSON Schema for SystemInfo V1",
         intro_text="The JSON schema is as follows:"
     )
     """Note containing the JSON schema for docstrings."""
@@ -104,7 +99,9 @@ class MachineInfoSchema(JSONSchema):
         The caller can modify the returned dictionary as needed or cache it for performance.
 
         Usage:
-            schema_dict = MachineInfoSchema.as_dict()
+            schema_dict = SystemInfoSchema.as_dict()
+
+        :return dict[str, object]: The JSON schema as a dictionary.
         """
         return deepcopy(cls._JSON_SCHEMA_DICT)
 
@@ -120,7 +117,7 @@ class MachineInfoSchema(JSONSchema):
         It serializes the schema dictionary to a JSON string.
 
         Usage:
-            schema_json = MachineInfoSchema.as_json()
+            schema_json = SystemInfoSchema.as_json()
 
         :return str: The JSON schema as a JSON-formatted string.
 

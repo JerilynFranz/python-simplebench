@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from types import MappingProxyType
 from typing import Any
 
-from simplebench.report.base import ResultsInfo as BaseResultsInfo
+from simplebench.report.base import BaseResultsInfo
 from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 from simplebench.validators import validate_core_data_mapping
 

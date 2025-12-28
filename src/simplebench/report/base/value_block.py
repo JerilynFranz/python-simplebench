@@ -8,7 +8,7 @@ from .json_schema import JSONSchema
 from .value_block_dict import ValueBlockDataBase, ValueBlockDictBase
 
 
-class ValueBlock(Hydrator, ABC, Hashable):
+class BaseValueBlock(Hydrator, ABC, Hashable):
     """Base class representing a value block."""
 
     VERSION: int = 0
@@ -25,7 +25,7 @@ class ValueBlock(Hydrator, ABC, Hashable):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: ValueBlockDataBase) -> "ValueBlock":
+    def from_dict(cls, data: ValueBlockDataBase) -> "BaseValueBlock":
         """Create a ValueBlock instance from a dictionary.
 
         :param data: Dictionary containing the JSON results data.

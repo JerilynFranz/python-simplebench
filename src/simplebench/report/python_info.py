@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def python_info(version: int) -> type[BasePythonInfo]:
+def python_info_by_version(version: int) -> type[BasePythonInfo]:
     """Retrieve a PythonInfo class for the specified version.
 
     :param version: The JSON report version number.

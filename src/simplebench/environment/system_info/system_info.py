@@ -17,7 +17,8 @@ class SystemInfo:
     """Create a SystemInfo facade for the system related :module:`platform` functions.
 
     It is a typed object-oriented representation of the System environment
-    where it was created and cleanly exposes the following :module:`platform` functions:
+    where it was created and cleanly exposes the following :module:`platform` functions
+    as properties:
 
     - :func:`platform.system` - name of the operating system.
     - :func:`platform.release` - release of the operating system.
@@ -38,7 +39,7 @@ class SystemInfo:
     """
     release: str
     """The System release string."""
-    version: str
+    system_version: str
     """The System version string."""
     machine: str
     """The machine type, e.g. 'x86_64' or 'arm64'."""
@@ -54,5 +55,5 @@ class SystemInfo:
         uname = platform.uname()
         object.__setattr__(self, 'system', uname.system)
         object.__setattr__(self, 'release', uname.release)
-        object.__setattr__(self, 'version', uname.version)
+        object.__setattr__(self, 'system_version', uname.version)
         object.__setattr__(self, 'machine', uname.machine)

@@ -8,7 +8,7 @@ from simplebench.base import Hydrator
 from .json_schema import JSONSchema
 
 
-class Report(Hydrator, ABC):
+class BaseReport(Hydrator, ABC):
     """Abstract Base class representing a JSON report."""
 
     VERSION: int = 0
@@ -29,7 +29,7 @@ class Report(Hydrator, ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> Report:
+    def from_dict(cls, data: dict) -> BaseReport:
         """Create a Report instance from a dictionary.
 
         :param data: Dictionary containing the JSON report data.

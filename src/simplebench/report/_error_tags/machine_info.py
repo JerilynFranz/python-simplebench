@@ -6,6 +6,14 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _MachineInfoErrorTag(ErrorTag):
     """Error tags for JSONMachineInfo exceptions."""
+    INVALID_SYSTEM_TYPE = 'INVALID_SYSTEM_INFO_TYPE'
+    """Attempted to set the system property to something other than a v1 SystemInfo"""
+    INVALID_EXECUTION_ENVIRONMENT_TYPE = 'INVALID_EXECUTION_ENVIRONMENT_INFO_TYPE'
+    """Attempted to set the execution_environment property to something other than a v1 ExecutionEnvironment"""
+    INVALID_MEMORY_TYPE = 'INVALID_MEMORY_TYPE'
+    """Attempted to set the memory property to something other than a v1 MemoryInfo"""
+    INVALID_CPU_TYPE = 'INVALID_CPU_TYPE'
+    """Attempted to set the cpu property to something other than a v1 CPUInfo"""
     INVALID_VERSION_TYPE = 'INVALID_VERSION_TYPE'
     """Attempted to set the version property to something other than a type int."""
     UNSUPPORTED_VERSION = 'UNSUPPORTED_VERSION'

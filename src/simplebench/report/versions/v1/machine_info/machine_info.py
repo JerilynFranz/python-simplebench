@@ -14,17 +14,12 @@ of the JSON report schema and the V1 implementation itself is essentially a froz
 of the base MachineInfo representation at the time of the V1 schema release.
 """
 import hashlib
-import re
 from typing import Any
 
-from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.report._error_tags import _MachineInfoErrorTag
-from simplebench.report.base import CPUInfo, ExecutionEnvironment, JSONSchema
-from simplebench.report.base import MachineInfo as BaseMachineInfo
-from simplebench.validators import validate_string, validate_type
+from simplebench.report.base import BaseMachineInfo, JSONSchema
 
-from ..cpu_info import CPUInfo as CPUInfoV1
-from ..execution_environment import ExecutionEnvironment as ExecutionEnvironmentV1
+from .. import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
+from . import validate
 from .machine_info_schema import MachineInfoSchema
 
 
@@ -46,58 +41,26 @@ class MachineInfo(BaseMachineInfo):
     def __init__(self,
                  *,
                  hash_id: str = '',
-                 processor: str,
-                 machine: str,
-                 system: str,
-                 release: str,
                  node: str = '',
-                 execution_environment: ExecutionEnvironment,
-                 cpu: CPUInfo) -> None:
+                 cpu: CPUInfo,
+                 memory: MemoryInfo,
+                 system: SystemInfo,
+                 execution_environment: ExecutionEnvironment) -> None:
         """Initialize JSONMachineInfo.
 
-        :param hash_id: The unique hash identifier for the machine information.
-            If not provided, it defaults to an empty string and will be computed automatically.
-        :param processor: The processor string.
-        :param machine: The machine string.
-        :param system: The operating system name.
-        :param release: The operating system release.
-        :param node: The node string.
-        :param execution_environment: The execution environment information.
-        :param cpu: The CPU information.
+        :param str hash_id: The unique hash identifier for the machine information.
+        :param str node: The node string.
+        :param CPUInfo cpu: The CPU information.
+        :param MemoryInfo memory: The memory information.
+        :param SystemInfo system: The system information.
+        :param ExecutionEnvironment execution_environment: The execution environment information.
         """
-        self.hash_id = hash_id
-        self.processor = processor
-        self.machine = machine
-        self.system = system
-        self.release = release
-        self.node = node
-        self.execution_environment = execution_environment
-        self.cpu = cpu
-
-    @classmethod
-    def from_system(cls, node: str | None = '') -> 'MachineInfo':
-        """Create a MachineInfo instance from the current system information.
-
-        .. code-block:: python
-           :caption: Example
-              machine_info = MachineInfo.from_system()
-
-        :param node: The node name to include in the MachineInfo (optional).
-        :return MachineInfo: A MachineInfo instance with information about the current machine.
-        """
-        info = machine_info.get_machine_info()
-        if node is None:
-            node = info.get('node', '')
-
-        return cls(
-            processor=info['processor'],
-            machine=info['machine'],
-            system=info['system'],
-            release=info['release'],
-            node=node,
-            execution_environment=ExecutionEnvironmentV1.from_system(),
-            cpu=CPUInfoV1.from_system()
-        )
+        self._hash_id = validate.hash_id(hash_id)
+        self._node = validate.node(node)
+        self._cpu = validate.cpu(cpu)
+        self._memory = validate.memory(memory)
+        self._system = validate.system(system)
+        self._execution_environment = validate.execution_environment(execution_environment)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> 'MachineInfo':
@@ -123,8 +86,10 @@ class MachineInfo(BaseMachineInfo):
             default={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={
-                'execution_environment': ExecutionEnvironmentV1.from_dict,
-                'cpu': CPUInfoV1.from_dict
+                'execution_environment': ExecutionEnvironment.from_dict,
+                'cpu': CPUInfo.from_dict,
+                'memory': MemoryInfo.from_dict,
+                'system': SystemInfo.from_dict
             })
         return cls(**kwargs)
 
@@ -166,111 +131,6 @@ class MachineInfo(BaseMachineInfo):
             self._hash_id = hashlib.sha256(hash_input).hexdigest()
         return self._hash_id
 
-    @hash_id.setter
-    def hash_id(self, value: str) -> None:
-        """Set the hash_id property.
-
-        It is validated to be a valid SHA-256 hexadecimal string or an empty string.
-
-        :param value: The hash_id string to set.
-        """
-        hash_string = validate_string(
-            value, "hash_id",
-            _MachineInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
-            _MachineInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
-            allow_empty=True, strip=True)
-        if hash_string == '':
-            self._hash_id = ''
-            return
-
-        if not re.fullmatch(r'^[a-f0-9]{64}$', hash_string):
-            raise SimpleBenchTypeError(
-                "hash_id must be a valid SHA-256 hexadecimal string",
-                tag=_MachineInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE)
-        self._hash_id: str = hash_string
-
-    @property
-    def processor(self) -> str:
-        """Get the processor property.
-
-        :return: The processor string.
-        """
-        return self._processor
-
-    @processor.setter
-    def processor(self, value: str) -> None:
-        """Set the processor property.
-
-        :param value: The processor string to set.
-        """
-
-        self._processor: str = validate_string(
-            value, "processor",
-            _MachineInfoErrorTag.INVALID_PROCESSOR_PROPERTY_TYPE,
-            _MachineInfoErrorTag.EMPTY_PROCESSOR_PROPERTY_VALUE,
-            allow_empty=False)
-
-    @property
-    def machine(self) -> str:
-        """Get the machine property.
-
-        :return: The machine string.
-        """
-        return self._machine
-
-    @machine.setter
-    def machine(self, value: str) -> None:
-        """Set the machine property.
-
-        :param value: The machine string to set.
-        """
-
-        self._machine: str = validate_string(
-            value, "machine",
-            _MachineInfoErrorTag.INVALID_MACHINE_PROPERTY_TYPE,
-            _MachineInfoErrorTag.EMPTY_MACHINE_PROPERTY_VALUE,
-            allow_empty=False)
-
-    @property
-    def system(self) -> str:
-        """Get the system OS property.
-
-        :return: The system OS string.
-        """
-        return self._system
-
-    @system.setter
-    def system(self, value: str) -> None:
-        """Set the system OS property.
-
-        :param value: The system OS string to set.
-        """
-        self._system: str = validate_string(
-            value, "system",
-            _MachineInfoErrorTag.INVALID_SYSTEM_PROPERTY_TYPE,
-            _MachineInfoErrorTag.INVALID_SYSTEM_PROPERTY_VALUE,
-            allow_empty=False)
-
-    @property
-    def release(self) -> str:
-        """Get the OS release property.
-
-        :return: The release string.
-        """
-        return self._release
-
-    @release.setter
-    def release(self, value: str) -> None:
-        """Set the OS release property.
-
-        :param value: The OS release string to set.
-        """
-        self._release: str = validate_string(
-            value, "release",
-            _MachineInfoErrorTag.INVALID_RELEASE_PROPERTY_TYPE,
-            _MachineInfoErrorTag.INVALID_RELEASE_PROPERTY_VALUE,
-            allow_empty=False)
-
     @property
     def node(self) -> str:
         """Get the node property.
@@ -278,18 +138,6 @@ class MachineInfo(BaseMachineInfo):
         :return: The node string.
         """
         return self._node
-
-    @node.setter
-    def node(self, value: str) -> None:
-        """Set the node property.
-
-        :param value: The node string to set.
-        """
-        self._node: str = validate_string(
-            value, "node",
-            _MachineInfoErrorTag.INVALID_NODE_PROPERTY_TYPE,
-            _MachineInfoErrorTag.EMPTY_NODE_PROPERTY_VALUE,
-            allow_empty=True, strip=True)
 
     @property
     def execution_environment(self) -> ExecutionEnvironment:
@@ -299,16 +147,6 @@ class MachineInfo(BaseMachineInfo):
         """
         return self._execution_environment
 
-    @execution_environment.setter
-    def execution_environment(self, value: ExecutionEnvironment) -> None:
-        """Set the execution environment property.
-
-        :param value: The execution environment to set.
-        """
-        self._execution_environment = validate_type(
-            value, ExecutionEnvironment, "execution_environment",
-            _MachineInfoErrorTag.INVALID_EXECUTION_ENVIRONMENT_PROPERTY_TYPE)
-
     @property
     def cpu(self) -> CPUInfo:
         """Get the CPU property.
@@ -317,12 +155,18 @@ class MachineInfo(BaseMachineInfo):
         """
         return self._cpu
 
-    @cpu.setter
-    def cpu(self, value: CPUInfo) -> None:
-        """Set the CPU property.
+    @property
+    def memory(self) -> MemoryInfo:
+        """Get the memory property.
 
-        :param value: The CPU info to set.
+        :return: The memory info.
         """
-        self._cpu = validate_type(
-            value, CPUInfo, "cpu",
-            _MachineInfoErrorTag.INVALID_CPU_PROPERTY_TYPE)
+        return self._memory
+
+    @property
+    def system(self) -> SystemInfo:
+        """Get the system property.
+
+        :return: The system info.
+        """
+        return self._system

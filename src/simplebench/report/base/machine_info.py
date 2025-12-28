@@ -21,7 +21,7 @@ from simplebench.base import Hydrator
 from .json_schema import JSONSchema
 
 
-class MachineInfo(Hydrator, ABC):
+class BaseMachineInfo(Hydrator, ABC):
     """Class representing machine information in a JSON report."""
 
     VERSION: int = 0
@@ -55,7 +55,7 @@ class MachineInfo(Hydrator, ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'MachineInfo':
+    def from_dict(cls, data: dict[str, Any]) -> 'BaseMachineInfo':
         """Create a MachineInfo instance from a dictionary.
 
         .. code-block:: python

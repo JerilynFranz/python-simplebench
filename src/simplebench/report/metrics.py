@@ -1,8 +1,8 @@
 """JSON metrics classes"""
 from typing import TYPE_CHECKING
 
-from .base import Metrics
 from ._error_tags import _MetricsErrorTag
+from .base import Metrics
 
 _JSON_CLASS_LOADED: bool = False
 
@@ -21,7 +21,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def metrics(version: int) -> type[Metrics]:
+def metrics_by_version(version: int) -> type[Metrics]:
     """Retrieve a Metrics class for the specified version.
 
     :param version: The JSON report version number.

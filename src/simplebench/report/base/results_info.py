@@ -20,7 +20,7 @@ from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 from .json_schema import JSONSchema
 
 
-class ResultsInfo(Hydrator, ABC):
+class BaseResultsInfo(Hydrator, ABC):
     """Base class representing JSON results."""
 
     VERSION: int = 0
@@ -54,7 +54,7 @@ class ResultsInfo(Hydrator, ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: CoreDataMappingType) -> 'ResultsInfo':
+    def from_dict(cls, data: CoreDataMappingType) -> 'BaseResultsInfo':
         """Create a JSON Results object instance from a dictionary.
 
         :param CoreDataMappingType data: Mapping containing the JSON results object data.

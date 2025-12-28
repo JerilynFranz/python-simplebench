@@ -19,7 +19,7 @@ from simplebench.base import Hydrator
 from .json_schema import JSONSchema
 
 
-class StatsBlock(Hydrator, ABC):
+class BaseStatsBlock(Hydrator, ABC):
     """Abstract Base class representing a JSON StatsBlock."""
 
     VERSION: int = 0
@@ -40,7 +40,7 @@ class StatsBlock(Hydrator, ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> 'StatsBlock':
+    def from_dict(cls, data: dict) -> 'BaseStatsBlock':
         """Create a StatsBlock instance from a dictionary.
 
         :param data: Dictionary containing the JSON stats block data.

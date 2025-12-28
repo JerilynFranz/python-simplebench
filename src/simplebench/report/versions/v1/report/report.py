@@ -16,9 +16,7 @@ from typing import TYPE_CHECKING, Any, Sequence, TypeAlias
 
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _ReportErrorTag
-from simplebench.report.base import JSONSchema, MachineInfo
-from simplebench.report.base import Report as BaseReport
-from simplebench.report.base import ResultsInfo
+from simplebench.report.base import BaseMachineInfo, BaseReport, BaseResultsInfo, JSONSchema
 from simplebench.type_proxies import is_case
 from simplebench.validators import (
     validate_iso8601_datetime,
@@ -61,15 +59,15 @@ class Report(BaseReport):
                  title: str,
                  description: str,
                  variation_cols: dict[str, str],
-                 results_info: Sequence[ResultsInfo],
-                 machine: MachineInfo) -> None:
+                 results_info: Sequence[BaseResultsInfo],
+                 machine: BaseMachineInfo) -> None:
         """Initialize a Report base instance."""
         self.timestamp = timestamp
         self.group = group
         self.title = title
         self.description = description
         self.variation_cols = variation_cols
-        self._results: tuple[ResultsInfo, ...] = validate.results_info(results)
+        self._results: tuple[BaseResultsInfo, ...] = validate.results_info(results)
         self.machine = machine
 
     @classmethod
@@ -84,7 +82,7 @@ class Report(BaseReport):
         allowed_keys['version'] = int
         allowed_keys['type'] = str
 
-        def process_results(value: Any) -> list[ResultsInfo]:
+        def process_results(value: Any) -> list[BaseResultsInfo]:
             validated_list = validate_sequence_of_type(
                 value, dict, 'results',
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE,
@@ -222,7 +220,7 @@ class Report(BaseReport):
         self._variation_cols: dict[str, str] = value
 
     @property
-    def results(self) -> tuple[ResultsInfo]:
+    def results(self) -> tuple[BaseResultsInfo]:
         """Get the results property.
 
         The results property is a tuple of ResultsInfo instances.
@@ -230,19 +228,19 @@ class Report(BaseReport):
         return self._results
 
     @property
-    def machine(self) -> MachineInfo:
+    def machine(self) -> BaseMachineInfo:
         """Get the machine property."""
         return self._machine
 
     @machine.setter
-    def machine(self, value: MachineInfo) -> None:
+    def machine(self, value: BaseMachineInfo) -> None:
         """Set the machine property.
 
         :param value: The machine value to set.
         """
-        if not isinstance(value, MachineInfo):
+        if not isinstance(value, BaseMachineInfo):
             raise SimpleBenchValueError(
                 "machine must be a JSONMachineInfo instance",
                 tag=_ReportErrorTag.INVALID_MACHINE_PROPERTY_TYPE)
 
-        self._machine: MachineInfo = value
+        self._machine: BaseMachineInfo = value

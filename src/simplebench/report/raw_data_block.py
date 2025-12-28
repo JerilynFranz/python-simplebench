@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from simplebench.exceptions import SimpleBenchValueError
 
 from ._error_tags import _RawDataBlockErrorTag
-from .base import JSONSchema, RawDataBlock
+from .base import BaseRawDataBlock, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -32,7 +32,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def raw_data_block(version: int) -> type[RawDataBlock]:
+def raw_data_block_by_version(version: int) -> type[BaseRawDataBlock]:
     """Retrieve a RawDataBlock class for the specified version.
 
     :param version: The JSON report version number.
@@ -42,13 +42,13 @@ def raw_data_block(version: int) -> type[RawDataBlock]:
 
     return json_class(
         version,
-        RawDataBlock,
+        BaseRawDataBlock,
         _RawDataBlockErrorTag.INVALID_VERSION_TYPE,
         _RawDataBlockErrorTag.UNSUPPORTED_VERSION
     )
 
 
-def from_dict(data: dict) -> RawDataBlock:
+def from_dict(data: dict) -> BaseRawDataBlock:
     """Create a json RawDataBlock instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -60,9 +60,9 @@ def from_dict(data: dict) -> RawDataBlock:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[RawDataBlock] = json_class(
+    report_class: type[BaseRawDataBlock] = json_class(
         version,
-        RawDataBlock,
+        BaseRawDataBlock,
         _RawDataBlockErrorTag.INVALID_VERSION_TYPE,
         _RawDataBlockErrorTag.UNSUPPORTED_VERSION
     )
@@ -93,7 +93,7 @@ def schema(version: int) -> type[JSONSchema]:
 
     return json_class(
         version,
-        RawDataBlock,
+        BaseRawDataBlock,
         _RawDataBlockErrorTag.INVALID_VERSION_TYPE,
         _RawDataBlockErrorTag.UNSUPPORTED_VERSION
     ).SCHEMA
