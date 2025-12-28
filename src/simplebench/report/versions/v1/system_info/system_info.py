@@ -4,6 +4,7 @@ from typing import Any
 
 from simplebench.report.base import BaseSystemInfo, JSONSchema
 
+from ..types import SystemInfoData, SystemInfoDict
 from . import validate
 from .system_info_schema import SystemInfoSchema
 
@@ -44,7 +45,7 @@ class SystemInfo(BaseSystemInfo):
         self._machine = validate.machine(machine)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'SystemInfo':
+    def from_dict(cls, data: SystemInfoData) -> 'SystemInfo':
         """Create a SystemInfo instance from a dictionary.
 
         .. code-block:: system3
@@ -71,7 +72,7 @@ class SystemInfo(BaseSystemInfo):
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> SystemInfoDict:
         """Convert the SystemInfo to a dictionary suitable for JSON serialization.
 
         This includes all properties defined in the :class:`SystemInfoSchema`
@@ -79,12 +80,16 @@ class SystemInfo(BaseSystemInfo):
 
         :return: A dictionary representation of the SystemInfo.
         """
-        property_keys = self.init_params().keys()
-        data = {key: getattr(self, key) for key in property_keys}
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
-
-        return data
+        cls = self.__class__
+        return SystemInfoDict({
+            'type': cls.TYPE,
+            'version': cls.VERSION,
+            'hash_id': self.hash_id,
+            'system': self.system,
+            'system_version': self.system_version,
+            'release': self.release,
+            'machine': self.machine
+        })
 
     @property
     def hash_id(self) -> str:

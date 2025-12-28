@@ -1,4 +1,4 @@
-"""JSON CPUInfo version 1 class.
+"""CPUInfo version 1 class.
 
 The CPUInfo class represents a version 1 JSON CPUInfo.
 
@@ -12,14 +12,14 @@ As the foundational version, this class is considered immutable. Future versions
 will inherit from this class to extend its functionality, but this implementation
 will not be changed.
 """
-import copy
 import hashlib
 import json
 
 from simplebench import environment
-from simplebench.environment import CPUInfoDictType
 from simplebench.report.base import BaseCPUInfo, JSONSchema
+from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 
+from ..types import CPUInfoData, CPUInfoDict
 from . import validate
 from .cpu_info_schema import CPUInfoSchema
 
@@ -40,7 +40,7 @@ class CPUInfo(BaseCPUInfo):
     def __init__(self,
                  *,
                  hash_id: str | None = None,
-                 data: CPUInfoDictType | environment.CPUInfo) -> None:
+                 data: CoreDataMappingType) -> None:
         """Initialize CPUInfo.
 
         :param str | None hash_id: The unique hash identifier for the CPU information.
@@ -69,7 +69,7 @@ class CPUInfo(BaseCPUInfo):
             hash_id values are NOT validated against the data content on initialization
             because it is only an opaque identifier, not a data validation mechanism.
 
-        :param CPUInfoDictType | environment.CPUInfo data: The raw CPU information data collected from the system
+        :param CoreDataMappingType data: The raw CPU information data collected from the system
             using the :package:`cpuinfo` library. It must either be a dictionary or
             an instance of `simplebench.environment.CPUInfo`.
 
@@ -78,10 +78,8 @@ class CPUInfo(BaseCPUInfo):
               dictionaries, lists, strings, numbers, booleans, and nulls.
             - All keys in dictionaries must be non-blank, non-empty strings.
         """
-        if isinstance(data, environment.CPUInfo):
-            data = data.info
-        self._data = validate.data(data)
-        self._hash_id = validate.hash_id(hash_id, allow_none=True)
+        self._data: ImmutableCoreDataMappingType = validate.data(data)
+        self._hash_id: str = validate.hash_id(hash_id, allow_none=True)
 
     @property
     def hash_id(self) -> str:
@@ -95,29 +93,15 @@ class CPUInfo(BaseCPUInfo):
         return self._hash_id
 
     @property
-    def data(self) -> CPUInfoDictType:
+    def data(self) -> ImmutableCoreDataMappingType:
         """Get the data property.
 
-        :return CPUInfoDictType: A deep copy of the data dictionary to ensure immutability.
+        :return ImmutableCoreDataMappingType: An immutable mapping of the CPU information data.
         """
-        return copy.deepcopy(self._data)
+        return self._data
 
     @classmethod
-    def from_system(cls) -> 'CPUInfo':
-        """Create a CPUInfo instance from the current system's CPU information.
-
-        This method collects CPU information using the
-        :package:`~simplebench.environment.CPUInfo` library class
-        and constructs a CPUInfo instance with the collected data.
-
-        :return CPUInfo: A CPUInfo instance containing the current system's CPU information.
-        """
-
-        cpu_data = environment.CPUInfo().info
-        return cls(data=cpu_data)
-
-    @classmethod
-    def from_dict(cls, data: CPUInfoDictType) -> 'CPUInfo':
+    def from_dict(cls, data: CPUInfoData) -> 'CPUInfo':
         """Create a CPUInfo instance from a dictionary.
 
         .. code-block:: python
@@ -125,12 +109,11 @@ class CPUInfo(BaseCPUInfo):
 
            cpu_info = CPUInfo.from_dict(data)
 
-
         The dictionary must conform to the expected structure for the CPUInfo
         representation. The 'version' and 'type' properties are validated
         against the class's VERSION and TYPE attributes if they are present.
 
-        :param CPUInfoDictType data: The dictionary containing CPU information.
+        :param CPUInfoDict data: The dictionary containing CPU information.
         :return CPUInfo: A CPUInfo instance.
         """
         allowed_keys = cls.init_params()
@@ -146,17 +129,17 @@ class CPUInfo(BaseCPUInfo):
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 
-    def to_dict(self) -> CPUInfoDictType:
+    def to_dict(self) -> CPUInfoDict:
         """Convert the CPUInfo to a dictionary suitable for JSON serialization.
 
         This includes all properties defined in the :class:`CPUInfoSchema`
         for the version.
 
-        :return dict[str, DataTypes]: A dictionary representation of the CPUInfo.
+        :return CPUInfoDict: An immutable mapping representation of the CPUInfo.
         """
-        property_keys = self.init_params().keys()
-        data = {key: getattr(self, key) for key in property_keys}
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
-
-        return data
+        cls = self.__class__
+        return CPUInfoDict(
+            type=cls.TYPE,
+            version=cls.VERSION,
+            hash_id=self.hash_id,
+            data=self.data)

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence, Set
 from types import MappingProxyType
-from typing import TypeAlias
+from typing import TypeAlias, TypedDict
 
 CoreDataTypes: TypeAlias = str | int | float | bool | None | Sequence['CoreDataTypes'] | Mapping[str, 'CoreDataTypes'] | Set['CoreDataTypes']
 """Type alias for the core data type primitives used in SimpleBench.
@@ -57,6 +57,7 @@ and the values are core data types as defined by `CoreDataTypes`.
 
 It is serializable.
 """
+
 
 ImmutableCoreDataMappingType: TypeAlias = MappingProxyType[str, ImmutableCoreDataTypes]
 """Type alias for an immutable mapping from strings to immutable core data types.

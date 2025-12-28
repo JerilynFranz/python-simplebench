@@ -1,8 +1,8 @@
 """V1 PythonInfo implementation."""
 import hashlib
-from typing import Any
 
 from simplebench.report.base import BasePythonInfo, JSONSchema
+from simplebench.report.versions.v1.types import PythonInfoData, PythonInfoDict
 
 from . import validate
 from .python_info_schema import PythonInfoSchema
@@ -42,7 +42,7 @@ class PythonInfo(BasePythonInfo):
         self._system = validate.system(system)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'PythonInfo':
+    def from_dict(cls, data: PythonInfoData) -> 'PythonInfo':
         """Create a PythonInfo instance from a dictionary.
 
         .. code-block:: python3
@@ -69,20 +69,27 @@ class PythonInfo(BasePythonInfo):
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> PythonInfoDict:
         """Convert the PythonInfo to a dictionary suitable for JSON serialization.
 
         This includes all properties defined in the :class:`PythonInfoSchema`
         for the version.
 
-        :return: A dictionary representation of the PythonInfo.
+        :return PythonInfoDict: A dictionary representation of the PythonInfo.
         """
-        property_keys = self.init_params().keys()
-        data = {key: getattr(self, key) for key in property_keys}
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
-
-        return data
+        cls = self.__class__
+        return PythonInfoDict(
+            type=cls.TYPE,
+            version=cls.VERSION,
+            hash_id=self.hash_id,
+            compiler=self.compiler,
+            implementation=self.implementation,
+            implementation_version=self.implementation_version,
+            python_version=self.python_version,
+            build=self.build,
+            release=self.release,
+            system=self.system
+        )
 
     @property
     def compiler(self) -> str:

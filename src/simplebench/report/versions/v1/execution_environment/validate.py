@@ -9,8 +9,8 @@ def python(value: PythonInfo) -> PythonInfo:
     """Validate that the provided value is a PythonInfo instance.
 
     :param value: The value to validate.
-    :return: The validated PythonInfo instance.
-    :raises TypeError: If the value is not a PythonInfo instance.
+    :return PythonInfo: The validated PythonInfo instance.
+    :raises SimpleBenchTypeError: If the value is not a PythonInfo instance.
     """
     return validate_type(
         value, PythonInfo, "python",

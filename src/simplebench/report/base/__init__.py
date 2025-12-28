@@ -15,7 +15,7 @@ from .results_info import BaseResultsInfo
 from .stats_block import BaseStatsBlock
 from .system_info import BaseSystemInfo
 from .value_block import BaseValueBlock
-from .value_block_dict import ValueBlockDataBase, ValueBlockDictBase
+from .types import ValueBlockDataBase, ValueBlockDictBase
 from .vcs_info import BaseVCSInfo
 
 __all__ = [

@@ -32,9 +32,9 @@ def serialize_to_json(
         **kwargs: Any) -> str:
     """Serialize an object to a JSON string.
 
-    It uses `serialize_to_dict` to convert the object to a JSON-compatible dictionary
-    representation, then serializes that dictionary to a JSON string using the built-in
-    :func:`json.dumps()` function.
+    It uses `serialize_to_dict_list_or_primitive` to convert the object to a JSON-compatible dictionary
+    representation, then serializes that to a JSON string using the Python standard library
+    library function :func:`json.dumps()`.
 
     It requires that all mappings have string keys and that there are no cyclic references
     in the object graph. It takes the same arguments as :func:`json.dumps()`.
@@ -90,7 +90,7 @@ def serialize_to_json(
         **kwargs)
 
 def serialize_to_dict_list_or_primitive(obj: object) -> JSONSerializableType:
-    """Serialize an object to a JSON-compatible dictionary, list, or primitive type.
+    """Serialize an object to a `json.dumps()` compatible dictionary, list, or primitive type.
     
     It recursively converts the object and its nested structures into types that can be
     directly serialized to JSON (i.e., dicts, lists, strings, numbers, booleans, and None).

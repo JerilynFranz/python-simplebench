@@ -1,8 +1,8 @@
 """Typed dictionaries for the V1 MachineInfo data structure.
 
-(run-time version)
+(type stub version)
 
-This is the run-time version of the type definitions for V1 Report data.
+This is the type stub version of the type definitions for V1 Report data.
 
 There are two versions (.pyi and .py) to accommodate different versions
 of Python supporting different features in TypedDicts.

@@ -14,14 +14,8 @@ The implementations of EnvironmentInfo are backwards compatible with future vers
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base EnvironmentInfo representation at the time of the V1 schema release.
 """
-from __future__ import annotations
+from abc import ABC, abstractmethod
 
-from abc import ABC
-from typing import Any
-
-from simplebench.exceptions import SimpleBenchTypeError
-
-from .._error_tags import _ExecutionEnvironmentErrorTag
 from .environment import Environment
 from .report_element import ReportElement
 
@@ -34,42 +28,3 @@ class BaseExecutionEnvironment(ReportElement, ABC):
 
     This must be overridden by subclasses to include the allowed execution environment types.
     """
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'BaseExecutionEnvironment':
-        """Create an ExecutionEnvironment instance from a dictionary.
-
-        .. code-block:: python
-           :caption: Example
-
-           environment_info = ExecutionEnvironment.from_dict(data)
-
-        :param data: The dictionary containing execution enviornment information.
-        :return: A ExecutionEnvironment instance.
-        """
-        if not isinstance(data, dict):
-            raise SimpleBenchTypeError(
-                "data must be a dictionary",
-                tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_TYPE)
-
-        known_keys = set(cls.ALLOWED_ENVIRONMENTS.keys())
-        extra_keys = set(data.keys()) - known_keys
-        if extra_keys:
-            raise SimpleBenchTypeError(
-                f"Unexpected keys in data dictionary: {extra_keys}",
-                tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
-
-        kwargs: dict[str, Environment] = {}
-        for key, value in data.items():
-            if key in cls.ALLOWED_ENVIRONMENTS:
-                if not isinstance(value, dict):
-                    raise SimpleBenchTypeError(
-                        f"Value for key '{key}' must be a dictionary",
-                        tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_VALUE_TYPE)
-                env_type = cls.ALLOWED_ENVIRONMENTS[key]
-                kwargs[key] = env_type.from_dict(value)
-            else:
-                raise SimpleBenchTypeError(
-                    f"Unexpected key in data dictionary: {key}",
-                    tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
-
-        return cls(**kwargs)

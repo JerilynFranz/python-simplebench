@@ -1,6 +1,6 @@
 """MachineInfo version 1 base class.
 
-This class represents machine information in a JSON report.
+This class represents machine information in a report.
 
 It implements validation and serialization/deserialization methods to and from dictionaries
 for the following JSON Schema version:
@@ -19,6 +19,7 @@ from typing import Any
 from simplebench.report.base import BaseMachineInfo, JSONSchema
 
 from .. import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
+from ..types import MachineInfoData, MachineInfoDict
 from . import validate
 from .machine_info_schema import MachineInfoSchema
 
@@ -63,7 +64,7 @@ class MachineInfo(BaseMachineInfo):
         self._execution_environment = validate.execution_environment(execution_environment)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'MachineInfo':
+    def from_dict(cls, data: MachineInfoData) -> 'MachineInfo':
         """Create a MachineInfo instance from a dictionary.
 
         .. code-block:: python
@@ -93,22 +94,21 @@ class MachineInfo(BaseMachineInfo):
             })
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> MachineInfoDict:
         """Convert the MachineInfo to a dictionary.
 
         :return: A dictionary representation of the MachineInfo.
         """
-        data: dict[str, Any] = {}
-        for key in self.init_params():
-            value = getattr(self, key)
-            if hasattr(value, 'to_dict'):
-                data[key] = value.to_dict()
-            else:
-                data[key] = value
-
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
-        return data
+        cls = self.__class__
+        return MachineInfoDict(
+            type=cls.TYPE,
+            version=cls.VERSION,
+            hash_id=self.hash_id,
+            node=self.node,
+            execution_environment=self.execution_environment.to_dict(),
+            cpu=self.cpu.to_dict(),
+            memory=self.memory.to_dict(),
+            system=self.system.to_dict())
 
     @property
     def hash_id(self) -> str:

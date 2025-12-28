@@ -10,6 +10,7 @@ from .raw_data_block import RawDataBlock
 from .report import Report
 from .results_info import ResultsInfo
 from .stats_block import StatsBlock
+from .system_info import SystemInfo
 from .value_block import ValueBlock
 from .vcs_info import VCSInfo
 
@@ -24,6 +25,7 @@ __all__ = [
     "Report",
     "ResultsInfo",
     "StatsBlock",
+    "SystemInfo",
     "ValueBlock",
     "VCSInfo",
 ]

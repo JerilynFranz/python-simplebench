@@ -1,8 +1,8 @@
 """Typed dictionaries for the V1 ExecutionEnvironment data structure.
 
-(run-time version)
+(type stub version)
 
-This is the run-time version of the type definitions for V1 ExecutionEnvironment data.
+This is the type stub version of the type definitions for V1 ExecutionEnvironment data.
 
 There are two versions (.pyi and .py) to accommodate different versions
 of Python supporting different features in TypedDicts.
@@ -38,7 +38,7 @@ if sys.version_info >= (3, 12):
 
         :param Required[PythonInfoData] python_info: Information about the Python interpreter.
         """
-        python_info: Required[PythonInfoData]
+        python: Required[PythonInfoData]
 
 else:  # For Python versions < 3.12 where closed=True is not supported
     class ExecutionEnvironmentData(TypedDict, total=False):
@@ -51,7 +51,7 @@ else:  # For Python versions < 3.12 where closed=True is not supported
 
         :param Required[PythonInfoData] python_info: Information about the Python interpreter.
         """
-        python_info: Required[PythonInfoData]
+        python: Required[PythonInfoData]
 
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
@@ -74,7 +74,7 @@ if sys.version_info >= (3, 12):
 
         :param Required[PythonInfoDict] python_info: Information about the Python interpreter.
         """
-        python_info: Required[PythonInfoDict]
+        python: Required[PythonInfoDict]
 
 else:  # For Python versions < 3.12 where closed=True is not supported
     class ExecutionEnvironmentDict(TypedDict, total=True):
@@ -94,4 +94,4 @@ else:  # For Python versions < 3.12 where closed=True is not supported
 
         :param Required[PythonInfoDict] python_info: Information about the Python interpreter.
         """
-        python_info: Required[PythonInfoDict]
+        python: Required[PythonInfoDict]

@@ -1,12 +1,21 @@
-"""Typed dictionaries for the V1 ResultsInfo data structure."""
+"""Typed dictionaries for the V1 ResultsInfo data structure.
+"""
 from typing import TypedDict
+
+from simplebench.types import (
+    ImmutableVariationColsType,
+    ImmutableVariationMarksType,
+    VariationColsType,
+    VariationMarksType,
+)
 
 from .value_block_dict import ValueBlockData, ValueBlockDict
 
 
 # A base for fields that are always required and have the same type.
 class _ResultsInfoCore(TypedDict, total=True):
-    kwargs: dict[str, str]
+    variation_cols: VariationColsType
+    variation_marks: VariationMarksType
     stats: dict[str, ValueBlockDict]
 
 
@@ -37,6 +46,6 @@ class ResultsInfoDict(_RequiredResultsInfoDict, total=False):
 
     :param dict[str, str] kwargs: Keyword argument variations for this result.
     :param dict[str, ValueBlockDict] stats: Statistical results.
-    :param list[ValueBlockDict] raw_results: (optional) Raw timing results.
+    :param tuple[ValueBlockDict, ...] raw_results: (optional) Raw timing results.
     """
-    raw_results: list[ValueBlockDict]
+    raw_results: tuple[ValueBlockDict, ...]

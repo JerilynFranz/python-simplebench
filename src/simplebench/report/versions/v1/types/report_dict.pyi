@@ -1,8 +1,8 @@
 """Typed dictionaries for the V1 Report data structure.
 
-(run-time version)
+(Type stub version)
 
-This is the run-time version of the type definitions for V1 Report data.
+This is the type stub version of the type definitions for V1 Report data.
 
 There are two versions (.pyi and .py) to accommodate different versions
 of Python supporting different features in TypedDicts.
@@ -30,7 +30,6 @@ from simplebench.types import ImmutableVariationColsType, VariationColsType
 
 from .machine_info_dict import MachineInfoData, MachineInfoDict
 from .results_info_dict import ResultsInfoData, ResultsInfoDict
-
 
 # A base for fields that are always required and have the same type.
 class _ReportCore(TypedDict, total=True):
@@ -63,7 +62,7 @@ class _RequiredReportData(_ReportCore, total=True):
 if sys.version_info >= (3, 12):
     class ReportData(_RequiredReportData, total=False, closed=True):
         """Typed dictionary for V1 Report data used as INPUT.
-
+                    
         All fields except `type` and `version` are required (`total=False`).
 
         .. note::

@@ -1,5 +1,5 @@
 """Types used by SimpleBench."""
-from .primitives import (
+from .core import (
     CoreDataMappingType,
     CoreDataSequenceType,
     CoreDataSetType,
@@ -10,6 +10,7 @@ from .primitives import (
     ImmutableCoreDataTypes,
 )
 from .values import Values
+from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
 
 __all__ = [
     "CoreDataTypes",
@@ -20,5 +21,9 @@ __all__ = [
     "ImmutableCoreDataSequenceType",
     "ImmutableCoreDataSetType",
     "ImmutableCoreDataTypes",
-    "Values"
+    "Values",
+    "VariationColsType",
+    "ImmutableVariationColsType",
+    "VariationMarksType",
+    "ImmutableVariationMarksType",
 ]

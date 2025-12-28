@@ -18,3 +18,5 @@ class _ExecutionEnvironmentErrorTag(ErrorTag):
     """A value in the data argument provided to the execution environment is of an invalid type."""
     INVALID_PYTHON_PROPERTY_TYPE = "Invalid Python property type"
     """The Python property provided to the execution environment is of an invalid type."""
+    MISSING_PYTHON_PROPERTY = "Missing Python property"
+    """The required Python property is missing from the execution environment data."""

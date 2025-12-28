@@ -18,6 +18,7 @@ from typing import Any
 
 from simplebench.report.base import BaseMemoryInfo, JSONSchema
 
+from ..types import MemoryInfoData, MemoryInfoDict
 from . import validate
 from .memory_info_schema import MemoryInfoSchema
 
@@ -53,7 +54,7 @@ class MemoryInfo(BaseMemoryInfo):
         self._total_swap = validate.total_swap(total_swap)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'MemoryInfo':
+    def from_dict(cls, data: MemoryInfoData) -> 'MemoryInfo':
         """Create a MemoryInfo instance from a dictionary.
 
         .. code-block:: python
@@ -61,8 +62,8 @@ class MemoryInfo(BaseMemoryInfo):
 
            memory_info = MemoryInfo.from_dict(data)
 
-        :param data: The dictionary containing machine information.
-        :return: A MemoryInfo instance.
+        :param data: The dictionary containing the MemoryInfo data.
+        :return MemoryInfo: A MemoryInfo instance.
         """
         allowed_keys = cls.init_params()
         allowed_keys['version'] = int
@@ -78,22 +79,18 @@ class MemoryInfo(BaseMemoryInfo):
             process_as={})
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> MemoryInfoDict:
         """Convert the MemoryInfo to a dictionary.
 
-        :return: A dictionary representation of the MemoryInfo.
+        :return MemoryInfoDict: A dictionary representation of the MemoryInfo.
         """
-        data: dict[str, Any] = {}
-        for key in self.init_params():
-            value = getattr(self, key)
-            if hasattr(value, 'to_dict'):
-                data[key] = value.to_dict()
-            else:
-                data[key] = value
-
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
-        return data
+        cls = self.__class__
+        return MemoryInfoDict(
+            type=cls.TYPE,
+            version=cls.VERSION,
+            hash_id=self.hash_id,
+            total_physical=self.total_physical,
+            total_swap=self.total_swap)
 
     @property
     def hash_id(self) -> str:
