@@ -1,43 +1,8 @@
-"""Base class for JSON value block representation."""
-from abc import ABC, abstractmethod
-from collections.abc import Hashable
+"""Base class for value block representation."""
+from abc import ABC
 
-from simplebench.base import Hydrator
-
-from .json_schema import JSONSchema
-from .value_block_dict import ValueBlockDataBase, ValueBlockDictBase
+from .report_element import ReportElement
 
 
-class BaseValueBlock(Hydrator, ABC, Hashable):
+class BaseValueBlock(ReportElement, ABC):
     """Base class representing a value block."""
-
-    VERSION: int = 0
-    """Version of the ValueBlock class."""
-
-    TYPE: str = ""
-    """Type of the ValueBlock class."""
-
-    ID: str = ""
-    """ID of the ValueBlock class."""
-
-    SCHEMA: type[JSONSchema] = JSONSchema
-    """JSON schema for the ValueBlock class."""
-
-    @classmethod
-    @abstractmethod
-    def from_dict(cls, data: ValueBlockDataBase) -> "BaseValueBlock":
-        """Create a ValueBlock instance from a dictionary.
-
-        :param data: Dictionary containing the JSON results data.
-        :return: JSONStatsSummary instance.
-        """
-
-    @abstractmethod
-    def __init__(
-            self,
-           ) -> None:
-        """Initialize ValueBlock class."""
-
-    @abstractmethod
-    def to_dict(self) -> ValueBlockDictBase:
-        """Convert the ValueBlock instance to a dictionary."""

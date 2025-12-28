@@ -16,16 +16,17 @@ of the base EnvironmentInfo representation at the time of the V1 schema release.
 """
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
 
 from .._error_tags import _ExecutionEnvironmentErrorTag
-from ..protocols import Environment
+from .environment import Environment
+from .report_element import ReportElement
 
 
-class ExecutionEnvironment(ABC):
+class BaseExecutionEnvironment(ReportElement, ABC):
     """Abstract class representing the execution_environment property for a machine-info object in a JSON report.
     """
     ALLOWED_ENVIRONMENTS: dict[str, type[Environment]] = {}
@@ -33,14 +34,8 @@ class ExecutionEnvironment(ABC):
 
     This must be overridden by subclasses to include the allowed execution environment types.
     """
-
-    @abstractmethod
-    def __init__(self) -> None:
-        """Initialize EnvironmentInfo."""
-        raise NotImplementedError("This method must be overridden by subclasses")
-
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> 'ExecutionEnvironment':
+    def from_dict(cls, data: dict[str, Any]) -> 'BaseExecutionEnvironment':
         """Create an ExecutionEnvironment instance from a dictionary.
 
         .. code-block:: python
@@ -55,8 +50,6 @@ class ExecutionEnvironment(ABC):
             raise SimpleBenchTypeError(
                 "data must be a dictionary",
                 tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_TYPE)
-
-        # Additional allowed execution environment types can be added here
 
         known_keys = set(cls.ALLOWED_ENVIRONMENTS.keys())
         extra_keys = set(data.keys()) - known_keys
@@ -80,20 +73,3 @@ class ExecutionEnvironment(ABC):
                     tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_EXTRA_KEYS)
 
         return cls(**kwargs)
-
-    @abstractmethod
-    def to_dict(self) -> dict[str, Any]:
-        """Convert the ExecutionEnvironment to a dictionary.
-
-        :return: A dictionary representation of the ExecutionEnvironment.
-        """
-        raise NotImplementedError("This method must be overridden by subclasses")
-
-    @property
-    @abstractmethod
-    def hash_id(self) -> str:
-        """Generate a unique hash ID for the ExecutionEnvironment.
-
-        :return: A unique hash ID.
-        """
-        raise NotImplementedError("This method must be overridden by subclasses")

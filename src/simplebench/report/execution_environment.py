@@ -2,7 +2,7 @@
 from typing import TYPE_CHECKING
 
 from ._error_tags import _ExecutionEnvironmentErrorTag
-from .base import ExecutionEnvironment
+from .base import BaseExecutionEnvironment
 
 _JSON_CLASS_LOADED: bool = False
 
@@ -21,7 +21,7 @@ def _load_deferred_imports() -> None:
         _JSON_CLASS_LOADED = True
 
 
-def execution_environment_by_version(version: int) -> type[ExecutionEnvironment]:
+def execution_environment_by_version(version: int) -> type[BaseExecutionEnvironment]:
     """Retrieve a ExecutionEnvironment class for the specified version.
 
     :param version: The JSON report version number.
@@ -31,12 +31,12 @@ def execution_environment_by_version(version: int) -> type[ExecutionEnvironment]
 
     return json_class(
         version,
-        ExecutionEnvironment,
+        BaseExecutionEnvironment,
         _ExecutionEnvironmentErrorTag.INVALID_VERSION_TYPE,
         _ExecutionEnvironmentErrorTag.UNSUPPORTED_VERSION)
 
 
-def from_dict(data: dict) -> ExecutionEnvironment:
+def from_dict(data: dict) -> BaseExecutionEnvironment:
     """Create a json ExecutionEnvironment instance from a dictionary, with validation.
 
     It checks the version in the data and instantates the appropriate sub-class
@@ -48,9 +48,9 @@ def from_dict(data: dict) -> ExecutionEnvironment:
 
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[ExecutionEnvironment] = json_class(
+    report_class: type[BaseExecutionEnvironment] = json_class(
         version,
-        ExecutionEnvironment,
+        BaseExecutionEnvironment,
         _ExecutionEnvironmentErrorTag.INVALID_VERSION_TYPE,
         _ExecutionEnvironmentErrorTag.UNSUPPORTED_VERSION)
     return report_class.from_dict(data)

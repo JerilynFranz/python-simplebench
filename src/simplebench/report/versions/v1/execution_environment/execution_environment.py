@@ -2,8 +2,7 @@
 import hashlib
 from typing import Any
 
-from simplebench.report.base import ExecutionEnvironment as BaseExecutionEnvironment
-from simplebench.report.protocols import Environment
+from simplebench.report.base import BaseExecutionEnvironment, Environment
 
 from ..python_info import PythonInfo
 from . import validate

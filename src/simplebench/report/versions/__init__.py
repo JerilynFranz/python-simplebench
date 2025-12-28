@@ -16,6 +16,7 @@ from simplebench.validators import validate_int
 
 from ..base import (
     BaseCPUInfo,
+    BaseExecutionEnvironment,
     BaseMachineInfo,
     BaseMemoryInfo,
     BasePythonInfo,
@@ -25,14 +26,13 @@ from ..base import (
     BaseStatsBlock,
     BaseValueBlock,
     BaseVCSInfo,
-    ExecutionEnvironment,
     Metrics,
 )
 from . import v1
 
 T = TypeVar('T',
             type[BaseCPUInfo],
-            type[ExecutionEnvironment],
+            type[BaseExecutionEnvironment],
             type[BaseMachineInfo],
             type[BaseMemoryInfo],
             type[Metrics],

@@ -1,6 +1,6 @@
 """report Metrics base class.
 
-This class represents Metrics in a JSON report.
+This class represents Metrics in a report.
 
 It implements validation and serialization/deserialization methods to and from dictionaries
 for a metrics property object in the following JSON Schema version:
@@ -14,6 +14,7 @@ It is the base implemention of the JSON a metrics object representation.
 This makes the implementations of Metrics backwards compatible with future versions
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the results object representation at the time of the V1 schema release."""
+import hashlib
 from collections import UserDict
 from collections.abc import Mapping
 from copy import copy
@@ -29,9 +30,9 @@ from ..value_block import ValueBlock
 
 
 class MetricsObject(UserDict):
-    """Base class representing the 'metrics' object in a JSON report ResultsInfo object.
+    """Immutable base class representing the 'metrics' object in a report ResultsInfo object.
 
-    This is a dictionary where the keys are metric names (strings) and the values
+    This is a dictionary (a UserDict) where the keys are metric names (strings) and the values
     are MetricItem objects (a StatsBlock, a ValueBlock, or a RawDataBlock).
 
     It is not a standalone JSON schema object, but rather a subcomponent
@@ -39,7 +40,7 @@ class MetricsObject(UserDict):
 
     See :class:`~simplebench.report.versions.v1.results_info.ResultsInfo` for more details.
 
-    The typing enforcement is done in the __setitem__ method.
+    The typing enforcement is done in the __setitem__ method at initialization time.
     """
 
     MetricItem: TypeAlias = StatsBlock | ValueBlock | RawDataBlock
@@ -50,6 +51,25 @@ class MetricsObject(UserDict):
     - :class:`~simplebench.report.versions.v1.value_block.ValueBlock`
     - :class:`~simplebench.report.versions.v1.raw_data_block.RawDataBlock`
     """
+    def __init__(self, metrics: Mapping[str, 'MetricsObject.MetricItem']):
+        """Initialize a Metrics v1 instance.
+
+        :param Mapping[str, MetricsObject.MetricItem] metrics: The metrics dictionary. The keys are metric names
+            and the values are Metrics.MetricItem objects (either a StatsBlock or a ValueBlock).
+
+            The keys must must be in the format 'namespace::type_name'
+            where both namespace and type_name start and end with an alphanumeric character
+            and can contain underscores in between."
+        """
+        for metric_name, metric_object in metrics.items():
+            validate_namespaced_identifier(metric_name)
+            if not isinstance(metric_object, MetricsObject.MetricItem):
+                raise SimpleBenchTypeError(
+                    f"Metric item must be a StatsBlock or ValueBlock, got {type(metric_object)}",
+                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
+        super().__init__(copy(metrics))
+        self._hash_id: str = ''
+        self._frozen: bool = True
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Mapping[str, Any]]) -> "MetricsObject":
@@ -91,26 +111,10 @@ class MetricsObject(UserDict):
 
         return cls(metrics=metrics)
 
-    def __init__(self, metrics: Mapping[str, 'MetricsObject.MetricItem']):
-        """Initialize a Metrics v1 instance.
-
-        :param Mapping[str, MetricsObject.MetricItem] metrics: The metrics dictionary. The keys are metric names
-            and the values are Metrics.MetricItem objects (either a StatsBlock or a ValueBlock).
-
-            The keys must must be in the format 'namespace::type_name'
-            where both namespace and type_name start and end with an alphanumeric character
-            and can contain underscores in between."
-        """
-        for metric_name, metric_object in metrics.items():
-            validate_namespaced_identifier(metric_name)
-            if not isinstance(metric_object, MetricsObject.MetricItem):
-                raise SimpleBenchTypeError(
-                    f"Metric item must be a StatsBlock or ValueBlock, got {type(metric_object)}",
-                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
-        super().__init__(copy(metrics))
-
     def __setitem__(self, key: str, value: MetricItem) -> None:
         """Set a metric item in the metrics dictionary.
+
+        Disabled after initialization to make the MetricsObject immutable.
 
         The key must be a valid namespaced identifier and the value must be a MetricItem object
         (either a StatsBlock or a ValueBlock).
@@ -125,6 +129,10 @@ class MetricsObject(UserDict):
         :raises SimpleBenchKeyError: If the metric name is invalid.
         :raises SimpleBenchTypeError: If the metric item is not of the correct type.
         """
+        if self._frozen:
+            raise SimpleBenchTypeError(
+                "MetricsObject is frozen and cannot be modified after initialization.",
+                tag=_MetricsErrorTag.METRICS_OBJECT_FROZEN)
         try:
             validate_namespaced_identifier(key)
         except SimpleBenchValueError as e:
@@ -167,3 +175,32 @@ class MetricsObject(UserDict):
             raise SimpleBenchKeyError(
                 f"Metric name '{key}' does not exist in metrics.",
                 tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE) from e
+
+    def __eq__(self, other):
+        """Check equality with another MetricsObject."""
+        if not isinstance(other, MetricsObject):
+            return False
+        return self.hash_id == other.hash_id
+
+    def __hash__(self) -> int:
+        """Get the hash of the MetricsObject based on its hash_id."""
+        return hash(self.hash_id)
+
+    @property
+    def hash_id(self) -> str:
+        """Get the hash_id property.
+
+        The hash_id is a SHA-256 hash of the concatenated hash_ids of all metric items
+        in the metrics dictionary, sorted by metric name for consistency.
+
+        :return: The hash_id string.
+        """
+        if self._hash_id == '':
+            hash_keys = sorted(k for k in self.data.items())
+            hashed_subelements: list[str] = []
+            for key, value in hash_keys:
+                if hasattr(value, 'hash_id'):
+                    hashed_subelements.append(f"{key}:{value.hash_id}")
+            hash_input = "\x00".join(hashed_subelements).encode('utf-8')
+            self._hash_id = hashlib.sha256(hash_input).hexdigest()
+        return self._hash_id
