@@ -11,25 +11,166 @@ from copy import copy
 from functools import cache
 from typing import Any, Callable, Iterable, get_type_hints, is_typeddict
 
-
 from . import validate
 
 
 class Hydrator:
-    """Base class providing convience methods for processing a JSON object."""
+    """Base class providing convenience methods for processing data dictionaries
+    for object import operations for containers such as dataclasses or TypedDicts.
+    It handles parameter introspection, data validation, default value application,
+    and type processing for nested objects.
 
+    It is intended to be used as a base class for other classes that need to
+    import/export data from/to dictionaries with validation such as dataclasses
+    or TypedDicts being serialized/deserialized to/from dictionaries where
+    the data needs to be validated and processed into complex nested objects.
+
+    It is not intended to be used for cases where simple **kwargs unpacking
+    is sufficient, or where deep type checking is required beyond basic validation
+    and processing.
+    
+    This class provides two main functionalities:
+    1. Initializing a mapping of constructor parameters and their types (`init_params`)
+       for a class using keyword-only arguments, and
+    2. Importing and validating data from a dictionary based on allowed fields,
+       optional fields, default values, matching rules, and processing functions. (`import_data`).
+
+    Subclasses can utilize these methods to facilitate data import/export operations
+    and ensure that the data conforms to expected formats and types.
+
+    It is designed to allow easy import of complex nested data structures by allowing
+    custom processing functions for specific fields during the import process (via
+    the `process_as` parameter) while allowing customization of import rules. This includes
+    specifying fields to be skipped, providing default values, specifying optional fields,
+    and matching rules for fields during import.
+     
+    It uses type hints to determine the expected types of fields for validation purposes
+    during import. Because it is mainly intended to be used for data serialization/deserialization
+    of dictionaries using only basic Python types such as dictionaries, lists, and primitives,
+    it does not implement deep type checking beyond what is necessary for basic validation
+    and processing.
+
+    Example usage:
+
+    .. code-block:: python3
+        :caption: Example of using Hydrator as a base class for data import/export.
+        from typing import Any
+        from simplebench.base.hydrator.hydrator import Hydrator
+
+        data: dict[str, Any] = {
+            'field1': 42,
+            'field2': {'some': 'data'},
+            'field3': 3.14
+        }
+
+        MyDataClassInstance = MyDataClass.from_dict(data)
+
+        class MyDataClass(Hydrator):
+            '''A simple data class unpacking nested objects from dicts.'''
+            def __init__(self, *,
+                         field1: int,
+                         field2: AnotherClass,
+                         field3: float = 0.0,
+                         field4: AThirdClass):
+                self.field1 = field1
+                self.field2 = field2
+                self.field3 = field3
+                self.field4 = field4
+
+            @classmethod
+            def from_dict(cls, data: dict[str, Any]) -> "MyDataClass":
+                allowed_fields = cls.init_params()
+
+                def process_field4(value: dict) -> AThirdClass:
+                    return AThirdClass(**value)
+            
+                validated_data = cls.import_data(
+                    data=data,
+                    allowed_fields=allowed_fields,
+                    optional_fields=['field3'],
+                    defaults={'field3': 0.0},
+                    process_as={
+                        'field2': AnotherClass.from_dict,
+                        'field4': process_field4
+                    }
+                )
+                return cls(**validated_data)
+
+            def to_dict(self) -> dict[str, Any]:
+                return {
+                    'field1': self.field1,
+                    'field2': self.field2.to_dict(),
+                    'field3': self.field3,
+                    'field4': {
+                        'value': self.field4.value
+                    }
+                }
+
+        class AThirdClass:
+            '''Another simple class to demonstrate nested object processing
+            of an unrelated class that can be constructed using a helper function
+            shim to illustrate custom processing during data import.
+            '''
+            def __init__(self, *, value: float):
+                self.value = value
+
+        class AnotherClass:
+            '''A simple class to demonstrate nested object processing
+            
+            This is a simple class that can be constructed from a dictionary
+            using **kwargs unpacking to illustrate nested object handling
+            in the Hydrator base class.
+            
+            It is the kind of class that might be used as a field by a Hydrator subclass
+            but does not itself need to inherit from Hydrator.
+            '''
+            def __init__(self, *, some: str):
+                self.some = some
+
+            @classmethod
+            def from_dict(cls, data: dict[str, Any]) -> "AnotherClass":
+                return cls(**data)
+
+            def to_dict(self) -> dict[str, Any]:
+                return {'some': self.some}
+
+
+    """
     @classmethod
     @cache
     def init_params(cls) -> dict[str, Any]:
-        """Return a dictionary of the parameters that can be passed to the constructor.
+        """Return a dictionary of the parameters and their types that can be
+        passed to the constructor.
+
+        It inspects the class's `__init__` method to extract the keyword-only
+        parameters and their type annotations and returns them as a dictionary.
+
+        If the class is a TypedDict or a dataclass, it extracts the fields
+        and their types accordingly.
+
+        To use with TypedDicts, pass the TypedDict class itself as the `cls` parameter:
+
+        .. code-block:: python3
+
+            from typing import TypedDict
+
+            class MyTypedDict(TypedDict):
+                field1: int
+                field2: str
+
+            params = Hydrator.init_params(MyTypedDict)
+            # params will be {'field1': int, 'field2': str}
+            value = MyTypedDict(**params)
 
         It is used to help determine which fields are required for the constructor
-        and what their types are.
+        and what their types are during data import/export operations.
 
         Only keyword-only parameters are included. It uses `get_type_hints` to
         resolve annotations, including simple and generic types.
 
         It is cached to avoid recomputing it every time it is called.
+
+        :return dict[str, Any]: A dictionary mapping parameter names for the __init__ method to their types.
         """
         # TypedDict support
         if is_typeddict(cls):
@@ -41,7 +182,11 @@ class Hydrator:
 
         # Regular class logic (Python 3.10+)
         try:
-            type_hints = get_type_hints(cls.__init__)
+            type_hints = get_type_hints(
+                cls.__init__,
+                globalns=vars(inspect.getmodule(cls)),
+                localns=dict(vars(cls))
+            )
         except Exception:  # pylint: disable=broad-exception-caught
             return {}
 
@@ -67,20 +212,20 @@ class Hydrator:
 
         :param Mapping[str, Any] data: The data dictionary to process.
         :param Mapping[str, Any] allowed_fields: A dictionary of allowed input keys and their types. It cannot be empty.
-        :param Iterable[str] | None skip_fields: A list of input keys to NOT include in the output.
+        :param Iterable[str] | None skip_fields: (optional) A list of input keys to NOT include in the output.
                     Only keys that are present in the `allowed_fields` dictionary can be skipped.
-        :param Iterable[str] | None optional_fields: An iterable of input keys that are optional and
+        :param Iterable[str] | None optional_fields: (optional) An iterable of input keys that are optional and
                     that can be omitted from the output if missing. Only keys that are present in the
                     `allowed_fields` dictionary can be optional.
-        :param Mapping[str, Any] | None defaults: A dictionary of default values for keys if they are not present.
+        :param Mapping[str, Any] | None defaults: (optional) A dictionary of default values for keys if they are not present.
                     If a key is present in the input data, the default value is not used.
                     If a value is set by the default, it is not considered missing.
                     Only keys that are present in the `optional_fields` dictionary can have default values.
-        :param Mapping[str, Any] | None match_on: A dictionary of keys and values that must match the
+        :param Mapping[str, Any] | None match_on: (optional) A dictionary of keys and values that must match the
                         corresponding keys in the input data. This is processed AFTER the default
                         values are applied. Only keys that are present in the `allowed_fields`
                         dictionary can have match_on rules.
-        :param Mapping[str, Callable[[Any], Any]] | None process_as: A dictionary of keys and functions
+        :param Mapping[str, Callable[[Any], Any]] | None process_as: (optional) A dictionary of keys and functions
                         to apply to the corresponding values in the input data before storing in the
                         output. This is processed AFTER the match_on rules for input are checked.
                         Only keys that are present in the `allowed_fields` dictionary can have
@@ -88,8 +233,6 @@ class Hydrator:
         :return dict[str, Any]: The processed and validated data dictionary.
         :raises: SimpleBenchTypeError if the data does not match the rules.
 
-        Raises:
-            SimpleBenchValueError: If the data does not match the rules.
         """
         data = validate.data(data)
         allowed_fields_map = validate.allowed(allowed_fields)
