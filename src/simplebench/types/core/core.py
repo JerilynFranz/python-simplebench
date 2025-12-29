@@ -3,8 +3,10 @@
 This module provides two key `TypeAlias` definitions:
 - `CoreDataTypes`: A general-purpose alias for serializable data/structures.
 - `ImmutableCoreDataTypes`: A stricter alias for immutable serializable data/structures.
+
+There are also several related `TypeAlias` definitions for mappings, sequences, and sets
+built upon these core types and is_* functions to validate instances of these types.
 """
-# pylint: disable=line-too-long
 from __future__ import annotations
 
 import threading
@@ -19,7 +21,8 @@ from simplebench.validators import core_data_types as validators
 
 from ._error_tags import _CoreTypeErrorTags
 
-CoreDataTypes: TypeAlias = str | int | float | bool | None | Sequence['CoreDataTypes'] | Mapping[str, 'CoreDataTypes'] | Set['CoreDataTypes']
+CoreDataTypes: TypeAlias = str | int | float | bool | None | \
+    Sequence['CoreDataTypes'] | Mapping[str, 'CoreDataTypes'] | Set['CoreDataTypes']
 """Type alias for the core data type primitives used in SimpleBench.
 
 These are the primitive data types that can be safely used in various
@@ -38,7 +41,8 @@ Allowed types are:
     - `Set[CoreDataTypes]` (covers set, frozenset)
 """
 
-ImmutableCoreDataTypes: TypeAlias = str | int | float | bool | None | tuple['ImmutableCoreDataTypes', ...] | frozenset['ImmutableCoreDataTypes'] | MappingProxyType[str, 'ImmutableCoreDataTypes']
+ImmutableCoreDataTypes: TypeAlias = str | int | float | bool | None | tuple['ImmutableCoreDataTypes', ...] | \
+    frozenset['ImmutableCoreDataTypes'] | MappingProxyType[str, 'ImmutableCoreDataTypes']
 """Type alias for the immutable core data type primitives used in SimpleBench.
 
 These are the immutable primitive data types that can be used in various
@@ -121,7 +125,9 @@ class _NotInCache:
 
 _NOT_IN_CACHE: Final[_NotInCache] = _NotInCache()
 
-def is_core_data_type(value: CoreDataTypes, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataTypes]:
+def is_core_data_type(
+        value: CoreDataTypes, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataTypes]:
     """Check if a value is a valid CoreDataTypes instance.
 
     :param object value: The value to check.
@@ -134,7 +140,9 @@ def is_core_data_type(value: CoreDataTypes, *, max_depth=DEFAULT_MAX_CORE_DATA_D
     except (ValueError, TypeError):
         return False
 
-def is_core_data_mapping_type(value: CoreDataMappingType, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataMappingType]:
+def is_core_data_mapping_type(
+        value: CoreDataMappingType, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataMappingType]:
     """Check if a value is a valid CoreDataMappingType instance.
 
     :param object value: The value to check.
@@ -147,7 +155,9 @@ def is_core_data_mapping_type(value: CoreDataMappingType, *, max_depth=DEFAULT_M
     except (ValueError, TypeError):
         return False
 
-def is_core_data_sequence_type(value: CoreDataSequenceType, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataSequenceType]:
+def is_core_data_sequence_type(
+        value: CoreDataSequenceType, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataSequenceType]:
     """Check if a value is a valid CoreDataSequenceType instance.
 
     :param object value: The value to check.
@@ -160,7 +170,9 @@ def is_core_data_sequence_type(value: CoreDataSequenceType, *, max_depth=DEFAULT
     except (ValueError, TypeError):
         return False
 
-def is_core_data_set_type(value: CoreDataSetType, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataSetType]:
+def is_core_data_set_type(
+        value: CoreDataSetType, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataSetType]:
     """Check if a value is a valid CoreDataSetType instance.
 
     :param object value: The value to check.
@@ -173,7 +185,9 @@ def is_core_data_set_type(value: CoreDataSetType, *, max_depth=DEFAULT_MAX_CORE_
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_type(value: ImmutableCoreDataTypes, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataTypes]:
+def is_immutable_core_data_type(
+        value: ImmutableCoreDataTypes, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataTypes]:
     """Check if a value is a valid ImmutableCoreDataTypes instance.
 
     :param object value: The value to check.
@@ -189,7 +203,9 @@ def is_immutable_core_data_type(value: ImmutableCoreDataTypes, *, max_depth=DEFA
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_mapping_type(value: ImmutableCoreDataMappingType, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataMappingType]:
+def is_immutable_core_data_mapping_type(
+        value: ImmutableCoreDataMappingType, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataMappingType]:
     """Check if a value is a valid ImmutableCoreDataMappingType instance.
 
     :param object value: The value to check.
@@ -199,12 +215,15 @@ def is_immutable_core_data_mapping_type(value: ImmutableCoreDataMappingType, *, 
     if value is _in_immutables_cache(value) and isinstance(value, MappingProxyType):
         return True
     try:
-        validators.validate_immutable_core_data_mapping(value, 'ImmutableCoreDataMapping is checking', max_depth=max_depth)
+        validators.validate_immutable_core_data_mapping(
+            value, 'ImmutableCoreDataMapping is checking', max_depth=max_depth)
         return True
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_sequence_type(value: ImmutableCoreDataSequenceType, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataSequenceType]:
+def is_immutable_core_data_sequence_type(
+        value: ImmutableCoreDataSequenceType, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataSequenceType]:
     """Check if a value is a valid ImmutableCoreDataSequenceType instance.
 
     :param object value: The value to check.
@@ -214,12 +233,15 @@ def is_immutable_core_data_sequence_type(value: ImmutableCoreDataSequenceType, *
     if value is _in_immutables_cache(value) and isinstance(value, tuple):
         return True
     try:
-        validators.validate_immutable_core_data_sequence(value, 'ImmutableCoreDataSequence is checking', max_depth=max_depth)
+        validators.validate_immutable_core_data_sequence(
+            value, 'ImmutableCoreDataSequence is checking', max_depth=max_depth)
         return True
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_set_type(value: ImmutableCoreDataSetType, *, max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataSetType]:
+def is_immutable_core_data_set_type(
+        value: ImmutableCoreDataSetType, *,
+        max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataSetType]:
     """Check if a value is a valid ImmutableCoreDataSetType instance.
 
     :param object value: The value to check.
@@ -230,7 +252,8 @@ def is_immutable_core_data_set_type(value: ImmutableCoreDataSetType, *, max_dept
         return True
 
     try:
-        validators.validate_immutable_core_data_set(value, 'ImmutableCoreDataSet is checking', max_depth=max_depth)
+        validators.validate_immutable_core_data_set(
+            value, 'ImmutableCoreDataSet is checking', max_depth=max_depth)
         _cache_immutable_reference(value)
         return True
     except (ValueError, TypeError):
