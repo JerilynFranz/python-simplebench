@@ -180,6 +180,9 @@ def is_immutable_core_data_type(value: ImmutableCoreDataTypes, *, max_depth=DEFA
     :param int max_depth: Maximum depth to check nested structures.
     :return bool: True if the value is a valid ImmutableCoreDataTypes instance, False otherwise.
     """
+    if value is _in_immutables_cache(value):
+        return True
+
     try:
         validators.validate_immutable_core_data(value, 'ImmutableCoreData is checking', max_depth=max_depth)
         return True
@@ -193,7 +196,7 @@ def is_immutable_core_data_mapping_type(value: ImmutableCoreDataMappingType, *, 
     :param int max_depth: Maximum depth to check nested structures.
     :return bool: True if the value is a valid ImmutableCoreDataMappingType instance, False otherwise.
     """
-    if value is _in_immutables_cache(value):
+    if value is _in_immutables_cache(value) and isinstance(value, MappingProxyType):
         return True
     try:
         validators.validate_immutable_core_data_mapping(value, 'ImmutableCoreDataMapping is checking', max_depth=max_depth)
@@ -208,7 +211,7 @@ def is_immutable_core_data_sequence_type(value: ImmutableCoreDataSequenceType, *
     :param int max_depth: Maximum depth to check nested structures.
     :return bool: True if the value is a valid ImmutableCoreDataSequenceType instance, False otherwise.
     """
-    if value is _in_immutables_cache(value):
+    if value is _in_immutables_cache(value) and isinstance(value, tuple):
         return True
     try:
         validators.validate_immutable_core_data_sequence(value, 'ImmutableCoreDataSequence is checking', max_depth=max_depth)
@@ -223,7 +226,7 @@ def is_immutable_core_data_set_type(value: ImmutableCoreDataSetType, *, max_dept
     :param int max_depth: Maximum depth to check nested structures.
     :return bool: True if the value is a valid ImmutableCoreDataSetType instance, False otherwise.
     """
-    if value is _in_immutables_cache(value):
+    if value is _in_immutables_cache(value) and isinstance(value, frozenset):
         return True
 
     try:
