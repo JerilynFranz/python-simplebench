@@ -39,8 +39,7 @@ from typing import Any, Sequence, overload
 from simplebench.decorators import immutable
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
-from simplebench.report.base import BaseStatsBlock
-from simplebench.report.base import JSONSchema
+from simplebench.report.base import BaseStatsBlock, JSONSchema
 from simplebench.types.values import Values
 
 from . import validate
@@ -262,10 +261,10 @@ class StatsBlock(BaseStatsBlock):
 
         kwargs = cls.import_data(
             data=data,
-            allowed=allowed_keys,
-            skip={'version', 'type', 'measurements'},
-            optional={'description', 'version', 'type'},
-            default={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
+            allowed_fields=allowed_keys,
+            skip_fields={'version', 'type', 'measurements'},
+            optional_fields={'description', 'version', 'type'},
+            defaults={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={'percentiles': Values})
         return cls(**kwargs)

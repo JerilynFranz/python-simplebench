@@ -61,8 +61,11 @@ class ReportSchema(JSONSchema):
                 },
                 "variation_cols": {
                     "title": "Variation Columns",
-                    "description": "Variation columns for the benchmark",
-                    "type": "object"
+                    "description": "Variation columns for the benchmark. Variation columns define the names for parameters for benchmark variations in a run and their display label.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 },
                 "results": {
                     "title": "Results",

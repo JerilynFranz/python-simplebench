@@ -82,10 +82,10 @@ class ResultsInfo(BaseResultsInfo):
 
         kwargs = cls.import_data(
             data=data,
-            allowed=allowed_keys,
-            skip={'version', 'type'},
-            optional={'version', 'type'},
-            default={'version': cls.VERSION, 'type': cls.TYPE},
+            allowed_fields=allowed_keys,
+            skip_fields={'version', 'type'},
+            optional_fields={'version', 'type'},
+            defaults={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={'metrics': MetricsObject.from_dict})
         return cls(**kwargs)

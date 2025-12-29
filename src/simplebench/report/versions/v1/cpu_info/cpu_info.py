@@ -122,10 +122,10 @@ class CPUInfo(BaseCPUInfo):
 
         kwargs = cls.import_data(
             data=data,
-            allowed=allowed_keys,
-            skip={'version', 'type'},
-            optional={'hash_id', 'version', 'type'},
-            default={'hash_id': None, 'version': cls.VERSION, 'type': cls.TYPE},
+            allowed_fields=allowed_keys,
+            skip_fields={'version', 'type'},
+            optional_fields={'hash_id', 'version', 'type'},
+            defaults={'hash_id': None, 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 

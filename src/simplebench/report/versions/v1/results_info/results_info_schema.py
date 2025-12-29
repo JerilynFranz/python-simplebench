@@ -58,10 +58,13 @@ class ResultsInfoSchema(JSONSchema):
                     "description": "Complexity analysis N value for the result",
                     "type": "number"
                 },
-                "variation_cols": {
-                    "title": "Variation Columns",
-                    "description": "Variation columns for the result",
-                    "type": "object"
+                "variation_marks": {
+                    "title": "Variation Marks",
+                    "description": "Variation marks for the result. Variation marks identify the kwargs combination used for a specific benchmark result",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 },
                 "metrics": {
                     "$ref": "#/$defs/metrics"

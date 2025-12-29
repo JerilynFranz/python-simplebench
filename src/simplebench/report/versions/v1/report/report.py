@@ -95,10 +95,10 @@ class Report(BaseReport):
 
         kwargs = cls.import_data(  # Hydrate instance arguments from dict
             data=data,
-            allowed=allowed_keys,
-            skip={'version', 'type'},
-            optional={'version', 'type'},
-            default={'version': cls.VERSION, 'type': cls.TYPE},
+            allowed_fields=allowed_keys,
+            skip_fields={'version', 'type'},
+            optional_fields={'version', 'type'},
+            defaults={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={
                 'results': process_results,
@@ -111,7 +111,7 @@ class Report(BaseReport):
 
         :return: Dictionary containing the JSON report data.
         """
-        output = ReportDict({
+        return ReportDict({
             'type': self.TYPE,
             'version': self.VERSION,
             'timestamp': self.timestamp,

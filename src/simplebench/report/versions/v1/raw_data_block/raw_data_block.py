@@ -72,10 +72,10 @@ class RawDataBlock(BaseRawDataBlock):
         init_params['version'] = int
         kwargs = cls.import_data(
             data=data,
-            allowed=init_params,
-            skip={'type', 'version'},
-            optional={'timer', 'type', 'version'},
-            default={'type': cls.TYPE, 'version': cls.VERSION},
+            allowed_fields=init_params,
+            skip_fields={'type', 'version'},
+            optional_fields={'timer', 'type', 'version'},
+            defaults={'type': cls.TYPE, 'version': cls.VERSION},
             match_on={'type': cls.TYPE, 'version': cls.VERSION},
             process_as={'data': Values},
         )

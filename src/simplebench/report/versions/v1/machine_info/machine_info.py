@@ -81,10 +81,10 @@ class MachineInfo(BaseMachineInfo):
 
         kwargs = cls.import_data(
             data=data,
-            allowed=allowed_keys,
-            skip={'version', 'type'},
-            optional={'hash_id', 'node', 'version', 'type'},
-            default={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
+            allowed_fields=allowed_keys,
+            skip_fields={'version', 'type'},
+            optional_fields={'hash_id', 'node', 'version', 'type'},
+            defaults={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={
                 'execution_environment': ExecutionEnvironment.from_dict,
@@ -97,7 +97,7 @@ class MachineInfo(BaseMachineInfo):
     def to_dict(self) -> MachineInfoDict:
         """Convert the MachineInfo to a dictionary.
 
-        :return: A dictionary representation of the MachineInfo.
+        :return MachineInfoDict: A dictionary representation of the MachineInfo.
         """
         cls = self.__class__
         return MachineInfoDict(
