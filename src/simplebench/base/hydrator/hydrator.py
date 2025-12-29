@@ -103,8 +103,7 @@ class Hydrator:
         validate.match_on_values(data, match_on_fields)
         validate.allowed_keys_against_data(data, allowed_fields_map)
         validate.required_keys_against_data(data, allowed_fields_map, optional_fields_set)
-        output = copy(data)  # Shallow copy to avoid mutating input
-        output = cls._apply_process_as_handlers(output, process_as_handlers)
+        output = cls._apply_process_as_handlers(data, process_as_handlers)
         output = cls._remove_skipped_fields(output, skip_fields_set)
         validate.data_types(output, allowed_fields_map)
         return output

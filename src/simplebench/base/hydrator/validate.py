@@ -123,26 +123,26 @@ def defaults(default_values: Mapping[str, Any], optional_fields: set[str]) -> Ma
     return default_values
 
 
-def match_on(match_on_values: Mapping[str, Any], allowed_fields: Mapping[str, Any]) -> Mapping[str, Any]:
+def match_on(match_on_param: Mapping[str, Any], allowed_fields: Mapping[str, Any]) -> Mapping[str, Any]:
     """Validate the match_on dictionary.
 
-    :param Mapping[str, Any] match_on_values: The match_on dictionary to validate.
+    :param Mapping[str, Any] match_on_param: The match_on dictionary to validate.
     :param Mapping[str, Any] allowed_fields: The allowed parameters dictionary to use for validation.
     :return Mapping[str, Any]: The validated match_on dictionary.
     :raises: SimpleBenchTypeError if the match_on dictionary is invalid.
     :raises: SimpleBenchValueError if the match_on dictionary contains invalid values.
     """
-    if not isinstance(match_on_values, Mapping):
+    if not isinstance(match_on_param, Mapping):
         raise SimpleBenchTypeError(
             "The `match_on` parameter must be of type `Mapping`",
             tag=_HydratorErrorTag.INVALID_MATCH_ON_TYPE)
 
-    if not all(field in allowed_fields for field in match_on_values.keys()):
+    if not all(field in allowed_fields for field in match_on_param.keys()):
         raise SimpleBenchValueError(
             "All keys in `match_on` must match a key in `allowed`",
             tag=_HydratorErrorTag.INVALID_MATCH_ON_KEY)
 
-    return match_on_values
+    return match_on_param
 
 
 def process_as(
@@ -283,7 +283,7 @@ def match_on_values(data_values: dict[str, Any], match_on_fields: Mapping[str, A
     
     :param dict[str, Any] data_values: The data dictionary to validate.
     :param Mapping[str, Any] match_on_fields: The match_on rules to apply.
-    :raises: SimpleBenchValueError if any match_on rule is violated.
+    :raises: SimpleBenchValueError for any mismatch.
     """
     for field, expected_value in match_on_fields.items():
         if data_values.get(field) != expected_value:
