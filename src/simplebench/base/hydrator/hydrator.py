@@ -4,238 +4,15 @@ This module defines a base class `Hydrator` for objects, which includes methods
 for initializing, converting to and from dictionaries, and validating against a
 set of allowed parameters.
 """
+import dataclasses
 import inspect
 from collections.abc import Mapping
+from copy import copy
 from functools import cache
-from typing import Any, Callable, Iterable, get_args, get_origin, get_type_hints
-
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators import validate_iterable_of_type, validate_type
-
-from ._error_tags import _HydratorErrorTag
+from typing import Any, Callable, Iterable, get_type_hints, is_typeddict
 
 
-def _validate_data(data: Mapping[str, Any]) -> dict[str, Any]:
-    """Validate the data dictionary.
-
-    :param data: The data dictionary to validate.
-    :return: A validated, mutable `dict` copy of the data.
-    :raises: SimpleBenchTypeError if the data dictionary is invalid.
-    """
-    validate_type(data, Mapping, 'data',
-                  _HydratorErrorTag.INVALID_DATA_TYPE)
-
-    if not all(isinstance(key, str) for key in data.keys()):
-        raise SimpleBenchTypeError(
-            "All keys in the data dictionary must be of type 'str'",
-            tag=_HydratorErrorTag.INVALID_DATA_KEY_TYPE)
-
-    return dict(data)
-
-
-def _validate_allowed(
-        allowed: Mapping[str, Any]) -> Mapping[str, Any]:
-    """Validate the allowed parameters dictionary.
-
-    A valid type annotation is a simple type (e.g., `int`) or a generic
-    from the `typing` module (e.g., `list[str]`).
-
-    :param allowed: The allowed parameters dictionary to validate.
-    :return: The validated allowed parameters dictionary.
-    :raises: SimpleBenchTypeError if the allowed parameters dictionary is invalid.
-    :raises: SimpleBenchValueError if the allowed parameters dictionary is empty.
-    """
-    validate_type(allowed, Mapping, 'allowed',
-                  _HydratorErrorTag.INVALID_ALLOWED_TYPE)
-
-    for value in allowed.values():
-        # A valid type annotation is either a simple type (like `int`)
-        # or a generic from the typing module (like `list[str]`, which has an __origin__).
-        is_simple_type = isinstance(value, type)
-        is_generic_type = hasattr(value, '__origin__')
-        if not (is_simple_type or is_generic_type):
-            raise SimpleBenchTypeError(
-                f"All values in `allowed` must be a valid type annotation, but got {value}",
-                tag=_HydratorErrorTag.INVALID_ALLOWED_VALUE_TYPE)
-
-    if len(allowed) == 0:
-        raise SimpleBenchValueError(
-            "The `allowed` dictionary cannot be empty",
-            tag=_HydratorErrorTag.INVALID_ALLOWED_EMPTY)
-    return allowed
-
-
-def _validate_skip(skip: Iterable[str], allowed: Mapping[str, Any]) -> set[str]:
-    """Validate the skip iterable.
-
-    :param skip: The skip iterable to validate.
-    :return: The validated skip set.
-    :raises: SimpleBenchTypeError if the skip iterable is invalid.
-    """
-    skip_set = set(validate_iterable_of_type(
-        skip, str, 'skip',
-        _HydratorErrorTag.INVALID_SKIP_TYPE,
-        _HydratorErrorTag.INVALID_SKIP_ITEM_TYPE,
-        allow_empty=True, exact_type=False))
-    if not all(field in allowed for field in skip_set):
-        raise SimpleBenchValueError(
-            "All values in `skip` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_SKIP_VALUE)
-
-    return skip_set
-
-
-def _validate_optional(optional: Iterable[str], allowed: Mapping[str, Any]) -> set[str]:
-    """Validate the optional iterable.
-
-    :param optional: The optional iterable to validate.
-    :param allowed: The allowed parameters dictionary to use for validation.
-    :return: The validated optional set.
-    :raises: SimpleBenchTypeError if the optional iterable is invalid.
-    :raises: SimpleBenchValueError if the optional iterable contains invalid values.
-    """
-    optional_set = set(validate_iterable_of_type(
-        optional, str, 'optional',
-        _HydratorErrorTag.INVALID_OPTIONAL_TYPE,
-        _HydratorErrorTag.INVALID_OPTIONAL_ITEM_TYPE,
-        allow_empty=True, exact_type=False))
-    if not all(field in allowed for field in optional_set):
-        raise SimpleBenchValueError(
-            "All values in `optional` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_OPTIONAL_ITEM_VALUE)
-
-    return optional_set
-
-
-def _validate_default(default: Mapping[str, Any], optional: set[str]) -> Mapping[str, Any]:
-    """Validate the default mapping.
-
-    :param default: The default mapping to validate.
-    :param optional: The optional set to use for validation.
-    :return: The validated default mapping.
-    :raises: SimpleBenchTypeError if the default mapping is invalid.
-    :raises: SimpleBenchValueError if the default mapping contains invalid values.
-    """
-    if not isinstance(default, Mapping):
-        raise SimpleBenchTypeError(
-            "The `default` parameter must be of type `Mapping`",
-            tag=_HydratorErrorTag.INVALID_DEFAULT_TYPE)
-
-    if not all(field in optional for field in default.keys()):
-        raise SimpleBenchValueError(
-            "All keys in `default` must match a key in `optional`",
-            tag=_HydratorErrorTag.INVALID_DEFAULT_KEY)
-
-    return default
-
-
-def _validate_match_on(match_on: Mapping[str, Any], allowed: Mapping[str, Any]) -> Mapping[str, Any]:
-    """Validate the match_on dictionary.
-
-    :param match_on: The match_on dictionary to validate.
-    :param allowed: The allowed parameters dictionary to use for validation.
-    :return: The validated match_on dictionary.
-    :raises: SimpleBenchTypeError if the match_on dictionary is invalid.
-    :raises: SimpleBenchValueError if the match_on dictionary contains invalid values.
-    """
-    if not isinstance(match_on, Mapping):
-        raise SimpleBenchTypeError(
-            "The `match_on` parameter must be of type `Mapping`",
-            tag=_HydratorErrorTag.INVALID_MATCH_ON_TYPE)
-
-    if not all(field in allowed for field in match_on.keys()):
-        raise SimpleBenchValueError(
-            "All keys in `match_on` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_MATCH_ON_KEY)
-
-    return match_on
-
-
-def _validate_process_as(
-        process_as: Mapping[str, Callable[[Any], Any]],
-        allowed: Mapping[str, Any]) -> Mapping[str, Callable[[Any], Any]]:
-    """Validate the process_as mapping.
-
-    :param process_as: The process_as mapping to validate.
-    :param allowed: The allowed parameters mapping to use for validation.
-    :return: The validated process_as mapping.
-    :raises: SimpleBenchTypeError if the process_as mapping is invalid.
-    :raises: SimpleBenchValueError if the process_as mapping contains invalid values.
-    """
-    if not isinstance(process_as, Mapping):
-        raise SimpleBenchTypeError(
-            "The `process_as` parameter must be of type `Mapping`",
-            tag=_HydratorErrorTag.INVALID_PROCESS_AS_TYPE)
-
-    if not all(field in allowed for field in process_as.keys()):
-        raise SimpleBenchValueError(
-            "All keys in `process_as` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_PROCESS_AS_KEY)
-
-    for call in process_as.values():
-        # must be callable with exactly one parameter and a return type annotation
-        if not callable(call):
-            raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_CALLABLE)
-
-        call_signature = inspect.signature(call)
-        if len(call_signature.parameters) != 1:
-            raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable with exactly one parameter",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_TOO_MANY_PARAMETERS)
-        param = list(call_signature.parameters.values())[0]
-        if param.kind not in [inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.POSITIONAL_ONLY]:
-            raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable with a single positional parameter",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_POSITIONAL)
-
-        return_annotation = call_signature.return_annotation
-        if return_annotation == inspect.Parameter.empty:
-            raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable with a return type annotation",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NO_RETURN_ANNOTATION)
-
-    return process_as
-
-
-def _is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
-    """
-    Check if an object is an instance of a generic type hint.
-    Handles simple types, lists, sequences, and dictionaries.
-    """
-    origin = get_origin(type_hint)
-    args = get_args(type_hint)
-
-    # Case 1: Simple type (e.g., int, str)
-    if origin is None:
-        if isinstance(type_hint, type):
-            return isinstance(obj, type_hint)
-        return False  # Should not happen with valid type hints
-
-    # Case 2: Dictionary or Mapping
-    if inspect.isclass(origin) and issubclass(origin, Mapping):
-        if not isinstance(obj, Mapping):
-            return False
-        key_type, value_type = args
-        return all(_is_instance_of_generic(
-            k, key_type) and _is_instance_of_generic(v, value_type) for k, v in obj.items())
-
-    # Case 3: Iterable (but not a Mapping)
-    if inspect.isclass(origin) and issubclass(origin, Iterable):
-        # If the object is a string/bytes but the type hint is a different kind of iterable (e.g. list[str]),
-        # it's a mismatch. We should not iterate over the string's characters.
-        if isinstance(obj, (str, bytes)):
-            return issubclass(origin, (str, bytes))
-
-        if not isinstance(obj, Iterable):
-            return False
-
-        item_type = args[0]
-        return all(_is_instance_of_generic(item, item_type) for item in obj)
-
-    # Fallback for other types (like Union, etc., which can be added here)
-    return isinstance(obj, origin)
+from . import validate
 
 
 class Hydrator:
@@ -254,124 +31,122 @@ class Hydrator:
 
         It is cached to avoid recomputing it every time it is called.
         """
-        output: dict[str, Any] = {}
+        # TypedDict support
+        if is_typeddict(cls):
+            return dict(cls.__annotations__)
+
+        # Dataclass support
+        if dataclasses.is_dataclass(cls):
+            return {field.name: field.type for field in dataclasses.fields(cls)}
+
+        # Regular class logic (Python 3.10+)
         try:
             type_hints = get_type_hints(cls.__init__)
-        except (AttributeError, TypeError, NameError):
+        except Exception:  # pylint: disable=broad-exception-caught
             return {}
 
-        init_params = inspect.signature(cls.__init__).parameters
-        for name, param in init_params.items():
-            if param.kind != inspect.Parameter.KEYWORD_ONLY:
-                continue
-
-            if name in type_hints:
-                output[name] = type_hints[name]
-
-        return output
+        return {
+            name: type_hints[name]
+            for name, param in inspect.signature(cls.__init__).parameters.items()
+            if param.kind == inspect.Parameter.KEYWORD_ONLY and name in type_hints
+        }
 
     @classmethod
-    def import_data(  # noqa: C901
-            cls, *,
-            data: Mapping[str, Any],
-            allowed: Mapping[str, Any],
-            skip: Iterable[str] | None = None,
-            optional: Iterable[str] | None = None,
-            default: Mapping[str, Any] | None = None,
-            match_on: Mapping[str, Any] | None = None,
-            process_as: Mapping[str, Callable[[Any], Any]] | None = None) -> dict[str, Any]:
+    def import_data(
+        cls,
+        *,
+        data: Mapping[str, Any],
+        allowed_fields: Mapping[str, Any],
+        skip_fields: Iterable[str] | None = None,
+        optional_fields: Iterable[str] | None = None,
+        defaults: Mapping[str, Any] | None = None,
+        match_on: Mapping[str, Any] | None = None,
+        process_as: Mapping[str, Callable[[Any], Any]] | None = None
+    ) -> dict[str, Any]:
         """Process and validate the data dictionary.
 
-        :param data: The data dictionary to process.
-        :param allowed: A dictionary of allowed input keys and their types. It cannot be empty.
-        :param skip: A list of input keys to NOT include in the output. Only keys that are present
-                    in the `allowed` dictionary can be skipped.
-        :param optional: An iterable of input keys that are optional and that can be omitted from the output
-                    if missing. Only keys that are present in the `allowed` dictionary
-                    can be optional.
-        :param default: A dictionary of default values for keys if they are not present.
+        :param Mapping[str, Any] data: The data dictionary to process.
+        :param Mapping[str, Any] allowed_fields: A dictionary of allowed input keys and their types. It cannot be empty.
+        :param Iterable[str] | None skip_fields: A list of input keys to NOT include in the output.
+                    Only keys that are present in the `allowed_fields` dictionary can be skipped.
+        :param Iterable[str] | None optional_fields: An iterable of input keys that are optional and
+                    that can be omitted from the output if missing. Only keys that are present in the
+                    `allowed_fields` dictionary can be optional.
+        :param Mapping[str, Any] | None defaults: A dictionary of default values for keys if they are not present.
                     If a key is present in the input data, the default value is not used.
                     If a value is set by the default, it is not considered missing.
-                    Only keys that are present in the `optional` dictionary can have default values.
-        :param match_on: A dictionary of keys and values that must match the corresponding keys in
-                        the input data. This is processed AFTER the default values are applied.
-                        Only keys that are present in the `allowed` dictionary can have match_on rules.
-        :param process_as: A dictionary of keys and functions to apply to the corresponding values in
-                        the input data before storing in the output. This is processed AFTER the
-                        match_on rules for input are checked.
-                        Only keys that are present in the `allowed` dictionary can have process_as rules.
-        :return: The processed and validated data dictionary.
+                    Only keys that are present in the `optional_fields` dictionary can have default values.
+        :param Mapping[str, Any] | None match_on: A dictionary of keys and values that must match the
+                        corresponding keys in the input data. This is processed AFTER the default
+                        values are applied. Only keys that are present in the `allowed_fields`
+                        dictionary can have match_on rules.
+        :param Mapping[str, Callable[[Any], Any]] | None process_as: A dictionary of keys and functions
+                        to apply to the corresponding values in the input data before storing in the
+                        output. This is processed AFTER the match_on rules for input are checked.
+                        Only keys that are present in the `allowed_fields` dictionary can have
+                        process_as rules.
+        :return dict[str, Any]: The processed and validated data dictionary.
         :raises: SimpleBenchTypeError if the data does not match the rules.
 
         Raises:
             SimpleBenchValueError: If the data does not match the rules.
         """
-        data = _validate_data(data=data)
+        data = validate.data(data)
+        allowed_fields_map = validate.allowed(allowed_fields)
+        skip_fields_set = validate.skip(skip_fields or set(), allowed_fields_map)
+        optional_fields_set = validate.optional(optional_fields or set(), allowed_fields_map)
+        defaults_for_fields = validate.defaults(defaults or {}, optional_fields_set)
+        match_on_fields = validate.match_on(match_on or {}, allowed_fields_map)
+        process_as_handlers = validate.process_as(process_as or {}, allowed_fields_map)
 
-        allowed_fields: Mapping[str, Any] = _validate_allowed(allowed=allowed)
+        data = cls._apply_defaults(data, defaults_for_fields)
+        validate.match_on_values(data, match_on_fields)
+        validate.allowed_keys_against_data(data, allowed_fields_map)
+        validate.required_keys_against_data(data, allowed_fields_map, optional_fields_set)
+        output = copy(data)  # Shallow copy to avoid mutating input
+        output = cls._apply_process_as_handlers(output, process_as_handlers)
+        output = cls._remove_skipped_fields(output, skip_fields_set)
+        validate.data_types(output, allowed_fields_map)
+        return output
 
-        skip_fields: set[str] = _validate_skip(skip=skip or set(),
-                                               allowed=allowed_fields)
+    @staticmethod
+    def _apply_defaults(data: dict[str, Any], defaults: Mapping[str, Any]) -> dict[str, Any]:
+        """Apply default values to the data dictionary.
+        
+        :param dict[str, Any] data: The data dictionary to apply defaults to.
+        :param Mapping[str, Any] defaults: The default values to apply.
+        :return dict[str, Any]: The data dictionary with defaults applied.
+        """
+        output = copy(data)  # Shallow copy to avoid mutating input
+        for field, default_value in defaults.items():
+            if field not in output:
+                output[field] = default_value
+        return output
 
-        optional_fields: set[str] = _validate_optional(optional=optional or set(),
-                                                       allowed=allowed_fields)
+    @staticmethod
+    def _apply_process_as_handlers(data: dict[str, Any], process_as_handlers: Mapping[str, Any]) -> dict[str, Any]:
+        """Apply process_as functions to the output dictionary.
 
-        default_fields: Mapping[str, Any] = _validate_default(default=default or {},
-                                                              optional=optional_fields)
-
-        match_on_fields: Mapping[str, Any] = _validate_match_on(match_on=match_on or {},
-                                                                allowed=allowed_fields)
-
-        process_as_fields: Mapping[str, Callable[[Any], Any]] = _validate_process_as(
-                                                                process_as=process_as or {},
-                                                                allowed=allowed_fields)
-
-        # Apply default values to the data dictionary
-        for field, default_value in default_fields.items():
-            if field not in data:
-                data[field] = default_value
-
-        # Apply match_on rules to the data dictionary
-        for field, expected_value in match_on_fields.items():
-            if data.get(field) != expected_value:
-                raise SimpleBenchValueError(
-                    f"The value of '{field}' must be '{expected_value}'",
-                    tag=_HydratorErrorTag.INVALID_MATCH_ON_VALUE)
-
-        # Validate the data dictionary against the allowed fields
-        for field in data.keys():
-            if field not in allowed_fields:
-                raise SimpleBenchValueError(
-                    f"The key '{field}' is not allowed",
-                    tag=_HydratorErrorTag.INVALID_DATA_KEY)
-
-        # Validate the data dictionary against the optional fields
-        for field in allowed_fields:
-            if field not in data and field not in optional_fields:
-                raise SimpleBenchValueError(
-                    f"The key '{field}' is missing",
-                    tag=_HydratorErrorTag.INVALID_DATA_KEY)
-
-        # Shallow copy the data dictionary to the output dictionary
-        output: dict[str, Any] = data.copy()
-
-        # Apply process_as rules to the output dictionary
-        # Only apply the process_as rules to the fields that are actually
-        # present in the data dictionary
-        for field, process_func in process_as_fields.items():
+        :param dict[str, Any] data: The data dictionary to process.
+        :param Mapping[str, Any] process_as_handlers: The process_as functions to apply.
+        :return dict[str, Any]: A copy of the data dictionary with process_as functions applied.
+        """
+        output = copy(data)  # Shallow copy to avoid mutating input
+        for field, process_func in process_as_handlers.items():
             if field in output:
                 output[field] = process_func(output[field])
+        return output
 
-        # Remove the skipped fields from the output dictionary
-        for field in skip_fields:
+    @staticmethod
+    def _remove_skipped_fields(data: dict[str, Any], skip_fields_set: set[str]) -> dict[str, Any]:
+        """Remove skipped fields from the output dictionary.
+
+        :param dict[str, Any] data: The data dictionary to process.
+        :param set[str] skip_fields_set: The set of fields to skip.
+        :return dict[str, Any]: The data dictionary with skipped fields removed.
+        """
+        output = copy(data)  # Shallow copy to avoid mutating input
+        for field in skip_fields_set:
             if field in output:
                 del output[field]
-
-        # Validate the processed output dictionary against the allowed field types
-        for field, value in output.items():
-            if not _is_instance_of_generic(value, allowed_fields[field]):
-                raise SimpleBenchTypeError(
-                    f"The value of '{field}' does not match the expected type '{allowed_fields[field]}'",
-                    tag=_HydratorErrorTag.INVALID_DATA_VALUE_TYPE)
-
         return output
