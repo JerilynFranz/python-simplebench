@@ -277,7 +277,7 @@ def _in_immutables_cache(value: ImmutableCoreDataTypes) -> ImmutableCoreDataType
             if cached_value is value:
                 return cached_value
         except KeyError:
-            # Item was removed between the 'in' check and access
+            # Item was removed between the 'in' check and access by another thread
             return _NOT_IN_CACHE
     return _NOT_IN_CACHE
 
@@ -295,8 +295,12 @@ def _cache_immutable_reference(value: ImmutableCoreDataTypes) -> None:
 def _trim_immutables_cache(size: int) -> None:
     """Trim the immutable core data type cache to the specified size.
 
-    Simply removes the oldest entries until the cache size is within the limit.
-    Sizes < 1 are ignored.
+    If the cache exceeds the specified size, the oldest entries are removed
+    until the cache size is at or below 75% of the specified size.
+
+    The smallest allowed size is 10.
+
+    Cache trimming is performed within a thread-safe lock.
 
     :param int size: The maximum size of the cache.
     :raises SimpleBenchTypeError: If size is not an integer.
@@ -307,11 +311,12 @@ def _trim_immutables_cache(size: int) -> None:
             'Cache size must be an integer.',
             tag=_CoreTypeErrorTags.INVALID_CACHE_TYPE)
 
-    if size < 1:
+    if size < 10: # Minimum size to ensure effective caching
         raise SimpleBenchValueError(
-            'Cache size must be at least 1',
+            'Cache size must be at least 10',
             tag=_CoreTypeErrorTags.INVALID_CACHE_SIZE)
 
     with _CACHE_LOCK:
-        while len(_IMMUTABLE_ITEMS_CACHE) > size:
+        target_size = int(size * 0.75)
+        while len(_IMMUTABLE_ITEMS_CACHE) > target_size:
             _IMMUTABLE_ITEMS_CACHE.popitem(last=False)
