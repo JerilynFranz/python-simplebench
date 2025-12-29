@@ -1,11 +1,15 @@
 """Validator functions for SimpleBench."""
 from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 
-from .complex_types import (
+from .core_data_types import (
     validate_core_data,
     validate_core_data_mapping,
     validate_core_data_sequence,
     validate_core_data_set,
+    validate_immutable_core_data,
+    validate_immutable_core_data_mapping,
+    validate_immutable_core_data_sequence,
+    validate_immutable_core_data_set,
 )
 from .dates_and_times import validate_iso8601_datetime
 from .identifiers import validate_namespaced_identifier
@@ -47,6 +51,10 @@ __all__ = [
     "validate_float",
     "validate_float_range",
     "validate_frozenset_of_type",
+    "validate_immutable_core_data",
+    "validate_immutable_core_data_mapping",
+    "validate_immutable_core_data_sequence",
+    "validate_immutable_core_data_set",
     "validate_int",
     "validate_int_range",
     "validate_iso8601_datetime",
@@ -64,7 +72,5 @@ __all__ = [
     "validate_string",
     "validate_string_with_regex",
     "validate_type",
-
-
 ]
 """'*' All exports for simplebench.validators."""

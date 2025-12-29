@@ -1,8 +1,16 @@
-"""Validators for complex data types used in SimpleBench."""
+"""Validators for complex data types used in SimpleBench.
+
+These validators ensure that data structures conform to the CoreDataTypes
+contract defined in :module:`simplebench.types.core`.
+
+They recursively validate mappings, sequences, and sets to ensure all
+elements conform to the allowed primitive types.
+"""
 import math
 from collections.abc import Mapping, Sequence, Set
 from types import MappingProxyType
 
+from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.types import (
     CoreDataMappingType,
@@ -15,8 +23,6 @@ from simplebench.types import (
     ImmutableCoreDataTypes,
 )
 from simplebench.validators import _ValidatorsErrorTag
-
-_DEFAULT_MAX_DEPTH: int = 10
 
 
 class _PendingItem:
@@ -35,10 +41,9 @@ class _PendingItem:
         """Return a string representation of the PendingItem."""
         return f"_PendingItem(item={self.item}, depth={self.depth}), item id={id(self.item)})"
 
-
-
 def _internal_validate_core_data_mapping(            *,
             item: CoreDataMappingType,
+            is_immutable: bool,
             name: str,
             max_depth: int,
             depth: int,
@@ -47,6 +52,7 @@ def _internal_validate_core_data_mapping(            *,
 
     :param Mapping[str, CoreDataTypes] value: The data mapping to validate.
     :param str name: The name of the mapping (used in error messages).
+    :param bool is_immutable: Whether to check for immutability.
     :param int max_depth: The maximum allowed depth for nested structures. (optional, keyword-only, defaults to 10).
     :param int depth: The current depth in the data tree.
     :param set[int] parents: Set of ids of previously seen items to detect cycles
@@ -83,6 +89,7 @@ def _internal_validate_core_data_mapping(            *,
         parents.add(item_id)
         validated_dict_element: ImmutableCoreDataTypes = _internal_validate_core_data(
             item=element,
+            is_immutable=is_immutable,
             name=name,
             depth=depth + 1,
             max_depth=max_depth,
@@ -95,7 +102,7 @@ def validate_core_data_mapping(
             item: CoreDataMappingType,
             name: str,
             *,
-            max_depth: int = _DEFAULT_MAX_DEPTH) -> ImmutableCoreDataMappingType:
+            max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataMappingType:
     """Validate a CoreDataTypes mapping.
 
     The `value` parameter must be a `Mapping[str, CoreDataTypes]` conformant mapping.
@@ -153,6 +160,7 @@ def validate_core_data_mapping(
 
     return _internal_validate_core_data_mapping(
         item=item,
+        is_immutable=False,
         name=name,
         max_depth=max_depth,
         depth=0,
@@ -161,6 +169,7 @@ def validate_core_data_mapping(
 def _internal_validate_core_data_sequence(
             *,
             item: Sequence[CoreDataTypes],
+            is_immutable: bool,
             name: str,
             depth: int,
             max_depth: int,
@@ -172,6 +181,7 @@ def _internal_validate_core_data_sequence(
 
     :param CoreDataSequenceType item: The item to validate.
     :param str name: The name of the mapping (used in error messages).
+    :param bool is_immutable: Whether to check for immutability.
     :param int depth: The current depth in the data tree.
     :param int max_depth: The maximum allowed depth for nested structures.
     :param set[int] parents: Set of ids of previously seen items to detect cycles.
@@ -197,6 +207,7 @@ def _internal_validate_core_data_sequence(
     validated_elements: ImmutableCoreDataSequenceType = tuple(
         _internal_validate_core_data(
             item=element,
+            is_immutable=is_immutable,
             name=name,
             depth=depth + 1,
             max_depth=max_depth,
@@ -208,7 +219,7 @@ def validate_core_data_sequence(
         item: CoreDataSequenceType,
         name: str,
         *,
-        max_depth: int = _DEFAULT_MAX_DEPTH) -> ImmutableCoreDataSequenceType:
+        max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataSequenceType:
     """Validate a CoreDataTypes sequence.
     The `value` parameter must be a `Sequence[CoreDataTypes]` conformant sequence.
     It can have arbitrary values but must conform with the :class:`CoreDataTypes` contract.
@@ -253,6 +264,7 @@ def validate_core_data_sequence(
             tag=_ValidatorsErrorTag.INVALID_CORE_MAPPING_PARAM_VALUE)
     return _internal_validate_core_data_sequence(
         item=item,
+        is_immutable=False,
         name=name,
         max_depth=max_depth,
         depth=0,
@@ -261,6 +273,7 @@ def validate_core_data_sequence(
 def _internal_validate_core_data_set(
             *,
             item: CoreDataSetType,
+            is_immutable: bool,
             name: str,
             depth: int,
             max_depth: int,
@@ -272,6 +285,7 @@ def _internal_validate_core_data_set(
 
     :param CoreDataSetType item: The item to validate.
     :param str name: The name of the mapping (used in error messages).
+    :param bool is_immutable: Whether to check for immutability.
     :param int depth: The current depth in the data tree.
     :param int max_depth: The maximum allowed depth for nested structures.
     :param set[int] parents: Set of ids of previously seen items to detect cycles.
@@ -297,6 +311,7 @@ def _internal_validate_core_data_set(
     validated_elements: ImmutableCoreDataSetType = frozenset(
         _internal_validate_core_data(
             item=element,
+            is_immutable=is_immutable,
             name=name,
             depth=depth + 1,
             max_depth=max_depth,
@@ -308,7 +323,7 @@ def validate_core_data_set(
             item: CoreDataSetType,
             name: str,
             *,
-            max_depth: int = _DEFAULT_MAX_DEPTH) -> ImmutableCoreDataSetType:
+            max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataSetType:
     """Validate a CoreDataTypes set.
 
     The `value` parameter must be a `Set[CoreDataTypes]` conformant set.
@@ -363,6 +378,7 @@ def validate_core_data_set(
             tag=_ValidatorsErrorTag.INVALID_CORE_MAPPING_PARAM_VALUE)
     return _internal_validate_core_data_set(
         item=item,
+        is_immutable=False,
         name=name,
         max_depth=max_depth,
         depth=0,
@@ -371,9 +387,10 @@ def validate_core_data_set(
 def _internal_validate_core_data(
             *,
             item: CoreDataTypes,
+            is_immutable: bool,
             name: str,
             depth: int,
-            max_depth: int = _DEFAULT_MAX_DEPTH,
+            max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH,
             parents: set[int]) -> ImmutableCoreDataTypes:
     """Recursively validate a CoreDataTypes item.
 
@@ -382,6 +399,7 @@ def _internal_validate_core_data(
 
     :param CoreDataTypes item: The item to validate.
     :param str name: The name of the mapping (used in error messages).
+    :param bool is_immutable: Whether to check for immutability.
     :param int depth: The current depth in the data tree.
     :param int max_depth: The maximum allowed depth for nested structures.
     :param set[int] parents: Set of ids of previously seen items to detect cycles.
@@ -419,6 +437,7 @@ def _internal_validate_core_data(
         parents.add(item_id)
         results = _internal_validate_core_data_set(
             item=item,
+            is_immutable=is_immutable,
             name=name,
             depth=depth,
             max_depth=max_depth,
@@ -430,6 +449,7 @@ def _internal_validate_core_data(
         parents.add(item_id)
         results = _internal_validate_core_data_mapping(
             item=item,
+            is_immutable=is_immutable,
             name=name,
             depth=depth,
             max_depth=max_depth,
@@ -441,6 +461,7 @@ def _internal_validate_core_data(
         parents.add(item_id)
         results = _internal_validate_core_data_sequence(
             item=item,
+            is_immutable=is_immutable,
             name=name,
             depth=depth,
             max_depth=max_depth,
@@ -457,7 +478,7 @@ def validate_core_data(
         item: CoreDataTypes,
         name: str,
         *,
-        max_depth: int = _DEFAULT_MAX_DEPTH) -> ImmutableCoreDataTypes:
+        max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataTypes:
     """Validate a CoreDataTypes item.
 
     The `value` parameter must be a `CoreDataTypes` conformant data/structure.
@@ -486,7 +507,167 @@ def validate_core_data(
     """
     return _internal_validate_core_data(
         item=item,
+        is_immutable=False,
         name=name,
         depth=0,
         max_depth=max_depth,
         parents=set())
+
+
+def validate_immutable_core_data(
+        item: ImmutableCoreDataTypes,
+        name: str,
+        *,
+        max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataTypes:
+    """Validate an ImmutableCoreDataTypes item.
+
+    If it **IS** a valid ImmutableCoreDataTypes instance, returns the original object unchanged
+    to conserve memory and equality.
+
+    The `value` parameter must be an `ImmutableCoreDataTypes` conformant data/structure.
+    It can have arbitrary structure but must conform with the :class:`ImmutableCoreDataTypes` contract.
+    The entire data tree is validated recursively to ensure all elements conform to the
+    :class:`ImmutableCoreDataTypes` definition.
+    It cannot contain cyclic references and must not exceed the specified maximum depth for nested structures.
+    The validated data/structure is returned as an immutable `ImmutableCoreDataTypes`.
+
+    This has the result of ensuring that the returned data/structure is both serializable and immutable
+    and transforms all mutable structures (like lists and dicts) into their immutable counterparts
+    (like tuples and MappingProxyType). This includes classes that are subclasses of the allowed
+     mutable and immutable types.
+
+    .. note:: This is a composable validator without dependencies on other public validators.
+        This makes it safe to use in other validators without any risk of creating circular
+        dependencies.
+
+    :param ImmutableCoreDataTypes value: The data/structure to validate.
+    :param str name: The name of the mapping (used in error messages).
+    :param int max_depth: The maximum allowed depth for nested structures. (optional, keyword-only, defaults to 10).
+    :return ImmutableCoreDataTypes: An immutable validated data/structure.
+    :raises SimpleBenchTypeError: If the tree structure contains invalid types.
+    :raises SimpleBenchValueError: If any dictionary key is a blank or empty string or if a
+        cyclic reference is detected.
+    """
+    _internal_validate_core_data(
+        item=item,
+        is_immutable=True,
+        name=name,
+        depth=0,
+        max_depth=max_depth,
+        parents=set())
+    return item
+
+def validate_immutable_core_data_mapping(
+            item: ImmutableCoreDataMappingType,
+            name: str,
+            *,
+            max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataMappingType:
+    """Validate an ImmutableCoreDataTypes mapping.
+
+    If it **IS** a valid ImmutableCoreDataMappingType instance, returns the original object unchanged
+    to conserve memory and equality.
+
+    The `value` parameter must be a `MappingProxyType[str, ImmutableCoreDataTypes]` conformant mapping.
+    It can have arbitrary keys and values but must conform with the :class:`ImmutableCoreDataTypes` contract,
+    and must use strings as keys. The entire mapping tree is validated recursively to ensure all
+    elements conform to the :class:`ImmutableCoreDataTypes` definition.
+
+    It cannot contain cyclic references and must not exceed the specified maximum depth for nested structures.
+
+    .. note:: This is a composable validator without dependencies on other public validators.
+        This makes it safe to use in other validators without any risk of creating circular
+        dependencies.
+
+    :param ImmutableCoreDataMappingType value: The data mapping to validate.
+    :param str name: The name of the mapping (used in error messages).
+    :param int max_depth: The maximum allowed depth for nested structures. (optional, keyword-only, defaults to 10).
+    :return ImmutableCoreDataMappingType: The original data mapping object.
+    :raises SimpleBenchTypeError: If the tree structure contains invalid types.
+    :raises SimpleBenchValueError: If any dictionary key is a blank or empty string or
+        if a cyclic reference is detected.
+    """
+    _internal_validate_core_data_mapping(
+        item=item,
+        is_immutable=True,
+        name=name,
+        max_depth=max_depth,
+        depth=0,
+        parents=set())
+    return item
+
+def validate_immutable_core_data_sequence(
+        item: ImmutableCoreDataSequenceType,
+        name: str,
+        *,
+        max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataSequenceType:
+    """Validate an ImmutableCoreDataTypes sequence.
+
+    If it **IS** a valid ImmutableCoreDataSequenceType instance, returns the original object unchanged
+    to conserve memory and equality.
+
+    The `value` parameter must be a `tuple[ImmutableCoreDataTypes, ...]` conformant sequence.
+
+    It can have arbitrary values but must conform with the :class:`ImmutableCoreDataTypes` contract.
+
+    The entire sequence tree is validated recursively to ensure all elements conform to the
+    :class:`ImmutableCoreDataTypes` definition.
+
+    It cannot contain cyclic references and must not exceed the specified maximum depth for nested structures.
+
+    .. note:: This is a composable validator without dependencies on other public validators.
+        This makes it safe to use in other validators without any risk of creating circular
+        dependencies.
+
+    :param ImmutableCoreDataSequenceType value: The data sequence to validate.
+    :param str name: The name of the mapping (used in error messages).
+    :param int max_depth: The maximum allowed depth for nested structures. (optional, keyword-only, defaults to 10).
+    :return ImmutableCoreDataSequenceType: The original data sequence object.
+    :raises SimpleBenchTypeError: If the tree structure contains invalid types.
+    :raises SimpleBenchValueError: If a cyclic reference is detected.
+    """
+    _internal_validate_core_data_sequence(
+        item=item,
+        is_immutable=True,
+        name=name,
+        max_depth=max_depth,
+        depth=0,
+        parents=set())
+    return item
+
+def validate_immutable_core_data_set(
+            item: ImmutableCoreDataSetType,
+            name: str,
+            *,
+            max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataSetType:
+    """Validate an ImmutableCoreDataTypes set.
+
+    If it **IS** a valid ImmutableCoreDataSetType instance, returns the original object unchanged
+    to conserve memory and equality.
+
+    The `item` parameter must be a `frozenset[ImmutableCoreDataTypes]` conformant set.
+
+    It can have arbitrary values but must conform with the :class:`ImmutableCoreDataTypes` contract.
+    The entire set tree is validated recursively to ensure all elements conform to the
+    :class:`ImmutableCoreDataTypes` definition.
+
+    It cannot contain cyclic references and must not exceed the specified maximum depth for nested structures.
+
+    .. note:: This is a composable validator without dependencies on other public validators.
+        This makes it safe to use in other validators without any risk of creating circular
+        dependencies.
+
+    :param ImmutableCoreDataSetType value: The data set to validate.
+    :param str name: The name of the mapping (used in error messages).
+    :param int max_depth: The maximum allowed depth for nested structures. (optional, keyword-only, defaults to 10).
+    :return ImmutableCoreDataSetType: The original data set object.
+    :raises SimpleBenchTypeError: If the tree structure contains invalid types.
+    :raises SimpleBenchValueError: If a cyclic reference is detected.
+    """
+    _internal_validate_core_data_set(
+        item=item,
+        is_immutable=True,
+        name=name,
+        max_depth=max_depth,
+        depth=0,
+        parents=set())
+    return item

@@ -112,3 +112,6 @@ BASE_MEMORY_UNIT: str = 'bytes'
 
 DEFAULT_SIGNIFICANT_FIGURES: int = 3
 """Default number of significant figures for output values (3 significant figures)."""
+
+DEFAULT_MAX_CORE_DATA_DEPTH: int = 10
+"""Default maximum depth for core data structures (10 levels)."""
