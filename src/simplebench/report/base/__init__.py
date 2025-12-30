@@ -11,6 +11,7 @@ from .python_info import BasePythonInfo
 from .raw_data_block import BaseRawDataBlock
 from .report import BaseReport
 from .report_element import ReportElement
+from .report_element_typed_dict import ReportElementTypedDict
 from .results_info import BaseResultsInfo
 from .stats_block import BaseStatsBlock
 from .system_info import BaseSystemInfo

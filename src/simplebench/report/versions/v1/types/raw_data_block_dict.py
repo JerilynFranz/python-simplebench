@@ -1,15 +1,15 @@
-"""Typed dictionaries for the V1 ValueBlock data structure.
+"""Typed dictionaries for the V1 RawDataBlock data structure.
 
-This module defines two distinct dictionary types for handling ValueBlock data,
-both modeled on the JSON schema for version 1 ValueBlocks in
-version 1: :class:`~simplebench.report.versions.v1.value_block.value_block_schema.ValueBlockSchema`.
+This module defines two distinct dictionary types for handling RawDataBlock data,
+both modeled on the JSON schema for version 1 RawDataBlocks in
+version 1: :class:`~simplebench.report.versions.v1.raw_data_block.raw_data_block_schema.RawDataBlockSchema`.
 
-    - `ValueBlockData`: For use as INPUT (e.g., to `from_dict`). It is more
+    - `RawDataBlockData`: For use as INPUT (e.g., to `from_dict`). It is more
     lenient, accepting `int` or `float` for the `value` field and making `type` and `version` optional.
-    - `ValueBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is
+    - `RawDataBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is
     stricter, guaranteeing that `value` is a `float` and that `type` and `version` are present.
 
-    These types ensure proper validation and serialization of ValueBlock data"""
+    These types ensure proper validation and serialization of RawDataBlock data"""
 
 from typing import NotRequired, Required
 
@@ -17,8 +17,8 @@ from simplebench.report.base.report_element_typed_dict import ReportElementTyped
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class _RequiredValueBlockData(ReportElementTypedDict, total=True):
-    """Required fields for V1 ValueBlock data used as INPUT.
+class _RequiredRawDataBlockData(ReportElementTypedDict, total=True):
+    """Required fields for V1 RawDataBlock data used as INPUT.
 
     The input type allows `value` to be either `int` or `float`.
     
@@ -32,8 +32,8 @@ class _RequiredValueBlockData(ReportElementTypedDict, total=True):
     scale: Required[float]
     value: Required[float | int]
 
-class ValueBlockData(_RequiredValueBlockData, total=False):
-    """Typed dictionary for V1 ValueBlock data used as INPUT.
+class RawDataBlockData(_RequiredRawDataBlockData, total=False):
+    """Typed dictionary for V1 RawDataBlock data used as INPUT.
 
     This type is lenient, allowing `type`, `version`, and `timer` to be
     omitted, and accepting either `int` or `float` for the `value` field.
@@ -54,8 +54,8 @@ class ValueBlockData(_RequiredValueBlockData, total=False):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class _RequiredValueBlockDict(ReportElementTypedDict, total=True):
-    """Required fields for V1 ValueBlock data used as OUTPUT.
+class _RequiredRawDataBlockDict(ReportElementTypedDict, total=True):
+    """Required fields for V1 RawDataBlock data used as OUTPUT.
 
     `value` is guaranteed to be a `float`.
 
@@ -75,8 +75,8 @@ class _RequiredValueBlockDict(ReportElementTypedDict, total=True):
     type: Required[str]
     version: Required[int]
 
-class ValueBlockDict(_RequiredValueBlockDict, total=False):
-    """Typed dictionary for the JSON representation of a V1 ValueBlock (OUTPUT).
+class RawDataBlockDict(_RequiredRawDataBlockDict, total=False):
+    """Typed dictionary for the JSON representation of a V1 RawDataBlock (OUTPUT).
 
     This type is strict, requiring `type` and`version`` to be present.
     `value` is guaranteed to be a `float`, `timer` is optional.

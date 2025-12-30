@@ -11,8 +11,9 @@ version 1: :class:`~simplebench.report.versions.v1.results_info.results_info_sch
 
     These types ensure proper validation and serialization of ResultsInfo data
 """
-from typing import NotRequired, Required, TypedDict
+from typing import NotRequired, Required
 
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
@@ -24,7 +25,7 @@ from .metrics_object_dict import MetricsObjectDict
 
 # -- Common base for both INPUT and OUTPUT --
 
-class _ResultsInfoBase(TypedDict, total=True):
+class _ResultsInfoBase(ReportElementTypedDict, total=True):
     """Base fields for V1 ResultsInfo data.
 
     :param Required[str] group: The group for the results.

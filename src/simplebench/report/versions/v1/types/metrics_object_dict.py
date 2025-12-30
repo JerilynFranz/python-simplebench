@@ -12,7 +12,9 @@ version 1: :class:`~simplebench.report.versions.v1.results_info.results_info_sch
     These types ensure proper validation and serialization of MetricsObject data
 """
 from collections.abc import Mapping
-from typing import Required, TypeAlias, TypedDict
+from typing import Required, TypeAlias
+
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 from .raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from .stats_block_dict import StatsBlockData, StatsBlockDict
@@ -23,7 +25,7 @@ MetricDictTypes: TypeAlias = ValueBlockDict | StatsBlockDict | RawDataBlockDict
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class MetricsObjectData(TypedDict, total=True):
+class MetricsObjectData(ReportElementTypedDict, total=True):
     """Typed dictionary for V1 MetricsObject data used as INPUT.
         
     :param Required[Mapping[str, MetricDataTypes]] metrics: The metrics object data.
@@ -32,7 +34,7 @@ class MetricsObjectData(TypedDict, total=True):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class MetricsObjectDict(TypedDict, total=True):
+class MetricsObjectDict(ReportElementTypedDict, total=True):
     """Typed dictionary for the JSON representation of a V1 MetricsObject (OUTPUT).
 
     :param Required[Mapping[str, MetricDictTypes]] metrics: The metrics object data.

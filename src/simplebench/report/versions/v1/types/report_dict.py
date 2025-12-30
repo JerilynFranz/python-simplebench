@@ -11,8 +11,9 @@ version 1: :class:`~simplebench.report.versions.v1.report.report_schema.ReportSc
 
     These types ensure proper validation and serialization of Report data
 """
-from typing import NotRequired, Required, Sequence, TypedDict
+from typing import NotRequired, Required, Sequence
 
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 
 from .machine_info_dict import MachineInfoData, MachineInfoDict
@@ -20,7 +21,7 @@ from .results_info_dict import ResultsInfoData, ResultsInfoDict
 
 
 # A base for fields that are always required and have the same type.
-class _ReportBase(TypedDict, total=True):
+class _ReportBase(ReportElementTypedDict, total=True):
     """Core required fields for V1 Report data.
     
     :param Required[str] timestamp: The timestamp of the report.

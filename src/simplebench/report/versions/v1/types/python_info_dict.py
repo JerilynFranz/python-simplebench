@@ -1,9 +1,9 @@
 """Typed dictionaries for the V1 PythonInfo data structure."""
-from typing import TypedDict
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 
 # A base for fields that are always required and have the same type.
-class _PythonInfoCore(TypedDict, total=True):
+class _PythonInfoCore(ReportElementTypedDict, total=True):
     compiler: str
     implementation: str
     implementation_version: str

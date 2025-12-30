@@ -7,13 +7,15 @@ This module defines two distinct dictionary types for handling ExecutionEnvironm
 
     These types ensure proper validation and serialization of ExecutionEnvironment data
 """
-from typing import Required, TypedDict
+from typing import Required
+
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 from .python_info_dict import PythonInfoData, PythonInfoDict
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class ExecutionEnvironmentData(TypedDict, total=False):
+class ExecutionEnvironmentData(ReportElementTypedDict, total=False):
     """Typed dictionary for V1 ExecutionEnvironment data used as INPUT.
 
     :param Required[PythonInfoData] python_info: Information about the Python interpreter.
@@ -22,7 +24,7 @@ class ExecutionEnvironmentData(TypedDict, total=False):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class ExecutionEnvironmentDict(TypedDict, total=True):
+class ExecutionEnvironmentDict(ReportElementTypedDict, total=True):
     """Typed dictionary for the JSON representation of a V1 ExecutionEnvironment (OUTPUT).
 
     All fields are required (`total=True`), and their types are immutable.

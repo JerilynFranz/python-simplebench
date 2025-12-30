@@ -11,13 +11,14 @@ version 1: :class:`~simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUI
 
     These types ensure proper validation and serialization of CPUInfo data
 """
-from typing import NotRequired, Required, TypedDict
+from typing import NotRequired, Required
 
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import CoreDataMappingType
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class _RequiredCPUInfoData(TypedDict, total=True):
+class _RequiredCPUInfoData(ReportElementTypedDict, total=True):
     """Required fields for V1 CPUInfo data used as INPUT.
     
     :param CoreDataMappingType data: The CPU information data.
@@ -41,7 +42,7 @@ class CPUInfoData(_RequiredCPUInfoData, total=False):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class _RequiredCPUInfoDict(TypedDict, total=True):
+class _RequiredCPUInfoDict(ReportElementTypedDict, total=True):
     """Required fields for V1 CPUInfo data used as OUTPUT.
     
     :param CoreDataMappingType data: The CPU information data.

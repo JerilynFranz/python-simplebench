@@ -11,7 +11,9 @@ version 1: :class:`~simplebench.report.versions.v1.machine_info.machine_info_sch
 
     These types ensure proper validation and serialization of MachineInfo data\
 """
-from typing import NotRequired, Required, TypedDict
+from typing import NotRequired, Required
+
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 from .cpu_info_dict import CPUInfoData, CPUInfoDict
 from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvironmentDict
@@ -20,7 +22,7 @@ from .system_info_dict import SystemInfoData, SystemInfoDict
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class _RequiredMachineInfoData(TypedDict, total=True):
+class _RequiredMachineInfoData(ReportElementTypedDict, total=True):
     """Required fields for V1 MachineInfo data used as INPUT.
 
     :param Required[ExecutionEnvironmentData] execution_environment: The execution environment information.
@@ -58,7 +60,7 @@ class MachineInfoData(_RequiredMachineInfoData, total=False):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class _RequiredMachineInfoDict(TypedDict, total=True):
+class _RequiredMachineInfoDict(ReportElementTypedDict, total=True):
     """Required fields for V1 MachineInfo data used as OUTPUT.
 
     All fields are required (`total=True`), and their values are immutable types.

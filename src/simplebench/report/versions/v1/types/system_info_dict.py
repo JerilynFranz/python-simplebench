@@ -11,11 +11,13 @@ version 1: :class:`~simplebench.report.versions.v1.system_info.system_info_schem
 
     These types ensure proper validation and serialization of SystemInfo data
 """
-from typing import NotRequired, Required, TypedDict
+from typing import NotRequired, Required
+
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class _RequiredSystemInfoData(TypedDict, total=True):
+class _RequiredSystemInfoData(ReportElementTypedDict, total=True):
     """Required fields for V1 SystemInfo data used as INPUT.
 
     All fields are required (`total=True`), except for those made optional
@@ -55,7 +57,7 @@ class SystemInfoData(_RequiredSystemInfoData, total=False):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class _RequiredSystemInfoDict(TypedDict, total=True):
+class _RequiredSystemInfoDict(ReportElementTypedDict, total=True):
     """Required fields for V1 SystemInfo data used as OUTPUT.
 
      All fields are required (`total=True`)

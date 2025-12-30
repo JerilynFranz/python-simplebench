@@ -11,11 +11,13 @@ version 1: :class:`~simplebench.report.versions.v1.memory_info.memory_info_schem
 
     These types ensure proper validation and serialization of MemoryInfo data
 """
-from typing import NotRequired, Required, TypedDict
+from typing import NotRequired, Required
+
+from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class _RequiredMemoryInfoData(TypedDict, total=True):
+class _RequiredMemoryInfoData(ReportElementTypedDict, total=True):
     """Required fields for V1 MemoryInfo data used as INPUT.
 
     :param Required[int] total_physical: Total physical memory in bytes.
@@ -46,7 +48,7 @@ class MemoryInfoData(_RequiredMemoryInfoData, total=False):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class _RequiredMemoryInfoDict(TypedDict, total=True):
+class _RequiredMemoryInfoDict(ReportElementTypedDict, total=True):
     """Required fields for V1 MemoryInfo data used as OUTPUT.
 
     All fields are required (`total=True`), and their values are immutable types.
