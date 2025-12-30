@@ -13,15 +13,16 @@ deserialization of report data.
 The version 1 report is the first stable version of the report format
 and serves as a foundation for future versions.
 """
-from typing import TYPE_CHECKING, Any, Sequence
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any, Sequence, cast
 
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report.base import BaseReport, JSONSchema
 from simplebench.types import ImmutableVariationColsType, VariationColsType
-from simplebench.validators import validate_sequence_of_type
+from simplebench.validators import validate_core_data_mapping, validate_sequence_of_type
 
 from .. import MachineInfo, ResultsInfo
-from ..types import ReportData, ReportDict
+from ..types import ReportData, ReportDict, ResultsInfoData
 from . import validate
 from .report_schema import ReportSchema
 
@@ -71,26 +72,27 @@ class Report(BaseReport):
         self._variation_cols: ImmutableVariationColsType = validate.variation_cols(variation_cols)
         self._results: tuple[ResultsInfo, ...] = validate.results(results)
         self._machine: MachineInfo = validate.machine(machine)
+        self._to_dict_cache: ReportDict | None = None  # Cache for to_dict output
 
     @classmethod
-    def from_dict(cls, data: ReportData) -> 'Report':
+    def from_dict(cls, data: Mapping[str, Any]) -> 'Report':
         """Create a Report instance from a dictionary.
 
-        :param ReportData data: Dictionary containing the JSON report data.
+        The input dictionary is validated against the rules for the version 1 report schema.
+
+        :param Mapping[str, Any] data: Dictionary containing the JSON structured report data.
         :return Report: Report instance.
         :raises SimpleBenchValueError: If any field has an invalid value.
         :raises SimpleBenchTypeError: If any field is of an incorrect type.
         """
-        allowed_keys = cls.init_params()  # Hydrate allowed keys from init params
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
-
+        allowed_keys = cls.init_params(ReportData)  # Hydrate allowed keys from ReportData TypedDict
         def process_results(value: Any) -> list[ResultsInfo]:
             validated_list = validate_sequence_of_type(
                 value, dict, 'results',
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE,
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT,
                 allow_empty=False)
+
             return [ResultsInfo.from_dict(item) for item in validated_list]
 
         kwargs = cls.import_data(  # Hydrate instance arguments from dict
@@ -109,9 +111,15 @@ class Report(BaseReport):
     def to_dict(self) -> ReportDict:
         """Convert the JSONReport instance to a dictionary.
 
-        :return: Dictionary containing the JSON report data.
+        The output dictionary conforms to the version 1 report schema
+        and is suitable for serialization to JSON. It is immutable and cached
+        for efficiency.
+
+        :return ReportDict: Immutable dictionary containing the JSON report data.
         """
-        return ReportDict({
+        if self._to_dict_cache is not None:
+            return self._to_dict_cache
+        data = {
             'type': self.TYPE,
             'version': self.VERSION,
             'timestamp': self.timestamp,
@@ -120,8 +128,14 @@ class Report(BaseReport):
             'description': self.description,
             'variation_cols': self.variation_cols,
             'machine': self.machine.to_dict(),
-            'results': [result.to_dict() for result in self.results],
-        })
+            'results': (result.to_dict() for result in self.results),
+        }
+
+        # We control the data structure here, so this cast is safe
+        self._to_dict_cache = cast(ReportDict,
+            validate_core_data_mapping(data, 'Report.to_dict output'))
+        return self._to_dict_cache
+
 
     @property
     def timestamp(self) -> str:

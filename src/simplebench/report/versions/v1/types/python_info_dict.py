@@ -17,7 +17,6 @@ class _PythonInfoCore(TypedDict, total=True):
 
 class _RequiredPythonInfoData(_PythonInfoCore, total=True):
     """Required fields for V1 PythonInfo data used as INPUT."""
-    pass
 
 
 class PythonInfoData(_RequiredPythonInfoData, total=False):

@@ -10,63 +10,82 @@ version 1: :class:`~simplebench.report.versions.v1.value_block.value_block_schem
     stricter, guaranteeing that `value` is a `float` and that `type` and `version` are present.
 
     These types ensure proper validation and serialization of ValueBlock data"""
-from simplebench.report.base import ValueBlockDataBase
 
-
-# A base for fields that are always required and have the same type.
-class _ValueBlockCore(ValueBlockDataBase, total=True):
-    semantic_type: str
-    unit: str
-    scale: float
+from typing import NotRequired, Required, TypedDict
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
+class _RequiredValueBlockData(TypedDict, total=True):
+    """Required fields for V1 ValueBlock data used as INPUT.
 
-class _RequiredValueBlockData(_ValueBlockCore, total=True):
-    """Required fields for V1 ValueBlock data used as INPUT."""
-    value: float | int  # Accepts int or float, as per JSON 'number' type
-
+    The input type allows `value` to be either `int` or `float`.
+    
+    :param Required[str] semantic_type: The semantic type of the value.
+    :param Required[str] unit: The unit of the value.
+    :param Required[float] scale: The scaling factor for the value.
+    :param Required[float | int] value: The numeric value of the block.
+    """
+    semantic_type: Required[str]
+    unit: Required[str]
+    scale: Required[float]
+    value: Required[float | int]
 
 class ValueBlockData(_RequiredValueBlockData, total=False):
     """Typed dictionary for V1 ValueBlock data used as INPUT.
 
     This type is lenient, allowing `type`, `version`, and `timer` to be
-    omitted, and accepting `int` or `float` for the `value` field.
+    omitted, and accepting either `int` or `float` for the `value` field.
 
-    :param str semantic_type: The semantic type of the value.
-    :param str unit: The unit of the value.
-    :param float scale: The scaling factor for the value.
-    :param int | float value: The numeric value of the block.
-    :param str type: (optional) The type identifier for the block.
-    :param int version: (optional) The version of the block's data structure.
-    :param str timer: (optional) The name of the timer associated with this value.
+    :param Required[str] semantic_type: The semantic type of the value.
+    :param Required[str] unit: The unit of the value.
+    :param Required[float] scale: The scaling factor for the value.
+    :param Required[float | int] value: The numeric value of the block.
+    :param NotRequired[str] type: The type identifier for the block.
+    :param NotRequired[int] version: The version of the block's data structure.
+    :param NotRequired[str] timer: The name of the timer associated with this value.
     """
-    type: str
-    version: int
-    timer: str
-
+    type: NotRequired[str]
+    version: NotRequired[int]
+    timer: NotRequired[str]
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class _RequiredValueBlockDict(_ValueBlockCore, total=True):
-    """Required fields for V1 ValueBlock data used as OUTPUT."""
-    type: str
-    version: int
-    value: float  # Guaranteed to be a float on output
+class _RequiredValueBlockDict(TypedDict, total=True):
+    """Required fields for V1 ValueBlock data used as OUTPUT.
 
+    `value` is guaranteed to be a `float`.
+
+    All fields are required (`total=True`), and their values are immutable.
+
+    :param Required[str] semantic_type: The semantic type of the value.
+    :param Required[str] unit: The unit of the value.
+    :param Required[float] scale: The scaling factor for the value.
+    :param Required[float] value: The numeric value of the block (guaranteed to be float).
+    :param Required[str] type: The type identifier for the block.
+    :param Required[int] version: The version of the block's data structure.
+    """
+    semantic_type: Required[str]
+    unit: Required[str]
+    scale: Required[float]
+    value: Required[float]  # Guaranteed to be float
+    type: Required[str]
+    version: Required[int]
 
 class ValueBlockDict(_RequiredValueBlockDict, total=False):
     """Typed dictionary for the JSON representation of a V1 ValueBlock (OUTPUT).
 
-    This type is strict, requiring `type` and `version` to be present and
-    guaranteeing that `value` is a `float`. The `timer` field remains optional.
+    This type is strict, requiring `type` and`version`` to be present.
+    `value` is guaranteed to be a `float`, `timer` is optional.
 
-    :param str type: The type identifier for the block.
-    :param int version: The version of the block's data structure.
-    :param str semantic_type: The semantic type of the value.
-    :param str unit: The unit of the value.
-    :param float scale: The scaling factor for the value.
-    :param float value: The numeric value of the block (guaranteed to be float).
-    :param str timer: (optional) The name of the timer associated with this value.
+    All fields are immutable.
+
+    :param Required[str] semantic_type: The semantic type of the value.
+    :param Required[str] unit: The unit of the value.
+    :param Required[float] scale: The scaling factor for the value.
+    :param Required[float] value: The numeric value of the block (guaranteed to be float).
+    :param Required[str] type: The type identifier for the block.
+    :param Required[int] version: The version of the block's data structure.
+    :param NotRequired[str] timer: The name of the timer associated with this value.
     """
-    timer: str
+    timer: NotRequired[str]
+    

@@ -4,14 +4,19 @@ The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
 from collections.abc import Mapping
-from types import MappingProxyType
-from typing import Any
+from typing import Any, cast
 
 from simplebench.report.base import BaseResultsInfo
-from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
+from simplebench.types import (
+    CoreDataMappingType,
+    ImmutableCoreDataMappingType,
+    ImmutableVariationMarksType,
+    VariationMarksType,
+)
 from simplebench.validators import validate_core_data_mapping
 
 from .. import MetricsObject
+from ..types import ResultsInfoDict
 from . import validate
 from .results_info_schema import ResultsInfoSchema
 
@@ -40,8 +45,7 @@ class ResultsInfo(BaseResultsInfo):
                  title: str,
                  description: str,
                  n: float,
-                 variation_cols: Mapping[str, str],
-                 variation_marks: Mapping[str, str],
+                 variation_marks: VariationMarksType,
                  metrics: MetricsObject,
                  extra_info: CoreDataMappingType,
                  ):
@@ -55,7 +59,7 @@ class ResultsInfo(BaseResultsInfo):
         :param str description: The description of the results.
         :param n: The complexity analysis n value.
         :param float n: The n value.
-        :param Mapping[str, str] variation_cols: The variation columns.
+        :param VariationMarksType variation_marks: The variation marks mapping.
         :param MetricsObject metrics: The list of metrics.
         :param CoreDataMappingType extra_info: Additional information.
         """
@@ -63,22 +67,22 @@ class ResultsInfo(BaseResultsInfo):
         self._title: str = validate.title(title)
         self._description: str = validate.description(description)
         self._n: float = validate.n(n)
-        self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(variation_cols)
-        self._variation_marks: MappingProxyType[str, str] = validate.variation_marks(variation_marks)
+        self._variation_marks: ImmutableVariationMarksType = validate.variation_marks(variation_marks)
         self._metrics: MetricsObject = validate.metrics(metrics)
         self._extra_info: ImmutableCoreDataMappingType = validate.extra_info(extra_info)
+        self._to_dict_cache: ResultsInfoDict | None = None
 
     @classmethod
-    def from_dict(cls, data: CoreDataMappingType) -> 'ResultsInfo':
+    def from_dict(cls, data: Mapping[str, Any]) -> 'ResultsInfo':
         """Create a ResultsInfo object instance from a mapping of data conformant
         to the V1 results-info JSON schema.
 
-        :param CoreDataMappingType data: Mapping containing the results-info object data.
+        :param ResultsInfoData data: Mapping containing the results-info object data.
         :return ResultsInfo: ResultsInfo instance.
         """
-        allowed_keys = cls.init_params()
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
+        allowed_keys = cls.init_params()  # Hydrate allowed keys from init params
+        allowed_keys['version'] = int  # Allowed and checked if present, but not passed to init
+        allowed_keys['type'] = str  # Allowed and checked if present, but not passed to init
 
         kwargs = cls.import_data(
             data=data,
@@ -90,23 +94,30 @@ class ResultsInfo(BaseResultsInfo):
             process_as={'metrics': MetricsObject.from_dict})
         return cls(**kwargs)
 
-    def to_dict(self) -> CoreDataMappingType:
-        """Convert the ResultsInfo instance to a mapping suitable for serialization.
+    def to_dict(self) -> ResultsInfoDict:
+        """Convert the ResultsInfo instance to an immutable ResultsInfoDict
+        suitable for serialization.
 
-        :return CoreDataMappingType: Mapping containing the ResultsInfo object data.
+        Results are cached after the first conversion. Because the ResultsInfo
+        instance is immutable, the cached mapping is always valid for future calls.
+
+        :return ResultsInfoDict: Immutable mapping containing the ResultsInfo object data.
         """
+        if self._to_dict_cache is not None:
+            return self._to_dict_cache
         data: dict[str, Any] = {}
         for key in self.init_params():
             value = getattr(self, key)
-            if hasattr(value, 'to_dict'):
-                data[key] = value.to_dict()
-            else:
-                data[key] = value
+            to_dict_fn = getattr(value, "to_dict", None)
+            data[key] = to_dict_fn() if callable(to_dict_fn) else value
 
         data['type'] = self.TYPE
         data['version'] = self.VERSION
-        return validate_core_data_mapping(data, 'ResultsInfo.to_dict output',
-                                          max_depth=10)
+
+        # We control the data structure here, so this cast is safe
+        self._to_dict_cache = cast(ResultsInfoDict,
+            validate_core_data_mapping(data, 'ResultsInfo.to_dict output'))
+        return self._to_dict_cache
 
     @property
     def group(self) -> str:
@@ -129,12 +140,12 @@ class ResultsInfo(BaseResultsInfo):
         return self._n
 
     @property
-    def variation_cols(self) -> MappingProxyType[str, str]:
-        """Get the variation columns.
+    def variation_marks(self) -> ImmutableVariationMarksType:
+        """Get the variation marks.
 
-        :return: A mapping of variation columns.
+        :return: The variation marks immutable mapping.
         """
-        return self._variation_cols
+        return self._variation_marks
 
     @property
     def metrics(self) -> MetricsObject:

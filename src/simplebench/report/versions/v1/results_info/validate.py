@@ -4,7 +4,7 @@ from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
-from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
+from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType, VariationMarksType, ImmutableVariationMarksType
 from simplebench.validators import validate_core_data_mapping, validate_float, validate_string, validate_type
 
 from .. import MetricsObject
@@ -70,37 +70,14 @@ def n(value: float) -> float:
     return value
 
 
-def variation_cols(value: Mapping[str, str]) -> MappingProxyType[str, str]:
-    """Validate the variation_cols property.
-
-    Validates that `variation_cols` is a mapping of strings to strings
-    and converts it to an immutable MappingProxyType[str, str].
-
-    :param Mapping[str, str] value: The variation_cols values to validate.
-    :return MappingProxyType[str, str]: The validated variation_cols values dictionary
-    :raises SimpleBenchTypeError: If variation_cols is not a mapping of strings to strings.
-    """
-    validate_type(
-        value, Mapping, 'variation_cols',
-        _ResultsInfoErrorTag.INVALID_VARIATION_COLS_TYPE,
-        message=f"variation_cols must be a Mapping, got {type(value)}"
-    )
-    if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
-        raise SimpleBenchTypeError(
-            "All keys and values in variation_cols must be strings",
-            tag=_ResultsInfoErrorTag.INVALID_VARIATION_COLS_CONTENT)
-
-    return MappingProxyType(value)
-
-
-def variation_marks(value: Mapping[str, str]) -> MappingProxyType[str, str]:
+def variation_marks(value: VariationMarksType) -> ImmutableVariationMarksType:
     """Validate the variation_marks property.
 
     Validates that `variation_marks` is a mapping of strings to strings
     and converts it to an immutable MappingProxyType[str, str].
 
-    :param Mapping[str, str] value: The variation_marks values to validate.
-    :return MappingProxyType[str, str]: The validated variation_marks values dictionary
+    :param VariationMarksType value: The variation_marks values to validate.
+    :return ImmutableVariationMarksType: The validated variation_marks values dictionary
     :raises SimpleBenchTypeError: If variation_marks is not a mapping of strings to strings.
     """
     validate_type(

@@ -4,6 +4,7 @@ from .cpu_info_dict import CPUInfoData, CPUInfoDict
 from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvironmentDict
 from .machine_info_dict import MachineInfoData, MachineInfoDict
 from .memory_info_dict import MemoryInfoData, MemoryInfoDict
+from .metrics_object_dict import MetricsObjectData, MetricsObjectDict, MetricDataTypes, MetricDictTypes
 from .python_info_dict import PythonInfoData, PythonInfoDict
 from .report_dict import ReportData, ReportDict
 from .results_info_dict import ResultsInfoData, ResultsInfoDict
@@ -19,6 +20,10 @@ __all__ = [
     'MachineInfoDict',
     'MemoryInfoData',
     'MemoryInfoDict',
+    'MetricsObjectData',
+    'MetricsObjectDict',
+    'MetricDataTypes',
+    'MetricDictTypes',
     'PythonInfoData',
     'PythonInfoDict',
     'ReportData',
