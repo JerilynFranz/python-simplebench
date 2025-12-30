@@ -138,11 +138,11 @@ class Hydrator:
     """
     @classmethod
     @cache
-    def init_params(cls) -> dict[str, Any]:
+    def init_params(cls, target_cls: type | None = None) -> dict[str, Any]:
         """Return a dictionary of the parameters and their types that can be
         passed to the constructor.
 
-        It inspects the class's `__init__` method to extract the keyword-only
+        It inspects the target class's `__init__` method to extract the keyword-only
         parameters and their type annotations and returns them as a dictionary.
 
         If the class is a TypedDict or a dataclass, it extracts the fields
@@ -170,29 +170,33 @@ class Hydrator:
 
         It is cached to avoid recomputing it every time it is called.
 
+        :param type | None target_cls: (optional) The target class to inspect. If None, uses the current class.
         :return dict[str, Any]: A dictionary mapping parameter names for the __init__ method to their types.
         """
+        if target_cls is None:
+            target_cls = cls
+
         # TypedDict support
-        if is_typeddict(cls):
-            return dict(cls.__annotations__)
+        if is_typeddict(target_cls):
+            return dict(target_cls.__annotations__)
 
         # Dataclass support
-        if dataclasses.is_dataclass(cls):
-            return {field.name: field.type for field in dataclasses.fields(cls)}
+        if dataclasses.is_dataclass(target_cls):
+            return {field.name: field.type for field in dataclasses.fields(target_cls)}
 
         # Regular class logic (Python 3.10+)
         try:
             type_hints = get_type_hints(
-                cls.__init__,
-                globalns=vars(inspect.getmodule(cls)),
-                localns=dict(vars(cls))
+                target_cls.__init__,
+                globalns=vars(inspect.getmodule(target_cls)),
+                localns=dict(vars(target_cls))
             )
         except Exception:  # pylint: disable=broad-exception-caught
             return {}
 
         return {
             name: type_hints[name]
-            for name, param in inspect.signature(cls.__init__).parameters.items()
+            for name, param in inspect.signature(target_cls.__init__).parameters.items()
             if param.kind == inspect.Parameter.KEYWORD_ONLY and name in type_hints
         }
 
