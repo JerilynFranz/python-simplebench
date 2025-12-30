@@ -296,7 +296,10 @@ def _trim_immutables_cache(size: int) -> None:
     """Trim the immutable core data type cache to the specified size.
 
     If the cache exceeds the specified size, the oldest entries are removed
-    until the cache size is at or below 75% of the specified size.
+    until the cache size is at or below 75% of the specified size (rounding down).
+
+    This helps maintain cache efficiency while preventing unbounded growth
+    and minimizing performance impact from frequent trimming.
 
     The smallest allowed size is 10.
 
