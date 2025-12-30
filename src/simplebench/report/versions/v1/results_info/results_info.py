@@ -105,14 +105,21 @@ class ResultsInfo(BaseResultsInfo):
         """
         if self._to_dict_cache is not None:
             return self._to_dict_cache
+
+        property_keys = self.init_params(ResultsInfoDict).keys()
         data: dict[str, Any] = {}
-        for key in self.init_params():
+        # This loop handles calling to_dict on any properties that
+        # themselves have a to_dict method. This ensures nested objects,
+        # known or unknown, are properly serialized in the future as needed.
+        for key in property_keys:
+            if key in {'type', 'version'}:
+                continue
             value = getattr(self, key)
             to_dict_fn = getattr(value, "to_dict", None)
             data[key] = to_dict_fn() if callable(to_dict_fn) else value
-
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
+        cls = self.__class__
+        data['type'] = cls.TYPE
+        data['version'] = cls.VERSION
 
         # We control the data structure here, so this cast is safe
         self._to_dict_cache = cast(ResultsInfoDict,

@@ -116,12 +116,12 @@ class StatsBlockSchema(JSONSchema):
                     "description": "The maximum value of the per-iteration measurements.",
                     "type": "number"
                 },
-                "standard_deviation": {
+                "stdev": {
                     "title": "Standard Deviation",
                     "description": "The standard deviation of a single underlying operation (round). If rounds > 1, this value is scaled from the standard deviation of the iterations to counter the effect of averaging.",
                     "type": "number"
                 },
-                "relative_standard_deviation": {
+                "relative_stdev": {
                     "title": "Relative Standard Deviation",
                     "description": "The relative standard deviation (coefficient of variation), based on the scaled standard deviation of a single round.",
                     "type": "number"
@@ -157,8 +157,8 @@ class StatsBlockSchema(JSONSchema):
                 "median",
                 "minimum",
                 "maximum",
-                "standard_deviation",
-                "relative_standard_deviation",
+                "stdev",
+                "relative_stdev",
                 "percentiles"
             ],
             "additionalProperties": False

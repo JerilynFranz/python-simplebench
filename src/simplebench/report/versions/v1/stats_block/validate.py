@@ -33,7 +33,7 @@ def description(value: str) -> str:
                 allow_blank=True, strip=True)
 
 
-def mean(value: float | None) -> float | None:
+def mean(value: float | None, measurements_value: Values | None) -> float | None:
     """Validates that mean is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -42,12 +42,16 @@ def mean(value: float | None) -> float | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "mean cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.MEAN_AND_MEASUREMENTS_PROVIDED)
     return validate_float(
                 value, 'mean',
                 _StatsBlockErrorTag.INVALID_MEAN_TYPE)
 
 
-def median(value: float | None) -> float | None:
+def median(value: float | None, measurements_value: Values | None) -> float | None:
     """Validates that the median is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -56,12 +60,16 @@ def median(value: float | None) -> float | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "median cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.MEDIAN_AND_MEASUREMENTS_PROVIDED)
     return validate_float(
                 value, 'median',
                 _StatsBlockErrorTag.INVALID_MEDIAN_TYPE)
 
 
-def minimum(value: float | None) -> float | None:
+def minimum(value: float | None, measurements_value: Values | None) -> float | None:
     """Validates that the minimum is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -70,12 +78,16 @@ def minimum(value: float | None) -> float | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "minimum cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.MINIMUM_AND_MEASUREMENTS_PROVIDED)
     return validate_float(
                 value, 'minimum',
                 _StatsBlockErrorTag.INVALID_MINIMUM_TYPE)
 
 
-def maximum(value: float | None) -> float | None:
+def maximum(value: float | None, measurements_value: Values | None) -> float | None:
     """Validates that the maximum is a floating point number or None.
 
     :param float | None value: The value to validate.
@@ -84,6 +96,10 @@ def maximum(value: float | None) -> float | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "maximum cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.MAXIMUM_AND_MEASUREMENTS_PROVIDED)
     return validate_float(
                 value, 'maximum',
                 _StatsBlockErrorTag.INVALID_MAXIMUM_TYPE)
@@ -147,7 +163,7 @@ def rounds(value: int) -> int:
                 _StatsBlockErrorTag.INVALID_ROUNDS_VALUE)
 
 
-def iterations(value: int | None) -> int | None:
+def iterations(value: int | None, measurements_value: Values | None) -> int | None:
     """Validates that iterations is a positive integer.
 
     :param int | None value: The value to validate.
@@ -157,13 +173,17 @@ def iterations(value: int | None) -> int | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "iterations cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.ITERATIONS_AND_MEASUREMENTS_PROVIDED)
     return validate_positive_int(
                 value, "iterations",
                 _StatsBlockErrorTag.INVALID_ITERATIONS_TYPE,
                 _StatsBlockErrorTag.INVALID_ITERATIONS_VALUE)
 
 
-def percentiles(value: Values | Sequence[float | int] | None) -> Values | None:
+def percentiles(value: Values | Sequence[float | int] | None, measurements_value: Values | None) -> Values | None:
     """Validates that percentiles is a sequence of floats or ints or None.
 
     :param Values | Sequence[float | int] | None value: The value to validate.
@@ -173,6 +193,10 @@ def percentiles(value: Values | Sequence[float | int] | None) -> Values | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "percentiles cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.PERCENTILES_AND_MEASUREMENTS_PROVIDED)
 
     # If the value is not already a Values object, validate it as a sequence of numbers
     # and convert it to a Values object containing floats
@@ -202,8 +226,8 @@ def percentiles(value: Values | Sequence[float | int] | None) -> Values | None:
     return validated_values
 
 
-def relative_standard_deviation(value: float | None) -> float | None:
-    """Validates that relative_standard_deviation is a float or None.
+def relative_stdev(value: float | None, measurements_value: Values | None) -> float | None:
+    """Validates that relative_stdev is a float or None.
 
     It also checks that it is non-negative if it is not None.
 
@@ -214,8 +238,12 @@ def relative_standard_deviation(value: float | None) -> float | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "relative_stdev cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.RELATIVE_STDEV_AND_MEASUREMENTS_PROVIDED)
     return validate_non_negative_float(
-            value, 'relative_standard_deviation',
+            value, 'relative_stdev',
             _StatsBlockErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_TYPE,
             _StatsBlockErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_VALUE)
 
@@ -253,8 +281,8 @@ def semantic_type(value: str) -> str:
                 _StatsBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
 
 
-def standard_deviation(value: float | None) -> float | None:
-    """Validates that standard_deviation is a float or None.
+def stdev(value: float | None, measurements_value: Values | None) -> float | None:
+    """Validates that stdev is a float or None.
 
     It also checks that it is non-negative if it is not None.
 
@@ -265,8 +293,12 @@ def standard_deviation(value: float | None) -> float | None:
     """
     if value is None:
         return None
+    if measurements_value is not None:
+        raise SimpleBenchTypeError(
+            "stdev cannot be provided when measurements are provided",
+            tag=_StatsBlockErrorTag.STDEV_AND_MEASUREMENTS_PROVIDED)
     return validate_non_negative_float(
-            value, 'standard_deviation',
+            value, 'stdev',
             _StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_TYPE,
             _StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_VALUE)
 

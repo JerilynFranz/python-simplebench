@@ -32,15 +32,18 @@ The dictionary serialized representation matches the JSON schema for version 1 r
 and can be used for JSON serialization and deserialization.
 """
 import statistics
+from collections.abc import Mapping
 from copy import copy
 from math import sqrt
-from typing import Any, Sequence, overload
+from typing import Any, Sequence, cast, overload
 
-from simplebench.decorators import immutable
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
-from simplebench.report.base import BaseStatsBlock, JSONSchema
+from simplebench.report.base.json_schema import JSONSchema
+from simplebench.report.base.stats_block import BaseStatsBlock
+from simplebench.report.versions.v1.types.stats_block_dict import StatsBlockData, StatsBlockDict
 from simplebench.types.values import Values
+from simplebench.validators import validate_core_data_mapping
 
 from . import validate
 from .stats_block_schema import StatsBlockSchema
@@ -66,8 +69,8 @@ class StatsBlock(BaseStatsBlock):
     :param median: The median value of the stats block.
     :param minimum: The minimum value of the stats block.
     :param maximum: The maximum value of the stats block.
-    :param standard_deviation: The standard deviation of the stats block.
-    :param relative_standard_deviation: The relative standard deviation of the stats block.
+    :param stdev: The standard deviation of the stats block.
+    :param relative_stdev: The relative standard deviation of the stats block.
     :param percentiles: The list of percentiles for the stats block as a `Values` instance.
     :param measurements: A list of raw measurements for initializing the stats block.
     :raise SimpleBenchTypeError: If any parameter is of an invalid type.
@@ -99,8 +102,8 @@ class StatsBlock(BaseStatsBlock):
         "median",
         "minimum",
         "maximum",
-        "standard_deviation",
-        "relative_standard_deviation",
+        "stdev",
+        "relative_stdev",
         "percentiles",
     )
 
@@ -110,8 +113,8 @@ class StatsBlock(BaseStatsBlock):
         "median",
         "minimum",
         "maximum",
-        "standard_deviation",
-        "relative_standard_deviation",
+        "stdev",
+        "relative_stdev",
         "percentiles",
     )
 
@@ -127,28 +130,38 @@ class StatsBlock(BaseStatsBlock):
         "_median",
         "_minimum",
         "_maximum",
-        "_standard_deviation",
-        "_relative_standard_deviation",
+        "_stdev",
+        "_relative_stdev",
         "_percentiles",
         "_measurements",
         "_hash_cache",
+        "_to_dict_cache",
     )
 
     @overload
     def __init__(self, *,
                  name: str,
-                 description: str,
+                 description: str = '',
                  semantic_type: str,
                  unit: str,
                  scale: float,
                  rounds: int,
                  measurements: Sequence[float] | Values) -> None:
-        """Initialize a StatsBlock by calculating statistics from raw measurements."""
+        """Initialize a StatsBlock by calculating statistics from raw measurements.
+        
+        :param str name: The name of the stats block.
+        :param str description: The description of the stats block.
+        :param str semantic_type: The semantic type of the stats block.
+        :param str unit: The unit of measurement for the stats block.
+        :param float scale: The scale factor for the stats block.
+        :param int rounds: The number of rounds in the stats block.
+        :param Sequence[float] | Values | None measurements: The list of raw measurements for the stats block.
+        """
 
     @overload
     def __init__(self, *,
                  name: str,
-                 description: str,
+                 description: str = '',
                  semantic_type: str,
                  unit: str,
                  scale: float,
@@ -158,14 +171,30 @@ class StatsBlock(BaseStatsBlock):
                  median: float,
                  minimum: float,
                  maximum: float,
-                 standard_deviation: float,
-                 relative_standard_deviation: float,
+                 stdev: float,
+                 relative_stdev: float,
                  percentiles: Sequence[float]) -> None:
-        """Initialize a StatsBlock with pre-calculated statistical values."""
+        """Initialize a StatsBlock with pre-calculated statistical values.
+        
+        :param str name: The name of the stats block.
+        :param str description: The description of the stats block.
+        :param str semantic_type: The semantic type of the stats block.
+        :param str unit: The unit of measurement for the stats block.
+        :param float scale: The scale factor for the stats block.
+        :param int | None iterations: The number of iterations in the stats block.
+        :param int rounds: The number of rounds in the stats block.
+        :param float | None mean: The mean value of the stats block.
+        :param float | None median: The median value of the stats block.
+        :param float | None minimum: The minimum value of the stats block.
+        :param float | None maximum: The maximum value of the stats block.
+        :param float | None stdev: The standard deviation of the stats block.
+        :param float | None relative_stdev: The relative standard deviation of the stats block.
+        :param Sequence[float] | None percentiles: The list of percentiles for the stats block.        
+        """
 
     def __init__(self, *,
                  name: str,
-                 description: str,
+                 description: str = '',
                  semantic_type: str,
                  unit: str,
                  scale: float,
@@ -175,8 +204,8 @@ class StatsBlock(BaseStatsBlock):
                  median: float | None = None,
                  minimum: float | None = None,
                  maximum: float | None = None,
-                 standard_deviation: float | None = None,
-                 relative_standard_deviation: float | None = None,
+                 stdev: float | None = None,
+                 relative_stdev: float | None = None,
                  percentiles: Sequence[float] | None = None,
                  measurements: Sequence[float] | Values | None = None) -> None:
         """Initialize a StatsBlock object with the given parameters.
@@ -189,31 +218,32 @@ class StatsBlock(BaseStatsBlock):
             The following parameters can be derived from the measurements and cannot be
             set directly if measurements are provided. If measurements are provided and
             any of these parameters are also provided a value other than `None`,
-            a `SimpleBenchValueError` will be raised.
+            a `SimpleBenchTypeError` will be raised.
 
+            - iterations
             - mean
             - median
             - minimum
             - maximum
-            - standard_deviation
-            - relative_standard_deviation
+            - stdev
+            - relative_stdev
             - percentiles
 
-        :param name: The name of the stats block.
-        :param description: The description of the stats block.
-        :param semantic_type: The semantic type of the stats block.
-        :param unit: The unit of measurement for the stats block.
-        :param scale: The scale factor for the stats block.
-        :param iterations: The number of iterations in the stats block.
-        :param rounds: The number of rounds in the stats block.
-        :param mean: The mean value of the stats block.
-        :param median: The median value of the stats block.
-        :param minimum: The minimum value of the stats block.
-        :param maximum: The maximum value of the stats block.
-        :param standard_deviation: The standard deviation of the stats block.
-        :param relative_standard_deviation: The relative standard deviation of the stats block.
-        :param percentiles: The list of percentiles for the stats block.
-        :param measurements: The list of raw measurements for the stats block.
+        :param str name: The name of the stats block.
+        :param str description: The description.
+        :param str semantic_type: The semantic type of the stats block.
+        :param str unit: The unit of measurement.
+        :param float scale: The scale factor.
+        :param int | None iterations: The number of iterations. (exclusive with `measurements`)
+        :param int rounds: The number of rounds in the stats block.
+        :param float | None mean: The mean value of the data. (exclusive with `measurements`)
+        :param float | None median: The median value of the data. (exclusive with `measurements`)
+        :param float | None minimum: The minimum value of the data. (exclusive with `measurements`)
+        :param float | None maximum: The maximum value of the data. (exclusive with `measurements`)
+        :param float | None stdev: The standard deviation of the data. (exclusive with `measurements`)
+        :param float | None relative_stdev: The relative standard deviation of the data. (exclusive with `measurements`)
+        :param Sequence[float] | None percentiles: The list of percentiles for the data (exclusive with `measurements`).
+        :param Sequence[float] | Values | None measurements: The list of raw measurements for the data.
         :raise SimpleBenchTypeError: If any parameter is of an invalid type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
@@ -228,66 +258,104 @@ class StatsBlock(BaseStatsBlock):
         included in the exported dictionary representation of the StatsBlock or
         considered part of the object's identity for equality or hashing."""
 
-        self.name = name
-        self.description = description
-        self.semantic_type = semantic_type
-        self.unit = unit
-        self.scale = scale
-        self.iterations = iterations
-        self.rounds = rounds
-        self.mean = mean
-        self.median = median
-        self.minimum = minimum
-        self.maximum = maximum
-        self.standard_deviation = standard_deviation
-        self.relative_standard_deviation = relative_standard_deviation
-        self.percentiles = percentiles
+        self._name: str = validate.name(name)
+        """The name of the stats block."""
+        self._description: str = validate.description(description)
+        """The description of the stats block."""
+        self._semantic_type: str = validate.semantic_type(semantic_type)
+        """The semantic type of the stats block."""
+        self._unit: str = validate.unit(unit)
+        """The unit of measurement."""
+        self._scale: float = validate.scale(scale)
+        """The scale factor."""
+        self._rounds: int = validate.rounds(rounds)
+        """The number of rounds per iteration."""
+
+        # potentially derivable properties - only settable if measurements is None
+        self._iterations: int | None = validate.iterations(iterations, self._measurements)
+        """The number of iterations."""
+        self._mean: float | None = validate.mean(mean, self._measurements)
+        """The mean value."""
+        self._median: float | None = validate.median(median, self._measurements)
+        """The median value."""
+        self._minimum: float | None = validate.minimum(minimum, self._measurements)
+        """The minimum value."""
+        self._maximum: float | None = validate.maximum(maximum, self._measurements)
+        """The maximum value."""
+        self._stdev: float | None = validate.stdev(stdev, self._measurements)
+        """The standard deviation."""
+        self._relative_stdev: float | None = validate.relative_stdev(relative_stdev, self._measurements)
+        """The relative standard deviation."""
+        self._percentiles: Values | None = validate.percentiles(percentiles, self._measurements)
+        """The list of percentiles."""
+
         self._hash_cache: int | None = None
+        """Cache for the computed hash value of the object."""
+        self._to_dict_cache: StatsBlockDict | None = None
+        """Cache for the dictionary representation of the object."""
+
         self._validate_stats_block_consistency()
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "StatsBlock":
+    def from_dict(cls, data: Mapping[str, Any]) -> "StatsBlock":
         """Create a StatsBlock object from a dictionary representation
         that conforms to the version 1 :class:`StatsBlockSchema`.
+
+        This method validates the input dictionary to ensure it matches
+        the expected schema and types before creating the StatsBlock instance.
+
+        It cannot be instantiated using raw measurements via this method;
+        the statistical parameters must be provided directly in the dictionary.
 
         :param data: A dictionary representation of a StatsBlock.
         :return StatsBlock: A StatsBlock object created from the dictionary.
         :raise SimpleBenchTypeError: If any parameter in the dictionary is of an invalid type.
         :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.
         """
-        allowed_keys = cls.init_params()
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
+        allowed_keys = cls.init_params(StatsBlockData)
 
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
-            skip_fields={'version', 'type', 'measurements'},
+            skip_fields={'version', 'type'},
             optional_fields={'description', 'version', 'type'},
             defaults={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={'percentiles': Values})
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
-        """Convert the StatsBlock object to a dictionary.
+    def to_dict(self) -> StatsBlockDict:
+        """Convert the StatsBlock object to an immutable mapping conforming to the version 1 :class:`StatsBlockSchema`.
 
-        The exported dictionary representation includes all properties of the StatsBlock
-        except for the `measurements` property, which is not included.
+        The exported mapping includes all properties of the StatsBlock and
+        expands any nested objects by calling their own `to_dict` methods if available.
 
         It is the canonical representation of the StatsBlock suitable for serialization to JSON
         and deserialization back into a StatsBlock object.
 
-        :return: A dictionary representation of the StatsBlock.
+        :return StatsBlockDict: A dictionary representation of the StatsBlock.
         """
-        property_keys = self.init_params().keys()
-        data = {key: getattr(self, key) for key in property_keys}
-        if 'measurements' in data:  # not included in the exported dictionary representation
-            del data['measurements']
-        data['type'] = self.TYPE
-        data['version'] = self.VERSION
+        if self._to_dict_cache is not None:
+            return self._to_dict_cache
 
-        return data
+        property_keys = self.init_params(StatsBlockDict).keys()
+        data: dict[str, Any] = {}
+        # This loop handles calling to_dict on any properties that
+        # themselves have a to_dict method. This ensures nested objects,
+        # known or unknown, are properly serialized in the future as needed.
+        for key in property_keys:
+            if key in {'type', 'version'}:
+                continue
+            value = getattr(self, key)
+            to_dict_fn = getattr(value, "to_dict", None)
+            data[key] = to_dict_fn() if callable(to_dict_fn) else value
+        data['type'] = StatsBlock.TYPE
+        data['version'] = StatsBlock.VERSION
+
+        # We control the data structure here, so this cast is safe
+        self._to_dict_cache = cast(StatsBlockDict,
+            validate_core_data_mapping(data, 'StatsBlock.to_dict output'))
+        return self._to_dict_cache
 
     @property
     def name(self) -> str:
@@ -297,18 +365,6 @@ class StatsBlock(BaseStatsBlock):
         """
         return self._name
 
-    @name.setter
-    @immutable
-    def name(self, value: str) -> None:
-        """Set the name of the stats block.
-
-        :param value: The name of the stats block.
-        :raise SimpleBenchTypeError: If name is not a string.
-        :raise SimpleBenchValueError: If name is an empty string.
-        :raise SimpleBenchAttributeError: If name is already set.
-        """
-        self._name: str = validate.name(value)
-
     @property
     def description(self) -> str:
         """Get the description of the stats block.
@@ -316,17 +372,6 @@ class StatsBlock(BaseStatsBlock):
         :return: The description of the stats block.
         """
         return self._description
-
-    @description.setter
-    @immutable
-    def description(self, value: str) -> None:
-        """Set the description of the stats block.
-
-        :param value: The description of the stats block.
-        :raise SimpleBenchTypeError: If description is not a string.
-        :raise SimpleBenchAttributeError: If description is already set.
-        """
-        self._description: str = validate.description(value)
 
     @property
     def semantic_type(self) -> str:
@@ -359,18 +404,6 @@ class StatsBlock(BaseStatsBlock):
         """
         return self._semantic_type
 
-    @semantic_type.setter
-    @immutable
-    def semantic_type(self, value: str) -> None:
-        """Set the semantic type of the stats block.
-
-        :param value: The semantic type of the stats block.
-        :raise SimpleBenchTypeError: If semantic_type is not a string.
-        :raise SimpleBenchValueError: If semantic_type is not a valid namespaced identifier.
-        :raise SimpleBenchAttributeError: If semantic_type is already set.
-        """
-        self._semantic_type = validate.semantic_type(value)
-
     @property
     def unit(self) -> str:
         """Get the unit of measurement.
@@ -378,18 +411,6 @@ class StatsBlock(BaseStatsBlock):
         :return: The unit of measurement.
         """
         return self._unit
-
-    @unit.setter
-    @immutable
-    def unit(self, value: str) -> None:
-        """Set the unit of measurement.
-
-        :param value: The unit of measurement.
-        :raise SimpleBenchTypeError: If unit is not a string.
-        :raise SimpleBenchValueError: If unit is an empty string.
-        :raise SimpleBenchAttributeError: If unit is already set.
-        """
-        self._unit: str = validate.unit(value)
 
     @property
     def scale(self) -> float:
@@ -399,18 +420,6 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchTypeError: If scale is not a float.
         """
         return self._scale
-
-    @scale.setter
-    @immutable
-    def scale(self, value: float) -> None:
-        """Set the scale factor.
-
-        :param value: The scale factor.
-        :raise SimpleBenchTypeError: If scale is not a float.
-        :raise SimpleBenchValueError: If scale is not a positive number.
-        :raise SimpleBenchAttributeError: If scale is already set.
-        """
-        self._scale: float = validate.scale(value)
 
     @property
     def iterations(self) -> int:
@@ -425,29 +434,8 @@ class StatsBlock(BaseStatsBlock):
             `measurements` are not available either.
         """
         if self._iterations is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate iterations without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._iterations = len(self._measurements)
+            self._iterations = len(self._measurements) # type: ignore[reportArgumentType]  # validated in __init__
         return self._iterations
-
-    @iterations.setter
-    @immutable
-    def iterations(self, value: int | None) -> None:
-        """Set the number of iterations.
-
-        .. warning:: Cannot be set if `measurements` are already set
-            This property is mutually exclusive with the `measurements` property
-            because its value can be calculated from the `measurements` property.
-
-        :param value: The number of iterations.
-        :raise SimpleBenchTypeError: If iterations is not an integer.
-        :raise SimpleBenchValueError: If iterations is not a positive integer.
-        :raise SimpleBenchAttributeError: If iterations is already set.
-        """
-        self._validate_no_measurements('iterations')
-        self._iterations: int | None = validate.iterations(value)
 
     @property
     def rounds(self) -> int:
@@ -456,18 +444,6 @@ class StatsBlock(BaseStatsBlock):
         :return: The number of rounds.
         """
         return self._rounds
-
-    @rounds.setter
-    @immutable
-    def rounds(self, value: int) -> None:
-        """Set the number of rounds.
-
-        :param value: The number of rounds.
-        :raise SimpleBenchTypeError: If rounds is not an integer.
-        :raise SimpleBenchValueError: If rounds is not a positive integer.
-        :raise SimpleBenchAttributeError: If rounds is already set.
-        """
-        self._rounds: int = validate.rounds(value)
 
     @property
     def mean(self) -> float:
@@ -479,28 +455,9 @@ class StatsBlock(BaseStatsBlock):
         :return float: The mean value.
         """
         if self._mean is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate mean without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._mean = statistics.mean(self._measurements)
+            self._mean = float(
+                statistics.mean(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
         return self._mean
-
-    @mean.setter
-    @immutable
-    def mean(self, value: float | None) -> None:
-        """Set the mean value.
-
-        .. warning:: Cannot be set if `measurements` are already set
-            This property is mutually exclusive with the `measurements` property
-            because its value can be calculated from the `measurements` property.
-
-        :param value: The mean value.
-        :raise SimpleBenchAttributeError: If measurements are already set.
-        :raise SimpleBenchTypeError: If mean is not a float.
-        """
-        self._validate_no_measurements('mean')
-        self._mean: float | None = validate.mean(value)
 
     @property
     def median(self) -> float:
@@ -512,28 +469,9 @@ class StatsBlock(BaseStatsBlock):
         :return float: The median value.
         """
         if self._median is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate median without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._median = statistics.median(self._measurements)
+            self._median = float(
+                statistics.median(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
         return self._median
-
-    @median.setter
-    @immutable
-    def median(self, value: float | None) -> None:
-        """Set the median value.
-
-        .. warning:: Cannot be set if `measurements` are already set
-            This property is mutually exclusive with the `measurements` property
-            because its value can be calculated from the `measurements` property.
-
-        :param value: The median value.
-        :raise SimpleBenchValueError: If measurements are already set.
-        :raise SimpleBenchTypeError: If median is not a float.
-        """
-        self._validate_no_measurements('median')
-        self._median: float | None = validate.median(value)
 
     @property
     def minimum(self) -> float:
@@ -545,28 +483,8 @@ class StatsBlock(BaseStatsBlock):
         :return: The minimum value.
         """
         if self._minimum is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate minimum without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._minimum = float(min(self._measurements))
+            self._minimum = float(min(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
         return self._minimum
-
-    @minimum.setter
-    @immutable
-    def minimum(self, value: float | None) -> None:
-        """Set the minimum value.
-
-        .. warning:: Cannot be set if `measurements` are already set
-            This property is mutually exclusive with the `measurements` property
-            because its value can be calculated from the `measurements` property.
-
-        :param float | None value: The minimum value.
-        :raise SimpleBenchTypeError: If minimum is not a float.
-        :raise SimpleBenchAttributeError: If measurements are already set.
-        """
-        self._validate_no_measurements("minimum")
-        self._minimum: float | None = validate.minimum(value)
 
     @property
     def maximum(self) -> float:
@@ -578,71 +496,41 @@ class StatsBlock(BaseStatsBlock):
         :return: The maximum value.
         """
         if self._maximum is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate maximum without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            self._maximum = float(max(self._measurements))
+            self._maximum = float(
+                max(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
         return self._maximum
 
-    @maximum.setter
-    @immutable
-    def maximum(self, value: float | None) -> None:
-        """Set the maximum value.
-
-        .. warning:: Cannot be set if `measurements` are already set
-            This property is mutually exclusive with the `measurements` property
-            because its value can be calculated from the `measurements` property.
-
-        :param float | None value: The maximum value.
-        :raise SimpleBenchTypeError: If maximum is not a float.
-        :raise SimpleBenchAttributeError: If maximum is already set.
-        """
-        self._validate_no_measurements("maximum")
-        self._maximum: float | None = validate.maximum(value)
-
     @property
-    def standard_deviation(self) -> float:
+    def stdev(self) -> float:
         """Get the standard deviation.
 
+        This calculates the estimated per-round standard deviation.
+
         .. note::
-            The value is either set directly or calculated from the `measurements` property.
+            The standard deviation is scaled from the raw calculated standard deviation of the iterations
+            by the square root of the number of rounds per iteration.
+            
+            This counters the effect of averaging multiple rounds to a single iteration measurement which
+            would otherwise **reduce** the apparent variability by the square root of the number of rounds
+            per iteration and conceal the true variability of a single round.
+
+        .. note::
+            The value is either set directly or calculated from the `measurements` parameter.
 
         :return: The standard deviation.
         """
-        if self._standard_deviation is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate standard deviation without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
-            if len(self._measurements) > 1:
-                self._standard_deviation = float(
-                    statistics.stdev(self._measurements) * sqrt(self.rounds))
+        if self._stdev is None:
+            if len(self._measurements) > 1:  # type: ignore[reportArgumentType]  # validated in __init__
+                self._stdev = float(
+                    statistics.stdev(
+                        self._measurements) *   # type: ignore[reportArgumentType]  # validated in __init__
+                        sqrt(self.rounds))
             else:
-                self._standard_deviation = 0.0
-
-        return self._standard_deviation
-
-    @standard_deviation.setter
-    @immutable
-    def standard_deviation(self, value: float | None) -> None:
-        """Set the standard deviation.
-
-        .. warning:: Cannot be set if `measurements` are already set
-            This property is mutually exclusive with the `measurements` property
-            because its value can be calculated from the `measurements` property.
-
-        :param value: The standard deviation.
-        :raise SimpleBenchTypeError: If standard_deviation is not a float.
-        :raise SimpleBenchValueError: If standard_deviation is negative.
-        :raise SimpleBenchValueError: If measurements are already set.
-        :raise SimpleBenchAttributeError: If standard_deviation is already set.
-        """
-        self._validate_no_measurements("standard_deviation")
-        self._standard_deviation: float | None = validate.standard_deviation(value)
+                self._stdev = 0.0  # Standard deviation is 0 if only one measurement
+        return self._stdev
 
     @property
-    def relative_standard_deviation(self) -> float:
+    def relative_stdev(self) -> float:
         """Get the relative standard deviation.
 
         The relative standard deviation (RSD) is calculated as the standard deviation
@@ -662,30 +550,12 @@ class StatsBlock(BaseStatsBlock):
 
         :return: The relative standard deviation.
         """
-        if self._relative_standard_deviation is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate relative standard deviation without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
+        if self._relative_stdev is None:
             if self.mean == 0.0:
-                self._relative_standard_deviation = 1e9 if self.standard_deviation else 0.0
+                self._relative_stdev = 1e9 if self.stdev else 0.0
             else:
-                self._relative_standard_deviation = abs(self.standard_deviation / self.mean * 100)
-        return self._relative_standard_deviation
-
-    @relative_standard_deviation.setter
-    @immutable
-    def relative_standard_deviation(self, value: float | None) -> None:
-        """Set the relative standard deviation.
-
-        :param value: The relative standard deviation.
-        :raise SimpleBenchTypeError: If relative_standard_deviation is not a float.
-        :raise SimpleBenchValueError: If relative_standard_deviation is negative.
-        :raise SimpleBenchValueError: If measurements are already set.
-        :raise SimpleBenchAttributeError: If relative_standard_deviation is already set.
-        """
-        self._validate_no_measurements("relative_standard_deviation")
-        self._relative_standard_deviation: float | None = validate.relative_standard_deviation(value)
+                self._relative_stdev = abs(self.stdev / self.mean * 100)
+        return self._relative_stdev
 
     @property
     def percentiles(self) -> Values:
@@ -702,41 +572,8 @@ class StatsBlock(BaseStatsBlock):
 
         """
         if self._percentiles is None:
-            if self._measurements is None:
-                raise SimpleBenchValueError(
-                    "Cannot calculate percentiles without measurements",
-                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
             self._percentiles = self._calculate_percentiles()
         return self._percentiles
-
-    @percentiles.setter
-    @immutable
-    def percentiles(self, value: Sequence[float | int] | None) -> None:
-        """Set the list of percentiles.
-
-        The percentiles must be a sequence of 101 float or int values representing the percentiles
-        from 0 to 100. The values must be sorted in ascending order.
-
-        :param value: The list of percentiles.
-        :raise SimpleBenchTypeError: If percentiles is not None or a sequence of float.
-        :raise SimpleBenchValueError: If the sequence does not contain exactly 101 numbers
-            or is not sorted in ascending order.
-        :raise SimpleBenchValueError: If measurements are already set and the value is not None.
-        :raise SimpleBenchAttributeError: If percentiles is already set.
-        """
-        self._validate_no_measurements("percentiles")
-        self._percentiles: Values | None = validate.percentiles(value)
-
-    def _validate_no_measurements(self, name: str) -> None:
-        """Raises an exception if the measurements value is not None.
-
-        :param name: The name of the value being set.
-        :raises SimpleBenchValueError: If measurements are already set.
-        """
-        if self._measurements is not None:
-            raise SimpleBenchValueError(
-                f"Cannot set {name} when measurements are already set",
-                tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
 
     def _calculate_percentiles(self) -> Values:
         """Helper to calculate percentiles from the measurements.
@@ -809,9 +646,7 @@ class StatsBlock(BaseStatsBlock):
         if not isinstance(other, StatsBlock):
             return NotImplemented
 
-        # Use all() with a generator for an efficient, short-circuiting comparison
-        # of the public properties that define the object's state.
-        return all(getattr(self, attr) == getattr(other, attr) for attr in self._COMPARISON_ATTRIBUTES)
+        return hash(self) == hash(other)
 
     def __hash__(self) -> int:
         """Compute the hash of the StatsBlock instance.
