@@ -15,8 +15,8 @@ will not be changed.
 import hashlib
 import json
 
-from simplebench import environment
-from simplebench.report.base import BaseCPUInfo, JSONSchema
+from simplebench.report.base.cpu_info import BaseCPUInfo
+from simplebench.report.base.json_schema import JSONSchema
 from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 
 from ..types import CPUInfoData, CPUInfoDict
@@ -78,14 +78,14 @@ class CPUInfo(BaseCPUInfo):
               dictionaries, lists, strings, numbers, booleans, and nulls.
             - All keys in dictionaries must be non-blank, non-empty strings.
         """
-        self._data: ImmutableCoreDataMappingType = validate.data(data)
-        self._hash_id: str = validate.hash_id(hash_id, allow_none=True)
+        self._data: CPUInfoDict = validate.data(data)
+        self._hash_id: str | None = validate.hash_id(hash_id, allow_none=True)
 
     @property
     def hash_id(self) -> str:
         """Get the hash_id property.
 
-        :return str: The hash_id string.
+        :return str | None: The hash_id string or None if not set.
         """
         if self._hash_id is None:
             serialized = json.dumps(self.data, sort_keys=True, separators=(',', ':'))
