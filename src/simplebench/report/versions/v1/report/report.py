@@ -121,17 +121,8 @@ class Report(BaseReport):
         """
         if self._to_dict_cache is not None:
             return self._to_dict_cache
-        data = {
-            'type': self.TYPE,
-            'version': self.VERSION,
-            'timestamp': self.timestamp,
-            'group': self.group,
-            'title': self.title,
-            'description': self.description,
-            'variation_cols': self.variation_cols,
-            'machine': self.machine.to_dict(),
-            'results': (result.to_dict() for result in self.results),
-        }
+
+        data = self._to_dict_helper()
 
         # We control the data structure here, so this cast is safe
         self._to_dict_cache = cast(ReportDict,

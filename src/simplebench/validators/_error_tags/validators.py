@@ -152,3 +152,9 @@ class _ValidatorsErrorTag(ErrorTag):
     """The 'allow_empty' argument must be a bool."""
     VALIDATE_SEQUENCE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE = "VALIDATE_SEQUENCE_OF_TYPE_INVALID_EXACT_TYPE_ARG_TYPE"
     """The 'exact_type' argument must be a bool."""
+
+    # Core data types validation tags
+    INVALID_CACHE_TYPE = "INVALID_CACHE_TYPE"
+    """The provided cache size is not an integer."""
+    INVALID_CACHE_SIZE = 'INVALID_CACHE_SIZE'
+    """The provided cache size is less than 1."""

@@ -132,4 +132,5 @@ class ReportElement(Hydrator, ABC):
                     "and is not an ImmutableCoreDataMappingType. It cannot be converted to a dictionary.",
                     tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE)
 
+        # Validate and return the core data mapping as immutable
         return validate_core_data_mapping(data, 'cls._to_dict_helper output')

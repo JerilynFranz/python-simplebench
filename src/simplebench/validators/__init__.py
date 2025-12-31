@@ -10,6 +10,13 @@ from .core_data_types import (
     validate_immutable_core_data_mapping,
     validate_immutable_core_data_sequence,
     validate_immutable_core_data_set,
+    is_core_data,
+    is_core_data_mapping,
+    is_core_data_primitive,
+    is_core_data_primitive_type,
+    is_core_data_sequence,
+    is_core_data_set,
+    is_immutable_core_data,
 )
 from .dates_and_times import validate_iso8601_datetime
 from .identifiers import validate_namespaced_identifier
@@ -40,6 +47,13 @@ from .validate_iterable_of_type import validate_iterable_of_type
 from .validate_sequence_of_type import validate_sequence_of_type
 
 __all__ = [
+    "is_core_data",
+    "is_core_data_primitive",
+    "is_core_data_primitive_type",
+    "is_core_data_mapping",
+    "is_core_data_sequence",
+    "is_core_data_set",
+    "is_immutable_core_data",
     "_ValidatorsErrorTag",
     "validate_bool",
     "validate_core_data",

@@ -9,13 +9,6 @@ from .core import (
     ImmutableCoreDataSequenceType,
     ImmutableCoreDataSetType,
     ImmutableCoreDataTypes,
-    is_core_data,
-    is_core_data_mapping,
-    is_core_data_primitive,
-    is_core_data_primitive_type,
-    is_core_data_sequence,
-    is_core_data_set,
-    is_immutable_core_data,
 )
 from .values import Values
 from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
@@ -35,11 +28,4 @@ __all__ = [
     "ImmutableVariationColsType",
     "VariationMarksType",
     "ImmutableVariationMarksType",
-    "is_core_data",
-    "is_core_data_primitive",
-    "is_core_data_primitive_type",
-    "is_core_data_mapping",
-    "is_core_data_sequence",
-    "is_core_data_set",
-    "is_immutable_core_data",
 ]

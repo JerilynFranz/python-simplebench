@@ -22,7 +22,7 @@ from collections.abc import Sequence, Set, Mapping
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
-from simplebench.types.core import is_core_data_primitive, is_core_data_primitive_type
+from simplebench.validators import is_core_data_primitive, is_core_data_primitive_type
 
 from . import _cache
 from ._error_tags import _ReportElementValidationErrorTag
