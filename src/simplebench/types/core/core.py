@@ -41,116 +41,11 @@ Allowed types are:
     - `Set[CoreDataTypes]` (covers set, frozenset)
 """
 
-
-class ImmutableDict(Mapping[str, 'ImmutableCoreDataTypes']):
-    """Immutable dictionary type for use in ImmutableCoreDataTypes.
-
-    This class implements the Mapping interface to provide an immutable
-    dictionary-like object that can be used as part of the ImmutableCoreDataTypes
-    type alias.
-
-    It is both serializable and immutable.
-    """
-
-    def __init__(self, data: 'CoreDataMappingType') -> None:
-        """Initialize the ImmutableDict with the provided data.
-
-        :param Mapping[str, ImmutableCoreDataTypes] data: The data to store in the immutable dictionary.
-        """
-        validated_data = validators.validate_core_data_mapping(
-                            data, 'ImmutableDict initialization')
-        self._data: 'ImmutableCoreDataMappingType' = validated_data
-
-    def __getitem__(self, key: str) -> 'ImmutableCoreDataTypes':
-        return self._data[key]
-
-    def __iter__(self):
-        return iter(self._data)
-
-    def __len__(self) -> int:
-        return len(self._data)
-
-    def __contains__(self, key: object) -> bool:
-        return key in self._data
-
-    def keys(self):
-        return self._data.keys()
-
-    def values(self):
-        return self._data.values()
-
-    def get(self,
-            key: str,
-            default: Any = None) -> 'ImmutableCoreDataTypes':
-        return self._data.get(key, default)
-
-    def items(self):
-        return self._data.items()
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Mapping):
-            return False
-        return dict(self._data) == dict(other)
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
-
-class ImmutableTypedDict(Mapping[str, 'ImmutableCoreDataTypes']):
-    """Immutable typed dictionary for use in ImmutableCoreDataTypes.
-
-    This class extends both TypedDict and ImmutableDict to provide an immutable
-    typed dictionary-like object that can be used as part of the ImmutableCoreDataTypes
-    type alias.
-
-    It is both serializable and immutable.
-    """
-    def __init__(self, data: 'CoreDataMappingType') -> None:
-        """Initialize the ImmutableDict with the provided data.
-
-        :param Mapping[str, ImmutableCoreDataTypes] data: The data to store in the immutable dictionary.
-        """
-        validated_data = validators.validate_core_data_mapping(
-                            data, 'ImmutableDict initialization')
-        self._data: 'ImmutableCoreDataMappingType' = validated_data
-
-    def __getitem__(self, key: str) -> 'ImmutableCoreDataTypes':
-        return self._data[key]
-
-    def __iter__(self):
-        return iter(self._data)
-
-    def __len__(self) -> int:
-        return len(self._data)
-
-    def __contains__(self, key: object) -> bool:
-        return key in self._data
-
-    def keys(self):
-        return self._data.keys()
-
-    def values(self):
-        return self._data.values()
-
-    def get(self,
-            key: str,
-            default: Any = None) -> 'ImmutableCoreDataTypes':
-        return self._data.get(key, default)
-
-    def items(self):
-        return self._data.items()
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Mapping):
-            return False
-        return dict(self._data) == dict(other)
-
-    def __ne__(self, other: object) -> bool:
-        return not self.__eq__(other)
-
+ImmutableCoreDataTypesTuple = (str, int, float, bool, type(None), tuple, frozenset, MappingProxyType)
 
 ImmutableCoreDataTypes: TypeAlias = str | int | float | bool | None | \
     tuple['ImmutableCoreDataTypes', ...] | frozenset['ImmutableCoreDataTypes'] | \
-    MappingProxyType[str, 'ImmutableCoreDataTypes'] | ImmutableDict
+    MappingProxyType[str, 'ImmutableCoreDataTypes']
 """Type alias for the immutable core data type primitives used in SimpleBench.
 
 These are the immutable primitive data types that can be used in various
@@ -179,7 +74,7 @@ It is serializable.
 """
 
 
-ImmutableCoreDataMappingType: TypeAlias = MappingProxyType[str, ImmutableCoreDataTypes] | ImmutableDict
+ImmutableCoreDataMappingType: TypeAlias = MappingProxyType[str, ImmutableCoreDataTypes]
 """Type alias for an immutable mapping from strings to immutable core data types.
 
 This type represents a mapping where the keys are non-empty, non-blank strings

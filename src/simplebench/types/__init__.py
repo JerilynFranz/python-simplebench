@@ -9,6 +9,7 @@ from .core import (
     ImmutableCoreDataSequenceType,
     ImmutableCoreDataSetType,
     ImmutableCoreDataTypes,
+    ImmutableCoreDataTypesTuple
 )
 from .values import Values
 from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
@@ -28,4 +29,5 @@ __all__ = [
     "ImmutableVariationColsType",
     "VariationMarksType",
     "ImmutableVariationMarksType",
+    "ImmutableCoreDataTypesTuple"
 ]

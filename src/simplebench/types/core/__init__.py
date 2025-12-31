@@ -10,6 +10,7 @@ from .core import (
     ImmutableCoreDataSequenceType,
     ImmutableCoreDataSetType,
     ImmutableCoreDataTypes,
+    ImmutableCoreDataTypesTuple
 )
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "ImmutableCoreDataSequenceType",
     "ImmutableCoreDataSetType",
     "ImmutableCoreDataTypes",
+    "ImmutableCoreDataTypesTuple"
 ]

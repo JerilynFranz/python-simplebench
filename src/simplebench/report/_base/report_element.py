@@ -6,16 +6,20 @@ It implements validation and serialization/deserialization methods to and from d
 for a JSON Schema version.
 """
 from abc import ABC, abstractmethod
-from typing import Any, Callable
+from typing import Any, Callable, TypeVar
+from types import MappingProxyType
 
 from simplebench.base import Hydrator
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
-from simplebench.types import ImmutableCoreDataMappingType, is_immutable_core_data
-from simplebench.validators import validate_core_data_mapping
+from simplebench.types import ImmutableCoreDataMappingType, ImmutableCoreDataTypesTuple
+from simplebench.validators import is_immutable_core_data
+from simplebench.report.validate import report_element_typed_dict_mimic
 
 from .json_schema import JSONSchema
+
+T = TypeVar("T", bound=ReportElementTypedDict)
 
 
 class _NoMatch:
@@ -85,11 +89,18 @@ class ReportElement(Hydrator, ABC):
         """
         return self.dict_type
 
-    def _to_dict_helper(self) -> ImmutableCoreDataMappingType:
+    def _to_dict_helper(self, dict_type: type[T]) -> T:
         """Helper method to convert a mapping to a ReportElementDictType.
+
+        It iterates over the properties defined in the ReportElement's
+        dict_type and constructs an immutable mapping representation
+        that is type cast to the requested ReportElementDictType subclass for output.
+
         :param Mapping[str, Any] data: The input mapping to convert.
         :param ReportElementDictType cls: The target ReportElementDictType class.
-        :return ImmutableCoreDataMappingType: The immutable output mapping.
+        :return ReportElementTypedDict: An immutable mapping representing the report element
+            that is type cast to the requested ReportElementTypedDict subclass.
+        :raises SimpleBenchTypeError: If any attribute cannot be converted to a dictionary.
         """
         property_keys = self.init_params(self.dict_type).keys()
         data: dict[str, Any] = {}
@@ -132,5 +143,13 @@ class ReportElement(Hydrator, ABC):
                     "and is not an ImmutableCoreDataMappingType. It cannot be converted to a dictionary.",
                     tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE)
 
-        # Validate and return the core data mapping as immutable
-        return validate_core_data_mapping(data, 'cls._to_dict_helper output')
+        for key, value in data.items():
+            if isinstance(value, ImmutableCoreDataTypesTuple):
+                continue
+            raise SimpleBenchTypeError(
+                f"ReportElement._to_dict_helper produced invalid data for key '{key}': "
+                f"value of type {type(value).__name__} is not a core data primitive or an immutable mapping.",
+                tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE)
+
+        # Return validated immutable mapping that mimics the requested ReportElementTypedDict subclass
+        return report_element_typed_dict_mimic(MappingProxyType(data), dict_type)

@@ -16,9 +16,9 @@ and serves as a foundation for future versions.
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, Sequence, cast
 
+from simplebench.exceptions import SimpleBenchRuntimeError
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report._base import BaseReport, JSONSchema
-from simplebench.report.validate import report_element_typed_dict_mimic as validate_report_element
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 from simplebench.validators import validate_core_data_mapping, validate_sequence_of_type
 
@@ -74,6 +74,12 @@ class Report(BaseReport):
         self._results: tuple[ResultsInfo, ...] = validate.results(results)
         self._machine: MachineInfo = validate.machine(machine)
         self._to_dict_cache: ReportDict | None = None  # Cache for to_dict output
+        """Cached immutable dictionary representation of the Report instance.
+        
+        It is initialized to None and populated on the first call to to_dict().
+        It is used to improve performance by avoiding redundant conversions 
+        and it is type cast to :class:`ReportDict
+        """
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> 'Report':
@@ -115,18 +121,12 @@ class Report(BaseReport):
 
         The output dictionary conforms to the version 1 report schema
         and is suitable for serialization to JSON. It is immutable and cached
-        for efficiency.
+        for efficiency and is type cast to :class:`ReportDict`.
 
         :return ReportDict: Immutable dictionary containing the JSON report data.
         """
-        if self._to_dict_cache is not None:
-            return self._to_dict_cache
-
-        data = self._to_dict_helper()
-
-        # We control the data structure here, so this cast is safe
-        self._to_dict_cache = cast(ReportDict,
-            validate_core_data_mapping(data, 'Report.to_dict output'))
+        if self._to_dict_cache is None:
+            self._to_dict_cache = self._to_dict_helper(ReportDict)
         return self._to_dict_cache
 
 
