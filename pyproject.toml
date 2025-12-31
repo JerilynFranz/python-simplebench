@@ -38,6 +38,7 @@ dependencies = [
     "numpy>=1.26.4",
     "py-cpuinfo>=9.0.0",
     "rich>=14.1.0",
+    "typing-extensions>=4.10.0",
 ]
 
 [build-system]
@@ -270,7 +271,7 @@ description = "Development environment with all tools"
 package = "editable"
 dependency_groups = ["test", "types", "tools", "lint"]
 base = ["testenv"]
-base_python = ["python3.14"]
+base_python = ["python3.10"]
 allowlist_externals = ["pytest", "mypy", "flake8", "pylint"]
 
 commands = []
