@@ -11,7 +11,7 @@ version 1: :class:`~simplebench.report.versions.v1.results_info.results_info_sch
 
     These types ensure proper validation and serialization of ResultsInfo data
 """
-from typing import NotRequired, Required
+import sys
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import (
@@ -22,6 +22,11 @@ from simplebench.types import (
 )
 
 from .metrics_object_dict import MetricsObjectDict
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    from typing_extensions import NotRequired, Required
 
 # -- Common base for both INPUT and OUTPUT --
 

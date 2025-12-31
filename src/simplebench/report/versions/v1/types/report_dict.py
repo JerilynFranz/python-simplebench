@@ -11,13 +11,19 @@ version 1: :class:`~simplebench.report.versions.v1.report.report_schema.ReportSc
 
     These types ensure proper validation and serialization of Report data
 """
-from typing import NotRequired, Required, Sequence
+import sys
+from typing import Sequence
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 
 from .machine_info_dict import MachineInfoData, MachineInfoDict
 from .results_info_dict import ResultsInfoData, ResultsInfoDict
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    from typing_extensions import NotRequired, Required
 
 
 # A base for fields that are always required and have the same type.

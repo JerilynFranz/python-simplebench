@@ -11,14 +11,20 @@ version 1: :class:`~simplebench.report.versions.v1.results_info.results_info_sch
 
     These types ensure proper validation and serialization of MetricsObject data
 """
+import sys
 from collections.abc import Mapping
-from typing import Required, TypeAlias
+from typing import TypeAlias
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 from .raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from .stats_block_dict import StatsBlockData, StatsBlockDict
 from .value_block_dict import ValueBlockData, ValueBlockDict
+
+if sys.version_info >= (3, 11):
+    from typing import Required
+else:
+    from typing_extensions import Required
 
 MetricDataTypes: TypeAlias = ValueBlockData | StatsBlockData | RawDataBlockData
 MetricDictTypes: TypeAlias = ValueBlockDict | StatsBlockDict | RawDataBlockDict

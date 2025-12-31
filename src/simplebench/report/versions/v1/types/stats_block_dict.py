@@ -9,11 +9,17 @@ version 1: :class:`~simplebench.report.versions.v1.stats_block.stats_block_schem
     - `StatsBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is
     stricter, guaranteeing that `value` is a `float` and that `type` and `version` are present.
 
-    These types ensure proper validation and serialization of StatsBlock data"""
-
-from typing import NotRequired, Required, Sequence
+    These types ensure proper validation and serialization of StatsBlock data
+"""
+import sys
+from typing import Sequence
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    from typing_extensions import NotRequired, Required
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

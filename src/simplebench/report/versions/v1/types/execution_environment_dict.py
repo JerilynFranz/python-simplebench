@@ -7,11 +7,16 @@ This module defines two distinct dictionary types for handling ExecutionEnvironm
 
     These types ensure proper validation and serialization of ExecutionEnvironment data
 """
-from typing import Required
+import sys
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 
 from .python_info_dict import PythonInfoData, PythonInfoDict
+
+if sys.version_info >= (3, 11):
+    from typing import Required
+else:
+    from typing_extensions import Required
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

@@ -9,11 +9,16 @@ version 1: :class:`~simplebench.report.versions.v1.raw_data_block.raw_data_block
     - `RawDataBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is
     stricter, guaranteeing that `value` is a `float` and that `type` and `version` are present.
 
-    These types ensure proper validation and serialization of RawDataBlock data"""
-
-from typing import NotRequired, Required
+    These types ensure proper validation and serialization of RawDataBlock data
+"""
+import sys
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    from typing_extensions import NotRequired, Required
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
@@ -78,7 +83,7 @@ class _RequiredRawDataBlockDict(ReportElementTypedDict, total=True):
 class RawDataBlockDict(_RequiredRawDataBlockDict, total=False):
     """Typed dictionary for the JSON representation of a V1 RawDataBlock (OUTPUT).
 
-    This type is strict, requiring `type` and`version`` to be present.
+    This type is strict, requiring `type` and`version` to be present.
     `value` is guaranteed to be a `float`, `timer` is optional.
 
     All fields are immutable.

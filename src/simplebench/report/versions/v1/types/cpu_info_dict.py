@@ -11,10 +11,17 @@ version 1: :class:`~simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUI
 
     These types ensure proper validation and serialization of CPUInfo data
 """
-from typing import NotRequired, Required
+import sys
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import CoreDataMappingType
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    from typing_extensions import NotRequired, Required
+
+
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

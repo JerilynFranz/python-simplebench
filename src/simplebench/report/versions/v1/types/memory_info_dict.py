@@ -11,9 +11,14 @@ version 1: :class:`~simplebench.report.versions.v1.memory_info.memory_info_schem
 
     These types ensure proper validation and serialization of MemoryInfo data
 """
-from typing import NotRequired, Required
+import sys
 
 from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, Required
+else:
+    from typing_extensions import NotRequired, Required
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
