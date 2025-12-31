@@ -16,8 +16,9 @@ It does not need to solve the general TypedDict mimic validation problem,
 only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 """
 
-from typing import Any, Mapping, TypeGuard, TypeVar
+from typing import Any, Mapping, TypeGuard, TypeVar, get_type_hints
 
+from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types.core import is_core_data_primitive, is_core_data_primitive_type
@@ -59,6 +60,8 @@ def report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) ->
     results to avoid redundant validation. Only fully immutable core data type
     structures are cached positively (with validity of `True`) to ensure safety.
     Mutable structures can be validated but are not cached.
+
+    Cyclic references are detected and raise an error to prevent infinite recursion.
 
     :param Mapping[str, Any] data: The dictionary to validate.
     :param ReportElementTypedDict td_cls: The TypedDict subclass type to validate against.
@@ -104,6 +107,8 @@ def is_report_element_typed_dict_mimic(data: Mapping[str, Any],
     If subtrees are newly encountered, they are validated and their results
     are added to the cache for future reuse. Only fully immutable core data type
     structures are cached positively (with validity of `True`) to ensure safety.
+
+    Cyclic references are detected and raise an error to prevent infinite recursion.
     
     :param Mapping[str, Any] data: The dictionary to check.
     :param ReportElementTypedDict td_cls: The TypedDict subclass type to check against.
@@ -114,7 +119,9 @@ def is_report_element_typed_dict_mimic(data: Mapping[str, Any],
     return valid
 
 def _validate_and_check_immutability_of_mimic(
-        data: Mapping[str, Any], td_cls: type[ReportElementTypedDict]) -> tuple[bool, bool]:
+        data: Mapping[str, Any],
+        td_cls: type[ReportElementTypedDict],
+        parents: set[int]| None = None) -> tuple[bool, bool]:
     """Validate a mapping against a ReportElementTypedDict subclass
     and check if it consists only of fully immutable core data types.
 
@@ -122,8 +129,11 @@ def _validate_and_check_immutability_of_mimic(
     and returns whether it conforms to the TypedDict subclass and whether the structure
     is fully immutable core data types.
 
+    Cyclic references are detected and raise an error to prevent infinite recursion.
+
     :param Mapping[str, Any] data: The dictionary to check.
     :param ReportElementTypedDict td_cls: The TypedDict subclass type to check against.
+    :param set[type] | None parents: Set of parent data nodes in the recursion stack to detect cycles.
     :return tuple[bool, bool]: A tuple where the first element indicates if the dictionary
         conforms to the TypedDict subclass, and the second element indicates if the
         data consists only of fully immutable core data types.
@@ -135,7 +145,16 @@ def _validate_and_check_immutability_of_mimic(
         # Mutable structures can be validated but they are not cached because their
         # state can change.
         return (cached_state, cached_state)
+    parents = parents or set()
+    if id(data) in parents:
+        raise SimpleBenchTypeError(
+            "Cyclic reference detected in data structure during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED)
 
+    if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
+        raise SimpleBenchTypeError(
+            "Maximum core data depth exceeded during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
     _validate_report_element_typed_dict_subclass(td_cls)
     _validate_is_mapping_of_string_to_any(data)
     _validate_has_required_and_no_extra_keys(data, td_cls)
@@ -159,8 +178,10 @@ def _validate_and_check_immutability_of_mimic(
         # Nested ReportElementTypedDict subclasses
         if isinstance(expected_type, type) and issubclass(
             expected_type, ReportElementTypedDict):  # type: ignore[reportArgumentType]
+            parents.add(id(data))
             valid, immutable_tree = _validate_and_check_immutability_of_mimic(
-                                        value, expected_type)
+                                        value, expected_type, parents)
+            parents.remove(id(data))
             if immutable_tree:
                 _cache.add_cache_entry(td_cls, data, valid)
             else:
@@ -190,10 +211,17 @@ def _validate_report_element_typed_dict_subclass(td_cls: type[ReportElementTyped
     are accounted for in either the `__required_keys__` or `__optional_keys__` sets.
     It raises an error if there are any discrepancies.
 
+    Uses typing.get_type_hints to resolve forward references and type aliases.
+
     :param ReportElementTypedDict td_cls: The TypedDict subclass to validate
-    :raise SimpleBenchTypeError: If the TypedDict subclass is misconfigured.
+    :raise SimpleBenchTypeError: If the TypedDict subclass is misconfigured or type hints cannot be resolved.
     """
-    annotations = td_cls.__annotations__
+    try:
+        annotations = get_type_hints(td_cls)
+    except Exception as exc:
+        raise SimpleBenchTypeError(
+            f"Failed to resolve type hints for {td_cls.__name__}: {exc}",
+            tag=_ReportElementValidationErrorTag.UNABLE_TO_RESOLVE_TYPE_HINT) from exc
     required: set[str] = getattr(td_cls, '__required_keys__', set(annotations))
     optional: set[str] = getattr(td_cls, '__optional_keys__', set())
     annotation_set = set(annotations.keys())

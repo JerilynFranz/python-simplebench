@@ -4,4 +4,7 @@
 			"path": "."
 		}
 	],
+	"settings": {
+		"pylint.importStrategy": "fromEnvironment"
+	},
 }

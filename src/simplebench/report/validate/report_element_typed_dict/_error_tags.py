@@ -8,6 +8,12 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ReportElementValidationErrorTag(ErrorTag):
     """Error tags for report element validation errors."""
+    UNABLE_TO_RESOLVE_TYPE_HINT = "UNABLE_TO_RESOLVE_TYPE_HINT"
+    """The type hint could not be resolved."""
+    MAX_CORE_DATA_DEPTH_EXCEEDED = "MAX_CORE_DATA_DEPTH_EXCEEDED"
+    """The maximum core data depth has been exceeded during validation."""
+    CYCLIC_REFERENCE_DETECTED = "CYCLIC_REFERENCE_DETECTED"
+    """A cyclic reference was detected in the data structure being validated."""
     UNSUPPORTED_TYPEDDICT_KEY_TYPE = "UNSUPPORTED_TYPEDDICT_KEY_TYPE"
     """The TypedDict key has an unsupported type."""
     UNEXPECTED_TYPEDDICT_KEY_WRAPPER_TYPE = "UNEXPECTED_TYPEDDICT_KEY_WRAPPER_TYPE"
