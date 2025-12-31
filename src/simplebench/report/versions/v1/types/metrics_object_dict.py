@@ -15,7 +15,7 @@ import sys
 from collections.abc import Mapping
 from typing import TypeAlias
 
-from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 
 from .raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from .stats_block_dict import StatsBlockData, StatsBlockDict

@@ -13,7 +13,7 @@ version 1: :class:`~simplebench.report.versions.v1.results_info.results_info_sch
 """
 import sys
 
-from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,

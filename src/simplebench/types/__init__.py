@@ -1,6 +1,7 @@
 """Types used by SimpleBench."""
 from .core import (
     CoreDataMappingType,
+    CoreDataPrimitiveTypesTuple,
     CoreDataSequenceType,
     CoreDataSetType,
     CoreDataTypes,
@@ -8,12 +9,13 @@ from .core import (
     ImmutableCoreDataSequenceType,
     ImmutableCoreDataSetType,
     ImmutableCoreDataTypes,
-    is_core_data_mapping_type,
+    is_core_data,
+    is_core_data_mapping,
+    is_core_data_primitive,
     is_core_data_primitive_type,
-    is_core_data_sequence_type,
-    is_core_data_set_type,
-    is_core_data_type,
-    is_immutable_core_data_type,
+    is_core_data_sequence,
+    is_core_data_set,
+    is_immutable_core_data,
 )
 from .values import Values
 from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
@@ -21,6 +23,7 @@ from .variations import ImmutableVariationColsType, ImmutableVariationMarksType,
 __all__ = [
     "CoreDataTypes",
     "CoreDataMappingType",
+    "CoreDataPrimitiveTypesTuple",
     "CoreDataSequenceType",
     "CoreDataSetType",
     "ImmutableCoreDataMappingType",
@@ -32,10 +35,11 @@ __all__ = [
     "ImmutableVariationColsType",
     "VariationMarksType",
     "ImmutableVariationMarksType",
-    "is_core_data_type",
+    "is_core_data",
+    "is_core_data_primitive",
     "is_core_data_primitive_type",
-    "is_core_data_mapping_type",
-    "is_core_data_sequence_type",
-    "is_core_data_set_type",
-    "is_immutable_core_data_type",
+    "is_core_data_mapping",
+    "is_core_data_sequence",
+    "is_core_data_set",
+    "is_immutable_core_data",
 ]

@@ -23,14 +23,11 @@ def format_json_for_docstring(
     :return: A string containing the formatted RST code-block.
     :rtype: str
     """
-    # 1. Ensure we have a pretty-printed JSON string if a dict is passed.
     if isinstance(json_data, dict):
         json_text = JSONEncoder(indent=2).encode(json_data)
     else:
         json_text = json_data
 
-    # 2. Define a clean, dedented template for the note.
-    # The placeholder {schema_text} is where the indented JSON will go.
     template = dedent("""
         {intro}
 
@@ -40,11 +37,8 @@ def format_json_for_docstring(
         {schema_text}
         """)
 
-    # 3. Indent the JSON text to align with the code-block directive's content area.
-    # A standard 3-space indent is conventional for directives.
     indented_json_text = indent(json_text, "   ")
 
-    # 4. Format the template to create the final RST block.
     return template.format(
         intro=intro_text,
         caption=caption,

@@ -1,0 +1,135 @@
+"""ReportElement base class.
+
+This class represents a report element in a report that can be serialized.
+
+It implements validation and serialization/deserialization methods to and from dictionaries
+for a JSON Schema version.
+"""
+from abc import ABC, abstractmethod
+from typing import Any, Callable
+
+from simplebench.base import Hydrator
+from simplebench.doc_utils import enum_docstrings
+from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
+from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.types import ImmutableCoreDataMappingType, is_immutable_core_data
+from simplebench.validators import validate_core_data_mapping
+
+from .json_schema import JSONSchema
+
+
+class _NoMatch:
+    """Class representing no match found in instance for report element attribute lookup."""
+
+
+_NO_MATCH = _NoMatch()
+"""Sentinel value indicating no match found in instance for report element attribute lookup."""
+
+
+@enum_docstrings
+class _ReportElementErrorTag(ErrorTag):
+    """Error tags for ReportElement errors."""
+    INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE = "INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE"
+    """The to_dict method of a ReportElement attribute is not callable."""
+
+class ReportElement(Hydrator, ABC):
+    """abstract class representing a report element in a report."""
+
+    VERSION: int = 0
+    """The report element version number.
+
+    It must be overridden in subclasses to specify the correct version.
+    """
+
+    TYPE: str = ""
+    """The report element type property value.
+
+    It must be overridden in subclasses to specify the correct type.
+    """
+
+    ID: str = ""
+    """The report element $id property value.
+
+    It must be overridden in subclasses to specify the correct $id.
+    """
+
+    SCHEMA: type[JSONSchema] = JSONSchema
+    """The JSON schema class used to validate the report element class.
+
+    It must be overridden in subclasses to specify the correct schema class.
+    """
+    def __init__(self) -> None:
+        """Abstract base __init__ method for all report element classes."""
+        raise NotImplementedError(
+            "__init__ is an abstract method and must be implemented by a subclass."
+        )
+
+    @property
+    @abstractmethod
+    def dict_type(self) -> type[ReportElementTypedDict]:
+        """The ReportElementTypedDict type associated with this ReportElement subclass.
+
+        This property must be overridden in subclasses to specify the correct
+        ReportElementTypedDict type.
+        """
+        raise NotImplementedError(
+            "dict_type is an abstract property and must be implemented by a subclass."
+        )
+
+    @property
+    def data_type(self) -> type[ReportElementTypedDict]:
+        """The ReportElementTypedDict type used for input data to `from_dict`.
+
+        By default, this is the same as dict_type, but subclasses can override
+        this method to provide a different type for input data if needed.
+        """
+        return self.dict_type
+
+    def _to_dict_helper(self) -> ImmutableCoreDataMappingType:
+        """Helper method to convert a mapping to a ReportElementDictType.
+        :param Mapping[str, Any] data: The input mapping to convert.
+        :param ReportElementDictType cls: The target ReportElementDictType class.
+        :return ImmutableCoreDataMappingType: The immutable output mapping.
+        """
+        property_keys = self.init_params(self.dict_type).keys()
+        data: dict[str, Any] = {}
+        # This loop handles calling to_dict on any properties that
+        # themselves have a to_dict method. This ensures nested objects,
+        # known or unknown, are properly serialized in the future as needed.
+        cls = self.__class__
+        for key in property_keys:
+            match key:
+                case 'type':
+                    data['type'] = cls.TYPE
+                    continue
+
+                case 'version':
+                    data['version']= cls.VERSION
+                    continue
+
+            value: Callable[[], ImmutableCoreDataMappingType] | \
+                ImmutableCoreDataMappingType | _NoMatch = getattr(self, key, _NO_MATCH)
+            to_dict_fn: Callable[[], ImmutableCoreDataMappingType] | None = getattr(value, "to_dict", None)
+
+            # Attribute doesn't exist on instance
+            if isinstance(value, _NoMatch):
+                raise AttributeError(
+                    f"ReportElement subclass {cls.__name__} is missing expected attribute '{key}'")
+
+            # Already an ImmutableCoreDataMappingType
+            elif is_immutable_core_data(value):
+                data[key] = value
+
+            # Has a callable to_dict method
+            elif callable(to_dict_fn):
+                data[key] = to_dict_fn()
+
+            # Invalid type for to_dict conversion
+            else:
+                raise SimpleBenchTypeError(
+                    f"Attribute '{key}' of {cls.__name__} class "
+                    f"is of type {type(value).__name__}, does not have a callable to_dict method, "
+                    "and is not an ImmutableCoreDataMappingType. It cannot be converted to a dictionary.",
+                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE)
+
+        return validate_core_data_mapping(data, 'cls._to_dict_helper output')

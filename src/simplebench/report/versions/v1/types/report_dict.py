@@ -14,7 +14,7 @@ version 1: :class:`~simplebench.report.versions.v1.report.report_schema.ReportSc
 import sys
 from typing import Sequence
 
-from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 
 from .machine_info_dict import MachineInfoData, MachineInfoDict

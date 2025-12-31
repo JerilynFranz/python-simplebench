@@ -13,7 +13,7 @@ import threading
 from collections import OrderedDict
 from collections.abc import Mapping, Sequence, Set
 from types import MappingProxyType
-from typing import Final, TypeAlias, TypeGuard
+from typing import Any, Final, TypeAlias, TypeGuard
 
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -41,8 +41,116 @@ Allowed types are:
     - `Set[CoreDataTypes]` (covers set, frozenset)
 """
 
-ImmutableCoreDataTypes: TypeAlias = str | int | float | bool | None | tuple['ImmutableCoreDataTypes', ...] | \
-    frozenset['ImmutableCoreDataTypes'] | MappingProxyType[str, 'ImmutableCoreDataTypes']
+
+class ImmutableDict(Mapping[str, 'ImmutableCoreDataTypes']):
+    """Immutable dictionary type for use in ImmutableCoreDataTypes.
+
+    This class implements the Mapping interface to provide an immutable
+    dictionary-like object that can be used as part of the ImmutableCoreDataTypes
+    type alias.
+
+    It is both serializable and immutable.
+    """
+
+    def __init__(self, data: 'CoreDataMappingType') -> None:
+        """Initialize the ImmutableDict with the provided data.
+
+        :param Mapping[str, ImmutableCoreDataTypes] data: The data to store in the immutable dictionary.
+        """
+        validated_data = validators.validate_core_data_mapping(
+                            data, 'ImmutableDict initialization')
+        self._data: 'ImmutableCoreDataMappingType' = validated_data
+
+    def __getitem__(self, key: str) -> 'ImmutableCoreDataTypes':
+        return self._data[key]
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self) -> int:
+        return len(self._data)
+
+    def __contains__(self, key: object) -> bool:
+        return key in self._data
+
+    def keys(self):
+        return self._data.keys()
+
+    def values(self):
+        return self._data.values()
+
+    def get(self,
+            key: str,
+            default: Any = None) -> 'ImmutableCoreDataTypes':
+        return self._data.get(key, default)
+
+    def items(self):
+        return self._data.items()
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Mapping):
+            return False
+        return dict(self._data) == dict(other)
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)
+
+class ImmutableTypedDict(Mapping[str, 'ImmutableCoreDataTypes']):
+    """Immutable typed dictionary for use in ImmutableCoreDataTypes.
+
+    This class extends both TypedDict and ImmutableDict to provide an immutable
+    typed dictionary-like object that can be used as part of the ImmutableCoreDataTypes
+    type alias.
+
+    It is both serializable and immutable.
+    """
+    def __init__(self, data: 'CoreDataMappingType') -> None:
+        """Initialize the ImmutableDict with the provided data.
+
+        :param Mapping[str, ImmutableCoreDataTypes] data: The data to store in the immutable dictionary.
+        """
+        validated_data = validators.validate_core_data_mapping(
+                            data, 'ImmutableDict initialization')
+        self._data: 'ImmutableCoreDataMappingType' = validated_data
+
+    def __getitem__(self, key: str) -> 'ImmutableCoreDataTypes':
+        return self._data[key]
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __len__(self) -> int:
+        return len(self._data)
+
+    def __contains__(self, key: object) -> bool:
+        return key in self._data
+
+    def keys(self):
+        return self._data.keys()
+
+    def values(self):
+        return self._data.values()
+
+    def get(self,
+            key: str,
+            default: Any = None) -> 'ImmutableCoreDataTypes':
+        return self._data.get(key, default)
+
+    def items(self):
+        return self._data.items()
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Mapping):
+            return False
+        return dict(self._data) == dict(other)
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)
+
+
+ImmutableCoreDataTypes: TypeAlias = str | int | float | bool | None | \
+    tuple['ImmutableCoreDataTypes', ...] | frozenset['ImmutableCoreDataTypes'] | \
+    MappingProxyType[str, 'ImmutableCoreDataTypes'] | ImmutableDict
 """Type alias for the immutable core data type primitives used in SimpleBench.
 
 These are the immutable primitive data types that can be used in various
@@ -71,7 +179,7 @@ It is serializable.
 """
 
 
-ImmutableCoreDataMappingType: TypeAlias = MappingProxyType[str, ImmutableCoreDataTypes]
+ImmutableCoreDataMappingType: TypeAlias = MappingProxyType[str, ImmutableCoreDataTypes] | ImmutableDict
 """Type alias for an immutable mapping from strings to immutable core data types.
 
 This type represents a mapping where the keys are non-empty, non-blank strings
@@ -125,7 +233,41 @@ class _NotInCache:
 
 _NOT_IN_CACHE: Final[_NotInCache] = _NotInCache()
 
-def is_core_data_type(
+
+CoreDataPrimitiveTypesTuple: tuple[type, ...] = (str, int, float, bool, type(None))
+"""Tuple of types representing core data primitive types."""
+
+def is_core_data_primitive(
+        value: Any) -> TypeGuard[str | int | float | bool | None]:
+    """Check if a value is a core data primitive type.
+
+    The allowed primitive types are str, int, float, bool, and None.
+
+    All core primitive types are immutable and serializable.
+
+    :param object value: The value to check.
+    :return bool: True if the value is a core data primitive type, False otherwise.
+    """
+    return isinstance(value, (str, int, float, bool)) or value is None
+
+_CORE_PRIMITIVES_SET: Final[set[type]] = {str, int, float, bool, type(None)}
+"""Set of core data primitive types for quick membership testing."""
+
+def is_core_data_primitive_type(
+        value_type: Any) -> TypeGuard[type[str | int | float | bool | None]]:
+    """Check if a type is a core data primitive type.
+
+    The allowed primitive types are str, int, float, bool, and NoneType.
+
+    All core primitive types are immutable and serializable.
+
+    :param object value_type: The type to check.
+    :return bool: True if the type is a core data primitive type, False otherwise.
+    """
+    return value_type in _CORE_PRIMITIVES_SET
+
+
+def is_core_data(
         value: CoreDataTypes, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataTypes]:
     """Check if a value is a valid CoreDataTypes instance.
@@ -140,7 +282,7 @@ def is_core_data_type(
     except (ValueError, TypeError):
         return False
 
-def is_core_data_mapping_type(
+def is_core_data_mapping(
         value: CoreDataMappingType, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataMappingType]:
     """Check if a value is a valid CoreDataMappingType instance.
@@ -155,7 +297,7 @@ def is_core_data_mapping_type(
     except (ValueError, TypeError):
         return False
 
-def is_core_data_sequence_type(
+def is_core_data_sequence(
         value: CoreDataSequenceType, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataSequenceType]:
     """Check if a value is a valid CoreDataSequenceType instance.
@@ -170,7 +312,7 @@ def is_core_data_sequence_type(
     except (ValueError, TypeError):
         return False
 
-def is_core_data_set_type(
+def is_core_data_set(
         value: CoreDataSetType, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[CoreDataSetType]:
     """Check if a value is a valid CoreDataSetType instance.
@@ -185,8 +327,8 @@ def is_core_data_set_type(
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_type(
-        value: ImmutableCoreDataTypes, *,
+def is_immutable_core_data(
+        value: Any, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataTypes]:
     """Check if a value is a valid ImmutableCoreDataTypes instance.
 
@@ -203,7 +345,7 @@ def is_immutable_core_data_type(
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_mapping_type(
+def is_immutable_core_data_mapping(
         value: ImmutableCoreDataMappingType, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataMappingType]:
     """Check if a value is a valid ImmutableCoreDataMappingType instance.
@@ -221,7 +363,7 @@ def is_immutable_core_data_mapping_type(
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_sequence_type(
+def is_immutable_core_data_sequence(
         value: ImmutableCoreDataSequenceType, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataSequenceType]:
     """Check if a value is a valid ImmutableCoreDataSequenceType instance.
@@ -239,7 +381,7 @@ def is_immutable_core_data_sequence_type(
     except (ValueError, TypeError):
         return False
 
-def is_immutable_core_data_set_type(
+def is_immutable_core_data_set(
         value: ImmutableCoreDataSetType, *,
         max_depth=DEFAULT_MAX_CORE_DATA_DEPTH) -> TypeGuard[ImmutableCoreDataSetType]:
     """Check if a value is a valid ImmutableCoreDataSetType instance.

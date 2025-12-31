@@ -3,7 +3,7 @@ import hashlib
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
-from simplebench.report.base import BaseExecutionEnvironment, Environment
+from simplebench.report._base import BaseExecutionEnvironment, Environment
 from simplebench.report.versions.v1.python_info import PythonInfo
 from simplebench.report.versions.v1.types import ExecutionEnvironmentData, ExecutionEnvironmentDict, PythonInfoData
 

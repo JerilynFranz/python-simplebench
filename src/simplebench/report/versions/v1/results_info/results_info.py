@@ -6,7 +6,7 @@ The V1 Results object represents the results metric of a version 1 JSON report.
 from collections.abc import Mapping
 from typing import Any, cast
 
-from simplebench.report.base import BaseResultsInfo
+from simplebench.report._base import BaseResultsInfo
 from simplebench.types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,

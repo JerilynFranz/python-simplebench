@@ -9,7 +9,7 @@ This module defines two distinct dictionary types for handling ExecutionEnvironm
 """
 import sys
 
-from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 
 from .python_info_dict import PythonInfoData, PythonInfoDict
 

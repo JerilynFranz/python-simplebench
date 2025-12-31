@@ -19,7 +19,7 @@ from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _VCSInfoErrorTag
-from simplebench.report.base import BaseVCSInfo, JSONSchema
+from simplebench.report._base import BaseVCSInfo, JSONSchema
 from simplebench.validators import validate_string
 
 from .vcs_info_schema import VCSInfoSchema

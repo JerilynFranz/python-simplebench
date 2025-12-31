@@ -17,7 +17,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, Sequence, cast
 
 from simplebench.report._error_tags import _ReportErrorTag
-from simplebench.report.base import BaseReport, JSONSchema
+from simplebench.report._base import BaseReport, JSONSchema
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 from simplebench.validators import validate_core_data_mapping, validate_sequence_of_type
 

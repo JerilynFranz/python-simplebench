@@ -2,7 +2,7 @@
 import hashlib
 from typing import Any
 
-from simplebench.report.base import BaseSystemInfo, JSONSchema
+from simplebench.report._base import BaseSystemInfo, JSONSchema
 
 from ..types import SystemInfoData, SystemInfoDict
 from . import validate

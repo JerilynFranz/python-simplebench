@@ -23,7 +23,7 @@ comparison, use in hash-based collections, and efficient copying.
 from copy import copy
 from typing import Any
 
-from simplebench.report.base import BaseValueBlock, JSONSchema
+from simplebench.report._base import BaseValueBlock, JSONSchema
 from simplebench.report.versions.v1.types import ValueBlockData, ValueBlockDict
 
 from . import validate

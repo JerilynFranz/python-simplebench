@@ -15,8 +15,8 @@ will not be changed.
 import hashlib
 import json
 
-from simplebench.report.base.cpu_info import BaseCPUInfo
-from simplebench.report.base.json_schema import JSONSchema
+from simplebench.report._base.cpu_info import BaseCPUInfo
+from simplebench.report._base.json_schema import JSONSchema
 from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 
 from ..types import CPUInfoData, CPUInfoDict

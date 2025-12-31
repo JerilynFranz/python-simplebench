@@ -16,7 +16,7 @@ of the base MachineInfo representation at the time of the V1 schema release.
 import hashlib
 from typing import Any
 
-from simplebench.report.base import BaseMachineInfo, JSONSchema
+from simplebench.report._base import BaseMachineInfo, JSONSchema
 
 from .. import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
 from ..types import MachineInfoData, MachineInfoDict

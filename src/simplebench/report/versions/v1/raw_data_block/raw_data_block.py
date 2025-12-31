@@ -1,8 +1,11 @@
 """Class for JSON raw data block representation."""
-from typing import Any
+from collections.abc import Mapping
+from typing import Any, cast
 
-from simplebench.report.base import BaseRawDataBlock, JSONSchema
+from simplebench.report._base import BaseRawDataBlock, JSONSchema
+from simplebench.report.versions.v1.types.raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from simplebench.types import Values
+from simplebench.validators import validate_core_data_mapping
 
 from . import validate
 from .raw_data_block_schema import RawDataBlockSchema
@@ -58,9 +61,27 @@ class RawDataBlock(BaseRawDataBlock):
         self._unit = validate.unit(unit)
         self._scale = validate.scale(scale)
         self._data = validate.data(data)
+        self._to_dict_cache: RawDataBlockDict | None = None  # Cache for to_dict output
+
+
+    @property
+    def dict_type(self) -> type[RawDataBlockDict]:
+        """The ReportElementTypedDict type associated with this RawDataBlock class.
+
+        :return: The ReportElementTypedDict type.
+        """
+        return RawDataBlockDict
+
+    @property
+    def data_type(self) -> type[RawDataBlockData]:
+        """The ReportElementTypedDict type used for input data to `from_dict`.
+
+        :return: The ReportElementTypedDict type for input data.
+        """
+        return RawDataBlockData
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "RawDataBlock":
+    def from_dict(cls, data: Mapping[str, Any]) -> "RawDataBlock":
         """Create a RawDataBlock instance from a dictionary that represents the
         JSON raw data block. It must conform to the :class:`RawDataBlockSchema`.
 
@@ -81,26 +102,19 @@ class RawDataBlock(BaseRawDataBlock):
         )
         return cls(**kwargs)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> RawDataBlockDict:
         """Convert the RawDataBlock instance to a dictionary.
+
+        The returned dictionary conforms to the 'shape' of the :class:`RawDataBlockDict` type,
+        is immutable, and can be serialized to JSON.
 
         :return: Dictionary representation of the RawDataBlock instance.
         """
-        output: dict[str, Any] = {
-            'type': self.TYPE,
-            'version': self.VERSION,
-            'semantic_type': self.semantic_type,
-            'unit': self.unit,
-            'scale': self.scale,
-            'data': self.data,
-        }
-
-        if self.timer is not None:
-            output['timer'] = self.timer
-        if self.cpu_timer is not None:
-            output['cpu_timer'] = self.cpu_timer
-
-        return output
+        if self._to_dict_cache is None:
+            value = self._to_dict_helper()
+            self._to_dict_cache = cast(RawDataBlockDict,
+                validate_core_data_mapping(value, 'RawDataBlock.to_dict output'))
+        return self._to_dict_cache
 
     @property
     def semantic_type(self) -> str:

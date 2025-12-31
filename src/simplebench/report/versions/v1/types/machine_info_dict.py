@@ -13,7 +13,7 @@ version 1: :class:`~simplebench.report.versions.v1.machine_info.machine_info_sch
 """
 import sys
 
-from simplebench.report.base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 
 from .cpu_info_dict import CPUInfoData, CPUInfoDict
 from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvironmentDict

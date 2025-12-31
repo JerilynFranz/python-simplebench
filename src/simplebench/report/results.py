@@ -2,7 +2,7 @@
 from typing import TYPE_CHECKING
 
 from ._error_tags import _ResultsInfoErrorTag
-from .base import BaseResultsInfo, JSONSchema
+from ._base import BaseResultsInfo, JSONSchema
 
 _JSON_CLASS_LOADED: bool = False
 

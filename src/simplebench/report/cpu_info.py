@@ -8,7 +8,7 @@ from ._error_tags import _CPUInfoErrorTag
 _DEFERRED_IMPORTS_LOADED: bool = False
 
 if TYPE_CHECKING:
-    from .base import BaseCPUInfo
+    from ._base import BaseCPUInfo
     from .versions import json_class
     _DEFERRED_IMPORTS_LOADED = True  # To avoid import issues during type checking
 

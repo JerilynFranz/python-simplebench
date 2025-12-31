@@ -1,7 +1,7 @@
 """V1 PythonInfo implementation."""
 import hashlib
 
-from simplebench.report.base import BasePythonInfo, JSONSchema
+from simplebench.report._base import BasePythonInfo, JSONSchema
 from simplebench.report.versions.v1.types import PythonInfoData, PythonInfoDict
 
 from . import validate

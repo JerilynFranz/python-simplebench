@@ -39,8 +39,8 @@ from typing import Any, Sequence, cast, overload
 
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
-from simplebench.report.base.json_schema import JSONSchema
-from simplebench.report.base.stats_block import BaseStatsBlock
+from simplebench.report._base.json_schema import JSONSchema
+from simplebench.report._base.stats_block import BaseStatsBlock
 from simplebench.report.versions.v1.types.stats_block_dict import StatsBlockData, StatsBlockDict
 from simplebench.types.values import Values
 from simplebench.validators import validate_core_data_mapping

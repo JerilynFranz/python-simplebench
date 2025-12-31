@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from simplebench.exceptions import SimpleBenchValueError
 
 from ._error_tags import _RawDataBlockErrorTag
-from .base import BaseRawDataBlock, JSONSchema
+from ._base import BaseRawDataBlock, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:

@@ -14,7 +14,7 @@ from typing import TypeVar
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_int
 
-from ..base import (
+from .._base import (
     BaseCPUInfo,
     BaseExecutionEnvironment,
     BaseMachineInfo,

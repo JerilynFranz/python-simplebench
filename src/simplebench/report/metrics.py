@@ -2,7 +2,7 @@
 from typing import TYPE_CHECKING
 
 from ._error_tags import _MetricsErrorTag
-from .base import Metrics
+from ._base import Metrics
 
 _JSON_CLASS_LOADED: bool = False
 

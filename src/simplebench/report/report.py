@@ -5,7 +5,7 @@ from simplebench.exceptions import SimpleBenchValueError
 from simplebench.validators import validate_positive_int
 
 from ._error_tags import _ReportErrorTag
-from .base import BaseReport, JSONSchema
+from ._base import BaseReport, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from simplebench.exceptions import SimpleBenchValueError
 
 from ._error_tags import _PythonInfoErrorTag
-from .base import BasePythonInfo, JSONSchema
+from ._base import BasePythonInfo, JSONSchema
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
