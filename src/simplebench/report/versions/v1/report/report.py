@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any, Sequence, cast
 
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report._base import BaseReport, JSONSchema
+from simplebench.report.validate import report_element_typed_dict_mimic as validate_report_element
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 from simplebench.validators import validate_core_data_mapping, validate_sequence_of_type
 
@@ -85,14 +86,15 @@ class Report(BaseReport):
         :raises SimpleBenchValueError: If any field has an invalid value.
         :raises SimpleBenchTypeError: If any field is of an incorrect type.
         """
-        allowed_keys = cls.init_params(ReportData)  # Hydrate allowed keys from ReportData TypedDict
+        allowed_keys = cls.init_params()
+
         def process_results(value: Any) -> list[ResultsInfo]:
+            """Process the results-info objects in the input sequence"""
             validated_list = validate_sequence_of_type(
                 value, dict, 'results',
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE,
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT,
                 allow_empty=False)
-
             return [ResultsInfo.from_dict(item) for item in validated_list]
 
         kwargs = cls.import_data(  # Hydrate instance arguments from dict

@@ -16,7 +16,8 @@ It does not need to solve the general TypedDict mimic validation problem,
 only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 """
 
-from typing import Any, Mapping, TypeGuard, TypeVar, get_type_hints
+from typing import Any, TypeGuard, TypeVar, get_type_hints, get_origin, get_args, Literal, Annotated
+from collections.abc import Sequence, Set, Mapping
 
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
@@ -175,27 +176,15 @@ def _validate_and_check_immutability_of_mimic(
                 return (False, False) # Value type mismatch and we cannot determine immutability
             continue
 
-        # Nested ReportElementTypedDict subclasses
-        if isinstance(expected_type, type) and issubclass(
-            expected_type, ReportElementTypedDict):  # type: ignore[reportArgumentType]
-            parents.add(id(data))
-            valid, immutable_tree = _validate_and_check_immutability_of_mimic(
-                                        value, expected_type, parents)
-            parents.remove(id(data))
-            if immutable_tree:
-                _cache.add_cache_entry(td_cls, data, valid)
-            else:
-                immutable_children = False  # at least one child is mutable
-            if not valid:
-                _cache.add_cache_entry(td_cls, data, False)
-                return (False, False)
-            continue
-
-        # Unsupported type - fails to be a nested ReportElementTypedDict or core data primitive
-        # This probably indicates a misconfiguration of the TypedDict subclass
-        raise SimpleBenchTypeError(
-            f"Key '{key}' in ReportElementTypedDict '{td_cls.__name__}' has unsupported type {expected_type}",
-            tag=_ReportElementValidationErrorTag.MISCONFIGURED_REPORT_ELEMENT_TYPED_DICT)
+        # Validate nested ReportElementTypedDict or generic container types
+        parents.add(id(data))
+        is_valid, is_immutable = _validate_field_value(value, expected_type, parents)
+        parents.remove(id(data))
+        if not is_valid:
+            _cache.add_cache_entry(td_cls, data, False)
+            return (False, False)  # Value type mismatch and we cannot determine immutability
+        if not is_immutable:
+            immutable_children = False
 
     if immutable_children:  # All children are immutable core data types and so we can cache positively
         _cache.add_cache_entry(td_cls, data, True)
@@ -281,3 +270,264 @@ def _validate_has_required_and_no_extra_keys(data: Mapping[str, Any],
         raise SimpleBenchTypeError(
             f"Extra keys not allowed: {extra}",
             tag=_ReportElementValidationErrorTag.EXTRA_KEYS_PRESENT)
+
+def _validate_field_value(value, expected_type, parents: set[int]) -> tuple[bool, bool]:
+    """Validate a single field value against its expected type.
+
+    The field must be one of:
+    - A ReportElementTypedDict subclass
+    - A generic container type (e.g., List, Dict) with core data primitive types or
+      ReportElementTypedDict subclasses as element types
+
+    _validate_field_value is a helper function that recursively checks
+    the value against the expected type, handling nested structures.
+
+    If it reaches primitive types, it uses is_core_data_primitive()
+    to validate core data primitive values.
+
+    If it reaches a ReportElementTypedDict subclass, it uses
+    is_report_element_typed_dict_mimic() to validate the structure.
+
+    If it reaches a generic container type (e.g., List, Dict), it recursively
+    validates each element against the specified element type.
+
+    :param Any value: The value to validate.
+    :param type expected_type: The expected type to validate against.
+    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :return tuple[bool, bool]: A tuple (is_valid, is_immutable) indicating validation results.
+    """
+    parents = parents or set()
+    if id(value) in parents:
+        raise SimpleBenchTypeError(
+            "Cyclic reference detected in data structure during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED)
+
+    if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
+        raise SimpleBenchTypeError(
+            "Maximum core data depth exceeded during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+
+    origin = get_origin(expected_type)
+    args = get_args(expected_type)
+
+    # Special case: do not treat str/bytes as containers
+    if isinstance(value, (str, bytes)):
+        if is_core_data_primitive_type(expected_type):
+            return (is_core_data_primitive(value), True)
+        return (isinstance(value, expected_type), True) if isinstance(expected_type, type) else (True, True)
+
+    # Handle Sequences (excluding str/bytes)
+    if origin in (list, tuple, Sequence):
+        parents.add(id(value))
+        results = _validate_sequence_field(origin, args, value, expected_type, parents)
+        parents.remove(id(value))
+        return results
+
+    # Handle Sets
+    if origin in (set, frozenset, Set):
+        parents.add(id(value))
+        results = _validate_set_field(args, value, parents)
+        parents.remove(id(value))
+        return results
+
+    # Handle Mappings
+    if origin in (dict, Mapping):
+        parents.add(id(value))
+        results = _validate_mapping_field(args, value, parents)
+        parents.remove(id(value))
+        return results
+
+    # Handle ReportElementTypedDicts
+    if isinstance(expected_type, type) and issubclass(expected_type, ReportElementTypedDict):  # type: ignore[reportArgumentType]
+        parents.add(id(value))
+        valid, immutable = _validate_and_check_immutability_of_mimic(value, expected_type, parents)
+        parents.remove(id(value))
+        return (valid, immutable)
+
+    # Core data primitive
+    if is_core_data_primitive_type(expected_type):
+        return (is_core_data_primitive(value), True)
+
+    # Fallback: direct type check
+    if isinstance(expected_type, type):
+        return (isinstance(value, expected_type), True)
+    return (True, True)  # If expected_type is Any or not a type
+
+
+def _validate_sequence_field(origin: Any,
+                             args: tuple[Any, ...],
+                             value: Any, expected_type: Any,
+                             parents: set[int]) -> tuple[bool, bool]:
+    """Validate a sequence field value against its expected type.
+
+    This is called by _validate_field_value to handle sequence types specifically
+    and does not handle strings
+
+    :param Any origin: The origin type of the expected type.
+    :param tuple[Any, ...] args: The type arguments of the expected type.
+    :param Any value: The value to validate.
+    :param type expected_type: The expected type to validate against.
+    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :return tuple[bool, bool]: A tuple (is_valid, is_immutable) indicating validation results.
+    """
+    if id(value) in parents:
+        raise SimpleBenchTypeError(
+            "Cyclic reference detected in data structure during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED)
+
+    if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
+        raise SimpleBenchTypeError(
+            "Maximum core data depth exceeded during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+
+    # Handle Sequences (str/bytes are excluded earlier)
+    if not isinstance(value, Sequence):
+        return (False, False)
+
+    # Handle variable-length tuple: Tuple[X, ...]
+    if origin is tuple and len(args) == 2 and args[1] is Ellipsis:
+        elem_type = args[0]
+        immutable = True
+        for v in value:
+            parents.add(id(v))
+            v_valid, v_immutable = _validate_field_value(v, elem_type, parents)
+            parents.remove(id(v))
+            if not v_valid:
+                return (False, False)
+            if not v_immutable:
+                immutable = False
+        return (True, immutable)
+
+    # Handle fixed-length tuple: Tuple[X, Y, Z]
+    if origin is tuple and len(args) > 0 and not (len(args) == 2 and args[1] is Ellipsis):
+        if len(value) != len(args):
+            return (False, False)
+        immutable = True
+        for v, elem_type in zip(value, args):
+            parents.add(id(v))
+            v_valid, v_immutable = _validate_field_value(v, elem_type, parents)
+            parents.remove(id(v))
+            if not v_valid:
+                return (False, False)
+            if not v_immutable:
+                immutable = False
+        return (True, immutable)
+
+    # Handle other sequences
+    elem_type = args[0] if args else object
+    immutable = True
+    for v in value:
+        parents.add(id(v))
+        v_valid, v_immutable = _validate_field_value(v, elem_type, parents)
+        parents.remove(id(v))
+        if not v_valid:
+            return (False, False)
+        if not v_immutable:
+            immutable = False
+    return (True, immutable)
+
+def _validate_set_field(
+            args: tuple[Any, ...],
+            value: Any,
+            parents: set[int]) -> tuple[bool, bool]:
+    """Validate a set field value against its expected type.
+    This is called by _validate_field_value to handle set types specifically.
+
+    :param tuple[Any, ...] args: The type arguments of the expected type.
+    :param Any value: The value to validate.
+    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :return tuple[bool, bool]: A tuple (is_valid, is_immutable) indicating validation results.
+    """
+    if id(value) in parents:
+        raise SimpleBenchTypeError(
+            "Cyclic reference detected in data structure during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED)
+
+    if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
+        raise SimpleBenchTypeError(
+            "Maximum core data depth exceeded during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+
+    if not isinstance(value, Set):
+        raise SimpleBenchTypeError(
+            f"Expected a Set type for value, got {type(value)}",
+            tag=_ReportElementValidationErrorTag.NOT_A_SET)
+    elem_type = args[0] if args else object
+    immutable = True
+    for v in value:
+        parents.add(id(v))
+        v_valid, v_immutable = _validate_field_value(v, elem_type, parents)
+        parents.remove(id(v))
+        if not v_valid:
+            return (False, False)
+        if not v_immutable:
+            immutable = False
+    return (True, immutable)
+
+def _validate_mapping_field(
+            args: tuple[Any, ...],
+            value: Any,
+            parents: set[int]) -> tuple[bool, bool]:
+    """Validate a mapping field value against its expected type.
+    This is called by _validate_field_value to handle mapping types specifically.
+
+    :param tuple[Any, ...] args: The type arguments of the expected type.
+    :param Any value: The value to validate.
+    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :return tuple[bool, bool]: A tuple (is_valid, is_immutable) indicating validation results.
+    """
+    if id(value) in parents:
+        raise SimpleBenchTypeError(
+            "Cyclic reference detected in data structure during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED)
+
+    if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
+        raise SimpleBenchTypeError(
+            "Maximum core data depth exceeded during ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+
+    if not isinstance(value, Mapping):
+        raise SimpleBenchTypeError(
+            f"Expected a Mapping type for value, got {type(value)}",
+            tag=_ReportElementValidationErrorTag.NOT_A_MAPPING)
+    if len(args) != 2:
+        raise SimpleBenchTypeError(
+            "Mapping type must have exactly two type arguments (key and value types)",
+            tag=_ReportElementValidationErrorTag.INVALID_MAPPING_TYPE_ARGUMENTS)
+    key_type, val_type = args
+    if not _is_string_key_type(key_type):
+        raise SimpleBenchTypeError(
+            "Mapping key type must be str, Literal of str, or Annotated[str, ...] for ReportElementTypedDict validation",
+            tag=_ReportElementValidationErrorTag.MAPPING_KEY_NOT_STRING)
+    immutable = True
+    parents.add(id(value))
+    for k, v in value.items():
+        if not isinstance(k, str):
+            raise SimpleBenchTypeError(
+                f"Mapping key must be str for ReportElementTypedDict validation, got {type(k)}",
+                tag=_ReportElementValidationErrorTag.MAPPING_KEY_NOT_STRING)
+        valid, v_immutable = _validate_field_value(v, val_type, parents)
+        if not valid:
+            return (False, False)
+        if not v_immutable:
+            immutable = False
+    parents.remove(id(value))
+    return (True, immutable)
+
+def _is_string_key_type(key_type: Any) -> bool:
+    """Check if a type is a valid string key type for Mappings.
+
+    :param Any key_type: The type to check.
+    :return bool: True if the type is a valid string key type, False otherwise.
+    """
+    if key_type is str:
+        return True
+    origin = get_origin(key_type)
+    if origin is Literal:
+        return all(isinstance(arg, str) for arg in get_args(key_type))
+    if origin is Annotated and get_args(key_type) and get_args(key_type)[0] is str:
+        return True
+    try:
+        return issubclass(key_type, str)
+    except TypeError:
+        return False

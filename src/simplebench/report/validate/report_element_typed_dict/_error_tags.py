@@ -8,6 +8,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _ReportElementValidationErrorTag(ErrorTag):
     """Error tags for report element validation errors."""
+    NOT_A_SET = "NOT_A_SET"
+    """The provided value is not a set."""
+    INVALID_MAPPING_TYPE_ARGUMENTS = "INVALID_MAPPING_TYPE_ARGUMENTS"
+    """The Mapping type does not have exactly two type arguments (key and value types)."""
     UNABLE_TO_RESOLVE_TYPE_HINT = "UNABLE_TO_RESOLVE_TYPE_HINT"
     """The type hint could not be resolved."""
     MAX_CORE_DATA_DEPTH_EXCEEDED = "MAX_CORE_DATA_DEPTH_EXCEEDED"

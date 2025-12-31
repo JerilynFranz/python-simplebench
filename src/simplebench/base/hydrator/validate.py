@@ -195,6 +195,8 @@ def process_as(
 
 def allowed_keys_against_data(data_values: dict[str, Any], allowed_fields_map: Mapping[str, Any]) -> None:
     """Validate that all keys in the data dictionary are allowed.
+
+    This does not check types, only that the keys exist in the allowed fields.
     
     :param dict[str, Any] data_values: The data dictionary to validate.
     :param Mapping[str, Any] allowed_fields_map: The allowed fields map.
