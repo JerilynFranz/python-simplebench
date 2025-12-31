@@ -30,9 +30,9 @@ T = TypeVar("T", bound=ReportElementTypedDict)
 
 """Set of core data primitive types for quick membership testing."""
 
-def is_report_element_typed_dict_cls(obj: Any) -> TypeGuard[ReportElementTypedDict]:
+def is_report_element_typed_dict(obj: Any) -> TypeGuard[ReportElementTypedDict]:
     """TypeGuard function. Check if an object is actually a :class:`ReportElementTypedDict` subclass.
-    
+        
     :param Any obj: The object to check.
     :return bool: True if the object is a ReportElementTypedDict subclass, False otherwise.
     """
@@ -43,16 +43,22 @@ def report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) ->
 
     Raises an error if validation fails.
 
+    This is a mimic function that behaves like a type cast to ReportElementTypedDict.
+
+    Because it performs structural validation, the returned value is guaranteed to conform
+    to the specified ReportElementTypedDict structure if no error is raised.
+
     This is a structural check and does not require an actual instance of ReportElementTypedDict.
-    It validates that the provided mapping conforms to the structure defined by the TypedDict subclass.
 
     It validates that:
     - All required keys are present and of the correct type.
     - All optional keys, if present, are of the correct type.
     - No extra keys are present.
 
-    For performance, it uses a size-limited cache to store previously validated immutable
-    core data type validation results to avoid redundant validation.
+    For performance, it uses a size-limited cache to store previously validated
+    results to avoid redundant validation. Only fully immutable core data type
+    structures are cached positively (with validity of `True`) to ensure safety.
+    Mutable structures can be validated but are not cached.
 
     :param Mapping[str, Any] data: The dictionary to validate.
     :param ReportElementTypedDict td_cls: The TypedDict subclass type to validate against.
@@ -70,8 +76,15 @@ def is_report_element_typed_dict_mimic(data: Mapping[str, Any],
                                        td_cls: type[T]) -> TypeGuard[T]:
     """TypeGuard function. Check if a mapping conforms to a ReportElementTypedDict subclass.
 
+    It acts as a structural isinstance() check for mappings against the TypedDict subclass.
+
+    It comprehensively checks that the mapping conforms to the structure defined
+    by the ReportElementTypedDict subclass and recursively checks nested ReportElementTypedDicts.
+
+    Static type checkers can use this to narrow types accordingly and will understand
+    that after a successful check the mapping conforms to the ReportElementTypedDict structure.
+
     A Mapping[str, Any] is checked against the structure defined by the TypedDict subclass.
-    It functionally mimics an isinstance() check for Mappings against the TypedDict subclass.
 
     It validates that:
     - All required keys are present and of the correct type.
@@ -89,15 +102,39 @@ def is_report_element_typed_dict_mimic(data: Mapping[str, Any],
     it reuses those cached results to avoid redundant validation.
 
     If subtrees are newly encountered, they are validated and their results
-    are added to the cache for future reuse.
+    are added to the cache for future reuse. Only fully immutable core data type
+    structures are cached positively (with validity of `True`) to ensure safety.
     
     :param Mapping[str, Any] data: The dictionary to check.
     :param ReportElementTypedDict td_cls: The TypedDict subclass type to check against.
     :return bool: True if the dictionary conforms to the TypedDict subclass, False otherwise.
+    :raise SimpleBenchTypeError: If the TypedDict subclass is misconfigured.
     """
-    cached_state: bool | None = _cache.valid_in_cache(td_cls,data)
+    valid, _ = _validate_and_check_immutability_of_mimic(data, td_cls)
+    return valid
+
+def _validate_and_check_immutability_of_mimic(
+        data: Mapping[str, Any], td_cls: type[ReportElementTypedDict]) -> tuple[bool, bool]:
+    """Validate a mapping against a ReportElementTypedDict subclass
+    and check if it consists only of fully immutable core data types.
+
+    It recursively checks the structure and types of the mapping against the TypedDict subclass
+    and returns whether it conforms to the TypedDict subclass and whether the structure
+    is fully immutable core data types.
+
+    :param Mapping[str, Any] data: The dictionary to check.
+    :param ReportElementTypedDict td_cls: The TypedDict subclass type to check against.
+    :return tuple[bool, bool]: A tuple where the first element indicates if the dictionary
+        conforms to the TypedDict subclass, and the second element indicates if the
+        data consists only of fully immutable core data types.
+    :raise SimpleBenchTypeError: If the TypedDict subclass is misconfigured.
+    """
+    cached_state: bool | None = _cache.valid_in_cache(td_cls, data)
     if cached_state is not None:
-        return cached_state
+        # Cached results are always immutable core data types and thus safe to reuse.
+        # Mutable structures can be validated but they are not cached because their
+        # state can change.
+        return (cached_state, cached_state)
 
     _validate_report_element_typed_dict_subclass(td_cls)
     _validate_is_mapping_of_string_to_any(data)
@@ -106,6 +143,7 @@ def is_report_element_typed_dict_mimic(data: Mapping[str, Any],
     keys_to_check: set[str] = set(data.keys())
 
     # Check value types
+    immutable_children: bool = True
     while keys_to_check:
         key = keys_to_check.pop()
         value = data[key]
@@ -115,27 +153,32 @@ def is_report_element_typed_dict_mimic(data: Mapping[str, Any],
         if is_core_data_primitive_type(expected_type):
             if not is_core_data_primitive(value):
                 _cache.add_cache_entry(td_cls, data, False)
-                return False
-            keys_to_check.remove(key)
+                return (False, False) # Value type mismatch and we cannot determine immutability
             continue
 
         # Nested ReportElementTypedDict subclasses
         if isinstance(expected_type, type) and issubclass(
             expected_type, ReportElementTypedDict):  # type: ignore[reportArgumentType]
-            if not is_report_element_typed_dict_mimic(
-                value, expected_type):  # type: ignore[reportArgumentType]
+            valid, immutable_tree = _validate_and_check_immutability_of_mimic(
+                                        value, expected_type)
+            if immutable_tree:
+                _cache.add_cache_entry(td_cls, data, valid)
+            else:
+                immutable_children = False  # at least one child is mutable
+            if not valid:
                 _cache.add_cache_entry(td_cls, data, False)
-                return False
-            keys_to_check.remove(key)
+                return (False, False)
             continue
 
         # Unsupported type - fails to be a nested ReportElementTypedDict or core data primitive
+        # This probably indicates a misconfiguration of the TypedDict subclass
         raise SimpleBenchTypeError(
             f"Key '{key}' in ReportElementTypedDict '{td_cls.__name__}' has unsupported type {expected_type}",
-            tag=_ReportElementValidationErrorTag.UNSUPPORTED_TYPEDDICT_KEY_TYPE)
+            tag=_ReportElementValidationErrorTag.MISCONFIGURED_REPORT_ELEMENT_TYPED_DICT)
 
-    _cache.add_cache_entry(td_cls, data, True)
-    return True
+    if immutable_children:  # All children are immutable core data types and so we can cache positively
+        _cache.add_cache_entry(td_cls, data, True)
+    return (True, immutable_children)  # All keys validated successfully, propagate immutability status
 
 def _validate_report_element_typed_dict_subclass(td_cls: type[ReportElementTypedDict]) -> None:
     """Validate a ReportElementTypedDict subclass schema.
