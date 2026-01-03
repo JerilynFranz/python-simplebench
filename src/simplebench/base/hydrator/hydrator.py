@@ -9,7 +9,9 @@ import inspect
 from collections.abc import Mapping
 from copy import copy
 from functools import cache
-from typing import Any, Callable, Iterable, get_type_hints, is_typeddict
+from typing import Any, Callable, Iterable, Union, get_args, get_origin, get_type_hints, is_typeddict
+
+from simplebench.base import _TypedDictKeyInfo
 
 from . import validate
 
@@ -178,7 +180,7 @@ class Hydrator:
 
         # TypedDict support
         if is_typeddict(target_cls):
-            return dict(target_cls.__annotations__)
+            return cls.init_params_for_typeddict(target_cls)
 
         # Dataclass support
         if dataclasses.is_dataclass(target_cls):
@@ -215,13 +217,17 @@ class Hydrator:
         """Process and validate the data dictionary.
 
         :param Mapping[str, Any] data: The data dictionary to process.
-        :param Mapping[str, Any] allowed_fields: A dictionary of allowed input keys and their types. It cannot be empty.
+        :param Mapping[str, Any] allowed_fields: A dictionary of allowed input keys and their types.
+                    It cannot be empty. The types must in the form suitable for isinstance checks.
+                    e.g., str, int, list, dict, or (class, otherclass, ...) for multiple allowed types.
+        
         :param Iterable[str] | None skip_fields: (optional) A list of input keys to NOT include in the output.
                     Only keys that are present in the `allowed_fields` dictionary can be skipped.
         :param Iterable[str] | None optional_fields: (optional) An iterable of input keys that are optional and
                     that can be omitted from the output if missing. Only keys that are present in the
                     `allowed_fields` dictionary can be optional.
-        :param Mapping[str, Any] | None defaults: (optional) A dictionary of default values for keys if they are not present.
+        :param Mapping[str, Any] | None defaults: (optional) A dictionary of default values for keys
+                    if they are not present.
                     If a key is present in the input data, the default value is not used.
                     If a value is set by the default, it is not considered missing.
                     Only keys that are present in the `optional_fields` dictionary can have default values.
@@ -296,3 +302,53 @@ class Hydrator:
             if field in output:
                 del output[field]
         return output
+
+    @classmethod
+    def init_params_for_typeddict(cls, typeddict_cls: type) -> dict[str, Any]:
+        """Return a dictionary of the parameters and their types for a TypedDict class.
+
+        It takes a TypedDict class as input and returns a dictionary mapping
+        parameter names to their types based on the TypedDict's annotations.
+
+        :param type typeddict_cls: The TypedDict class to inspect.
+        :return dict[str, Any]: A dictionary mapping parameter names for the TypedDict to their types.
+        """
+        output: dict[str, Any] = {}
+        annotations = get_type_hints(typeddict_cls)
+        for key in annotations:
+            value_info = _TypedDictKeyInfo(key, typeddict_cls)
+            value_type = value_info.value_type
+            annotations[key] = cls._unwrap_typeddict_type(value_type)
+        return output
+
+    @classmethod
+    def _unwrap_typeddict_type(cls, tp: Any) -> Any:
+        """Unwrap a type annotation to its base type for isinstance checks.
+
+        - For generics (e.g., list[str]), returns the base type (list, dict, set, tuple, etc.).
+        - For TypedDict, returns dict.
+        - For primitives, returns the primitive type.
+        - For unions, returns a tuple of the base types.
+        - For Literal, returns a tuple of the literal values.
+        - Otherwise, returns the type itself.
+
+        :param Any tp: The type annotation to unwrap.
+        :return Any: The base type suitable for isinstance checks.
+        """
+        if is_typeddict(tp):
+            return dict
+
+        origin = get_origin(tp)
+        if origin is not None:
+            # Handle Union types
+            if (origin is getattr(__import__('typing'), 'Union', None)
+                or origin is getattr(__import__('types'), 'UnionType', None)
+                or origin is Union):
+                args = get_args(tp)
+                return tuple(cls._unwrap_typeddict_type(arg) for arg in args)
+            # Handle Literal types
+            if origin is getattr(__import__('typing'), 'Literal', None):
+                return get_args(tp)
+            return origin
+
+        return tp  # Fallback: return the type itself

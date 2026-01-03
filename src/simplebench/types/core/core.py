@@ -9,19 +9,11 @@ built upon these core types and is_* functions to validate instances of these ty
 """
 from __future__ import annotations
 
-import threading
-from collections import OrderedDict
 from collections.abc import Mapping, Sequence, Set
 from types import MappingProxyType
-from typing import Any, Final, TypeAlias, TypeGuard
+from typing import TypeAlias
 
-from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators import core_data_types as validators
-
-from ._error_tags import _CoreTypeErrorTags
-
-CoreDataTypes: TypeAlias = str | int | float | bool | None | \
+CoreDataTypes: TypeAlias = str | bytes |int | float | bool | complex | None | \
     Sequence['CoreDataTypes'] | Mapping[str, 'CoreDataTypes'] | Set['CoreDataTypes']
 """Type alias for the core data type primitives used in SimpleBench.
 
@@ -32,18 +24,34 @@ They are serializable, but not necessarily immutable.
 
 Allowed types are:
     - str
+    - bytes
     - int
     - float
     - bool
+    - complex
     - None
     - `Sequence[CoreDataTypes]` (covers list, tuple, etc.)
     - `Mapping[str, CoreDataTypes]` (covers dict, MappingProxyType, etc.)
     - `Set[CoreDataTypes]` (covers set, frozenset)
 """
 
-ImmutableCoreDataTypesTuple = (str, int, float, bool, type(None), tuple, frozenset, MappingProxyType)
+ImmutableCoreDataTypesTuple = (str, bytes, int, float, bool, complex, type(None), tuple, frozenset, MappingProxyType)
+"""Tuple of types representing immutable core data primitive types.
 
-ImmutableCoreDataTypes: TypeAlias = str | int | float | bool | None | \
+Includes:
+    - str
+    - bytes
+    - int
+    - float
+    - bool
+    - complex
+    - NoneType
+    - tuple
+    - frozenset
+    - MappingProxyType
+"""
+
+ImmutableCoreDataTypes: TypeAlias = str | bytes | int | float | bool | complex |None | \
     tuple['ImmutableCoreDataTypes', ...] | frozenset['ImmutableCoreDataTypes'] | \
     MappingProxyType[str, 'ImmutableCoreDataTypes']
 """Type alias for the immutable core data type primitives used in SimpleBench.
@@ -55,9 +63,11 @@ They are both serializable and immutable.
 
 Allowed types are:
     - str
+    - bytes
     - int
     - float
     - bool
+    
     - None
     - `tuple[ImmutableCoreDataTypes, ...]`
     - `frozenset[ImmutableCoreDataTypes]`
@@ -116,5 +126,17 @@ is an immutable core data type as defined by `ImmutableCoreDataTypes`.
 It is both serializable and immutable.
 """
 
-CoreDataPrimitiveTypesTuple: tuple[type, ...] = (str, int, float, bool, type(None))
-"""Tuple of types representing core data primitive types."""
+CoreDataPrimitiveTypesTuple: tuple[type, ...] = (str, bytes, int, float, bool, complex, type(None))
+"""Tuple of types representing core data primitive types.
+
+They are all immutable and serializable.
+
+Includes:
+    - str
+    - bytes
+    - int
+    - float
+    - bool
+    - complex
+    - NoneType
+"""

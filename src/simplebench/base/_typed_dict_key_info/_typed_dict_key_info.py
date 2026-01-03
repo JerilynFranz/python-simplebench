@@ -2,10 +2,15 @@
 
 This module defines the _TypedDictKeyInfo class, which extracts and stores information
 about a TypedDict key's required/optional status and its contained type.
+
+:property bool | None is_required: True if Required, False if NotRequired, None if neither.
+:property bool | None is_optional: True if NotRequired, False if Required, None if neither.
+:property object value_type: The value type argument contained in Required/NotRequired, or the original value type.
 """
 from simplebench.exceptions import SimpleBenchTypeError
 
 from ._error_tags import _TypedDictKeyInfoErrorTag
+
 
 class _TypedDictKeyInfo:
     """Information about a TypedDict key's required/optional status and contained type.

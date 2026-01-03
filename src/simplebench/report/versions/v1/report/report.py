@@ -14,21 +14,17 @@ The version 1 report is the first stable version of the report format
 and serves as a foundation for future versions.
 """
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Sequence, cast
+from typing import Any, Sequence
 
-from simplebench.exceptions import SimpleBenchRuntimeError
-from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report._base import BaseReport, JSONSchema
+from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.types import ImmutableVariationColsType, VariationColsType
-from simplebench.validators import validate_core_data_mapping, validate_sequence_of_type
+from simplebench.validators import validate_sequence_of_type
 
 from .. import MachineInfo, ResultsInfo
-from ..types import ReportData, ReportDict, ResultsInfoData
+from ..types import ReportDict
 from . import validate
 from .report_schema import ReportSchema
-
-if TYPE_CHECKING:
-    from simplebench.case import Case
 
 
 class Report(BaseReport):
@@ -73,12 +69,13 @@ class Report(BaseReport):
         self._variation_cols: ImmutableVariationColsType = validate.variation_cols(variation_cols)
         self._results: tuple[ResultsInfo, ...] = validate.results(results)
         self._machine: MachineInfo = validate.machine(machine)
-        self._to_dict_cache: ReportDict | None = None  # Cache for to_dict output
-        """Cached immutable dictionary representation of the Report instance.
+        self._to_dict_cache: ReportDict | None = None
+        """Private backing attribute for cached immutable dictionary representation of the Report instance.
         
         It is initialized to None and populated on the first call to to_dict().
         It is used to improve performance by avoiding redundant conversions 
-        and it is type cast to :class:`ReportDict
+        and it is type cast to :class:`ReportDict` for
+        static type checking.
         """
 
     @classmethod
@@ -93,6 +90,7 @@ class Report(BaseReport):
         :raises SimpleBenchTypeError: If any field is of an incorrect type.
         """
         allowed_keys = cls.init_params()
+        allowed_keys.update({'version': int, 'type': str})
 
         def process_results(value: Any) -> list[ResultsInfo]:
             """Process the results-info objects in the input sequence"""
@@ -121,7 +119,8 @@ class Report(BaseReport):
 
         The output dictionary conforms to the version 1 report schema
         and is suitable for serialization to JSON. It is immutable and cached
-        for efficiency and is type cast to :class:`ReportDict`.
+        for efficiency and is type cast to :class:`ReportDict` for
+        static type checking.
 
         :return ReportDict: Immutable dictionary containing the JSON report data.
         """

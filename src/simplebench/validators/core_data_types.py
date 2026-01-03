@@ -423,10 +423,10 @@ def _internal_validate_core_data(
     if isinstance(item, bytes):
         raise SimpleBenchTypeError(
             f"Invalid data type for element in `{name}` mapping: bytes. "
-            f"Allowed types are Mapping, Sequence, Set, str, int, float, bool, and None.",
+            f"Allowed types are Mapping, Sequence, Set, str, int, float, complex, bool, and None.",
             tag=_ValidatorsErrorTag.INVALID_CORE_MAPPING_PARAM_VALUE)
 
-    if isinstance(item, (str, int, float, bool)) or item is None:
+    if isinstance(item, (str, int, float, complex, bool)) or item is None:
         # No 'parents' addition for immutable primitive types
         # because they cannot form cyclic references and can share ids.
         # Check for non-finite floats (NaN, Infinity)
@@ -434,6 +434,12 @@ def _internal_validate_core_data(
             if math.isnan(item) or math.isinf(item):
                 raise SimpleBenchValueError(
                     f"Float values in `{name}` cannot be NaN or Infinity.",
+                    tag=_ValidatorsErrorTag.INVALID_CORE_MAPPING_PARAM_VALUE)
+        if isinstance(item, complex):
+            if math.isnan(item.real) or math.isinf(item.real) or \
+               math.isnan(item.imag) or math.isinf(item.imag):
+                raise SimpleBenchValueError(
+                    f"Complex values in `{name}` cannot have NaN or Infinity components.",
                     tag=_ValidatorsErrorTag.INVALID_CORE_MAPPING_PARAM_VALUE)
         return item
 
@@ -689,28 +695,28 @@ class _NotInCache:
 
 _NOT_IN_CACHE: Final[_NotInCache] = _NotInCache()
 
-_CORE_PRIMITIVES_SET: Final[set[type]] = {str, int, float, bool, type(None)}
+_CORE_PRIMITIVES_SET: Final[set[type]] = {str, int, float, bool, complex, type(None)}
 """Set of core data primitive types for quick membership testing."""
 
 def is_core_data_primitive(
-        value: Any) -> TypeGuard[str | int | float | bool | None]:
+        value: Any) -> TypeGuard[str | int | float | bool | complex | None]:
     """Check if a value is a core data primitive type.
 
-    The allowed primitive types are str, int, float, bool, and None.
+    The allowed primitive types are str, int, float, bool, complex, and None.
 
     All core primitive types are immutable and serializable.
 
     :param object value: The value to check.
     :return bool: True if the value is a core data primitive type, False otherwise.
     """
-    return isinstance(value, (str, int, float, bool)) or value is None
+    return isinstance(value, (str, int, float, bool, complex)) or value is None
 
 
 def is_core_data_primitive_type(
-        value_type: Any) -> TypeGuard[type[str | int | float | bool | None]]:
+        value_type: Any) -> TypeGuard[type[str | int | float | bool | complex | None]]:
     """Check if a type is a core data primitive type.
 
-    The allowed primitive types are str, int, float, bool, and NoneType.
+    The allowed primitive types are str, int, float, bool, complex, and NoneType.
 
     All core primitive types are immutable and serializable.
 

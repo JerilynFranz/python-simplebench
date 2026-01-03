@@ -6,6 +6,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _HydratorErrorTag(ErrorTag):
     """Builder exception ErrorTags for JSON report objects."""
+    UNSUPPORTED_TYPEDDICT_VALUE_TYPE = "UNSUPPORTED_TYPEDDICT_VALUE_TYPE"
+    "Unsupported TypedDict value type encountered during unwrapping to core type."
     INVALID_PROCESS_AS_TYPE = "INVALID_PROCESS_AS_TYPE"
     "Invalid `process_as` type. Must be a `dict`."
     INVALID_PROCESS_AS_KEY = "INVALID_PROCESS_AS_KEY"
