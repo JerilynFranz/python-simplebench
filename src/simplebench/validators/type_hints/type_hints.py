@@ -1142,6 +1142,9 @@ def _is_subtype_of_typehint(subtype: Any, basetype: Any) -> bool:
     Checks if a given type is a subtype of or compatible with a base type.
     This is a complex problem, so we'll handle the common cases.
 
+    .. warning::
+        This function does not handle all edge cases and complex type hints.
+
     :param Any subtype: The potential subtype.
     :param Any basetype: The potential base type.
     :return bool: True if subtype is a subtype of basetype, False otherwise.
