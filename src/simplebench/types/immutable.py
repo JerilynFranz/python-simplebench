@@ -54,7 +54,7 @@ so they are automatically recognized.
 
 import sys
 from abc import ABCMeta
-from typing import Protocol, TypedDict, cast, runtime_checkable
+from typing import Any, Protocol, TypedDict, TypeGuard, cast, runtime_checkable
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired
@@ -281,3 +281,25 @@ class ImmutableTypedDict(TypedDict):
 # Register built-in immutable types so they pass isinstance(x, Immutable) checks
 for _t in (bool, int, float, complex, str, bytes, type(None)):
     cast(ABCMeta, Immutable).register(_t)
+
+def is_immutable_typeddict_typehint(type_hint: Any) -> TypeGuard[type[ImmutableTypedDict]]:
+    """
+    Safely check if a type hint inherits from :class:`~simplebench.types.ImmutableTypedDict`.
+
+    This function is a TypeGuard, which allows static type checkers to understand
+    that if this function returns True, the given `type_hint` is a class
+    that inherits from ImmutableTypedDict.
+
+    :param Any type_hint: The type hint to check.
+    :return bool: True if the type hint inherits from ImmutableTypedDict, False otherwise.
+    """
+    if not is_typeddict(type_hint):
+        return False
+    try:
+        # Check the MRO directly to see if it inherits from ImmutableTypedDict.
+        # This avoids the static checker issue with issubclass and TypedDict.
+        return ImmutableTypedDict in type_hint.__mro__
+    except (TypeError, AttributeError):
+        # issubclass would raise TypeError; __mro__ might raise AttributeError
+        # if type_hint is not a class.
+        return False

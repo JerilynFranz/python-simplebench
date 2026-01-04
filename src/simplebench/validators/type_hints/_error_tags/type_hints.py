@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _TypeHintsErrorTag(ErrorTag):
     """Error tags for type hints validation errors."""
+    TYPE_HINT_MISMATCH = "TYPE_HINT_MISMATCH"
+    """The object type does not match the expected type hint."""
+    INVALID_PRIMITIVE_CHECK = "INVALID_PRIMITIVE_CHECK"
+    """A primitive type check was attempted on a non-primitive type."""
     INVALID_NONE_CHECK = "INVALID_NONE_CHECK"
     """A None check was performed on a non-None type hint."""
     VALIDATION_FAILED = "VALIDATION_FAILED"

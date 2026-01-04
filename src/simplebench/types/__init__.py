@@ -11,7 +11,7 @@ from .core import (
     ImmutableCoreDataTypes,
     ImmutableCoreDataTypesTuple,
 )
-from .immutable import Immutable, ImmutableTypedDict
+from .immutable import Immutable, ImmutableTypedDict, is_immutable_typeddict_typehint
 from .values import Values
 from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
 
@@ -27,6 +27,7 @@ __all__ = [
     "ImmutableCoreDataTypes",
     "Immutable",
     "ImmutableTypedDict",
+    "is_immutable_typeddict_typehint",
     "Values",
     "VariationColsType",
     "ImmutableVariationColsType",

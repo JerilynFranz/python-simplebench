@@ -16,9 +16,10 @@ It does not need to solve the general TypedDict mimic validation problem,
 only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 """
 
-from typing import Any, TypeGuard, TypeVar, get_type_hints, get_origin, get_args, Literal, Annotated
-from collections.abc import Sequence, Set, Mapping
+from collections.abc import Mapping, Sequence, Set
+from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_origin, get_type_hints
 
+from simplebench.base import _TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
@@ -26,7 +27,6 @@ from simplebench.validators import is_core_data_primitive, is_core_data_primitiv
 
 from . import _cache
 from ._error_tags import _ReportElementValidationErrorTag
-from simplebench.base import _TypedDictKeyInfo
 
 T = TypeVar("T", bound=ReportElementTypedDict)
 
