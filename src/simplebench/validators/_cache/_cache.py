@@ -96,7 +96,7 @@ class ValidationCache:
         :param bool is_valid: The validity of the object.
         """
         log.debug("add_cache_entry: Caching object of type '%s' with id %d as valid=%s",
-                  td_cls.__name__, id(obj), is_valid)
+                  td_cls, id(obj), is_valid)
         item = CacheEntry(td_cls, obj, is_valid, self._cache, self._cache_lock)
         with self._cache_lock:
             self._cache.setdefault(item.cache_key, item)

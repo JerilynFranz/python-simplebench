@@ -42,7 +42,7 @@ from .strings import (
     validate_string,
     validate_string_with_regex,
 )
-from .type_hints import ImmutablePrimitiveTypes, ImmutablePrimitiveTypesTuple, is_immutable, is_instance_of_typehint
+from .type_hints import ImmutablePrimitiveTypes, ImmutablePrimitiveTypesTuple, is_immutable, isinstance_of_typehint
 from .types import validate_type
 from .validate_iterable_of_type import validate_iterable_of_type
 from .validate_sequence_of_type import validate_sequence_of_type
@@ -56,7 +56,7 @@ __all__ = [
     "is_core_data_mapping",
     "is_core_data_sequence",
     "is_core_data_set",
-    "is_instance_of_typehint",
+    "isinstance_of_typehint",
     "is_immutable",
     "is_immutable_core_data",
     "_ValidatorsErrorTag",

@@ -69,11 +69,26 @@ Tuple of two booleans:
 ImmutablePrimitiveTypes: TypeAlias = int | str | bytes | bool | float | complex | NoneType
 """Type alias for primitive data types."""
 
-ImmutablePrimitiveTypesTuple: tuple = (int, str, bytes, bool, float, complex, NoneType)
+ImmutablePrimitiveTypesTuple: tuple[type[int] | type[str] | type[bytes] \
+        | type[bool] | type[float] | type[complex] | type[NoneType], ...] = (
+            int, str, bytes, bool, float, complex, NoneType)
 """Tuple of primitive data types for isinstance checks."""
 
 _IMMUTABLE_PRIMITIVE_TYPES_SET: set[type] = set(ImmutablePrimitiveTypesTuple)
 """Set of primitive data types for quick membership checks."""
+
+
+class ValidationState(NamedTuple):
+    """Represents the state of a validation check for cycle detection.
+
+    :property int obj_id: The ID of the object being checked.
+    :property Any type_hint: The type hint being checked against.
+    :property str context: The context of the validation check.
+    """
+    obj_id: int
+    type_hint: Any
+    context: str
+
 
 class Options(NamedTuple):
     """Options for type hint validation functions.
@@ -88,7 +103,7 @@ class Options(NamedTuple):
 
 log = logging.getLogger(__name__)
 
-def is_instance_of_typehint(
+def isinstance_of_typehint(
         obj: Any,
         type_hint: Any,
         *,
@@ -129,7 +144,7 @@ def is_instance_of_typehint(
         depth=depth,
         consume_iterators=consume_iterators)
     is_valid, _ = _check_instance_of_typehint(
-        obj, type_hint, options, parents=set(), raise_on_error=False)
+        obj, type_hint, options, parents=set(), raise_on_error=False, context="root")
     return is_valid
 
 def is_immutable(
@@ -184,7 +199,7 @@ def is_immutable(
         depth=depth,
         consume_iterators=consume_iterators)
     _, is_imm = _check_instance_of_typehint(
-        obj, type_hint, options, parents=set(), raise_on_error=False)
+        obj, type_hint, options, parents=set(), raise_on_error=False, context="root")
     return is_imm
 
 
@@ -192,60 +207,90 @@ def _check_instance_of_typehint(
         obj: Any,
         type_hint: Any,
         options: Options,
-        parents: set[int],
-        raise_on_error: bool = False) -> CheckResult:
+        parents: set[ValidationState],
+        raise_on_error: bool = False,
+        *,
+        context: str) -> CheckResult:
     """
     Internal function to check if an object is an instance of a given type hint.
 
     :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
+    :param str context: The context of the validation check.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
-    log.debug("_check_instance_of_typehint: Checking object of type '%s' against type hint '%s'",
-              type(obj).__name__, type_hint)
+    log.debug("_check_instance_of_typehint: Checking object of type '%s' against type hint '%s' in context '%s'",
+              type(obj).__name__, type_hint, context)
 
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
     if cached_result is not None:  # Only cached if Immutable
+        log.debug(
+            "_check_instance_of_typehint: Cache hit for object of type '%s' and type hint '%s'",
+            type(obj).__name__, type_hint)
         if cached_result or not raise_on_error:
             return (cached_result, _IS_IMMUTABLE)
         raise SimpleBenchTypeError(
             f"Object of type '{type(obj).__name__}' is not an instance of type hint '{type_hint}'",
             tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
 
+    log.debug(
+        "_check_instance_of_typehint: Cache miss for object of type '%s' and type hint '%s'",
+        type(obj).__name__, type_hint)
+
     # If we have hit the depth limit for the check,
     # Return Valid, but not Immutable (as we can't be sure)
     if options.depth > len(parents):
+        log.debug(
+            "_check_instance_of_typehint: Depth limit reached for object of type '%s' and type hint '%s'",
+            type(obj).__name__, type_hint)
         return (_IS_VALID, _NOT_IMMUTABLE)
+    log.debug(
+        "_check_instance_of_typehint: Depth limit not reached for object of type '%s' and type hint '%s'",
+        type(obj).__name__, type_hint)
 
     origin = get_origin(type_hint)
     args = get_args(type_hint)
 
-    if id(obj) in parents:
+    log.debug(
+        "_check_instance_of_typehint: Origin of type hint '%s' is '%s' with args '%s'",
+        type_hint, origin, args)
+
+    current_state = ValidationState(id(obj), type_hint, context)
+    if current_state in parents:
+        log.debug("_check_instance_of_typehint: Cycle detected for object of type '%s'", type(obj).__name__)
         if raise_on_error:
             raise SimpleBenchTypeError(
                 f"Cycle detected in object graph for object of type '{type(obj).__name__}'.",
                 tag=_TypeHintsErrorTag.CYCLIC_REFERENCE_DETECTED)
         return (_NOT_VALID, _NOT_IMMUTABLE)
 
-    new_parents = parents | {id(obj)}
+    new_parents = parents | {current_state}
+
+    log.debug(
+        "_check_instance_of_typehint: Checking if object of type '%s' is a primitive data type",
+        type(obj).__name__)
+    if _is_primitive(obj):  # fast path for primitive data types
+        return _check_primitive_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error)
+
+    log.debug(
+        "_check_instance_of_typehint: Object of type '%s' is not a primitive data type, proceeding with full check",
+        type(obj).__name__)
 
     if origin is Annotated:
+        log.debug("_check_instance_of_typehint: Handling Annotated type hint '%s'", type_hint)
         if not args:
             raise SimpleBenchValueError(
                 f"Annotated type hint '{type_hint}' has no arguments.",
                 tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
         type_hint = args[0]
-        return _check_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error)
+        return _check_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error, context=context)
 
     if obj is None:
         return _check_none_instance_of_typehint(obj, type_hint, origin, args, options, new_parents, raise_on_error)
-
-    if _is_primitive(obj):  # fast path for primitive data types
-        return _check_primitive_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error)
 
     if origin in (Union, UnionType):
         return _union_check(obj, type_hint, origin, args, options, new_parents, raise_on_error)
@@ -311,17 +356,6 @@ def _check_instance_of_typehint(
 
     return (is_valid, is_imm)
 
-def _is_primitive(obj: Any) -> bool:
-    """
-    Check if an object is a primitive data type according.
-
-    :param Any obj: The object to check.
-    :return bool: True if the object is a primitive data type, False otherwise.
-    """
-    try:
-        return isinstance(obj, ImmutablePrimitiveTypesTuple)
-    except Exception:  # pylint: disable=broad-exception-caught
-        return False
 
 def _is_primitive_typehint(type_hint: Any) -> bool:
     """
@@ -333,6 +367,20 @@ def _is_primitive_typehint(type_hint: Any) -> bool:
     :return bool: True if the type hint represents a primitive data type, False otherwise.
     """
     return type_hint in _IMMUTABLE_PRIMITIVE_TYPES_SET
+
+def _is_primitive(obj: Any) -> bool:
+    """
+    Check if an object is a primitive data type according.
+
+    :param Any obj: The object to check.
+    :return bool: True if the object is a primitive data type, False otherwise.
+    """
+    log.debug("_is_primitive: Checking if object of type '%s' isinstance of  '%s'",
+              type(obj).__name__, ImmutablePrimitiveTypesTuple)
+    try:
+        return isinstance(obj, ImmutablePrimitiveTypesTuple)
+    except Exception:  # pylint: disable=broad-exception-caught
+        return False
 
 def _is_immutable(obj: Any) -> bool:
     """
@@ -428,7 +476,7 @@ def _union_check(
         origin: Any,
         args: tuple,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
     """Handle Union types first as an exclusive check. 
     
@@ -436,7 +484,7 @@ def _union_check(
     :param Any type_hint: The type hint to check against.
     :param tuple args: The type arguments of the Union type hint.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails
@@ -449,11 +497,11 @@ def _union_check(
             f"Type hint '{type_hint}' is not a Union type.",
             tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
     new_parents = parents.copy()
-    new_parents.add(id(obj))
+    new_parents.add(ValidationState(id(obj), type_hint, "union"))
     for arg in args:
         # Recursively check against each type in the Union
         is_valid, is_imm = _check_instance_of_typehint(
-            obj, arg, options, new_parents, raise_on_error=False)
+            obj, arg, options, new_parents, raise_on_error=False, context="union_item")
 
         # If a match is found, return immediately
         if is_valid:
@@ -473,7 +521,7 @@ def _check_primitive_instance_of_typehint(
         obj: Any,
         type_hint: Any,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
     """
     Internal function to check if a primitive object is an instance of a given type hint.
@@ -481,17 +529,13 @@ def _check_primitive_instance_of_typehint(
     :param Any obj: The primitive object to check.
     :param Any type_hint: The type hint to check against.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
     log.debug(
         "_check_primitive_instance_of_typehint: Checking primitive object of type '%s' against type hint '%s'",
         type(obj).__name__, type_hint)
-    if not _is_primitive(obj):  # Sanity check for bad calls
-        raise SimpleBenchValueError(
-            f"Object '{obj}' is not a primitive data type.",
-            tag=_TypeHintsErrorTag.INVALID_PRIMITIVE_CHECK)
 
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
@@ -505,13 +549,21 @@ def _check_primitive_instance_of_typehint(
     # 1. Check against specific primitive types (int, str, bytes, bool, float, bytes, complex, NoneType)
     # This does not include container types (Mapping, Sequence, Set) which are handled elsewhere
     # or Union/Literal which are also handled elsewhere.
-    if _is_primitive(type_hint): # fast path for primitive types/objects
-        if isinstance(obj, type_hint):
-            return (_IS_VALID, _IS_IMMUTABLE)
+    if _is_primitive_typehint(type_hint) and isinstance(obj, type_hint):
+        return (_IS_VALID, _IS_IMMUTABLE)
+    log.debug(
+        "_check_primitive_instance_of_typehint: Primitive object of type '%s' "
+        "did not match direct primitive type hint '%s'",
+        type(obj).__name__, type_hint)
 
     # 2. Check against universal types
     if type_hint is Any or type_hint is object or type_hint is Hashable:
         return (_IS_VALID, _IS_IMMUTABLE)
+
+    log.debug(
+        "_check_primitive_instance_of_typehint: Primitive object of type '%s' "
+        "did not match universal type hint '%s'",
+        type(obj).__name__, type_hint)
 
     origin = get_origin(type_hint)
     args = get_args(type_hint)
@@ -528,22 +580,28 @@ def _check_primitive_instance_of_typehint(
             return (_IS_VALID, _IS_IMMUTABLE)
         # Fall through if value not in Literal
 
-    # 4. Check Union
-    new_parents = parents.copy()
-    new_parents.add(id(obj))
-    if origin in (Union, UnionType):
-        # Recurse for each argument to handle complex cases (e.g. Union[int, Literal['foo']])
-        for arg in args:
-            check_result = _check_instance_of_typehint(obj, arg, options, new_parents, raise_on_error=False)
-            if check_result[_VALID]:
-                return check_result
+    log.debug(
+        "_check_primitive_instance_of_typehint: Primitive object of type '%s' "
+        "did not match Literal type hint '%s'",
+        type(obj).__name__, type_hint)
 
-        # If no match in Union
-        if raise_on_error:
-            raise SimpleBenchTypeError(
-                f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
-                tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-        return (_NOT_VALID, _IS_IMMUTABLE)
+    # 4. Check Union
+    if origin in (Union, UnionType):
+        for arg in args:
+            # Primitives are self-contained, so we don't need to pass new_parents here.
+            # This avoids creating unnecessary sets and ValidationState objects.
+            is_valid, _ = _check_instance_of_typehint(
+                obj, arg, options, parents, raise_on_error=False, context="primitive_union_item")
+            if is_valid:
+                # Primitives are always immutable, so we can return immediately.
+                result = (_IS_VALID, _IS_IMMUTABLE)
+                _CACHE.add_cache_entry(type_hint, obj, result[_IMMUTABLE])
+                return result
+
+    log.debug(
+        "_check_primitive_instance_of_typehint: Primitive object of type '%s' "
+        "did not match Union type hint '%s'",
+        type(obj).__name__, type_hint)
 
     # Primitives are always Immutable and it may have taken a lot of checks
     # to determine that it does not match the type hint despite being a primitive.
@@ -564,7 +622,7 @@ def _check_none_instance_of_typehint(
         origin: Any,
         args: tuple,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
     """
     Internal function to check if None is an instance of a given type hint.
@@ -574,7 +632,7 @@ def _check_none_instance_of_typehint(
     :param Any origin: The origin type of the type hint.
     :param tuple args: The type arguments of the type hint.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
@@ -599,16 +657,11 @@ def _check_none_instance_of_typehint(
     if origin is Literal and None in args:
         return (_IS_VALID, _IS_IMMUTABLE)
 
-    new_parents = parents.copy()
-    new_parents.add(id(obj))
     if origin in (Union, UnionType):
-        if NoneType in args or Any in args:  # fast path
-            return (_IS_VALID, _IS_IMMUTABLE)
-
-        # Slow path: Recursively check args (handles Annotated[None], etc.)
         for arg in args:
-            check_result = _check_instance_of_typehint(obj, arg, options, new_parents, raise_on_error=False)
-            if check_result[_VALID]:
+            is_valid, _ = _check_instance_of_typehint(
+                obj, arg, options, parents, raise_on_error=False, context="none_union_item")
+            if is_valid:
                 return (_IS_VALID, _IS_IMMUTABLE)
 
     check_result = (_NOT_VALID, _IS_IMMUTABLE)
@@ -625,7 +678,7 @@ def _container_check_typeddict(
         obj: Any,
         type_hint: Any,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
     """Check if obj matches a TypedDict type hint.
 
@@ -638,7 +691,7 @@ def _container_check_typeddict(
     :param Any obj: The object to check.
     :param Any type_hint: The type hint to check (may or may not be a TypedDict).
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
@@ -684,13 +737,14 @@ def _container_check_typeddict(
     optional_keys: set[str] = set(type_hint.__optional_keys__)
     allowed_keys: set[str] = required_keys.union(optional_keys)
     if is_immutable_typed_dict:
+        # If the TypedDict is defined as Immutable, we need to check that all values are also Immutable.
+        # This is a structural check, so we don't need to check the container type itself.
         # Immutable TypedDicts may have a special key __immutable__ that we ignore for validation
         required_keys.discard('__immutable__')
         optional_keys.discard('__immutable__')
         allowed_keys.discard('__immutable__')
 
-    new_parents = parents.copy()
-    new_parents.add(id(obj))
+    new_parents = parents | {ValidationState(id(obj), type_hint, "typeddict")}
 
     # check for 'extra_items' if typeddict class explicitly sets it
     extra_items_type_hint: Any = getattr(type_hint, '__extra_items__', Never)
@@ -699,10 +753,11 @@ def _container_check_typeddict(
             if key not in allowed_keys:
                 return (_NOT_VALID, _NOT_IMMUTABLE)
     else: # Extra items allowed, check their types
-        for key in obj.keys():
+        for key,value in obj.keys():
             if key not in allowed_keys:
                 check_result = _check_instance_of_typehint(
-                    obj[key], extra_items_type_hint, options, new_parents, raise_on_error=False)
+                    value, extra_items_type_hint, options, new_parents,
+                    raise_on_error=False, context="typeddict_extra_item")
                 if not check_result[_VALID]:
                     if raise_on_error:
                         raise SimpleBenchTypeError(
@@ -714,13 +769,13 @@ def _container_check_typeddict(
 
     # Now check each defined key in the TypedDict
     annotations: dict[str, Any] = get_type_hints(type_hint)
-    for key in annotations:
+    for key, value in annotations:
         if key == '__immutable__' and is_immutable_typed_dict:
             continue
         if key in obj:
             dict_key_info = TypedDictKeyInfo(key, type_hint)
             check_result = _check_instance_of_typehint(
-                obj[key], dict_key_info.value_type, options, new_parents, raise_on_error=False)
+                value, dict_key_info.value_type, options, new_parents, raise_on_error=False, context="typeddict_value")
             if not check_result[_VALID]:
                 if raise_on_error:
                     raise SimpleBenchTypeError(
@@ -755,7 +810,7 @@ def _container_check_mapping(
         origin: Any,
         args: tuple,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
     """Check if obj matches Mapping type hint.
     
@@ -770,7 +825,7 @@ def _container_check_mapping(
     :param Any origin: The origin type of the type hint.
     :param tuple args: The type arguments of the type hint.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
@@ -800,26 +855,30 @@ def _container_check_mapping(
             raise SimpleBenchValueError(
                 f"Mapping type hint '{origin}' has invalid number of arguments: {len(args)}",
                 tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
-    new_parents = parents.copy()
-    new_parents.add(id(obj))
+    new_parents = parents | {ValidationState(id(obj), type_hint, "mapping")}
     container_is_immutable: bool = isinstance(obj, Immutable)
     for key, value in obj.items():
-        key_check = _check_instance_of_typehint(key, key_type, options, new_parents, raise_on_error=False)
-        if not key_check[_VALID]:
+        # Check key type
+        is_valid, is_imm = _check_instance_of_typehint(
+            key, key_type, options, new_parents, raise_on_error, context="mapping_key")
+        if not is_valid:
             if raise_on_error:
                 raise SimpleBenchTypeError(
                     f"Key '{key}' in Mapping does not match type hint '{key_type}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
             return (_NOT_VALID, _NOT_IMMUTABLE)
-        container_is_immutable = container_is_immutable and key_check[_IMMUTABLE]
-        value_check = _check_instance_of_typehint(value, value_type, options, new_parents, raise_on_error=False)
-        if not value_check[_VALID]:
+        container_is_immutable = container_is_immutable and is_imm
+
+        # Check value type
+        is_valid, is_imm = _check_instance_of_typehint(
+            value, value_type, options, new_parents, raise_on_error, context="mapping_value")
+        if not is_valid:
             if raise_on_error:
                 raise SimpleBenchTypeError(
                     f"Value for key '{key}' in Mapping does not match type hint '{value_type}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
             return (_NOT_VALID, _NOT_IMMUTABLE)
-        container_is_immutable = container_is_immutable and value_check[_IMMUTABLE]
+        container_is_immutable = container_is_immutable and is_imm
 
     # If we reach here, all checks passed
     if container_is_immutable:
@@ -832,7 +891,7 @@ def _container_check_set(
         origin: Any,
         args: tuple,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
     """Check if obj matches Set type hint.
 
@@ -845,7 +904,7 @@ def _container_check_set(
     :param Any origin: The origin type of the type hint.
     :param tuple args: The type arguments of the type hint.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
@@ -865,31 +924,36 @@ def _container_check_set(
             f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
 
-    if not isinstance(obj, Set): # fast fail path
+    if not isinstance(obj, Set):
         if raise_on_error:
             raise SimpleBenchTypeError(
-                f"Object of type '{type(obj)}' is not a Set for type hint '{type_hint}'.",
+                f"Object of type '{type(obj).__name__}' is not a Set, but type hint is '{type_hint}'",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
         return (_NOT_VALID, _NOT_IMMUTABLE)
+    item_type: Any = Any
+    if len(args) == 1:
+        item_type = args[0]
+    elif len(args) > 1:
+        raise SimpleBenchValueError(
+            f"Set type hint '{origin}' has invalid number of arguments: {len(args)}",
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
+    new_parents = parents | {ValidationState(id(obj), type_hint, "set")}
     container_is_immutable: bool = isinstance(obj, Immutable)
-
-    new_parents = parents.copy()
-    new_parents.add(id(obj))
     for item in obj:
-        item_check = _check_instance_of_typehint(
-            item, args[0] if args else Any, options, new_parents, raise_on_error=False)
-        if not item_check[_VALID]:
+        is_valid, is_imm = _check_instance_of_typehint(
+            item, item_type, options, new_parents, raise_on_error, context="set_item")
+        if not is_valid:
             if raise_on_error:
                 raise SimpleBenchTypeError(
                     f"Item '{item}' in Set does not match type hint '{args[0] if args else Any}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
             return (_NOT_VALID, _NOT_IMMUTABLE)
-        container_is_immutable = container_is_immutable and item_check[_IMMUTABLE]
+        container_is_immutable = container_is_immutable and is_imm
 
     # If we reach here, all checks passed
     if container_is_immutable:
-        _CACHE.add_cache_entry(type_hint, obj, True)
+        _CACHE.add_cache_entry(type_hint, obj, _IS_IMMUTABLE)
     return (_IS_VALID, container_is_immutable)
 
 def _container_check_sequence(
@@ -898,7 +962,7 @@ def _container_check_sequence(
         origin: Any,
         args: tuple,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
     """Check if obj matches Sequence type hint.
 
@@ -911,7 +975,7 @@ def _container_check_sequence(
     :param Any origin: The origin type of the type hint.
     :param tuple args: The type arguments of the type hint.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
@@ -935,7 +999,7 @@ def _container_check_sequence(
     if not isinstance(obj, Sequence):
         if raise_on_error:
             raise SimpleBenchTypeError(
-                f"Object of type '{type(obj)}' is not a Sequence for type hint '{type_hint}'.",
+                f"Object of type '{type(obj).__name__}' is not a Sequence, but type hint is '{type_hint}'",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
         return (_NOT_VALID, _NOT_IMMUTABLE)
 
@@ -961,11 +1025,11 @@ def _container_check_sequence(
 
     container_is_immutable: bool = isinstance(obj, Immutable)
 
-    new_parents = parents.copy()
-    new_parents.add(id(obj))
+    new_parents = parents | {ValidationState(id(obj), type_hint, "sequence")}
     item_type_hint: Any = args[0] if args else Any
     for item in obj:
-        item_check = _check_instance_of_typehint(item, item_type_hint, options, new_parents, raise_on_error=False)
+        item_check = _check_instance_of_typehint(
+            item, item_type_hint, options, new_parents, raise_on_error=False, context="sequence_item")
         if not item_check[_VALID]:
             if raise_on_error:
                 raise SimpleBenchTypeError(
@@ -985,9 +1049,9 @@ def _container_check_iterable(
         origin: Any,
         args: tuple,
         options: Options,
-        parents: set[int],
+        parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
-    """Check if obj matches a generic Iterable type hint.
+    """Check if obj matches Iterable type hint.
 
     This function should only be called after checks for more specific container
     types (Mapping, Sequence, Set) have already failed.
@@ -999,7 +1063,7 @@ def _container_check_iterable(
     :param Any origin: The origin type of the type hint.
     :param tuple args: The type arguments of the type hint.
     :param Options options: Options for type hint validation.
-    :param set[int] parents: Set of parent object IDs to detect cycles.
+    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
@@ -1034,25 +1098,28 @@ def _container_check_iterable(
     if not isinstance(obj, Iterable):
         if raise_on_error:
             raise SimpleBenchTypeError(
-                f"Object of type '{type(obj).__name__}' is not an instance of '{origin.__name__}' "
-                f"for type hint '{type_hint}'.",
-                tag=_TypeHintsErrorTag.VALIDATION_FAILED)
+                f"Object of type '{type(obj).__name__}' is not an Iterable, but type hint is '{type_hint}'",
+                tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
         return (_NOT_VALID, _NOT_IMMUTABLE)
 
     container_is_immutable: bool = isinstance(obj, Immutable)
-    new_parents = parents.copy()
-    new_parents.add(id(obj))
+    new_parents = parents | {ValidationState(id(obj), type_hint, "iterable")}
 
-    item_type_hint: Any = args[0] if args else Any
+    # Handle Iterable[T]
+    if len(args) == 1:
+        item_type_hint: Any = args[0]
+    else:
+        item_type_hint = Any
     for item in obj:
-        item_check = _check_instance_of_typehint(item, item_type_hint, options, new_parents, raise_on_error=False)
-        if not item_check[_VALID]:
+        is_valid, is_imm = _check_instance_of_typehint(item, item_type_hint, options,
+                                                 new_parents, raise_on_error=False, context="iterable_item")
+        if not is_valid:
             if raise_on_error:
                 raise SimpleBenchTypeError(
                     f"Item '{item}' in Iterable does not match type hint '{item_type_hint}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
             return (_NOT_VALID, _NOT_IMMUTABLE)
-        container_is_immutable = container_is_immutable and item_check[_IMMUTABLE]
+        container_is_immutable = container_is_immutable and is_imm
 
     # If we reach here, all checks passed
     if container_is_immutable:
