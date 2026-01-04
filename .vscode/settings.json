@@ -73,7 +73,7 @@
   "mypy-type-checker.preferDaemon": true,
   "python.terminal.useEnvFile": true,
   "python-env.workspaceSearchPaths": [
-    "env"
+    "venv"
   ],
   "pylint.importStrategy": "fromEnvironment",
 }

@@ -5,6 +5,11 @@
 		}
 	],
 	"settings": {
-		"pylint.importStrategy": "fromEnvironment"
+		"pylint.importStrategy": "fromEnvironment",
+		"python.useEnvironmentsExtension": true,
+		"python-env.workspaceSearchPaths": [
+			"venv"
+		],
+		"python.terminal.useEnvFile": true
 	},
 }
