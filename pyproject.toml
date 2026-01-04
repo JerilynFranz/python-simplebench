@@ -339,6 +339,7 @@ tools = [
     "hatchling>=1.27",
     "mercurial>=6.1",
     "pydeps>=1.23.2",
+    "python-dotenv>=0.21.0",
     "testplan>=25.8.0",
     "tox>=4.32.0",
     "tox-uv>=1.29.0",
