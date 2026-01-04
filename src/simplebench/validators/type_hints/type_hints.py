@@ -1,5 +1,6 @@
 """Validation functions for type hints and instances against those type hints."""
 import inspect
+import logging
 import sys
 from collections.abc import Callable, Hashable, Iterable, Iterator, Mapping, Sequence, Set
 from types import MappingProxyType, NoneType, UnionType
@@ -85,6 +86,8 @@ class Options(NamedTuple):
     depth: int = 0
     consume_iterators: bool = False
 
+log = logging.getLogger(__name__)
+
 def is_instance_of_typehint(
         obj: Any,
         type_hint: Any,
@@ -125,7 +128,8 @@ def is_instance_of_typehint(
         strict_typed_dict=strict_typed_dict,
         depth=depth,
         consume_iterators=consume_iterators)
-    is_valid, _ = _check_instance_of_typehint(obj, type_hint, options, parents=set(), raise_on_error=False)
+    is_valid, _ = _check_instance_of_typehint(
+        obj, type_hint, options, parents=set(), raise_on_error=False)
     return is_valid
 
 def is_immutable(
@@ -179,7 +183,8 @@ def is_immutable(
         strict_typed_dict=strict_typed_dict,
         depth=depth,
         consume_iterators=consume_iterators)
-    _, is_imm = _check_instance_of_typehint(obj, type_hint, options, parents=set(), raise_on_error=False)
+    _, is_imm = _check_instance_of_typehint(
+        obj, type_hint, options, parents=set(), raise_on_error=False)
     return is_imm
 
 
@@ -199,6 +204,9 @@ def _check_instance_of_typehint(
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
+    log.debug("_check_instance_of_typehint: Checking object of type '%s' against type hint '%s'",
+              type(obj).__name__, type_hint)
+
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
     if cached_result is not None:  # Only cached if Immutable
@@ -226,13 +234,17 @@ def _check_instance_of_typehint(
     new_parents = parents | {id(obj)}
 
     if origin is Annotated:
+        if not args:
+            raise SimpleBenchValueError(
+                f"Annotated type hint '{type_hint}' has no arguments.",
+                tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
         type_hint = args[0]
         return _check_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error)
 
     if obj is None:
         return _check_none_instance_of_typehint(obj, type_hint, origin, args, options, new_parents, raise_on_error)
 
-    if _is_primitive(obj):
+    if _is_primitive(obj):  # fast path for primitive data types
         return _check_primitive_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error)
 
     if origin in (Union, UnionType):
@@ -241,28 +253,53 @@ def _check_instance_of_typehint(
     if origin is Literal:
         return _literal_check(obj, type_hint, origin, args, raise_on_error)
 
-    # Handle plain types (e.g., int, str, or user-defined classes)
-    if isinstance(type_hint, type):
+    # If we have an unsubscripted generic container, get_origin() returns None.
+    # We need to manually set the origin and args to handle it like a
+    # subscripted generic (e.g., `list` becomes `list[Any]`).
+    if origin is None and isinstance(type_hint, type):
+        if issubclass(type_hint, Mapping):
+            origin = type_hint
+            args = (Any, Any)
+        elif issubclass(type_hint, Iterable):
+            origin = type_hint
+            args = (Any,)
+        elif issubclass(type_hint, Callable):
+            origin = type_hint
+            args = (..., Any)
+
+    # If there are no args, it's a plain type (int, str, list, dict, custom class, etc.)
+    # This handles both primitive types and unsubscripted generic containers.
+    if not args and isinstance(type_hint, type):
         return _plain_type_check(obj, type_hint)
 
-    # If not a special form, proceed with generic container checks
-    container_results: list[CheckResult] = []
-    container_results.extend([
-        _container_check_typeddict(obj, type_hint, options, new_parents, raise_on_error),
-    ])
-    if origin:
-        container_results.extend([
-            _container_check_mapping(obj, type_hint, origin, args, options, new_parents, raise_on_error),
-            _container_check_set(obj, type_hint, origin, args, options, new_parents, raise_on_error),
-            _container_check_sequence(obj, type_hint, origin, args, options, new_parents, raise_on_error),
-            _container_check_iterable(obj, type_hint, origin, args, options, new_parents, raise_on_error),
-            _container_check_callable(obj, type_hint, origin, args, raise_on_error),
-        ])
+    # Dispatch to the appropriate container check.
+    # The order (most specific to most general) is important.
+    # The if..elif chain ensures that only one container check is applied
+    # and that it is the most specific one available.
+    result: CheckResult | None = None
+    if is_typeddict(type_hint):
+        result = _container_check_typeddict(obj, type_hint, options, new_parents, raise_on_error)
+    elif origin:
+        if issubclass(origin, Mapping):
+            result = _container_check_mapping(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+        elif issubclass(origin, Set):
+            result = _container_check_set(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+        elif issubclass(origin, Sequence):
+            result = _container_check_sequence(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+        elif issubclass(origin, Iterable):
+            result = _container_check_iterable(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+        elif issubclass(origin, Callable):
+            result = _container_check_callable(obj, type_hint, origin, args, raise_on_error)
 
-    # The container checks return (_IS_VALID, _IS_IMMUTABLE) if they don't apply.
-    # A successful validation means ALL checks passed (i.e., were either applicable and valid, or not applicable).
-    is_valid = all(result[_VALID] for result in container_results)
-    is_imm = all(result[_IMMUTABLE] for result in container_results)
+    # If no container check was applicable, it's an unhandled type.
+    if result is None:
+        if raise_on_error:
+            raise SimpleBenchTypeError(
+                f"Object of type '{type(obj).__name__}' is not a recognized container for type hint '{type_hint}'",
+                tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
+        return (_NOT_VALID, _NOT_IMMUTABLE)
+
+    is_valid, is_imm = result
 
     if is_valid and is_imm:
         _CACHE.add_cache_entry(type_hint, obj, is_imm)
@@ -347,7 +384,7 @@ def _plain_type_check(
     if is_valid:
         is_imm = isinstance(obj, Immutable)
         if is_imm:
-            _CACHE.add_cache_entry(type(obj), type_hint, True)
+            _CACHE.add_cache_entry(type_hint, obj, True)
         return (_IS_VALID, is_imm)
     return (_NOT_VALID, _is_immutable(obj))
 
@@ -376,7 +413,7 @@ def _literal_check(
     is_valid = obj in args
     if is_valid:
         # Literals are always immutable values
-        _CACHE.add_cache_entry(obj, type_hint, True)
+        _CACHE.add_cache_entry(type_hint, obj, True)
         return (_IS_VALID, _IS_IMMUTABLE)
 
     if raise_on_error:
@@ -405,6 +442,8 @@ def _union_check(
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails
     :raises SimpleBenchValueError: If type_hint is not a Union type.
     """
+    log.debug("_union_check: Checking object of type '%s' against Union type hint '%s'",
+                type(obj).__name__, type_hint)
     if origin not in (Union, UnionType):  # Sanity check for bad calls
         raise SimpleBenchValueError(
             f"Type hint '{type_hint}' is not a Union type.",
@@ -420,7 +459,7 @@ def _union_check(
         if is_valid:
             # We can cache the result for the specific matching type `arg`
             if is_imm:
-                _CACHE.add_cache_entry(obj, arg, True)
+                _CACHE.add_cache_entry(arg, obj, True)
             return (is_valid, is_imm)
 
     if raise_on_error:
@@ -446,13 +485,16 @@ def _check_primitive_instance_of_typehint(
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
+    log.debug(
+        "_check_primitive_instance_of_typehint: Checking primitive object of type '%s' against type hint '%s'",
+        type(obj).__name__, type_hint)
     if not _is_primitive(obj):  # Sanity check for bad calls
         raise SimpleBenchValueError(
             f"Object '{obj}' is not a primitive data type.",
             tag=_TypeHintsErrorTag.INVALID_PRIMITIVE_CHECK)
 
     # Check the cache first
-    cached_result = _CACHE.valid_in_cache(obj, type_hint)
+    cached_result = _CACHE.valid_in_cache(type_hint, obj)
     if cached_result is not None:  # Only cached if Immutable
         if cached_result or not raise_on_error:
             return (cached_result, _IS_IMMUTABLE)
@@ -506,7 +548,7 @@ def _check_primitive_instance_of_typehint(
     # Primitives are always Immutable and it may have taken a lot of checks
     # to determine that it does not match the type hint despite being a primitive.
     result = (_NOT_VALID, _IS_IMMUTABLE)
-    _CACHE.add_cache_entry(obj, type_hint, result[_IMMUTABLE])
+    _CACHE.add_cache_entry(type_hint, obj, result[_IMMUTABLE])
 
     # 5. Error - no match found
     if raise_on_error:
@@ -536,6 +578,8 @@ def _check_none_instance_of_typehint(
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
+    log.debug(
+        "_check_none_instance_of_typehint: Checking None against type hint '%s'", type_hint)
     if obj is not None:  # Sanity check for bad calls
         raise SimpleBenchValueError(
             f"Object is not None, got '{obj}'.",
@@ -568,7 +612,7 @@ def _check_none_instance_of_typehint(
                 return (_IS_VALID, _IS_IMMUTABLE)
 
     check_result = (_NOT_VALID, _IS_IMMUTABLE)
-    _CACHE.add_cache_entry(obj, type_hint, check_result[_IMMUTABLE])
+    _CACHE.add_cache_entry(type_hint, obj, check_result[_IMMUTABLE])
 
     if raise_on_error:
         raise SimpleBenchTypeError(
@@ -598,6 +642,9 @@ def _container_check_typeddict(
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
+    log.debug(
+        "_container_check_typeddict: Checking object of type '%s' against TypedDict type hint '%s'",
+        type(obj).__name__, type_hint)
     # Fast path checks
     if not is_typeddict(type_hint):
         return (_IS_VALID, _IS_IMMUTABLE)  # Not a TypedDict type hint, so this check does not apply
@@ -727,6 +774,9 @@ def _container_check_mapping(
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
+    log.debug(
+        "_container_check_mapping: Checking object of type '%s' against Mapping type hint '%s'",
+        type(obj).__name__, type_hint)
     if not issubclass(origin, Mapping):
         return (_IS_VALID, _IS_IMMUTABLE)  # Not a Mapping type hint, so this check does not apply
 
@@ -800,6 +850,9 @@ def _container_check_set(
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     """
+    log.debug(
+        "_container_check_set: Checking object of type '%s' against Set type hint '%s'",
+        type(obj).__name__, type_hint)
     if not issubclass(origin, Set):
         return (_IS_VALID, _IS_IMMUTABLE)  # Not a Set, so this check does not apply
 
@@ -863,6 +916,9 @@ def _container_check_sequence(
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     """
+    log.debug(
+        "_container_check_sequence: Checking object of type '%s' against Sequence type hint '%s'",
+        type(obj).__name__, type_hint)
     if not issubclass(origin, Sequence):
         return (_IS_VALID, _IS_IMMUTABLE)  # Not a Sequence type hint, so this check does not apply
 
@@ -948,6 +1004,9 @@ def _container_check_iterable(
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     """
+    log.debug(
+        "_container_check_iterable: Checking object of type '%s' against Iterable type hint '%s'",
+        type(obj).__name__, type_hint)
     if not issubclass(origin, Iterable):
         return (_IS_VALID, _IS_IMMUTABLE)  # Not an Iterable type hint, so this check does not apply
 
@@ -1019,6 +1078,9 @@ def _container_check_callable(
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     """
+    log.debug(
+        "_container_check_callable: Checking object of type '%s' against Callable type hint '%s'",
+        type(obj).__name__, type_hint)
     if not issubclass(origin, Callable):
         return (_IS_VALID, _IS_IMMUTABLE)  # Not a Callable type hint, so this check does not apply
 
@@ -1104,6 +1166,7 @@ def _is_immutable_data_typehint(type_hint: Any) -> bool:
     :param Any type_hint: The type hint to check.
     :return bool: True if the type hint represents an immutable data type, False otherwise.
     """
+    log.debug("_is_immutable_data_typehint: Checking if type hint '%s' is immutable", type_hint)
     origin = get_origin(type_hint)
     args = get_args(type_hint)
 
@@ -1149,6 +1212,8 @@ def _is_subtype_of_typehint(subtype: Any, basetype: Any) -> bool:
     :param Any basetype: The potential base type.
     :return bool: True if subtype is a subtype of basetype, False otherwise.
     """
+    log.debug("_is_subtype_of_typehint: Checking if '%s' is a subtype of '%s'", subtype, basetype)
+    # Handle origins and args
     origin_subtype = get_origin(subtype)
     args_subtype = get_args(subtype)
     origin_basetype = get_origin(basetype)

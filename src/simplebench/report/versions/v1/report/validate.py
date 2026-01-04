@@ -16,11 +16,23 @@ from simplebench.validators import (
     validate_type,
 )
 
-from .. import MachineInfo, ResultsInfo
+_DEFERRED_IMPORTS_DONE: bool = False
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.report.versions.v1 import MachineInfo, ResultsInfo
+    _DEFERRED_IMPORTS_DONE = True
+else:
+    MachineInfo = None  # pylint: disable=invalid-name
+    ResultsInfo = None  # pylint: disable=invalid-name
 
+def _deferred_imports() -> None:
+    """Perform deferred imports to avoid circular dependencies."""
+    global ResultsInfo, MachineInfo, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
+    if _DEFERRED_IMPORTS_DONE:
+        return
+    from simplebench.report.versions.v1 import MachineInfo, ResultsInfo  # pylint: disable=import-outside-toplevel
+    _DEFERRED_IMPORTS_DONE = True
 
 def timestamp(value: str) -> str:
     """Validate a timestamp string in ISO 8601 format.
@@ -111,6 +123,7 @@ def results(value: Sequence[ResultsInfo]) -> tuple[ResultsInfo, ...]:
     :return tuple[ResultsInfo, ...]: A validated tuple of ResultsInfo instances.
     :raises SimpleBenchTypeError: If results is not a Sequence of ResultsInfo.
     """
+    _deferred_imports()
     return tuple(validate_sequence_of_type(
         value, ResultsInfo, 'results',
         _ReportErrorTag.INVALID_RESULTS_TYPE,
@@ -123,6 +136,7 @@ def machine(value: MachineInfo) -> MachineInfo:
     :param MachineInfo value: The object to validate.
     :raises SimpleBenchValueError: If the object is not a MachineInfo instance.
     """
+    _deferred_imports()
     return validate_type(
         value, MachineInfo, "machine",
         _ReportErrorTag.INVALID_MACHINE_PROPERTY_TYPE,

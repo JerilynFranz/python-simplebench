@@ -4,7 +4,7 @@ The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
 from collections.abc import Mapping
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from simplebench.report._base import BaseResultsInfo
 from simplebench.types import (
@@ -15,11 +15,25 @@ from simplebench.types import (
 )
 from simplebench.validators import validate_core_data_mapping
 
-from .. import MetricsObject
 from ..types import ResultsInfoDict
 from . import validate
 from .results_info_schema import ResultsInfoSchema
 
+_DEFERRED_IMPORTS_DONE: bool = False
+
+if TYPE_CHECKING:
+    from simplebench.report.versions.v1 import MetricsObject
+    _DEFERRED_IMPORTS_DONE = True
+else:
+    MetricsObject = None  # pylint: disable=invalid-name
+
+def _deferred_imports() -> None:
+    """Perform deferred imports to avoid circular dependencies."""
+    global MetricsObject, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
+    if _DEFERRED_IMPORTS_DONE:
+        return
+    from simplebench.report.versions.v1 import MetricsObject  # pylint: disable=import-outside-toplevel
+    _DEFERRED_IMPORTS_DONE = True
 
 class ResultsInfo(BaseResultsInfo):
     """An immutable class representing the results-info object for V1 reports.
@@ -80,6 +94,8 @@ class ResultsInfo(BaseResultsInfo):
         :param ResultsInfoData data: Mapping containing the results-info object data.
         :return ResultsInfo: ResultsInfo instance.
         """
+        _deferred_imports()
+
         allowed_keys = cls.init_params()  # Hydrate allowed keys from init params
         allowed_keys['version'] = int  # Allowed and checked if present, but not passed to init
         allowed_keys['type'] = str  # Allowed and checked if present, but not passed to init

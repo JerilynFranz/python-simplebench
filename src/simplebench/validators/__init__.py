@@ -2,6 +2,13 @@
 from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 
 from .core_data_types import (
+    is_core_data,
+    is_core_data_mapping,
+    is_core_data_primitive,
+    is_core_data_primitive_type,
+    is_core_data_sequence,
+    is_core_data_set,
+    is_immutable_core_data,
     validate_core_data,
     validate_core_data_mapping,
     validate_core_data_sequence,
@@ -10,13 +17,6 @@ from .core_data_types import (
     validate_immutable_core_data_mapping,
     validate_immutable_core_data_sequence,
     validate_immutable_core_data_set,
-    is_core_data,
-    is_core_data_mapping,
-    is_core_data_primitive,
-    is_core_data_primitive_type,
-    is_core_data_sequence,
-    is_core_data_set,
-    is_immutable_core_data,
 )
 from .dates_and_times import validate_iso8601_datetime
 from .identifiers import validate_namespaced_identifier
@@ -42,17 +42,22 @@ from .strings import (
     validate_string,
     validate_string_with_regex,
 )
+from .type_hints import ImmutablePrimitiveTypes, ImmutablePrimitiveTypesTuple, is_immutable, is_instance_of_typehint
 from .types import validate_type
 from .validate_iterable_of_type import validate_iterable_of_type
 from .validate_sequence_of_type import validate_sequence_of_type
 
 __all__ = [
+    "ImmutablePrimitiveTypes",
+    "ImmutablePrimitiveTypesTuple",
     "is_core_data",
     "is_core_data_primitive",
     "is_core_data_primitive_type",
     "is_core_data_mapping",
     "is_core_data_sequence",
     "is_core_data_set",
+    "is_instance_of_typehint",
+    "is_immutable",
     "is_immutable_core_data",
     "_ValidatorsErrorTag",
     "validate_bool",

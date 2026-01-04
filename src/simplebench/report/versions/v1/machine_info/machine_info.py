@@ -14,15 +14,38 @@ of the JSON report schema and the V1 implementation itself is essentially a froz
 of the base MachineInfo representation at the time of the V1 schema release.
 """
 import hashlib
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from simplebench.report._base import BaseMachineInfo, JSONSchema
+from simplebench.report.versions.v1.types import MachineInfoData, MachineInfoDict
 
-from .. import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
-from ..types import MachineInfoData, MachineInfoDict
 from . import validate
 from .machine_info_schema import MachineInfoSchema
 
+_DEFERRED_IMPORTS_DONE: bool = False
+
+if TYPE_CHECKING:
+    from simplebench.report.versions.v1 import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
+    _DEFERRED_IMPORTS_DONE = True
+
+else:
+    CPUInfo = None  # pylint: disable=invalid-name
+    ExecutionEnvironment = None  # pylint: disable=invalid-name
+    MemoryInfo = None  # pylint: disable=invalid-name
+    SystemInfo = None  # pylint: disable=invalid-name
+
+def _deferred_imports() -> None:
+    """Perform deferred imports to avoid circular dependencies."""
+    global CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
+    if _DEFERRED_IMPORTS_DONE:
+        return
+    from simplebench.report.versions.v1 import (  # pylint: disable=import-outside-toplevel
+        CPUInfo,
+        ExecutionEnvironment,
+        MemoryInfo,
+        SystemInfo,
+    )
+    _DEFERRED_IMPORTS_DONE = True
 
 class MachineInfo(BaseMachineInfo):
     """Class representing machine information in a JSON report."""
@@ -75,6 +98,8 @@ class MachineInfo(BaseMachineInfo):
         :param data: The dictionary containing machine information.
         :return: A MachineInfo instance.
         """
+        _deferred_imports()
+
         allowed_keys = cls.init_params()
         allowed_keys['version'] = int
         allowed_keys['type'] = str

@@ -75,3 +75,7 @@ def test_values(testspec: TestSpec) -> None:
     :type testspec: TestSpec
     """
     testspec.run()
+
+
+if __name__ == '__main__':
+    pytest.main([__file__])

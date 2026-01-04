@@ -11,16 +11,7 @@ from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric
-from simplebench.report import (
-    CURRENT_VERSION,
-    cpu_info_by_version,
-    machine_info_by_version,
-    python_info_by_version,
-    report,
-    results_info_by_version,
-    stats_block_by_version,
-    value_block_by_version,
-)
+from simplebench.report import report
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
 from simplebench.reporters.reporter import Reporter, ReporterOptions
 from simplebench.type_proxies import is_case
@@ -32,12 +23,26 @@ from .options import JSONOptions
 
 Options: TypeAlias = JSONOptions
 
+_DEFERRED_IMPORTS_DONE: bool = False
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.report.versions import CURRENT_VERSION
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
+    _DEFERRED_IMPORTS_DONE = True
 
+else:
+    CURRENT_VERSION = None  # pylint: disable=invalid-name
+
+
+def _deferred_imports() -> None:
+    """Perform deferred imports to avoid circular dependencies."""
+    global CURRENT_VERSION, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
+    if _DEFERRED_IMPORTS_DONE:
+        return
+    from simplebench.report.versions import CURRENT_VERSION  # pylint: disable=import-outside-toplevel
+    _DEFERRED_IMPORTS_DONE = True
 
 class JSONReporter(Reporter):
     """Class for outputting benchmark results to JSON files.
@@ -210,4 +215,5 @@ class JSONReporter(Reporter):
     @property
     def schema_version(self) -> int:
         """The current schema version for the JSON reporter."""
+        _deferred_imports()
         return CURRENT_VERSION

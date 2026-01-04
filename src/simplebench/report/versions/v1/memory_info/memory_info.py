@@ -17,8 +17,8 @@ import hashlib
 from typing import Any
 
 from simplebench.report._base import BaseMemoryInfo, JSONSchema
+from simplebench.report.versions.v1.types import MemoryInfoData, MemoryInfoDict
 
-from ..types import MemoryInfoData, MemoryInfoDict
 from . import validate
 from .memory_info_schema import MemoryInfoSchema
 

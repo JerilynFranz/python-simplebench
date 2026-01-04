@@ -2,8 +2,17 @@
 import threading
 import weakref
 from collections import OrderedDict
+from typing import Any
 
 from ._cache_key import CacheKey
+
+
+class _ObjectWrapper:
+    """A wrapper to allow weak references to any object."""
+    __slots__ = ("obj", "__weakref__")
+
+    def __init__(self, obj: Any):
+        self.obj = obj
 
 
 class CacheEntry:
@@ -19,7 +28,7 @@ class CacheEntry:
                  obj: object,
                  is_valid: bool,
                  cache: OrderedDict[CacheKey, "CacheEntry"],
-                 lock: threading.Lock) -> None:
+                 lock: threading.RLock) -> None:
         """Initialize the CacheEntry.
 
         :param ImmutableCoreDataTypes value: The immutable core data type value.
@@ -29,7 +38,7 @@ class CacheEntry:
         self._cache_key: CacheKey = cache_key
         self._is_valid: bool = is_valid
 
-        def cleanup(ref: weakref.ReferenceType[object]) -> None:  # pylint: disable=unused-argument
+        def cleanup(ref: weakref.ReferenceType[_ObjectWrapper]) -> None:  # pylint: disable=unused-argument
             """Cleanup callback for when the cached object is garbage collected.
 
             :param weakref.ReferenceType[object] ref: The weak reference to the cached object.
@@ -38,7 +47,7 @@ class CacheEntry:
                 if cache_key in cache:
                     del cache[cache_key]
 
-        self._value: weakref.ReferenceType[object] = weakref.ref(obj, cleanup)
+        self._value: weakref.ReferenceType[_ObjectWrapper] = weakref.ref(_ObjectWrapper(obj), cleanup)
 
     @property
     def obj(self) -> object | None:
@@ -46,7 +55,8 @@ class CacheEntry:
 
         :return object | None: The cached object or None if it has been garbage collected.
         """
-        return self._value()
+        value = self._value()
+        return None if value is None else value.obj
 
     @property
     def is_valid(self) -> bool:

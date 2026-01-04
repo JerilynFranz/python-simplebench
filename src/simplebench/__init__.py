@@ -1,4 +1,5 @@
 """Simple benchmarking framework."""
+
 from simplebench._meta import __author__, __copyright__, __project__, __release__, __version__  # noqa: F401
 from simplebench.benchmark import benchmark
 from simplebench.case import Case, Mark, Results
