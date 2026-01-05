@@ -3,7 +3,10 @@
 import logging
 import os
 import sys
+from collections.abc import Iterable, Mapping, Sequence, Set
 from pathlib import Path
+from types import MappingProxyType, NoneType
+from typing import Annotated, Any, Literal
 
 import pytest
 from dotenv import load_dotenv
@@ -57,131 +60,634 @@ else:
 
 from testspec import Assert, TestAction, TestSpec, idspec
 
-from simplebench.validators.type_hints import is_immutable_instance, isinstance_of_typehint
+from simplebench.validators.type_hints import clear_typehint_cache, isinstance_of_typehint
 from simplebench.validators.type_hints._primitives import ImmutablePrimitiveTypes, ImmutablePrimitiveTypesTuple
 
 
 @pytest.mark.parametrize('typespec', [
-    idspec('IMMUTABLE_001', TestAction(
-        name="Check immutable primitive: int",
-        action=is_immutable_instance,
-        args=[1, ImmutablePrimitiveTypes],
-        assertion=Assert.EQUAL,
-        expected=True)),
-    idspec('IMMUTABLE_002', TestAction(
-        name="Check immutable primitive: float",
-        action=is_immutable_instance,
-        args=[3.14, ImmutablePrimitiveTypes],
-        assertion=Assert.EQUAL,
-        expected=True)),
-    idspec('IMMUTABLE_003', TestAction(
-        name="Check immutable primitive: str",
-        action=is_immutable_instance,
-        args=["hello", ImmutablePrimitiveTypes],
-        assertion=Assert.EQUAL,
-        expected=True)),
-    idspec('IMMUTABLE_004', TestAction(
-        name="Check immutable primitive: bool",
-        action=is_immutable_instance,
-        args=[True, ImmutablePrimitiveTypes],
-        assertion=Assert.EQUAL,
-        expected=True)),
-    idspec('IMMUTABLE_005', TestAction(
-        name="Check immutable primitive: bytes",
-        action=is_immutable_instance,
-        args=[b'bytes', ImmutablePrimitiveTypes],
-        assertion=Assert.EQUAL,
-        expected=True)),
-    idspec('IMMUTABLE_006', TestAction(
-        name="Check immutable primitive types: complex",
-        action=is_immutable_instance,
-        args=[complex(1, 2), ImmutablePrimitiveTypes],
-        assertion=Assert.EQUAL,
-        expected=True)),
-    idspec('IMMUTABLE_007', TestAction(
-        name="Check immutable primitive: int",
-        action=is_immutable_instance,
-        args=[1, int],
-        assertion=Assert.EQUAL,
-        expected=True)),
-])
-def test_is_immutable(typespec: TestSpec) -> None:
-    """Test is_instance_of_typehint function."""
-    typespec.run()
-
-
-@pytest.mark.parametrize('typespec', [
-    idspec('TYPE_HINT_001', TestAction(
-        name="Check immutable primitive: int",
+    idspec('PRIMITIVES_001', TestAction(
+        name="1 is a int",
         action=isinstance_of_typehint,
         args=[1, int],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_002', TestAction(
-        name="Check immutable primitive value: str",
+    idspec('PRIMITIVES_002', TestAction(
+        name="'hello' is a str",
         action=isinstance_of_typehint,
         args=["hello", str],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_003', TestAction(
-        name="Check immutable primitive value: bytes",
+    idspec('PRIMITIVES_003', TestAction(
+        name="b'bytes' is a bytes",
         action=isinstance_of_typehint,
         args=[b'bytes', bytes],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_004', TestAction(
-        name="Check immutable primitive value: bool",
+    idspec('PRIMITIVES_004', TestAction(
+        name="True is a bool",
         action=isinstance_of_typehint,
         args=[True, bool],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_005', TestAction(
-        name="Check immutable primitive value: complex",
+    idspec('PRIMITIVES_005', TestAction(
+        name="complex(1, 2) is a complex",
         action=isinstance_of_typehint,
         args=[complex(1, 2), complex],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_006', TestAction(
-        name="Check immutable primitive value: float",
+    idspec('PRIMITIVES_006', TestAction(
+        name="3.14 is a float",
         action=isinstance_of_typehint,
         args=[3.14, float],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_007', TestAction(
-        name="Check immutable primitive value: None)",
+    idspec('PRIMITIVES_007', TestAction(
+        name="None is a None",
         action=isinstance_of_typehint,
         args=[None, None],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_008', TestAction(
-        name="Check immutable primitive int value against union type hint (int | str)",
+    idspec('PRIMITIVES_008', TestAction(
+        name="None is a NoneType",
+        action=isinstance_of_typehint,
+        args=[None, type(None)],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_009', TestAction(
+        name="3 is not a str",
+        action=isinstance_of_typehint,
+        args=[3, str],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('PRIMITIVES_010', TestAction(
+        name="'hello' is not a bytes",
+        action=isinstance_of_typehint,
+        args=["hello", bytes],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('PRIMITIVES_011', TestAction(
+        name="b'bytes' is not a str",
+        action=isinstance_of_typehint,
+        args=[b'bytes', str],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('PRIMITIVES_012', TestAction(  # Wierd true fact!
+        name="True is an int",
+        action=isinstance_of_typehint,
+        args=[True, int],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_013', TestAction(
+        name="complex(1, 2) is not a float",
+        action=isinstance_of_typehint,
+        args=[complex(1, 2), float],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('PRIMITIVES_014', TestAction(
+        name="3.14 is not an int",
+        action=isinstance_of_typehint,
+        args=[3.14, int],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('PRIMITIVES_015', TestAction(
+        name="None is not an int",
+        action=isinstance_of_typehint,
+        args=[None, int],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('PRIMITIVES_016', TestAction(
+        name="1 is an Any",
+        action=isinstance_of_typehint,
+        args=[1, Any],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_017', TestAction(
+        name="'string' is an Any",
+        action=isinstance_of_typehint,
+        args=["string", Any],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_018', TestAction(
+        name="b'bytes' is an Any",
+        action=isinstance_of_typehint,
+        args=[b'bytes', Any],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_019', TestAction(
+        name="True is an Any",
+        action=isinstance_of_typehint,
+        args=[True, Any],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_020', TestAction(
+        name="3.14 is an Any",
+        action=isinstance_of_typehint,
+        args=[3.14, Any],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_021', TestAction(
+        name="None is an Any",
+        action=isinstance_of_typehint,
+        args=[None, Any],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_022', TestAction(
+        name="1 is an object",
+        action=isinstance_of_typehint,
+        args=[1, object],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_023', TestAction(
+        name="'string' is an object",
+        action=isinstance_of_typehint,
+        args=["string", object],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_024', TestAction(
+        name="b'bytes' is an object",
+        action=isinstance_of_typehint,
+        args=[b'bytes', object],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_025', TestAction(
+        name="True is an object",
+        action=isinstance_of_typehint,
+        args=[True, object],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_026', TestAction(
+        name="3.14 is an object",
+        action=isinstance_of_typehint,
+        args=[3.14, object],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('PRIMITIVES_027', TestAction(
+        name="None is an object",
+        action=isinstance_of_typehint,
+        args=[None, object],
+        assertion=Assert.EQUAL,
+        expected=True)),
+])
+def test_primitives(typespec: TestSpec) -> None:
+    """Test primitives."""
+    clear_typehint_cache()
+    typespec.run()
+
+
+@pytest.mark.parametrize('typespec', [
+    idspec('LITERALS_001', TestAction(
+        name="1 is Literal[1]",
+        action=isinstance_of_typehint,
+        args=[1, Literal[1]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('LITERALS_002', TestAction(
+        name="'hello' is Literal['hello']",
+        action=isinstance_of_typehint,
+        args=["hello", Literal['hello']],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('LITERALS_003', TestAction(
+        name="b'bytes' is Literal[b'bytes']",
+        action=isinstance_of_typehint,
+        args=[b'bytes', Literal[b'bytes']],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('LITERALS_004', TestAction(
+        name="True is Literal[True]",
+        action=isinstance_of_typehint,
+        args=[True, Literal[True]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('LITERALS_005', TestAction(
+        name="3.14 is Literal[3.14]",
+        action=isinstance_of_typehint,
+        args=[3.14, Literal[3.14]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('LITERALS_006', TestAction(
+        name="1 is not Literal[2]",
+        action=isinstance_of_typehint,
+        args=[1, Literal[2]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('LITERALS_007', TestAction(
+        name="'hello' is not Literal['world']",
+        action=isinstance_of_typehint,
+        args=["hello", Literal['world']],
+        assertion=Assert.EQUAL,
+        expected=False)),
+])
+def test_literals(typespec: TestSpec) -> None:
+    """Test literals."""
+    clear_typehint_cache()
+    typespec.run()
+
+
+@pytest.mark.parametrize('typespec', [
+    idspec('UNIONS_001', TestAction(
+        name="1 is a int | str",
         action=isinstance_of_typehint,
         args=[1, int | str],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_009', TestAction(
-        name="Check immutable primitive str value against union type hint (int | str)",
+    idspec('UNIONS_002', TestAction(
+        name="'test' is a int | str",
         action=isinstance_of_typehint,
         args=["test", int | str],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_0010', TestAction(
-        name="Check immutable primitive float value against union type hint (float | bytes)",
+    idspec('UNIONS_003', TestAction(
+        name="2.71 is a float | bytes",
         action=isinstance_of_typehint,
         args=[2.71, float | bytes],
         assertion=Assert.EQUAL,
         expected=True)),
-    idspec('TYPE_HINT_011', TestAction(
-        name="Check immutable primitive bytes value against union type hint (float | bytes)",
+    idspec('UNIONS_004', TestAction(
+        name="b'data' is a float | bytes",
         action=isinstance_of_typehint,
         args=[b'data', float | bytes],
         assertion=Assert.EQUAL,
         expected=True)),
+    idspec('UNIONS_005', TestAction(
+        name="False is a bool | None",
+        action=isinstance_of_typehint,
+        args=[False, bool | None],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('UNIONS_006', TestAction(
+        name="None is a bool | None",
+        action=isinstance_of_typehint,
+        args=[None, bool | None],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('UNIONS_007', TestAction(
+        name="3+4j is a complex | int",
+        action=isinstance_of_typehint,
+        args=[3+4j, complex | int],
+        assertion=Assert.EQUAL,
+        expected=True)),
 ])
-def test_is_instance_of_typehint(typespec: TestSpec) -> None:
-    """Test is_instance_of_typehint function."""
+def test_unions(typespec: TestSpec) -> None:
+    """Test unions."""
+    clear_typehint_cache()
     typespec.run()
 
 
+@pytest.mark.parametrize('typespec', [
+    idspec('ANNOTATED_001', TestAction(
+        name="1 is Annotated[int, 'metadata']",
+        action=isinstance_of_typehint,
+        args=[1, Annotated[int, 'metadata']],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ANNOTATED_002', TestAction(
+        name="'a' is not Annotated[int, 'metadata']",
+        action=isinstance_of_typehint,
+        args=['a', Annotated[int, 'metadata']],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('ANNOTATED_003', TestAction(
+        name="'a' is Annotated[str | int, 'metadata']",
+        action=isinstance_of_typehint,
+        args=['a', Annotated[str | int, 'metadata']],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ANNOTATED_004', TestAction(
+        name="1 is Annotated[str | int, 'metadata']",
+        action=isinstance_of_typehint,
+        args=[1, Annotated[str | int, 'metadata']],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ANNOTATED_005', TestAction(
+        name="None is Annotated[None, 'metadata']",
+        action=isinstance_of_typehint,
+        args=[None, Annotated[None, 'metadata']],
+        assertion=Assert.EQUAL,
+        expected=True)),
+])
+def test_annotated(typespec: TestSpec) -> None:
+    """Test annotated types."""
+    clear_typehint_cache()
+    typespec.run()
+
+
+@pytest.mark.parametrize('typespec', [
+    idspec('SETS_001', TestAction(
+        name="{1, 2} is a set",
+        action=isinstance_of_typehint,
+        args=[{1, 2}, set],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_002', TestAction(
+        name="{1, 2} is a set[int]",
+        action=isinstance_of_typehint,
+        args=[{1, 2}, set[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_003', TestAction(
+        name="{1, 'a'} is a set[int | str]",
+        action=isinstance_of_typehint,
+        args=[{1, 'a'}, set[int | str]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_004', TestAction(
+        name="{1, 2} is not a set[str]",
+        action=isinstance_of_typehint,
+        args=[{1, 2}, set[str]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('SETS_005', TestAction(
+        name="empty set is a set[int]",
+        action=isinstance_of_typehint,
+        args=[set(), set[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_006', TestAction(
+        name="{1, 2} is a collections.abc.Set",
+        action=isinstance_of_typehint,
+        args=[{1, 2}, Set],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_007', TestAction(
+        name="{1, 2} is a collections.abc.Set[int]",
+        action=isinstance_of_typehint,
+        args=[{1, 2}, Set[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_008', TestAction(
+        name="frozenset({1, 2}) is a frozenset[int]",
+        action=isinstance_of_typehint,
+        args=[frozenset({1, 2}), frozenset[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_009', TestAction(
+        name="frozenset({1, 2}) is not a set[int]",
+        action=isinstance_of_typehint,
+        args=[frozenset({1, 2}), set[int]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('SETS_010', TestAction(
+        name="frozenset({1, 2}) is a collections.abc.Set[int]",
+        action=isinstance_of_typehint,
+        args=[frozenset({1, 2}), Set[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SETS_011', TestAction(
+        name="[1, 2] is not a set[int]",
+        action=isinstance_of_typehint,
+        args=[[1, 2], set[int]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+])
+def test_sets(typespec: TestSpec) -> None:
+    """Test set types."""
+    clear_typehint_cache()
+    typespec.run()
+
+
+@pytest.mark.parametrize('typespec', [
+    idspec('MAPPINGS_001', TestAction(
+        name="{'a': 1} is a dict",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, dict],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_002', TestAction(
+        name="{'a': 1} is a dict[str, int]",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, dict[str, int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_003', TestAction(
+        name="{'a': 1, 'b': 'c'} is a dict[str, int | str]",
+        action=isinstance_of_typehint,
+        args=[{'a': 1, 'b': 'c'}, dict[str, int | str]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_004', TestAction(
+        name="{'a': 1} is not a dict[str, str]",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, dict[str, str]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('MAPPINGS_005', TestAction(
+        name="{'a': 1} is not a dict[int, int]",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, dict[int, int]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('MAPPINGS_006', TestAction(
+        name="empty dict is a dict[str, int]",
+        action=isinstance_of_typehint,
+        args=[{}, dict[str, int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_007', TestAction(
+        name="{'a': 1} is a Mapping",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, Mapping],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_008', TestAction(
+        name="{'a': 1} is a Mapping[str, int]",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, Mapping[str, int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_009', TestAction(
+        name="MappingProxyType is a Mapping[str, int]",
+        action=isinstance_of_typehint,
+        args=[MappingProxyType({'a': 1}), Mapping[str, int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_010', TestAction(
+        name="{'a': {'b': 1}} is a dict[str, dict[str, int]]",
+        action=isinstance_of_typehint,
+        args=[{'a': {'b': 1}}, dict[str, dict[str, int]]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('MAPPINGS_011', TestAction(
+        name="{'a': {'b': 1}} is not a dict[str, dict[str, str]]",
+        action=isinstance_of_typehint,
+        args=[{'a': {'b': 1}}, dict[str, dict[str, str]]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('MAPPINGS_012', TestAction(
+        name="[1, 2] is not a dict",
+        action=isinstance_of_typehint,
+        args=[[1, 2], dict],
+        assertion=Assert.EQUAL,
+        expected=False)),
+])
+def test_mappings(typespec: TestSpec) -> None:
+    """Test mapping types."""
+    clear_typehint_cache()
+    typespec.run()
+
+
+@pytest.mark.parametrize('typespec', [
+    idspec('SEQUENCES_001', TestAction(
+        name="[1, 2] is a list",
+        action=isinstance_of_typehint,
+        args=[[1, 2], list],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_002', TestAction(
+        name="[1, 2] is a list[int]",
+        action=isinstance_of_typehint,
+        args=[[1, 2], list[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_003', TestAction(
+        name="[1, 'a'] is a list[int | str]",
+        action=isinstance_of_typehint,
+        args=[[1, 'a'], list[int | str]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_004', TestAction(
+        name="[1, 2] is not a list[str]",
+        action=isinstance_of_typehint,
+        args=[[1, 2], list[str]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('SEQUENCES_005', TestAction(
+        name="empty list is a list[int]",
+        action=isinstance_of_typehint,
+        args=[[], list[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_006', TestAction(
+        name="[1, 2] is a collections.abc.Sequence",
+        action=isinstance_of_typehint,
+        args=[[1, 2], Sequence],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_007', TestAction(
+        name="[1, 2] is a collections.abc.Sequence[int]",
+        action=isinstance_of_typehint,
+        args=[[1, 2], Sequence[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_008', TestAction(
+        name="(1, 2) is a tuple[int, int]",
+        action=isinstance_of_typehint,
+        args=[(1, 2), tuple[int, int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_009', TestAction(
+        name="(1, 2) is a collections.abc.Sequence[int]",
+        action=isinstance_of_typehint,
+        args=[(1, 2), Sequence[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_010', TestAction(
+        name="[[1], [2]] is a list[list[int]]",
+        action=isinstance_of_typehint,
+        args=[[[1], [2]], list[list[int]]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('SEQUENCES_011', TestAction(
+        name="[[1], [2]] is not a list[list[str]]",
+        action=isinstance_of_typehint,
+        args=[[[1], [2]], list[list[str]]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('SEQUENCES_012', TestAction(
+        name="{'a': 1} is not a list",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, list],
+        assertion=Assert.EQUAL,
+        expected=False)),
+])
+def test_sequences(typespec: TestSpec) -> None:
+    """Test sequence types."""
+    clear_typehint_cache()
+    typespec.run()
+
+
+@pytest.mark.parametrize('typespec', [
+    idspec('ITERABLES_001', TestAction(
+        name="[1, 2] is an Iterable",
+        action=isinstance_of_typehint,
+        args=[[1, 2], Iterable],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_002', TestAction(
+        name="[1, 2] is an Iterable[int]",
+        action=isinstance_of_typehint,
+        args=[[1, 2], Iterable[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_003', TestAction(
+        name="{1, 2} is an Iterable[int]",
+        action=isinstance_of_typehint,
+        args=[{1, 2}, Iterable[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_004', TestAction(
+        name="(1, 2) is an Iterable[int]",
+        action=isinstance_of_typehint,
+        args=[(1, 2), Iterable[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_005', TestAction(
+        name="'abc' is an Iterable[str]",
+        action=isinstance_of_typehint,
+        args=['abc', Iterable[str]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_006', TestAction(
+        name="b'abc' is an Iterable[int]",
+        action=isinstance_of_typehint,
+        args=[b'abc', Iterable[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_007', TestAction(
+        name="{'a': 1} is an Iterable[str] (keys)",
+        action=isinstance_of_typehint,
+        args=[{'a': 1}, Iterable[str]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_008', TestAction(
+        name="[1, 2] is not an Iterable[str]",
+        action=isinstance_of_typehint,
+        args=[[1, 2], Iterable[str]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('ITERABLES_009', TestAction(
+        name="empty list is an Iterable[int]",
+        action=isinstance_of_typehint,
+        args=[[], Iterable[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_010', TestAction(
+        name="123 is not an Iterable",
+        action=isinstance_of_typehint,
+        args=[123, Iterable],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('ITERABLES_011', TestAction(
+        name="generator is an Iterable[int]",
+        action=isinstance_of_typehint,
+        args=[(i for i in range(3)), Iterable[int]],
+        kwargs={'consume_iterators': True},
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('ITERABLES_012', TestAction(
+        name="generator is not an Iterable[str]",
+        action=isinstance_of_typehint,
+        args=[(i for i in range(3)), Iterable[str]],
+        kwargs={'consume_iterators': True},
+        assertion=Assert.EQUAL,
+        expected=False)),
+])
+def test_iterables(typespec: TestSpec) -> None:
+    """Test iterable types."""
+    clear_typehint_cache()
+    typespec.run()
+
+
+
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])
+    pytest.main([__file__, "--log-cli-level=INFO", '-s'])

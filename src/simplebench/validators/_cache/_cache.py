@@ -151,7 +151,7 @@ class ValidationCache:
                 self._cache.popitem(last=False)
         log.debug("trim_cache: Cache trimmed to size %d", len(self._cache))
 
-    def clear_cache(self) -> None:
+    def clear(self) -> None:
         """Clear the entire cache."""
         log.debug("clear_cache: Clearing entire cache")
         with self._cache_lock:

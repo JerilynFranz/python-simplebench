@@ -20,23 +20,26 @@ from ._containers import (
 from ._error_tags import _TypeHintsErrorTag
 from ._log import log
 from ._options import Options
-from ._primitives import ImmutablePrimitiveTypesTuple, _check_primitive_instance_of_typehint, _is_primitive
+from ._primitives import ImmutablePrimitiveTypesTuple
 from ._validation_state import ValidationState
 
 __all__ = (
     "isinstance_of_typehint",
-    "is_immutable_instance",
 )
 
 T = TypeVar("T", bound=TypedDict)  # type: ignore[invalidTypeForm]
 
+
+def clear_typehint_cache() -> None:
+    """Clear the internal type hint validation cache."""
+    _CACHE.clear()
 
 def isinstance_of_typehint(
         obj: Any,
         type_hint: Any,
         *,
         strict_typed_dict: bool = False,
-        depth: int = 0,
+        depth: int = 50,
         consume_iterators: bool = False,
         noncachable_types: set[type[Any]] | None = None) -> bool:
     """
@@ -61,7 +64,7 @@ def isinstance_of_typehint(
     :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
     :param bool strict_typed_dict: Whether to enforce that TypedDict checks require actual TypedDict instances.
-    :param int depth: The recursion depth for nested structures.
+    :param int depth: (default=50) The recursion depth limit for nested structures.
     :param bool consume_iterators: Whether to consume iterators during validation.
     :param set[type[Any]] | None noncachable_types: Set of types that should not be cached during validation.
         The default is {NoneType, bool, int, float, complex, str, bytes}. These types are not cached because
@@ -82,68 +85,6 @@ def isinstance_of_typehint(
     result = _check_instance_of_typehint(
         obj, type_hint, options, parents=set(), raise_on_error=False, context="root")
     return result.valid
-
-def is_immutable_instance(
-        obj: Any,
-        type_hint: Any,
-        *,
-        strict_typed_dict: bool = False,
-        depth: int = 0,
-        consume_iterators: bool = False,
-        noncachable_types: set[type[Any]] | None = None) -> bool:
-    """
-    Check if an object is Immutable according to a given type hint.
-    Supports basic types, generics (Mapping, Sequence, Set), Union, Literal, and TypedDict.
-
-    It is cross-cached with is_instance_of_typehint for efficiency. If either function
-    determines that the object is Immutable, the result is cached for future calls.
-
-    This means that if is_instance_of_typehint is called first and determines that the object
-    is Immutable, subsequent calls to is_immutable on the same object will be very fast.
-
-    Due to the complexity of immutability checks, this function may not be able to
-    definitively determine immutability for all type hints, especially with deeply
-    nested structures.
-
-    The immutability definition follows SimpleBench's definition of :class:`~simplebench.types.Immutable`.
-
-    While an object may be considered Immutable by Python standards (e.g., a tuple),
-    it may not be considered Immutable by SimpleBench if it contains mutable elements
-    (e.g., a tuple containing a list).
-
-    Additionally, a determination of being NOT Immutable does not imply mutability;
-    it may simply mean that the function could not verify immutability given the
-    provided type hint and depth. It is a conservative check that assumes mutability
-    unless it can be proven otherwise.
-
-    The depth parameter limits the recursion depth for nested structures.
-    A depth of 0 allows for one level of recursion (checking the object and its immediate children),
-    while a depth of 1 allows for two levels, and so on.
-
-    :param Any obj: The object to check.
-    :param Any type_hint: The type hint to check against.
-    :param bool strict_typed_dict: Whether to enforce that TypedDict checks require actual TypedDict instances.
-    :param int depth: The recursion depth for nested structures.
-    :param bool consume_iterators: Whether to consume iterators during validation.
-    :param set[type[Any]] | None noncachable_types: Set of types that should not be cached during validation.
-        The default is {NoneType, bool, int, float, complex, str, bytes}. These types are not cached because
-        they frequently occur in data heavy applications while being relatively fast to process and caching
-        them would explode the cache size without significant performance benefit.
-    :return bool: True if the object is Immutable according to the type hint, False otherwise.
-    """
-    if depth < 0:
-        raise SimpleBenchValueError(
-            f"depth must be non-negative, got {depth}.",
-            tag=_TypeHintsErrorTag.NEGATIVE_DEPTH)
-    options = Options(
-        strict_typed_dict=strict_typed_dict,
-        depth=depth,
-        consume_iterators=consume_iterators,
-        noncachable_types=noncachable_types or {NoneType, bool, int, float, complex, str, bytes})
-    result = _check_instance_of_typehint(
-        obj, type_hint, options, parents=set(), raise_on_error=False, context="root")
-    return result.immutable
-
 
 def _check_instance_of_typehint(
         obj: Any,
@@ -209,16 +150,6 @@ def _check_instance_of_typehint(
 
     new_parents = parents | {current_state}
 
-    log.debug(
-        "_check_instance_of_typehint: Checking if object of type '%s' is a primitive data type",
-        type(obj).__name__)
-    if _is_primitive(obj):  # fast path for primitive data types
-        return _check_primitive_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error)
-
-    log.debug(
-        "_check_instance_of_typehint: Object of type '%s' is not a primitive data type, proceeding with full check",
-        type(obj).__name__)
-
     if origin is Annotated:
         log.debug("_check_instance_of_typehint: Handling Annotated type hint '%s'", type_hint)
         if not args:
@@ -228,8 +159,53 @@ def _check_instance_of_typehint(
         type_hint = args[0]
         return _check_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error, context=context)
 
+
     if obj is None:
         return _check_none_instance_of_typehint(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+    elif type_hint in {None, NoneType}:
+        log.debug(
+            "_check_instance_of_typehint: Object of type '%s' does not match NoneType type hint",
+            type(obj).__name__)
+        if raise_on_error:
+            raise SimpleBenchTypeError(
+                f"Object of type '{type(obj).__name__}' is not None for type hint '{type_hint}'",
+                tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
+        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+
+    log.debug("_check_instance_of_typehint: Checking if type hint is Any (%s)", type_hint)
+    if type_hint is Any:
+        log.debug(
+            "_check_instance_of_typehint: Type hint is Any, automatically valid")
+        return CheckResult(_IS_VALID, _IS_IMMUTABLE)
+
+    # fast paths for primitives. Caching would be pointless here. It takes much more time to cache than to check.
+    # We don't have to worry about None/NoneType here because they were handled above.
+    if type_hint in {object, Hashable}:
+        log.debug(
+            "_check_instance_of_typehint: Type hint '%s' - checking if object is primitive type", type_hint)
+        if isinstance(obj, (float, int, str, bool, bytes, complex, bytes, str)):
+            log.debug(
+                "_check_instance_of_typehint: Type hint '%s' is automatically valid for primitive objects of type '%s'",
+                type_hint, type(obj).__name__)
+            return CheckResult(_IS_VALID, _IS_IMMUTABLE)
+    log.debug("_check_instance_of_typehint: Checking if type_hint '%s' is a primitive type hint", type_hint)
+    if type_hint in {int, float, complex, str, bytes, bool, bytes, str}:
+        log.debug("_check_instance_of_typehint: Checking if object (%s) matches type hint for primitives check '%s'",
+                  type(obj).__name__, type_hint)
+        if isinstance(obj, type_hint):
+            log.debug(
+                "_check_instance_of_typehint: Object of type '%s' matches primitive type hint '%s'",
+                type(obj).__name__, type_hint)
+            return CheckResult(_IS_VALID, _IS_IMMUTABLE)
+        if raise_on_error:
+            raise SimpleBenchTypeError(
+                f"Object of type '{type(obj).__name__}' does not match primitive type hint '{type_hint}'",
+                tag=_TypeHintsErrorTag.VALIDATION_FAILED)
+        return CheckResult(_NOT_VALID, _IS_IMMUTABLE)
+
+    log.debug(
+        "_check_instance_of_typehint: Object of type '%s'' is not a primitive data type', proceeding with full check",
+        type(obj).__name__)
 
     if origin in (Union, UnionType):
         return _union_check(obj, type_hint, origin, args, options, new_parents, raise_on_error)

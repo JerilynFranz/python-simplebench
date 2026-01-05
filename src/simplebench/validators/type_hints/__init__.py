@@ -1,12 +1,7 @@
 """Type hint related validators and utilities."""
-from ._primitives import ImmutablePrimitiveTypes, ImmutablePrimitiveTypesTuple
-from .type_hints import is_immutable_instance, isinstance_of_typehint
-from .typed_dict_key_info import TypedDictKeyInfo
+from ._type_hints import isinstance_of_typehint, clear_typehint_cache
 
 __all__ = [
-    "ImmutablePrimitiveTypes",
-    "ImmutablePrimitiveTypesTuple",
+    "clear_typehint_cache",
     "isinstance_of_typehint",
-    "is_immutable_instance",
-    "TypedDictKeyInfo",
 ]

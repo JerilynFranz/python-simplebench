@@ -43,9 +43,6 @@ from .strings import (
     validate_string_with_regex,
 )
 from .type_hints import (
-    ImmutablePrimitiveTypes,
-    ImmutablePrimitiveTypesTuple,
-    is_immutable_instance,
     isinstance_of_typehint,
 )
 from .types import validate_type
@@ -53,8 +50,6 @@ from .validate_iterable_of_type import validate_iterable_of_type
 from .validate_sequence_of_type import validate_sequence_of_type
 
 __all__ = [
-    "ImmutablePrimitiveTypes",
-    "ImmutablePrimitiveTypesTuple",
     "is_core_data",
     "is_core_data_primitive",
     "is_core_data_primitive_type",
@@ -62,7 +57,6 @@ __all__ = [
     "is_core_data_sequence",
     "is_core_data_set",
     "isinstance_of_typehint",
-    "is_immutable_instance",
     "is_immutable_core_data",
     "_ValidatorsErrorTag",
     "validate_bool",
