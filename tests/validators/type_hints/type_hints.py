@@ -57,13 +57,8 @@ else:
 
 from testspec import Assert, TestAction, TestSpec, idspec
 
-from simplebench.validators.type_hints.type_hints import (
-    ImmutablePrimitiveTypes,
-    ImmutablePrimitiveTypesTuple,
-    TypedDictKeyInfo,
-    is_immutable_instance,
-    isinstance_of_typehint,
-)
+from simplebench.validators.type_hints import is_immutable_instance, isinstance_of_typehint
+from simplebench.validators.type_hints._primitives import ImmutablePrimitiveTypes, ImmutablePrimitiveTypesTuple
 
 
 @pytest.mark.parametrize('typespec', [
