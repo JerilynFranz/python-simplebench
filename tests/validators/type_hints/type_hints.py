@@ -148,10 +148,34 @@ def test_is_immutable(typespec: TestSpec) -> None:
         assertion=Assert.EQUAL,
         expected=True)),
     idspec('TYPE_HINT_007', TestAction(
+        name="Check immutable primitive value: None)",
+        action=isinstance_of_typehint,
+        args=[None, None],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('TYPE_HINT_008', TestAction(
         name="Check immutable primitive int value against union type hint (int | str)",
         action=isinstance_of_typehint,
         args=[1, int | str],
-        assertion=Assert.NOT_EQUAL,
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('TYPE_HINT_009', TestAction(
+        name="Check immutable primitive str value against union type hint (int | str)",
+        action=isinstance_of_typehint,
+        args=["test", int | str],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('TYPE_HINT_0010', TestAction(
+        name="Check immutable primitive float value against union type hint (float | bytes)",
+        action=isinstance_of_typehint,
+        args=[2.71, float | bytes],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('TYPE_HINT_011', TestAction(
+        name="Check immutable primitive bytes value against union type hint (float | bytes)",
+        action=isinstance_of_typehint,
+        args=[b'data', float | bytes],
+        assertion=Assert.EQUAL,
         expected=True)),
 ])
 def test_is_instance_of_typehint(typespec: TestSpec) -> None:

@@ -1,9 +1,5 @@
 """Cache key for object references."""
-from typing import Any
-
-from simplebench.exceptions import SimpleBenchValueError
-
-from ._error_tags import _ValidationCacheErrorTag
+from typing import Any, Hashable
 
 
 class CacheKey:
@@ -22,18 +18,15 @@ class CacheKey:
     :property type cls_type: The type of the object.
     :property int instance_id: The id() of the object instance.
     """
-    def __init__(self, cls_type: type, obj: Any) -> None:
+    def __init__(self, cls_type: Hashable, obj: Any) -> None:
         """Initialize the CacheKey.
 
-        :param type cls_type: The type of the object.
+        :param Hashable cls_type: The type of the object.
         :param Any obj: The object value.
-        :raise SimpleBenchValueError: If obj is `None`.
         """
-        if obj is None:
-            raise SimpleBenchValueError(
-                "Cannot create CacheKey for None value.",
-                tag=_ValidationCacheErrorTag.NONE_VALUE_NOT_ALLOWED)
-        self.obj_type: type = cls_type
+        if cls_type is None:  # None is a special case, replace with type(None) instead
+            cls_type = type(None)
+        self.obj_type: Hashable = cls_type
         self.instance_id: int = id(obj)
 
     def __hash__(self) -> int:
@@ -45,4 +38,4 @@ class CacheKey:
         return (self.obj_type, self.instance_id) == (other.obj_type, other.instance_id)
 
     def __repr__(self):
-        return f"CacheKey(cls_type={self.obj_type.__name__}, instance_id={self.instance_id})"
+        return f"CacheKey(cls_type={repr(self.obj_type)}, instance_id={self.instance_id})"

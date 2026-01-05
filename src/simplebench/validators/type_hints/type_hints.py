@@ -1,5 +1,4 @@
 """Validation functions for type hints and instances against those type hints."""
-import logging
 from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence, Set
 from types import MappingProxyType, NoneType, UnionType
 from typing import Annotated, Any, Literal, TypedDict, TypeVar, Union, get_args, get_origin, is_typeddict
@@ -38,7 +37,8 @@ def isinstance_of_typehint(
         *,
         strict_typed_dict: bool = False,
         depth: int = 0,
-        consume_iterators: bool = False) -> bool:
+        consume_iterators: bool = False,
+        noncachable_types: set[type[Any]] | None = None) -> bool:
     """
     Check if an object is an instance of a given type hint.
     Supports basic types, generics (Mapping, Sequence, Set), Union, Literal, and TypedDict.
@@ -63,6 +63,11 @@ def isinstance_of_typehint(
     :param bool strict_typed_dict: Whether to enforce that TypedDict checks require actual TypedDict instances.
     :param int depth: The recursion depth for nested structures.
     :param bool consume_iterators: Whether to consume iterators during validation.
+    :param set[type[Any]] | None noncachable_types: Set of types that should not be cached during validation.
+        The default is {NoneType, bool, int, float, complex, str, bytes}. These types are not cached because
+        they frequently occur in data heavy applications while being relatively fast to process and caching
+        them would explode the cache size without significant performance benefit.
+
     :return bool: True if the object matches the type hint, False otherwise.
     """
     if depth < 0:
@@ -72,7 +77,8 @@ def isinstance_of_typehint(
     options = Options(
         strict_typed_dict=strict_typed_dict,
         depth=depth,
-        consume_iterators=consume_iterators)
+        consume_iterators=consume_iterators,
+        noncachable_types=noncachable_types or {NoneType, bool, int, float, complex, str, bytes})
     result = _check_instance_of_typehint(
         obj, type_hint, options, parents=set(), raise_on_error=False, context="root")
     return result.valid
@@ -83,7 +89,8 @@ def is_immutable_instance(
         *,
         strict_typed_dict: bool = False,
         depth: int = 0,
-        consume_iterators: bool = False) -> bool:
+        consume_iterators: bool = False,
+        noncachable_types: set[type[Any]] | None = None) -> bool:
     """
     Check if an object is Immutable according to a given type hint.
     Supports basic types, generics (Mapping, Sequence, Set), Union, Literal, and TypedDict.
@@ -118,6 +125,10 @@ def is_immutable_instance(
     :param bool strict_typed_dict: Whether to enforce that TypedDict checks require actual TypedDict instances.
     :param int depth: The recursion depth for nested structures.
     :param bool consume_iterators: Whether to consume iterators during validation.
+    :param set[type[Any]] | None noncachable_types: Set of types that should not be cached during validation.
+        The default is {NoneType, bool, int, float, complex, str, bytes}. These types are not cached because
+        they frequently occur in data heavy applications while being relatively fast to process and caching
+        them would explode the cache size without significant performance benefit.
     :return bool: True if the object is Immutable according to the type hint, False otherwise.
     """
     if depth < 0:
@@ -127,7 +138,8 @@ def is_immutable_instance(
     options = Options(
         strict_typed_dict=strict_typed_dict,
         depth=depth,
-        consume_iterators=consume_iterators)
+        consume_iterators=consume_iterators,
+        noncachable_types=noncachable_types or {NoneType, bool, int, float, complex, str, bytes})
     result = _check_instance_of_typehint(
         obj, type_hint, options, parents=set(), raise_on_error=False, context="root")
     return result.immutable
@@ -178,9 +190,6 @@ def _check_instance_of_typehint(
             "_check_instance_of_typehint: Depth limit reached for object of type '%s' and type hint '%s'",
             type(obj).__name__, type_hint)
         return CheckResult(_IS_VALID, _NOT_IMMUTABLE)
-    log.debug(
-        "_check_instance_of_typehint: Depth limit not reached for object of type '%s' and type hint '%s'",
-        type(obj).__name__, type_hint)
 
     origin = get_origin(type_hint)
     args = get_args(type_hint)
@@ -226,7 +235,7 @@ def _check_instance_of_typehint(
         return _union_check(obj, type_hint, origin, args, options, new_parents, raise_on_error)
 
     if origin is Literal:
-        return _literal_check(obj, type_hint, origin, args, raise_on_error)
+        return _literal_check(obj, type_hint, origin, args, options, raise_on_error)
 
     # If we have an unsubscripted generic container, get_origin() returns None.
     # We need to manually set the origin and args to handle it like a
@@ -245,7 +254,7 @@ def _check_instance_of_typehint(
     # If there are no args, it's a plain type (int, str, list, dict, custom class, etc.)
     # This handles both primitive types and unsubscripted generic containers.
     if not args and isinstance(type_hint, type):
-        return _plain_type_check(obj, type_hint)
+        return _plain_type_check(obj, type_hint, options)
 
     # Dispatch to the appropriate container check.
     # The order (most specific to most general) is important.
@@ -277,7 +286,7 @@ def _check_instance_of_typehint(
     is_valid, is_imm = result
 
     if is_valid and is_imm:
-        _CACHE.add_cache_entry(type_hint, obj, is_imm)  # type: ignore[arg-type]
+        _CACHE.add_cache_entry(type_hint, obj, is_imm, options.noncachable_types)
 
     if raise_on_error and not is_valid:
         raise SimpleBenchTypeError(
@@ -300,11 +309,13 @@ def _is_immutable(obj: Any) -> bool:
 
 def _plain_type_check(
         obj: Any,
-        type_hint: Any) -> CheckResult:
+        type_hint: Any,
+        options: Options) -> CheckResult:
     """Handle plain type hints (e.g., int, str, user-defined classes).
     
     :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
+    :param Options options: Options for type hint validation.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchValueError: If type_hint is not a plain type.
     """
@@ -317,7 +328,7 @@ def _plain_type_check(
     if is_valid:
         is_imm = _is_immutable(obj)
         if is_imm:
-            _CACHE.add_cache_entry(type_hint, obj, True)
+            _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
         return CheckResult(_IS_VALID, is_imm)
     return CheckResult(_NOT_VALID, _is_immutable(obj))
 
@@ -326,6 +337,7 @@ def _literal_check(
         type_hint: Any,
         origin: Any,
         args: tuple,
+        options: Options,
         raise_on_error: bool = False) -> CheckResult:
     """Handle Literal types.
     
@@ -333,6 +345,7 @@ def _literal_check(
     :param Any type_hint: The type hint to check against.
     :param Any origin: The origin type of the type hint.
     :param tuple args: The type arguments of the Literal type hint.
+    :param Options options: Options for type hint validation.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
@@ -342,11 +355,10 @@ def _literal_check(
             f"Type hint '{type_hint}' is not a Literal type.",
             tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
-
     is_valid = obj in args
     if is_valid:
         # Literals are always immutable values
-        _CACHE.add_cache_entry(type_hint, obj, True)
+        _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
         return CheckResult(_IS_VALID, _IS_IMMUTABLE)
 
     if raise_on_error:
@@ -392,7 +404,7 @@ def _union_check(
         if is_valid:
             # We can cache the result for the specific matching type `arg`
             if is_imm:
-                _CACHE.add_cache_entry(arg, obj, True)
+                _CACHE.add_cache_entry(arg, obj, True, options.noncachable_types)
             return CheckResult(is_valid, is_imm)
 
     if raise_on_error:
@@ -450,7 +462,7 @@ def _check_none_instance_of_typehint(
                 return CheckResult(_IS_VALID, _IS_IMMUTABLE)
 
     check_result = CheckResult(_NOT_VALID, _IS_IMMUTABLE)
-    _CACHE.add_cache_entry(type_hint, obj, check_result.immutable)
+    _CACHE.add_cache_entry(type_hint, obj, check_result.immutable, options.noncachable_types)
 
     if raise_on_error:
         raise SimpleBenchTypeError(

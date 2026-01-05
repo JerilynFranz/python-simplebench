@@ -3,10 +3,11 @@
 import logging
 import threading
 from collections import OrderedDict
+from typing import Any, Hashable
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
-from ._cache_entry import CacheEntry
+from ._cache_entry import CacheEntry, ObjectWrapper
 from ._cache_key import CacheKey
 from ._error_tags import _ValidationCacheErrorTag
 
@@ -53,20 +54,21 @@ class ValidationCache:
         object id and class it can be reused directly from the cache without re-validation of the subtree.
         """
 
-    def valid_in_cache(self, td_cls: type, obj: object) -> bool | None:
+    def valid_in_cache(self, td_cls: Hashable, obj: object) -> bool | None:
         """
         Check if a reference validity is cached and return its validity if found.
 
         If it was not found in the cache or if the found object is not the same
         object instance as the value passed for cache lookup, it returns `None`.
-        This is a strict identity check, not just equality.
+        This is a strict identity check that the obj in the cache is the same object,
+        not just 'equal' to it.
 
         The cache key is based on the type of the value and its id().
 
         Access is optimized for performance with optimistic lock-free read access and
         thread-safe locking if a cache modification is needed.
 
-        :param type td_cls: The type of the value reference to check.
+        :param Hashable td_cls: The type hint of the value reference to check.
         :param object obj: The object reference to check.
         :return bool | None: The cached validity if found, or None if not found in cache.
         """
@@ -76,27 +78,33 @@ class ValidationCache:
         if key in self._cache:
             try:  # optimistic access for performance
                 entry: CacheEntry = self._cache[key]
-                cached_value = entry.obj
-                if cached_value is None:
+                wrapped_value: ObjectWrapper | None = entry.obj_wrapper
+                if wrapped_value is None:
                     # Stale reference, remove from cache.
                     with self._cache_lock:
                         del self._cache[key]
                     return None
-                if cached_value is obj:
+                if wrapped_value.obj is obj:  # strict identity check, which is why we keep the object in the wrapper
                     return entry.is_valid
             except KeyError:
                 # Item was removed between the 'in' check and access by another thread
                 return None
         return None
 
-    def add_cache_entry(self, td_cls: type, obj: object, is_valid: bool) -> None:
+    def add_cache_entry(self,
+            td_cls: Hashable, obj: object, is_valid: bool, noncachable_types: set[type[Any]] | None = None) -> None:
         """Cache a CacheEntry
 
+        :param Hashable td_cls: The type hint of the object.
         :param object obj: The object to cache.
         :param bool is_valid: The validity of the object.
         """
         log.debug("add_cache_entry: Caching object of type '%s' with id %d as valid=%s",
                   td_cls, id(obj), is_valid)
+        if noncachable_types is not None and type(obj) in noncachable_types:
+            log.debug("add_cache_entry: Not caching object of type '%s' as it is in noncachable_types",
+                      td_cls)
+            return
         item = CacheEntry(td_cls, obj, is_valid, self._cache, self._cache_lock)
         with self._cache_lock:
             self._cache.setdefault(item.cache_key, item)

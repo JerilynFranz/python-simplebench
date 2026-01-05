@@ -179,7 +179,7 @@ def _container_check_typeddict(
 
     # Successful TypedDict check
     if container_is_immutable:
-        _CACHE.add_cache_entry(type_hint, obj, True)
+        _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
     return CheckResult(_IS_VALID, container_is_immutable)
 
 def _annotation_is_str_typehint(annotation: Any) -> bool:
@@ -268,7 +268,7 @@ def _container_check_mapping(
 
     # If we reach here, all checks passed
     if container_is_immutable:
-        _CACHE.add_cache_entry(type_hint, obj, True)
+        _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
     return CheckResult(_IS_VALID, container_is_immutable)
 
 def _container_check_set(
@@ -340,7 +340,7 @@ def _container_check_set(
 
     # If we reach here, all checks passed
     if container_is_immutable:
-        _CACHE.add_cache_entry(type_hint, obj, _IS_IMMUTABLE)
+        _CACHE.add_cache_entry(type_hint, obj, _IS_IMMUTABLE, options.noncachable_types)
     return CheckResult(_IS_VALID, container_is_immutable)
 
 def _container_check_sequence(
@@ -428,7 +428,7 @@ def _container_check_sequence(
 
     # If we reach here, all checks passed
     if container_is_immutable:
-        _CACHE.add_cache_entry(type_hint, obj, True)
+        _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
     return CheckResult(_IS_VALID, container_is_immutable)
 
 def _container_check_iterable(
@@ -511,7 +511,7 @@ def _container_check_iterable(
 
     # If we reach here, all checks passed
     if container_is_immutable:
-        _CACHE.add_cache_entry(type_hint, obj, True)
+        _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
     return CheckResult(_IS_VALID, container_is_immutable)
 
 def _container_check_callable(
