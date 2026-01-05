@@ -8,3 +8,5 @@ class CheckResult(NamedTuple):
     """Indicates if the object matches the type hint."""
     immutable: bool
     """Indicates if the object is immutable according to validation rules."""
+
+__all__ = ('CheckResult',)

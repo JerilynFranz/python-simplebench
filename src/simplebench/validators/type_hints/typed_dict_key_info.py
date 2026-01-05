@@ -10,8 +10,10 @@ about a TypedDict key's required/optional/readonly status and its contained type
 :property object value_type: The value type argument contained in Required/NotRequired, or the original value type.
 """
 from simplebench.exceptions import SimpleBenchTypeError
+
 from ._error_tags import _TypedDictKeyInfoErrorTag
 
+__all__ = ('TypedDictKeyInfo',)
 
 class TypedDictKeyInfo:
     """Information about a TypedDict key's required/optional status and contained type.
@@ -104,4 +106,5 @@ class TypedDictKeyInfo:
         :return object: The value type argument contained in Required/NotRequired,
                         or the original value type if neither.
         """
+        return self._value_type
         return self._value_type
