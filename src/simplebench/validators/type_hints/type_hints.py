@@ -125,8 +125,9 @@ def isinstance_of_typehint(
     deeply nested structures.
 
     The depth parameter limits the recursion depth for nested structures.
-    A depth of 0 allows for one level of recursion (checking the object and its immediate children),
-    while a depth of 1 allows for two levels, and so on.
+
+    - A depth of 0 allows for one level of recursion: Checking the object itself.
+    - A depth of 1 allows for two levels: The object and its immediate children, and so on.
 
     :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
@@ -243,7 +244,7 @@ def _check_instance_of_typehint(
 
     # If we have hit the depth limit for the check,
     # Return Valid, but not Immutable (as we can't be sure)
-    if options.depth > len(parents):
+    if options.depth < len(parents):
         log.debug(
             "_check_instance_of_typehint: Depth limit reached for object of type '%s' and type hint '%s'",
             type(obj).__name__, type_hint)
@@ -347,7 +348,7 @@ def _check_instance_of_typehint(
     is_valid, is_imm = result
 
     if is_valid and is_imm:
-        _CACHE.add_cache_entry(type_hint, obj, is_imm)
+        _CACHE.add_cache_entry(type_hint, obj, is_imm)  # type: ignore[arg-type]
 
     if raise_on_error and not is_valid:
         raise SimpleBenchTypeError(
@@ -379,7 +380,7 @@ def _is_primitive(obj: Any) -> bool:
               type(obj).__name__, ImmutablePrimitiveTypesTuple)
     try:
         return isinstance(obj, ImmutablePrimitiveTypesTuple)
-    except Exception:  # pylint: disable=broad-exception-caught
+    except (TypeError, ValueError, AttributeError):
         return False
 
 def _is_immutable(obj: Any) -> bool:
@@ -391,7 +392,7 @@ def _is_immutable(obj: Any) -> bool:
     """
     try:
         return isinstance(obj, Immutable)
-    except Exception:  # pylint: disable=broad-exception-caught
+    except (TypeError, ValueError, AttributeError):
         return False
 
 def _check_immutable_protocol_compliance(*,
@@ -430,7 +431,7 @@ def _plain_type_check(
 
     is_valid = isinstance(obj, type_hint)
     if is_valid:
-        is_imm = isinstance(obj, Immutable)
+        is_imm = _is_immutable(obj)
         if is_imm:
             _CACHE.add_cache_entry(type_hint, obj, True)
         return (_IS_VALID, is_imm)
@@ -680,27 +681,25 @@ def _container_check_typeddict(
         options: Options,
         parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
-    """Check if obj matches a TypedDict type hint.
-
-    If not a TypedDict and not strict_typed_dict, returns True to allow other checks to proceed normally.
-    If it is a TypedDict or structurally conforms to a TypedDict, checks keys and values recursively if specified.
-
-    If not a TypedDict, returns (_IS_VALID, _IS_IMMUTABLE) to allow other checks to proceed normally.
-    The semantic is 'If not a TypedDict, this check does not apply and should not cause a failure.'
+    """Handle TypedDict types.
 
     :param Any obj: The object to check.
-    :param Any type_hint: The type hint to check (may or may not be a TypedDict).
+    :param Any type_hint: The type hint to check against.
     :param Options options: Options for type hint validation.
     :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
+    :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
+    :raises SimpleBenchValueError: If type_hint is not a TypedDict.
     """
     log.debug(
         "_container_check_typeddict: Checking object of type '%s' against TypedDict type hint '%s'",
         type(obj).__name__, type_hint)
     # Fast path checks
     if not is_typeddict(type_hint):
-        return (_IS_VALID, _IS_IMMUTABLE)  # Not a TypedDict type hint, so this check does not apply
+        raise SimpleBenchValueError(
+            f"Type hint '{type_hint}' is not a TypedDict.",
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
@@ -753,7 +752,7 @@ def _container_check_typeddict(
             if key not in allowed_keys:
                 return (_NOT_VALID, _NOT_IMMUTABLE)
     else: # Extra items allowed, check their types
-        for key,value in obj.keys():
+        for key, value in obj.items():
             if key not in allowed_keys:
                 check_result = _check_instance_of_typehint(
                     value, extra_items_type_hint, options, new_parents,
@@ -769,13 +768,13 @@ def _container_check_typeddict(
 
     # Now check each defined key in the TypedDict
     annotations: dict[str, Any] = get_type_hints(type_hint)
-    for key, value in annotations:
+    for key, value_type in annotations.items():
         if key == '__immutable__' and is_immutable_typed_dict:
             continue
         if key in obj:
             dict_key_info = TypedDictKeyInfo(key, type_hint)
             check_result = _check_instance_of_typehint(
-                value, dict_key_info.value_type, options, new_parents, raise_on_error=False, context="typeddict_value")
+                value_type, dict_key_info.value_type, options, new_parents, raise_on_error=False, context="typeddict_value")
             if not check_result[_VALID]:
                 if raise_on_error:
                     raise SimpleBenchTypeError(
@@ -812,28 +811,26 @@ def _container_check_mapping(
         options: Options,
         parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
-    """Check if obj matches Mapping type hint.
-    
-    If not a Mapping, returns True to allow other checks to proceed normally.
-    The semantic is 'If not a Mapping, this check does not apply and should not cause a
-    failure.'
-
-    If it is a Mapping, checks keys and values recursively if specified and args are provided.
+    """Handle Mapping types.
 
     :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
     :param Any origin: The origin type of the type hint.
-    :param tuple args: The type arguments of the type hint.
+    :param tuple args: The type arguments of the Mapping type hint.
     :param Options options: Options for type hint validation.
     :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
+    :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
+    :raises SimpleBenchValueError: If origin is not a subclass of Mapping.
     """
     log.debug(
         "_container_check_mapping: Checking object of type '%s' against Mapping type hint '%s'",
         type(obj).__name__, type_hint)
     if not issubclass(origin, Mapping):
-        return (_IS_VALID, _IS_IMMUTABLE)  # Not a Mapping type hint, so this check does not apply
+        raise SimpleBenchValueError(
+            f"Type hint '{type_hint}' is not a Mapping.",
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
@@ -886,34 +883,33 @@ def _container_check_mapping(
     return (_IS_VALID, container_is_immutable)
 
 def _container_check_set(
-        obj: Set,
+        obj: Any,
         type_hint: Any,
         origin: Any,
         args: tuple,
         options: Options,
         parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
-    """Check if obj matches Set type hint.
+    """Handle Set types.
 
-    If type_hint is not a Set, returns True to allow other checks to proceed normally.
-    The semantic is 'If not a Set, this check does not apply and should not cause a
-    failure.' If it is a Set, checks items recursively if specified and args are provided.
-
-    :param Set obj: The object to check.
+    :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
     :param Any origin: The origin type of the type hint.
-    :param tuple args: The type arguments of the type hint.
+    :param tuple args: The type arguments of the Set type hint.
     :param Options options: Options for type hint validation.
     :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
+    :raises SimpleBenchValueError: If origin is not a subclass of Set.
     """
     log.debug(
         "_container_check_set: Checking object of type '%s' against Set type hint '%s'",
         type(obj).__name__, type_hint)
     if not issubclass(origin, Set):
-        return (_IS_VALID, _IS_IMMUTABLE)  # Not a Set, so this check does not apply
+        raise SimpleBenchValueError(
+            f"Type hint '{type_hint}' is not a Set.",
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
@@ -957,34 +953,33 @@ def _container_check_set(
     return (_IS_VALID, container_is_immutable)
 
 def _container_check_sequence(
-        obj: Sequence,
+        obj: Any,
         type_hint: Any,
         origin: Any,
         args: tuple,
         options: Options,
         parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
-    """Check if obj matches Sequence type hint.
+    """Handle Sequence types.
 
-    If the type_hint is not a Sequence, returns True to allow other checks to proceed normally.
-    The semantic is 'If not a Sequence, this check does not apply and should not cause
-    a failure.' If it is a Sequence, checks items recursively if specified and args are provided.
-
-    :param Sequence obj: The object to check.
+    :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
     :param Any origin: The origin type of the type hint.
-    :param tuple args: The type arguments of the type hint.
+    :param tuple args: The type arguments of the Sequence type hint.
     :param Options options: Options for type hint validation.
     :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
+    :raises SimpleBenchValueError: If origin is not a subclass of Sequence.
     """
     log.debug(
         "_container_check_sequence: Checking object of type '%s' against Sequence type hint '%s'",
         type(obj).__name__, type_hint)
     if not issubclass(origin, Sequence):
-        return (_IS_VALID, _IS_IMMUTABLE)  # Not a Sequence type hint, so this check does not apply
+        raise SimpleBenchValueError(
+            f"Type hint '{type_hint}' is not a Sequence.",
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
@@ -1044,35 +1039,33 @@ def _container_check_sequence(
     return (_IS_VALID, container_is_immutable)
 
 def _container_check_iterable(
-        obj: Iterable,
+        obj: Any,
         type_hint: Any,
         origin: Any,
         args: tuple,
         options: Options,
         parents: set[ValidationState],
         raise_on_error: bool = False) -> CheckResult:
-    """Check if obj matches Iterable type hint.
+    """Handle Iterable types.
 
-    This function should only be called after checks for more specific container
-    types (Mapping, Sequence, Set) have already failed.
-
-    It handles the safe, non-consuming validation of Iterators by default.
-
-    :param Iterable obj: The object to check.
+    :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
     :param Any origin: The origin type of the type hint.
-    :param tuple args: The type arguments of the type hint.
+    :param tuple args: The type arguments of the Iterable type hint.
     :param Options options: Options for type hint validation.
     :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
+    :raises SimpleBenchValueError: If origin is not a subclass of Iterable.
     """
     log.debug(
         "_container_check_iterable: Checking object of type '%s' against Iterable type hint '%s'",
         type(obj).__name__, type_hint)
     if not issubclass(origin, Iterable):
-        return (_IS_VALID, _IS_IMMUTABLE)  # Not an Iterable type hint, so this check does not apply
+        raise SimpleBenchValueError(
+            f"Type hint '{type_hint}' is not an Iterable.",
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
     # Check the cache first
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
@@ -1127,29 +1120,29 @@ def _container_check_iterable(
     return (_IS_VALID, container_is_immutable)
 
 def _container_check_callable(
-        obj: Callable,
+        obj: Any,
         type_hint: Any,
         origin: Any,
         args: tuple,
         raise_on_error: bool = False) -> CheckResult:
-    """Check if obj matches Callable type hint.
-    If not a Callable, returns True to allow other checks to proceed normally.
-    If it is a Callable, checks parameters and return type recursively if specified
-    and args are provided.
+    """Handle Callable types.
 
-    :param Callable obj: The object to check.
+    :param Any obj: The object to check.
     :param Any type_hint: The type hint to check against.
     :param Any origin: The origin type of the type hint.
-    :param tuple args: The type arguments of the type hint.
+    :param tuple args: The type arguments of the Callable type hint.
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
+    :raises SimpleBenchValueError: If origin is not a subclass of Callable.
     """
     log.debug(
         "_container_check_callable: Checking object of type '%s' against Callable type hint '%s'",
         type(obj).__name__, type_hint)
     if not issubclass(origin, Callable):
-        return (_IS_VALID, _IS_IMMUTABLE)  # Not a Callable type hint, so this check does not apply
+        raise SimpleBenchValueError(
+            f"Type hint '{type_hint}' is not a Callable.",
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
     if not callable(obj):
         if raise_on_error:
