@@ -157,7 +157,6 @@ split_before_named_assigns = true
 max-line-length = 120
 
 [tool.pylint.MASTER]
-suggestion-mode = 'yes'
 
 [tool.pytest.ini_options]
 testpaths = "tests"
