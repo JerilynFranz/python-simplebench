@@ -12,5 +12,8 @@ class ValidationState(NamedTuple):
     :property str context: The context of the validation check.
     """
     obj_id: int
+    """The ID of the object being checked."""
     type_hint: Any
+    """The type hint being checked against."""
     context: str
+    """The context of the validation check."""

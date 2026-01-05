@@ -19,6 +19,7 @@ from ._containers import (
     _container_check_typeddict,
 )
 from ._error_tags import _TypeHintsErrorTag
+from ._log import log
 from ._options import Options
 from ._primitives import ImmutablePrimitiveTypesTuple, _check_primitive_instance_of_typehint, _is_primitive
 from ._validation_state import ValidationState
@@ -29,9 +30,6 @@ __all__ = (
 )
 
 T = TypeVar("T", bound=TypedDict)  # type: ignore[invalidTypeForm]
-
-
-log = logging.getLogger(__name__)
 
 
 def isinstance_of_typehint(

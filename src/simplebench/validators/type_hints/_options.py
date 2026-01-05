@@ -10,7 +10,10 @@ class Options(NamedTuple):
     :property bool consume_iterators: Whether to consume iterators during validation.
     """
     strict_typed_dict: bool = False
+    """Whether to enforce that TypedDict checks require actual TypedDict instances."""
     depth: int = 0
+    """The recursion depth for nested structures."""
     consume_iterators: bool = False
+    """Whether to consume iterators during validation."""
 
 __all__ = ('Options',)

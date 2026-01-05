@@ -11,6 +11,7 @@ from ._cache import _CACHE
 from ._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
 from ._error_tags import _TypeHintsErrorTag
 from ._check_result import CheckResult
+from ._log import log
 from ._options import Options
 from .typed_dict_key_info import TypedDictKeyInfo
 from ._validation_state import ValidationState
@@ -51,7 +52,7 @@ def _container_check_typeddict(
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     :raises SimpleBenchValueError: If type_hint is not a TypedDict.
     """
-    from .type_hints import _check_instance_of_typehint, log  # pylint: disable=import-outside-toplevel
+    from .type_hints import _check_instance_of_typehint  # pylint: disable=import-outside-toplevel
 
     log.debug(
         "_container_check_typeddict: Checking object of type '%s' against TypedDict type hint '%s'",
@@ -210,7 +211,7 @@ def _container_check_mapping(
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     :raises SimpleBenchValueError: If origin is not a subclass of Mapping.
     """
-    from .type_hints import _check_instance_of_typehint, log  # pylint: disable=import-outside-toplevel
+    from .type_hints import _check_instance_of_typehint  # pylint: disable=import-outside-toplevel
 
     log.debug(
         "_container_check_mapping: Checking object of type '%s' against Mapping type hint '%s'",
@@ -291,7 +292,7 @@ def _container_check_set(
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     :raises SimpleBenchValueError: If origin is not a subclass of Set.
     """
-    from .type_hints import _check_instance_of_typehint, log  # pylint: disable=import-outside-toplevel
+    from .type_hints import _check_instance_of_typehint  # pylint: disable=import-outside-toplevel
 
     log.debug(
         "_container_check_set: Checking object of type '%s' against Set type hint '%s'",
@@ -363,7 +364,7 @@ def _container_check_sequence(
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     :raises SimpleBenchValueError: If origin is not a subclass of Sequence.
     """
-    from .type_hints import _check_instance_of_typehint, log  # pylint: disable=import-outside-toplevel
+    from .type_hints import _check_instance_of_typehint  # pylint: disable=import-outside-toplevel
 
     log.debug(
         "_container_check_sequence: Checking object of type '%s' against Sequence type hint '%s'",
@@ -451,7 +452,7 @@ def _container_check_iterable(
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     :raises SimpleBenchValueError: If origin is not a subclass of Iterable.
     """
-    from .type_hints import _check_instance_of_typehint, log  # pylint: disable=import-outside-toplevel
+    from .type_hints import _check_instance_of_typehint  # pylint: disable=import-outside-toplevel
 
     log.debug(
         "_container_check_iterable: Checking object of type '%s' against Iterable type hint '%s'",
@@ -530,7 +531,7 @@ def _container_check_callable(
     :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
     :raises SimpleBenchValueError: If origin is not a subclass of Callable.
     """
-    from .type_hints import _is_subtype_of_typehint, log  # pylint: disable=import-outside-toplevel
+    from .type_hints import _is_subtype_of_typehint  # pylint: disable=import-outside-toplevel
 
     log.debug(
         "_container_check_callable: Checking object of type '%s' against Callable type hint '%s'",

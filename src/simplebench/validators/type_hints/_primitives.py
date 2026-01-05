@@ -5,8 +5,11 @@ from typing import Any, Literal, TypeAlias, Union, get_args, get_origin
 
 from simplebench.exceptions import SimpleBenchTypeError
 
-from ._error_tags import _TypeHintsErrorTag
+from ._cache import _CACHE
 from ._check_result import CheckResult
+from ._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_VALID
+from ._error_tags import _TypeHintsErrorTag
+from ._log import log
 from ._options import Options
 from ._validation_state import ValidationState
 
@@ -49,8 +52,6 @@ def _is_primitive(obj: Any) -> bool:
     :param Any obj: The object to check.
     :return bool: True if the object is a primitive data type, False otherwise.
     """
-    from .type_hints import log  # pylint: disable=import-outside-toplevel
-
     log.debug("_is_primitive: Checking if object of type '%s' isinstance of  '%s'",
               type(obj).__name__, ImmutablePrimitiveTypesTuple)
     try:
@@ -75,14 +76,8 @@ def _check_primitive_instance_of_typehint(
     :param bool raise_on_error: Whether to raise an exception on validation failure.
     :return CheckResult: Tuple indicating (is_valid, is_immutable).
     """
-    from .type_hints import (  # pylint: disable=import-outside-toplevel
-        _CACHE,
-        _IS_IMMUTABLE,
-        _IS_VALID,
-        _NOT_VALID,
-        _check_instance_of_typehint,
-        log,
-    )
+    from .type_hints import _check_instance_of_typehint  # pylint: disable=import-outside-toplevel
+
     log.debug(
         "_check_primitive_instance_of_typehint: Checking primitive object of type '%s' against type hint '%s'",
         type(obj).__name__, type_hint)
