@@ -3,9 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from types import TracebackType
 from typing import Any, Callable, NoReturn, Optional
-
-import pytest
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
@@ -52,9 +51,8 @@ class TestGet(TestSpec):
                             This can be a static string or a callable that returns a string.
                             Defaults to "".
     :type display_on_fail: str | Callable[[], str], optional
-    :param on_fail: Function to call on test failure to raise an exception.
-                    Defaults to pytest.fail.
-    :type on_fail: Callable[[str], NoReturn], optional
+    :param Callable[[str], NoReturn], optional on_fail: Function to call on test failure.
+        Defaults to _fail method which raises AssertionError.
     :param extra: Extra fields for use by test frameworks. It is not used by the TestGet class itself.
                   Defaults to None.
     :type extra: Any, optional
@@ -94,10 +92,13 @@ class TestGet(TestSpec):
     """
     display_on_fail: str | Callable[[], str] = ""
     """String or function to display additional information on test failure."""
-    on_fail: Callable[[str], NoReturn] = pytest.fail
+    on_fail: Callable[[str], NoReturn] | None = None
     """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestGet class itself. Default is None."""
+
+    _creation_traceback: Optional[TracebackType] = None
+    """The traceback at the point where the TestAction was created."""
 
     def __post_init__(self) -> None:
         """Post-initialization validation checks."""
@@ -123,6 +124,7 @@ class TestGet(TestSpec):
             raise TypeError("on_fail must be callable")
         if self.display_on_fail and not (isinstance(self.display_on_fail, str) or callable(self.display_on_fail)):
             raise TypeError("display_on_fail must be a str or callable if provided")
+        super().__post_init__()
 
     def run(self) -> None:
         """Execute the attribute get test."""
@@ -134,6 +136,8 @@ class TestGet(TestSpec):
         # feature that is just not understood by pylint.
         __tracebackhide__ = True  # pylint: disable=unused-variable
 
+        test_description: str = f"{self.name}"
+
         # Errors found during the test
         errors: list[str] = []
 
@@ -141,7 +145,10 @@ class TestGet(TestSpec):
         expected = _resolve_deferred_value(self.expected)
         validate = _resolve_deferred_value(self.validate)
         if obj is NO_OBJ_ASSIGNED:
-            self.on_fail(f"{self.name}: obj for test is not assigned")
+            if self.on_fail:
+                self.on_fail(f"{self.name}: obj for test is not assigned")
+            else:
+                self._fail(f"{self.name}: obj for test is not assigned")
             raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
 
         if self.exception is None and expected is NO_EXPECTED_VALUE and validate is None:
@@ -176,5 +183,7 @@ class TestGet(TestSpec):
 
         # Report any errors found during the get portion of the test
         if errors:
-            self.on_fail(self.name + ": " + "\n".join(errors))
-            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+            if self.on_fail:
+                self.on_fail(test_description + ": " + "\n".join(errors))
+            else:
+                self._fail(test_description + ": " + "\n".join(errors))

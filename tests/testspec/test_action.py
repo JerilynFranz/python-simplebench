@@ -1,15 +1,17 @@
 """TestSpec testing framework - test actions."""
+import logging
 from dataclasses import dataclass
 from enum import Enum
+from types import TracebackType
 from typing import Any, Callable, NoReturn, Optional
-
-import pytest
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
 from .constants import NO_EXPECTED_VALUE
 from .deferred import Deferred, _resolve_deferred_value
 from .helpers import _process_exception, no_assigned_action
+
+log = logging.getLogger(__name__)
 
 
 @dataclass
@@ -52,8 +54,8 @@ class TestAction(TestSpec):
     :type exception: Optional[type[BaseException]], optional
     :param exception_tag: Expected tag (if any) to be found in the exception message. Defaults to None.
     :type exception_tag: Optional[str], optional
-    :param on_fail: Function to call on test failure. Defaults to pytest.fail.
-    :type on_fail: Callable[[str], NoReturn], optional
+    :param on_fail: Function to call on test failure. Defaults to _fail method which raises AssertionError.
+    :type on_fail: Callable[[str], NoReturn] | None, optional
     :param extra: Extra data for use by test frameworks. It is not used by the TestAction class itself.
                   Defaults to None.
     :type extra: Any, optional
@@ -87,7 +89,7 @@ class TestAction(TestSpec):
     """Expected tag (if any) to be found in the exception message."""
     display_on_fail: str | Callable[[], str] = ""
     """String or function to display additional information on test failure."""
-    on_fail: Callable[[str], NoReturn] = pytest.fail
+    on_fail: Callable[[str], NoReturn] | None = None
     """Function to call on test failure. (default is pytest.fail)
 
     The function must accept a single string argument containing the failure message
@@ -95,6 +97,9 @@ class TestAction(TestSpec):
     """
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestAction class itself. Default is None."""
+
+    _creation_traceback: Optional[TracebackType] = None
+    """The traceback at the point where the TestAction was created."""
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """Run the test based on the provided TestSpec entry.
@@ -145,4 +150,7 @@ class TestAction(TestSpec):
             errors.extend(new_errors)
 
         if errors:
-            self.on_fail(test_description + ": " + "\n".join(errors))
+            if self.on_fail:
+                self.on_fail(test_description + ": " + "\n".join(errors))
+            else:
+                self._fail(test_description + ": " + "\n".join(errors))

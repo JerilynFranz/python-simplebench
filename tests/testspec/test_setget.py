@@ -3,9 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from types import TracebackType
 from typing import Any, Callable, NoReturn, Optional
-
-import pytest
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
@@ -106,11 +105,14 @@ class TestSetGet(TestSpec):
     The validation function should call the `on_fail` method to raise an exception if the object is not
     in a valid state. None should be returned if the object is valid.
     """
-    on_fail: Callable[[str], NoReturn] = pytest.fail
-    """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
+    on_fail: Callable[[str], NoReturn] | None = None
+    """Function to call on test failure. The function should raise an exception (default is _fail method)."""
 
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestSetGet class itself. Default is None."""
+
+    _creation_traceback: Optional[TracebackType] = None
+    """The traceback at the point where the TestAction was created."""
 
     def __post_init__(self) -> None:
         """Post-initialization validation checks."""
@@ -132,6 +134,7 @@ class TestSetGet(TestSpec):
             raise TypeError("set_exception_tag must be a str or Enum if provided")
         if not callable(self.on_fail):
             raise TypeError("on_fail must be callable")
+        super().__post_init__()
 
     def run(self) -> None:
         """Execute the attribute set/get test."""
@@ -143,15 +146,20 @@ class TestSetGet(TestSpec):
         # feature that is just not understood by pylint.
         __tracebackhide__ = True  # pylint: disable=unused-variable
 
+        test_description: str = f"{self.name}"
+
         # Errors found during the test
         errors: list[str] = []
 
-        if self.obj is NO_OBJ_ASSIGNED:
-            self.on_fail(f"{self.name}: obj for test is not assigned")
+        obj = _resolve_deferred_value(self.obj)
+        if obj is NO_OBJ_ASSIGNED:
+            if self.on_fail:
+                self.on_fail(f"{self.name}: obj for test is not assigned")
+            else:
+                self._fail(f"{self.name}: obj for test is not assigned")
             raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
 
         # Resolve any deferred values for obj
-        obj = _resolve_deferred_value(self.obj)
         expected = _resolve_deferred_value(self.expected)
         validate = _resolve_deferred_value(self.validate)
 
@@ -175,7 +183,10 @@ class TestSetGet(TestSpec):
 
         # bail now if there was an error during the set operation
         if errors:
-            self.on_fail(self.name + ": " + "\n".join(errors))
+            if self.on_fail:
+                self.on_fail(test_description + ": " + "\n".join(errors))
+            else:
+                self._fail(test_description + ": " + "\n".join(errors))
             raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
 
         # If there is no get_exception or expected value or validate function, we can't do any validation
@@ -214,7 +225,10 @@ class TestSetGet(TestSpec):
             )
             errors.extend(new_errors)
 
-        # Report any errors found during the get portion of the test
+        # Report any errors found during the validate portion of the test
         if errors:
-            self.on_fail(self.name + ": " + "\n".join(errors))
+            if self.on_fail:
+                self.on_fail(test_description + ": " + "\n".join(errors))
+            else:
+                self._fail(test_description + ": " + "\n".join(errors))
             raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from

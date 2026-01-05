@@ -151,7 +151,7 @@ def test_is_immutable(typespec: TestSpec) -> None:
         name="Check immutable primitive int value against union type hint (int | str)",
         action=isinstance_of_typehint,
         args=[1, int | str],
-        assertion=Assert.EQUAL,
+        assertion=Assert.NOT_EQUAL,
         expected=True)),
 ])
 def test_is_instance_of_typehint(typespec: TestSpec) -> None:
@@ -160,4 +160,4 @@ def test_is_instance_of_typehint(typespec: TestSpec) -> None:
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=DEBUG"])
+    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])
