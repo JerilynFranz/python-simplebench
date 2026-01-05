@@ -10,10 +10,10 @@ from simplebench.types import Immutable, is_immutable_typeddict_typehint
 from ._cache import _CACHE
 from ._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
 from ._error_tags import _TypeHintsErrorTag
-from .check_result import CheckResult
-from .options import Options
+from ._check_result import CheckResult
+from ._options import Options
 from .typed_dict_key_info import TypedDictKeyInfo
-from .validation_state import ValidationState
+from ._validation_state import ValidationState
 
 if sys.version_info >= (3, 11):
     from typing import Never

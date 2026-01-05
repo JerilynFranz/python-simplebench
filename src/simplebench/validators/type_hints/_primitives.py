@@ -6,9 +6,9 @@ from typing import Any, Literal, TypeAlias, Union, get_args, get_origin
 from simplebench.exceptions import SimpleBenchTypeError
 
 from ._error_tags import _TypeHintsErrorTag
-from .check_result import CheckResult
-from .options import Options
-from .validation_state import ValidationState
+from ._check_result import CheckResult
+from ._options import Options
+from ._validation_state import ValidationState
 
 __all__ = (
     "ImmutablePrimitiveTypes",

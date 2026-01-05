@@ -107,4 +107,3 @@ class TypedDictKeyInfo:
                         or the original value type if neither.
         """
         return self._value_type
-        return self._value_type

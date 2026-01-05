@@ -61,7 +61,7 @@ from simplebench.validators.type_hints.type_hints import (
     ImmutablePrimitiveTypes,
     ImmutablePrimitiveTypesTuple,
     TypedDictKeyInfo,
-    is_immutable,
+    is_immutable_instance,
     isinstance_of_typehint,
 )
 
@@ -69,43 +69,43 @@ from simplebench.validators.type_hints.type_hints import (
 @pytest.mark.parametrize('typespec', [
     idspec('IMMUTABLE_001', TestAction(
         name="Check immutable primitive: int",
-        action=is_immutable,
+        action=is_immutable_instance,
         args=[1, ImmutablePrimitiveTypes],
         assertion=Assert.EQUAL,
         expected=True)),
     idspec('IMMUTABLE_002', TestAction(
         name="Check immutable primitive: float",
-        action=is_immutable,
+        action=is_immutable_instance,
         args=[3.14, ImmutablePrimitiveTypes],
         assertion=Assert.EQUAL,
         expected=True)),
     idspec('IMMUTABLE_003', TestAction(
         name="Check immutable primitive: str",
-        action=is_immutable,
+        action=is_immutable_instance,
         args=["hello", ImmutablePrimitiveTypes],
         assertion=Assert.EQUAL,
         expected=True)),
     idspec('IMMUTABLE_004', TestAction(
         name="Check immutable primitive: bool",
-        action=is_immutable,
+        action=is_immutable_instance,
         args=[True, ImmutablePrimitiveTypes],
         assertion=Assert.EQUAL,
         expected=True)),
     idspec('IMMUTABLE_005', TestAction(
         name="Check immutable primitive: bytes",
-        action=is_immutable,
+        action=is_immutable_instance,
         args=[b'bytes', ImmutablePrimitiveTypes],
         assertion=Assert.EQUAL,
         expected=True)),
     idspec('IMMUTABLE_006', TestAction(
         name="Check immutable primitive types: complex",
-        action=is_immutable,
+        action=is_immutable_instance,
         args=[complex(1, 2), ImmutablePrimitiveTypes],
         assertion=Assert.EQUAL,
         expected=True)),
     idspec('IMMUTABLE_007', TestAction(
         name="Check immutable primitive: int",
-        action=is_immutable,
+        action=is_immutable_instance,
         args=[1, int],
         assertion=Assert.EQUAL,
         expected=True)),

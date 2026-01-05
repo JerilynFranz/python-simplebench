@@ -8,6 +8,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.types import Immutable
 
 from ._cache import _CACHE
+from ._check_result import CheckResult
 from ._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
 from ._containers import (
     _container_check_callable,
@@ -18,14 +19,13 @@ from ._containers import (
     _container_check_typeddict,
 )
 from ._error_tags import _TypeHintsErrorTag
+from ._options import Options
 from ._primitives import ImmutablePrimitiveTypesTuple, _check_primitive_instance_of_typehint, _is_primitive
-from .check_result import CheckResult
-from .options import Options
-from .validation_state import ValidationState
+from ._validation_state import ValidationState
 
 __all__ = (
     "isinstance_of_typehint",
-    "is_immutable",
+    "is_immutable_instance",
 )
 
 T = TypeVar("T", bound=TypedDict)  # type: ignore[invalidTypeForm]
@@ -79,7 +79,7 @@ def isinstance_of_typehint(
         obj, type_hint, options, parents=set(), raise_on_error=False, context="root")
     return result.valid
 
-def is_immutable(
+def is_immutable_instance(
         obj: Any,
         type_hint: Any,
         *,
