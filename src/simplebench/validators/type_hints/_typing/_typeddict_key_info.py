@@ -7,13 +7,28 @@ about a TypedDict key's required/optional/readonly status and its contained type
 :property bool | None is_optional: True if NotRequired, False if Required, None if neither.
 :property bool is_readonly: True if ReadOnly, False otherwise.
 :property str key: The TypedDict key name.
-:property object value_type: The value type argument contained in Required/NotRequired, or the original value type.
+:property object value_type: The value type argument contained in Required/NotRequired/ReadOnly, or the original value type.
 """
+import sys
+from typing import get_args, get_origin
+
 from simplebench.exceptions import SimpleBenchTypeError
 
 from .._error_tags import _TypedDictKeyInfoErrorTag
+from .._log import log
 
 __all__ = ('TypedDictKeyInfo',)
+
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, ReadOnly, Required
+else:
+    try:
+        from typing_extensions import NotRequired, ReadOnly, Required
+    except ImportError as e:
+        raise ImportError(
+            "SimpleBench requires 'typing_extensions' for Python < 3.11 "
+            "to support Required, NotRequired, ReadOnly.") from e
 
 class TypedDictKeyInfo:
     """Information about a TypedDict key's required/optional status and contained type.
@@ -42,30 +57,30 @@ class TypedDictKeyInfo:
         # Loop to unwrap decorators like Required, NotRequired, and ReadOnly.
         # This handles nested wrappers like ReadOnly[Required[int]].
         while True:
-            typ_type = type(current_type)
-            module: str = typ_type.__module__
-            qualname: str = typ_type.__qualname__
-
-            if qualname in {"Required", "NotRequired", "ReadOnly"}:
-                if module not in {"typing", "typing_extensions"}:
-                    raise SimpleBenchTypeError(
-                        f"TypedDict key '{key}' in class {td_cls.__name__} has unexpected type wrapper "
-                        f"'{qualname}' from module '{module}', expected 'typing' or 'typing_extensions'.",
-                        tag=_TypedDictKeyInfoErrorTag.UNEXPECTED_TYPEDDICT_WRAPPER_MODULE)
-
-                if qualname == "Required":
+            origin = get_origin(current_type)
+            if origin in {Required, NotRequired, ReadOnly}:
+                if origin is Required:
                     self._is_required = True
-                elif qualname == "NotRequired":
+                elif origin is NotRequired:
                     self._is_required = False
-                elif qualname == "ReadOnly":
+                elif origin is ReadOnly:
                     self._is_readonly = True
-
-                current_type = current_type.__args__[0]
+                current_type = get_args(current_type)[0]
             else:
                 # No more wrappers to unwrap, we've found the value type.
                 break
 
+        origin = get_origin(current_type)
+        if origin in {Required, NotRequired, ReadOnly}:
+            raise SimpleBenchTypeError(
+                f"TypedDict key '{key}' in class {td_cls.__name__} has unprocessed "
+                f"'{origin}' wrapper. Failed to 'unwrap' type.",
+                tag=_TypedDictKeyInfoErrorTag.NESTED_REQUIRED_NOTREQUIRED_READONLY)
         self._value_type: object = current_type
+
+        log.debug(
+            "TypedDictKeyInfo: Key '%s' in TypedDict '%s' - is_required: %s, is_readonly: %s, value_type: %s",
+            key, td_cls.__name__, self._is_required, self._is_readonly, current_type)
 
     @property
     def is_required(self) -> bool:

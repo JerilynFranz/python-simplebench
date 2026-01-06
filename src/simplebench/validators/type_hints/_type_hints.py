@@ -10,6 +10,7 @@ from ._cache import _CACHE
 from ._check_result import CheckResult
 from ._constants import IS_IMMUTABLE, IS_VALID, NOT_IMMUTABLE, NOT_VALID
 from ._error_tags import _TypeHintsErrorTag
+from ._forward_references import resolve_type_hint
 from ._generic import _check_generic
 from ._immutable import _is_immutable
 from ._log import log
@@ -35,7 +36,10 @@ def isinstance_of_typehint(
         strict_typed_dict: bool = False,
         depth: int = 50,
         consume_iterators: bool = False,
-        noncachable_types: set[type[Any]] | None = None) -> bool:
+        noncachable_types: set[type[Any]] | None = None,
+        globalns:dict[str, Any] | None = None,
+        localns:dict[str, Any] | None = None,
+        ) -> bool:
     """
     Check if an object is an instance of a given type hint.
     Supports basic types, generics, Union, Literal, and TypedDict.
@@ -83,9 +87,48 @@ def isinstance_of_typehint(
 
     Slow in this context means on the order of milliseconds for complex nested
     structures. And it can be much slower if the structure is very deep or complex.
+    An example of a pathological case would be a list of millions of items
+    where each item must be validated against a complex type hint. A
+    type like `list[str | int | dict[str, list[float | None]]]` with
+    millions of items would be very slow to validate the first time.
+
+    In such cases, consider simplifying the type hints. For example, using
+    `list[Any]` or `list[object]` would be much faster, though less precise
+    or simply write a custom validation function for your specific use case.
+
+    It is **MUCH** faster to do something like:
+
+    .. code-block:: python
+        if isinstance(data, list):
+           valid = all(isinstance(item, (str, int, dict)) for item in data)
+        else:
+           valid = False
+    
+    than to do:
+    .. code-block:: python
+        valid = isinstance_of_typehint(data, list[str | int | dict[str, list[float | None]]])
 
     This can be greatly mitigated by caching if you use immutable objects and
     repeatedly check the same type hints against them or sub-objects within them.
+
+    Where isinstance_of_typehint is most useful is in validating
+    configuration data or other data structures that are not performance-critical
+    but need to be validated against complex type hints at runtime.
+
+    Things like nested configuration dictionaries (particularly TypedDicts),
+    JSON data structures, or other complex data that benefit from type hint
+    validation but are not performance-critical.
+
+    This is a simple and easily understandable method for runtime type hint
+    validation, but it cannot cover all edge cases due to the complexity of
+    Python's type hinting system. It is designed to handle the most common
+    use cases effectively.
+
+    If you need both performance and type hint validation, consider using
+    specialized libraries like `pydantic <https://pydantic-docs.helpmanual.io/>`_ 
+    or `attrs <https://www.attrs.org/en/stable/>`_ that are optimized
+    for runtime data validation with type hints. They are more complex
+    to use but can offer far better performance for specific use cases.
 
     A :class:`~simplebench.types.Immutable` superclass can be used to mark
     user-defined classes as immutable for caching purposes. There is also
@@ -101,9 +144,23 @@ def isinstance_of_typehint(
     in general. You should benchmark your specific use case if performance is a concern.
 
     .. warning::
-        It **DOES NOT** support string-based type hints (e.g., `'int'`, `'List[int]'`).
-        They must be actual type objects or typing constructs. It does not evaluate
-        string type hints such as those used in `from __future__ import annotations`.
+        While it tries to handle forward references in type hints (such as those generated
+        by `from __future__ import annotations`), it may not cover all edge cases.
+        If you have complex forward references, consider resolving them manually
+        before passing them to this function and not using `from __future__ import annotations`
+        if you do not actually have to.
+        
+        If you pass `globalns` and `localns`, it will use those to help resolve forward
+        references in type hints. If you do not provide them, it may not be able to
+        resolve all forward references correctly.
+        
+        There is a performance cost to inferring these namespaces or resolving forward
+        references, so if you can provide the type hint without usng forward references,
+        it is strongly recommended.
+
+        Deeply nested or cyclic structures may lead to performance issues or
+        maximum recursion depth errors. The `depth` parameter can help mitigate
+        this by limiting the recursion depth.
 
     It is important to note that type hint validation is not foolproof and
     may not cover all edge cases. This is designed for common use cases.
@@ -143,9 +200,18 @@ def isinstance_of_typehint(
         caching less effective (and tending to bloat the cache without significant performance benefit).
         The internal default set includes NoneType, bool, int, float, complex, str, and bytes and they
         will always be treated as non-cachable.
+    :param dict[str, Any] | None globalns: Optional global namespace for resolving forward references.
+    :param dict[str, Any] | None localns: Optional local namespace for resolving forward references.
 
     :return bool: `True` if the object matches the type hint, `False` otherwise.
     """
+    type_hint_kwargs = {'type_hint': type_hint}
+    if globalns is not None:
+        type_hint_kwargs['globalns'] = globalns
+    if localns is not None:
+        type_hint_kwargs['localns'] = localns
+    type_hint = resolve_type_hint(**type_hint_kwargs)
+
     validate.type_hint_arg(type_hint)
     validate.depth_arg(depth)
     validate.strict_typed_dict_arg(strict_typed_dict)

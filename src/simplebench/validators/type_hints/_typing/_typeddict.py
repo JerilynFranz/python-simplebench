@@ -165,15 +165,17 @@ def _check_typing_typeddict(
     log.debug(
         "_container_check_typeddict: TypedDict '%s' annotations: %s",
         type_hint, annotations)
-    for key, value_type in annotations.items():
+    for key in annotations.keys():
         if key == '__immutable__' and is_immutable_typed_dict:
             continue
         if key in obj:
             dict_key_info = TypedDictKeyInfo(key, type_hint)
+            value = obj[key]
+            value_type = dict_key_info.value_type
             log.debug(
                 "_container_check_typeddict: Checking key '%s', value '%s in TypedDict object against type hint '%s'",
-                key, value_type, dict_key_info.value_type)
-            check_result = _check_instance_of_typehint(obj[key], value_type, options, new_parents,
+                key, value, value_type)
+            check_result = _check_instance_of_typehint(value, value_type, options, new_parents,
                                 raise_on_error=False, context="typeddict_value")
             if not check_result.valid:
                 log.debug(

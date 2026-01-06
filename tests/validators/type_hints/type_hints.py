@@ -550,7 +550,7 @@ def typeddict_testspec() -> list[TestSpec]:
             name="{'a': 1, 'b': 'x', 'c': 3.14} is a TypedDict with invalid extra field 'c'",
             action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x', 'c': 3.14}, TDImplicitRequiredDict],
             assertion=Assert.FALSE)),
-        idspec('TYPEDDICT_007', TestAction( 
+        idspec('TYPEDDICT_007', TestAction(
             name="{} is a TypedDict with all required fields missing",
             action=isinstance_of_typehint,
             args=[{}, TDImplicitRequiredDict],
@@ -586,11 +586,21 @@ def typeddict_testspec() -> list[TestSpec]:
             assertion=Assert.FALSE)),
     ])
 
-    class TDMixedDict(TypedDict):
-        """TypedDict with mixed required and not required fields."""
+    class TDMixedRequiredFieldsDict(TypedDict, total=True):
+        """TypedDict with mixed required and not required fields (total=True).
+        a - required
+        c - required
+        """
         a: int
-        b: NotRequired[str]
         c: Required[float]
+
+    class TDMixedDict(TDMixedRequiredFieldsDict, total=False):
+        """TypedDict with mixed required and not required fields.
+        a - required
+        b - not required
+        c - required
+        """
+        b: NotRequired[str]
 
     testspecs.extend([
         idspec('TYPEDDICT_013', TestAction(
@@ -685,4 +695,4 @@ def test_collections(typespec: TestSpec) -> None:
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=INFO", '-s'])
+    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])
