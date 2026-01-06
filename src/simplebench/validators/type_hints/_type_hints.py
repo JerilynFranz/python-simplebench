@@ -366,7 +366,7 @@ def _check_instance_of_typehint(
             return CheckResult(IS_VALID, IS_IMMUTABLE)
 
     log.debug("_check_instance_of_typehint: Checking if type_hint '%s' is a primitive type hint", type_hint)
-    if type_hint in {int, float, complex, str, bytes, bool, bytes, str}:
+    if type_hint in {int, float, complex, bool, bytes, str}:
         log.debug("_check_instance_of_typehint: Checking if object (%s) matches type hint for primitives check '%s'",
                   type(obj).__name__, type_hint)
         if isinstance(obj, type_hint):
