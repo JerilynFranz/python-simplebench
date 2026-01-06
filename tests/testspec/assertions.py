@@ -34,8 +34,7 @@ class Assert(str, Enum):
     :vartype ISINSTANCE: str
     :cvar ISSUBCLASS: Checks if a class is a subclass of another class.
     :vartype ISSUBCLASS: str
-    :cvar LEN: Checks the length of a collection against an expected value.
-    :vartype LEN: str
+    :cvar str LEN: Checks the length of a collection against an expected value.
     """
     EQUAL = '=='
     NOT_EQUAL = '!='
@@ -52,6 +51,8 @@ class Assert(str, Enum):
     ISINSTANCE = 'isinstance'
     ISSUBCLASS = 'issubclass'
     LEN = 'len'
+    TRUE = 'true'
+    FALSE = 'false'
 
 
 def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
@@ -114,6 +115,12 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
         case Assert.IS_NOT_NONE:
             if found is None:
                 return f"assertion failed: (found={found}) is not None"
+        case Assert.TRUE:
+            if not found is True:
+                return f"assertion failed: (found={found}) is True"
+        case Assert.FALSE:
+            if not found is False:
+                return f"assertion failed: (found={found}) is False"
         case Assert.LEN:
             if not len(found) == expected:
                 return f"assertion failed: len(found={len(found)}) == (expected={expected})"
