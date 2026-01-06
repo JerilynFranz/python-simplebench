@@ -3,7 +3,7 @@
 import logging
 import os
 import sys
-from collections.abc import Iterable, Mapping, Sequence, Set
+from collections.abc import Collection, Iterable, Mapping, Sequence, Set
 from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, Any, Literal, TypedDict
@@ -561,5 +561,61 @@ def test_typeddict(typespec: TestSpec) -> None:
     typespec.run()
 
 
+@pytest.mark.parametrize('typespec', [
+    idspec('COLLECTION_001', TestAction(
+        name='[1, 2, 3] is a Collection',
+        action=isinstance_of_typehint,
+        args=[[1, 2, 3], Collection],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('COLLECTION_002', TestAction(
+        name='[1, 2, 3] is a Collection[int]',
+        action=isinstance_of_typehint,
+        args=[[1, 2, 3], Collection[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('COLLECTION_003', TestAction(
+        name='(1, 2, 3) is a Collection[int]',
+        action=isinstance_of_typehint,
+        args=[(1, 2, 3), Collection[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('COLLECTION_004', TestAction(
+        name='{1, 2, 3} is a Collection[int]',
+        action=isinstance_of_typehint,
+        args=[{1, 2, 3}, Collection[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('COLLECTION_005', TestAction(
+        name='frozenset({1, 2, 3}) is a Collection[int]',
+        action=isinstance_of_typehint,
+        args=[frozenset({1, 2, 3}), Collection[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('COLLECTION_006', TestAction(
+        name='[1, "a", 3] is not a Collection[int]',
+        action=isinstance_of_typehint,
+        args=[[1, "a", 3], Collection[int]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('COLLECTION_007', TestAction(
+        name='123 is not a Collection',
+        action=isinstance_of_typehint,
+        args=[123, Collection],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('COLLECTION_008', TestAction(
+        name='empty list is a Collection[int]',
+        action=isinstance_of_typehint,
+        args=[[], Collection[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+])
+def test_collections(typespec: TestSpec) -> None:
+    """Test Collection types."""
+    clear_typehint_cache()
+    typespec.run()
+
+
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=INFO", '-s'])
+    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])

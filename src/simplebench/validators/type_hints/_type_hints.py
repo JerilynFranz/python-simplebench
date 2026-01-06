@@ -1,26 +1,26 @@
 """Validation functions for type hints and instances against those type hints."""
-from collections.abc import Callable, Hashable, Iterable, Mapping, Sequence, Set
-from types import MappingProxyType, NoneType, UnionType
+from collections.abc import Callable, Collection, Hashable, Iterable, Mapping, Sequence, Set
+from types import NoneType, UnionType
 from typing import Annotated, Any, Literal, TypedDict, TypeVar, Union, get_args, get_origin, is_typeddict
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.types import Immutable
 
 from ._cache import _CACHE
 from ._check_result import CheckResult
-from ._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
-from ._containers import (
-    _container_check_callable,
-    _container_check_iterable,
-    _container_check_mapping,
-    _container_check_sequence,
-    _container_check_set,
-    _container_check_typeddict,
+from ._collections_abc import (
+    _check_collections_abc_callable,
+    _check_collections_abc_collection,
+    _check_collections_abc_iterable,
+    _check_collections_abc_mapping,
+    _check_collections_abc_sequence,
+    _check_collections_abc_set,
 )
+from ._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
 from ._error_tags import _TypeHintsErrorTag
+from ._immutable import _is_immutable
 from ._log import log
 from ._options import Options
-from ._primitives import ImmutablePrimitiveTypesTuple
+from ._typing import _check_typing_literal, _check_typing_typeddict, _check_typing_union
 from ._validation_state import ValidationState
 
 __all__ = (
@@ -159,7 +159,6 @@ def _check_instance_of_typehint(
         type_hint = args[0]
         return _check_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error, context=context)
 
-
     if obj is None:
         return _check_none_instance_of_typehint(obj, type_hint, origin, args, options, new_parents, raise_on_error)
     elif type_hint in {None, NoneType}:
@@ -208,10 +207,10 @@ def _check_instance_of_typehint(
         type(obj).__name__)
 
     if origin in (Union, UnionType):
-        return _union_check(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+        return _check_typing_union(obj, type_hint, origin, args, options, new_parents, raise_on_error)
 
     if origin is Literal:
-        return _literal_check(obj, type_hint, origin, args, options, raise_on_error)
+        return _check_typing_literal(obj, type_hint, origin, args, raise_on_error)
 
     # If we have an unsubscripted generic container, get_origin() returns None.
     # We need to manually set the origin and args to handle it like a
@@ -238,20 +237,23 @@ def _check_instance_of_typehint(
     # and that it is the most specific one available.
     result: CheckResult | None = None
     if is_typeddict(type_hint):
-        result = _container_check_typeddict(obj, type_hint, options, new_parents, raise_on_error)
+        result = _check_typing_typeddict(obj, type_hint, options, new_parents, raise_on_error)
     elif origin:
         if issubclass(origin, Mapping):
-            result = _container_check_mapping(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+            result = _check_collections_abc_mapping(obj, type_hint, origin, args, options, new_parents, raise_on_error)
         elif issubclass(origin, Set):
-            result = _container_check_set(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+            result = _check_collections_abc_set(obj, type_hint, origin, args, options, new_parents, raise_on_error)
         elif issubclass(origin, Sequence):
-            result = _container_check_sequence(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+            result = _check_collections_abc_sequence(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+        elif issubclass(origin, Collection):
+            result = _check_collections_abc_collection(
+                obj, type_hint, origin, args, options, new_parents, raise_on_error)
         elif issubclass(origin, Iterable):
-            result = _container_check_iterable(obj, type_hint, origin, args, options, new_parents, raise_on_error)
+            result = _check_collections_abc_iterable(obj, type_hint, origin, args, options, new_parents, raise_on_error)
         elif issubclass(origin, Callable):
-            result = _container_check_callable(obj, type_hint, origin, args, raise_on_error)
+            result = _check_collections_abc_callable(obj, type_hint, origin, args, raise_on_error)
 
-    # If no container check was applicable, it's an unhandled type.
+    # If no collections check was applicable, it's an unhandled type.
     if result is None:
         if raise_on_error:
             raise SimpleBenchTypeError(
@@ -270,18 +272,6 @@ def _check_instance_of_typehint(
             tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
 
     return CheckResult(is_valid, is_imm)
-
-def _is_immutable(obj: Any) -> bool:
-    """
-    Check if an object is Immutable according to SimpleBench's definition.
-
-    :param Any obj: The object to check.
-    :return bool: True if the object is Immutable, False otherwise.
-    """
-    try:
-        return isinstance(obj, Immutable)
-    except (TypeError, ValueError, AttributeError):
-        return False
 
 def _plain_type_check(
         obj: Any,
@@ -306,87 +296,6 @@ def _plain_type_check(
         if is_imm:
             _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
         return CheckResult(_IS_VALID, is_imm)
-    return CheckResult(_NOT_VALID, _is_immutable(obj))
-
-def _literal_check(
-        obj: Any,
-        type_hint: Any,
-        origin: Any,
-        args: tuple,
-        options: Options,
-        raise_on_error: bool = False) -> CheckResult:
-    """Handle Literal types.
-    
-    :param Any obj: The object to check.
-    :param Any type_hint: The type hint to check against.
-    :param Any origin: The origin type of the type hint.
-    :param tuple args: The type arguments of the Literal type hint.
-    :param Options options: Options for type hint validation.
-    :param bool raise_on_error: Whether to raise an exception on validation failure.
-    :return CheckResult: Tuple indicating (is_valid, is_immutable).
-    :raises SimpleBenchTypeError: If raise_on_error is True and validation fails.
-    """
-    if origin is not Literal:  # Sanity check for bad calls
-        raise SimpleBenchValueError(
-            f"Type hint '{type_hint}' is not a Literal type.",
-            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
-
-    is_valid = obj in args
-    if is_valid:
-        # Literals are always immutable values
-        _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
-        return CheckResult(_IS_VALID, _IS_IMMUTABLE)
-
-    if raise_on_error:
-        raise SimpleBenchTypeError(
-            f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
-            tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-    return CheckResult(_NOT_VALID, _is_immutable(obj))
-
-def _union_check(
-        obj: Any,
-        type_hint: Any,
-        origin: Any,
-        args: tuple,
-        options: Options,
-        parents: set[ValidationState],
-        raise_on_error: bool = False) -> CheckResult:
-    """Handle Union types first as an exclusive check. 
-    
-    :param Any obj: The object to check.
-    :param Any type_hint: The type hint to check against.
-    :param tuple args: The type arguments of the Union type hint.
-    :param Options options: Options for type hint validation.
-    :param set[ValidationState] parents: Set of parent object IDs to detect cycles.
-    :param bool raise_on_error: Whether to raise an exception on validation failure.
-    :return CheckResult: Tuple indicating (is_valid, is_immutable).
-    :raises SimpleBenchTypeError: If raise_on_error is True and validation fails
-    :raises SimpleBenchValueError: If type_hint is not a Union type.
-    """
-    log.debug("_union_check: Checking object of type '%s' against Union type hint '%s'",
-                type(obj).__name__, type_hint)
-    if origin not in (Union, UnionType):  # Sanity check for bad calls
-        raise SimpleBenchValueError(
-            f"Type hint '{type_hint}' is not a Union type.",
-            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
-    new_parents = parents.copy()
-    new_parents.add(ValidationState(id(obj), type_hint, "union"))
-    for arg in args:
-        # Recursively check against each type in the Union
-        is_valid, is_imm = _check_instance_of_typehint(
-            obj, arg, options, new_parents, raise_on_error=False, context="union_item")
-
-        # If a match is found, return immediately
-        if is_valid:
-            # We can cache the result for the specific matching type `arg`
-            if is_imm:
-                _CACHE.add_cache_entry(arg, obj, True, options.noncachable_types)
-            return CheckResult(is_valid, is_imm)
-
-    if raise_on_error:
-        raise SimpleBenchTypeError(
-            f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
-            tag=_TypeHintsErrorTag.VALIDATION_FAILED)
     return CheckResult(_NOT_VALID, _is_immutable(obj))
 
 def _check_none_instance_of_typehint(
@@ -446,47 +355,6 @@ def _check_none_instance_of_typehint(
             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
 
     return check_result
-
-def _is_immutable_data_typehint(type_hint: Any) -> bool:
-    """
-    Check if a type hint represents an immutable data type.
-
-    :param Any type_hint: The type hint to check.
-    :return bool: True if the type hint represents an immutable data type, False otherwise.
-    """
-    log.debug("_is_immutable_data_typehint: Checking if type hint '%s' is immutable", type_hint)
-    origin = get_origin(type_hint)
-    args = get_args(type_hint)
-
-    if origin is Annotated:
-        return _is_immutable_data_typehint(args[0])
-
-    if type_hint in ImmutablePrimitiveTypesTuple:
-        return True
-
-    if origin is frozenset:
-        if args:
-            item_type = args[0]
-            return _is_immutable_data_typehint(item_type)
-        return True  # frozenset with no args is immutable
-
-    if origin is tuple:
-        if args and args[-1] is Ellipsis:
-            item_type = args[0]
-            return _is_immutable_data_typehint(item_type)
-        for item_type in args:
-            if not _is_immutable_data_typehint(item_type):
-                return False
-        return True
-
-    if origin is MappingProxyType:
-        if len(args) == 2:
-            key_type, value_type = args
-            return (_is_immutable_data_typehint(key_type)
-                    and _is_immutable_data_typehint(value_type))
-        return True  # MappingProxyType with no args is immutable
-
-    return False
 
 def _is_subtype_of_typehint(subtype: Any, basetype: Any) -> bool:
     """
