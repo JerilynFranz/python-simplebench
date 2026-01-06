@@ -12,8 +12,8 @@ from .._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
 from .._error_tags import _TypeHintsErrorTag
 from .._log import log
 from .._options import Options
-from .._typed_dict_key_info import TypedDictKeyInfo
 from .._validation_state import ValidationState
+from ._typed_dict_key_info import TypedDictKeyInfo
 
 if sys.version_info >= (3, 11):
     from typing import Never

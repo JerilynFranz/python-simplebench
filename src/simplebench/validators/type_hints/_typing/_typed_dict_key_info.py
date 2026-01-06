@@ -11,7 +11,7 @@ about a TypedDict key's required/optional/readonly status and its contained type
 """
 from simplebench.exceptions import SimpleBenchTypeError
 
-from ._error_tags import _TypedDictKeyInfoErrorTag
+from .._error_tags import _TypedDictKeyInfoErrorTag
 
 __all__ = ('TypedDictKeyInfo',)
 
