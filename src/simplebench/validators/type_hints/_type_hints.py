@@ -284,7 +284,7 @@ def _check_instance_of_typehint(
     if type_hint in {object, Hashable}:
         log.debug(
             "_check_instance_of_typehint: Type hint '%s' - checking if object is primitive type", type_hint)
-        if isinstance(obj, (float, int, str, bool, bytes, complex, bytes, str)):
+        if isinstance(obj, (float, int, bool, complex, bytes, str)):
             log.debug(
                 "_check_instance_of_typehint: Type hint '%s' is automatically valid for primitive objects of type '%s'",
                 type_hint, type(obj).__name__)
