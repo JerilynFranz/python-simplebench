@@ -1,17 +1,9 @@
 """Helper function to validate primitive types against type hints."""
-from collections.abc import Hashable
-from types import NoneType, UnionType
-from typing import Any, Literal, TypeAlias, Union, get_args, get_origin
+from types import NoneType
+from typing import Any, TypeAlias
 
-from simplebench.exceptions import SimpleBenchTypeError
-
-from ._cache import _CACHE
-from ._check_result import CheckResult
-from ._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
-from ._error_tags import _TypeHintsErrorTag
 from ._log import log
-from ._options import Options
-from ._validation_state import ValidationState
+
 
 __all__ = (
     "ImmutablePrimitiveTypes",
@@ -19,7 +11,6 @@ __all__ = (
     "IMMUTABLE_PRIMITIVE_TYPES_SET",
     "_is_primitive_typehint",
     "_is_primitive",
-    "_check_primitive_instance_of_typehint",
 )
 
 ImmutablePrimitiveTypes: TypeAlias = int | str | bytes | bool | float | complex | NoneType
@@ -69,5 +60,3 @@ def _is_primitive(obj: Any) -> bool:
         return isinstance(obj, ImmutablePrimitiveTypesTuple)
     except (TypeError, ValueError, AttributeError):
         return False
-
-
