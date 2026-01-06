@@ -157,25 +157,25 @@ def _validate_and_check_immutability_of_mimic(
         key_info = _TypedDictKeyInfo(key, td_cls)
         expected_type_hint = key_info.value_type
 
-        if is_core_data_primitive_type(expected_type):
+        if is_core_data_primitive_type(expected_type_hint):
             if not is_core_data_primitive(value):
                 if raise_on_error:
                     raise SimpleBenchTypeError(
                         f"Value for key '{key}' has invalid type {type(value)}, "
-                        f"expected core data primitive type {expected_type}",
+                        f"expected core data primitive type {expected_type_hint}",
                         tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE)
                 return (False, False) # Value type mismatch and we don't know immutability
             continue
 
         # Validate nested TypedDict or generic container types
         parents.add(id(data))
-        is_valid, is_immutable = _validate_field_value(value, expected_type, parents)
+        is_valid, is_immutable = _validate_field_value(value, expected_type_hint, parents)
         parents.remove(id(data))
         if not is_valid:
             if raise_on_error:
                 raise SimpleBenchTypeError(
                     f"Value for key '{key}' has invalid type {type(value)}, "
-                    f"expected type {expected_type}",
+                    f"expected type {expected_type_hint}",
                     tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE)
             return (False, False)  # Value type mismatch and we cannot determine immutability
         if not is_immutable:
@@ -185,7 +185,8 @@ def _validate_and_check_immutability_of_mimic(
         _CACHE.add_cache_entry(td_cls, data, True)
     return (True, immutable_children)  # All keys validated successfully, propagate immutability status
 
-def _validate_typed_dict_subclass(td_cls: type[TypedDict], raise_on_error: bool = True) -> bool:  # type: ignore[invalidTypeForm]
+def _validate_typed_dict_subclass(
+        td_cls: type[TypedDict], raise_on_error: bool = True) -> bool:  # type: ignore[invalidTypeForm]
     """Validate a TypedDict subclass schema.
 
     This is not a runtime instance validation, but a static schema validation.
@@ -357,7 +358,7 @@ def _validate_field_value(value, expected_type, parents: set[int], raise_on_erro
             return (False, False)
         if expected_type is Any:
             return (True, False)
-        
+
 
     # Handle Sequences (excluding str/bytes)
     if origin in (list, tuple, Sequence):
@@ -544,7 +545,7 @@ def _validate_mapping_field(
         case _:
             raise SimpleBenchTypeError(
                 "Mapping type must have zero, one, or two type arguments",
-                tag=_TypedDictErrorTag.INVALID_MAPPING_TYPE_ARGS)        
+                tag=_TypedDictErrorTag.INVALID_MAPPING_TYPE_ARGS)
     if not _is_string_key_type(key_type):
         raise SimpleBenchTypeError(
             "Mapping key type must be str, Literal of str, or Annotated[str, ...] "

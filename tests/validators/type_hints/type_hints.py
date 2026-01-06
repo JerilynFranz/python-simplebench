@@ -11,6 +11,17 @@ from typing import Annotated, Any, Literal, TypedDict
 import pytest
 from dotenv import load_dotenv
 
+if sys.version_info >= (3, 11):
+    from typing import Never, NotRequired, Required, ReadOnly
+else:
+    try:
+        from typing_extensions import Never, NotRequired, Required, ReadOnly
+    except ImportError as e:
+        raise ImportError(
+            "SimpleBench requires 'typing_extensions' for Python < 3.11 "
+            "to support Never.") from e
+
+
 log = logging.getLogger(__name__)
 
 # Automatically adjust sys.path to include src/ and tests/ directories for imports if needed.
@@ -509,19 +520,23 @@ def test_iterables(typespec: TestSpec) -> None:
 def typeddict_testspec() -> list[TestSpec]:
     """Generate TypedDict test specifications."""
 
-    class TDRequiredDict(TypedDict):
+    class TDImplicitRequiredDict(TypedDict):
         """TypedDict with required fields."""
         a: int
         b: str
 
     testspecs: list[TestSpec] = [
         idspec('TYPEDDICT_001', TestAction(
-            name="{'a': 1, 'b': 'x'} is a TypedDict with correct types",
-            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x'}, TDRequiredDict],
+            name="{'a': 1, 'b': 'x'} is a TypedDict with correct types and required fields",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x'}, TDImplicitRequiredDict],
             assertion=Assert.TRUE)),
         idspec('TYPEDDICT_002', TestAction(
-            name="{'a': 1, 'b': 1} is a TypedDict with wrong types",
-            action=isinstance_of_typehint, args=[{'a': 1, 'b': 1}, TDRequiredDict],
+            name="{'a': 1, 'b': 1} is a TypedDict with wrong type for 'b' and required fields",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 1}, TDImplicitRequiredDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_002', TestAction(
+            name="{'a': 't', 'b': 'x'} is a TypedDict with wrong type for 'a' and required fields",
+            action=isinstance_of_typehint, args=[{'a': 't', 'b': 'x'}, TDImplicitRequiredDict],
             assertion=Assert.FALSE))
     ]
     return testspecs
