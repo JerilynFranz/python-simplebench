@@ -1,6 +1,6 @@
 """Helper functions to validate user-defined generic types against type hints."""
 from collections.abc import Callable, Collection, Iterable, Mapping, Sequence, Set
-from typing import Any, is_typeddict
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
 

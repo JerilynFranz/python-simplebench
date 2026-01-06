@@ -1,5 +1,5 @@
 """Validation functions for type hints and instances against those type hints."""
-from collections.abc import Callable, Hashable, Iterable, Mapping
+from collections.abc import Hashable
 from types import NoneType, UnionType
 from typing import Any, Literal, TypedDict, TypeVar, Union, get_args, get_origin, is_typeddict
 
