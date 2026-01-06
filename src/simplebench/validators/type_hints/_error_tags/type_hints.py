@@ -6,6 +6,12 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _TypeHintsErrorTag(ErrorTag):
     """Error tags for type hints validation errors."""
+    INVALID_NONCACHABLE_TYPES = "INVALID_NONCACHABLE_TYPES"
+    """The noncachable_types argument is not a type or tuple of types."""
+    INVALID_CONSUME_ITERATORS = "INVALID_CONSUME_ITERATORS"
+    """The consume_iterators argument is not a boolean."""
+    INVALID_STRICT_TYPED_DICT = "INVALID_STRICT_TYPED_DICT"
+    """The strict_typed_dict argument is not a boolean."""
     TYPE_HINT_MISMATCH = "TYPE_HINT_MISMATCH"
     """The object type does not match the expected type hint."""
     INVALID_PRIMITIVE_CHECK = "INVALID_PRIMITIVE_CHECK"

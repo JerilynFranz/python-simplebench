@@ -550,8 +550,75 @@ def typeddict_testspec() -> list[TestSpec]:
             name="{'a': 1, 'b': 'x', 'c': 3.14} is a TypedDict with invalid extra field 'c'",
             action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x', 'c': 3.14}, TDImplicitRequiredDict],
             assertion=Assert.FALSE)),
-
+        idspec('TYPEDDICT_007', TestAction( 
+            name="{} is a TypedDict with all required fields missing",
+            action=isinstance_of_typehint,
+            args=[{}, TDImplicitRequiredDict],
+            assertion=Assert.FALSE)),
     ]
+
+    class TDNotRequiredDict(TypedDict, total=False):
+        """TypedDict with no required fields."""
+        a: int
+        b: str
+
+    testspecs.extend([
+        idspec('TYPEDDICT_008', TestAction(
+            name="{'a': 1, 'b': 'x'} is a TypedDict with correct types and no required fields",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x'}, TDNotRequiredDict],
+            assertion=Assert.TRUE)),
+        idspec('TYPEDDICT_009', TestAction(
+            name="{'a': 1} is a TypedDict with missing field 'b' and no required fields",
+            action=isinstance_of_typehint, args=[{'a': 1}, TDNotRequiredDict],
+            assertion=Assert.TRUE)),
+        idspec('TYPEDDICT_010', TestAction(
+            name="{} is a TypedDict with all fields missing and no required fields",
+            action=isinstance_of_typehint,
+            args=[{}, TDNotRequiredDict],
+            assertion=Assert.TRUE)),
+        idspec('TYPEDDICT_011', TestAction(
+            name="{'a': 't', 'b': 'x'} is a TypedDict with wrong type for 'a' and no required fields",
+            action=isinstance_of_typehint, args=[{'a': 't', 'b': 'x'}, TDNotRequiredDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_012', TestAction(
+            name="{'a': 1, 'b': 'x', 'c': 3.14} is a TypedDict with invalid extra field 'c' and no required fields",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x', 'c': 3.14}, TDNotRequiredDict],
+            assertion=Assert.FALSE)),
+    ])
+
+    class TDMixedDict(TypedDict):
+        """TypedDict with mixed required and not required fields."""
+        a: int
+        b: NotRequired[str]
+        c: Required[float]
+
+    testspecs.extend([
+        idspec('TYPEDDICT_013', TestAction(
+            name="{'a': 1, 'c': 3.14} is a TypedDict with required fields and missing not required field",
+            action=isinstance_of_typehint, args=[{'a': 1, 'c': 3.14}, TDMixedDict],
+            assertion=Assert.TRUE)),
+        idspec('TYPEDDICT_014', TestAction(
+            name="{'a': 1, 'b': 'x', 'c': 3.14} is a TypedDict with all fields present",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x', 'c': 3.14}, TDMixedDict],
+            assertion=Assert.TRUE)),
+        idspec('TYPEDDICT_015', TestAction(
+            name="{'a': 1} is a TypedDict missing required field 'c'",
+            action=isinstance_of_typehint, args=[{'a': 1}, TDMixedDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_016', TestAction(
+            name="{'c': 3.14} is a TypedDict missing required field 'a'",
+            action=isinstance_of_typehint, args=[{'c': 3.14}, TDMixedDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_017', TestAction(
+            name="{'a': 't', 'c': 3.14} is a TypedDict with wrong type for 'a'",
+            action=isinstance_of_typehint, args=[{'a': 't', 'c': 3.14}, TDMixedDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_018', TestAction(
+            name="{'a': 1, 'c': 'pi'} is a TypedDict with wrong type for 'c'",
+            action=isinstance_of_typehint, args=[{'a': 1, 'c': 'pi'}, TDMixedDict],
+            assertion=Assert.FALSE)),
+    ])
+
     return testspecs
 
 @pytest.mark.parametrize('typespec', typeddict_testspec())
@@ -618,4 +685,4 @@ def test_collections(typespec: TestSpec) -> None:
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])
+    pytest.main([__file__, "--log-cli-level=INFO", '-s'])

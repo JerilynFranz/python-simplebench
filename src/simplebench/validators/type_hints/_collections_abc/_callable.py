@@ -1,19 +1,14 @@
 """Helper functions to validate container types against type hints."""
 import inspect
-import sys
-from collections.abc import Callable, Collection, Iterable, Iterator, Mapping, Sequence, Set
-from typing import Any, get_type_hints, is_typeddict
+from collections.abc import Callable
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.types import Immutable, is_immutable_typeddict_typehint
 
-from .._cache import _CACHE
 from .._check_result import CheckResult
-from .._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
+from .._constants import IS_VALID, NOT_IMMUTABLE, NOT_VALID
 from .._error_tags import _TypeHintsErrorTag
 from .._log import log
-from .._options import Options
-from .._validation_state import ValidationState
 
 __all__ = (
     "_check_collections_abc_callable",
@@ -51,11 +46,11 @@ def _check_collections_abc_callable(
             raise SimpleBenchTypeError(
                 f"Object of type '{type(obj).__name__}' is not callable.",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+        return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
     # If no args, just being callable is enough. Callables are not immutable.
     if not args:
-        return CheckResult(_IS_VALID, _NOT_IMMUTABLE)
+        return CheckResult(IS_VALID, NOT_IMMUTABLE)
 
     # Callable[..., ReturnType] (ellipsis means any arguments)
     if args[0] is Ellipsis:
@@ -72,10 +67,10 @@ def _check_collections_abc_callable(
                                 f"Callable's annotated return type '{return_annotation}' is not compatible with "
                                 f"expected return type '{expected_return_type}'.",
                                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-                        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+                        return CheckResult(NOT_VALID, NOT_IMMUTABLE)
             except (ValueError, TypeError):
                 pass  # Built-ins or C callables may not have signatures
-        return CheckResult(_IS_VALID, _NOT_IMMUTABLE)
+        return CheckResult(IS_VALID, NOT_IMMUTABLE)
 
     # Callable[[ArgTypes...], ReturnType]
     param_types = args[0]
@@ -91,7 +86,7 @@ def _check_collections_abc_callable(
                     f"Callable has {len(params)} parameters, expected {len(param_types)} "
                     f"for type hint '{type_hint}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-            return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+            return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
         # Check parameter types if possible
         for param, expected_type in zip(params, param_types):
@@ -103,7 +98,7 @@ def _check_collections_abc_callable(
                             f"Expected parameter type '{expected_type}' is not compatible with "
                             f"callable's annotated parameter type '{param.annotation}' for param '{param.name}'.",
                             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-                    return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+                    return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
         # Check return type if possible
         if return_type is not None and sig.return_annotation is not inspect.Signature.empty:
@@ -114,9 +109,9 @@ def _check_collections_abc_callable(
                         f"Callable's annotated return type '{sig.return_annotation}' does not match "
                         f"expected type hint '{return_type}'.",
                         tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-                return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+                return CheckResult(NOT_VALID, NOT_IMMUTABLE)
     except (ValueError, TypeError):
         # Builtins or C callables may not have signatures; fallback to just callable
-        return CheckResult(_IS_VALID, _NOT_IMMUTABLE)
+        return CheckResult(IS_VALID, NOT_IMMUTABLE)
 
-    return CheckResult(_IS_VALID, _NOT_IMMUTABLE)
+    return CheckResult(IS_VALID, NOT_IMMUTABLE)

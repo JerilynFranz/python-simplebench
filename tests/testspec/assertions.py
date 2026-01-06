@@ -85,59 +85,61 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
     match assertion:
         case Assert.EQUAL:
             if not found == expected:
-                return f"assertion failed: (found={found}) == (expected={expected})"
+                return f"Assert.EQUAL failed: found={found}, expected={expected}"
         case Assert.NOT_EQUAL:
             if not found != expected:
-                return f"assertion failed: (found={found}) != (expected={expected})"
+                return f"Assert.NOT_EQUAL failed: found={found}, expected={expected}"
         case Assert.LESS_THAN:
             if not found < expected:
-                return f"assertion failed: (found={found}) < (expected={expected})"
+                return f"Assert.LESS_THAN failed: found={found}, expected={expected}"
         case Assert.LESS_THAN_OR_EQUAL:
             if not found <= expected:
-                return f"assertion failed: (found={found}) <= (expected={expected})"
+                return f"Assert.LESS_THAN_OR_EQUAL failed: found={found}, expected={expected}"
         case Assert.GREATER_THAN:
             if not found > expected:
-                return f"assertion failed: (found={found}) > (expected={expected})"
+                return f"Assert.GREATER_THAN failed: found={found}, expected={expected}"
         case Assert.GREATER_THAN_OR_EQUAL:
             if not found >= expected:
-                return f"assertion failed: (found={found}) >= (expected={expected})"
+                return f"Assert.GREATER_THAN_OR_EQUAL failed: found={found}, expected={expected}"
         case Assert.IN:
             if not (expected in found):  # pylint: disable=superfluous-parens  # for clarity
-                return f"assertion failed: (found={found}) in (expected={expected})"
+                return f"Assert.IN failed: found={found}, expected={expected}"
         case Assert.NOT_IN:
             if not (expected not in found):  # pylint: disable=superfluous-parens  # for clarity
-                return f"assertion failed: (found={found}) not in (expected={expected})"
+                return f"Assert.NOT_IN failed: found={found}, expected={expected}"
         case Assert.IS:
             if not (found is expected):  # pylint: disable=superfluous-parens  # for clarity
-                return f"assertion failed: (found={found}) is (expected={expected})"
+                return f"Assert.IS failed: found={found}, expected={expected}"
         case Assert.IS_NOT:
             if not (found is not expected):  # pylint: disable=superfluous-parens  # for clarity
-                return f"assertion failed: (found={found}) is not (expected={expected})"
+                return f"Assert.IS_NOT failed: found={found}, expected={expected}"
         case Assert.ISINSTANCE:
-            if not isinstance(found, expected):
-                return f"assertion failed: (found={type(found)}) isinstance (expected={expected})"
+            try:
+                if not isinstance(found, expected):
+                    return f"Assert.ISINSTANCE failed: found={type(found)}, expected={expected}"
+            except TypeError as exc:
+                return f"Assert.ISINSTANCE failed: invalid expected type '{expected}': {exc}"
         case Assert.ISSUBCLASS:
-            if not issubclass(found, expected):
-                return f"assertion failed: (found={found}) issubclass (expected={expected})"
+            try:
+                if not issubclass(found, expected):
+                    return f"Assert.ISSUBCLASS failed: found={found}, expected={expected}"
+            except TypeError as exc:
+                return f"Assert.ISSUBCLASS failed: invalid expected type '{expected}': {exc}"
         case Assert.IS_NONE:
             if found is not None:
-                return f"assertion failed: (found={found}) is None"
+                return f"Assert.IS_NONE failed: found={found}"
         case Assert.IS_NOT_NONE:
             if found is None:
-                return f"assertion failed: (found={found}) is not None"
+                return f"Assert.IS_NOT_NONE failed: found={found}"
         case Assert.TRUE:
-            log.debug("validate_assertion: ASSERT.TRUE check for found=%s", found)
             if not found:
-                log.debug("validate_assertion: found=%s is not True", found)
-                return f"assertion failed: (found={found}) is Falsish value"
+                return f"Assert.TRUE failed: found={found}"
         case Assert.FALSE:
-            log.debug("validate_assertion: ASSERT.FALSE check for found=%s", found)
             if found:
-                log.debug("validate_assertion: found=%s is not False", found)
-                return f"assertion failed: (found={found}) is Truthish value"
+                return f"Assert.FALSE failed: found={found}"
         case Assert.LEN:
             if not len(found) == expected:
-                return f"assertion failed: len(found={len(found)}) == (expected={expected})"
+                return f"Assert.LEN failed: found={len(found)}, expected={expected}"
         case _:
             return f"Unsupported assertion operator '{assertion}'"
     return ""

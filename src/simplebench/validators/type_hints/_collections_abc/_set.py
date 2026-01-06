@@ -7,7 +7,7 @@ from simplebench.types import Immutable
 
 from .._cache import _CACHE
 from .._check_result import CheckResult
-from .._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
+from .._constants import IS_IMMUTABLE, IS_VALID, NOT_IMMUTABLE, NOT_VALID
 from .._error_tags import _TypeHintsErrorTag
 from .._log import log
 from .._options import Options
@@ -52,7 +52,7 @@ def _check_collections_abc_set(
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
     if cached_result is not None:  # Only cached if Immutable
         if cached_result or not raise_on_error:
-            return CheckResult(cached_result, _IS_IMMUTABLE)
+            return CheckResult(cached_result, IS_IMMUTABLE)
         raise SimpleBenchTypeError(
             f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
@@ -62,7 +62,7 @@ def _check_collections_abc_set(
             raise SimpleBenchTypeError(
                 f"Object of type '{type(obj).__name__}' is not a Set, but type hint is '{type_hint}'",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+        return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
     if not isinstance(obj, origin):
         if raise_on_error:
@@ -70,7 +70,7 @@ def _check_collections_abc_set(
                 f"Object of type '{type(obj).__name__}' is not an instance of '{origin.__name__}' "
                 f"for type hint '{type_hint}'.",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+        return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
     item_type: Any = Any
     if len(args) == 1:
@@ -90,10 +90,10 @@ def _check_collections_abc_set(
                 raise SimpleBenchTypeError(
                     f"Item '{item}' in Set does not match type hint '{args[0] if args else Any}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-            return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+            return CheckResult(NOT_VALID, NOT_IMMUTABLE)
         container_is_immutable = container_is_immutable and is_imm
 
     # If we reach here, all checks passed
     if container_is_immutable:
-        _CACHE.add_cache_entry(type_hint, obj, _IS_IMMUTABLE, options.noncachable_types)
-    return CheckResult(_IS_VALID, container_is_immutable)
+        _CACHE.add_cache_entry(type_hint, obj, IS_IMMUTABLE, options.noncachable_types)
+    return CheckResult(IS_VALID, container_is_immutable)

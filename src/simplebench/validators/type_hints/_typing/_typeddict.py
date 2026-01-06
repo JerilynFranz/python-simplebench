@@ -8,12 +8,12 @@ from simplebench.types import Immutable, is_immutable_typeddict_typehint
 
 from .._cache import _CACHE
 from .._check_result import CheckResult
-from .._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
+from .._constants import IS_IMMUTABLE, IS_VALID, NOT_IMMUTABLE, NOT_VALID
 from .._error_tags import _TypeHintsErrorTag
 from .._log import log
 from .._options import Options
 from .._validation_state import ValidationState
-from ._typed_dict_key_info import TypedDictKeyInfo
+from ._typeddict_key_info import TypedDictKeyInfo
 
 if sys.version_info >= (3, 11):
     from typing import Never
@@ -61,7 +61,7 @@ def _check_typing_typeddict(
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
     if cached_result is not None:  # Only cached if Immutable
         if cached_result or not raise_on_error:
-            return CheckResult(cached_result, _IS_IMMUTABLE)
+            return CheckResult(cached_result, IS_IMMUTABLE)
         raise SimpleBenchTypeError(
             f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
@@ -74,14 +74,14 @@ def _check_typing_typeddict(
                     f"Object of type '{type(obj).__name__}' is not a dict, "
                     f"required for strict TypedDict type hint '{type_hint}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-            return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+            return CheckResult(NOT_VALID, NOT_IMMUTABLE)
     if not isinstance(obj, Mapping):  # This acts as a fast-fail for non-Mapping objects and a type guard
         if raise_on_error:
             raise SimpleBenchTypeError(
                 f"Object of type '{type(obj).__name__}' is not a Mapping, "
                 f"required for TypedDict type hint '{type_hint}'.",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)  # Not a Mapping, cannot structurally conform to TypedDict
+        return CheckResult(NOT_VALID, NOT_IMMUTABLE)  # Not a Mapping, cannot structurally conform to TypedDict
 
     # From here on, we know that type_hint IS a TypedDict and that the object is a Mapping.
     # All TypedDict checks are structural so we can proceed.
@@ -92,7 +92,7 @@ def _check_typing_typeddict(
             raise SimpleBenchTypeError(
                 f"TypedDict keys must be strings, found non-string keys in object of type '{type(obj).__name__}'.",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+        return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
     # Make sure that if the TypedDict is defined as Immutable, the Mapping obj is also Immutable
     # Note: This only checks the top-level container not nested elements here.
@@ -106,7 +106,7 @@ def _check_typing_typeddict(
                 f"TypedDict type hint '{type_hint}' is defined as Immutable, "
                 f"but object of type '{type(obj).__name__}' is not Immutable.",
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+        return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
     required_keys: set[str] = set(type_hint.__required_keys__)
     optional_keys: set[str] = set(type_hint.__optional_keys__)
@@ -128,6 +128,8 @@ def _check_typing_typeddict(
         "_container_check_typeddict: TypedDict '%s' extra_items type hint: '%s'",
         type_hint, extra_items_type_hint)
     if extra_items_type_hint is Never:  # No extra items allowed
+        log.debug(
+            "_container_check_typeddict: No extra items allowed in TypedDict type hint '%s'", type_hint)
         for key in obj.keys():
             if key not in allowed_keys:
                 log.debug(
@@ -137,7 +139,9 @@ def _check_typing_typeddict(
                     raise SimpleBenchTypeError(
                         f"Extra key '{key}' found in TypedDict, but not defined in type hint '{type_hint}'.",
                         tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-                return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+                log.debug(
+                    "_container_check_typeddict: Validation failed due to extra key '%s' in TypedDict object.", key)
+                return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
     else: # Extra items allowed, check their types
         for key, value in obj.items():
@@ -151,19 +155,26 @@ def _check_typing_typeddict(
                             f"Extra key '{key}' in TypedDict does not match extra_items type hint "
                             f"'{extra_items_type_hint}'.",
                             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-                    return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+                    return CheckResult(NOT_VALID, NOT_IMMUTABLE)
                 container_is_immutable = container_is_immutable and check_result.immutable
 
+    log.debug(
+        "_container_check_typeddict: Checking defined keys for TypedDict type hint '%s'", type_hint)
     # Now check each defined key in the TypedDict
     annotations: dict[str, Any] = get_type_hints(type_hint)
+    log.debug(
+        "_container_check_typeddict: TypedDict '%s' annotations: %s",
+        type_hint, annotations)
     for key, value_type in annotations.items():
         if key == '__immutable__' and is_immutable_typed_dict:
             continue
         if key in obj:
             dict_key_info = TypedDictKeyInfo(key, type_hint)
-            check_result = _check_instance_of_typehint(
-                value_type, dict_key_info.value_type, options, new_parents,
-                raise_on_error=False, context="typeddict_value")
+            log.debug(
+                "_container_check_typeddict: Checking key '%s', value '%s in TypedDict object against type hint '%s'",
+                key, value_type, dict_key_info.value_type)
+            check_result = _check_instance_of_typehint(obj[key], value_type, options, new_parents,
+                                raise_on_error=False, context="typeddict_value")
             if not check_result.valid:
                 log.debug(
                     "_container_check_typeddict: Key '%s' in TypedDict object does not match "
@@ -172,7 +183,7 @@ def _check_typing_typeddict(
                     raise SimpleBenchTypeError(
                         f"Value for key '{key}' in TypedDict does not match type hint '{dict_key_info.value_type}'.",
                         tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-                return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+                return CheckResult(NOT_VALID, NOT_IMMUTABLE)
             container_is_immutable = container_is_immutable and check_result.immutable
         else:
             if key in required_keys:
@@ -183,9 +194,12 @@ def _check_typing_typeddict(
                     raise SimpleBenchTypeError(
                         f"Required key '{key}' missing in TypedDict.",
                         tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-                return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+                return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
+    log.debug(
+        "_container_check_typeddict: Object of type '%s' successfully validated against "
+        "TypedDict type hint '%s'", type(obj).__name__, type_hint)
     # Successful TypedDict check
     if container_is_immutable:
         _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
-    return CheckResult(_IS_VALID, container_is_immutable)
+    return CheckResult(IS_VALID, container_is_immutable)

@@ -4,7 +4,7 @@ from typing import Any, Literal
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
 from .._check_result import CheckResult
-from .._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_VALID
+from .._constants import IS_IMMUTABLE, IS_VALID, NOT_VALID
 from .._error_tags import _TypeHintsErrorTag
 from .._immutable import _is_immutable
 
@@ -34,10 +34,10 @@ def _check_typing_literal(
             tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
 
     if obj in args:
-        return CheckResult(_IS_VALID, _IS_IMMUTABLE)
+        return CheckResult(IS_VALID, IS_IMMUTABLE)
 
     if raise_on_error:
         raise SimpleBenchTypeError(
             f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-    return CheckResult(_NOT_VALID, _is_immutable(obj))
+    return CheckResult(NOT_VALID, _is_immutable(obj))

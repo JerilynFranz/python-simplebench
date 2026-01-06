@@ -6,7 +6,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
 from .._cache import _CACHE
 from .._check_result import CheckResult
-from .._constants import _NOT_VALID
+from .._constants import NOT_VALID
 from .._error_tags import _TypeHintsErrorTag
 from .._immutable import _is_immutable
 from .._log import log
@@ -63,4 +63,4 @@ def _check_typing_union(
         raise SimpleBenchTypeError(
             f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-    return CheckResult(_NOT_VALID, _is_immutable(obj))
+    return CheckResult(NOT_VALID, _is_immutable(obj))

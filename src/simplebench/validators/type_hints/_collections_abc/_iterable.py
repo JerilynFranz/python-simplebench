@@ -1,13 +1,13 @@
 """Helper functions to validate container types against type hints."""
 from collections.abc import Iterable, Iterator
-from typing import Any, get_type_hints, is_typeddict
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.types import Immutable, is_immutable_typeddict_typehint
+from simplebench.types import Immutable
 
 from .._cache import _CACHE
 from .._check_result import CheckResult
-from .._constants import _IS_IMMUTABLE, _IS_VALID, _NOT_IMMUTABLE, _NOT_VALID
+from .._constants import IS_IMMUTABLE, IS_VALID, NOT_IMMUTABLE, NOT_VALID
 from .._error_tags import _TypeHintsErrorTag
 from .._log import log
 from .._options import Options
@@ -52,7 +52,7 @@ def _check_collections_abc_iterable(
     cached_result = _CACHE.valid_in_cache(type_hint, obj)
     if cached_result is not None:  # Only cached if Immutable
         if cached_result or not raise_on_error:
-            return CheckResult(cached_result, _IS_IMMUTABLE)
+            return CheckResult(cached_result, IS_IMMUTABLE)
         raise SimpleBenchTypeError(
             f"Object of type '{type(obj)}' does not match type hint '{type_hint}'.",
             tag=_TypeHintsErrorTag.VALIDATION_FAILED)
@@ -62,19 +62,19 @@ def _check_collections_abc_iterable(
         # We treat str/bytes as primitives. If we're here, it means a more specific
         # check like Sequence[str] didn't catch it, so we consider it valid against
         # a generic Iterable hint (e.g., Iterable[str]).
-        return CheckResult(_IS_VALID, _IS_IMMUTABLE)
+        return CheckResult(IS_VALID, IS_IMMUTABLE)
 
     # Short-circuit for single-pass Iterators if configured to do so.
     # We assume it is NOT immutable since we cannot check its items without consuming it.
     if isinstance(obj, Iterator) and not options.consume_iterators:
-        return CheckResult(_IS_VALID, _NOT_IMMUTABLE)
+        return CheckResult(IS_VALID, NOT_IMMUTABLE)
 
     if not isinstance(obj, Iterable):
         if raise_on_error:
             raise SimpleBenchTypeError(
                 f"Object of type '{type(obj).__name__}' is not an Iterable, but type hint is '{type_hint}'",
                 tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
-        return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+        return CheckResult(NOT_VALID, NOT_IMMUTABLE)
 
     container_is_immutable: bool = isinstance(obj, Immutable)
     new_parents = parents | {ValidationState(id(obj), type_hint, "iterable")}
@@ -92,10 +92,10 @@ def _check_collections_abc_iterable(
                 raise SimpleBenchTypeError(
                     f"Item '{item}' in Iterable does not match type hint '{item_type_hint}'.",
                     tag=_TypeHintsErrorTag.VALIDATION_FAILED)
-            return CheckResult(_NOT_VALID, _NOT_IMMUTABLE)
+            return CheckResult(NOT_VALID, NOT_IMMUTABLE)
         container_is_immutable = container_is_immutable and is_imm
 
     # If we reach here, all checks passed
     if container_is_immutable:
         _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)
-    return CheckResult(_IS_VALID, container_is_immutable)
+    return CheckResult(IS_VALID, container_is_immutable)
