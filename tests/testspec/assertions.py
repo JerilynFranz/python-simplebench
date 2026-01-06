@@ -1,7 +1,9 @@
 """TestSpec testing framework - assertion operators."""
+import logging
 from enum import Enum
 from typing import Any
 
+log = logging.getLogger(__name__)
 
 class Assert(str, Enum):
     """Enumeration of supported assertion operators.
@@ -55,6 +57,18 @@ class Assert(str, Enum):
     FALSE = 'false'
 
 
+def expected_argument_required(assertion: Assert) -> bool:
+    """Check if the given assertion operator requires an expected argument.
+
+    :param Assert assertion: The assertion operator to check.
+    :return bool: True if the assertion operator requires an expected argument, False otherwise.
+    """
+    match assertion:
+        case Assert.IS_NONE | Assert.IS_NOT_NONE | Assert.TRUE | Assert.FALSE:
+            return False
+        case _:
+            return True
+
 def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
     """Helper function to perform an assertion check.
 
@@ -62,14 +76,10 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
     and performs the specified assertion check. If the assertion fails, it returns
     an error message; otherwise, it returns an empty string.
 
-    :param assertion: The assertion operator to use.
-    :type assertion: Assert
-    :param expected: The expected value.
-    :type expected: Any
-    :param found: The found value.
-    :type found: Any
-    :return: An error message if the assertion fails, otherwise an empty string.
-    :rtype: str
+    :param Assert assertion: The assertion operator to use.
+    :param Any expected: The expected value.
+    :param Any found: The found value.
+    :return str: An error message if the assertion fails, otherwise an empty string.
     :raises ValueError: If an unsupported assertion operator is provided.
     """
     match assertion:
@@ -116,11 +126,15 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
             if found is None:
                 return f"assertion failed: (found={found}) is not None"
         case Assert.TRUE:
-            if not found is True:
-                return f"assertion failed: (found={found}) is True"
+            log.debug("validate_assertion: ASSERT.TRUE check for found=%s", found)
+            if not found:
+                log.debug("validate_assertion: found=%s is not True", found)
+                return f"assertion failed: (found={found}) is Falsish value"
         case Assert.FALSE:
-            if not found is False:
-                return f"assertion failed: (found={found}) is False"
+            log.debug("validate_assertion: ASSERT.FALSE check for found=%s", found)
+            if found:
+                log.debug("validate_assertion: found=%s is not False", found)
+                return f"assertion failed: (found={found}) is Truthish value"
         case Assert.LEN:
             if not len(found) == expected:
                 return f"assertion failed: len(found={len(found)}) == (expected={expected})"

@@ -12,10 +12,10 @@ import pytest
 from dotenv import load_dotenv
 
 if sys.version_info >= (3, 11):
-    from typing import Never, NotRequired, Required, ReadOnly
+    from typing import Never, NotRequired, ReadOnly, Required
 else:
     try:
-        from typing_extensions import Never, NotRequired, Required, ReadOnly
+        from typing_extensions import Never, NotRequired, ReadOnly, Required
     except ImportError as e:
         raise ImportError(
             "SimpleBench requires 'typing_extensions' for Python < 3.11 "
@@ -521,7 +521,7 @@ def typeddict_testspec() -> list[TestSpec]:
     """Generate TypedDict test specifications."""
 
     class TDImplicitRequiredDict(TypedDict):
-        """TypedDict with required fields."""
+        """TypedDict with implicitly required fields."""
         a: int
         b: str
 
@@ -534,10 +534,23 @@ def typeddict_testspec() -> list[TestSpec]:
             name="{'a': 1, 'b': 1} is a TypedDict with wrong type for 'b' and required fields",
             action=isinstance_of_typehint, args=[{'a': 1, 'b': 1}, TDImplicitRequiredDict],
             assertion=Assert.FALSE)),
-        idspec('TYPEDDICT_002', TestAction(
+        idspec('TYPEDDICT_003', TestAction(
             name="{'a': 't', 'b': 'x'} is a TypedDict with wrong type for 'a' and required fields",
             action=isinstance_of_typehint, args=[{'a': 't', 'b': 'x'}, TDImplicitRequiredDict],
-            assertion=Assert.FALSE))
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_004', TestAction(
+            name="{'a': 1} is a TypedDict missing required field 'b'",
+            action=isinstance_of_typehint, args=[{'a': 1}, TDImplicitRequiredDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_005', TestAction(
+            name="{'b': 'x'} is a TypedDict missing required field 'a'",
+            action=isinstance_of_typehint, args=[{'b': 'x'}, TDImplicitRequiredDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_006', TestAction(
+            name="{'a': 1, 'b': 'x', 'c': 3.14} is a TypedDict with invalid extra field 'c'",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x', 'c': 3.14}, TDImplicitRequiredDict],
+            assertion=Assert.FALSE)),
+
     ]
     return testspecs
 

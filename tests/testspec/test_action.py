@@ -5,7 +5,7 @@ from enum import Enum
 from types import TracebackType
 from typing import Any, Callable, NoReturn, Optional
 
-from .assertions import Assert, validate_assertion
+from .assertions import Assert, expected_argument_required, validate_assertion
 from .base import TestSpec
 from .constants import NO_EXPECTED_VALUE
 from .deferred import Deferred, _resolve_deferred_value
@@ -132,7 +132,7 @@ class TestAction(TestSpec):
                     errors.append(f"failed result validation: found={found}")
                 if validate_obj and not validate_obj(obj):
                     errors.append(f"failed object validation: obj={obj}")
-                if expected is not NO_EXPECTED_VALUE:
+                if not expected_argument_required(self.assertion) or expected is not NO_EXPECTED_VALUE:
                     assertion_result = validate_assertion(self.assertion, expected, found)
                     if assertion_result:
                         errors.append(assertion_result)
