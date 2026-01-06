@@ -11,6 +11,16 @@ from simplebench.exceptions import SimpleBenchValueError
 from ._error_tags import _TypeHintsErrorTag
 
 
+def resolve_forward_references_arg(resolve_forward_references: Any) -> None:
+    """Check that the resolve_forward_references argument is a boolean.
+    
+    :raises SimpleBenchValueError: If resolve_forward_references is not a boolean.
+    """
+    if not isinstance(resolve_forward_references, bool):
+        raise SimpleBenchValueError(
+            f'resolve_forward_references must be a boolean, got {resolve_forward_references!r}.',
+            tag=_TypeHintsErrorTag.INVALID_RESOLVE_FORWARD_REFERENCES)
+
 def noncachable_types_arg(noncachable_types: Any) -> None:
     """Check that the noncachable_types argument is a set of types.
     

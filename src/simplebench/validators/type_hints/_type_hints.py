@@ -37,6 +37,7 @@ def isinstance_of_typehint(
         depth: int = 50,
         consume_iterators: bool = False,
         noncachable_types: set[type[Any]] | None = None,
+        resolve_forward_references: bool = True,
         globalns:dict[str, Any] | None = None,
         localns:dict[str, Any] | None = None,
         ) -> bool:
@@ -144,8 +145,13 @@ def isinstance_of_typehint(
     in general. You should benchmark your specific use case if performance is a concern.
 
     .. warning::
-        While it tries to handle forward references in type hints (such as those generated
-        by `from __future__ import annotations`), it may not cover all edge cases.
+        While it tries to handle forward references (such as those generated
+        by `from __future__ import annotations`) in type hints if the
+        `resolve_forward_references` parameter is `True` (the default),
+        it may not cover all edge cases. There *may* be a small performance speedup
+        by setting `resolve_forward_references` to `False` if you do not
+        have forward references in your type hints.
+
         If you have complex forward references, consider resolving them manually
         before passing them to this function and not using `from __future__ import annotations`
         if you do not actually have to.
@@ -155,7 +161,7 @@ def isinstance_of_typehint(
         resolve all forward references correctly.
         
         There is a performance cost to inferring these namespaces or resolving forward
-        references, so if you can provide the type hint without usng forward references,
+        references, so if you can provide the type hint without using forward references,
         it is strongly recommended.
 
         Deeply nested or cyclic structures may lead to performance issues or
@@ -194,23 +200,26 @@ def isinstance_of_typehint(
     :param Any type_hint: The type hint to check against.
     :param bool strict_typed_dict: Whether to enforce that TypedDict checks require actual TypedDict instances.
     :param int depth: (default=50) The recursion depth limit for nested structures.
-    :param bool consume_iterators: (default=False) Whether to consume iterators during validation.
-    :param set[type[Any]] | None noncachable_types: Set of types that should not be cached during validation.
+    :param bool consume_iterators: (optional, default=False) Whether to consume iterators during validation.
+    :param set[type[Any]] | None noncachable_types: (optional, default=False) Set of types that should not be cached during validation.
         This is intended for types that are immutable but have high variability (e.g., datetime) making
         caching less effective (and tending to bloat the cache without significant performance benefit).
         The internal default set includes NoneType, bool, int, float, complex, str, and bytes and they
         will always be treated as non-cachable.
-    :param dict[str, Any] | None globalns: Optional global namespace for resolving forward references.
-    :param dict[str, Any] | None localns: Optional local namespace for resolving forward references.
+    :param bool resolve_forward_references: (optional, default=True) Whether to attempt to resolve forward references in type hints.
+    :param dict[str, Any] | None globalns: (optional, default=None) global namespace for resolving forward references.
+    :param dict[str, Any] | None localns: (optional, default=None) local namespace for resolving forward references.
 
     :return bool: `True` if the object matches the type hint, `False` otherwise.
     """
-    type_hint_kwargs = {'type_hint': type_hint}
-    if globalns is not None:
-        type_hint_kwargs['globalns'] = globalns
-    if localns is not None:
-        type_hint_kwargs['localns'] = localns
-    type_hint = resolve_type_hint(**type_hint_kwargs)
+    validate.resolve_forward_references_arg(resolve_forward_references)
+    if resolve_forward_references:
+        type_hint_kwargs = {'type_hint': type_hint}
+        if globalns is not None:
+            type_hint_kwargs['globalns'] = globalns
+        if localns is not None:
+            type_hint_kwargs['localns'] = localns
+        type_hint = resolve_type_hint(**type_hint_kwargs)
 
     validate.type_hint_arg(type_hint)
     validate.depth_arg(depth)
