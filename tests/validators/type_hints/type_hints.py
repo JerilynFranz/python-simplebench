@@ -1,5 +1,6 @@
 """Tests for type hint validation functions."""
 # pylint: disable=import-error,wrong-import-position,unused-import
+import enum
 import logging
 import os
 import sys
@@ -812,6 +813,46 @@ def nested_types_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', nested_types_testspecs())
 def test_nested_types(testspec: TestSpec) -> None:
+    testspec.run()
+
+
+
+def enum_testspecs() -> list[TestSpec]:
+    """Test Enum type hints."""
+
+    class Color(enum.Enum):
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    testspecs: list[TestSpec] = [
+        idspec('ENUM_001', TestAction(
+            name='Color.RED is a Color',
+            action=isinstance_of_typehint,
+            args=[Color.RED, Color],
+            assertion=Assert.TRUE)),
+        idspec('ENUM_002', TestAction(
+            name='Color.GREEN is a Color',
+            action=isinstance_of_typehint,
+            args=[Color.GREEN, Color],
+            assertion=Assert.TRUE)),
+        idspec('ENUM_003', TestAction(
+            name='1 is not a Color',
+            action=isinstance_of_typehint,
+            args=[1, Color],
+            assertion=Assert.FALSE)),
+        idspec('ENUM_004', TestAction(
+            name="'RED' is not a Color'",
+            action=isinstance_of_typehint,
+            args=['RED', Color],
+            assertion=Assert.FALSE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', enum_testspecs())
+def test_enum_typehint(testspec: TestSpec) -> None:
+    """Test Enum typehint."""
+    clear_typehint_cache()
     testspec.run()
 
 
