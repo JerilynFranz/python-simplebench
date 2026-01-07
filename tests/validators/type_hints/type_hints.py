@@ -7,7 +7,7 @@ import sys
 from collections.abc import Collection, Hashable, Iterable, Mapping, Sequence, Set
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, Callable, Final, Literal, NewType, TypedDict
+from typing import Annotated, Any, Callable, Final, Literal, NewType, Protocol, TypedDict, runtime_checkable
 
 import pytest
 from dotenv import load_dotenv
@@ -997,5 +997,45 @@ def test_hashable_typehint(testspec: TestSpec) -> None:
     clear_typehint_cache()
     testspec.run()
 
+def protocols_testspecs() -> list[TestSpec]:
+    """Tests for protocols."""
+
+    class MyProtocol(Protocol):
+        """non-runtime checkable Protocol for testing."""
+        def foo(self) -> int: ...
+
+    @runtime_checkable
+    class MyCheckableProtocol(Protocol):
+        """runtime checkable Protocol for testing."""
+        def foo(self) -> int: ...
+
+    class MyProtocolImpl:
+        """Implementation of MyCheckableProtocol."""
+        def foo(self) -> int:
+            return 42
+
+
+    testspecs: list[TestSpec] = [
+        idspec('PROTOCOLS_001', TestAction(
+            name='object() is not instance of a non-runtime checkable Protocol',
+            action=isinstance_of_typehint, args=[object(), MyProtocol],
+            assertion=Assert.FALSE)),
+        idspec('PROTOCOLS_002', TestAction(
+            name='object() is not instance of a runtime checkable Protocol',
+            action=isinstance_of_typehint, args=[object(), MyCheckableProtocol],
+            assertion=Assert.FALSE)),
+        idspec('PROTOCOLS_003', TestAction(
+            name='MyProtocolImpl() is instance of a runtime checkable Protocol',
+            action=isinstance_of_typehint, args=[MyProtocolImpl(), MyCheckableProtocol],
+            assertion=Assert.TRUE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', protocols_testspecs())
+def test_protocols(testspec: TestSpec) -> None:
+    """Tests for protocols."""
+    clear_typehint_cache()
+    testspec.run()
+
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=INFO", '-s'])
+    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])

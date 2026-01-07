@@ -3,6 +3,7 @@
 Use by importing _validate module and calling _validate.validation_function(arguments).
 """
 import types
+import typing
 from collections.abc import Set
 from typing import Any, TypeVar
 
@@ -64,6 +65,13 @@ def type_hint_arg(type_hint: Any) -> None:
     if isinstance(type_hint, str):
         raise SimpleBenchValueError(
             'Type hint must not be a string.',
+            tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
+    if isinstance(type_hint, typing._SpecialForm):
+        # Allow NoReturn and other valid special forms
+        if type_hint in {typing.NoReturn, typing.Any, typing.ClassVar, typing.Final}:
+            return
+        raise SimpleBenchValueError(
+            f'Unsupported special form type hint: {type_hint!r}.',
             tag=_TypeHintsErrorTag.INVALID_TYPE_HINT)
     if not (
         isinstance(type_hint, type)

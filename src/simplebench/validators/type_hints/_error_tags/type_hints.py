@@ -6,6 +6,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _TypeHintsErrorTag(ErrorTag):
     """Error tags for type hints validation errors."""
+    NON_RUNTIME_CHECKABLE_PROTOCOL = "NON_RUNTIME_CHECKABLE_PROTOCOL"
+    """A non-runtime checkable Protocol was used in an isinstance check."""
     INVALID_RESOLVE_FORWARD_REFERENCES = "INVALID_RESOLVE_FORWARD_REFERENCES"
     """The resolve_forward_references argument is not a boolean."""
     INVALID_NONCACHABLE_TYPES = "INVALID_NONCACHABLE_TYPES"

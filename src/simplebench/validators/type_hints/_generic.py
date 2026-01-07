@@ -1,6 +1,6 @@
 """Helper functions to validate user-defined generic types against type hints."""
 from collections.abc import Callable, Collection, Iterable, Mapping, Sequence, Set
-from typing import Any
+from typing import Any, Protocol
 
 from simplebench.exceptions import SimpleBenchTypeError
 
@@ -25,7 +25,7 @@ def _check_generic(
         options: Options,
         parents: set[ValidationState],
         raise_on_error: bool = False,
-        context: str = "") -> 'CheckResult':
+        context: str = "") -> CheckResult:
     """
     Check user-defined generic types.
 
@@ -64,14 +64,27 @@ def _check_generic(
 
     obj_is_immutable: bool = _is_immutable(obj)
 
+    # handler for non-runtime Protocols
+    if (hasattr(type_hint, '__mro__')
+        and any(base is Protocol for base in type_hint.__mro__)
+        and not getattr(type_hint, '_is_runtime_protocol', False)):
+        if raise_on_error:
+            raise SimpleBenchTypeError(
+                f'Protocol {type_hint} is not runtime checkable.',
+                tag=_TypeHintsErrorTag.NON_RUNTIME_CHECKABLE_PROTOCOL)
+        return CheckResult(NOT_VALID, obj_is_immutable)
+
     if origin is None and isinstance(type_hint, type):
         if issubclass(type_hint, Mapping):
+            log.debug("_check_generic: Detected Mapping type hint '%s'", type_hint)
             origin = type_hint
             args = (Any, Any)
         elif issubclass(type_hint, Iterable):
+            log.debug("_check_generic: Detected Iterable type hint '%s'", type_hint)
             origin = type_hint
             args = (Any,)
         elif issubclass(type_hint, Callable):
+            log.debug("_check_generic: Detected Callable type hint '%s'", type_hint)
             origin = type_hint
             args = (..., Any)
 
@@ -84,7 +97,7 @@ def _check_generic(
             return CheckResult(IS_VALID, obj_is_immutable)
         if raise_on_error:
             raise SimpleBenchTypeError(
-                f'Object of type {type(obj).__name__} is not an instance of {type_hint}',
+                f'Object of type {type(obj).__name__} is not an instance of {type_hint} (origin = {origin}, args = {args})',
                 tag=_TypeHintsErrorTag.VALIDATION_FAILED
             )
         return CheckResult(NOT_VALID, obj_is_immutable)
@@ -186,6 +199,26 @@ def _check_generic(
                 _CACHE.add_cache_entry(type_hint, obj, IS_VALID, options.noncachable_types)
             return CheckResult(IS_VALID, obj_is_immutable)
 
+    # Validate type parameters for user-defined generics if __orig_class__ is not present
+    if not hasattr(obj, '__orig_class__'):
+        obj_type = type(obj)
+        obj_origin = getattr(obj_type, '__origin__', None)
+        obj_args = getattr(obj_type, '__args__', None)
+        if obj_origin is origin and obj_args is not None and len(obj_args) == len(args):
+            for item, hint in zip(obj_args, args):
+                is_valid, is_imm = _check_instance_of_typehint(
+                    item, hint, options, parents, raise_on_error, context="generic_parameter")
+                obj_is_immutable = obj_is_immutable and is_imm
+                if not is_valid:
+                    if raise_on_error:
+                        raise SimpleBenchTypeError(
+                            f"Generic parameter '{item}' does not match type hint '{hint}'.",
+                            tag=_TypeHintsErrorTag.VALIDATION_FAILED)
+                    return CheckResult(NOT_VALID, NOT_IMMUTABLE)
+            if obj_is_immutable:
+                _CACHE.add_cache_entry(type_hint, obj, IS_VALID, options.noncachable_types)
+            return CheckResult(IS_VALID, obj_is_immutable)
+
     # Fallback: check contained items if possible
     if hasattr(obj, '__iter__'):
         for item in obj:
@@ -209,3 +242,4 @@ def _check_generic(
             f"Object of type '{type(obj).__name__}' is not an instance of generic type hint '{type_hint}'",
             tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
     return result
+
