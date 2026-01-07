@@ -642,52 +642,36 @@ def test_typeddict(typespec: TestSpec) -> None:
 @pytest.mark.parametrize('typespec', [
     idspec('COLLECTION_001', TestAction(
         name='[1, 2, 3] is a Collection',
-        action=isinstance_of_typehint,
-        args=[[1, 2, 3], Collection],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        action=isinstance_of_typehint, args=[[1, 2, 3], Collection],
+        assertion=Assert.TRUE)),
     idspec('COLLECTION_002', TestAction(
         name='[1, 2, 3] is a Collection[int]',
-        action=isinstance_of_typehint,
-        args=[[1, 2, 3], Collection[int]],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        action=isinstance_of_typehint, args=[[1, 2, 3], Collection[int]],
+        assertion=Assert.TRUE)),
     idspec('COLLECTION_003', TestAction(
         name='(1, 2, 3) is a Collection[int]',
-        action=isinstance_of_typehint,
-        args=[(1, 2, 3), Collection[int]],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        action=isinstance_of_typehint, args=[(1, 2, 3), Collection[int]],
+        assertion=Assert.TRUE)),
     idspec('COLLECTION_004', TestAction(
         name='{1, 2, 3} is a Collection[int]',
-        action=isinstance_of_typehint,
-        args=[{1, 2, 3}, Collection[int]],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        action=isinstance_of_typehint, args=[{1, 2, 3}, Collection[int]],
+        assertion=Assert.TRUE)),
     idspec('COLLECTION_005', TestAction(
         name='frozenset({1, 2, 3}) is a Collection[int]',
-        action=isinstance_of_typehint,
-        args=[frozenset({1, 2, 3}), Collection[int]],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        action=isinstance_of_typehint, args=[frozenset({1, 2, 3}), Collection[int]],
+        assertion=Assert.TRUE)),
     idspec('COLLECTION_006', TestAction(
         name='[1, "a", 3] is not a Collection[int]',
-        action=isinstance_of_typehint,
-        args=[[1, "a", 3], Collection[int]],
-        assertion=Assert.EQUAL,
-        expected=False)),
+        action=isinstance_of_typehint, args=[[1, "a", 3], Collection[int]],
+        assertion=Assert.FALSE)),
     idspec('COLLECTION_007', TestAction(
         name='123 is not a Collection',
-        action=isinstance_of_typehint,
-        args=[123, Collection],
-        assertion=Assert.EQUAL,
-        expected=False)),
+        action=isinstance_of_typehint, args=[123, Collection],
+        assertion=Assert.FALSE)),
     idspec('COLLECTION_008', TestAction(
         name='empty list is a Collection[int]',
-        action=isinstance_of_typehint,
-        args=[[], Collection[int]],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        action=isinstance_of_typehint, args=[[], Collection[int]],
+        assertion=Assert.TRUE)),
 ])
 def test_collections(typespec: TestSpec) -> None:
     """Test Collection types."""
@@ -713,13 +697,11 @@ def newtype_testspec() -> list[TestSpec]:
             # is that the value is compatible with the underlying type.
         idspec('NEWTYPE_003', TestAction(
             name="5 is compatible with a NewType of int",
-            action=isinstance_of_typehint,
-            args=[5, NewInt],
+            action=isinstance_of_typehint, args=[5, NewInt],
             assertion=Assert.TRUE)),
         idspec('NEWTYPE_004', TestAction(
             name="'hello' is not compatible with a NewType of int",
-            action=isinstance_of_typehint,
-            args=['hello', NewInt],
+            action=isinstance_of_typehint, args=['hello', NewInt],
             assertion=Assert.FALSE)),
     ]
     return testspecs
@@ -736,26 +718,20 @@ def test_newtype(testspec: TestSpec) -> None:
         name="Final[int] accepts int",
         action=isinstance_of_typehint,
         args=[10, Final[int]],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        assertion=Assert.TRUE)),
     idspec('FINAL_002', TestAction(
         name="Final[str] accepts str",
         action=isinstance_of_typehint,
         args=["test", Final[str]],
-        assertion=Assert.EQUAL,
-        expected=True)),
+        assertion=Assert.TRUE)),
     idspec('FINAL_003', TestAction(
         name="Final[str] rejects int",
-        action=isinstance_of_typehint,
-        args=[10, Final[str]],
-        assertion=Assert.EQUAL,
-        expected=False)),
+        action=isinstance_of_typehint, args=[10, Final[str]],
+        assertion=Assert.FALSE)),
     idspec('FINAL_004', TestAction(
         name="Final[int] rejects str",
-        action=isinstance_of_typehint,
-        args=["test", Final[int]],
-        assertion=Assert.EQUAL,
-        expected=False)),
+        action=isinstance_of_typehint, args=["test", Final[int]],
+        assertion=Assert.FALSE)),
 ])
 def test_final_typehint(testspec: TestSpec) -> None:
     """Test Final typehint."""
@@ -773,18 +749,15 @@ def userclass_testspecs() -> list:
     testspecs: list[TestSpec] = [
         idspec('USERCLASS_001', TestAction(
             name="MyClass instance is a MyClass",
-            action=isinstance_of_typehint,
-            args=[instance, MyClass],
+            action=isinstance_of_typehint, args=[instance, MyClass],
             assertion=Assert.TRUE)),
         idspec('USERCLASS_002', TestAction(
             name="MyClass instance is an object",
-            action=isinstance_of_typehint,
-            args=[instance, object],
+            action=isinstance_of_typehint, args=[instance, object],
             assertion=Assert.TRUE)),
         idspec('USERCLASS_003', TestAction(
             name="MyClass instance is not an int",
-            action=isinstance_of_typehint,
-            args=[instance, int],
+            action=isinstance_of_typehint, args=[instance, int],
             assertion=Assert.FALSE)),
     ]
     return testspecs
@@ -828,23 +801,19 @@ def enum_testspecs() -> list[TestSpec]:
     testspecs: list[TestSpec] = [
         idspec('ENUM_001', TestAction(
             name='Color.RED is a Color',
-            action=isinstance_of_typehint,
-            args=[Color.RED, Color],
+            action=isinstance_of_typehint, args=[Color.RED, Color],
             assertion=Assert.TRUE)),
         idspec('ENUM_002', TestAction(
             name='Color.GREEN is a Color',
-            action=isinstance_of_typehint,
-            args=[Color.GREEN, Color],
+            action=isinstance_of_typehint, args=[Color.GREEN, Color],
             assertion=Assert.TRUE)),
         idspec('ENUM_003', TestAction(
             name='1 is not a Color',
-            action=isinstance_of_typehint,
-            args=[1, Color],
+            action=isinstance_of_typehint, args=[1, Color],
             assertion=Assert.FALSE)),
         idspec('ENUM_004', TestAction(
             name="'RED' is not a Color'",
-            action=isinstance_of_typehint,
-            args=['RED', Color],
+            action=isinstance_of_typehint, args=['RED', Color],
             assertion=Assert.FALSE)),
     ]
     return testspecs
