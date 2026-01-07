@@ -587,3 +587,23 @@ class SimpleBenchDuplicateKeyError(TaggedException[Exception]):
         """
         message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
+
+class SimpleBenchRecursionError(TaggedException[RecursionError]):
+    """Exception raised when maximum recursion depth is exceeded in simplebench.
+
+    Usage:
+        raise SimpleBenchRecursionError("An error occurred",
+                                        tag=MyErrorTags.SOME_ERROR)
+    Args:
+        msg (str): The error message.
+        tag (ErrorTag): The tag code.
+    """
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchRecursionError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
