@@ -1002,18 +1002,32 @@ def protocols_testspecs() -> list[TestSpec]:
 
     class MyProtocol(Protocol):
         """non-runtime checkable Protocol for testing."""
-        def foo(self) -> int: ...
+        def foo(self) -> int:
+            """non-runtime checkable"""
+            ...
 
     @runtime_checkable
     class MyCheckableProtocol(Protocol):
         """runtime checkable Protocol for testing."""
-        def foo(self) -> int: ...
-
+        def foo(self) -> int:
+            """A method that returns an int."""
+            ...
     class MyProtocolImpl:
         """Implementation of MyCheckableProtocol."""
         def foo(self) -> int:
+            """Random implementation."""
             return 42
 
+    class MyProtocolImplWrong:
+        """Implementation missing required method."""
+        pass
+
+    class MyProtocolImplExtra:
+        """Implementation with extra methods."""
+        def foo(self) -> int:
+            return 99
+        def bar(self) -> str:
+            return 'extra'
 
     testspecs: list[TestSpec] = [
         idspec('PROTOCOLS_001', TestAction(
@@ -1021,13 +1035,26 @@ def protocols_testspecs() -> list[TestSpec]:
             action=isinstance_of_typehint, args=[object(), MyProtocol],
             assertion=Assert.FALSE)),
         idspec('PROTOCOLS_002', TestAction(
-            name='object() is not instance of a runtime checkable Protocol',
-            action=isinstance_of_typehint, args=[object(), MyCheckableProtocol],
-            assertion=Assert.FALSE)),
-        idspec('PROTOCOLS_003', TestAction(
             name='MyProtocolImpl() is instance of a runtime checkable Protocol',
             action=isinstance_of_typehint, args=[MyProtocolImpl(), MyCheckableProtocol],
             assertion=Assert.TRUE)),
+        idspec('PROTOCOLS_003', TestAction(
+            name='MyProtocolImplWrong() is not instance of a runtime checkable Protocol',
+            action=isinstance_of_typehint, args=[MyProtocolImplWrong(), MyCheckableProtocol],
+            assertion=Assert.FALSE)),
+        idspec('PROTOCOLS_004', TestAction(
+            name='MyProtocolImplExtra() is instance of a runtime checkable Protocol',
+            action=isinstance_of_typehint, args=[MyProtocolImplExtra(), MyCheckableProtocol],
+            assertion=Assert.TRUE)),
+        idspec('PROTOCOLS_005', TestAction(
+            name='MyProtocolImplExtra() is not instance of a non-runtime checkable Protocol',
+            action=isinstance_of_typehint, args=[MyProtocolImplExtra(), MyProtocol],
+            assertion=Assert.FALSE)),
+        idspec('PROTOCOLS_006', TestAction(
+            name="Bare object is not instance of a runtime checkable Protocol",
+            action=isinstance_of_typehint, args=[object(), MyCheckableProtocol],
+            assertion=Assert.FALSE)
+        )
     ]
     return testspecs
 
@@ -1038,4 +1065,4 @@ def test_protocols(testspec: TestSpec) -> None:
     testspec.run()
 
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])
+    pytest.main([__file__, "--log-cli-level=INFO", '-s'])
