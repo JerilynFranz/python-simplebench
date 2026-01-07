@@ -76,13 +76,19 @@ def _check_generic(
             args = (..., Any)
 
     # Check instance type for generics
-    if not isinstance(obj, origin):
-        if raise_on_error:
-            raise SimpleBenchTypeError(
-                f'Object of type {type(obj).__name__} is not an instance of {origin.__name__}',
-                tag=_TypeHintsErrorTag.VALIDATION_FAILED
-            )
-        return CheckResult(NOT_VALID, obj_is_immutable)
+    try:
+        if not isinstance(obj, origin):
+            if raise_on_error:
+                raise SimpleBenchTypeError(
+                    f'Object of type {type(obj).__name__} is not an instance of {origin.__name__}',
+                    tag=_TypeHintsErrorTag.VALIDATION_FAILED
+                )
+            return CheckResult(NOT_VALID, obj_is_immutable)
+    except TypeError:
+        raise SimpleBenchTypeError(
+            f'Origin {origin} ({type_hint}) is not a valid type for isinstance check.',
+            tag=_TypeHintsErrorTag.VALIDATION_FAILED
+        )
 
     # If no args, treat as non-parameterized generic
     try:

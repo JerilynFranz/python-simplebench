@@ -201,12 +201,14 @@ def isinstance_of_typehint(
     :param bool strict_typed_dict: Whether to enforce that TypedDict checks require actual TypedDict instances.
     :param int depth: (default=50) The recursion depth limit for nested structures.
     :param bool consume_iterators: (optional, default=False) Whether to consume iterators during validation.
-    :param set[type[Any]] | None noncachable_types: (optional, default=False) Set of types that should not be cached during validation.
+    :param set[type[Any]] | None noncachable_types: (optional, default=False) Set of types that should not be cached
+        during validation.
         This is intended for types that are immutable but have high variability (e.g., datetime) making
         caching less effective (and tending to bloat the cache without significant performance benefit).
         The internal default set includes NoneType, bool, int, float, complex, str, and bytes and they
         will always be treated as non-cachable.
-    :param bool resolve_forward_references: (optional, default=True) Whether to attempt to resolve forward references in type hints.
+    :param bool resolve_forward_references: (optional, default=True) Whether to attempt to resolve forward references
+        in type hints.
     :param dict[str, Any] | None globalns: (optional, default=None) global namespace for resolving forward references.
     :param dict[str, Any] | None localns: (optional, default=None) local namespace for resolving forward references.
 
@@ -312,12 +314,20 @@ def _check_instance_of_typehint(
             return _check_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error, context=context)
 
     # Unwrap NewType definitions
-    if hasattr(type_hint, '__supertype__'):
-        log.debug(
-            "_check_instance_of_typehint: Unwrapping NewType '%s' to supertype '%s'",
-            type_hint, type_hint.__supertype__)
-        return _check_instance_of_typehint(
-            obj, type_hint.__supertype__, options, new_parents, raise_on_error, context=context)
+    if _is_new_type(type_hint):
+        supertype = type_hint.__supertype__
+        log.debug("_check_instance_of_typehint: Detected NewType '%s' with supertype '%s'",
+                  type_hint, supertype)
+        if not isinstance(obj, supertype):
+            if raise_on_error:
+                raise SimpleBenchTypeError(
+                    f"Object of type '{type(obj).__name__}' is not an instance of NewType supertype '{supertype}'",
+                    tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
+            return CheckResult(NOT_VALID, NOT_IMMUTABLE)
+        log.debug("_check_instance_of_typehint: Unwrapping NewType '%s' to supertype '%s'",
+                    type_hint, supertype)
+        type_hint = supertype
+        return _check_instance_of_typehint(obj, type_hint, options, new_parents, raise_on_error, context="root")
 
     # Handle TypeVar before generic/container checks and caching
     if isinstance(type_hint, TypeVar):
@@ -502,3 +512,14 @@ def _is_subtype_of_typehint(subtype: Any, basetype: Any) -> bool:
 
     # Fallback for non-matching structures
     return False
+
+def _is_new_type(tp: Any) -> bool:
+    """Check if a type hint is a NewType definition."""
+    log.debug("_is_new_type: Checking if type hint '%s' is a NewType", tp)
+    log.debug("_is_new_type: Type hint '%s' is callable: %s", tp, callable(tp))
+    log.debug("_is_new_type: Type hint '%s' has __supertype__: %s", tp, hasattr(tp, '__supertype__'))
+    log.debug("_is_new_type: Type hint '%s' __annotations__: %s", tp, getattr(tp, '__annotations__', 'N/A'))
+    return (
+        callable(tp)
+        and hasattr(tp, '__supertype__')
+    )

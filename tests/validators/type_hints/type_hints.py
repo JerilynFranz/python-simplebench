@@ -6,7 +6,7 @@ import sys
 from collections.abc import Collection, Iterable, Mapping, Sequence, Set
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, Literal, TypedDict
+from typing import Annotated, Any, Literal, NewType, TypedDict
 
 import pytest
 from dotenv import load_dotenv
@@ -693,6 +693,41 @@ def test_collections(typespec: TestSpec) -> None:
     clear_typehint_cache()
     typespec.run()
 
+
+def newtype_testspec() -> list[TestSpec]:
+    """Generate NewType test specifications."""
+    NewInt = NewType('NewInt', int)
+
+    testspecs = [
+        idspec('NEWTYPE_001', TestAction(
+            name="NewInt(5) is a NewType of int",
+            action=isinstance_of_typehint, args=[NewInt(5), NewInt],
+            assertion=Assert.TRUE)),
+        idspec('NEWTYPE_002', TestAction(
+            name="NewInt(5) is an int",
+            action=isinstance_of_typehint, args=[NewInt(5), int],
+            assertion=Assert.TRUE)),
+            # Wierd true fact! NewType types are a 'noop' at runtime:
+            # It returns the original object unchanged. The most we can do is check
+            # is that the value is compatible with the underlying type.
+        idspec('NEWTYPE_003', TestAction(
+            name="5 is compatible with a NewType of int",
+            action=isinstance_of_typehint,
+            args=[5, NewInt],
+            assertion=Assert.TRUE)),
+        idspec('NEWTYPE_004', TestAction(
+            name="'hello' is not compatible with a NewType of int",
+            action=isinstance_of_typehint,
+            args=['hello', NewInt],
+            assertion=Assert.FALSE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', newtype_testspec())
+def test_newtype(testspec: TestSpec) -> None:
+    """Test NewType."""
+    clear_typehint_cache()
+    testspec.run()
 
 if __name__ == '__main__':
     pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])
