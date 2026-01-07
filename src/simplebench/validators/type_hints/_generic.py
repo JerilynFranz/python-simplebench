@@ -1,4 +1,5 @@
 """Helper functions to validate user-defined generic types against type hints."""
+import sys
 from collections.abc import Callable, Collection, Iterable, Mapping, Sequence, Set
 from typing import Any, Protocol
 
@@ -12,6 +13,16 @@ from ._immutable import _is_immutable
 from ._log import log
 from ._options import Options
 from ._validation_state import ValidationState
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired, ReadOnly, Required, Never
+else:
+    try:
+        from typing_extensions import NotRequired, ReadOnly, Required, Never
+    except ImportError as e:
+        raise ImportError(
+            "SimpleBench requires 'typing_extensions' for Python < 3.11 "
+            "to support Required, NotRequired, ReadOnly.") from e
 
 __all__ = (
     "_check_generic",
@@ -115,6 +126,10 @@ def _check_generic(
         if isinstance(exc, SimpleBenchTypeError):
             raise
         # Some origins may not be valid types for isinstance checks
+        if origin in {Required, NotRequired, ReadOnly, Never}:
+            raise SimpleBenchTypeError(
+                f'Origin {origin} ({type_hint}) is not a valid type outside of a TypedDict context.',
+                tag=_TypeHintsErrorTag.VALIDATION_FAILED) from exc
         raise SimpleBenchTypeError(
             f'Origin {origin} ({type_hint}) is not a valid type for isinstance check.',
             tag=_TypeHintsErrorTag.VALIDATION_FAILED) from exc

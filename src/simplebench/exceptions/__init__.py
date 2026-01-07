@@ -69,7 +69,7 @@ def generate_message(msg: str, tag: ErrorTag) -> str:
     return message.replace('\n', '')
 
 
-class SimpleBenchTypeError(TaggedException[ValueError]):
+class SimpleBenchTypeError(TaggedException[TypeError]):
     """Base class for all SimpleBench type errors.
 
     It differs from a standard TypeError by the addition of a

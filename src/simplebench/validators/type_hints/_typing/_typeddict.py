@@ -134,10 +134,12 @@ def _check_typing_typeddict(
             if key not in allowed_keys:
                 log.debug(
                     "_container_check_typeddict: Extra key '%s' found in TypedDict object, "
-                    "but not defined in type hint '%s'", key, type_hint)
+                    "but not defined in type hint '%s'. optionals = %s, required = %s",
+                    key, type_hint, optional_keys, required_keys)
                 if raise_on_error:
                     raise SimpleBenchTypeError(
-                        f"Extra key '{key}' found in TypedDict, but not defined in type hint '{type_hint}'.",
+                        f"Extra key '{key}' found in TypedDict, but not defined in type hint '{type_hint}'."
+                        f"optional = {optional_keys}, required = {required_keys}",
                         tag=_TypeHintsErrorTag.VALIDATION_FAILED)
                 log.debug(
                     "_container_check_typeddict: Validation failed due to extra key '%s' in TypedDict object.", key)
@@ -169,9 +171,33 @@ def _check_typing_typeddict(
         if key == '__immutable__' and is_immutable_typed_dict:
             continue
         if key in obj:
+            log.debug(
+                "_container_check_typeddict: Key '%s' found in TypedDict object, checking value against type hint.",
+                key)
             dict_key_info = TypedDictKeyInfo(key, type_hint)
             value = obj[key]
             value_type = dict_key_info.value_type
+            log.debug(
+                "_container_check_typeddict: Key '%s' has type hint '%s' in TypedDict '%s'",
+                key, value_type, type_hint)
+            if value_type is Never:
+                if raise_on_error:
+                    raise SimpleBenchTypeError(
+                        f"Key '{key}' in TypedDict cannot have a value because it is specified as type 'Never'.",
+                        tag=_TypeHintsErrorTag.VALIDATION_FAILED)
+                log.debug(
+                    "_container_check_typeddict: Key '%s' has type hint 'Never' in TypedDict '%s'",
+                    key, type_hint)
+                return CheckResult(NOT_VALID, NOT_IMMUTABLE)
+            if key in required_keys and value is Never:
+                log.debug(
+                    "_container_check_typeddict: Required key '%s' has value 'Never' in TypedDict object for "
+                    "type hint '%s'", key, type_hint)
+                if raise_on_error:
+                    raise SimpleBenchTypeError(
+                        f"Required key '{key}' in TypedDict cannot have value 'Never'.",
+                        tag=_TypeHintsErrorTag.VALIDATION_FAILED)
+                return CheckResult(NOT_VALID, NOT_IMMUTABLE)
             log.debug(
                 "_container_check_typeddict: Checking key '%s', value '%s in TypedDict object against type hint '%s'",
                 key, value, value_type)
@@ -201,6 +227,7 @@ def _check_typing_typeddict(
     log.debug(
         "_container_check_typeddict: Object of type '%s' successfully validated against "
         "TypedDict type hint '%s'", type(obj).__name__, type_hint)
+
     # Successful TypedDict check
     if container_is_immutable:
         _CACHE.add_cache_entry(type_hint, obj, True, options.noncachable_types)

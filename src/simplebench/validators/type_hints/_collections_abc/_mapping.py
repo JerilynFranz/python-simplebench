@@ -1,6 +1,6 @@
 """Helper functions to validate container types against type hints."""
 from collections.abc import Mapping
-from typing import Any, get_type_hints, is_typeddict
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.types import Immutable

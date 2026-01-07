@@ -7,7 +7,19 @@ import sys
 from collections.abc import Collection, Hashable, Iterable, Mapping, Sequence, Set
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, Callable, Final, Literal, NewType, Protocol, TypedDict, runtime_checkable
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    Final,
+    Literal,
+    NewType,
+    Optional,
+    Protocol,
+    TypedDict,
+    TypeVar,
+    runtime_checkable,
+)
 
 import pytest
 from dotenv import load_dotenv
@@ -196,36 +208,56 @@ def test_primitives(typespec: TestSpec) -> None:
     typespec.run()
 
 
-@pytest.mark.parametrize('typespec', [
-    idspec('LITERALS_001', TestAction(
-        name="1 is Literal[1]",
-        action=isinstance_of_typehint, args=[1, Literal[1]],
-        assertion=Assert.TRUE)),
-    idspec('LITERALS_002', TestAction(
-        name="'hello' is Literal['hello']",
-        action=isinstance_of_typehint, args=["hello", Literal['hello']],
-        assertion=Assert.TRUE)),
-    idspec('LITERALS_003', TestAction(
-        name="b'bytes' is Literal[b'bytes']",
-        action=isinstance_of_typehint, args=[b'bytes', Literal[b'bytes']],
-        assertion=Assert.TRUE)),
-    idspec('LITERALS_004', TestAction(
-        name="True is Literal[True]",
-        action=isinstance_of_typehint, args=[True, Literal[True]],
-        assertion=Assert.TRUE)),
-    idspec('LITERALS_005', TestAction(
-        name="3.14 is Literal[3.14]",
-        action=isinstance_of_typehint, args=[3.14, Literal[3.14]],
-        assertion=Assert.TRUE)),
-    idspec('LITERALS_006', TestAction(
-        name="1 is not Literal[2]",
-        action=isinstance_of_typehint, args=[1, Literal[2]],
-        assertion=Assert.FALSE)),
-    idspec('LITERALS_007', TestAction(
-        name="'hello' is not Literal['world']",
-        action=isinstance_of_typehint, args=["hello", Literal['world']],
-        assertion=Assert.FALSE)),
-])
+def literals_typespecs() -> list[TestSpec]:
+    """Generate Literal test specifications."""
+    class Color(enum.Enum):
+        """Enum for colors."""
+        RED = 1
+        GREEN = 2
+        BLUE = 3
+
+    return [
+        idspec('LITERALS_001', TestAction(
+            name="1 is Literal[1]",
+            action=isinstance_of_typehint, args=[1, Literal[1]],
+            assertion=Assert.TRUE)),
+        idspec('LITERALS_002', TestAction(
+            name="'hello' is Literal['hello']",
+            action=isinstance_of_typehint, args=["hello", Literal['hello']],
+            assertion=Assert.TRUE)),
+        idspec('LITERALS_003', TestAction(
+            name="b'bytes' is Literal[b'bytes']",
+            action=isinstance_of_typehint, args=[b'bytes', Literal[b'bytes']],
+            assertion=Assert.TRUE)),
+        idspec('LITERALS_004', TestAction(
+            name="True is Literal[True]",
+            action=isinstance_of_typehint, args=[True, Literal[True]],
+            assertion=Assert.TRUE)),
+        idspec('LITERALS_005', TestAction(
+            name="3.14 is Literal[3.14]",
+            action=isinstance_of_typehint, args=[3.14, Literal[3.14]],
+            assertion=Assert.TRUE)),
+        idspec('LITERALS_006', TestAction(
+            name="1 is not Literal[2]",
+            action=isinstance_of_typehint, args=[1, Literal[2]],
+            assertion=Assert.FALSE)),
+        idspec('LITERALS_007', TestAction(
+            name="'hello' is not Literal['world']",
+            action=isinstance_of_typehint, args=["hello", Literal['world']],
+            assertion=Assert.FALSE)),
+        idspec('LITERALS_008', TestAction(
+            name="Color.RED is Literal[Color.RED]",
+            action=isinstance_of_typehint,
+            args=[Color.RED, Literal[Color.RED]],
+            assertion=Assert.TRUE)),
+        idspec('LITERALS_009', TestAction(
+            name="Color.GREEN is not Literal[Color.RED]",
+            action=isinstance_of_typehint,
+            args=[Color.GREEN, Literal[Color.RED]],
+            assertion=Assert.FALSE)),
+    ]
+
+@pytest.mark.parametrize('typespec', literals_typespecs())
 def test_literals(typespec: TestSpec) -> None:
     """Test literals."""
     clear_typehint_cache()
@@ -453,6 +485,18 @@ def test_mappings(typespec: TestSpec) -> None:
         name="{'a': 1} is not a list",
         action=isinstance_of_typehint, args=[{'a': 1}, list],
         assertion=Assert.FALSE)),
+    idspec('SEQUENCES_013', TestAction(
+        name="(1, 2, 3) is a tuple[int, ...]",
+        action=isinstance_of_typehint, args=[(1, 2, 3), tuple[int, ...]],
+        assertion=Assert.TRUE)),
+    idspec('SEQUENCES_014', TestAction(
+        name="(1, 2, 'a') is not a tuple[int, ...]",
+        action=isinstance_of_typehint, args=[(1, 2, 'a'), tuple[int, ...]],
+        assertion=Assert.FALSE)),
+    idspec('SEQUENCES_015', TestAction(
+        name="() is a tuple[int, ...]",
+        action=isinstance_of_typehint, args=[(), tuple[int, ...]],
+        assertion=Assert.TRUE)),
 ])
 def test_sequences(typespec: TestSpec) -> None:
     """Test sequence types."""
@@ -630,6 +674,34 @@ def typeddict_testspec() -> list[TestSpec]:
             assertion=Assert.FALSE)),
     ])
 
+    class TDReadOnlyDict(TypedDict):
+        """TypedDict with ReadOnly field."""
+        a: ReadOnly[int]
+        b: str
+
+    class TDNeverDictRequiredFields(TypedDict):
+        """TypedDict with Never field."""
+        a: int
+
+    class TDNeverDict(TDNeverDictRequiredFields, total=False):
+        """TypedDict with Never field."""
+        b: Never
+
+    testspecs.extend([
+        idspec('TYPEDDICT_019', TestAction(
+            name="{'a': 1, 'b': 'x'} is a TypedDict with ReadOnly field",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x'}, TDReadOnlyDict],
+            assertion=Assert.TRUE)),
+        idspec('TYPEDDICT_020', TestAction(
+            name="{'a': 1, 'b': 'x'} is not a TypedDict with Never field present",
+            action=isinstance_of_typehint, args=[{'a': 1, 'b': 'x'}, TDNeverDict],
+            assertion=Assert.FALSE)),
+        idspec('TYPEDDICT_021', TestAction(
+            name="{'a': 1} is a TypedDict with optional Never field omitted",
+            action=isinstance_of_typehint, args=[{'a': 1}, TDNeverDict],
+            assertion=Assert.TRUE)),
+    ])
+
     return testspecs
 
 @pytest.mark.parametrize('typespec', typeddict_testspec())
@@ -742,7 +814,7 @@ def userclass_testspecs() -> list:
     """Test that user-defined class instances are correctly identified."""
 
     class MyClass:
-        pass
+        """A simple user-defined class."""
 
     instance = MyClass()
 
@@ -764,6 +836,8 @@ def userclass_testspecs() -> list:
 
 @pytest.mark.parametrize('testspec', userclass_testspecs())
 def test_userclass_instance(testspec: TestSpec) -> None:
+    """Test user-defined class instance typehint."""
+    clear_typehint_cache()
     testspec.run()
 
 
@@ -786,6 +860,8 @@ def nested_types_testspecs() -> list[TestSpec]:
 
 @pytest.mark.parametrize('testspec', nested_types_testspecs())
 def test_nested_types(testspec: TestSpec) -> None:
+    """Test nested type hints."""
+    clear_typehint_cache()
     testspec.run()
 
 
@@ -794,6 +870,7 @@ def enum_testspecs() -> list[TestSpec]:
     """Test Enum type hints."""
 
     class Color(enum.Enum):
+        """An example Enum for colors."""
         RED = 1
         GREEN = 2
         BLUE = 3
@@ -834,10 +911,17 @@ def callable_testspecs() -> list[TestSpec]:
     def func_one_arg(x: int) -> str:
         return str(x)
 
-    def func_two_args(x: int, y: str) -> float:
+    def func_two_args(x: int, y: str) -> float:  # pylint: disable=unused-argument
         return float(x)
 
+    def func_kwonly(x: int, *, y: str) -> str:
+        return f'{x}:{y}'
+
+    def func_kwonly_multi(x: int, *, y: str, z: float = 0.0) -> str:
+        return f'{x}:{y}:{z}'
+
     class CallableClass:
+        """A class that implements __call__."""
         def __call__(self, x: int) -> str:
             return str(x)
 
@@ -870,6 +954,38 @@ def callable_testspecs() -> list[TestSpec]:
             name='42 is not a Callable',
             action=isinstance_of_typehint, args=[42, Callable],
             assertion=Assert.FALSE)),
+        idspec('CALLABLE_008', TestAction(
+            name='func_no_args is a Callable[..., int]',
+            action=isinstance_of_typehint, args=[func_no_args, Callable[..., int]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_009', TestAction(
+            name='func_one_arg is a Callable[..., str]',
+            action=isinstance_of_typehint, args=[func_one_arg, Callable[..., str]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_010', TestAction(
+            name='func_two_args is a Callable[..., float]',
+            action=isinstance_of_typehint, args=[func_two_args, Callable[..., float]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_011', TestAction(
+            name='CallableClass() is a Callable[..., str]',
+            action=isinstance_of_typehint, args=[CallableClass(), Callable[..., str]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_012', TestAction(
+            name='func_kwonly is a Callable[[int, str], str]',
+            action=isinstance_of_typehint, args=[func_kwonly, Callable[[int, str], str]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_013', TestAction(
+            name='func_kwonly_multi is a Callable[[int, str, float], str]',
+            action=isinstance_of_typehint, args=[func_kwonly_multi, Callable[[int, str, float], str]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_014', TestAction(
+            name='func_kwonly is a Callable[..., str]',
+            action=isinstance_of_typehint, args=[func_kwonly, Callable[..., str]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_015', TestAction(
+            name='func_kwonly_multi is a Callable[..., str]',
+            action=isinstance_of_typehint, args=[func_kwonly_multi, Callable[..., str]],
+            assertion=Assert.TRUE)),
     ]
     return testspecs
 
@@ -883,19 +999,27 @@ def generic_sequence_subclass_testspecs() -> list[TestSpec]:
     """Test generic subclasses of Sequence."""
 
     class MyIntSeq(Sequence[int]):
+        """A simple Sequence subclass for integers."""
         def __init__(self, data):
+            """Initialize with a list of integers."""
             self._data = list(data)
         def __getitem__(self, idx):
+            """Get item at index."""
             return self._data[idx]
         def __len__(self):
+            """Get length of the sequence."""
             return len(self._data)
 
     class MyStrSeq(Sequence[str]):
+        """A simple Sequence subclass for strings."""
         def __init__(self, data):
+            """Initialize with a list of strings."""
             self._data = list(data)
         def __getitem__(self, idx):
+            """Get item at index."""
             return self._data[idx]
         def __len__(self):
+            """Get length of the sequence."""
             return len(self._data)
 
     int_seq = MyIntSeq([1, 2, 3])
@@ -1002,32 +1126,61 @@ def protocols_testspecs() -> list[TestSpec]:
 
     class MyProtocol(Protocol):
         """non-runtime checkable Protocol for testing."""
-        def foo(self) -> int:
+        def foo_with_sunglasses(self) -> int:
             """non-runtime checkable"""
-            ...
+            ...  # pylint: disable=unnecessary-ellipsis
 
     @runtime_checkable
     class MyCheckableProtocol(Protocol):
         """runtime checkable Protocol for testing."""
-        def foo(self) -> int:
+        def foo_with_sunglasses(self) -> int:
             """A method that returns an int."""
-            ...
+            ...  # pylint: disable=unnecessary-ellipsis
+
     class MyProtocolImpl:
         """Implementation of MyCheckableProtocol."""
-        def foo(self) -> int:
+        def foo_with_sunglasses(self) -> int:
             """Random implementation."""
             return 42
 
     class MyProtocolImplWrong:
         """Implementation missing required method."""
-        pass
 
     class MyProtocolImplExtra:
         """Implementation with extra methods."""
-        def foo(self) -> int:
+        def foo_with_sunglasses(self) -> int:
+            """foo method (in disguise) implementation"""
             return 99
-        def bar(self) -> str:
+        def bar_with_sunglasses(self) -> str:
+            """bar method (in disguise)"""
             return 'extra'
+
+    # Nested protocol example
+    @runtime_checkable
+    class NestedProtocol(Protocol):
+        """Docstring for NestedProtocol"""
+        def bar_with_sunglasses(self) -> str:
+            """A method that returns a string."""
+            ...  # pylint: disable=unnecessary-ellipsis
+        def proto(self) -> MyCheckableProtocol:
+            """A method that returns an instance of MyCheckableProtocol."""
+            ...  # pylint: disable=unnecessary-ellipsis
+
+    class NestedProtocolImpl:
+        """Implementation of NestedProtocol."""
+        def bar_with_sunglasses(self) -> str:
+            """Implementation of bar method."""
+            return 'nested'
+        def proto(self) -> MyProtocolImpl:
+            """Implementation of proto method."""
+            return MyProtocolImpl()
+
+    class NestedProtocolImplWrong:
+        """Implementation missing required method."""
+        def bar_with_sunglasses(self) -> str:
+            """Implementation of bar method (in disguise)."""
+            return 'nested'
+        # Missing proto()
 
     testspecs: list[TestSpec] = [
         idspec('PROTOCOLS_001', TestAction(
@@ -1053,8 +1206,15 @@ def protocols_testspecs() -> list[TestSpec]:
         idspec('PROTOCOLS_006', TestAction(
             name="Bare object is not instance of a runtime checkable Protocol",
             action=isinstance_of_typehint, args=[object(), MyCheckableProtocol],
-            assertion=Assert.FALSE)
-        )
+            assertion=Assert.FALSE)),
+        idspec('PROTOCOLS_007', TestAction(
+            name='NestedProtocolImpl() is instance of NestedProtocol',
+            action=isinstance_of_typehint, args=[NestedProtocolImpl(), NestedProtocol],
+            assertion=Assert.TRUE)),
+        idspec('PROTOCOLS_008', TestAction(
+            name='NestedProtocolImplWrong() is not instance of NestedProtocol',
+            action=isinstance_of_typehint, args=[NestedProtocolImplWrong(), NestedProtocol],
+            assertion=Assert.FALSE)),
     ]
     return testspecs
 
@@ -1063,6 +1223,349 @@ def test_protocols(testspec: TestSpec) -> None:
     """Tests for protocols."""
     clear_typehint_cache()
     testspec.run()
+
+def recursive_protocol_testspecs() -> list[TestSpec]:
+    """Test recursive Protocols."""
+
+    @runtime_checkable
+    class NodeProtocol(Protocol):
+        """Node protocol."""
+        def value(self) -> int:
+            """Value method."""
+            ...  # pylint: disable=unnecessary-ellipsis
+        def next(self) -> 'NodeProtocol | None':
+            """Next method."""
+            ...  # pylint: disable=unnecessary-ellipsis
+
+    class Node:
+        def __init__(self, val: int, next_node=None):
+            """Initialize Node with value and next node."""
+            self._val = val
+            self._next = next_node
+        def value(self) -> int:
+            """Value method."""
+            return self._val
+        def next(self):
+            """Next method."""
+            return self._next
+
+    class NotNode:
+        """Not a Node."""
+        def value(self) -> int:
+            """Value method."""
+            return 0
+        # Missing next()
+
+    # Mutually recursive protocols
+    @runtime_checkable
+    class TreeProtocol(Protocol):
+        """Tree node protocol."""
+        def left(self) -> 'TreeProtocol | None':
+            """left child"""
+            ...  # pylint: disable=unnecessary-ellipsis
+        def right(self) -> 'TreeProtocol | None':
+            """right child"""
+            ...  # pylint: disable=unnecessary-ellipsis
+        def data(self) -> int:
+            """data stored in the node"""
+            ...  # pylint: disable=unnecessary-ellipsis
+
+    class TreeNode:
+        """Tree node implementing TreeProtocol."""
+        def __init__(self, data: int, left=None, right=None):
+            """Initialize TreeNode with data, left child, and right child."""
+            self._data = data
+            self._left = left
+            self._right = right
+        def left(self):
+            """Left child."""
+            return self._left
+        def right(self):
+            """Right child."""
+            return self._right
+        def data(self):
+            """Data stored in the node."""
+            return self._data
+
+    class NotTreeNode:
+        """Not a TreeNode."""
+        def left(self):
+            """Left child."""
+            return None
+        # Missing right() and data()
+
+    # Deeply nested recursive structure
+    deep_node = Node(0)
+    for i in range(1, 10):
+        deep_node = Node(i, deep_node)
+
+    # Deeply nested tree
+    deep_tree = TreeNode(0)
+    for i in range(1, 6):
+        deep_tree = TreeNode(i, left=deep_tree, right=TreeNode(i + 100))
+
+    testspecs: list[TestSpec] = [
+        idspec('RECURSIVE_PROTOCOL_001', TestAction(
+            name='Node instance is a NodeProtocol',
+            action=isinstance_of_typehint, args=[deep_node, NodeProtocol],
+            assertion=Assert.TRUE)),
+        idspec('RECURSIVE_PROTOCOL_002', TestAction(
+            name='NotNode instance is not a NodeProtocol',
+            action=isinstance_of_typehint, args=[NotNode(), NodeProtocol],
+            assertion=Assert.FALSE)),
+        idspec('RECURSIVE_PROTOCOL_003', TestAction(
+            name='None is not a NodeProtocol',
+            action=isinstance_of_typehint, args=[None, NodeProtocol],
+            assertion=Assert.FALSE)),
+        idspec('RECURSIVE_PROTOCOL_004', TestAction(
+            name='TreeNode instance is a TreeProtocol',
+            action=isinstance_of_typehint, args=[deep_tree, TreeProtocol],
+            assertion=Assert.TRUE)),
+        idspec('RECURSIVE_PROTOCOL_005', TestAction(
+            name='NotTreeNode instance is not a TreeProtocol',
+            action=isinstance_of_typehint, args=[NotTreeNode(), TreeProtocol],
+            assertion=Assert.FALSE)),
+        idspec('RECURSIVE_PROTOCOL_006', TestAction(
+            name='Deeply nested Node chain is a NodeProtocol',
+            action=isinstance_of_typehint, args=[deep_node, NodeProtocol],
+            assertion=Assert.TRUE)),
+        idspec('RECURSIVE_PROTOCOL_007', TestAction(
+            name='Deeply nested Tree chain is a TreeProtocol',
+            action=isinstance_of_typehint, args=[deep_tree, TreeProtocol],
+            assertion=Assert.TRUE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', recursive_protocol_testspecs())
+def test_recursive_protocols(testspec: TestSpec) -> None:
+    """Test recursive Protocols."""
+    clear_typehint_cache()
+    testspec.run()
+
+@pytest.mark.parametrize('testspec', [
+    idspec('OPTIONAL_001', TestAction(
+        name='1 is Optional[int]',
+        action=isinstance_of_typehint, args=[1, Optional[int]],
+        assertion=Assert.TRUE)),
+    idspec('OPTIONAL_002', TestAction(
+        name='None is Optional[int]',
+        action=isinstance_of_typehint, args=[None, Optional[int]],
+        assertion=Assert.TRUE)),
+    idspec('OPTIONAL_003', TestAction(
+        name="'a' is not Optional[int]",
+        action=isinstance_of_typehint, args=['a', Optional[int]],
+        assertion=Assert.FALSE)),
+    idspec('OPTIONAL_004', TestAction(
+        name='None is Optional[str]',
+        action=isinstance_of_typehint, args=[None, Optional[str]],
+        assertion=Assert.TRUE)),
+    idspec('OPTIONAL_005', TestAction(
+        name='1 is not Optional[str]',
+        action=isinstance_of_typehint, args=[1, Optional[str]],
+        assertion=Assert.FALSE)),
+])
+def test_optional_typehint(testspec: TestSpec) -> None:
+    """Test Optional typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('UNION_001', TestAction(
+        name='1 is Union[int, str]',
+        action=isinstance_of_typehint, args=[1, int | str],
+        assertion=Assert.TRUE)),
+    idspec('UNION_002', TestAction(
+        name="'a' is Union[int, str]",
+        action=isinstance_of_typehint, args=['a', int | str],
+        assertion=Assert.TRUE)),
+    idspec('UNION_003', TestAction(
+        name='None is Union[int, None]',
+        action=isinstance_of_typehint, args=[None, int | None],
+        assertion=Assert.TRUE)),
+    idspec('UNION_004', TestAction(
+        name='3.14 is not Union[int, str]',
+        action=isinstance_of_typehint, args=[3.14, int | str],
+        assertion=Assert.FALSE)),
+    idspec('UNION_005', TestAction(
+        name='[1, 2] is not Union[int, str]',
+        action=isinstance_of_typehint, args=[[1, 2], int | str],
+        assertion=Assert.FALSE)),
+        idspec('UNION_006', TestAction(
+        name='1 is Union[int, Any]',
+        action=isinstance_of_typehint, args=[1, int | Any],
+        assertion=Assert.TRUE)),
+    idspec('UNION_007', TestAction(
+        name='None is Union[int, Any]',
+        action=isinstance_of_typehint, args=[None, int | Any],
+        assertion=Assert.TRUE)),
+    idspec('UNION_008', TestAction(
+        name='[1, 2] is Union[int, Any]',
+        action=isinstance_of_typehint, args=[[1, 2], int | Any],
+        assertion=Assert.TRUE)),
+    idspec('UNION_009', TestAction(
+        name='1 is Union[int, object]',
+        action=isinstance_of_typehint, args=[1, int | object],
+        assertion=Assert.TRUE)),
+    idspec('UNION_010', TestAction(
+        name='None is Union[int, object]',
+        action=isinstance_of_typehint, args=[None, int | object],
+        assertion=Assert.TRUE)),
+    idspec('UNION_011', TestAction(
+        name='[1, 2] is Union[int, object]',
+        action=isinstance_of_typehint, args=[[1, 2], int | object],
+        assertion=Assert.TRUE)),
+])
+def test_union_typehint(testspec: TestSpec) -> None:
+    """Test Union typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('TYPEVAR_001', TestAction(
+        name='1 is a TypeVar bound to int',
+        action=isinstance_of_typehint,
+        args=[1, TypeVar('T', bound=int)],
+        assertion=Assert.TRUE)),
+    idspec('TYPEVAR_002', TestAction(
+        name="'a' is not a TypeVar bound to int",
+        action=isinstance_of_typehint,
+        args=['a', TypeVar('T', bound=int)],
+        assertion=Assert.FALSE)),
+    idspec('TYPEVAR_003', TestAction(
+        name='1 is a TypeVar constrained to int or str',
+        action=isinstance_of_typehint,
+        args=[1, TypeVar('T', int, str)],
+        assertion=Assert.TRUE)),
+    idspec('TYPEVAR_004', TestAction(
+        name="'a' is a TypeVar constrained to int or str",
+        action=isinstance_of_typehint,
+        args=['a', TypeVar('T', int, str)],
+        assertion=Assert.TRUE)),
+    idspec('TYPEVAR_005', TestAction(
+        name='3.14 is not a TypeVar constrained to int or str',
+        action=isinstance_of_typehint,
+        args=[3.14, TypeVar('T', int, str)],
+        assertion=Assert.FALSE)),
+    idspec('TYPEVAR_006', TestAction(
+        name='int is a covariant TypeVar',
+        action=isinstance_of_typehint,
+        args=[1, TypeVar('T_co', covariant=True)],
+        assertion=Assert.TRUE)),
+    idspec('TYPEVAR_007', TestAction(
+        name='str is a contravariant TypeVar',
+        action=isinstance_of_typehint,
+        args=['a', TypeVar('T_contra', contravariant=True)],
+        assertion=Assert.TRUE)),
+])
+def test_typevar_typehint(testspec: TestSpec) -> None:
+    """Test TypeVar and generic constraints."""
+    clear_typehint_cache()
+    testspec.run()
+
+@pytest.mark.parametrize('testspec', [
+    idspec('ANY_001', TestAction(
+        name='1 is an Any',
+        action=isinstance_of_typehint, args=[1, Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_002', TestAction(
+        name="'string' is an Any",
+        action=isinstance_of_typehint, args=['string', Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_003', TestAction(
+        name='[1, 2, 3] is an Any',
+        action=isinstance_of_typehint, args=[[1, 2, 3], Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_004', TestAction(
+        name='None is an Any',
+        action=isinstance_of_typehint, args=[None, Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_005', TestAction(
+        name='object() is an Any',
+        action=isinstance_of_typehint, args=[object(), Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_006', TestAction(
+        name='[1, "a", None] is a list[Any]',
+        action=isinstance_of_typehint, args=[[1, "a", None], list[Any]],
+        assertion=Assert.TRUE)),
+    idspec('ANY_007', TestAction(
+        name='{"a": 1, "b": None} is a dict[str, Any]',
+        action=isinstance_of_typehint, args=[{"a": 1, "b": None}, dict[str, Any]],
+        assertion=Assert.TRUE)),
+    idspec('ANY_008', TestAction(
+        name='(1, "a", None) is a tuple[Any, Any, Any]',
+        action=isinstance_of_typehint, args=[(1, "a", None), tuple[Any, Any, Any]],
+        assertion=Assert.TRUE)),
+])
+def test_any_typehint_various(testspec: TestSpec) -> None:
+    """Test various uses of Any in type hints."""
+    clear_typehint_cache()
+    testspec.run()
+
+@pytest.mark.parametrize('testspec', [
+    idspec('NEVER_001', TestAction(
+        name='1 is not Never (Never not allowed in non-TypedDict contexts)',
+        action=isinstance_of_typehint, args=[1, Never],
+        exception=Exception)),
+    idspec('NEVER_002', TestAction(
+        name='None is not Never (Never not allowed in non-TypedDict contexts)',
+        action=isinstance_of_typehint, args=[None, Never],
+        exception=Exception)),
+])
+def test_never_typehint(testspec: TestSpec) -> None:
+    """Test Never typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('READONLY_001', TestAction(
+        name='1 is ReadOnly[int] (ReadOnly not allowed in non-TypedDict contexts)',
+        action=isinstance_of_typehint, args=[1, ReadOnly[int]],
+        exception=Exception)),
+    idspec('READONLY_002', TestAction(
+        name="'a' is not ReadOnly[int] (ReadOnly not allowed in non-TypedDict contexts)",
+        action=isinstance_of_typehint, args=['a', ReadOnly[int]],
+        exception=Exception)),
+])
+def test_readonly_typehint(testspec: TestSpec) -> None:
+    """Test ReadOnly typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('REQUIRED_001', TestAction(
+        name='1 is Required[int] (Required not allowed in non-TypedDict contexts)',
+        action=isinstance_of_typehint, args=[1, Required[int]],
+        exception=Exception)),
+    idspec('REQUIRED_002', TestAction(
+        name="'a' is not Required[int] (Required not allowed in non-TypedDict contexts)",
+        action=isinstance_of_typehint, args=['a', Required[int]],
+        exception=Exception)),
+])
+def test_required_typehint(testspec: TestSpec) -> None:
+    """Test Required typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    idspec('NOTREQUIRED_001', TestAction(
+        name='1 is NotRequired[int] (NotRequired not allowed in non-TypedDict contexts)',
+        action=isinstance_of_typehint, args=[1, NotRequired[int]],
+        exception=Exception)),
+    idspec('NOTREQUIRED_002', TestAction(
+        name="'a' is not NotRequired[int] (NotRequired not allowed in non-TypedDict contexts)",
+        action=isinstance_of_typehint, args=['a', NotRequired[int]],
+        exception=Exception)),
+])
+def test_notrequired_typehint(testspec: TestSpec) -> None:
+    """Test NotRequired typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
 
 if __name__ == '__main__':
     pytest.main([__file__, "--log-cli-level=INFO", '-s'])
