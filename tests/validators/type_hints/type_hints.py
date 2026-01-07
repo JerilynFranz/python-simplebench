@@ -4,7 +4,7 @@ import enum
 import logging
 import os
 import sys
-from collections.abc import Collection, Iterable, Mapping, Sequence, Set
+from collections.abc import Collection, Hashable, Iterable, Mapping, Sequence, Set
 from pathlib import Path
 from types import MappingProxyType
 from typing import Annotated, Any, Callable, Final, Literal, NewType, TypedDict
@@ -932,6 +932,68 @@ def generic_sequence_subclass_testspecs() -> list[TestSpec]:
 @pytest.mark.parametrize('testspec', generic_sequence_subclass_testspecs())
 def test_generic_sequence_subclass(testspec: TestSpec) -> None:
     """Test generic subclasses of Sequence."""
+    clear_typehint_cache()
+    testspec.run()
+
+@pytest.mark.parametrize('testspec', [
+    idspec('ANY_001', TestAction(
+        name='1 is an Any',
+        action=isinstance_of_typehint, args=[1, Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_002', TestAction(
+        name="'string' is an Any",
+        action=isinstance_of_typehint, args=['string', Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_003', TestAction(
+        name='[1, 2, 3] is an Any',
+        action=isinstance_of_typehint, args=[[1, 2, 3], Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_004', TestAction(
+        name='None is an Any',
+        action=isinstance_of_typehint, args=[None, Any],
+        assertion=Assert.TRUE)),
+    idspec('ANY_005', TestAction(
+        name='object() is an Any',
+        action=isinstance_of_typehint, args=[object(), Any],
+        assertion=Assert.TRUE)),
+])
+def test_any_typehint(testspec: TestSpec) -> None:
+    """Test Any typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
+@pytest.mark.parametrize('testspec', [
+    idspec('HASHABLE_001', TestAction(
+        name='1 is Hashable',
+        action=isinstance_of_typehint, args=[1, Hashable],
+        assertion=Assert.TRUE)),
+    idspec('HASHABLE_002', TestAction(
+        name="'a' is Hashable",
+        action=isinstance_of_typehint, args=['a', Hashable],
+        assertion=Assert.TRUE)),
+    idspec('HASHABLE_003', TestAction(
+        name='(1, 2) is Hashable',
+        action=isinstance_of_typehint, args=[(1, 2), Hashable],
+        assertion=Assert.TRUE)),
+    idspec('HASHABLE_004', TestAction(
+        name='[1, 2] is not Hashable',
+        action=isinstance_of_typehint, args=[[1, 2], Hashable],
+        assertion=Assert.FALSE)),
+    idspec('HASHABLE_005', TestAction(
+        name='{1: 2} is not Hashable',
+        action=isinstance_of_typehint, args=[{1: 2}, Hashable],
+        assertion=Assert.FALSE)),
+    idspec('HASHABLE_006', TestAction(
+        name='frozenset({1, 2}) is Hashable',
+        action=isinstance_of_typehint, args=[frozenset({1, 2}), Hashable],
+        assertion=Assert.TRUE)),
+    idspec('HASHABLE_007', TestAction(
+        name='set([1, 2]) is not Hashable',
+        action=isinstance_of_typehint, args=[set([1, 2]), Hashable],
+        assertion=Assert.FALSE)),
+])
+def test_hashable_typehint(testspec: TestSpec) -> None:
+    """Test Hashable typehint."""
     clear_typehint_cache()
     testspec.run()
 
