@@ -245,4 +245,3 @@ def _check_generic(
             f"Object of type '{type(obj).__name__}' is not an instance of generic type hint '{type_hint}'",
             tag=_TypeHintsErrorTag.TYPE_HINT_MISMATCH)
     return result
-
