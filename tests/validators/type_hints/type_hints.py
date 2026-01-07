@@ -879,5 +879,61 @@ def test_callable_typehint(testspec: TestSpec) -> None:
     clear_typehint_cache()
     testspec.run()
 
+def generic_sequence_subclass_testspecs() -> list[TestSpec]:
+    """Test generic subclasses of Sequence."""
+
+    class MyIntSeq(Sequence[int]):
+        def __init__(self, data):
+            self._data = list(data)
+        def __getitem__(self, idx):
+            return self._data[idx]
+        def __len__(self):
+            return len(self._data)
+
+    class MyStrSeq(Sequence[str]):
+        def __init__(self, data):
+            self._data = list(data)
+        def __getitem__(self, idx):
+            return self._data[idx]
+        def __len__(self):
+            return len(self._data)
+
+    int_seq = MyIntSeq([1, 2, 3])
+    str_seq = MyStrSeq(['a', 'b', 'c'])
+
+    testspecs: list[TestSpec] = [
+        idspec('GENSEQ_001', TestAction(
+            name='MyIntSeq([1, 2, 3]) is a Sequence[int]',
+            action=isinstance_of_typehint, args=[int_seq, Sequence[int]],
+            assertion=Assert.TRUE)),
+        idspec('GENSEQ_002', TestAction(
+            name='MyStrSeq(["a", "b", "c"]) is a Sequence[str]',
+            action=isinstance_of_typehint, args=[str_seq, Sequence[str]],
+            assertion=Assert.TRUE)),
+        idspec('GENSEQ_003', TestAction(
+            name='MyIntSeq([1, 2, 3]) is not a Sequence[str]',
+            action=isinstance_of_typehint, args=[int_seq, Sequence[str]],
+            assertion=Assert.FALSE)),
+        idspec('GENSEQ_004', TestAction(
+            name='MyStrSeq(["a", "b", "c"]) is not a Sequence[int]',
+            action=isinstance_of_typehint, args=[str_seq, Sequence[int]],
+            assertion=Assert.FALSE)),
+        idspec('GENSEQ_005', TestAction(
+            name='MyIntSeq([1, 2, 3]) is a Sequence',
+            action=isinstance_of_typehint, args=[int_seq, Sequence],
+            assertion=Assert.TRUE)),
+        idspec('GENSEQ_006', TestAction(
+            name='MyStrSeq(["a", "b", "c"]) is a Sequence',
+            action=isinstance_of_typehint, args=[str_seq, Sequence],
+            assertion=Assert.TRUE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', generic_sequence_subclass_testspecs())
+def test_generic_sequence_subclass(testspec: TestSpec) -> None:
+    """Test generic subclasses of Sequence."""
+    clear_typehint_cache()
+    testspec.run()
+
 if __name__ == '__main__':
     pytest.main([__file__, "--log-cli-level=INFO", '-s'])
