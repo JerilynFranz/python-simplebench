@@ -10,7 +10,6 @@ from ._cache import _CACHE
 from ._check_result import CheckResult
 from ._constants import IS_IMMUTABLE, IS_VALID, NOT_IMMUTABLE, NOT_VALID
 from ._error_tags import _TypeHintsErrorTag
-from ._forward_references import resolve_type_hint
 from ._generic import _check_generic
 from ._immutable import _is_immutable
 from ._log import log
@@ -37,9 +36,6 @@ def isinstance_of_typehint(
         depth: int = 50,
         consume_iterators: bool = False,
         noncachable_types: set[type[Any]] | None = None,
-        resolve_forward_references: bool = True,
-        globalns:dict[str, Any] | None = None,
-        localns:dict[str, Any] | None = None,
         ) -> bool:
     """
     Check if an object is an instance of a given type hint.
@@ -145,24 +141,19 @@ def isinstance_of_typehint(
     in general. You should benchmark your specific use case if performance is a concern.
 
     .. warning::
-        While it tries to handle forward references (such as those generated
-        by `from __future__ import annotations`) in type hints if the
-        `resolve_forward_references` parameter is `True` (the default),
-        it may not cover all edge cases. There *may* be a small performance speedup
-        by setting `resolve_forward_references` to `False` if you do not
-        have forward references in your type hints.
+        Type hints cannot be strings.  If you pass a string type hint (e.g., a forward reference),
+        a :class:`~simplebench.exceptions.SimpleBenchValueError` will be raised.
 
-        If you have complex forward references, consider resolving them manually
-        before passing them to this function and not using `from __future__ import annotations`
-        if you do not actually have to.
-        
-        If you pass `globalns` and `localns`, it will use those to help resolve forward
-        references in type hints. If you do not provide them, it may not be able to
-        resolve all forward references correctly.
-        
-        There is a performance cost to inferring these namespaces or resolving forward
-        references, so if you can provide the type hint without using forward references,
-        it is strongly recommended.
+        The object itself can be of any type, including user-defined classes
+        and use forward references, but the type hint itself must be a valid type hint object
+        without using a string to represent types.
+
+        Examples:
+    
+        .. code-block:: python
+            isinstance_of_typehint(obj, 'list[int]')  # This will raise SimpleBenchValueError
+
+            isinstance_of_typehint(obj, list[int])  # This is correct
 
         Deeply nested or cyclic structures may lead to performance issues or
         maximum recursion depth errors. The `depth` parameter can help mitigate
@@ -207,22 +198,8 @@ def isinstance_of_typehint(
         caching less effective (and tending to bloat the cache without significant performance benefit).
         The internal default set includes NoneType, bool, int, float, complex, str, and bytes and they
         will always be treated as non-cachable.
-    :param bool resolve_forward_references: (optional, default=True) Whether to attempt to resolve forward references
-        in type hints.
-    :param dict[str, Any] | None globalns: (optional, default=None) global namespace for resolving forward references.
-    :param dict[str, Any] | None localns: (optional, default=None) local namespace for resolving forward references.
-
     :return bool: `True` if the object matches the type hint, `False` otherwise.
     """
-    validate.resolve_forward_references_arg(resolve_forward_references)
-    if resolve_forward_references:
-        type_hint_kwargs = {'type_hint': type_hint}
-        if globalns is not None:
-            type_hint_kwargs['globalns'] = globalns
-        if localns is not None:
-            type_hint_kwargs['localns'] = localns
-        type_hint = resolve_type_hint(**type_hint_kwargs)
-
     validate.type_hint_arg(type_hint)
     validate.depth_arg(depth)
     validate.strict_typed_dict_arg(strict_typed_dict)

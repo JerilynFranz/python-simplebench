@@ -76,6 +76,19 @@ def _check_generic(
             args = (..., Any)
 
     # Check instance type for generics
+    if origin is None:
+        valid = isinstance(obj, type_hint)
+        if valid:
+            if obj_is_immutable:
+                _CACHE.add_cache_entry(type_hint, obj, IS_VALID, options.noncachable_types)
+            return CheckResult(IS_VALID, obj_is_immutable)
+        if raise_on_error:
+            raise SimpleBenchTypeError(
+                f'Object of type {type(obj).__name__} is not an instance of {type_hint}',
+                tag=_TypeHintsErrorTag.VALIDATION_FAILED
+            )
+        return CheckResult(NOT_VALID, obj_is_immutable)
+        
     try:
         if not isinstance(obj, origin):
             if raise_on_error:

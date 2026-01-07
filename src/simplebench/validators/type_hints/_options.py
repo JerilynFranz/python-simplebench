@@ -1,5 +1,5 @@
 """Options for type hint validation functions."""
-from typing import NamedTuple, Any
+from typing import Any, NamedTuple
 
 
 class Options(NamedTuple):

@@ -6,7 +6,7 @@ import sys
 from collections.abc import Collection, Iterable, Mapping, Sequence, Set
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, Literal, NewType, TypedDict
+from typing import Annotated, Any, Final, Literal, NewType, TypedDict
 
 import pytest
 from dotenv import load_dotenv
@@ -729,5 +729,91 @@ def test_newtype(testspec: TestSpec) -> None:
     clear_typehint_cache()
     testspec.run()
 
+
+@pytest.mark.parametrize('testspec', [
+    idspec('FINAL_001', TestAction(
+        name="Final[int] accepts int",
+        action=isinstance_of_typehint,
+        args=[10, Final[int]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('FINAL_002', TestAction(
+        name="Final[str] accepts str",
+        action=isinstance_of_typehint,
+        args=["test", Final[str]],
+        assertion=Assert.EQUAL,
+        expected=True)),
+    idspec('FINAL_003', TestAction(
+        name="Final[str] rejects int",
+        action=isinstance_of_typehint,
+        args=[10, Final[str]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+    idspec('FINAL_004', TestAction(
+        name="Final[int] rejects str",
+        action=isinstance_of_typehint,
+        args=["test", Final[int]],
+        assertion=Assert.EQUAL,
+        expected=False)),
+])
+def test_final_typehint(testspec: TestSpec) -> None:
+    """Test Final typehint."""
+    clear_typehint_cache()
+    testspec.run()
+
+def userclass_testspecs() -> list:
+    """Test that user-defined class instances are correctly identified."""
+
+    class MyClass:
+        pass
+
+    instance = MyClass()
+
+    testspecs: list[TestSpec] = [
+        idspec('USERCLASS_001', TestAction(
+            name="MyClass instance is a MyClass",
+            action=isinstance_of_typehint,
+            args=[instance, MyClass],
+            assertion=Assert.TRUE)),
+        idspec('USERCLASS_002', TestAction(
+            name="MyClass instance is an object",
+            action=isinstance_of_typehint,
+            args=[instance, object],
+            assertion=Assert.TRUE)),
+        idspec('USERCLASS_003', TestAction(
+            name="MyClass instance is not an int",
+            action=isinstance_of_typehint,
+            args=[instance, int],
+            assertion=Assert.FALSE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', userclass_testspecs())
+def test_userclass_instance(testspec: TestSpec) -> None:
+    testspec.run()
+
+
+def nested_types_testspecs() -> list[TestSpec]:
+    """Test nested type hints like list[dict[str, int]]."""
+
+    testspecs: list[TestSpec] = [
+        idspec('NESTED_001', TestAction(
+            name="[{ 'a': 1 }, { 'b': 2 }] is a list[dict[str, int]]",
+            action=isinstance_of_typehint,
+            args=[[{'a': 1}, {'b': 2}], list[dict[str, int]]],
+            assertion=Assert.TRUE)),
+        idspec('NESTED_002', TestAction(
+            name="[{ 'a': 'x' }, { 'b': 2 }] is not a list[dict[str, int]]",
+            action=isinstance_of_typehint,
+            args=[[{'a': 'x'}, {'b': 2}], list[dict[str, int]]],
+            assertion=Assert.FALSE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', nested_types_testspecs())
+def test_nested_types(testspec: TestSpec) -> None:
+    testspec.run()
+
+
 if __name__ == '__main__':
-    pytest.main([__file__, "--log-cli-level=DEBUG", '-s'])
+    pytest.main([__file__, "--log-cli-level=INFO", '-s'])
