@@ -7,7 +7,7 @@ import sys
 from collections.abc import Collection, Iterable, Mapping, Sequence, Set
 from pathlib import Path
 from types import MappingProxyType
-from typing import Annotated, Any, Final, Literal, NewType, TypedDict
+from typing import Annotated, Any, Callable, Final, Literal, NewType, TypedDict
 
 import pytest
 from dotenv import load_dotenv
@@ -824,6 +824,60 @@ def test_enum_typehint(testspec: TestSpec) -> None:
     clear_typehint_cache()
     testspec.run()
 
+
+def callable_testspecs() -> list[TestSpec]:
+    """Test Callable type hints."""
+
+    def func_no_args() -> int:
+        return 42
+
+    def func_one_arg(x: int) -> str:
+        return str(x)
+
+    def func_two_args(x: int, y: str) -> float:
+        return float(x)
+
+    class CallableClass:
+        def __call__(self, x: int) -> str:
+            return str(x)
+
+    testspecs: list[TestSpec] = [
+        idspec('CALLABLE_001', TestAction(
+            name='func_no_args is a Callable',
+            action=isinstance_of_typehint, args=[func_no_args, Callable],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_002', TestAction(
+            name='func_one_arg is a Callable[[int], str]',
+            action=isinstance_of_typehint, args=[func_one_arg, Callable[[int], str]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_003', TestAction(
+            name='func_two_args is a Callable[[int, str], float]',
+            action=isinstance_of_typehint, args=[func_two_args, Callable[[int, str], float]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_004', TestAction(
+            name='CallableClass() is a Callable[[int], str]',
+            action=isinstance_of_typehint, args=[CallableClass(), Callable[[int], str]],
+            assertion=Assert.TRUE)),
+        idspec('CALLABLE_005', TestAction(
+            name='func_no_args is not a Callable[[int], str]',
+            action=isinstance_of_typehint, args=[func_no_args, Callable[[int], str]],
+            assertion=Assert.FALSE)),
+        idspec('CALLABLE_006', TestAction(
+            name='func_one_arg is not a Callable[[str], str]',
+            action=isinstance_of_typehint, args=[func_one_arg, Callable[[str], str]],
+            assertion=Assert.FALSE)),
+        idspec('CALLABLE_007', TestAction(
+            name='42 is not a Callable',
+            action=isinstance_of_typehint, args=[42, Callable],
+            assertion=Assert.FALSE)),
+    ]
+    return testspecs
+
+@pytest.mark.parametrize('testspec', callable_testspecs())
+def test_callable_typehint(testspec: TestSpec) -> None:
+    """Test Callable typehint."""
+    clear_typehint_cache()
+    testspec.run()
 
 if __name__ == '__main__':
     pytest.main([__file__, "--log-cli-level=INFO", '-s'])
