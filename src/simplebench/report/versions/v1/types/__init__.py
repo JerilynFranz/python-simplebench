@@ -10,7 +10,7 @@ across different components and facilitate conversion to/from dictionary
 representations.
 """
 
-from .cpu_info_dict import CPUInfoData, CPUInfoDict
+from .cpu_info_dict import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
 from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvironmentDict
 from .machine_info_dict import MachineInfoData, MachineInfoDict
 from .memory_info_dict import MemoryInfoData, MemoryInfoDict
@@ -25,6 +25,8 @@ from .value_block_dict import ValueBlockData, ValueBlockDict
 __all__ = [
     'CPUInfoData',
     'CPUInfoDict',
+    "ImmutableCPUInfoData",
+    'ImmutableCPUInfoDict',
     'ExecutionEnvironmentData',
     'ExecutionEnvironmentDict',
     'MachineInfoData',

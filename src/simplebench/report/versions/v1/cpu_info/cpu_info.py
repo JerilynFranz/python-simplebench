@@ -14,12 +14,14 @@ will not be changed.
 """
 import hashlib
 import json
+from types import MappingProxyType
+from typing import cast
 
 from simplebench.report._base.cpu_info import BaseCPUInfo
 from simplebench.report._base.json_schema import JSONSchema
 from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 
-from ..types import CPUInfoData, CPUInfoDict
+from ..types import CPUInfoData, ImmutableCPUInfoData, ImmutableCPUInfoDict
 from . import validate
 from .cpu_info_schema import CPUInfoSchema
 
@@ -78,7 +80,7 @@ class CPUInfo(BaseCPUInfo):
               dictionaries, lists, strings, numbers, booleans, and nulls.
             - All keys in dictionaries must be non-blank, non-empty strings.
         """
-        self._data: CPUInfoDict = validate.data(data)
+        self._data: ImmutableCPUInfoData = validate.data(data)
         self._hash_id: str | None = validate.hash_id(hash_id, allow_none=True)
 
     @property
@@ -93,7 +95,7 @@ class CPUInfo(BaseCPUInfo):
         return self._hash_id
 
     @property
-    def data(self) -> ImmutableCoreDataMappingType:
+    def data(self) -> ImmutableCPUInfoData:
         """Get the data property.
 
         :return ImmutableCoreDataMappingType: An immutable mapping of the CPU information data.
@@ -129,17 +131,19 @@ class CPUInfo(BaseCPUInfo):
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 
-    def to_dict(self) -> CPUInfoDict:
-        """Convert the CPUInfo to a dictionary suitable for JSON serialization.
+    def to_dict(self) -> ImmutableCPUInfoDict:
+        """Convert the CPUInfo to an immutable dictionary suitable for JSON serialization.
 
         This includes all properties defined in the :class:`CPUInfoSchema`
         for the version.
 
-        :return CPUInfoDict: An immutable mapping representation of the CPUInfo.
+        :return ImmutableCPUInfoDict: An immutable mapping representation of the CPUInfo.
         """
         cls = self.__class__
-        return CPUInfoDict(
-            type=cls.TYPE,
-            version=cls.VERSION,
-            hash_id=self.hash_id,
-            data=self.data)
+        immutable_value = MappingProxyType({
+            'type': cls.TYPE,
+            'version': cls.VERSION,
+            'hash_id': self.hash_id,
+            'data': cast(ImmutableCoreDataMappingType, self.data)
+        })
+        return cast(ImmutableCPUInfoDict, immutable_value)

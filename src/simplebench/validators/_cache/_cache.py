@@ -3,7 +3,8 @@
 import logging
 import threading
 from collections import OrderedDict
-from typing import Any, Hashable
+from collections.abc import Hashable
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 

@@ -10,7 +10,7 @@ built upon these core types and is_* functions to validate instances of these ty
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence, Set
-from types import MappingProxyType
+from types import MappingProxyType, NoneType
 from typing import TypeAlias
 
 CoreDataTypes: TypeAlias = str | bytes |int | float | bool | complex | None | \
@@ -35,7 +35,8 @@ Allowed types are:
     - `Set[CoreDataTypes]` (covers set, frozenset)
 """
 
-ImmutableCoreDataTypesTuple = (str, bytes, int, float, bool, complex, type(None), tuple, frozenset, MappingProxyType)
+IMMUTABLE_CORE_DATA_TYPES_TUPLE = (
+    str, bytes, int, float, bool, complex, NoneType, tuple, frozenset, MappingProxyType)
 """Tuple of types representing immutable core data primitive types.
 
 Includes:
@@ -51,7 +52,7 @@ Includes:
     - MappingProxyType
 """
 
-ImmutableCoreDataTypes: TypeAlias = str | bytes | int | float | bool | complex |None | \
+ImmutableCoreDataTypes: TypeAlias = str | bytes | int | float | bool | complex | None | \
     tuple['ImmutableCoreDataTypes', ...] | frozenset['ImmutableCoreDataTypes'] | \
     MappingProxyType[str, 'ImmutableCoreDataTypes']
 """Type alias for the immutable core data type primitives used in SimpleBench.
@@ -126,7 +127,7 @@ is an immutable core data type as defined by `ImmutableCoreDataTypes`.
 It is both serializable and immutable.
 """
 
-CoreDataPrimitiveTypesTuple: tuple[type, ...] = (str, bytes, int, float, bool, complex, type(None))
+CORE_DATA_PRIMITIVE_TYPES_TUPLE: tuple[type, ...] = (str, bytes, int, float, bool, complex, NoneType)
 """Tuple of types representing core data primitive types.
 
 They are all immutable and serializable.

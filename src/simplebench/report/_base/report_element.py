@@ -6,16 +6,16 @@ It implements validation and serialization/deserialization methods to and from d
 for a JSON Schema version.
 """
 from abc import ABC, abstractmethod
-from typing import Any, Callable, TypeVar
 from types import MappingProxyType
+from typing import Any, Callable, TypeVar
 
-from simplebench.base import Hydrator
+from simplebench.base._hydrator import Hydrator
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
-from simplebench.types import ImmutableCoreDataMappingType, ImmutableCoreDataTypesTuple
-from simplebench.validators import is_immutable_core_data
 from simplebench.report.validate import report_element_typed_dict_mimic
+from simplebench.types import IMMUTABLE_CORE_DATA_TYPES_TUPLE, ImmutableCoreDataMappingType
+from simplebench.validators import is_immutable_core_data
 
 from .json_schema import JSONSchema
 
@@ -144,7 +144,7 @@ class ReportElement(Hydrator, ABC):
                     tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE)
 
         for key, value in data.items():
-            if isinstance(value, ImmutableCoreDataTypesTuple):
+            if isinstance(value, IMMUTABLE_CORE_DATA_TYPES_TUPLE):
                 continue
             raise SimpleBenchTypeError(
                 f"ReportElement._to_dict_helper produced invalid data for key '{key}': "

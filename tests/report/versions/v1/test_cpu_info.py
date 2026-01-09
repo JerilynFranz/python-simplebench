@@ -1,7 +1,7 @@
 """Tests for simplebench.report.versions.v1.cpu_info.CPUInfo class."""
 import pytest
 
-from simplebench.environment.cpu_info.cpu_info import CPUInfo as EnvCPUInfo
+from simplebench.environment.cpu_info._cpu_info import CPUInfo as EnvCPUInfo
 from simplebench.report.versions.v1.cpu_info import CPUInfo as ReportCPUInfo
 
 from ....testspec import Assert, TestAction, TestSpec, idspec

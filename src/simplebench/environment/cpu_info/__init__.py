@@ -1,9 +1,6 @@
 """CPU information utility functions."""
-from .cpu_info import CPUInfo
-from .types import CPUInfoDataTypes, CPUInfoDictType
+from ._cpu_info import CPUInfo
 
 __all__ = [
     'CPUInfo',
-    'CPUInfoDataTypes',
-    'CPUInfoDictType'
 ]

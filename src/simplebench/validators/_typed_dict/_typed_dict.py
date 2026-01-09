@@ -2,7 +2,9 @@
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypedDict, TypeGuard, TypeVar, cast, get_args, get_origin, get_type_hints
 
-from simplebench.base import _TypedDictKeyInfo
+from typechecked import isinstance_of_typehint
+
+from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.validators._cache import ValidationCache
@@ -42,7 +44,7 @@ def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
     :raise SimpleBenchTypeError: If any value has an incorrect type.
     """
     try:
-        valid, _ =_validate_and_check_immutability_of_mimic(data, td_cls)
+        valid = isinstance_of_typehint(data, td_cls)
     except SimpleBenchTypeError as exc:
         raise SimpleBenchTypeError(
             f"Data does not conform to TypedDict {td_cls.__name__}: {exc}",
@@ -581,5 +583,7 @@ def _is_string_key_type(key_type: Any) -> bool:
         return True
     try:
         return issubclass(key_type, str)
+    except TypeError:
+        return False
     except TypeError:
         return False

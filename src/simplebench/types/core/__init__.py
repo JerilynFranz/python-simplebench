@@ -1,8 +1,9 @@
 """Core types for SimpleBench"""
 
 from .core import (
+    CORE_DATA_PRIMITIVE_TYPES_TUPLE,
+    IMMUTABLE_CORE_DATA_TYPES_TUPLE,
     CoreDataMappingType,
-    CoreDataPrimitiveTypesTuple,
     CoreDataSequenceType,
     CoreDataSetType,
     CoreDataTypes,
@@ -10,18 +11,17 @@ from .core import (
     ImmutableCoreDataSequenceType,
     ImmutableCoreDataSetType,
     ImmutableCoreDataTypes,
-    ImmutableCoreDataTypesTuple
 )
 
 __all__ = [
     "CoreDataTypes",
     "CoreDataMappingType",
-    "CoreDataPrimitiveTypesTuple",
+    "CORE_DATA_PRIMITIVE_TYPES_TUPLE",
     "CoreDataSequenceType",
     "CoreDataSetType",
     "ImmutableCoreDataMappingType",
     "ImmutableCoreDataSequenceType",
     "ImmutableCoreDataSetType",
     "ImmutableCoreDataTypes",
-    "ImmutableCoreDataTypesTuple"
+    "IMMUTABLE_CORE_DATA_TYPES_TUPLE"
 ]

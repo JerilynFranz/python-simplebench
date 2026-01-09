@@ -16,6 +16,8 @@ of the base MemoryInfo representation at the time of the V1 schema release.
 import hashlib
 from typing import Any
 
+from typechecked import is_immutable, isinstance_of_typehint
+
 from simplebench.report._base import BaseMemoryInfo, JSONSchema
 from simplebench.report.versions.v1.types import MemoryInfoData, MemoryInfoDict
 

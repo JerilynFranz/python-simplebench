@@ -1,10 +1,14 @@
 """Validation functions for CPUInfo report version v1"""
 import re
+from typing import cast, Any
 
-from simplebench.environment.cpu_info import validate as cpu_info_validate
-from simplebench.environment.cpu_info.types import CPUInfoDictType
+from typechecked import is_immutable, isinstance_of_typehint
+
+from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _CPUInfoErrorTag
-from simplebench.validators import validate_string, validate_string_with_regex
+from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
+
+from ..types import CPUInfoData, ImmutableCPUInfoData
 
 _HASH_RE = re.compile(r'^[a-f0-9]{64}$')
 
@@ -56,7 +60,7 @@ def hash_id(value: str | None,
               message=f"{name} must be a 64-character hexadecimal string")
 
 
-def data(value: CPUInfoDictType) -> CPUInfoDictType:
+def data(value: Any) -> ImmutableCPUInfoData:
     """Validate the data property of CPUInfo.
 
     The data property must be a dictionary that contains the raw CPU information.
@@ -76,9 +80,18 @@ def data(value: CPUInfoDictType) -> CPUInfoDictType:
         non-finite floats (NaN, Infinity) or be deeply nested beyond reasonable limits
         (10 levels deep).
     
-    :param CPUInfoDictType value: The data dictionary to validate.
-    :return CPUInfoDictType: The validated data dictionary.
-    :raises SimpleBenchTypeError: If the tree structure contains invalid types.
-    :raises SimpleBenchValueError: If any dictionary key is a blank or empty string.
+    :param Any value: The data dictionary to validate. Should conform to `CPUInfoData` TypedDict.
+    :return ImmutableCPUInfoData: The validated data dictionary.
+    :raises SimpleBenchValueError: If any key in the dictionary is not a non-blank,
+        non-empty string, or if the structure contains unsupported types or cycles.
+    :raises SimpleBenchTypeError: If the value is not a valid dictionary.
     """
-    return cpu_info_validate.cpu_info_dict("data", value)
+    if not isinstance_of_typehint(value, CPUInfoData):
+        raise SimpleBenchTypeError(
+            "CPUInfo.data must be a 'CPUInfoData' TypedDict - validation failed.",
+            tag=_CPUInfoErrorTag.INVALID_DATA_ARG_TYPE)
+    if is_immutable(value):
+        return cast(ImmutableCPUInfoData, value)
+
+    immutable_value = validate_core_data_mapping(value, 'CPUInfo.data', max_depth=10)
+    return cast(ImmutableCPUInfoData, immutable_value)

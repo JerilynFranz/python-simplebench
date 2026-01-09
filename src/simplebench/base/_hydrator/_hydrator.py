@@ -11,9 +11,9 @@ from copy import copy
 from functools import cache
 from typing import Any, Callable, Iterable, Union, get_args, get_origin, get_type_hints, is_typeddict
 
-from simplebench.base import _TypedDictKeyInfo
+from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
 
-from . import validate
+from . import _validate
 
 
 class Hydrator:
@@ -244,21 +244,21 @@ class Hydrator:
         :raises: SimpleBenchTypeError if the data does not match the rules.
 
         """
-        data = validate.data(data)
-        allowed_fields_map = validate.allowed(allowed_fields)
-        skip_fields_set = validate.skip(skip_fields or set(), allowed_fields_map)
-        optional_fields_set = validate.optional(optional_fields or set(), allowed_fields_map)
-        defaults_for_fields = validate.defaults(defaults or {}, optional_fields_set)
-        match_on_fields = validate.match_on(match_on or {}, allowed_fields_map)
-        process_as_handlers = validate.process_as(process_as or {}, allowed_fields_map)
+        data = _validate.data(data)
+        allowed_fields_map = _validate.allowed(allowed_fields)
+        skip_fields_set = _validate.skip(skip_fields or set(), allowed_fields_map)
+        optional_fields_set = _validate.optional(optional_fields or set(), allowed_fields_map)
+        defaults_for_fields = _validate.defaults(defaults or {}, optional_fields_set)
+        match_on_fields = _validate.match_on(match_on or {}, allowed_fields_map)
+        process_as_handlers = _validate.process_as(process_as or {}, allowed_fields_map)
 
         data = cls._apply_defaults(data, defaults_for_fields)
-        validate.match_on_values(data, match_on_fields)
-        validate.allowed_keys_against_data(data, allowed_fields_map)
-        validate.required_keys_against_data(data, allowed_fields_map, optional_fields_set)
+        _validate.match_on_values(data, match_on_fields)
+        _validate.allowed_keys_against_data(data, allowed_fields_map)
+        _validate.required_keys_against_data(data, allowed_fields_map, optional_fields_set)
         output = cls._apply_process_as_handlers(data, process_as_handlers)
         output = cls._remove_skipped_fields(output, skip_fields_set)
-        validate.data_types(output, allowed_fields_map)
+        _validate.data_types(output, allowed_fields_map)
         return output
 
     @staticmethod

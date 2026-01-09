@@ -6,12 +6,12 @@ contract defined in :module:`simplebench.types.core`.
 They recursively validate mappings, sequences, and sets to ensure all
 elements conform to the allowed primitive types.
 """
-from collections import OrderedDict
 import math
+import threading
+from collections import OrderedDict
 from collections.abc import Mapping, Sequence, Set
 from types import MappingProxyType
-from typing import Final, Any, TypeGuard
-import threading
+from typing import Any, Final, TypeGuard
 
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -27,7 +27,7 @@ from simplebench.types import (
 )
 from simplebench.validators import _ValidatorsErrorTag
 
-_CACHE_LOCK = threading.Lock()
+_CACHE_LOCK = threading.RLock()
 """Lock for thread-safe access to the immutables cache."""
 
 class _PendingItem:
@@ -54,6 +54,8 @@ def _internal_validate_core_data_mapping(            *,
             depth: int,
             parents: set[int]) -> ImmutableCoreDataMappingType:
     """Internal helper to validate a CoreDataTypes mapping.
+
+    It recursively validates the mapping and converts it to a deep immutable structure.
 
     :param Mapping[str, CoreDataTypes] value: The data mapping to validate.
     :param str name: The name of the mapping (used in error messages).
@@ -104,7 +106,7 @@ def _internal_validate_core_data_mapping(            *,
     return MappingProxyType(validated_dict)
 
 def validate_core_data_mapping(
-            item: CoreDataMappingType,
+            item: Any,
             name: str,
             *,
             max_depth: int = DEFAULT_MAX_CORE_DATA_DEPTH) -> ImmutableCoreDataMappingType:
@@ -901,22 +903,22 @@ def _trim_immutables_cache(size: int) -> None:
     This helps maintain cache efficiency while preventing unbounded growth
     and minimizing performance impact from frequent trimming.
 
-    The smallest allowed size is 10.
+    The smallest allowed size is 100.
 
     Cache trimming is performed within a thread-safe lock.
 
     :param int size: The maximum size of the cache.
     :raises SimpleBenchTypeError: If size is not an integer.
-    :raises SimpleBenchValueError: If size is less than 1.
+    :raises SimpleBenchValueError: If size is less than 100.
     """
     if not isinstance(size, int):
         raise SimpleBenchTypeError(
             'Cache size must be an integer.',
             tag=_ValidatorsErrorTag.INVALID_CACHE_TYPE)
 
-    if size < 10: # Minimum size to ensure effective caching
+    if size < 100: # Minimum size to ensure effective caching
         raise SimpleBenchValueError(
-            'Cache size must be at least 10',
+            'Cache size must be at least 100',
             tag=_ValidatorsErrorTag.INVALID_CACHE_SIZE)
 
     with _CACHE_LOCK:

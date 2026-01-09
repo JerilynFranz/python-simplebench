@@ -15,7 +15,7 @@ of the base CPUInfo representation at the time of the V1 schema release.
 """
 from abc import ABC
 
-from simplebench.base import Hydrator
+from simplebench.base._hydrator import Hydrator
 from simplebench.report._base.report_element import ReportElement
 
 

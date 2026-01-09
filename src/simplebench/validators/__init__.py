@@ -1,7 +1,7 @@
 """Validator functions for SimpleBench."""
 from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 
-from ._immutable import is_immutable, validate_immutable
+from ._typed_dict import is_typed_dict_mimic, typed_dict_mimic
 from .core_data_types import (
     is_core_data,
     is_core_data_mapping,
@@ -43,21 +43,20 @@ from .strings import (
     validate_string,
     validate_string_with_regex,
 )
-from .type_hints import isinstance_of_typehint
 from .types import validate_type
 from .validate_iterable_of_type import validate_iterable_of_type
 from .validate_sequence_of_type import validate_sequence_of_type
 
 __all__ = [
+    "typed_dict_mimic",
+    "is_typed_dict_mimic",
     "is_core_data",
     "is_core_data_primitive",
     "is_core_data_primitive_type",
     "is_core_data_mapping",
     "is_core_data_sequence",
     "is_core_data_set",
-    "isinstance_of_typehint",
     "is_immutable_core_data",
-    "is_immutable",
     "_ValidatorsErrorTag",
     "validate_bool",
     "validate_core_data",
@@ -69,7 +68,6 @@ __all__ = [
     "validate_float",
     "validate_float_range",
     "validate_frozenset_of_type",
-    "validate_immutable",
     "validate_immutable_core_data",
     "validate_immutable_core_data_mapping",
     "validate_immutable_core_data_sequence",

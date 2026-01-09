@@ -2,7 +2,8 @@
 import threading
 import weakref
 from collections import OrderedDict
-from typing import Any, Hashable
+from collections.abc import Hashable
+from typing import Any
 
 from ._cache_key import CacheKey
 

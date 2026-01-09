@@ -11,7 +11,7 @@ It is the base implemention of the report machine info representation.
 """
 from abc import ABC
 
-from simplebench.base import Hydrator
+from simplebench.base._hydrator import Hydrator
 
 from .report_element import ReportElement
 

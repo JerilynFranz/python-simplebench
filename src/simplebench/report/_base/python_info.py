@@ -1,7 +1,7 @@
 """Base class for all PythonInfo classes."""
 from abc import ABC
 
-from simplebench.base import Hydrator
+from simplebench.base._hydrator import Hydrator
 
 from .environment import Environment
 

@@ -1,12 +1,13 @@
 """Validation functions for Hydrator parameters."""
 import inspect
-from collections.abc import Iterable, Mapping, Sequence, Set, Callable
+from collections.abc import Callable, Iterable, Mapping, Sequence, Set
 from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
 
-from simplebench.base import _TypedDictKeyInfo
-from simplebench.base.hydrator._error_tags import _HydratorErrorTag
+from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_iterable_of_type, validate_type
+
+from ._error_tags import _HydratorErrorTag
 
 
 def data(value: Mapping[str, Any]) -> dict[str, Any]:
@@ -429,4 +430,5 @@ def is_instance_of_typehint(obj: Any, type_hint: Any, recurse: bool = False) -> 
         return True  # Shallow: just check Iterable
 
     # Fallback to original logic
+    return is_instance_of_generic(obj, type_hint)
     return is_instance_of_generic(obj, type_hint)

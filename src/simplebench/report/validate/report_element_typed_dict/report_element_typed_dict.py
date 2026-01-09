@@ -19,7 +19,7 @@ only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_origin, get_type_hints
 
-from simplebench.base import _TypedDictKeyInfo
+from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
