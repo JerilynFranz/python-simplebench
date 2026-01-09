@@ -11,7 +11,7 @@ import sys
 
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 
-from .python_info_dict import PythonInfoData, PythonInfoDict
+from ._python_info_dict import PythonInfoData, PythonInfoDict
 
 if sys.version_info >= (3, 11):
     from typing import Required

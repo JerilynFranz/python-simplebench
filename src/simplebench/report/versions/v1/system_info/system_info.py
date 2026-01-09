@@ -1,6 +1,5 @@
 """V1 SystemInfo implementation."""
 import hashlib
-from typing import Any
 
 from simplebench.report._base import BaseSystemInfo, JSONSchema
 

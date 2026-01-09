@@ -14,9 +14,11 @@ from .report_element import ReportElement
 from .report_element_typed_dict import ReportElementTypedDict
 from .results_info import BaseResultsInfo
 from .stats_block import BaseStatsBlock
+from .swap_memory import BaseSwapMemoryObject
 from .system_info import BaseSystemInfo
 from .value_block import BaseValueBlock
 from .vcs_info import BaseVCSInfo
+from .virtual_memory import BaseVirtualMemoryObject
 
 __all__ = [
     "BaseCPUInfo",
@@ -32,7 +34,9 @@ __all__ = [
     "ReportElement",
     "BaseResultsInfo",
     "BaseStatsBlock",
+    "BaseSwapMemoryObject",
     "BaseValueBlock",
     "BaseVCSInfo",
+    "BaseVirtualMemoryObject",
     "BaseSystemInfo",
 ]

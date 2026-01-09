@@ -658,6 +658,9 @@ def validate_float_range(
         max_value: float) -> float:
     """Validate that a value is a float within a specified range.
 
+    Accepts both float and int types for the number parameter,
+    but always returns a float.
+
         (validation primitive - does not depend on other validators)
 
     :param float number: The value to validate.
@@ -689,16 +692,16 @@ def validate_float_range(
             f'Invalid call to validate_float_range: min_value ({min_value}) '
             f'cannot be greater than max_value ({max_value}).',
             tag=_ValidatorsErrorTag.INVALID_RANGE)
-    if not isinstance(number, float):
+    if not isinstance(number, float | int):  # Allow ints as valid floats
         raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(number)}. Must be a float.',
+            f'Invalid {field_name} type: {type(number)}. Must be a float or int.',
             tag=type_tag)
     if not min_value <= number <= max_value:
         raise SimpleBenchValueError(
             f'Invalid {field_name}: {number}. Must be a float between {min_value} and {max_value}, inclusive.',
             tag=value_tag)
 
-    return number
+    return float(number)
 
 
 # Validate filename stem regex: alphanumeric characters, dashes, and underscores only,

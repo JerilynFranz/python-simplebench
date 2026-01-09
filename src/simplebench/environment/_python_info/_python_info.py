@@ -16,13 +16,15 @@ Python-specific environment variables that are set.
 It also gathers information about the garbage collector settings
 using the :module:`gc` module.
 """
+import dataclasses
 import gc
 import os
 import platform
 import sys
-from dataclasses import dataclass
 from types import MappingProxyType
-from typing import Any, Callable, Final, Literal
+from typing import Any, Callable, Final, Literal, cast
+
+from simplebench.report.versions.v1 import ImmutablePythonInfoData
 
 _BUILDNO: Final[Literal[0]] = 0
 """Index for build number in platform.python_build() tuple."""
@@ -43,7 +45,7 @@ _NO_FLAG_SET = _NonExistentFlag()
 """Marker instance for non-existent sys.flags attributes."""
 
 
-@dataclass(frozen=True, slots=True)
+@dataclasses.dataclass(frozen=True)
 class PythonInfo:
     """Create a PythonInfo facade for the Python :module:`platform` functions.
 
@@ -108,7 +110,14 @@ class PythonInfo:
     architecture_linkage: str
     """A string containing the architecture linkage format."""
 
-    def __init__(self) -> None:
+    __slots__ = (
+        'python_version', 'implementation', 'implementation_version', 'compiler', 'revision',
+        'buildno', 'builddate', 'command_line_flags', 'environment_variables',
+        'gc_is_enabled', 'gc_thresholds', 'thread_switch_interval',
+        'architecture_bits', 'architecture_linkage',
+        '_dict_cache', '_cached_proto')
+
+    def __init__(self, _dict_cache: MappingProxyType[str, object] | None = None) -> None:
         """Create a PythonInfo facade for the Python :module:`platform` functions.
 
         This is used to gather information about the current Python version, implementation,
@@ -118,13 +127,15 @@ class PythonInfo:
         cls = self.__class__
         cached_proto = getattr(cls, '_cached_proto', None)
         if cached_proto is not None:
-            for field in self.__dataclass_fields__:  # pylint: disable=no-member
-                object.__setattr__(self, field, getattr(cached_proto, field))
+            fields = dataclasses.fields(self)
+            for field in fields:
+                object.__setattr__(self, field.name, getattr(cached_proto, field.name))
+            # Only fields that could change during a run are re-evaluated
             object.__setattr__(self, 'gc_is_enabled', gc.isenabled())
             object.__setattr__(self, 'gc_thresholds', gc.get_threshold())
             object.__setattr__(self, 'thread_switch_interval', sys.getswitchinterval())
+            object.__setattr__(self, 'environment_variables', self._environment_variables())
             return
-
 
         # Uses object.__setattr__ because the class is frozen
         architecture = platform.architecture()
@@ -146,6 +157,15 @@ class PythonInfo:
 
         # Cache the created instance for future use
         setattr(cls, '_cached_proto', self)
+
+        # Prerender the dict cache
+        output: dict[str, object] = {}
+        fields: tuple[dataclasses.Field, ...] = dataclasses.fields(self)
+        for field in fields:
+            name = field.name
+            output[name] = getattr(self, name)
+        dict_instance = MappingProxyType(output)
+        object.__setattr__(self, '_dict_cache', dict_instance)
 
     def _python_implementation_version(self) -> str:
         """Return the Python implementation revision.
@@ -263,3 +283,13 @@ class PythonInfo:
                 env_data[var_name] = value
 
         return MappingProxyType(env_data)
+
+    def to_dict(self) -> ImmutablePythonInfoData:
+        """Get the Python information dictionary.
+
+        This dictionary contains all the Python information gathered from the
+        :module:`pythoninfo` module at the time of the instance's creation.
+        :return ImmutablePythonInfoData: An immutable dictionary containing all
+            the Python information.
+        """
+        return cast(ImmutablePythonInfoData, getattr(self, '_dict_cache'))

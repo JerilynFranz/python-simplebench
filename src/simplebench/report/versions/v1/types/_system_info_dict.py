@@ -1,28 +1,33 @@
 """Typed dictionaries for the V1 SystemInfo data structure.
 
-This module defines two distinct dictionary types for handling SystemInfo data,
+This module defines four distinct dictionary types for handling SystemInfo data,
 both modeled on the JSON schema for version 1 SystemInfo in
-version 1: :class:`~simplebench.report.versions.v1.system_info.system_info_schema.SystemInfoSchema`.
+version 1: :class:`~simplebench.report.versions.v1.SystemInfoSchema`.
 
     - `SystemInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
     lenient, making `type`, `version`, and `hash_id` optional.
+    - `ImmutableSystemInfoData`: An immutable variant of `SystemInfoData` for use
+    as INPUT. It serves as a marker for type-checking to indicate immutability.
     - `SystemInfoDict`: For use as OUTPUT (e.g., from `to_dict`). It is
     stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
+    - `ImmutableSystemInfoDict`: An immutable variant of `SystemInfoDict` for use
+    as OUTPUT. It serves as a marker for type-checking to indicate immutability.
 
     These types ensure proper validation and serialization of SystemInfo data
 """
-import sys
-
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.types import Never, NotRequired, Required
 
-if sys.version_info >= (3, 11):
-    from typing import NotRequired, Required
-else:
-    from typing_extensions import NotRequired, Required
+__all__ = [
+    'SystemInfoData',
+    'SystemInfoDict',
+    'ImmutableSystemInfoData',
+    'ImmutableSystemInfoDict',
+]
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class _RequiredSystemInfoData(ReportElementTypedDict, total=True):
+class _RequiredSystemInfo(ReportElementTypedDict, total=True):
     """Required fields for V1 SystemInfo data used as INPUT.
 
     All fields are required (`total=True`), except for those made optional
@@ -38,7 +43,7 @@ class _RequiredSystemInfoData(ReportElementTypedDict, total=True):
     release: Required[str]
     machine: Required[str]
 
-class SystemInfoData(_RequiredSystemInfoData, total=False):
+class SystemInfoData(_RequiredSystemInfo, total=False):
     """Typed dictionary for V1 SystemInfo data used as INPUT.
 
     All fields except `type`, `version`, and `hash_id` are required (`total=False`).
@@ -60,30 +65,24 @@ class SystemInfoData(_RequiredSystemInfoData, total=False):
     version: NotRequired[int]
     hash_id: NotRequired[str]
 
+
+class ImmutableSystemInfoData(SystemInfoData, total=False):
+    """Immutable version of :class:`SystemInfoData` (INPUT).
+
+    This marks the dictionary as immutable for type-checking purposes. During runtime,
+    it should be constructed so as to enforce immutability.
+
+    The :func:`typechecked.is_immutable` function will recognize this marker
+    and treat instances of this type as :class:`~typechecked.Immutable`.
+
+    Because it inherits from `SystemInfoData`, all fields are the same and it
+    does not add or remove any fields.
+    """
+    __immutable__: NotRequired[Never]  # Marker to indicate immutability
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class _RequiredSystemInfoDict(ReportElementTypedDict, total=True):
-    """Required fields for V1 SystemInfo data used as OUTPUT.
-
-     All fields are required (`total=True`)
-
-    :param Required[str] system: The system OS identifier string.
-    :param Required[str] system_version: The system version string.
-    :param Required[str] release: The system release string.
-    :param Required[str] machine: The machine type string.
-    :param Required[str] type: The type identifier for the block.
-    :param Required[int] version: The version of the block's data structure.
-    :param Required[str] hash_id: The unique hash identifier for the system information.
-    """
-    system: Required[str]
-    system_version: Required[str]
-    release: Required[str]
-    machine: Required[str]
-    type: Required[str]
-    version: Required[int]
-    hash_id: Required[str]
-
-class SystemInfoDict(_RequiredSystemInfoDict, total=True):
+class SystemInfoDict(_RequiredSystemInfo, total=True):
     """Typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).
 
     This type is strict, requiring `type`, `version`, `node`, and `hash_id` to be
@@ -109,3 +108,28 @@ class SystemInfoDict(_RequiredSystemInfoDict, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the system information.
     """
+    type: Required[str]
+    version: Required[int]
+    hash_id: Required[str]
+
+class ImmutableSystemInfoDict(SystemInfoDict, total=True):
+    """Immutable typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).
+
+    This marks the dictionary as immutable for type-checking purposes. During runtime,
+    it should be constructed so as to enforce immutability.
+
+    The :func:`typechecked.is_immutable` function will recognize this marker
+    and treat instances of this type as :class:`~typechecked.Immutable`.
+
+    Because it inherits from `SystemInfoDict`, all fields are the same and it
+    can be used interchangeably where immutability is not a concern.
+
+    :param Required[str] system: The system OS identifier string.
+    :param Required[str] system_version: The system version string.
+    :param Required[str] release: The system release string.
+    :param Required[str] machine: The machine type string.
+    :param Required[str] type: The type identifier for the block.
+    :param Required[int] version: The version of the block's data structure.
+    :param Required[str] hash_id: The unique hash identifier for the system information.
+    """
+    __immutable__: NotRequired[Never]  # Marker to indicate immutability

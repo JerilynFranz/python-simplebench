@@ -1,4 +1,5 @@
 """Exceptions for JSON reports and schemas."""
+from ._virtual_memory import VirtualMemoryErrorTag
 from .cpu_info import _CPUInfoErrorTag
 from .execution_environment import _ExecutionEnvironmentErrorTag
 from .json_schema import _JSONSchemaErrorTag
@@ -10,6 +11,7 @@ from .raw_data_block import _RawDataBlockErrorTag
 from .report import _ReportErrorTag
 from .results_info import _ResultsInfoErrorTag
 from .stats_block import _StatsBlockErrorTag
+from .swap_memory import SwapMemoryErrorTag
 from .system_info import _SystemInfoErrorTag
 from .value_block import _ValueBlockErrorTag
 from .vcs_info import _VCSInfoErrorTag
@@ -26,7 +28,9 @@ __all__ = [
     "_ReportErrorTag",
     "_ResultsInfoErrorTag",
     "_StatsBlockErrorTag",
+    "SwapMemoryErrorTag",
     "_SystemInfoErrorTag",
     "_ValueBlockErrorTag",
+    "VirtualMemoryErrorTag",
     "_VCSInfoErrorTag",
 ]

@@ -2,7 +2,7 @@
 
 This module defines four distinct dictionary types for handling CPUInfo data,
 both modeled on the JSON schema for version 1 CPUInfo in
-version 1: :class:`~simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema`.
+version 1: :class:`~simplebench.report.versions.v1.CPUInfoSchema`.
 
 - `CPUInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
 lenient, making `type`, `version`, and `hash_id` optional.

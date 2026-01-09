@@ -11,7 +11,7 @@ from functools import cache
 from cpuinfo import get_cpu_info
 from typechecked import Immutable
 
-from simplebench.report.versions.v1.types import ImmutableCPUInfoData
+from simplebench.report.versions.v1 import ImmutableCPUInfoData
 from simplebench.validators import typed_dict_mimic, validate_core_data_mapping
 
 from . import _validate
@@ -89,8 +89,7 @@ class CPUInfo(Immutable):
             self._info = cls._get_cached_cpu_info(cache_key)
 
 
-    @property
-    def info(self) -> ImmutableCPUInfoData:
+    def to_dict(self) -> ImmutableCPUInfoData:
         """Get the CPU information dictionary.
 
         This dictionary contains all the CPU information gathered from the

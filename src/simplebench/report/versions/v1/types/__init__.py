@@ -10,16 +10,25 @@ across different components and facilitate conversion to/from dictionary
 representations.
 """
 
-from .cpu_info_dict import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from ._cpu_info_dict import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from ._memory_info_dict import (
+    ImmutableMemoryInfoData,
+    ImmutableMemoryInfoDict,
+    ImmutableSwapMemoryObjectDict,
+    ImmutableVirtualMemoryObjectDict,
+    MemoryInfoData,
+    MemoryInfoDict,
+    SwapMemoryObjectDict,
+    VirtualMemoryObjectDict,
+)
+from ._python_info_dict import ImmutablePythonInfoData, ImmutablePythonInfoDict, PythonInfoData, PythonInfoDict
 from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvironmentDict
 from .machine_info_dict import MachineInfoData, MachineInfoDict
-from .memory_info_dict import MemoryInfoData, MemoryInfoDict
 from .metrics_object_dict import MetricDataTypes, MetricDictTypes, MetricsObjectData, MetricsObjectDict
-from .python_info_dict import ImmutablePythonInfoDict, PythonInfoData, PythonInfoDict
 from .raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from .report_dict import ReportData, ReportDict
 from .results_info_dict import ResultsInfoData, ResultsInfoDict
-from .system_info_dict import SystemInfoData, SystemInfoDict
+from ._system_info_dict import ImmutableSystemInfoData, ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
 from .value_block_dict import ValueBlockData, ValueBlockDict
 
 __all__ = [
@@ -33,12 +42,19 @@ __all__ = [
     'MachineInfoDict',
     'MemoryInfoData',
     'MemoryInfoDict',
+    'SwapMemoryObjectDict',
+    'ImmutableSwapMemoryObjectDict',
+    'VirtualMemoryObjectDict',
+    'ImmutableVirtualMemoryObjectDict',
+    'ImmutableMemoryInfoData',
+    'ImmutableMemoryInfoDict',
     'MetricsObjectData',
     'MetricsObjectDict',
     'MetricDataTypes',
     'MetricDictTypes',
     'PythonInfoData',
     'PythonInfoDict',
+    'ImmutablePythonInfoData',
     'ImmutablePythonInfoDict',
     'RawDataBlockData',
     'RawDataBlockDict',
@@ -47,7 +63,9 @@ __all__ = [
     'ResultsInfoData',
     'ResultsInfoDict',
     'SystemInfoData',
+    'ImmutableSystemInfoData',
     'SystemInfoDict',
+    'ImmutableSystemInfoDict',
     'ValueBlockData',
     'ValueBlockDict',
 ]

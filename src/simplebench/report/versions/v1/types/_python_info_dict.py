@@ -2,7 +2,7 @@
 
 This module defines three distinct dictionary types for handling PythonInfo data,
 both modeled on the JSON schema for version 1 PythonInfo in
-version 1: :class:`~simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema`.
+version 1: :class:`~simplebench.report.versions.v1.PythonInfoSchema`.
 
 - `PythonInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
 lenient, making `type`, `version`, and `hash_id` optional.
@@ -19,6 +19,7 @@ from simplebench.types import Never, NotRequired, Required
 __all__ = [
     'PythonInfoData',
     'PythonInfoDict',
+    'ImmutablePythonInfoData',
     'ImmutablePythonInfoDict',
 ]
 
@@ -55,6 +56,31 @@ class PythonInfoData(_PythonInfoCore, total=False):
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
+
+class ImmutablePythonInfoData(PythonInfoData, total=False):
+    """Immutable version of :class:`PythonInfoData` (INPUT).
+
+    This marks the dictionary as immutable for type-checking purposes. During runtime,
+    it should be constructed so as to enforce immutability.
+
+    The :func:`typechecked.is_immutable` function will recognize this marker
+    and treat instances of this type as :class:`~typechecked.Immutable`.
+
+    Because it inherits from `PythonInfoData`, all fields are the same and it
+    can be used interchangeably where immutability is not a concern.
+
+    :param Required[str] compiler: The compiler string.
+    :param Required[str] implementation: The implementation string.
+    :param Required[str] implementation_version: The implementation_version string.
+    :param Required[str] python_version: The python_version string.
+    :param Required[str] build: The build string.
+    :param Required[str] release: The release string.
+    :param Required[str] system: The system string.
+    :param NotRequired[str] hash_id: The unique hash identifier for the python information.
+    :param NotRequired[str] type: The type identifier for the block.
+    :param NotRequired[int] version: The version of the block's data structure.
+    """
+    __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 

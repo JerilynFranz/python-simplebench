@@ -8,11 +8,15 @@ It wraps several :module:`platform` module functions to provide a clean,
 typed set of properties to access system, release, version, machine, and node.
 
 """
+import dataclasses
 import platform
-from dataclasses import dataclass
+from types import MappingProxyType
+from typing import cast
+
+from simplebench.report.versions.v1 import ImmutableSystemInfoData
 
 
-@dataclass(frozen=True, slots=True)
+@dataclasses.dataclass(frozen=True)
 class SystemInfo:
     """Create a SystemInfo facade for the system related :module:`platform` functions.
 
@@ -44,6 +48,8 @@ class SystemInfo:
     machine: str
     """The machine type, e.g. 'x86_64' or 'arm64'."""
 
+    __slots__ = ('system', 'release', 'system_version', 'machine', '_dict_cache')
+
     def __init__(self) -> None:
         """Create a SystemInfo facade for the System :module:`platform` functions.
 
@@ -57,3 +63,21 @@ class SystemInfo:
         object.__setattr__(self, 'release', uname.release)
         object.__setattr__(self, 'system_version', uname.version)
         object.__setattr__(self, 'machine', uname.machine)
+
+        # Prerender the dict cache
+        output: dict[str, object] = {}
+        fields: tuple[dataclasses.Field, ...] = dataclasses.fields(self)
+        for field in fields:
+            name = field.name
+            output[name] = getattr(self, name)
+        dict_instance = MappingProxyType(output)
+        object.__setattr__(self, '_dict_cache', dict_instance)
+
+    def to_dict(self) -> ImmutableSystemInfoData:
+        """Convert the SystemInfo to an immutable dictionary representation.
+
+        This is useful for serialization or reporting purposes.
+
+        :return ImmutableSystemInfoData: An immutable dictionary representation of the SystemInfo.
+        """
+        return cast(ImmutablePythonInfoData, getattr(self, '_dict_cache'))

@@ -15,10 +15,10 @@ import sys
 
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 
-from .cpu_info_dict import CPUInfoData, CPUInfoDict
+from ._cpu_info_dict import CPUInfoData, CPUInfoDict
 from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvironmentDict
-from .memory_info_dict import MemoryInfoData, MemoryInfoDict
-from .system_info_dict import SystemInfoData, SystemInfoDict
+from ._memory_info_dict import MemoryInfoData, MemoryInfoDict
+from ._system_info_dict import SystemInfoData, SystemInfoDict
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required

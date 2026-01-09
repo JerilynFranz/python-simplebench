@@ -1,8 +1,8 @@
 """Execution environment information utilities."""
-from .cpu_info import CPUInfo
+from ._cpu_info import CPUInfo
+from ._memory_info import MemoryInfo, SwapMemory, VirtualMemory
+from ._python_info import PythonInfo
 from .machine_info import MachineInfo, MachineInfoFactory
-from .memory_info import MemoryInfo
-from .python_info import PythonInfo
 from .system_info import SystemInfo
 
 __all__ = [
@@ -11,5 +11,7 @@ __all__ = [
     'MachineInfoFactory',
     'MemoryInfo',
     'PythonInfo',
+    'SwapMemory',
     'SystemInfo',
+    'VirtualMemory',
 ]

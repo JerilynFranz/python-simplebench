@@ -13,16 +13,15 @@ This makes the implementations of JSONMemoryInfo backwards compatible with futur
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base MemoryInfo representation at the time of the V1 schema release.
 """
-import hashlib
-from typing import Any
-
-from typechecked import is_immutable, isinstance_of_typehint
+from typing import cast
 
 from simplebench.report._base import BaseMemoryInfo, JSONSchema
-from simplebench.report.versions.v1.types import MemoryInfoData, MemoryInfoDict
+from simplebench.report.versions.v1 import ImmutableMemoryInfoDict, MemoryInfoData, MemoryInfoDict
 
-from . import validate
-from .memory_info_schema import MemoryInfoSchema
+from . import _validate
+from ._memory_info_schema import MemoryInfoSchema
+from ._swap_memory import SwapMemoryObject
+from ._virtual_memory import VirtualMemoryObject
 
 
 class MemoryInfo(BaseMemoryInfo):
@@ -43,17 +42,19 @@ class MemoryInfo(BaseMemoryInfo):
     def __init__(self,
                  *,
                  hash_id: str = '',
-                 total_physical: int,
-                 total_swap: int) -> None:
+                 swap_memory: SwapMemoryObject,
+                 virtual_memory: VirtualMemoryObject) -> None:
         """Initialize MemoryInfo.
 
         :param str hash_id: The unique hash identifier for the machine information.
         :param int total_physical: Total physical memory in bytes.
         :param int total_swap: Total configured swap memory in bytes.
         """
-        self._hash_id = validate.hash_id(hash_id)
-        self._total_physical = validate.total_physical(total_physical)
-        self._total_swap = validate.total_swap(total_swap)
+        self._hash_id = _validate.hash_id(hash_id)
+        self._swap_memory = _validate.swap_memory(swap_memory)
+        self._virtual_memory = _validate.virtual_memory(virtual_memory)
+        self._dict_cache: ImmutableMemoryInfoDict = self._to_dict_helper(ImmutableMemoryInfoDict)
+        self._hash_id: str = self._hash_id_helper(MemoryInfoDict)
 
     @classmethod
     def from_dict(cls, data: MemoryInfoData) -> 'MemoryInfo':
@@ -75,24 +76,18 @@ class MemoryInfo(BaseMemoryInfo):
             data=data,
             allowed_fields=allowed_keys,
             skip_fields={'version', 'type'},
-            optional_fields={'hash_id', 'node', 'version', 'type'},
-            defaults={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
+            optional_fields={'hash_id', 'version', 'type'},
+            defaults={'hash_id': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={})
         return cls(**kwargs)
 
-    def to_dict(self) -> MemoryInfoDict:
-        """Convert the MemoryInfo to a dictionary.
+    def to_dict(self) -> ImmutableMemoryInfoDict:
+        """The MemoryInfo as an immutable dictionary.
 
         :return MemoryInfoDict: A dictionary representation of the MemoryInfo.
         """
-        cls = self.__class__
-        return MemoryInfoDict(
-            type=cls.TYPE,
-            version=cls.VERSION,
-            hash_id=self.hash_id,
-            total_physical=self.total_physical,
-            total_swap=self.total_swap)
+        return cast(ImmutableMemoryInfoDict, self._dict_cache)
 
     @property
     def hash_id(self) -> str:
@@ -100,33 +95,20 @@ class MemoryInfo(BaseMemoryInfo):
 
         :return: The hash_id string.
         """
-        if self._hash_id == '':
-            hash_keys = sorted(k for k in self.init_params() if k != 'hash_id')
-
-            def get_val(key: str) -> Any:
-                value = getattr(self, key)
-                if hasattr(value, 'hash_id'):
-                    return value.hash_id
-                return value
-
-            hash_input = "\x00".join(
-                f"{key}:{get_val(key)}" for key in hash_keys
-            ).encode('utf-8')
-            self._hash_id = hashlib.sha256(hash_input).hexdigest()
         return self._hash_id
 
     @property
-    def total_physical(self) -> int:
-        """Get the total physical memory in bytes.
+    def swap_memory(self) -> SwapMemoryObject:
+        """Get the swap memory information.
 
-        :return: Total physical memory in bytes.
+        :return SwapMemoryObject: The swap memory information.
         """
-        return self._total_physical
+        return self._swap_memory
 
     @property
-    def total_swap(self) -> int:
-        """Get the total swap memory in bytes.
+    def virtual_memory(self) -> VirtualMemoryObject:
+        """Get the virtual memory information.
 
-        :return: Total swap memory in bytes.
+        :return VirtualMemoryObject: The virtual memory information.
         """
-        return self._total_swap
+        return self._virtual_memory

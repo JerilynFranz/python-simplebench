@@ -7,7 +7,7 @@ from simplebench.validators import validate_string, validate_string_with_regex, 
 
 from .._cpu_info import CPUInfo
 from ..execution_environment import ExecutionEnvironment
-from ..memory_info import MemoryInfo
+from .._memory_info import MemoryInfo
 from ..system_info import SystemInfo
 
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')

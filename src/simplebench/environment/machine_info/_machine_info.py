@@ -3,9 +3,9 @@ import platform
 from dataclasses import dataclass
 from typing import ClassVar
 
-from simplebench.environment.cpu_info import CPUInfo
-from simplebench.environment.memory_info import MemoryInfo
-from simplebench.environment.python_info import PythonInfo
+from simplebench.environment._cpu_info import CPUInfo
+from simplebench.environment._memory_info import MemoryInfo
+from simplebench.environment._python_info import PythonInfo
 from simplebench.environment.system_info import SystemInfo
 
 from . import validate
