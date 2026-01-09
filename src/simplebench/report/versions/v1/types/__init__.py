@@ -15,7 +15,7 @@ from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvir
 from .machine_info_dict import MachineInfoData, MachineInfoDict
 from .memory_info_dict import MemoryInfoData, MemoryInfoDict
 from .metrics_object_dict import MetricDataTypes, MetricDictTypes, MetricsObjectData, MetricsObjectDict
-from .python_info_dict import PythonInfoData, PythonInfoDict
+from .python_info_dict import ImmutablePythonInfoDict, PythonInfoData, PythonInfoDict
 from .raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from .report_dict import ReportData, ReportDict
 from .results_info_dict import ResultsInfoData, ResultsInfoDict
@@ -39,6 +39,7 @@ __all__ = [
     'MetricDictTypes',
     'PythonInfoData',
     'PythonInfoDict',
+    'ImmutablePythonInfoDict',
     'RawDataBlockData',
     'RawDataBlockDict',
     'ReportData',

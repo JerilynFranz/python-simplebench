@@ -15,9 +15,8 @@ of the base CPUInfo representation at the time of the V1 schema release.
 """
 from abc import ABC
 
-from simplebench.base._hydrator import Hydrator
 from simplebench.report._base.report_element import ReportElement
 
 
-class BaseCPUInfo(ReportElement, Hydrator, ABC):
+class BaseCPUInfo(ReportElement, ABC):
     """Class representing CPU information in a JSON report."""

@@ -5,7 +5,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _MachineInfoErrorTag
 from simplebench.validators import validate_string, validate_string_with_regex, validate_type
 
-from ..cpu_info import CPUInfo
+from .._cpu_info import CPUInfo
 from ..execution_environment import ExecutionEnvironment
 from ..memory_info import MemoryInfo
 from ..system_info import SystemInfo

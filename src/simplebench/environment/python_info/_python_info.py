@@ -39,7 +39,7 @@ class _NonExistentFlag:
     """Marker class for non-existent sys.flags attributes."""
 
 
-_NoFlagSet = _NonExistentFlag()
+_NO_FLAG_SET = _NonExistentFlag()
 """Marker instance for non-existent sys.flags attributes."""
 
 
@@ -79,7 +79,7 @@ class PythonInfo:
     in other parts of the application or reporting tools and makes it possible to
     serialize (such as by pickling) this information if needed.
     """
-    version: str
+    python_version: str
     """The Python version string."""
     implementation: str
     """The Python implementation name."""
@@ -103,6 +103,10 @@ class PythonInfo:
     """A tuple of the garbage collection thresholds."""
     thread_switch_interval: float
     """The thread switch interval in seconds."""
+    architecture_bits: str
+    """A string containing the architecture bits."""
+    architecture_linkage: str
+    """A string containing the architecture linkage format."""
 
     def __init__(self) -> None:
         """Create a PythonInfo facade for the Python :module:`platform` functions.
@@ -111,11 +115,22 @@ class PythonInfo:
         compiler, revision, and build details. This constructor accepts no arguments
         and always reflects the environment in which it was originally created.
         """
+        cls = self.__class__
+        cached_proto = getattr(cls, '_cached_proto', None)
+        if cached_proto is not None:
+            for field in self.__dataclass_fields__:  # pylint: disable=no-member
+                object.__setattr__(self, field, getattr(cached_proto, field))
+            object.__setattr__(self, 'gc_is_enabled', gc.isenabled())
+            object.__setattr__(self, 'gc_thresholds', gc.get_threshold())
+            object.__setattr__(self, 'thread_switch_interval', sys.getswitchinterval())
+            return
+
+
         # Uses object.__setattr__ because the class is frozen
         architecture = platform.architecture()
         object.__setattr__(self, 'architecture_bits', architecture[_BITS])
         object.__setattr__(self, 'architecture_linkage', architecture[_LINKAGE])
-        object.__setattr__(self, 'version', str(platform.python_version()))
+        object.__setattr__(self, 'python_version', str(platform.python_version()))
         object.__setattr__(self, 'implementation', platform.python_implementation())
         object.__setattr__(self, 'compiler', platform.python_compiler())
         object.__setattr__(self, 'implementation_version', self._python_implementation_version())
@@ -128,6 +143,9 @@ class PythonInfo:
         object.__setattr__(self, 'gc_is_enabled', gc.isenabled())
         object.__setattr__(self, 'gc_thresholds', gc.get_threshold())
         object.__setattr__(self, 'thread_switch_interval', sys.getswitchinterval())
+
+        # Cache the created instance for future use
+        setattr(cls, '_cached_proto', self)
 
     def _python_implementation_version(self) -> str:
         """Return the Python implementation revision.
@@ -164,9 +182,9 @@ class PythonInfo:
         flag_map = self._flag_map()
 
         for flag_name in sorted(flag_map.keys()):
-            flag_value = getattr(sys_flags, flag_name, _NoFlagSet)
+            flag_value = getattr(sys_flags, flag_name, _NO_FLAG_SET)
 
-            if flag_value is _NoFlagSet or not flag_value:
+            if flag_value is _NO_FLAG_SET or not flag_value:
                 continue
 
             arg = flag_map[flag_name]

@@ -9,6 +9,8 @@ from abc import ABC, abstractmethod
 from types import MappingProxyType
 from typing import Any, Callable, TypeVar
 
+from typechecked import Immutable
+
 from simplebench.base._hydrator import Hydrator
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
@@ -36,7 +38,8 @@ class _ReportElementErrorTag(ErrorTag):
     INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE = "INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE"
     """The to_dict method of a ReportElement attribute is not callable."""
 
-class ReportElement(Hydrator, ABC):
+
+class ReportElement(Hydrator, Immutable, ABC):
     """abstract class representing a report element in a report."""
 
     VERSION: int = 0

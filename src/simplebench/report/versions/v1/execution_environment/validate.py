@@ -2,7 +2,7 @@
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.validators import validate_type
 
-from ..python_info import PythonInfo
+from .._python_info import PythonInfo
 
 
 def python(value: PythonInfo) -> PythonInfo:

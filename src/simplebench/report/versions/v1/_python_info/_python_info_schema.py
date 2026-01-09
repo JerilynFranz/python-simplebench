@@ -44,57 +44,105 @@ class PythonInfoSchema(JSONSchema):
                     "type": "string",
                     "pattern": "^[a-f0-9]{64}$"
                 },
-                "compiler": {
-                    "title": "Python Compiler",
-                    "description": "Python compiler information",
-                    "type": "string"
+                "python_version": {
+                    "title": "Python Version",
+                    "description": "Python version",
+                    "type": "string",
+                    "pattern": r"^\S.*$"
                 },
                 "implementation": {
                     "title": "Python Implementation",
                     "description": "Python implementation",
-                    "type": "string"
+                    "type": "string",
+                    "pattern": r"^\S.*$"
                 },
                 "implementation_version": {
                     "title": "Python Implementation Version",
                     "description": "Version of the Python implementation",
                     "type": "string"
                 },
-                "python_version": {
-                    "title": "Python Version",
-                    "description": "Python version",
+                "compiler": {
+                    "title": "Python Compiler",
+                    "description": "Python compiler information",
                     "type": "string"
                 },
-                "build": {
-                    "title": "Python Build",
-                    "description": "Python build information",
+                "revision": {
+                    "title": "Python Revision",
+                    "description": "Python source code revision identifier",
+                    "type": "string"
+                },
+                "buildno": {
+                    "title": "Python Build Number",
+                    "description": "Python build number",
+                    "type": "string"
+                },
+                "builddate": {
+                    "title": "Python Build Date",
+                    "description": "Python build date",
+                    "type": "string"
+                },
+                "command_line_flags": {
+                    "title": "Command Line Flags",
+                    "description": "Command line flags used to start Python",
+                    "type": "string"
+                },
+                "environment_variables": {
+                    "title": "Environment Variables",
+                    "description": "Python-specific environment variables",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "gc_is_enabled": {
+                    "title": "Garbage Collector Is Enabled",
+                    "description": "Whether the garbage collector is enabled",
+                    "type": "boolean"
+                },
+                "gc_thresholds": {
+                    "title": "Garbage Collection Thresholds",
+                    "description": "Garbage collection thresholds",
                     "type": "array",
                     "items": {
-                            "type": "string"
+                        "type": "integer"
                     },
-                    "minItems": 3
+                    "minItems": 3,
+                    "maxItems": 3
                 },
-                "release": {
-                    "title": "Release",
-                    "description": "Release information",
+                "thread_switch_interval": {
+                    "title": "Thread Switch Interval",
+                    "description": "Thread switch interval in seconds",
+                    "type": "number"
+                },
+                "architecture_bits": {
+                    "title": "Architecture Bits",
+                    "description": "Architecture bits (e.g., '32bit', '64bit')",
                     "type": "string"
                 },
-                "system": {
-                    "title": "System",
-                    "description": "System information",
+                "architecture_linkage": {
+                    "title": "Architecture Linkage",
+                    "description": "Architecture linkage (e.g., 'ELF', 'WindowsPE')",
                     "type": "string"
-                }
+                },
             },
             "required": [
                 "version",
                 "type",
                 "hash_id",
-                "compiler",
+                "python_version",
                 "implementation",
                 "implementation_version",
-                "python_version",
-                "build",
-                "release",
-                "system"
+                "compiler",
+                "revision",
+                "buildno",
+                "builddate",
+                "command_line_flags",
+                "environment_variables",
+                "gc_is_enabled",
+                "gc_thresholds",
+                "thread_switch_interval",
+                "architecture_bits",
+                "architecture_linkage"
             ],
             "additionalProperties": False
         }

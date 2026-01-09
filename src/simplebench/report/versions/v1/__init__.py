@@ -1,11 +1,11 @@
 """V1 json report classes"""
 
-from .cpu_info import CPUInfo
+from ._cpu_info import CPUInfo
+from ._python_info import PythonInfo
 from .execution_environment import ExecutionEnvironment
 from .machine_info import MachineInfo
 from .memory_info import MemoryInfo
 from .metrics_object import MetricsObject
-from .python_info import PythonInfo
 from .raw_data_block import RawDataBlock
 from .report import Report
 from .results_info import ResultsInfo

@@ -1,4 +1,4 @@
 """Python information utilities."""
-from .python_info import PythonInfo
+from ._python_info import PythonInfo
 
 __all__ = ['PythonInfo']

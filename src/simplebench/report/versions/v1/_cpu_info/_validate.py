@@ -1,6 +1,6 @@
 """Validation functions for CPUInfo report version v1"""
 import re
-from typing import cast, Any
+from typing import Any, cast
 
 from typechecked import is_immutable, isinstance_of_typehint
 
@@ -67,7 +67,7 @@ def data(value: Any) -> ImmutableCPUInfoData:
 
     .. note:: This is a composite validator, not a primitive.
 
-       This function calls other, more basic validators internally. To avoid
+       This function calls other, more basic, validators internally. To avoid
        unintended behavior, such as circular dependencies,
        it should not be composed within other high-level validators without
        first inspecting its implementation to ensure it will avoid a case where
@@ -81,7 +81,7 @@ def data(value: Any) -> ImmutableCPUInfoData:
         (10 levels deep).
     
     :param Any value: The data dictionary to validate. Should conform to `CPUInfoData` TypedDict.
-    :return ImmutableCPUInfoData: The validated data dictionary.
+    :return ImmutableCPUInfoData: The validated data dictionary as an immutable mapping.
     :raises SimpleBenchValueError: If any key in the dictionary is not a non-blank,
         non-empty string, or if the structure contains unsupported types or cycles.
     :raises SimpleBenchTypeError: If the value is not a valid dictionary.

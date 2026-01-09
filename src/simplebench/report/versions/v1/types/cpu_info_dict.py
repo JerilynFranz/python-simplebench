@@ -1,15 +1,19 @@
 """Typed dictionaries for the V1 CPUInfo data structure.
 
-This module defines two distinct dictionary types for handling CPUInfo data,
+This module defines four distinct dictionary types for handling CPUInfo data,
 both modeled on the JSON schema for version 1 CPUInfo in
 version 1: :class:`~simplebench.report.versions.v1.cpu_info.cpu_info_schema.CPUInfoSchema`.
 
-    - `CPUInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
-    lenient, making `type`, `version`, and `hash_id` optional.
-    - `CPUInfoDict`: For use as OUTPUT (e.g., from `to_dict`). It is
-    stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
+- `CPUInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
+lenient, making `type`, `version`, and `hash_id` optional.
+- `ImmutableCPUInfoData`: An immutable subclass of `CPUInfoData` for
+type-checking purposes.
+- `CPUInfoDict`: For use as OUTPUT (e.g., from `to_dict`). It is
+stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
+- `ImmutableCPUInfoDict`: An immutable subclass of `CPUInfoDict` for
+type-checking purposes.
 
-    These types ensure proper validation and serialization of CPUInfo data
+These types ensure proper validation and serialization of CPUInfo data
 """
 
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
@@ -18,6 +22,7 @@ from simplebench.types import CoreDataMappingType, Never, NotRequired, Required
 __all__ = [
     'CPUInfoData',
     'CPUInfoDict',
+    'ImmutableCPUInfoData',
     'ImmutableCPUInfoDict',
 ]
 
@@ -80,7 +85,7 @@ class _RequiredCPUInfoDict(ReportElementTypedDict, total=True):
     type: Required[str]
     version: Required[int]
 
-class CPUInfoDict(_RequiredCPUInfoDict, total=False):
+class CPUInfoDict(_RequiredCPUInfoDict, total=True):
     """Typed dictionary for the JSON representation of a V1 CPUInfo (OUTPUT).
 
     :param Required[CoreDataMappingType] data: The CPU information data.

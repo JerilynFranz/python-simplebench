@@ -1,12 +1,26 @@
-"""Typed dictionaries for the V1 PythonInfo data structure."""
-import sys
+"""Typed dictionaries for the V1 PythonInfo data structure.
 
+This module defines three distinct dictionary types for handling PythonInfo data,
+both modeled on the JSON schema for version 1 PythonInfo in
+version 1: :class:`~simplebench.report.versions.v1.python_info.python_info_schema.PythonInfoSchema`.
+
+- `PythonInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
+lenient, making `type`, `version`, and `hash_id` optional.
+- `PythonInfoDict`: For use as OUTPUT (e.g., from `to_dict`). It is
+stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
+- `ImmutablePythonInfoDict`: An immutable subclass of `PythonInfoDict` for
+type-checking purposes.
+
+These types ensure proper validation and serialization of PythonInfo data
+"""
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.types import Never, NotRequired, Required
 
-if sys.version_info >= (3, 11):
-    from typing import NotRequired, Required
-else:
-    from typing_extensions import NotRequired, Required
+__all__ = [
+    'PythonInfoData',
+    'PythonInfoDict',
+    'ImmutablePythonInfoDict',
+]
 
 
 # A base for fields that are always required and have the same type.
@@ -44,7 +58,7 @@ class PythonInfoData(_PythonInfoCore, total=False):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class PythonInfoDict(_PythonInfoCore, total=False):
+class PythonInfoDict(_PythonInfoCore, total=True):
     """Typed dictionary for the JSON representation of a V1 PythonInfo (OUTPUT).
 
     This type is strict, requiring `type`, `version`, and `hash_id` to be present.
@@ -63,3 +77,28 @@ class PythonInfoDict(_PythonInfoCore, total=False):
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
+
+class ImmutablePythonInfoDict(PythonInfoDict, total=False):
+    """Immutable version of :class:`PythonInfoDict` (OUTPUT).
+
+    This marks the dictionary as immutable for type-checking purposes. During runtime,
+    it should be constructed so as to enforce immutability.
+
+    The :func:`typechecked.is_immutable` function will recognize this marker
+    and treat instances of this type as :class:`~typechecked.Immutable`.
+
+    Because it inherits from `PythonInfoDict`, all fields are the same and it
+    can be used interchangeably where immutability is not a concern.
+
+    :param Required[str] compiler: The compiler string.
+    :param Required[str] implementation: The implementation string.
+    :param Required[str] implementation_version: The implementation_version string.
+    :param Required[str] python_version: The python_version string.
+    :param Required[str] build: The build string.
+    :param Required[str] release: The release string.
+    :param Required[str] system: The system string.
+    :param Required[str] hash_id: The unique hash identifier for the python information.
+    :param Required[str] type: The type identifier for the block.
+    :param Required[int] version: The version of the block's data structure.
+    """
+    __immutable__: NotRequired[Never]  # Marker to indicate immutability
