@@ -88,6 +88,11 @@ class CPUInfo(BaseCPUInfo):
     def hash_id(self) -> str:
         """Get the hash_id property.
 
+        We can't use the helper from the base class because we need to
+        compute the hash_id based on the data property which is a complex structure
+        of dictionaries and lists. So we serialize the data to a sorted JSON string
+        and compute the SHA256 hash of that string.
+
         :return str | None: The hash_id string or None if not set.
         """
         if self._hash_id is None:

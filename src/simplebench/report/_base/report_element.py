@@ -5,6 +5,7 @@ This class represents a report element in a report that can be serialized.
 It implements validation and serialization/deserialization methods to and from dictionaries
 for a JSON Schema version.
 """
+import hashlib
 from abc import ABC, abstractmethod
 from types import MappingProxyType
 from typing import Any, Callable, TypeVar
@@ -13,7 +14,7 @@ from typechecked import Immutable
 
 from simplebench.base._hydrator import Hydrator
 from simplebench.doc_utils import enum_docstrings
-from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
+from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.report.validate import report_element_typed_dict_mimic
 from simplebench.types import IMMUTABLE_CORE_DATA_TYPES_TUPLE, ImmutableCoreDataMappingType
@@ -38,6 +39,8 @@ class _ReportElementErrorTag(ErrorTag):
     INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE = "INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE"
     """The to_dict method of a ReportElement attribute is not callable."""
 
+    INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING = "INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING"
+    """A required attribute is missing from a ReportElement instance."""
 
 class ReportElement(Hydrator, Immutable, ABC):
     """abstract class representing a report element in a report."""
@@ -105,8 +108,9 @@ class ReportElement(Hydrator, Immutable, ABC):
             that is type cast to the requested ReportElementTypedDict subclass.
         :raises SimpleBenchTypeError: If any attribute cannot be converted to a dictionary.
         """
-        property_keys = self.init_params(self.dict_type).keys()
+        property_keys = self.init_params(dict_type).keys()
         data: dict[str, Any] = {}
+
         # This loop handles calling to_dict on any properties that
         # themselves have a to_dict method. This ensures nested objects,
         # known or unknown, are properly serialized in the future as needed.
@@ -127,8 +131,9 @@ class ReportElement(Hydrator, Immutable, ABC):
 
             # Attribute doesn't exist on instance
             if isinstance(value, _NoMatch):
-                raise AttributeError(
-                    f"ReportElement subclass {cls.__name__} is missing expected attribute '{key}'")
+                raise SimpleBenchAttributeError(
+                    f"ReportElement subclass {cls.__name__} is missing expected attribute '{key}'",
+                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING)
 
             # Already an ImmutableCoreDataMappingType
             elif is_immutable_core_data(value):
@@ -156,3 +161,50 @@ class ReportElement(Hydrator, Immutable, ABC):
 
         # Return validated immutable mapping that mimics the requested ReportElementTypedDict subclass
         return report_element_typed_dict_mimic(MappingProxyType(data), dict_type)
+
+    def _hash_id_helper(self, cls_type: type) -> str:
+        """Helper method to compute the hash_id property for ReportElement subclasses.
+
+        It guides the computation of the hash_id property by iterating over the
+        __init__ parameters defined in the passed cls_type and constructing a
+        hash input string based on the parameter names and their corresponding
+        values in the instance. Special handling is provided for attributes that
+        are themselves ReportElement subclasses, using their hash_id values in the
+        computation.
+
+        :param cls_type: The TypedDict class whose __init__ parameters guide the hash_id computation.
+        :return: The hash_id string.
+        """
+        param_keys: set[str] = set(self.init_params(cls_type).keys()) - {'type', 'version', 'hash_id', '__immutable__'}
+        hash_items: list[str] = []
+        for key in param_keys:
+            if not hasattr(self, key):
+                raise SimpleBenchAttributeError(
+                    f"Missing required property '{key}'",
+                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING)
+            value = getattr(self, key)
+
+            # Special handling for 'hash_id' property for ReportElement sub-objects
+            # Their hash_id must be computed first to ensure consistent hashing
+            # and used in place of the full object representation in the parent object's hash_id.
+            # Because of caching, this will not recompute the sub-object's hash_id if already computed.
+            if isinstance(value, ReportElement):
+                value_hash_id = getattr(value, 'hash_id', _NO_MATCH)
+                if value_hash_id is _NO_MATCH:
+                    raise SimpleBenchAttributeError(
+                        f"Missing required 'hash_id' property on sub-object for attribute '{key}' "
+                        f"or its class {value.__class__.__name__}",
+                        tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING)
+                hash_items.append(f"{key}:{value_hash_id}")
+            else:
+                hash_items.append(f"{key}:{value}")
+
+        cls = self.__class__
+        if hasattr(cls, 'TYPE'):
+            hash_items.append(f"type:{cls.TYPE}")
+        if hasattr(cls, 'VERSION'):
+            hash_items.append(f"version:{cls.VERSION}")
+        hash_items.sort()
+        hash_input = "\x00".join(hash_items).encode('utf-8')
+
+        return hashlib.sha256(hash_input).hexdigest()

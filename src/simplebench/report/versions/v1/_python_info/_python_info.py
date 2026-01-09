@@ -10,15 +10,11 @@ As the foundational version, this class is considered immutable. Future versions
 will inherit from this class to extend its functionality, but this implementation
 will not be changed.
 """
-import hashlib
 import threading
 from collections.abc import Mapping, Sequence
 from types import MappingProxyType
-from typing import Any, cast
 
-from simplebench.exceptions import SimpleBenchAttributeError
 from simplebench.report._base import BasePythonInfo, JSONSchema
-from simplebench.report._error_tags import _PythonInfoErrorTag
 from simplebench.report.versions.v1.types import ImmutablePythonInfoDict, PythonInfoData
 
 from . import _validate
@@ -148,24 +144,9 @@ class PythonInfo(BasePythonInfo):
         if self._from_dict is None:
             with _LOCK:
                 # Double-checked in case another thread populated while waiting for the lock.
-                # This prevents redundant work and ensures only one instance is ever
-                # returned.
                 if self._from_dict is not None:
                     return self._from_dict
-                cls = self.__class__
-                properties = self.init_params(ImmutablePythonInfoDict).keys()
-                output_dict: dict[str, Any] = {}
-                try:
-                    for key in properties:
-                        output_dict[key] = getattr(self, key)
-                except AttributeError as e:
-                    raise SimpleBenchAttributeError(
-                        f"Missing required property: {e}",
-                        tag=_PythonInfoErrorTag.MISSING_PROPERTY) from e
-                output_dict['type'] = cls.TYPE
-                output_dict['version'] = cls.VERSION
-                self._from_dict = cast(ImmutablePythonInfoDict, MappingProxyType(output_dict))
-
+                self._from_dict = self._to_dict_helper(ImmutablePythonInfoDict)
         return self._from_dict
 
     @property
@@ -284,17 +265,11 @@ class PythonInfo(BasePythonInfo):
     def hash_id(self) -> str:
         """Get the hash_id property.
 
+        It is lazily computed on first access if not provided during initialization.
+
         :return: The hash_id string.
+        :raises SimpleBenchAttributeError: If any required property is missing.
         """
         if self._hash_id == '':
-            # Get all __init__ params except 'hash_id' itself.
-            # Sorting ensures a consistent order for hashing.
-            hash_keys = sorted(k for k in self.init_params() if k != 'hash_id')
-
-            # Create a null-byte separated string of "key:value" pairs.
-            hash_input = "\x00".join(
-                f"{key}:{getattr(self, key)}" for key in hash_keys
-            ).encode('utf-8')
-
-            self._hash_id = hashlib.sha256(hash_input).hexdigest()
+            self._hash_id = self._hash_id_helper(ImmutablePythonInfoDict)
         return self._hash_id
