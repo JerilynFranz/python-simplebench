@@ -21,7 +21,7 @@ from simplebench.types import (
     VariationMarksType,
 )
 
-from .metrics_object_dict import MetricsObjectDict
+from ..metrics_object.metrics_object_dict import MetricsObjectDict
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required

@@ -3,7 +3,7 @@ from collections.abc import Mapping
 from typing import Any, cast
 
 from simplebench.report._base import BaseRawDataBlock, JSONSchema
-from simplebench.report.versions.v1.types.raw_data_block_dict import RawDataBlockData, RawDataBlockDict
+from simplebench.report.versions.v1.raw_data_block.raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from simplebench.types import Values
 from simplebench.validators import validate_core_data_mapping
 

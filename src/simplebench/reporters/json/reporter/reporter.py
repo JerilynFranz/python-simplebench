@@ -23,14 +23,14 @@ from .options import JSONOptions
 
 Options: TypeAlias = JSONOptions
 
-_DEFERRED_IMPORTS_DONE: bool = False
+_deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.report.versions import CURRENT_VERSION
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 
 else:
     CURRENT_VERSION = None  # pylint: disable=invalid-name
@@ -38,11 +38,11 @@ else:
 
 def _deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
-    global CURRENT_VERSION, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
-    if _DEFERRED_IMPORTS_DONE:
+    global CURRENT_VERSION, _deferred_imports_done  # pylint: disable=global-statement
+    if _deferred_imports_done:
         return
     from simplebench.report.versions import CURRENT_VERSION  # pylint: disable=import-outside-toplevel
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 
 class JSONReporter(Reporter):
     """Class for outputting benchmark results to JSON files.

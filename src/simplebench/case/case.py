@@ -33,22 +33,22 @@ from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 from .mark import Mark
 
-_DEFERRED_IMPORTS_DONE: bool = False
+_deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
     from simplebench.report.versions.v1 import Report
     from simplebench.session import Session
 
     from .results import Results
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 
 
 def _deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
-    global _DEFERRED_IMPORTS_DONE, Report  # pylint: disable=global-statement
-    if not _DEFERRED_IMPORTS_DONE:
+    global _deferred_imports_done, Report  # pylint: disable=global-statement
+    if not _deferred_imports_done:
         from simplebench.report.versions.v1 import Report  # pylint: disable=import-outside-toplevel
-        _DEFERRED_IMPORTS_DONE = True
+        _deferred_imports_done = True
 
 
 def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str:

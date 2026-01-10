@@ -16,23 +16,23 @@ from simplebench.validators import (
     validate_type,
 )
 
-_DEFERRED_IMPORTS_DONE: bool = False
+_deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.report.versions.v1 import MachineInfo, ResultsInfo
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 else:
     MachineInfo = None  # pylint: disable=invalid-name
     ResultsInfo = None  # pylint: disable=invalid-name
 
 def _deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
-    global ResultsInfo, MachineInfo, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
-    if _DEFERRED_IMPORTS_DONE:
+    global ResultsInfo, MachineInfo, _deferred_imports_done  # pylint: disable=global-statement
+    if _deferred_imports_done:
         return
     from simplebench.report.versions.v1 import MachineInfo, ResultsInfo  # pylint: disable=import-outside-toplevel
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 
 def timestamp(value: str) -> str:
     """Validate a timestamp string in ISO 8601 format.

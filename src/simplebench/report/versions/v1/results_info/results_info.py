@@ -19,21 +19,21 @@ from ..types import ResultsInfoDict
 from . import validate
 from .results_info_schema import ResultsInfoSchema
 
-_DEFERRED_IMPORTS_DONE: bool = False
+_deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
     from simplebench.report.versions.v1 import MetricsObject
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 else:
     MetricsObject = None  # pylint: disable=invalid-name
 
 def _deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
-    global MetricsObject, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
-    if _DEFERRED_IMPORTS_DONE:
+    global MetricsObject, _deferred_imports_done  # pylint: disable=global-statement
+    if _deferred_imports_done:
         return
     from simplebench.report.versions.v1 import MetricsObject  # pylint: disable=import-outside-toplevel
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 
 class ResultsInfo(BaseResultsInfo):
     """An immutable class representing the results-info object for V1 reports.

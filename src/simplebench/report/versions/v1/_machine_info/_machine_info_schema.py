@@ -59,7 +59,13 @@ class MachineInfoSchema(JSONSchema):
                             "$ref": "python-info.json"
                         }
                     },
-                    "additionalProperties": True
+                    # By design this is open-ended to allow for future extensions for other
+                    # execution environments without breaking the schema. Thus, additionalProperties is True
+                    # and there is no required list. 'python' is a pre-defined property,
+                    # but others may be added later.
+                    # It requires at least one property to be present (the 'python' property or any future ones).
+                    "additionalProperties": True,
+                    "minProperties": 1
                 },
                 "cpu": {
                     "$ref": "cpu-info.json"

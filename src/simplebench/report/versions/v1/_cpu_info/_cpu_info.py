@@ -17,13 +17,13 @@ import json
 from types import MappingProxyType
 from typing import cast
 
-from simplebench.report._base.cpu_info import BaseCPUInfo
-from simplebench.report._base.json_schema import JSONSchema
+from simplebench.report._base._cpu_info import BaseCPUInfo
+from simplebench.report._base._json_schema import JSONSchema
 from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 
-from ..types import CPUInfoData, ImmutableCPUInfoData, ImmutableCPUInfoDict
 from . import _validate
 from ._cpu_info_schema import CPUInfoSchema
+from ._typeddict_types import CPUInfoData, ImmutableCPUInfoData, ImmutableCPUInfoDict
 
 
 class CPUInfo(BaseCPUInfo):

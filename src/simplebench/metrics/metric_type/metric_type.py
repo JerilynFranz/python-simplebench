@@ -8,11 +8,11 @@ from simplebench.validators import validate_float, validate_namespaced_identifie
 
 from ._error_tags import _MetricTypeErrorTag
 
-_DEFERRED_IMPORTS_DONE: bool = False
+_deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
     from simplebench.metrics.metric_category import MetricCategory
-    _DEFERRED_IMPORTS_DONE = True
+    _deferred_imports_done = True
 
 else:
     MetricCategory = None  # pylint: disable=invalid-name
@@ -20,10 +20,10 @@ else:
 
 def _deferred_imports() -> None:
     """Perform deferred imports for runtime use to avoid circular dependencies."""
-    global MetricCategory, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
-    if not _DEFERRED_IMPORTS_DONE:
+    global MetricCategory, _deferred_imports_done  # pylint: disable=global-statement
+    if not _deferred_imports_done:
         from simplebench.metrics.metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
-        _DEFERRED_IMPORTS_DONE = True
+        _deferred_imports_done = True
 
 
 @dataclass(frozen=True, kw_only=True)

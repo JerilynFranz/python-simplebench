@@ -72,11 +72,12 @@ class ImmutableSystemInfoData(SystemInfoData, total=False):
     This marks the dictionary as immutable for type-checking purposes. During runtime,
     it should be constructed so as to enforce immutability.
 
-    The :func:`typechecked.is_immutable` function will recognize this marker
-    and treat instances of this type as :class:`~typechecked.Immutable`.
-
-    Because it inherits from `SystemInfoData`, all fields are the same and it
+    Because it inherits from :class:`SystemInfoData`, all fields are the same and it
     does not add or remove any fields.
+
+    The `__immutable__` attribute serves as a class marker for type-checking
+    to indicate that instances of this type should be treated as immutable
+    and should never be given an actual value.
     """
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
@@ -86,15 +87,7 @@ class SystemInfoDict(_RequiredSystemInfo, total=True):
     """Typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).
 
     This type is strict, requiring `type`, `version`, `node`, and `hash_id` to be
-    present
-
-    All fields are required (`total=True`), and their types are immutable.
-    No additional fields are allowed beyond those defined here (`closed=True`).
-
-    .. note::
-        No additional fields are allowed beyond those defined here but
-        `closed=True` is not being enforced due to Python version limitations
-        before Python 3.12.
+    present to strictly conform with the JSON schema and for output serialization.
 
     The type asserts to type checkers that all required fields are present and
     that all fields are of the correct immutable types, but cannot enforce
@@ -117,9 +110,6 @@ class ImmutableSystemInfoDict(SystemInfoDict, total=True):
 
     This marks the dictionary as immutable for type-checking purposes. During runtime,
     it should be constructed so as to enforce immutability.
-
-    The :func:`typechecked.is_immutable` function will recognize this marker
-    and treat instances of this type as :class:`~typechecked.Immutable`.
 
     Because it inherits from `SystemInfoDict`, all fields are the same and it
     can be used interchangeably where immutability is not a concern.

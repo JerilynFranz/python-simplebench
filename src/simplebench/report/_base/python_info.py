@@ -1,7 +1,7 @@
 """Base class for all PythonInfo classes."""
 from abc import ABC
 
-from .environment import Environment
+from ._environment import Environment
 
 
 class BasePythonInfo(Environment, ABC):

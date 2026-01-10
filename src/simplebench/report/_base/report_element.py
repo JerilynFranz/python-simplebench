@@ -20,7 +20,7 @@ from simplebench.report.validate import report_element_typed_dict_mimic
 from simplebench.types import IMMUTABLE_CORE_DATA_TYPES_TUPLE, ImmutableCoreDataMappingType
 from simplebench.validators import is_immutable_core_data
 
-from .json_schema import JSONSchema
+from ._json_schema import JSONSchema
 
 T = TypeVar("T", bound=ReportElementTypedDict)
 

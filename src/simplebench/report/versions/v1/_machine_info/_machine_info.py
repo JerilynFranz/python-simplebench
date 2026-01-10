@@ -13,39 +13,17 @@ This makes the implementations of JSONMachineInfo backwards compatible with futu
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base MachineInfo representation at the time of the V1 schema release.
 """
-import hashlib
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from simplebench.report._base import BaseMachineInfo, JSONSchema
-from simplebench.report.versions.v1.types import MachineInfoData, MachineInfoDict
+from simplebench.report.versions.v1.types import ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
 
-from . import validate
-from .machine_info_schema import MachineInfoSchema
-
-_DEFERRED_IMPORTS_DONE: bool = False
+from . import _validate
+from ._machine_info_schema import MachineInfoSchema
 
 if TYPE_CHECKING:
     from simplebench.report.versions.v1 import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
-    _DEFERRED_IMPORTS_DONE = True
 
-else:
-    CPUInfo = None  # pylint: disable=invalid-name
-    ExecutionEnvironment = None  # pylint: disable=invalid-name
-    MemoryInfo = None  # pylint: disable=invalid-name
-    SystemInfo = None  # pylint: disable=invalid-name
-
-def _deferred_imports() -> None:
-    """Perform deferred imports to avoid circular dependencies."""
-    global CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo, _DEFERRED_IMPORTS_DONE  # pylint: disable=global-statement
-    if _DEFERRED_IMPORTS_DONE:
-        return
-    from simplebench.report.versions.v1 import (  # pylint: disable=import-outside-toplevel
-        CPUInfo,
-        ExecutionEnvironment,
-        MemoryInfo,
-        SystemInfo,
-    )
-    _DEFERRED_IMPORTS_DONE = True
 
 class MachineInfo(BaseMachineInfo):
     """Class representing machine information in a JSON report."""
@@ -66,10 +44,10 @@ class MachineInfo(BaseMachineInfo):
                  *,
                  hash_id: str = '',
                  node: str = '',
-                 cpu: CPUInfo,
-                 memory: MemoryInfo,
-                 system: SystemInfo,
-                 execution_environment: ExecutionEnvironment) -> None:
+                 cpu: 'CPUInfo',
+                 memory: 'MemoryInfo',
+                 system: 'SystemInfo',
+                 execution_environment: 'ExecutionEnvironment') -> None:
         """Initialize JSONMachineInfo.
 
         :param str hash_id: The unique hash identifier for the machine information.
@@ -78,13 +56,16 @@ class MachineInfo(BaseMachineInfo):
         :param MemoryInfo memory: The memory information.
         :param SystemInfo system: The system information.
         :param ExecutionEnvironment execution_environment: The execution environment information.
+        :raises SimpleBenchTypeError: If any of the parameters are of incorrect type.
+        :raises SimpleBenchValueError: If any of the parameters have invalid values.
         """
-        self._hash_id = validate.hash_id(hash_id)
-        self._node = validate.node(node)
-        self._cpu = validate.cpu(cpu)
-        self._memory = validate.memory(memory)
-        self._system = validate.system(system)
-        self._execution_environment = validate.execution_environment(execution_environment)
+        self._hash_id = _validate.hash_id(hash_id)
+        self._node = _validate.node(node)
+        self._cpu = _validate.cpu(cpu)
+        self._memory = _validate.memory(memory)
+        self._system = _validate.system(system)
+        self._execution_environment = _validate.execution_environment(execution_environment)
+        self._to_dict: ImmutableMachineInfoDict | None = None
 
     @classmethod
     def from_dict(cls, data: MachineInfoData) -> 'MachineInfo':
@@ -96,9 +77,14 @@ class MachineInfo(BaseMachineInfo):
            machine_info = MachineInfo.from_dict(data)
 
         :param data: The dictionary containing machine information.
-        :return: A MachineInfo instance.
+        :return MachineInfo: A MachineInfo instance.
         """
-        _deferred_imports()
+        from simplebench.report.versions.v1 import (  # pylint: disable=import-outside-toplevel
+            CPUInfo,
+            ExecutionEnvironment,
+            MemoryInfo,
+            SystemInfo,
+        )
 
         allowed_keys = cls.init_params()
         allowed_keys['version'] = int
@@ -119,21 +105,17 @@ class MachineInfo(BaseMachineInfo):
             })
         return cls(**kwargs)
 
-    def to_dict(self) -> MachineInfoDict:
+    def to_dict(self) -> ImmutableMachineInfoDict:
         """Convert the MachineInfo to a dictionary.
 
-        :return MachineInfoDict: A dictionary representation of the MachineInfo.
+        The returned dictionary conforms to the MachineInfo JSON schema
+        and the :class:`ImmutableMachineInfoDict` TypedDict definition.
+
+        :return ImmutableMachineInfoDict: A dictionary representation of the MachineInfo.
         """
-        cls = self.__class__
-        return MachineInfoDict(
-            type=cls.TYPE,
-            version=cls.VERSION,
-            hash_id=self.hash_id,
-            node=self.node,
-            execution_environment=self.execution_environment.to_dict(),
-            cpu=self.cpu.to_dict(),
-            memory=self.memory.to_dict(),
-            system=self.system.to_dict())
+        if self._to_dict is None:
+            self._to_dict = self._to_dict_helper(ImmutableMachineInfoDict)
+        return self._to_dict
 
     @property
     def hash_id(self) -> str:
@@ -142,18 +124,7 @@ class MachineInfo(BaseMachineInfo):
         :return: The hash_id string.
         """
         if self._hash_id == '':
-            hash_keys = sorted(k for k in self.init_params() if k != 'hash_id')
-
-            def get_val(key: str) -> Any:
-                value = getattr(self, key)
-                if hasattr(value, 'hash_id'):
-                    return value.hash_id
-                return value
-
-            hash_input = "\x00".join(
-                f"{key}:{get_val(key)}" for key in hash_keys
-            ).encode('utf-8')
-            self._hash_id = hashlib.sha256(hash_input).hexdigest()
+            self._hash_id = self._hash_id_helper(MachineInfoDict)
         return self._hash_id
 
     @property
@@ -165,15 +136,15 @@ class MachineInfo(BaseMachineInfo):
         return self._node
 
     @property
-    def execution_environment(self) -> ExecutionEnvironment:
+    def execution_environment(self) -> 'ExecutionEnvironment':
         """Get the execution environment property.
 
-        :return: The execution environment string.
+        :return: The execution environment info.
         """
         return self._execution_environment
 
     @property
-    def cpu(self) -> CPUInfo:
+    def cpu(self) -> 'CPUInfo':
         """Get the CPU property.
 
         :return: The CPU info.
@@ -181,7 +152,7 @@ class MachineInfo(BaseMachineInfo):
         return self._cpu
 
     @property
-    def memory(self) -> MemoryInfo:
+    def memory(self) -> 'MemoryInfo':
         """Get the memory property.
 
         :return: The memory info.
@@ -189,7 +160,7 @@ class MachineInfo(BaseMachineInfo):
         return self._memory
 
     @property
-    def system(self) -> SystemInfo:
+    def system(self) -> 'SystemInfo':
         """Get the system property.
 
         :return: The system info.

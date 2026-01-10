@@ -16,7 +16,7 @@ of the base EnvironmentInfo representation at the time of the V1 schema release.
 """
 from abc import ABC, abstractmethod
 
-from .environment import Environment
+from ._environment import Environment
 from .report_element import ReportElement
 
 

@@ -1,45 +1,67 @@
-"""V1 json report classes"""
-from ._cpu_info import CPUInfo, CPUInfoSchema
-from ._memory_info import MemoryInfo, MemoryInfoSchema
-from ._python_info import PythonInfo, PythonInfoSchema
-from ._system_info import SystemInfo, SystemInfoSchema
-from .execution_environment import ExecutionEnvironment
-from .machine_info import MachineInfo, MachineInfoSchema
+"""V1 json report classes
+
+This module exports all V1 report related classes including the main
+report structure and all associated data blocks, such as CPUInfo, MemoryInfo,
+MachineInfo, PythonInfo, SystemInfo, VCSInfo, StatsBlock, ValueBlock,
+ExecutionEnvironment, and ResultsInfo as well as their corresponding schemas
+for serialization and deserialization.
+
+In essence, this module serves as the central access point for all V1 report
+components, facilitating easy import and usage throughout the SimpleBench
+codebase and the public API for report generation, processing, and import/export
+of V1 report data.
+"""
+from ._cpu_info import CPUInfo, CPUInfoData, CPUInfoDict, CPUInfoSchema, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from ._execution_environment import (
+    ExecutionEnvironment,
+    ExecutionEnvironmentData,
+    ExecutionEnvironmentDict,
+    ImmutableExecutionEnvironmentData,
+    ImmutableExecutionEnvironmentDict,
+)
+
+from._generic_environment import GenericEnvironment, GenericEnvironmentSchema
+from ._machine_info import (
+    ImmutableMachineInfoData,
+    ImmutableMachineInfoDict,
+    MachineInfo,
+    MachineInfoData,
+    MachineInfoDict,
+    MachineInfoSchema,
+)
+from ._memory_info import (
+    ImmutableMemoryInfoData,
+    ImmutableMemoryInfoDict,
+    ImmutableSwapMemoryObjectDict,
+    ImmutableVirtualMemoryObjectDict,
+    MemoryInfo,
+    MemoryInfoData,
+    MemoryInfoDict,
+    MemoryInfoSchema,
+    SwapMemoryObjectDict,
+    VirtualMemoryObjectDict,
+)
+from ._python_info import (
+    ImmutablePythonInfoData,
+    ImmutablePythonInfoDict,
+    PythonInfo,
+    PythonInfoData,
+    PythonInfoDict,
+    PythonInfoSchema,
+)
+from ._system_info import (
+    ImmutableSystemInfoData,
+    ImmutableSystemInfoDict,
+    SystemInfo,
+    SystemInfoData,
+    SystemInfoDict,
+    SystemInfoSchema,
+)
 from .metrics_object import MetricsObject
 from .raw_data_block import RawDataBlock, RawDataBlockSchema
 from .report import Report, ReportSchema
 from .results_info import ResultsInfo, ResultsInfoSchema
 from .stats_block import StatsBlock, StatsBlockSchema
-from .types import (
-    CPUInfoData,
-    CPUInfoDict,
-    ExecutionEnvironmentData,
-    ExecutionEnvironmentDict,
-    ImmutableCPUInfoData,
-    ImmutableCPUInfoDict,
-    ImmutableExecutionEnvironmentData,
-    ImmutableExecutionEnvironmentDict,
-    ImmutableMachineInfoData,
-    ImmutableMachineInfoDict,
-    ImmutableMemoryInfoData,
-    ImmutableMemoryInfoDict,
-    ImmutablePythonInfoData,
-    ImmutablePythonInfoDict,
-    ImmutableSwapMemoryObjectDict,
-    ImmutableSystemInfoData,
-    ImmutableSystemInfoDict,
-    ImmutableVirtualMemoryObjectDict,
-    MachineInfoData,
-    MachineInfoDict,
-    MemoryInfoData,
-    MemoryInfoDict,
-    PythonInfoData,
-    PythonInfoDict,
-    SwapMemoryObjectDict,
-    SystemInfoData,
-    SystemInfoDict,
-    VirtualMemoryObjectDict,
-)
 from .value_block import ValueBlock, ValueBlockSchema
 from .vcs_info import VCSInfo, VCSInfoSchema
 
@@ -53,6 +75,8 @@ __all__ = [
     "ExecutionEnvironment",
     "ExecutionEnvironmentData",
     "ExecutionEnvironmentDict",
+    "GenericEnvironment",
+    "GenericEnvironmentSchema",
     "ImmutableExecutionEnvironmentData",
     "ImmutableExecutionEnvironmentDict",
     "MachineInfo",
