@@ -1,9 +1,9 @@
 """V1 SystemInfo implementation."""
 from simplebench.report._base import BaseSystemInfo, JSONSchema
 
-from ..types import ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
 from . import _validate
 from ._system_info_schema import SystemInfoSchema
+from ._typeddict_types import ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
 
 
 class SystemInfo(BaseSystemInfo):

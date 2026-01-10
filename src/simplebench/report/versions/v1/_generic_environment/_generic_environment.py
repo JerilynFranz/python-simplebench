@@ -53,6 +53,13 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
     def __init__(self, data: Mapping[str, Any]) -> None:
         """Initialize a GenericEnvironment instance.
 
+        If a 'hash_id' key is present in the input data mapping, its value is validated
+        and used as the hash_id property. If not present, the hash_id is computed from the
+        rest of the data mapping.
+
+        If 'type' or 'version' keys are not present in the input data mapping, they are
+        automatically added with the appropriate values for this class.
+
         :param data: Keyword arguments representing environment properties.
         Each key-value pair corresponds to a property name and its value.
         The values must be of core data types.
@@ -73,6 +80,10 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         thawed_data = dict(validated_data)  # Make a mutable copy for internal use
         self._hash_id = self._generate_hash_id(thawed_data) if self._hash_id == '' else self._hash_id
         thawed_data['hash_id'] = self._hash_id
+        if 'type' not in thawed_data:
+            thawed_data['type'] = self.TYPE
+        if 'version' not in thawed_data:
+            thawed_data['version'] = self.VERSION
         validated_data = cast(ImmutableCoreDataMappingType, MappingProxyType(thawed_data))  # Make immutable for storage
         self._from_dict: ImmutableCoreDataMappingType = validated_data
 

@@ -1,9 +1,7 @@
 """V1 ExecutionEnvironment implementation."""
-import hashlib
 from collections.abc import Mapping
 from types import MappingProxyType
-
-from typechecked import isinstance_of_typehint
+from typing import cast
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._base import BaseExecutionEnvironment, Environment
@@ -14,16 +12,10 @@ from simplebench.validators import validate_core_data_mapping
 
 from . import _validate
 from ._known_environments import KNOWN_ENVIRONMENTS
-from ._typeddict_types import (
-    ExecutionEnvironmentData,
-    ExecutionEnvironmentDict,
-    ImmutableExecutionEnvironmentData,
-    ImmutableExecutionEnvironmentDict,
-    PythonInfoData,
-)
+from ._typeddict_types import ExecutionEnvironmentDict
 
 
-class ExecutionEnvironment(BaseExecutionEnvironment):
+class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
     """Implementation of the ExecutionEnvironment interface for V1."""
 
     def __init__(self, **kwargs: CoreDataMappingType | Environment) -> None:
@@ -42,7 +34,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment):
         """
         self._hash_id: str = ''
         self._environments: MappingProxyType[
-            str, Environment | CoreDataMappingType] = _validate.environments(dict(kwargs))
+            str, Environment] = _validate.environments(dict(kwargs))
 
     @classmethod
     def from_dict(cls, data: Mapping[str, CoreDataMappingType]) -> 'ExecutionEnvironment':
@@ -73,9 +65,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment):
 
         :return ExecutionEnvironmentDict: A dictionary representation of the ExecutionEnvironment.
         """
-        return ExecutionEnvironmentDict(
-            python=self.python.to_dict()
-        )
+        return cast(ExecutionEnvironmentDict, self._environments)
 
     @property
     def hash_id(self) -> str:
@@ -83,23 +73,46 @@ class ExecutionEnvironment(BaseExecutionEnvironment):
 
         :return: A 64-character hexadecimal hash_id string.
         """
-        if self._hash_id == '':
-            hash_input = (
-                f"python:{self.python.hash_id}"
-            ).encode('utf-8')
-            self._hash_id = hashlib.sha256(hash_input).hexdigest()
         return self._hash_id
 
     @property
-    def python(self) -> PythonInfo:
+    def python(self) -> PythonInfo | None:
         """Get the Python property.
 
-        :return: The Python info.
-        """
-        return self._python
-    def python(self) -> PythonInfo:
-        """Get the Python property.
+        Returns the :class:`PythonInfo` instance if the 'python'
+        execution environment is present, otherwise returns ``None``.
 
-        :return: The Python info.
+        :return PythonInfo | None: The Python info.
+        :raises SimpleBenchTypeError: If the 'python' environment is not of type PythonInfo.
         """
-        return self._python
+        if 'python' in self._environments:
+            python_env = self._environments['python']
+            if isinstance(python_env, PythonInfo):
+                return python_env
+            raise SimpleBenchTypeError(
+                "The 'python' environment is not of type PythonInfo",
+                tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_TYPE)
+        return None
+
+    def __getitem__(self, key: str) -> Environment:
+        return self._environments[key]
+
+    def __iter__(self):
+        return iter(self._environments)
+
+    def __len__(self) -> int:
+        return len(self._environments)
+
+    def __contains__(self, key: object) -> bool:
+        return key in self._environments
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({dict(self._environments)!r})"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ExecutionEnvironment):
+            return NotImplemented
+        return self.hash_id == other.hash_id
+
+    def __hash__(self) -> int:
+        return hash(self.hash_id)

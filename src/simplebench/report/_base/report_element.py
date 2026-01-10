@@ -6,7 +6,7 @@ It implements validation and serialization/deserialization methods to and from d
 for a JSON Schema version.
 """
 import hashlib
-from abc import ABC, abstractmethod
+from abc import ABC
 from types import MappingProxyType
 from typing import Any, Callable, TypeVar
 
@@ -73,27 +73,6 @@ class ReportElement(Hydrator, Immutable, ABC):
         raise NotImplementedError(
             "__init__ is an abstract method and must be implemented by a subclass."
         )
-
-    @property
-    @abstractmethod
-    def dict_type(self) -> type[ReportElementTypedDict]:
-        """The ReportElementTypedDict type associated with this ReportElement subclass.
-
-        This property must be overridden in subclasses to specify the correct
-        ReportElementTypedDict type.
-        """
-        raise NotImplementedError(
-            "dict_type is an abstract property and must be implemented by a subclass."
-        )
-
-    @property
-    def data_type(self) -> type[ReportElementTypedDict]:
-        """The ReportElementTypedDict type used for input data to `from_dict`.
-
-        By default, this is the same as dict_type, but subclasses can override
-        this method to provide a different type for input data if needed.
-        """
-        return self.dict_type
 
     def _to_dict_helper(self, dict_type: type[T]) -> T:
         """Helper method to convert a mapping to a ReportElementDictType.

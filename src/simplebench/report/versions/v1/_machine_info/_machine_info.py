@@ -16,7 +16,7 @@ of the base MachineInfo representation at the time of the V1 schema release.
 from typing import TYPE_CHECKING
 
 from simplebench.report._base import BaseMachineInfo, JSONSchema
-from simplebench.report.versions.v1.types import ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
+from simplebench.report.versions.v1 import ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
 
 from . import _validate
 from ._machine_info_schema import MachineInfoSchema
