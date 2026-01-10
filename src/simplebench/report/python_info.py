@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 
-from ._error_tags import _PythonInfoErrorTag
 from ._base import BasePythonInfo, JSONSchema
+from ._error_tags import _PythonInfoErrorTag
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:

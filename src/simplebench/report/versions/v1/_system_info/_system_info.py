@@ -1,11 +1,9 @@
 """V1 SystemInfo implementation."""
-import hashlib
-
 from simplebench.report._base import BaseSystemInfo, JSONSchema
 
-from ..types import SystemInfoData, SystemInfoDict
-from . import validate
-from .system_info_schema import SystemInfoSchema
+from ..types import ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
+from . import _validate
+from ._system_info_schema import SystemInfoSchema
 
 
 class SystemInfo(BaseSystemInfo):
@@ -37,11 +35,12 @@ class SystemInfo(BaseSystemInfo):
         :param str release: The system release string.
         :param str machine: The machine type string.
         """
-        self._hash_id = validate.hash_id(hash_id)
-        self._system = validate.system(system)
-        self._system_version = validate.system_version(system_version)
-        self._release = validate.release(release)
-        self._machine = validate.machine(machine)
+        self._hash_id: str = _validate.hash_id(hash_id)
+        self._system: str = _validate.system(system)
+        self._system_version: str = _validate.system_version(system_version)
+        self._release: str = _validate.release(release)
+        self._machine: str = _validate.machine(machine)
+        self._dict_cache: ImmutableSystemInfoDict | None = None
 
     @classmethod
     def from_dict(cls, data: SystemInfoData) -> 'SystemInfo':
@@ -71,24 +70,17 @@ class SystemInfo(BaseSystemInfo):
             match_on={'version': cls.VERSION, 'type': cls.TYPE})
         return cls(**kwargs)
 
-    def to_dict(self) -> SystemInfoDict:
-        """Convert the SystemInfo to a dictionary suitable for JSON serialization.
+    def to_dict(self) -> ImmutableSystemInfoDict:
+        """Return the SystemInfo as an immutable dictionary suitable for JSON serialization.
 
         This includes all properties defined in the :class:`SystemInfoSchema`
-        for the version.
+        for the version as mirrored in :class:`SystemInfoDict`.
 
-        :return SystemInfoDict: A dictionary representation of the SystemInfo.
+        :return ImmutableSystemInfoDict: A dictionary representation of the SystemInfo.
         """
-        cls = self.__class__
-        return SystemInfoDict({
-            'type': cls.TYPE,
-            'version': cls.VERSION,
-            'hash_id': self.hash_id,
-            'system': self.system,
-            'system_version': self.system_version,
-            'release': self.release,
-            'machine': self.machine
-        })
+        if self._dict_cache is None:
+            self._dict_cache = self._to_dict_helper(ImmutableSystemInfoDict)
+        return self._dict_cache
 
     @property
     def hash_id(self) -> str:
@@ -96,17 +88,8 @@ class SystemInfo(BaseSystemInfo):
 
         :return: The hash_id string.
         """
-        if self._hash_id == '':
-            # Get all __init__ params except 'hash_id' itself.
-            # Sorting ensures a consistent order for hashing.
-            hash_keys = sorted(k for k in self.init_params() if k != 'hash_id')
-
-            # Create a null-byte separated string of "key:value" pairs.
-            hash_input = "\x00".join(
-                f"{key}:{getattr(self, key)}" for key in hash_keys
-            ).encode('utf-8')
-
-            self._hash_id = hashlib.sha256(hash_input).hexdigest()
+        if not self._hash_id:
+            self._hash_id = self._hash_id_helper(SystemInfoDict)
         return self._hash_id
 
     @property

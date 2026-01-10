@@ -2,7 +2,7 @@
 from simplebench.environment._cpu_info import CPUInfo
 from simplebench.environment._memory_info import MemoryInfo
 from simplebench.environment._python_info import PythonInfo
-from simplebench.environment.system_info import SystemInfo
+from simplebench.environment._system_info import SystemInfo
 from simplebench.validators import validate_bool, validate_string, validate_type
 
 from ._error_tags import _MachineInfoErrorTag

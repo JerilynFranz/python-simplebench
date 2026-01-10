@@ -8,7 +8,7 @@ from simplebench.validators import validate_string, validate_string_with_regex, 
 from .._cpu_info import CPUInfo
 from ..execution_environment import ExecutionEnvironment
 from .._memory_info import MemoryInfo
-from ..system_info import SystemInfo
+from .._system_info import SystemInfo
 
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""

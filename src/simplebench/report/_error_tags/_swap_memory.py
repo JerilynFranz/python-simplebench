@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class SwapMemoryErrorTag(ErrorTag):
+class _SwapMemoryErrorTag(ErrorTag):
     """Error tags related to swap memory information validation."""
     INVALID_TOTAL_TYPE = "INVALID_TOTAL_TYPE"
     """The total swap memory value is not of type int."""

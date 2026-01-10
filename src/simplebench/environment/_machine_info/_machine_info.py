@@ -6,9 +6,9 @@ from typing import ClassVar
 from simplebench.environment._cpu_info import CPUInfo
 from simplebench.environment._memory_info import MemoryInfo
 from simplebench.environment._python_info import PythonInfo
-from simplebench.environment.system_info import SystemInfo
+from simplebench.environment._system_info import SystemInfo
 
-from . import validate
+from . import _validate
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -27,11 +27,11 @@ class MachineInfo:
 
     def __post_init__(self) -> None:
         """Post-initialization to validate the object's fields."""
-        validate.node(self.node)
-        validate.cpu_info(self.cpu)
-        validate.python_info(self.python)
-        validate.system_info(self.system)
-        validate.memory_info(self.memory)
+        _validate.node(self.node)
+        _validate.cpu_info(self.cpu)
+        _validate.python_info(self.python)
+        _validate.system_info(self.system)
+        _validate.memory_info(self.memory)
 
 class MachineInfoFactory:
     """Factory for creating and caching MachineInfo instances."""
@@ -70,10 +70,10 @@ class MachineInfoFactory:
         """
         Create a MachineInfo instance, using caching to avoid redundant work.
         """
-        node = validate.node(node)
-        cache_key = validate.cache_key(cache_key)
-        fresh_cpu_info = validate.fresh_cpu_info(fresh_cpu_info)
-        fresh_memory_info = validate.fresh_memory_info(fresh_memory_info)
+        node = _validate.node(node)
+        cache_key = _validate.cache_key(cache_key)
+        fresh_cpu_info = _validate.fresh_cpu_info(fresh_cpu_info)
+        fresh_memory_info = _validate.fresh_memory_info(fresh_memory_info)
 
         if cache_key and cache_key in cls._keyed_cache:
             cached_instance = cls._keyed_cache[cache_key]

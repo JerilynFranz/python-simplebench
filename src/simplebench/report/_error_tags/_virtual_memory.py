@@ -4,7 +4,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class VirtualMemoryErrorTag(ErrorTag):
+class _VirtualMemoryErrorTag(ErrorTag):
     """Error tags related to virtual memory information validation."""
     INVALID_TOTAL_TYPE = "INVALID_TOTAL_TYPE"
     """The total virtual memory value is not of type int."""
