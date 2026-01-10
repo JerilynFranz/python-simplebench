@@ -5,10 +5,11 @@ from types import MappingProxyType
 from typing import ClassVar, cast
 
 from simplebench.environment._cpu_info import CPUInfo
-from simplebench.environment._execution_environment import ExecutionEnvironment
 from simplebench.environment._memory_info import MemoryInfo
+from simplebench.environment._python_info import PythonInfo
 from simplebench.environment._system_info import SystemInfo
 from simplebench.report.versions.v1 import ImmutableMachineInfoData
+from simplebench.report.versions.v1 import MachineInfo as ReportMachineInfo
 
 from . import _validate
 
@@ -20,40 +21,72 @@ class MachineInfo:
     """The node name of the machine."""
     cpu: CPUInfo
     """CPU information."""
-    execution_environment: ExecutionEnvironment
+    python: PythonInfo
     """Python interpreter information."""
     system: SystemInfo
     """System information."""
     memory: MemoryInfo
     """Memory information."""
 
-    __slots__ = ('node', 'cpu', 'execution_environment', 'system', 'memory', '_dict_cache')
+    __slots__ = ('node', 'cpu', 'python', 'execution_environment', 'system', 'memory', '_dict_cache')
 
     def __post_init__(self) -> None:
         """Post-initialization to validate the object's fields."""
         _validate.node(self.node)
         _validate.cpu_info(self.cpu)
-        _validate.execution_environment(self.execution_environment)
+        _validate.python_info(self.python)
         _validate.system_info(self.system)
         _validate.memory_info(self.memory)
         object.__setattr__(self, '_dict_cache', MappingProxyType({
                 'node': self.node,
                 'cpu': self.cpu.to_dict(),
-                'execution_environment': self.execution_environment.to_dict(),
+                'execution_environment': MappingProxyType({'python': self.python.to_dict()}),
                 'system': self.system.to_dict(),
                 'memory': self.memory.to_dict()
             }))
+        object.__setattr__(self, '_report_machine_info', ReportMachineInfo.from_dict(self.to_dict()))
+
+    @property
+    def as_report_machine_info(self) -> ReportMachineInfo:
+        """The :class:`simplebench.report.versions.v1.MachineInfo` representation of the
+        :class:`simplebench.environment.MachineInfo` instance.
+
+        :return ReportMachineInfo: The ReportMachineInfo representation of the MachineInfo instance.
+        """
+        return cast(ReportMachineInfo, getattr(self, '_report_machine_info'))
 
     def to_dict(self) -> ImmutableMachineInfoData:
-        """Convert the MachineInfo instance to a dictionary representation.
+        """Convert the MachineInfo instance to a dictionary.
 
-        :return MachineInfoData: The dictionary representation of the MachineInfo instance.
+        :return dict: A dictionary representation of the MachineInfo instance.
         """
         return cast(ImmutableMachineInfoData, getattr(self, '_dict_cache'))
 
-class MachineInfoFactory:
-    """Factory for creating and caching MachineInfo instances."""
 
+class MachineInfoFactory:
+    """Factory for creating and caching MachineInfo instances.
+    
+    This factory uses caching to avoid redundant creation of MachineInfo instances.
+    It supports caching based on a cache key and allows for fresh instances to be created
+    when requested.
+
+    It collects core information once and reuses it for subsequent instances,
+    unless a fresh instance is requested.
+
+    .. code-block:: python
+        from simplebench.environment import MachineInfoFactory
+        # Machine info with default node name (empty string)
+        machine_info_default = MachineInfoFactory.create(node='')
+
+        machine_info = MachineInfoFactory.create(node=None)
+        # Machine info with the real node name
+
+        machine_info_fresh = MachineInfoFactory.create(node=None, fresh=True)
+        # Fresh machine info with the real node name
+
+        machine_info_cached = MachineInfoFactory.create(cache_key="my_cache_key")
+        # Cached machine info with the real node name
+    """
     _cached_core_info: ClassVar[MachineInfo | None] = None
     _real_node_name: ClassVar[str] = ''
     _keyed_cache: ClassVar[dict[str, 'MachineInfo']] = {}
@@ -68,7 +101,7 @@ class MachineInfoFactory:
             cls._cached_core_info = MachineInfo(
                 node='',
                 cpu=CPUInfo(),
-                execution_environment=ExecutionEnvironment(),
+                python=PythonInfo(),
                 system=SystemInfo(),
                 memory=MemoryInfo()
             )
@@ -113,12 +146,12 @@ class MachineInfoFactory:
         final_node = cls._get_real_node_name() if node is None else node
         cpu_info = CPUInfo() if fresh else core_info.cpu
         memory_info = MemoryInfo() if fresh else core_info.memory
-        execution_environment_info = ExecutionEnvironment() if fresh else core_info.execution_environment
+        python_info = PythonInfo() if fresh else core_info.python
 
         instance = MachineInfo(
             node=final_node,
             cpu=cpu_info,
-            execution_environment=execution_environment_info,
+            python=python_info,
             system=core_info.system,
             memory=memory_info
         )

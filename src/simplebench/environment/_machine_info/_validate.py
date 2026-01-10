@@ -1,7 +1,7 @@
 """Validation functions for MachineInfo data"""
 from simplebench.environment._cpu_info import CPUInfo
-from simplebench.environment._execution_environment import ExecutionEnvironment
 from simplebench.environment._memory_info import MemoryInfo
+from simplebench.environment._python_info import PythonInfo
 from simplebench.environment._system_info import SystemInfo
 from simplebench.validators import validate_bool, validate_string, validate_type
 
@@ -94,18 +94,18 @@ def memory_info(value: MemoryInfo) -> MemoryInfo:
         _MachineInfoErrorTag.INVALID_MEMORY_INFO_PARAM_TYPE)
 
 
-def execution_environment(value: 'ExecutionEnvironment') -> 'ExecutionEnvironment':
-    """Validate the 'execution_environment' parameter.
+def python_info(value: PythonInfo) -> PythonInfo:
+    """Validate the 'python_info' parameter.
 
-    The value must be an instance of ExecutionEnvironment.
+    The value must be an instance of PythonInfo.
 
-    :param ExecutionEnvironment value: The ExecutionEnvironment instance to validate.
-    :return ExecutionEnvironment: The validated ExecutionEnvironment instance.
-    :raises SimpleBenchTypeError: If the value is not an ExecutionEnvironment instance.
+    :param PythonInfo value: The PythonInfo instance to validate.
+    :return PythonInfo: The validated PythonInfo instance.
+    :raises SimpleBenchTypeError: If the value is not a PythonInfo instance.
     """
     return validate_type(
-       value, ExecutionEnvironment, "execution_environment",
-       _MachineInfoErrorTag.INVALID_EXECUTION_ENVIRONMENT_PARAM_TYPE)
+        value, PythonInfo, "python_info",
+        _MachineInfoErrorTag.INVALID_PYTHON_INFO_PARAM_TYPE)
 
 
 def system_info(value: SystemInfo) -> SystemInfo:
