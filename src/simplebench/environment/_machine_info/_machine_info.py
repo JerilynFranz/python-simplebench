@@ -28,10 +28,15 @@ class MachineInfo:
     memory: MemoryInfo
     """Memory information."""
 
-    __slots__ = ('node', 'cpu', 'python', 'execution_environment', 'system', 'memory', '_dict_cache')
+    __slots__ = ('node', 'cpu', 'python', 'system', 'memory', '_dict_cache', '_report_machine_info')
 
     def __post_init__(self) -> None:
-        """Post-initialization to validate the object's fields."""
+        """Post-initialization to validate the object's fields.
+        
+        The 'execution_environment' field is constructed from the 'python' field for 
+        compatibility with report MachineInfo structure.
+        
+        """
         _validate.node(self.node)
         _validate.cpu_info(self.cpu)
         _validate.python_info(self.python)
@@ -44,7 +49,7 @@ class MachineInfo:
                 'system': self.system.to_dict(),
                 'memory': self.memory.to_dict()
             }))
-        object.__setattr__(self, '_report_machine_info', ReportMachineInfo.from_dict(self.to_dict()))
+        object.__setattr__(self, '_report_machine_info', ReportMachineInfo.from_dict(self._to_dict()))
 
     @property
     def as_report_machine_info(self) -> ReportMachineInfo:
@@ -55,8 +60,11 @@ class MachineInfo:
         """
         return cast(ReportMachineInfo, getattr(self, '_report_machine_info'))
 
-    def to_dict(self) -> ImmutableMachineInfoData:
-        """Convert the MachineInfo instance to a dictionary.
+    def _to_dict(self) -> ImmutableMachineInfoData:
+        """Convert the MachineInfo instance to a dictionary. The dictionary
+        conforms to the :class:`simplebench.report.versions.v1.ImmutableMachineInfoData` type
+        which means it can be directly for importing into report MachineInfo objects
+        via :meth:`simplebench.report.versions.v1.MachineInfo.from_dict`.
 
         :return dict: A dictionary representation of the MachineInfo instance.
         """
