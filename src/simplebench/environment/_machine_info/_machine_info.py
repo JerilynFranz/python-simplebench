@@ -1,37 +1,55 @@
 """Utility functions to get machine information."""
 import platform
 from dataclasses import dataclass
-from typing import ClassVar
+from types import MappingProxyType
+from typing import ClassVar, cast
 
 from simplebench.environment._cpu_info import CPUInfo
+from simplebench.environment._execution_environment import ExecutionEnvironment
 from simplebench.environment._memory_info import MemoryInfo
-from simplebench.environment._python_info import PythonInfo
 from simplebench.environment._system_info import SystemInfo
+from simplebench.report.versions.v1 import ImmutableMachineInfoData
 
 from . import _validate
 
 
-@dataclass(frozen=True, slots=True, kw_only=True)
+@dataclass(frozen=True, kw_only=True)
 class MachineInfo:
     """Data class holding information about the current machine and execution environment."""
     node: str
     """The node name of the machine."""
     cpu: CPUInfo
     """CPU information."""
-    python: PythonInfo
+    execution_environment: ExecutionEnvironment
     """Python interpreter information."""
     system: SystemInfo
     """System information."""
     memory: MemoryInfo
     """Memory information."""
 
+    __slots__ = ('node', 'cpu', 'execution_environment', 'system', 'memory', '_dict_cache')
+
     def __post_init__(self) -> None:
         """Post-initialization to validate the object's fields."""
         _validate.node(self.node)
         _validate.cpu_info(self.cpu)
-        _validate.python_info(self.python)
+        _validate.execution_environment(self.execution_environment)
         _validate.system_info(self.system)
         _validate.memory_info(self.memory)
+        object.__setattr__(self, '_dict_cache', MappingProxyType({
+                'node': self.node,
+                'cpu': self.cpu.to_dict(),
+                'execution_environment': self.execution_environment.to_dict(),
+                'system': self.system.to_dict(),
+                'memory': self.memory.to_dict()
+            }))
+
+    def to_dict(self) -> ImmutableMachineInfoData:
+        """Convert the MachineInfo instance to a dictionary representation.
+
+        :return MachineInfoData: The dictionary representation of the MachineInfo instance.
+        """
+        return cast(ImmutableMachineInfoData, getattr(self, '_dict_cache'))
 
 class MachineInfoFactory:
     """Factory for creating and caching MachineInfo instances."""
@@ -42,12 +60,15 @@ class MachineInfoFactory:
 
     @classmethod
     def _get_core_info(cls) -> MachineInfo:
-        """Get core machine info, from cache or by creating it."""
+        """Get core machine info, from cache or by creating it.
+        
+        :return MachineInfo: The core MachineInfo instance.
+        """
         if cls._cached_core_info is None:
             cls._cached_core_info = MachineInfo(
                 node='',
                 cpu=CPUInfo(),
-                python=PythonInfo(),
+                execution_environment=ExecutionEnvironment(),
                 system=SystemInfo(),
                 memory=MemoryInfo()
             )
@@ -55,7 +76,10 @@ class MachineInfoFactory:
 
     @classmethod
     def _get_real_node_name(cls) -> str:
-        """Get the real node name, from cache or by calling platform.node()."""
+        """Get the real node name, from cache or by calling platform.node().
+        
+        :return str: The real node name.
+        """
         if not cls._real_node_name:
             cls._real_node_name = platform.node()
         return cls._real_node_name
@@ -64,35 +88,37 @@ class MachineInfoFactory:
     def create(cls,
                node: str | None = '',
                cache_key: str | None = None,
-               fresh_cpu_info: bool = False,
-               fresh_memory_info: bool = False
+               fresh: bool = False,
                ) -> MachineInfo:
         """
         Create a MachineInfo instance, using caching to avoid redundant work.
+
+        :param str | None node: The node name to use. If `None`, the real node name is used.
+        :param str | None cache_key: An optional cache key to store/retrieve a MachineInfo instance.
+        :param bool fresh: (default: False) Whether to create fresh CPU, Memory, and Python info instances.
+        :return MachineInfo: The created or cached MachineInfo instance.
         """
         node = _validate.node(node)
         cache_key = _validate.cache_key(cache_key)
-        fresh_cpu_info = _validate.fresh_cpu_info(fresh_cpu_info)
-        fresh_memory_info = _validate.fresh_memory_info(fresh_memory_info)
+        fresh = _validate.fresh(fresh)
 
         if cache_key and cache_key in cls._keyed_cache:
             cached_instance = cls._keyed_cache[cache_key]
-            if not fresh_cpu_info and not fresh_memory_info:
-                # If no fresh info needed, we can potentially reuse the cached one as-is
-                # or just change the node
+            if not fresh:
                 if (node is None and cached_instance.node == cls._get_real_node_name()) or \
                    (node is not None and cached_instance.node == node):
                     return cached_instance
 
         core_info = cls._get_core_info()
         final_node = cls._get_real_node_name() if node is None else node
-        cpu_info = CPUInfo() if fresh_cpu_info else core_info.cpu
-        memory_info = MemoryInfo() if fresh_memory_info else core_info.memory
+        cpu_info = CPUInfo() if fresh else core_info.cpu
+        memory_info = MemoryInfo() if fresh else core_info.memory
+        execution_environment_info = ExecutionEnvironment() if fresh else core_info.execution_environment
 
         instance = MachineInfo(
             node=final_node,
             cpu=cpu_info,
-            python=core_info.python,
+            execution_environment=execution_environment_info,
             system=core_info.system,
             memory=memory_info
         )

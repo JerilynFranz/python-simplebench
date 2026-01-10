@@ -22,13 +22,18 @@ from ._memory_info_dict import (
     VirtualMemoryObjectDict,
 )
 from ._python_info_dict import ImmutablePythonInfoData, ImmutablePythonInfoDict, PythonInfoData, PythonInfoDict
-from .execution_environment_dict import ExecutionEnvironmentData, ExecutionEnvironmentDict
-from .machine_info_dict import MachineInfoData, MachineInfoDict
+from ._system_info_dict import ImmutableSystemInfoData, ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
+from .execution_environment_dict import (
+    ExecutionEnvironmentData,
+    ExecutionEnvironmentDict,
+    ImmutableExecutionEnvironmentData,
+    ImmutableExecutionEnvironmentDict,
+)
+from .machine_info_dict import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
 from .metrics_object_dict import MetricDataTypes, MetricDictTypes, MetricsObjectData, MetricsObjectDict
 from .raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from .report_dict import ReportData, ReportDict
 from .results_info_dict import ResultsInfoData, ResultsInfoDict
-from ._system_info_dict import ImmutableSystemInfoData, ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
 from .value_block_dict import ValueBlockData, ValueBlockDict
 
 __all__ = [
@@ -38,8 +43,12 @@ __all__ = [
     'ImmutableCPUInfoDict',
     'ExecutionEnvironmentData',
     'ExecutionEnvironmentDict',
+    'ImmutableExecutionEnvironmentData',
+    'ImmutableExecutionEnvironmentDict',
     'MachineInfoData',
     'MachineInfoDict',
+    'ImmutableMachineInfoData',
+    'ImmutableMachineInfoDict',
     'MemoryInfoData',
     'MemoryInfoDict',
     'SwapMemoryObjectDict',

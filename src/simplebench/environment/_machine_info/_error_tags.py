@@ -6,6 +6,10 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _MachineInfoErrorTag(ErrorTag):
     """Error tags for machine info utilities."""
+    INVALID_EXECUTION_ENVIRONMENT_PARAM_TYPE = 'INVALID_EXECUTION_ENVIRONMENT_PARAM_TYPE'
+    """The `execution_environment` parameter is not an ExecutionEnvironment instance."""
+    INVALID_FRESH_PARAM_TYPE = 'INVALID_FRESH_PARAM_TYPE'
+    """The `fresh` parameter is not a boolean value."""
     INVALID_CPU_INFO_PARAM_TYPE = 'INVALID_CPU_INFO_PARAM_TYPE'
     """The `cpu_info` parameter is not a CPUInfo instance."""
     INVALID_MEMORY_INFO_PARAM_TYPE = 'INVALID_MEMORY_INFO_PARAM_TYPE'

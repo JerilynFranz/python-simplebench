@@ -117,7 +117,7 @@ class PythonInfo:
         'architecture_bits', 'architecture_linkage',
         '_dict_cache', '_cached_proto')
 
-    def __init__(self, _dict_cache: MappingProxyType[str, object] | None = None) -> None:
+    def __init__(self) -> None:
         """Create a PythonInfo facade for the Python :module:`platform` functions.
 
         This is used to gather information about the current Python version, implementation,
