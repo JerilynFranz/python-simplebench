@@ -8,12 +8,12 @@ from ._system_info import _SystemInfoErrorTag
 from ._virtual_memory import _VirtualMemoryErrorTag
 from ._execution_environment import _ExecutionEnvironmentErrorTag
 from .json_schema import _JSONSchemaErrorTag
-from .machine_info import _MachineInfoErrorTag
+from ._machine_info import _MachineInfoErrorTag
 from .metrics import _MetricsErrorTag
 from ._raw_data_block import _RawDataBlockErrorTag
 from .report import _ReportErrorTag
 from .results_info import _ResultsInfoErrorTag
-from .stats_block import _StatsBlockErrorTag
+from ._stats_block import _StatsBlockErrorTag
 from ._value_block import _ValueBlockErrorTag
 from ._vcs_info import _VCSInfoErrorTag
 
