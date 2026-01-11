@@ -50,6 +50,13 @@ class VCSInfoSchema(JSONSchema):
                     "type": "string",
                     "minLength": 1
                 },
+                "commit_datetime": {
+                    "title": "Commit Datetime",
+                    "description": "The UTC datetime of the current commit in ISO 8601 format",
+                    "type": "string",
+                    "format": "date-time",
+                    "examples": ["2024-01-15T12:34:56Z"]
+                },
                 "branch": {
                     "title": "Branch",
                     "description": "The current branch name",
@@ -59,29 +66,27 @@ class VCSInfoSchema(JSONSchema):
                     "title": "Repository URL",
                     "description": "Optional URL of the primary remote repository (e.g., 'origin' in Git, 'default' in Mercurial)",
                     "type": "string",
-                    "format": "uri"
+                    "anyOf": [  # Either a valid URI or an empty string
+                        { "format": "uri" },
+                        { "maxLength": 0 }
+                    ],
+                    "examples": ["", "https://github.com/JerilynFranz/python-simplebench.git"]
                 },
                 "is_dirty": {
                     "title": "Is Dirty",
                     "description": "Indicates if there are uncommitted changes in the working tree",
                     "type": "boolean"
                 },
-                "commit_datetime": {
-                    "title": "Commit Datetime",
-                    "description": "The UTC datetime of the current commit in ISO 8601 format",
-                    "type": "string",
-                    "format": "date-time",
-                    "examples": ["2024-01-15T12:34:56Z"]
-                }
             },
             "required": [
                 "version",
                 "type",
                 "vcs",
+                "repository_url",
                 "commit_id",
+                "commit_datetime"
                 "branch",
                 "is_dirty",
-                "commit_datetime"
             ],
             "additionalProperties": False
         }

@@ -95,6 +95,8 @@ class ReportElement(Hydrator, Immutable, ABC):
         # known or unknown, are properly serialized in the future as needed.
         cls = self.__class__
         for key in property_keys:
+            if key == '__immutable__':  # class variable for typechecked.ImmutableTypedDict
+                continue
             match key:
                 case 'type':
                     data['type'] = cls.TYPE
