@@ -17,8 +17,8 @@ from typing import TypeAlias
 
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 
-from ..raw_data_block.raw_data_block_dict import RawDataBlockData, RawDataBlockDict
-from ..stats_block.stats_block_dict import StatsBlockData, StatsBlockDict
+from .._raw_data_block._raw_data_block_dict import RawDataBlockData, RawDataBlockDict
+from .._stats_block._stats_block_dict import StatsBlockData, StatsBlockDict
 from .._value_block._value_block_dict import ValueBlockData, ValueBlockDict
 
 if sys.version_info >= (3, 11):

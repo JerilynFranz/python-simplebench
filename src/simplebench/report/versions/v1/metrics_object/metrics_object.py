@@ -24,8 +24,8 @@ from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, Si
 from simplebench.report._error_tags import _MetricsErrorTag
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
-from ..raw_data_block import RawDataBlock
-from ..stats_block import StatsBlock
+from .._raw_data_block import RawDataBlock
+from .._stats_block import StatsBlock
 from .._value_block import ValueBlock
 
 

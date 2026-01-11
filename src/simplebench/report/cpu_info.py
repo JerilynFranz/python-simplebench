@@ -9,7 +9,7 @@ _DEFERRED_IMPORTS_LOADED: bool = False
 
 if TYPE_CHECKING:
     from ._base import BaseCPUInfo
-    from .versions import json_class
+    from .versions.__notinit__ import json_class
     _DEFERRED_IMPORTS_LOADED = True  # To avoid import issues during type checking
 
 else:
@@ -19,7 +19,7 @@ def _load_deferred_imports() -> None:
     """Load deferred imports."""
     global _DEFERRED_IMPORTS_LOADED, json_class  # pylint: disable=global-statement
     if not _DEFERRED_IMPORTS_LOADED:
-        from .versions import json_class  # pylint: disable=import-outside-toplevel
+        from .versions.__notinit__ import json_class  # pylint: disable=import-outside-toplevel
         _DEFERRED_IMPORTS_LOADED = True
 
 

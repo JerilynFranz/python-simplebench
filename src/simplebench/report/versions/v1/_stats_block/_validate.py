@@ -1,4 +1,5 @@
 """Validation functions for V1 StatsBlock properties."""
+import re
 from typing import Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -12,7 +13,59 @@ from simplebench.validators import (
     validate_positive_int,
     validate_sequence_of_numbers,
     validate_string,
+    validate_string_with_regex,
 )
+
+_HASH_ID_REGEX: re.Pattern[str] = re.compile(r"^[A-Za-z0-9]{64}$")
+"""Regex pattern for validating hash IDs.
+
+A valid hash ID is a 64-character hexadecimal string consisting of
+uppercase or lowercase letters (A-F, a-f) and digits (0-9).
+
+We could put the empty string in the regex as well, but it's cleaner to handle that
+separately in the validation function.
+"""
+
+
+def hash_id(value: str) -> str:
+    """Validates that hash_id is a valid 64-character hexadecimal string or an empty string.
+
+    :param str value: The value to validate.
+    :return str: The validated string value.
+    :raise SimpleBenchTypeError: If the value is not a string.
+    :raise SimpleBenchValueError: If the value is not a valid hash ID.
+    """
+    validate_string(
+                value, 'hash_id',
+                _StatsBlockErrorTag.INVALID_HASH_ID_TYPE,
+                _StatsBlockErrorTag.INVALID_HASH_ID_VALUE,  # impossible to trigger the value error here
+                allow_empty=True, strip=True)
+
+    return validate_string_with_regex(
+                value, 'hash_id', _HASH_ID_REGEX,
+                _StatsBlockErrorTag.INVALID_HASH_ID_TYPE,  # impossible to trigger the type error here
+                _StatsBlockErrorTag.INVALID_HASH_ID_VALUE)
+
+
+
+def timer(value: str | None) -> str | None:
+    """Validate the timer.
+
+    It can be either a non-blank string or ``None``.
+
+    :param str | None value: The timer string to validate.
+    :return str | None: The validated timer string or None.
+    :raise SimpleBenchTypeError: If the timer is not a string or None.
+    :raises SimpleBenchValueError: If the timer string is invalid.
+    """
+    if value is None:
+        return None
+
+    return validate_string(
+        value, 'timer',
+        _StatsBlockErrorTag.INVALID_TIMER_TYPE,
+        _StatsBlockErrorTag.INVALID_TIMER_VALUE,
+        allow_blank=False, strip=True)
 
 
 def description(value: str) -> str:

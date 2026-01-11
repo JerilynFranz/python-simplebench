@@ -8,6 +8,16 @@ __all__ = []
 @enum_docstrings
 class _StatsBlockErrorTag(ErrorTag):
     """Error tags for JSON stats summary exceptions."""
+    INVALID_HASH_ID_TYPE = "INVALID_HASH_ID_TYPE"
+    """The hash_id is not a string."""
+    INVALID_HASH_ID_VALUE = "INVALID_HASH_ID_VALUE"
+    """The hash_id has an invalid value.
+    
+    Must either be a 64-character hexadecimal string or an empty string."""
+    INVALID_TIMER_TYPE = "INVALID_TIMER_TYPE"
+    """The timer is not a string or None."""
+    INVALID_TIMER_VALUE = "INVALID_TIMER_VALUE"
+    """The timer has an invalid value (cannot be empty)."""
     MEDIAN_AND_MEASUREMENTS_PROVIDED = "MEDIAN_AND_MEASUREMENTS_PROVIDED"
     """Both median and measurements were provided, but only one is allowed."""
     MEAN_AND_MEASUREMENTS_PROVIDED = "MEAN_AND_MEASUREMENTS_PROVIDED"

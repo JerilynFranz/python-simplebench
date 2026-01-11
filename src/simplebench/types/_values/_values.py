@@ -18,12 +18,16 @@ Example usage:
 
     # The vals object is guaranteed to be a tuple containing only float numbers.
 """
-from __future__ import annotations
-
 from typing import Iterable
 
+from typechecked import Immutable
 
-class Values(tuple):
+from simplebench.exceptions import SimpleBenchTypeError
+
+from ._error_tags import _ValuesErrorTag
+
+
+class Values(tuple, Immutable):
     """
     An immutable tuple of float numbers that validates its contents upon creation.
 
@@ -47,10 +51,10 @@ class Values(tuple):
         # The vals object is guaranteed to be a tuple containing only float numbers.
 
     :param iterable: An iterable of float or int numbers.
-    :raises TypeError: If not an Iterable or contains non-numeric types.
+    :raises SimpleBenchTypeError: If not an Iterable or contains non-numeric types.
     """
 
-    def __new__(cls, iterable: Iterable[int | float] = ()) -> Values:
+    def __new__(cls, iterable: Iterable[int | float] = ()) -> 'Values':
         """
         Create a new Values instance from an iterable of int or float numbers.
 
@@ -70,13 +74,19 @@ class Values(tuple):
             # The vals object is guaranteed to be a tuple containing only float numbers.
 
         :param iterable: An iterable of float or int numbers.
-        :raises TypeError: If not an Iterable or contains non-numeric types.
+        :raises SimpleBenchTypeError: If not an Iterable or contains non-numeric types.
         """
         if not isinstance(iterable, Iterable):
-            raise TypeError(f"Invalid type for iterable: {type(iterable)}. Must be an Iterable of int or float.")
+            raise SimpleBenchTypeError(
+                f"Invalid type for iterable: {type(iterable)}. Must be an Iterable of int or float.",
+                tag=_ValuesErrorTag.INVALID_VALUES_TYPE
+                )
         raw_iterable = list(iterable)
         if not all(isinstance(item, (int, float)) for item in raw_iterable):
-            raise TypeError("All items in the iterable must be int or float")
+            raise SimpleBenchTypeError(
+                "All items in the iterable must be int or float",
+                tag=_ValuesErrorTag.INVALID_VALUES_CONTENT_TYPE
+                )
 
         float_iterable = (float(item) for item in raw_iterable)
         return super().__new__(cls, float_iterable)

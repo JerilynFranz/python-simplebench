@@ -7,7 +7,7 @@ from ._base import BaseExecutionEnvironment
 _JSON_CLASS_LOADED: bool = False
 
 if TYPE_CHECKING:
-    from .versions import json_class
+    from .versions.__notinit__ import json_class
     _JSON_CLASS_LOADED = True  # To avoid import issues during type checking
 else:
     json_class = None   # pylint: disable=invalid-name
@@ -17,7 +17,7 @@ def _load_deferred_imports() -> None:
     """Load deferred imports."""
     global _JSON_CLASS_LOADED, json_class  # pylint: disable=global-statement
     if not _JSON_CLASS_LOADED:
-        from .versions import json_class  # pylint: disable=import-outside-toplevel
+        from .versions.__notinit__ import json_class  # pylint: disable=import-outside-toplevel
         _JSON_CLASS_LOADED = True
 
 

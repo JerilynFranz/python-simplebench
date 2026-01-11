@@ -19,7 +19,8 @@ The code has three basic paths for creating a stats block:
 2. Creation by instantiating the `StatsBlock` class with the raw data measurements and
    having the class calculate the statistical parameters.
 3. Creation by using the `from_dict` class method to create a `StatsBlock` instance from a
-   dictionary that matches the JSON schema.
+   dictionary that matches the JSON schema. This does not allow raw measurements to be
+   provided; the statistical parameters must be provided directly in the dictionary.
 
 The created instance and all values available via properties are immutable once created
 and can be serialized back to a dictionary using the `to_dict` method.
@@ -32,25 +33,22 @@ The dictionary serialized representation matches the JSON schema for version 1 r
 and can be used for JSON serialization and deserialization.
 """
 import statistics
-from collections.abc import Mapping
 from copy import copy
 from math import sqrt
-from typing import Any, Sequence, cast, overload
+from typing import Any, Sequence, overload
 
 from simplebench.exceptions import SimpleBenchValueError
+from simplebench.report._base import BaseStatsBlock, JSONSchema
 from simplebench.report._error_tags import _StatsBlockErrorTag
-from simplebench.report._base._json_schema import JSONSchema
-from simplebench.report._base.stats_block import BaseStatsBlock
-from simplebench.report.versions.v1.stats_block.stats_block_dict import StatsBlockData, StatsBlockDict
-from simplebench.types.values import Values
-from simplebench.validators import validate_core_data_mapping
+from simplebench.types._values._values import Values
 
-from . import validate
-from .stats_block_schema import StatsBlockSchema
+from . import _validate
+from ._stats_block_dict import ImmutableStatsBlockDict, StatsBlockData
+from ._stats_block_schema import StatsBlockSchema
 
 
 class StatsBlock(BaseStatsBlock):
-    """Class representing JSON stats summary for V1 reports.
+    """Class representing a stats summary for V1 reports.
 
     This class represents a stats block information in a JSON report.
     It implements validation and serialization/deserialization methods to and from dictionaries
@@ -58,21 +56,22 @@ class StatsBlock(BaseStatsBlock):
 
     https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json
 
-    :param name: The name of the stats block.
-    :param description: The description of the stats block.
-    :param semantic_type: The semantic type of the stats block.
-    :param unit: The unit of measurement for the stats block.
-    :param scale: The scale factor for the stats block.
-    :param iterations: The number of iterations measured for the stats block.
-    :param rounds: The number of rounds in each iteration measured.
-    :param mean: The mean value of the stats block.
-    :param median: The median value of the stats block.
-    :param minimum: The minimum value of the stats block.
-    :param maximum: The maximum value of the stats block.
-    :param stdev: The standard deviation of the stats block.
-    :param relative_stdev: The relative standard deviation of the stats block.
-    :param percentiles: The list of percentiles for the stats block as a `Values` instance.
-    :param measurements: A list of raw measurements for initializing the stats block.
+    :hash_id str: The hash identifier for the stats block.
+    :param str name: The name of the stats block.
+    :param str description: The description of the stats block.
+    :param str semantic_type: The semantic type of the stats block.
+    :param str unit: The unit of measurement for the stats block.
+    :param float scale: The scale factor for the stats block.
+    :param int iterations: The number of iterations measured for the stats block.
+    :param int rounds: The number of rounds in each iteration measured.
+    :param float mean: The mean value of the stats block.
+    :param float median: The median value of the stats block.
+    :param float minimum: The minimum value of the stats block.
+    :param float maximum: The maximum value of the stats block.
+    :param float stdev: The standard deviation of the stats block.
+    :param float relative_stdev: The relative standard deviation of the stats block.
+    :param Values percentiles: The list of percentiles for the stats block as a `Values` instance.
+    :param Sequence[float] | Values measurements: A list of raw measurements for initializing the stats block.
     :raise SimpleBenchTypeError: If any parameter is of an invalid type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -88,24 +87,24 @@ class StatsBlock(BaseStatsBlock):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
-    # These are the public properties that define the object's state for comparison and hashing.
-    # This avoids comparing internal-only or cached attributes like _measurements or _hash_cache.
-    _COMPARISON_ATTRIBUTES = (
-        "name",
-        "description",
-        "semantic_type",
-        "unit",
-        "scale",
-        "iterations",
-        "rounds",
-        "mean",
-        "median",
-        "minimum",
-        "maximum",
-        "stdev",
-        "relative_stdev",
-        "percentiles",
-    )
+    _init_params_cache: dict[str, Any] = {}
+    """Cache for the constructor parameters of the StatsBlock class."""
+
+    @classmethod
+    def _stats_block_params(cls) -> dict[str, Any]:
+        """Get the constructor parameters for the StatsBlock class.
+
+        The parameters are cached after the first call for performance.
+
+        :return dict[str, Any]: A dictionary of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(StatsBlockData)
+            params.pop('type', None)
+            params.pop('version', None)
+            cls._init_params_cache = params
+
+        return cls._init_params_cache
 
     _DERIVABLE_PROPERTIES = (
         "iterations",
@@ -119,6 +118,7 @@ class StatsBlock(BaseStatsBlock):
     )
 
     __slots__ = (
+        "_hash_id",
         "_name",
         "_description",
         "_semantic_type",
@@ -126,6 +126,7 @@ class StatsBlock(BaseStatsBlock):
         "_scale",
         "_iterations",
         "_rounds",
+        "_timer",
         "_mean",
         "_median",
         "_minimum",
@@ -134,32 +135,36 @@ class StatsBlock(BaseStatsBlock):
         "_relative_stdev",
         "_percentiles",
         "_measurements",
-        "_hash_cache",
         "_to_dict_cache",
     )
 
     @overload
     def __init__(self, *,
+                 hash_id: str,
                  name: str,
-                 description: str = '',
                  semantic_type: str,
+                 description: str = '',
                  unit: str,
                  scale: float,
                  rounds: int,
+                 timer: str,
                  measurements: Sequence[float] | Values) -> None:
         """Initialize a StatsBlock by calculating statistics from raw measurements.
         
+        :param str hash_id: The hash identifier for the stats block.
         :param str name: The name of the stats block.
         :param str description: The description of the stats block.
         :param str semantic_type: The semantic type of the stats block.
         :param str unit: The unit of measurement for the stats block.
         :param float scale: The scale factor for the stats block.
         :param int rounds: The number of rounds in the stats block.
+        :param str timer: The timer used for measurements.
         :param Sequence[float] | Values | None measurements: The list of raw measurements for the stats block.
         """
 
     @overload
     def __init__(self, *,
+                 hash_id: str,
                  name: str,
                  description: str = '',
                  semantic_type: str,
@@ -167,6 +172,7 @@ class StatsBlock(BaseStatsBlock):
                  scale: float,
                  iterations: int,
                  rounds: int,
+                 timer: str,
                  mean: float,
                  median: float,
                  minimum: float,
@@ -183,6 +189,7 @@ class StatsBlock(BaseStatsBlock):
         :param float scale: The scale factor for the stats block.
         :param int | None iterations: The number of iterations in the stats block.
         :param int rounds: The number of rounds in the stats block.
+        :param str timer: The timer used for measurements.
         :param float | None mean: The mean value of the stats block.
         :param float | None median: The median value of the stats block.
         :param float | None minimum: The minimum value of the stats block.
@@ -193,6 +200,7 @@ class StatsBlock(BaseStatsBlock):
         """
 
     def __init__(self, *,
+                 hash_id: str,
                  name: str,
                  description: str = '',
                  semantic_type: str,
@@ -200,6 +208,7 @@ class StatsBlock(BaseStatsBlock):
                  scale: float,
                  iterations: int | None = None,
                  rounds: int,
+                 timer: str = '',
                  mean: float | None = None,
                  median: float | None = None,
                  minimum: float | None = None,
@@ -229,6 +238,7 @@ class StatsBlock(BaseStatsBlock):
             - relative_stdev
             - percentiles
 
+        :param str hash_id: The hash identifier for the stats block.
         :param str name: The name of the stats block.
         :param str description: The description.
         :param str semantic_type: The semantic type of the stats block.
@@ -236,6 +246,7 @@ class StatsBlock(BaseStatsBlock):
         :param float scale: The scale factor.
         :param int | None iterations: The number of iterations. (exclusive with `measurements`)
         :param int rounds: The number of rounds in the stats block.
+        :param str timer: The timer used for measurements.
         :param float | None mean: The mean value of the data. (exclusive with `measurements`)
         :param float | None median: The median value of the data. (exclusive with `measurements`)
         :param float | None minimum: The minimum value of the data. (exclusive with `measurements`)
@@ -251,53 +262,55 @@ class StatsBlock(BaseStatsBlock):
         # measurements are blocked from being set directly as they can be inferred as needed.
         # This prevents setting properties that can be derived from measurements
         # and possibly causing inconsistencies.
-        self._measurements: Values | None = validate.measurements(measurements)
+        self._measurements: Values | None = _validate.measurements(measurements)
         """The raw measurements for the stats block as a Values instance or None.
 
         It is a private attribute and should not be accessed directly. It is not
         included in the exported dictionary representation of the StatsBlock or
         considered part of the object's identity for equality or hashing."""
 
-        self._name: str = validate.name(name)
+        self._name: str = _validate.name(name)
         """The name of the stats block."""
-        self._description: str = validate.description(description)
+        self._description: str = _validate.description(description)
         """The description of the stats block."""
-        self._semantic_type: str = validate.semantic_type(semantic_type)
+        self._semantic_type: str = _validate.semantic_type(semantic_type)
         """The semantic type of the stats block."""
-        self._unit: str = validate.unit(unit)
+        self._unit: str = _validate.unit(unit)
         """The unit of measurement."""
-        self._scale: float = validate.scale(scale)
+        self._scale: float = _validate.scale(scale)
         """The scale factor."""
-        self._rounds: int = validate.rounds(rounds)
+        self._rounds: int = _validate.rounds(rounds)
         """The number of rounds per iteration."""
+        self._timer: str | None = _validate.timer(timer)
+        """The timer used for measurements."""
+        self._hash_id: str = _validate.hash_id(hash_id)
+        """The hash identifier for the stats block."""
 
         # potentially derivable properties - only settable if measurements is None
-        self._iterations: int | None = validate.iterations(iterations, self._measurements)
+        self._iterations: int | None = _validate.iterations(iterations, self._measurements)
         """The number of iterations."""
-        self._mean: float | None = validate.mean(mean, self._measurements)
+        self._mean: float | None = _validate.mean(mean, self._measurements)
         """The mean value."""
-        self._median: float | None = validate.median(median, self._measurements)
+        self._median: float | None = _validate.median(median, self._measurements)
         """The median value."""
-        self._minimum: float | None = validate.minimum(minimum, self._measurements)
+        self._minimum: float | None = _validate.minimum(minimum, self._measurements)
         """The minimum value."""
-        self._maximum: float | None = validate.maximum(maximum, self._measurements)
+        self._maximum: float | None = _validate.maximum(maximum, self._measurements)
         """The maximum value."""
-        self._stdev: float | None = validate.stdev(stdev, self._measurements)
+        self._stdev: float | None = _validate.stdev(stdev, self._measurements)
         """The standard deviation."""
-        self._relative_stdev: float | None = validate.relative_stdev(relative_stdev, self._measurements)
+        self._relative_stdev: float | None = _validate.relative_stdev(relative_stdev, self._measurements)
         """The relative standard deviation."""
-        self._percentiles: Values | None = validate.percentiles(percentiles, self._measurements)
+        self._percentiles: Values | None = _validate.percentiles(percentiles, self._measurements)
         """The list of percentiles."""
 
-        self._hash_cache: int | None = None
-        """Cache for the computed hash value of the object."""
-        self._to_dict_cache: StatsBlockDict | None = None
+        self._to_dict_cache: ImmutableStatsBlockDict | None = None
         """Cache for the dictionary representation of the object."""
 
         self._validate_stats_block_consistency()
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "StatsBlock":
+    def from_dict(cls, data: StatsBlockData) -> "StatsBlock":
         """Create a StatsBlock object from a dictionary representation
         that conforms to the version 1 :class:`StatsBlockSchema`.
 
@@ -312,7 +325,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchTypeError: If any parameter in the dictionary is of an invalid type.
         :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.
         """
-        allowed_keys = cls.init_params(StatsBlockData)
+        allowed_keys = cls._stats_block_params()
 
         kwargs = cls.import_data(
             data=data,
@@ -324,7 +337,7 @@ class StatsBlock(BaseStatsBlock):
             process_as={'percentiles': Values})
         return cls(**kwargs)
 
-    def to_dict(self) -> StatsBlockDict:
+    def to_dict(self) -> ImmutableStatsBlockDict:
         """Convert the StatsBlock object to an immutable mapping conforming to the version 1 :class:`StatsBlockSchema`.
 
         The exported mapping includes all properties of the StatsBlock and
@@ -335,27 +348,19 @@ class StatsBlock(BaseStatsBlock):
 
         :return StatsBlockDict: A dictionary representation of the StatsBlock.
         """
-        if self._to_dict_cache is not None:
-            return self._to_dict_cache
-
-        property_keys = self.init_params(StatsBlockDict).keys()
-        data: dict[str, Any] = {}
-        # This loop handles calling to_dict on any properties that
-        # themselves have a to_dict method. This ensures nested objects,
-        # known or unknown, are properly serialized in the future as needed.
-        for key in property_keys:
-            if key in {'type', 'version'}:
-                continue
-            value = getattr(self, key)
-            to_dict_fn = getattr(value, "to_dict", None)
-            data[key] = to_dict_fn() if callable(to_dict_fn) else value
-        data['type'] = StatsBlock.TYPE
-        data['version'] = StatsBlock.VERSION
-
-        # We control the data structure here, so this cast is safe
-        self._to_dict_cache = cast(StatsBlockDict,
-            validate_core_data_mapping(data, 'StatsBlock.to_dict output'))
+        if self._to_dict_cache is None:
+            self._to_dict_cache = self._to_dict_helper(ImmutableStatsBlockDict)
         return self._to_dict_cache
+
+    @property
+    def hash_id(self) -> str:
+        """Get the hash identifier of the stats block.
+
+        :return: The hash identifier of the stats block.
+        """
+        if self._hash_id is None:
+            self._hash_id = self._hash_id_helper(StatsBlockData)
+        return self._hash_id
 
     @property
     def name(self) -> str:
@@ -651,8 +656,7 @@ class StatsBlock(BaseStatsBlock):
     def __hash__(self) -> int:
         """Compute the hash of the StatsBlock instance.
 
-        The hash is computed from the public properties that define the object's state
-        and is cached for performance.
+        The hash is computed from the hash_id.
 
         .. note::
             Triggers the lazy eval properties to be evaluated if they have not been already.
@@ -664,11 +668,7 @@ class StatsBlock(BaseStatsBlock):
 
         :return int: The hash value of the StatsBlock instance.
         """
-        if self._hash_cache is None:
-            # Build a tuple of all state-defining public properties and hash it.
-            state = tuple(getattr(self, attr) for attr in self._COMPARISON_ATTRIBUTES)
-            self._hash_cache = hash(state)   # pylint: disable=attribute-defined-outside-init
-        return self._hash_cache
+        return hash(self.hash_id)
 
     def __repr__(self) -> str:
         """Get the string representation of the StatsBlock instance.
@@ -678,11 +678,8 @@ class StatsBlock(BaseStatsBlock):
 
         :return str: The string representation of the StatsBlock.
         """
-        # Get the constructor parameters, excluding 'measurements' as this repr
-        # should represent the object's state via its calculated statistical properties.
-        init_params = self.__class__.init_params()
-        if 'measurements' in init_params:
-            del init_params['measurements']
+        # Get the init parameters excluding 'type' and 'version'
+        init_params =  self._stats_block_params()
 
         # Build the key-value argument string. Accessing the properties via getattr
         # will trigger their lazy calculation if they haven't been computed yet.
@@ -694,8 +691,9 @@ class StatsBlock(BaseStatsBlock):
 
         This method ensures that the pickled representation of the StatsBlock
         is compact. It achieves this by forcing the calculation of any lazy-evaluated
-        statistical properties and then excluding the potentially large `_measurements`
-        list from the pickled state.
+        statistical properties and then excluding any attributes that are not part of the
+        public interface of the StatsBlock from the pickled state. Those excluded attributes
+        can be recalculated upon unpickling on demand and do not need to be stored.
 
         This prioritizes a small pickled size and fast subsequent unpickling over
         preserving the lazy-evaluation state across serialization.
@@ -703,17 +701,20 @@ class StatsBlock(BaseStatsBlock):
         :return: A state tuple for pickling.
         :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
         """
-        # Trigger all lazy calculations by accessing the public properties.
-        # This ensures the internal state (_mean, _median, etc.) is populated.
-        for attr in self._COMPARISON_ATTRIBUTES:
-            getattr(self, attr)
+        # Sweep all slot attributes to force calculation of any lazy properties.
+        # and collect any public attribute values for pickling.
+        public_attrs = self._stats_block_params()
+        slot_values: list[Any] = []
+        for slot in self.__slots__:
+            attr_name = slot.lstrip('_')
+            if attr_name in public_attrs:
+                slot_values.append(getattr(self, attr_name))
+            else:
+                slot_values.append(None)
 
         # Build the state tuple for a __slots__ class. The first element is for
         # __dict__ (None in our case) and the second is a tuple of the slotted values.
-        state = tuple(
-            None if slot == '_measurements' else getattr(self, slot)
-            for slot in self.__slots__
-        )
+        state = tuple(slot_values)
         return (None, state)
 
     def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:

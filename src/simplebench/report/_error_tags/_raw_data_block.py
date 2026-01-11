@@ -8,6 +8,10 @@ __all__ = []
 @enum_docstrings
 class _RawDataBlockErrorTag(ErrorTag):
     """Error tags for JSON raw data block representation exceptions."""
+    INVALID_HASH_ID_TYPE = "INVALID_HASH_ID_TYPE"
+    """The hash_id value is not a string."""
+    INVALID_HASH_ID_VALUE = "INVALID_HASH_ID_VALUE"
+    """The hash_id value is not either an empty string or a 64-character hexadecimal string."""
     INVALID_SEMANTIC_TYPE_TYPE = "INVALID_SEMANTIC_TYPE_TYPE"
     """The semantic type value is not a string."""
     INVALID_SEMANTIC_TYPE_VALUE = "INVALID_SEMANTIC_TYPE_VALUE"

@@ -12,6 +12,7 @@ class RawDataBlockSchema(JSONSchema):
 
     VERSION: int = 1
     """The JSON RawDataBlock schema version number."""
+
     TYPE: str = "SimpleBenchRawDataBlock::V1"
     """The JSON RawDataBlock schema type property value for version 1 reports."""
 
@@ -51,11 +52,6 @@ class RawDataBlockSchema(JSONSchema):
                 "timer": {
                     "title": "Timer",
                     "description": "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
-                    "type": "string"
-                },
-                "cpu_timer": {
-                    "title": "CPU Timer",
-                    "description": "The CPU timing function used for this measurement (e.g., 'process_time_ns'). Should be included for any CPU time-related metrics.",
                     "type": "string"
                 },
                 "unit": {

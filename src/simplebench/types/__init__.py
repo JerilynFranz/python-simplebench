@@ -1,4 +1,5 @@
 """Types used by SimpleBench."""
+from ._values import Values
 from .core import (
     CORE_DATA_PRIMITIVE_TYPES_TUPLE,
     IMMUTABLE_CORE_DATA_TYPES_TUPLE,
@@ -12,7 +13,6 @@ from .core import (
     ImmutableCoreDataTypes,
 )
 from .typeddict import Never, NotRequired, ReadOnly, Required
-from .values import Values
 from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
 
 __all__ = [
