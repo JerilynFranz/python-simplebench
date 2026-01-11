@@ -19,7 +19,7 @@ from simplebench.report._base.report_element_typed_dict import ReportElementType
 
 from ..raw_data_block.raw_data_block_dict import RawDataBlockData, RawDataBlockDict
 from ..stats_block.stats_block_dict import StatsBlockData, StatsBlockDict
-from ..value_block.value_block_dict import ValueBlockData, ValueBlockDict
+from .._value_block._value_block_dict import ValueBlockData, ValueBlockDict
 
 if sys.version_info >= (3, 11):
     from typing import Required

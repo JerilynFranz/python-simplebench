@@ -20,19 +20,22 @@ An instance can be created in two ways:
 The class also implements equality, hashing, and copy protocols to allow for
 comparison, use in hash-based collections, and efficient copying.
 """
-from copy import copy
-from typing import Any
+from types import MappingProxyType
+from typing import cast
 
 from simplebench.report._base import BaseValueBlock, JSONSchema
-from simplebench.report.versions.v1.types import ValueBlockData, ValueBlockDict
 
-from . import validate
-from .value_block_schema import ValueBlockSchema
+from . import _validate
+from ._value_block_dict import ImmutableValueBlockDict, ValueBlockData
+from ._value_block_schema import ValueBlockSchema
+
+__all__ = []
 
 
 class ValueBlock(BaseValueBlock):
     """Class representing a value block (V1).
 
+    :param str hash_id: The unique hash identifier for the value block.
     :param str semantic_type: The semantic type string for the value block.
     :param (str | None) timer: The timer string or None.
     :param str unit: The unit of measurement.
@@ -55,16 +58,20 @@ class ValueBlock(BaseValueBlock):
     """ID of the value block schema."""
 
     __slots__ = (
+        '_hash_id',
         '_semantic_type',
         '_timer',
         '_unit',
         '_scale',
         '_value',
+        '_dict_cache',
     )
+    """Slots for immutable attributes and cached dictionary representation."""
 
     def __init__(
             self,
             *,
+            hash_id: str = '',
             semantic_type: str,
             timer: str | None = None,
             unit: str,
@@ -72,6 +79,8 @@ class ValueBlock(BaseValueBlock):
             value: float | int) -> None:
         """Initialize JSONStatsSummary base class.
 
+        :param str hash_id: The unique hash identifier for the value block.
+            If not provided, it defaults to an empty string and will be computed automatically.
         :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
         :param (str | None) timer: The timer string or None.
         :param str unit: The unit of measurement.
@@ -80,11 +89,16 @@ class ValueBlock(BaseValueBlock):
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
-        self._semantic_type: str = validate.semantic_type(semantic_type)
-        self._timer: str | None = validate.timer(timer)
-        self._unit: str = validate.unit(unit)
-        self._scale: float = validate.scale(scale)
-        self._value: float = validate.value(value)
+        self._semantic_type: str = _validate.semantic_type(semantic_type)
+        self._timer: str | None = _validate.timer(timer)
+        self._unit: str = _validate.unit(unit)
+        self._scale: float = _validate.scale(scale)
+        self._value: float = _validate.value(value)
+
+        self._hash_id: str = _validate.hash_id(hash_id)
+        if self._hash_id == '':
+            self._hash_id = self._hash_id_helper(ValueBlockData)
+        self._dict_cache: ImmutableValueBlockDict | None = None
 
     @classmethod
     def from_dict(cls, data: ValueBlockData) -> "ValueBlock":  # type: ignore[override]
@@ -111,29 +125,33 @@ class ValueBlock(BaseValueBlock):
         )
         return cls(**kwargs)
 
-    def to_dict(self) -> ValueBlockDict:
+    def to_dict(self) -> ImmutableValueBlockDict:
         """Convert the ValueBlock instance to a dictionary.
 
-        The returned dictionary conforms to the JSON schema for ValueBlock V1
+        The returned immutable dictionary conforms to the JSON schema for ValueBlock V1
         and is suitable for serialization.
 
-        The returned :class:`ValueBlockDict` has a stricter definition than
+        The returned :class:`ImmutableValueBlockDict` has a stricter definition than
         :class:`ValueBlockData`. It requires the `type` and `version` fields
         to be present and guarantees that the `value` field is a `float`.
 
-        :return ValueBlockDict: Dictionary representation of the ValueBlock instance.
+        :return ImmutableValueBlockDict: Dictionary representation of the ValueBlock instance.
         """
-        output: ValueBlockDict = {
-            'type': self.TYPE,
-            'version': self.VERSION,
-            'semantic_type': self.semantic_type,
-            'unit': self.unit,
-            'scale': self.scale,
-            'value': self.value,
-        }
-        if self.timer is not None:
-            output['timer'] = self.timer
-        return output
+        if self._dict_cache is None:
+            output = {
+                'type': self.TYPE,
+                'version': self.VERSION,
+                'hash_id': self.hash_id,
+                'semantic_type': self.semantic_type,
+                'unit': self.unit,
+                'scale': self.scale,
+                'value': self.value,
+            }
+            if self.timer is not None:
+                output['timer'] = self.timer
+            self._dict_cache = cast(ImmutableValueBlockDict, MappingProxyType(output))
+
+        return self._dict_cache
 
     @property
     def semantic_type(self) -> str:
@@ -176,18 +194,20 @@ class ValueBlock(BaseValueBlock):
         """
         return self._value
 
+    @property
+    def hash_id(self) -> str:
+        """Get the hash_id value.
+
+        :return: The hash_id value.
+        """
+        return self._hash_id
+
     def __hash__(self) -> int:
         """Get the hash of the ValueBlock instance.
 
         :return: The hash value.
         """
-        return hash((
-            self.semantic_type,
-            self.timer,
-            self.unit,
-            self.scale,
-            self.value,
-        ))
+        return hash(self.hash_id)
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two ValueBlock instances.
@@ -197,13 +217,7 @@ class ValueBlock(BaseValueBlock):
         """
         if not isinstance(other, ValueBlock):
             return NotImplemented
-        return (
-            self.semantic_type == other.semantic_type and
-            self.timer == other.timer and
-            self.unit == other.unit and
-            self.scale == other.scale and
-            self.value == other.value
-        )
+        return self.hash_id == other.hash_id
 
     def __repr__(self) -> str:
         """Get the string representation of the ValueBlock instance.
@@ -211,6 +225,7 @@ class ValueBlock(BaseValueBlock):
         :return: The string representation.
         """
         params: dict[str, str | float | None] = {
+            'hash_id': self.hash_id,
             'semantic_type': self.semantic_type,
             'timer': self.timer,
             'unit': self.unit,
@@ -224,15 +239,3 @@ class ValueBlock(BaseValueBlock):
         )
 
         return f"ValueBlock({formatted_params})"
-
-    def __deepcopy__(self, memo: dict[int, Any]) -> "ValueBlock":
-        """Create a deep copy of the ValueBlock instance.
-
-        Since the ValueBlock instance and its contained attributes are immutable,
-        a shallow copy is functionally identical to a deep copy. This method
-        overrides the default `copy.deepcopy` to perform a more efficient shallow copy.
-
-        :param memo: Memoization dictionary for deep copy.
-        :return: A deep copy of the ValueBlock instance.
-        """
-        return copy(self)

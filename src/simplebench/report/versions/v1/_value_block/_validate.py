@@ -7,6 +7,7 @@ Each function checks the type and value constraints for a specific field,
 returns the validated and correctly typed value, and raises appropriate
 exceptions if the validation fails.
 """
+import re
 
 from simplebench.report._error_tags import _ValueBlockErrorTag
 from simplebench.validators import (
@@ -14,7 +15,34 @@ from simplebench.validators import (
     validate_namespaced_identifier,
     validate_positive_float,
     validate_string,
+    validate_string_with_regex,
 )
+
+_HASH_ID_REGEX = re.compile(r'^[a-fA-F0-9]{64}$')
+
+__all__ = []
+
+
+def hash_id(val: str) -> str:
+    """Validate the hash_id string.
+
+    An empty string is allowed, which indicates that the hash_id should be
+    computed automatically.
+
+    :param value: The unique hash identifier for the vcs information.
+    :return: The validated hash_id string.
+    :raises SimpleBenchTypeError: If the hash_id value is not a string.
+    """
+    val = validate_string(
+            val, "hash_id",
+            _ValueBlockErrorTag.INVALID_HASH_ID_TYPE,
+            _ValueBlockErrorTag.INVALID_HASH_ID_VALUE,
+            allow_empty=True, strip=True)
+
+    return validate_string_with_regex(
+            val, "hash_id", _HASH_ID_REGEX,
+            _ValueBlockErrorTag.INVALID_HASH_ID_STRUCTURE,  # can't trigger type error here
+            _ValueBlockErrorTag.INVALID_HASH_ID_STRUCTURE)
 
 
 def semantic_type(val: str) -> str:

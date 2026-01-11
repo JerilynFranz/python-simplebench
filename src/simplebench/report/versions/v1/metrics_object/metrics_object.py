@@ -26,7 +26,7 @@ from simplebench.validators import validate_namespaced_identifier, validate_stri
 
 from ..raw_data_block import RawDataBlock
 from ..stats_block import StatsBlock
-from ..value_block import ValueBlock
+from .._value_block import ValueBlock
 
 
 class MetricsObject(UserDict):

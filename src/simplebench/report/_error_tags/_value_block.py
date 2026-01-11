@@ -2,10 +2,21 @@
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
+__all__ = []
+
 
 @enum_docstrings
 class _ValueBlockErrorTag(ErrorTag):
     """Error tags for JSON value block representation exceptions."""
+    INVALID_HASH_ID_TYPE = "INVALID_HASH_ID_TYPE"
+    """The hash_id value is not a string."""
+    INVALID_HASH_ID_VALUE = "INVALID_HASH_ID_VALUE"
+    """The hash_id value is invalid.
+    
+    Must be a 64-character hexadecimal string or an empty string.
+    """
+    INVALID_HASH_ID_STRUCTURE = "INVALID_HASH_ID_STRUCTURE"
+    """The hash_id value is not a valid 64-character hexadecimal string."""
     INVALID_SEMANTIC_TYPE_TYPE = "INVALID_SEMANTIC_TYPE_TYPE"
     """The semantic type value is not a string."""
     INVALID_SEMANTIC_TYPE_VALUE = "INVALID_SEMANTIC_TYPE_VALUE"

@@ -57,13 +57,20 @@ from ._system_info import (
     SystemInfoDict,
     SystemInfoSchema,
 )
+from ._value_block import (
+    ImmutableValueBlockData,
+    ImmutableValueBlockDict,
+    ValueBlock,
+    ValueBlockData,
+    ValueBlockDict,
+    ValueBlockSchema,
+)
 from ._vcs_info import ImmutableVCSInfoData, ImmutableVCSInfoDict, VCSInfo, VCSInfoData, VCSInfoDict, VCSInfoSchema
 from .metrics_object import MetricsObject
 from .raw_data_block import RawDataBlock, RawDataBlockSchema
 from .report import Report, ReportSchema
 from .results_info import ResultsInfo, ResultsInfoSchema
 from .stats_block import StatsBlock, StatsBlockSchema
-from .value_block import ValueBlock, ValueBlockSchema
 
 __all__ = [
     "CPUInfo",
@@ -118,6 +125,10 @@ __all__ = [
     "ImmutableSystemInfoDict",
     "ValueBlock",
     "ValueBlockSchema",
+    "ValueBlockData",
+    "ValueBlockDict",
+    "ImmutableValueBlockData",
+    "ImmutableValueBlockDict",
     "VCSInfo",
     "VCSInfoSchema",
     "VCSInfoData",

@@ -14,7 +14,7 @@ from .raw_data_block import _RawDataBlockErrorTag
 from .report import _ReportErrorTag
 from .results_info import _ResultsInfoErrorTag
 from .stats_block import _StatsBlockErrorTag
-from .value_block import _ValueBlockErrorTag
+from ._value_block import _ValueBlockErrorTag
 from ._vcs_info import _VCSInfoErrorTag
 
 __all__ = [

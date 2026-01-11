@@ -6,6 +6,7 @@ from json import JSONEncoder
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report._base import JSONSchema
 
+__all__ = []
 
 class ValueBlockSchema(JSONSchema):
     """Schema for the JSON ValueBlock output (V1)"""
