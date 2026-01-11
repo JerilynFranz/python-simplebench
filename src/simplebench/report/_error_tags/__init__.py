@@ -15,7 +15,7 @@ from .report import _ReportErrorTag
 from .results_info import _ResultsInfoErrorTag
 from .stats_block import _StatsBlockErrorTag
 from .value_block import _ValueBlockErrorTag
-from .vcs_info import _VCSInfoErrorTag
+from ._vcs_info import _VCSInfoErrorTag
 
 __all__ = [
     "_CPUInfoErrorTag",

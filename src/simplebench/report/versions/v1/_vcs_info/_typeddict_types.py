@@ -18,12 +18,7 @@ These types ensure proper validation and serialization of VCSInfo data
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
-__all__ = [
-    'VCSInfoData',
-    'VCSInfoDict',
-    'ImmutableVCSInfoData',
-    'ImmutableVCSInfoDict',
-]
+__all__ = []
 
 
 # A base for fields that are always required and have the same type.

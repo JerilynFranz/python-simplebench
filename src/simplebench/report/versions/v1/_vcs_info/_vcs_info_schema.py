@@ -1,10 +1,15 @@
-"""Schema for JSON VCSInfo v1 validation."""
+"""Schema for JSON VCSInfo v1 validation.
+"""
 # pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report._base import JSONSchema
+
+__all__ = [
+    'VCSInfoSchema',
+]
 
 
 class VCSInfoSchema(JSONSchema):

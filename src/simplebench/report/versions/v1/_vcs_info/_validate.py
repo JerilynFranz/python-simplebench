@@ -1,10 +1,22 @@
-"""Validation functions for VCSInfo version 1 data."""
+"""Validation functions for VCSInfo version 1 data.
+
+It is mostly thin wrappers around common validators defined in
+:simplebench.validators, with additional context-specific error tags.
+
+It it intended to be used by :class:`~simplebench.report.versions.v1.VCSInfo`
+to validate its input parameters and is imported there as a module
+rather than having its functions defined directly in that class
+to avoid cluttering the class namespace.
+"""
 import re
 
 from simplebench.report._error_tags import _VCSInfoErrorTag
 from simplebench.validators import validate_bool, validate_iso8601_datetime, validate_string, validate_string_with_regex
 
 _HASH_ID_REGEX = re.compile(r'^[a-fA-F0-9]{64}$')
+
+__all__ = []
+
 
 def hash_id(value: str) -> str:
     """Validate the hash_id string.

@@ -19,6 +19,10 @@ from . import _validate
 from ._typeddict_types import ImmutableVCSInfoDict, VCSInfoData
 from ._vcs_info_schema import VCSInfoSchema
 
+__all__ = [
+    'VCSInfo',
+]
+
 
 class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
     """Class representing vcs information in a JSON report."""
@@ -35,7 +39,7 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
     SCHEMA: type[JSONSchema] = VCSInfoSchema
     """The JSON schema class for version 1 reports."""
 
-    def __init__(self, *,
+    def __init__(self, *,  # pylint: disable=too-many-arguments
             hash_id: str = '',
             vcs: str,
             commit_id: str,
