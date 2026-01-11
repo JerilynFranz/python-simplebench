@@ -17,7 +17,7 @@ from .report_element import ReportElement
 from .report_element_typed_dict import ReportElementTypedDict
 from .results_info import BaseResultsInfo
 from .stats_block import BaseStatsBlock
-from .value_block import BaseValueBlock
+from ._value_block import BaseValueBlock
 from ._vcs_info import BaseVCSInfo
 
 __all__ = []

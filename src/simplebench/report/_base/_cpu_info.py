@@ -17,6 +17,8 @@ from abc import ABC
 
 from simplebench.report._base.report_element import ReportElement
 
+__all__ = []
+
 
 class BaseCPUInfo(ReportElement, ABC):
     """Class representing CPU information in a JSON report."""

@@ -13,5 +13,8 @@ from abc import ABC
 
 from .report_element import ReportElement
 
+__all__ = []
+
+
 class BaseSystemInfo(ReportElement, ABC):
     """Class representing System information in a report."""

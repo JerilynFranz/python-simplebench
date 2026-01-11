@@ -3,6 +3,8 @@ from abc import ABC
 
 from .report_element import ReportElement
 
+__all__ = []
+
 
 class Environment(ReportElement, ABC):
     """Base class for execution environments in reports.

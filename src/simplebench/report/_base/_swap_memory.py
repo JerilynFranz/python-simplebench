@@ -15,6 +15,8 @@ from simplebench.base._hydrator import Hydrator
 
 from .report_element import ReportElement
 
+__all__ = []
+
 
 class BaseSwapMemoryObject(ReportElement, Hydrator, ABC):
     """Class representing swap memory information in a report."""

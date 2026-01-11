@@ -14,10 +14,12 @@ The implementations of EnvironmentInfo are backwards compatible with future vers
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base EnvironmentInfo representation at the time of the V1 schema release.
 """
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from ._environment import Environment
 from .report_element import ReportElement
+
+__all__ = []
 
 
 class BaseExecutionEnvironment(ReportElement, ABC):

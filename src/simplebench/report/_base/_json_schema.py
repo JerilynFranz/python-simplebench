@@ -8,6 +8,8 @@ from simplebench.exceptions import SimpleBenchTypeError
 
 from .._error_tags import _JSONSchemaErrorTag
 
+__all__ = []
+
 
 class JSONSchema(ABC):
     """Abstract Base class representing a JSON schema."""

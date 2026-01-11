@@ -11,5 +11,7 @@ from abc import ABC
 
 from .report_element import ReportElement
 
+__all__ = []
+
 class BaseStatsBlock(ReportElement, ABC):
     """Abstract Base class representing a StatsBlock."""

@@ -15,6 +15,8 @@ from simplebench.base._hydrator import Hydrator
 
 from .report_element import ReportElement
 
+__all__ = []
+
 
 class BaseMachineInfo(ReportElement, Hydrator, ABC):
     """Class representing machine information in a report."""

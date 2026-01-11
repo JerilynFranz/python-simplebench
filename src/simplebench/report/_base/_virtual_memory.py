@@ -16,5 +16,8 @@ from simplebench.base._hydrator import Hydrator
 from .report_element import ReportElement
 
 
+__all__ = []
+
+
 class BaseVirtualMemoryObject(ReportElement, Hydrator, ABC):
     """Class representing virtual memory information in a report."""

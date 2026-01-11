@@ -11,6 +11,8 @@ from abc import ABC
 
 from .report_element import ReportElement
 
+__all__ = []
+
 
 class BaseResultsInfo(ReportElement, ABC):
     """Base class representing results in a report."""

@@ -13,5 +13,9 @@ from abc import ABC
 
 from .report_element import ReportElement
 
+
+__all__ = []
+
+
 class BaseVCSInfo(ReportElement, ABC):
     """Class representing VCS information in a report."""
