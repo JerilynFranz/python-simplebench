@@ -124,41 +124,6 @@ Issues = "https://github.com/JerilynFranz/python-simplebench/issues"
 Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGELOG.rst"
 
 
-[tool.flake8]
-max-line-length = 120
-max-complexity = 20
-# E203: whitespace before ':' (conflicts with black)
-# E501: line too long (handled by pylint)
-extend-ignore = ["E203", "E501"]
-
-[tool.isort]
-line_length = 120
-# Mode 3 - Vertical Hanging Indent
-multi_line_output = 3
-include_trailing_comma = true
-
-[tool.yapf]
-based_on_style = "pep8"
-column_limit = 120
-spaces_before_comment = 2
-allow_multiline_lambdas = true
-allow_split_before_dict_value = false
-split_before_logical_operator = true
-join_multiple_lines = false
-split_arguments_when_comma_terminated = true
-indent_dictionary_value = true
-dedent_closing_brackets = true
-coalese_brackets = true
-split_before_dot = false
-split_before_first_argument = true
-split_before_named_assigns = true
-
-
-[tool.pylint.format]
-max-line-length = 120
-
-[tool.pylint.MASTER]
-
 [tool.pytest.ini_options]
 testpaths = "tests"
 norecursedirs = ".git .tox .vscode venv* .*_cache build dist testplan.py"
@@ -254,7 +219,7 @@ test = ["py310", "py311", "py312", "py313", "py314", "doctest", "lint"]
 
 [tool.tox.env_run_base]
 description = "Run test under {base_python}"
-allowlist_externals = ["pytest", "flake8", "pylint", "mypy", "sphinx-build"]
+allowlist_externals = ["pytest", "ruff", "mypy", "sphinx-build"]
 dependency_groups = ["test", "lint", "tools", "types"]
 extras = ["all"]
 commands = [["pytest", "{posargs:tests/}"]]
@@ -272,7 +237,7 @@ package = "editable"
 dependency_groups = ["test", "types", "tools", "lint"]
 base = ["testenv"]
 base_python = ["python3.12"]
-allowlist_externals = ["pytest", "mypy", "flake8", "pylint"]
+allowlist_externals = ["pytest", "mypy", "ruff"]
 
 commands = []
 
@@ -282,8 +247,7 @@ package = "skip"
 base_python = ["python3.12"]
 dependency_groups = ["lint", "types"]
 commands = [
-    ["flake8", "src", "tests"],
-    ["pylint", "src", "tests"],
+    ["ruff", "check", "tests", "src"],
     ["mypy", "src", "tests"],
 ]
 
@@ -316,12 +280,8 @@ test = [
 
 # Dependencies for linting and code style
 lint = [
-    "flake8>=7.3.0",
-    "Flake8-pyproject>=1.2.4",
-    "isort>=5.12.0",
     "mypy>=1.17.1",
-    "pylint>=3.3.8",
-    "yapf>=0.40.0",
+    "ruff>=0.14.11"
 ]
 
 # Dependencies for building documentation
@@ -355,3 +315,85 @@ types = [
 
 [project.entry-points.pytest11]
 simplebench = "simplebench._pytest"
+
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    "venv",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".venv-tools",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+# Same as Black.
+line-length = 120
+indent-width = 4
+
+# Assume Python 3.10+ syntax.
+target-version = "py310"
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E", "F", "W", "B"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "single"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = true
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+#
+# This is currently disabled by default, but it is planned for this
+# to be opt-out in the future.
+docstring-code-format = true
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"
