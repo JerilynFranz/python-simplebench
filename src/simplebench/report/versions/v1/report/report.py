@@ -24,7 +24,7 @@ from simplebench.validators import validate_sequence_of_type
 
 from . import validate
 from .report_schema import ReportSchema
-from .typeddict_types import ReportDict
+from ._typeddict_types import ReportDict
 
 _deferred_imports_done: bool = False
 

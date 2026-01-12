@@ -20,8 +20,9 @@ An instance can be created in two ways:
 The class also implements equality, hashing, and copy protocols to allow for
 comparison, use in hash-based collections, and efficient copying.
 """
+from collections.abc import Mapping
 from types import MappingProxyType
-from typing import cast
+from typing import Any, cast
 
 from simplebench.report._base import BaseValueBlock, JSONSchema
 
@@ -101,7 +102,7 @@ class ValueBlock(BaseValueBlock):
         self._dict_cache: ImmutableValueBlockDict | None = None
 
     @classmethod
-    def from_dict(cls, data: ValueBlockData) -> "ValueBlock":  # type: ignore[override]
+    def from_dict(cls, data: Mapping[str, Any]) -> "ValueBlock":  # type: ignore[override]
         """Create a ValueBlock instance from a dictionary.
 
         The input dictionary must conform to the JSON schema for ValueBlock V1,

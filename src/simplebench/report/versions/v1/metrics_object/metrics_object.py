@@ -28,6 +28,12 @@ from .._raw_data_block import RawDataBlock
 from .._stats_block import StatsBlock
 from .._value_block import ValueBlock
 
+MetricItem: TypeAlias = StatsBlock | ValueBlock | RawDataBlock
+"""Type alias for the possible types of metric items in the metrics dictionary."""
+
+METRIC_ITEM_TYPES: tuple[type, ...] = (StatsBlock, ValueBlock, RawDataBlock)
+"""Tuple of the possible types of metric items in the metrics dictionary."""
+
 
 class MetricsObject(UserDict):
     """Immutable base class representing the 'metrics' object in a report ResultsInfo object.
@@ -38,34 +44,33 @@ class MetricsObject(UserDict):
     It is not a standalone JSON schema object, but rather a subcomponent
     of the results-info JSON schema object.
 
-    See :class:`~simplebench.report.versions.v1.results_info.ResultsInfo` for more details.
+    See :class:`~simplebench.report.versions.v1.ResultsInfo` for more details.
 
     The typing enforcement is done in the __setitem__ method at initialization time.
-    """
-
-    MetricItem: TypeAlias = StatsBlock | ValueBlock | RawDataBlock
-    """Type alias for the possible types of metric items in the metrics dictionary.
 
     Currently, the only possible types are
-    - :class:`~simplebench.report.versions.v1.stats_block.StatsBlock`
-    - :class:`~simplebench.report.versions.v1.value_block.ValueBlock`
-    - :class:`~simplebench.report.versions.v1.raw_data_block.RawDataBlock`
+    - :class:`~simplebench.report.versions.v1.StatsBlock`
+    - :class:`~simplebench.report.versions.v1.ValueBlock`
+    - :class:`~simplebench.report.versions.v1.RawDataBlock`
     """
-    def __init__(self, metrics: Mapping[str, 'MetricsObject.MetricItem']):
+    def __init__(self, metrics: Mapping[str, MetricItem]):
         """Initialize a Metrics v1 instance.
 
-        :param Mapping[str, MetricsObject.MetricItem] metrics: The metrics dictionary. The keys are metric names
-            and the values are Metrics.MetricItem objects (either a StatsBlock or a ValueBlock).
+        :param Mapping[str, MetricItem] metrics: The metrics dictionary. The keys are metric names
+            and the values are :var:`MetricItem` objects (
+            a :class:`~simplebench.report.versions.v1.StatsBlock`,
+            :class:`~simplebench.report.versions.v1.ValueBlock`,
+            or :class:`~simplebench.report.versions.v1.RawDataBlock` object).
 
             The keys must must be in the format 'namespace::type_name'
             where both namespace and type_name start and end with an alphanumeric character
-            and can contain underscores in between."
+            and can contain underscores in between. The identifier cannot be blank.
         """
         for metric_name, metric_object in metrics.items():
             validate_namespaced_identifier(metric_name)
-            if not isinstance(metric_object, MetricsObject.MetricItem):
+            if not isinstance(metric_object, METRIC_ITEM_TYPES):
                 raise SimpleBenchTypeError(
-                    f"Metric item must be a StatsBlock or ValueBlock, got {type(metric_object)}",
+                    f"Metric item must be a StatsBlock, ValueBlock, RawDataBlock - got {type(metric_object)}",
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
         super().__init__(copy(metrics))
         self._hash_id: str = ''
@@ -78,11 +83,13 @@ class MetricsObject(UserDict):
         :param data: Dictionary containing the JSON results object data.
         :return: JSON Metrics object instance.
         """
-        value_block: str = ValueBlock.TYPE
-        stats_block: str = StatsBlock.TYPE
-        raw_data_block: str = RawDataBlock.TYPE
+        supported_metric_types: dict[str, type[MetricItem]] = {
+            ValueBlock.TYPE: ValueBlock,
+            StatsBlock.TYPE: StatsBlock,
+            RawDataBlock.TYPE: RawDataBlock,
+        }
 
-        metrics: dict[str, MetricsObject.MetricItem] = {}
+        metrics: dict[str, MetricItem] = {}
         for metric_name, metric_data in data.get('metrics', {}).items():
             validated_metric_name: str = validate_string(
                 metric_name, 'metric name',
@@ -95,21 +102,13 @@ class MetricsObject(UserDict):
                     f"Metric item must be a dictionary, got {type(metric_data)}",
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
             discriminator_type = metric_data.get('type')
-            if discriminator_type == value_block:
-                metrics[metric_name] = ValueBlock.from_dict(metric_data)
-
-            elif discriminator_type == stats_block:
-                metrics[metric_name] = StatsBlock.from_dict(metric_data)
-
-            elif discriminator_type == raw_data_block:
-                metrics[metric_name] = RawDataBlock.from_dict(metric_data)
-
-            else:
+            if not discriminator_type in supported_metric_types:
                 raise SimpleBenchValueError(
                     f"Invalid metric item type: {discriminator_type}",
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
+            metrics[metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data)
 
-        return cls(metrics=metrics)
+        return cls(metrics)
 
     def __setitem__(self, key: str, value: MetricItem) -> None:
         """Set a metric item in the metrics dictionary.
@@ -139,7 +138,7 @@ class MetricsObject(UserDict):
             raise SimpleBenchKeyError(
                 f"Invalid metric name '{key}': {e}",
                 tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE) from e
-        if not isinstance(value, MetricsObject.MetricItem):
+        if not isinstance(value, MetricItem):
             raise SimpleBenchTypeError(
                 f"Metric item must be a StatsBlock or ValueBlock, got {type(value)}",
                 tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
@@ -149,7 +148,7 @@ class MetricsObject(UserDict):
                 tag=_MetricsErrorTag.INVALID_METRIC_ITEM_SEMANTIC_TYPE)
         super().__setitem__(key, value)
 
-    def __getitem__(self, key: str) -> 'MetricsObject.MetricItem':
+    def __getitem__(self, key: str) -> 'MetricItem':
         """Get a metric item from the metrics dictionary.
 
         :param key: The metric name.

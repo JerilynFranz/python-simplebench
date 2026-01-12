@@ -13,5 +13,3 @@ class _ReportErrorTag(ErrorTag):
 
     INVALID_VERSION_TYPE = "INVALID_VERSION_TYPE"
     """Report version type is invalid; expected an integer."""
-
-

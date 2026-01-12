@@ -120,7 +120,7 @@ class TestGet(TestSpec):
             raise TypeError("exception must be an Exception type if provided")
         if self.exception_tag is not None and not isinstance(self.exception_tag, (str, Enum)):
             raise TypeError("set_exception_tag must be a str or Enum if provided")
-        if not callable(self.on_fail):
+        if self.on_fail is not None and not callable(self.on_fail):
             raise TypeError("on_fail must be callable")
         if self.display_on_fail and not (isinstance(self.display_on_fail, str) or callable(self.display_on_fail)):
             raise TypeError("display_on_fail must be a str or callable if provided")

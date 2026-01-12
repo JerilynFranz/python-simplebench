@@ -33,9 +33,10 @@ The dictionary serialized representation matches the JSON schema for version 1 r
 and can be used for JSON serialization and deserialization.
 """
 import statistics
+from collections.abc import Mapping, Sequence
 from copy import copy
 from math import sqrt
-from typing import Any, Sequence, overload
+from typing import Any, overload
 
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._base import BaseStatsBlock, JSONSchema
@@ -310,7 +311,7 @@ class StatsBlock(BaseStatsBlock):
         self._validate_stats_block_consistency()
 
     @classmethod
-    def from_dict(cls, data: StatsBlockData) -> "StatsBlock":
+    def from_dict(cls, data: Mapping[str, Any]) -> "StatsBlock":
         """Create a StatsBlock object from a dictionary representation
         that conforms to the version 1 :class:`StatsBlockSchema`.
 
@@ -320,7 +321,7 @@ class StatsBlock(BaseStatsBlock):
         It cannot be instantiated using raw measurements via this method;
         the statistical parameters must be provided directly in the dictionary.
 
-        :param data: A dictionary representation of a StatsBlock.
+        :param Any data: A dictionary representation of a StatsBlock.
         :return StatsBlock: A StatsBlock object created from the dictionary.
         :raise SimpleBenchTypeError: If any parameter in the dictionary is of an invalid type.
         :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.

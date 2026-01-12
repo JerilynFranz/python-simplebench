@@ -1,4 +1,4 @@
 """Metrics block for results"""
-from .metrics_object import MetricsObject
+from .metrics_object import MetricItem, MetricsObject
 
-__all__ = ['MetricsObject']
+__all__ = []

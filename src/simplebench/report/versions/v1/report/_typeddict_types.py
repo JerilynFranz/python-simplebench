@@ -18,7 +18,7 @@ from simplebench.report._base.report_element_typed_dict import ReportElementType
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 
 from .._machine_info._typeddict_types import MachineInfoData, MachineInfoDict
-from ..results_info.results_info_dict import ResultsInfoData, ResultsInfoDict
+from ..results_info._typeddict_types import ResultsInfoData, ResultsInfoDict
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required

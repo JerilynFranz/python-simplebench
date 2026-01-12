@@ -15,14 +15,14 @@ from simplebench.types import (
 )
 from simplebench.validators import validate_core_data_mapping
 
-from ..types import ResultsInfoDict
 from . import validate
+from ._typeddict_types import ResultsInfoDict
 from .results_info_schema import ResultsInfoSchema
 
 _deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
-    from simplebench.report.versions.v1 import MetricsObject
+    from .. import MetricsObject
     _deferred_imports_done = True
 else:
     MetricsObject = None  # pylint: disable=invalid-name
@@ -32,7 +32,7 @@ def _deferred_imports() -> None:
     global MetricsObject, _deferred_imports_done  # pylint: disable=global-statement
     if _deferred_imports_done:
         return
-    from simplebench.report.versions.v1 import MetricsObject  # pylint: disable=import-outside-toplevel
+    from .. import MetricsObject  # pylint: disable=import-outside-toplevel
     _deferred_imports_done = True
 
 class ResultsInfo(BaseResultsInfo):
