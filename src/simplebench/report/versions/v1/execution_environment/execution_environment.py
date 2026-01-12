@@ -7,7 +7,7 @@ from typing import cast
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.report.base import BaseExecutionEnvironment, Environment
-from simplebench.report.versions.v1._python_info import PythonInfo
+from simplebench.report.versions.v1.python_info import PythonInfo
 from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 from simplebench.validators import validate_core_data_mapping
 

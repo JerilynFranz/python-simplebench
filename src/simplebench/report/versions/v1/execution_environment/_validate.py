@@ -8,7 +8,7 @@ from simplebench.report.base import Environment
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.validators import validate_core_data_mapping, validate_type
 
-from .._generic_environment import GenericEnvironment
+from ..generic_environment import GenericEnvironment
 from .known_environments import KNOWN_ENVIRONMENTS
 
 __all__ = []

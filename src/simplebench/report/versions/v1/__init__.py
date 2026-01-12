@@ -12,7 +12,7 @@ codebase and the public API for report generation, processing, and import/export
 of V1 report data.
 """
 
-from ._cpu_info import CPUInfo, CPUInfoData, CPUInfoDict, CPUInfoSchema, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from .cpu_info import CPUInfo, CPUInfoData, CPUInfoDict, CPUInfoSchema, ImmutableCPUInfoData, ImmutableCPUInfoDict
 from .execution_environment import (
     ExecutionEnvironment,
     ExecutionEnvironmentData,
@@ -20,8 +20,8 @@ from .execution_environment import (
     ImmutableExecutionEnvironmentData,
     ImmutableExecutionEnvironmentDict,
 )
-from ._generic_environment import GenericEnvironment, GenericEnvironmentSchema
-from ._machine_info import (
+from .generic_environment import GenericEnvironment, GenericEnvironmentSchema
+from .machine_info import (
     ImmutableMachineInfoData,
     ImmutableMachineInfoDict,
     MachineInfo,
@@ -29,7 +29,7 @@ from ._machine_info import (
     MachineInfoDict,
     MachineInfoSchema,
 )
-from ._memory_info import (
+from .memory_info import (
     ImmutableMemoryInfoData,
     ImmutableMemoryInfoDict,
     ImmutableSwapMemoryObjectDict,
@@ -41,7 +41,7 @@ from ._memory_info import (
     SwapMemoryObjectDict,
     VirtualMemoryObjectDict,
 )
-from ._metrics_object import (
+from .metrics_object import (
     ImmutableMetricDataTypes,
     ImmutableMetricDictTypes,
     ImmutableMetricsObjectData,
@@ -52,7 +52,7 @@ from ._metrics_object import (
     MetricsObjectData,
     MetricsObjectDict,
 )
-from ._python_info import (
+from .python_info import (
     ImmutablePythonInfoData,
     ImmutablePythonInfoDict,
     PythonInfo,
@@ -60,7 +60,7 @@ from ._python_info import (
     PythonInfoDict,
     PythonInfoSchema,
 )
-from ._raw_data_block import (
+from .raw_data_block import (
     ImmutableRawDataBlockData,
     ImmutableRawDataBlockDict,
     RawDataBlock,
@@ -68,8 +68,8 @@ from ._raw_data_block import (
     RawDataBlockDict,
     RawDataBlockSchema,
 )
-from ._stats_block import StatsBlock, StatsBlockSchema
-from ._system_info import (
+from .stats_block import StatsBlock, StatsBlockSchema
+from .system_info import (
     ImmutableSystemInfoData,
     ImmutableSystemInfoDict,
     SystemInfo,
@@ -77,7 +77,7 @@ from ._system_info import (
     SystemInfoDict,
     SystemInfoSchema,
 )
-from ._value_block import (
+from .value_block import (
     ImmutableValueBlockData,
     ImmutableValueBlockDict,
     ValueBlock,
@@ -85,7 +85,7 @@ from ._value_block import (
     ValueBlockDict,
     ValueBlockSchema,
 )
-from ._vcs_info import ImmutableVCSInfoData, ImmutableVCSInfoDict, VCSInfo, VCSInfoData, VCSInfoDict, VCSInfoSchema
+from .vcs_info import ImmutableVCSInfoData, ImmutableVCSInfoDict, VCSInfo, VCSInfoData, VCSInfoDict, VCSInfoSchema
 from .report import Report, ReportSchema
 from .results_info import ResultsInfo, ResultsInfoSchema
 

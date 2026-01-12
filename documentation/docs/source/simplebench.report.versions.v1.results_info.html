@@ -265,170 +265,24 @@
 <section id="module-simplebench.report.versions.v1.results_info.results_info_schema">
 <span id="simplebench-report-versions-v1-results-info-results-info-schema-module"></span><h2>simplebench.report.versions.v1.results_info.results_info_schema module<a class="headerlink" href="#module-simplebench.report.versions.v1.results_info.results_info_schema" title="Link to this heading">🔗</a></h2>
 <p>Schema for JSON ResultsInfo v1 validation.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.results_info.results_info_schema.</span></span><span class="sig-name descname"><span class="pre">ResultsInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info_schema.html#ResultsInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></p>
-<p>Schema for the JSON ResultsInfo output (V1)</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.ID" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON ResultsInfo schema $id value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchResultsInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON ResultsInfo schema type property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON ResultsInfo schema version number.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.as_dict">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info_schema.html#ResultsInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the JSON schema as a dictionary.</p>
-<p>It always returns a fresh copy of the schema dictionary to prevent accidental
-modifications.</p>
-<p>The caller can modify the returned dictionary as needed or cache it for performance.</p>
-<dl class="simple">
-<dt>Usage:</dt><dd><p>schema_dict = ResultsInfoSchema.as_dict()</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.as_json">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info_schema.html#ResultsInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the JSON schema as a JSON-formatted string.</p>
+</section>
+<section id="module-simplebench.report.versions.v1.results_info.typeddict_types">
+<span id="simplebench-report-versions-v1-results-info-typeddict-types-module"></span><h2>simplebench.report.versions.v1.results_info.typeddict_types module<a class="headerlink" href="#module-simplebench.report.versions.v1.results_info.typeddict_types" title="Link to this heading">🔗</a></h2>
+<p>Typed dictionaries for the V1 ResultsInfo data structure.</p>
+<p>This module defines four distinct dictionary types for handling ResultsInfo data,
+all modeled on the JSON schema for version 1 ResultsInfo in
+version 1: <a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.ResultsInfoSchema" title="simplebench.report.versions.v1.ResultsInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsInfoSchema</span></code></a>.</p>
 <blockquote>
-<div><p>It serializes the schema dictionary to a JSON string.</p>
-<dl class="simple">
-<dt>Usage:</dt><dd><p>schema_json = ResultsInfoSchema.as_json()</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">return str<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The JSON schema as a JSON-formatted string.</p>
-</dd>
-</dl>
+<div><ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsInfoData</span></code>: For use as INPUT (e.g., to <cite>from_dict</cite>). It is more</p></li>
+</ul>
+<p>lenient, making <cite>type</cite>, <cite>version</cite>, and <cite>hash_id</cite> optional.
+- <code class="xref py py-class docutils literal notranslate"><span class="pre">ImmutableResultsInfoData</span></code>: An immutable version of <cite>ResultsInfoData</cite>.
+- <code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsInfoDict</span></code>: For use as OUTPUT (e.g., from <cite>to_dict</cite>). It is
+stricter, guaranteeing that <cite>type</cite>, <cite>version</cite>, and <cite>hash_id</cite> are present.
+- <code class="xref py py-class docutils literal notranslate"><span class="pre">ImmutableResultsInfoDict</span></code>: An immutable version of <cite>ResultsInfoDict</cite>.</p>
+<p>These types ensure proper validation and serialization of ResultsInfo data</p>
 </div></blockquote>
-<p>The JSON schema is as follows:</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id1" title="Link to this code">🔗</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Results Schema (V1)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBench JSON Results Schema (V1)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Version&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Version of the schema&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBenchResultsInfo::V1&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;n&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Complexity analysis N value for the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;variation_marks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation Marks&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation marks for the result. Variation marks identify the kwargs combination used for a specific benchmark result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;metrics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/metrics&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;extra_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Extra Info&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A free-form object for third-party extensions or extra data.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;semantic_type&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;title&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;description&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;n&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;variation_cols&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;metrics&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;extra_info&quot;</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;$defs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;metrics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Metrics&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A collection of metric blocks, indexed by a unique, namespaced metric ID.\n\nExamples of valid keys:\n- `simplebench_std::time_per_operation`\n- `simplebench_std::operations_per_second`\n- `simplebench_std::memory_usage`\n- `simplebench_std::peak_memory_usage`\n- `simplebench_std::wallclock_time`\n- `my_plugin::custom_metric`&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;patternProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/metric_block&quot;</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;metric_block&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Metric Block&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A container for a measurement, which can be a single value, a statistical summary, or raw data.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stats-block.json&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value-block.json&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;raw-data-block.json&quot;</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">      </span><span class="p">],</span>
-<span class="w">      </span><span class="nt">&quot;discriminator&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;propertyName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;type&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 <section id="module-simplebench.report.versions.v1.results_info.validate">
 <span id="simplebench-report-versions-v1-results-info-validate-module"></span><h2>simplebench.report.versions.v1.results_info.validate module<a class="headerlink" href="#module-simplebench.report.versions.v1.results_info.validate" title="Link to this heading">🔗</a></h2>
@@ -508,10 +362,10 @@ or has keys that are not strings or are blank or empty strings.</p></li>
 <span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.results_info.validate.</span></span><span class="sig-name descname"><span class="pre">metrics</span></span><span class="sig-paren">(</span>
 
 <dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.MetricsObject" title="simplebench.report.versions.v1._metrics_object._metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.MetricsObject" title="simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.MetricsObject" title="simplebench.report.versions.v1._metrics_object._metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/validate.html#metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.validate.metrics" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.MetricsObject" title="simplebench.report.versions.v1.metrics_object.metrics_object.MetricsObject"><span class="pre">MetricsObject</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/validate.html#metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.validate.metrics" title="Link to this definition">🔗</a></dt>
 <dd><p>Validate the metrics property.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -595,326 +449,6 @@ and converts it to an immutable MappingProxyType[str, str].</p>
 <section id="module-simplebench.report.versions.v1.results_info">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.report.versions.v1.results_info" title="Link to this heading">🔗</a></h2>
 <p>JSONResults v1 package initializer.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.results_info.</span></span><span class="sig-name descname"><span class="pre">ResultsInfo</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">variation_marks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">extra_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#complex" title="(in Python v3.14)"><span class="pre">complex</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Sequence" title="(in Python v3.14)"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">CoreDataTypes</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">CoreDataTypes</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Set" title="(in Python v3.14)"><span class="pre">Set</span></a><span class="p"><span class="pre">[</span></span><span class="pre">CoreDataTypes</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info.html#ResultsInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseResultsInfo</span></code></p>
-<p>An immutable class representing the results-info object for V1 reports.</p>
-<p>This class encapsulates the structure and validation logic
-of the results-info section.</p>
-<p>Initialize a Results v1 instance.</p>
-<p>The input parameters are validated, converted to immutable types as needed,
-and stored as private attributes that are accessible via read-only properties.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>group</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The group name of the results.</p></li>
-<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The title of the results.</p></li>
-<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The description of the results.</p></li>
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The complexity analysis n value.</p></li>
-<li><p><strong>n</strong> – The n value.</p></li>
-<li><p><strong>variation_marks</strong> (<em>VariationMarksType</em>) – The variation marks mapping.</p></li>
-<li><p><strong>metrics</strong> (<a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.MetricsObject" title="simplebench.report.versions.v1.MetricsObject"><em>MetricsObject</em></a>) – The list of metrics.</p></li>
-<li><p><strong>extra_info</strong> (<em>CoreDataMappingType</em>) – Additional information.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.ID" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON report ID property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.SCHEMA">
-<span class="sig-name descname"><span class="pre">SCHEMA</span></span><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.SCHEMA" title="Link to this definition">🔗</a></dt>
-<dd><p>alias of <a class="reference internal" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema" title="simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsInfoSchema</span></code></a></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchResultsInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON report type property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.VERSION" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON report version number.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.description">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.description" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the description property.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.extra_info">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extra_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/types.html#types.MappingProxyType" title="(in Python v3.14)"><span class="pre">MappingProxyType</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.extra_info" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the extra info.</p>
-<p>The extra info immutable mapping is returned.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return ImmutableCoreDataMappingType<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The extra info immutable mapping.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.from_dict">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Mapping" title="(in Python v3.14)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo" title="simplebench.report.versions.v1.results_info.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info.html#ResultsInfo.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.from_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Create a ResultsInfo object instance from a mapping of data conformant
-to the V1 results-info JSON schema.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>ResultsInfoData</em>) – Mapping containing the results-info object data.</p>
-</dd>
-<dt class="field-even">Return ResultsInfo<span class="colon">:</span></dt>
-<dd class="field-even"><p>ResultsInfo instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.group">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">group</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.group" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the group property.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.metrics">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the metrics.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The metrics dictionary.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.n">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.n" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the n property.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.title">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.title" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the title property.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ResultsInfoDict</span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info.html#ResultsInfo.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.to_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Convert the ResultsInfo instance to an immutable ResultsInfoDict
-suitable for serialization.</p>
-<p>Results are cached after the first conversion. Because the ResultsInfo
-instance is immutable, the cached mapping is always valid for future calls.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return ResultsInfoDict<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Immutable mapping containing the ResultsInfo object data.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfo.variation_marks">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variation_marks</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/types.html#types.MappingProxyType" title="(in Python v3.14)"><span class="pre">MappingProxyType</span></a></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfo.variation_marks" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the variation marks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The variation marks immutable mapping.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfoSchema">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.report.versions.v1.results_info.</span></span><span class="sig-name descname"><span class="pre">ResultsInfoSchema</span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info_schema.html#ResultsInfoSchema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONSchema</span></code></p>
-<p>Schema for the JSON ResultsInfo output (V1)</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfoSchema.ID">
-<span class="sig-name descname"><span class="pre">ID</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.ID" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON ResultsInfo schema $id value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfoSchema.TYPE">
-<span class="sig-name descname"><span class="pre">TYPE</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SimpleBenchResultsInfo::V1'</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.TYPE" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON ResultsInfo schema type property value for version 1 reports.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfoSchema.VERSION">
-<span class="sig-name descname"><span class="pre">VERSION</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.VERSION" title="Link to this definition">🔗</a></dt>
-<dd><p>The JSON ResultsInfo schema version number.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfoSchema.as_dict">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><span class="pre">object</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info_schema.html#ResultsInfoSchema.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.as_dict" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the JSON schema as a dictionary.</p>
-<p>It always returns a fresh copy of the schema dictionary to prevent accidental
-modifications.</p>
-<p>The caller can modify the returned dictionary as needed or cache it for performance.</p>
-<dl class="simple">
-<dt>Usage:</dt><dd><p>schema_dict = ResultsInfoSchema.as_dict()</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.report.versions.v1.results_info.ResultsInfoSchema.as_json">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">as_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../_modules/simplebench/report/versions/v1/results_info/results_info_schema.html#ResultsInfoSchema.as_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.as_json" title="Link to this definition">🔗</a></dt>
-<dd><p>Get the JSON schema as a JSON-formatted string.</p>
-<blockquote>
-<div><p>It serializes the schema dictionary to a JSON string.</p>
-<dl class="simple">
-<dt>Usage:</dt><dd><p>schema_json = ResultsInfoSchema.as_json()</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">return str<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The JSON schema as a JSON-formatted string.</p>
-</dd>
-</dl>
-</div></blockquote>
-<p>The JSON schema is as follows:</p>
-<div class="literal-block-wrapper docutils container" id="id2">
-<div class="code-block-caption"><span class="caption-text">JSON Schema for ValueBlock V1</span><a class="headerlink" href="#id2" title="Link to this code">🔗</a></div>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">  </span><span class="nt">&quot;$schema&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://json-schema.org/draft/2020-12/schema&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Results Schema (V1)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBench JSON Results Schema (V1)&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Version&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Version of the schema&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Type of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;const&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SimpleBenchResultsInfo::V1&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;group&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Group of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Title of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description of the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;n&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Complexity analysis N value for the result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;variation_marks&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation Marks&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Variation marks for the result. Variation marks identify the kwargs combination used for a specific benchmark result&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;metrics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/metrics&quot;</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;extra_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Extra Info&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A free-form object for third-party extensions or extra data.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">},</span>
-<span class="w">  </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="s2">&quot;type&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;semantic_type&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;group&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;title&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;description&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;n&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;variation_cols&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;metrics&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="s2">&quot;extra_info&quot;</span>
-<span class="w">  </span><span class="p">],</span>
-<span class="w">  </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;$defs&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;metrics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Metrics&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A collection of metric blocks, indexed by a unique, namespaced metric ID.\n\nExamples of valid keys:\n- `simplebench_std::time_per_operation`\n- `simplebench_std::operations_per_second`\n- `simplebench_std::memory_usage`\n- `simplebench_std::peak_memory_usage`\n- `simplebench_std::wallclock_time`\n- `my_plugin::custom_metric`&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;patternProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/metric_block&quot;</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">      </span><span class="p">},</span>
-<span class="w">      </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
-<span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nt">&quot;metric_block&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">      </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Metric Block&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;A container for a measurement, which can be a single value, a statistical summary, or raw data.&quot;</span><span class="p">,</span>
-<span class="w">      </span><span class="nt">&quot;oneOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;stats-block.json&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value-block.json&quot;</span>
-<span class="w">        </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span>
-<span class="w">          </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;raw-data-block.json&quot;</span>
-<span class="w">        </span><span class="p">}</span>
-<span class="w">      </span><span class="p">],</span>
-<span class="w">      </span><span class="nt">&quot;discriminator&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;propertyName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;type&quot;</span>
-<span class="w">      </span><span class="p">}</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="w">  </span><span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -957,17 +491,8 @@ modifications.</p>
             <ul>
 <li><a class="reference internal" href="#">simplebench.report.versions.v1.results_info package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-simplebench.report.versions.v1.results_info.results_info_schema">simplebench.report.versions.v1.results_info.results_info_schema module</a><ul>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.ID"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.ID</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.VERSION</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.as_dict()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.results_info_schema.ResultsInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.as_json()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.results_info.results_info_schema">simplebench.report.versions.v1.results_info.results_info_schema module</a></li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.results_info.typeddict_types">simplebench.report.versions.v1.results_info.typeddict_types module</a></li>
 <li><a class="reference internal" href="#module-simplebench.report.versions.v1.results_info.validate">simplebench.report.versions.v1.results_info.validate module</a><ul>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.validate.description"><code class="docutils literal notranslate"><span class="pre">description()</span></code></a></li>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.validate.extra_info"><code class="docutils literal notranslate"><span class="pre">extra_info()</span></code></a></li>
@@ -978,33 +503,7 @@ modifications.</p>
 <li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.validate.variation_marks"><code class="docutils literal notranslate"><span class="pre">variation_marks()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-simplebench.report.versions.v1.results_info">Module contents</a><ul>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo"><code class="docutils literal notranslate"><span class="pre">ResultsInfo</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.ID"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.ID</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.SCHEMA"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.SCHEMA</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.TYPE"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.VERSION"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.VERSION</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.description"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.description</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.extra_info"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.extra_info</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.from_dict"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.from_dict()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.group"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.group</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.metrics"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.metrics</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.n"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.n</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.title"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.title</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.to_dict"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.to_dict()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfo.variation_marks"><code class="docutils literal notranslate"><span class="pre">ResultsInfo.variation_marks</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.ID"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.ID</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.TYPE"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.TYPE</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.VERSION"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.VERSION</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.as_dict"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.as_dict()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.report.versions.v1.results_info.ResultsInfoSchema.as_json"><code class="docutils literal notranslate"><span class="pre">ResultsInfoSchema.as_json()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.results_info">Module contents</a></li>
 </ul>
 </li>
 </ul>

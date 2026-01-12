@@ -12,6 +12,14 @@ simplebench.report.versions.v1.results\_info.results\_info\_schema module
    :show-inheritance:
    :undoc-members:
 
+simplebench.report.versions.v1.results\_info.typeddict\_types module
+--------------------------------------------------------------------
+
+.. automodule:: simplebench.report.versions.v1.results_info.typeddict_types
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 simplebench.report.versions.v1.results\_info.validate module
 ------------------------------------------------------------
 

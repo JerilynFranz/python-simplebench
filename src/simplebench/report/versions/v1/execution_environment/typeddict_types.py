@@ -14,7 +14,7 @@ from simplebench.report.base._report_element_typed_dict import ReportElementType
 from simplebench.types import Never, NotRequired
 
 # Imports are directly from the specific sub-modules to avoid accidentally creating circular dependencies
-from .._python_info._typeddict_types import PythonInfoData, PythonInfoDict
+from ..python_info.typeddict_types import PythonInfoData, PythonInfoDict
 
 __all__ = []
 

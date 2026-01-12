@@ -258,11 +258,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">json</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONEncoder</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.doc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">format_docstring</span><span class="p">,</span> <span class="n">format_json_for_docstring</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONSchema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONSchema</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[]</span>
 
 
 <div class="viewcode-block" id="ResultsInfoSchema">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.results_info.html#simplebench.report.versions.v1.ResultsInfoSchema">[docs]</a>
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ResultsInfoSchema">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ResultsInfoSchema</span><span class="p">(</span><span class="n">JSONSchema</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Schema for the JSON ResultsInfo output (V1)&quot;&quot;&quot;</span>
 
@@ -289,6 +291,12 @@
                 <span class="s1">&#39;const&#39;</span><span class="p">:</span> <span class="n">VERSION</span><span class="p">,</span>
             <span class="p">},</span>
             <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Type&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Type of the result&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;const&#39;</span><span class="p">:</span> <span class="n">TYPE</span><span class="p">},</span>
+            <span class="s1">&#39;hash_id&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Hash ID&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Unique 64 byte hexadecimal hash identifier for the results-info data. This can be used to identify identical Python interpreter configurations without revealing details.&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;pattern&#39;</span><span class="p">:</span> <span class="s1">&#39;^[a-f0-9]</span><span class="si">{64}</span><span class="s1">$&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
             <span class="s1">&#39;group&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Group&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Group of the result&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
             <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Title of the result&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
             <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Description&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Description of the result&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
@@ -310,12 +318,13 @@
         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span>
             <span class="s1">&#39;type&#39;</span><span class="p">,</span>
             <span class="s1">&#39;version&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;hash_id&#39;</span><span class="p">,</span>
             <span class="s1">&#39;semantic_type&#39;</span><span class="p">,</span>
             <span class="s1">&#39;group&#39;</span><span class="p">,</span>
             <span class="s1">&#39;title&#39;</span><span class="p">,</span>
             <span class="s1">&#39;description&#39;</span><span class="p">,</span>
             <span class="s1">&#39;n&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;variation_cols&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;variation_marks&#39;</span><span class="p">,</span>
             <span class="s1">&#39;metrics&#39;</span><span class="p">,</span>
             <span class="s1">&#39;extra_info&#39;</span><span class="p">,</span>
         <span class="p">],</span>
@@ -352,7 +361,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Note containing the JSON schema for docstrings.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ResultsInfoSchema.as_dict">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.results_info.html#simplebench.report.versions.v1.ResultsInfoSchema.as_dict">[docs]</a>
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ResultsInfoSchema.as_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the JSON schema as a dictionary.</span>
@@ -369,7 +378,7 @@
 
 
 <div class="viewcode-block" id="ResultsInfoSchema.as_json">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.results_info.html#simplebench.report.versions.v1.ResultsInfoSchema.as_json">[docs]</a>
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ResultsInfoSchema.as_json">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="nd">@format_docstring</span><span class="p">(</span><span class="n">JSON_SCHEMA_NOTE</span><span class="o">=</span><span class="n">_JSON_SCHEMA_NOTE</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

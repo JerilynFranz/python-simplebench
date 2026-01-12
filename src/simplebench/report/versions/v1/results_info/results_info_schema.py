@@ -7,6 +7,8 @@ from json import JSONEncoder
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report.base import JSONSchema
 
+__all__ = []
+
 
 class ResultsInfoSchema(JSONSchema):
     """Schema for the JSON ResultsInfo output (V1)"""

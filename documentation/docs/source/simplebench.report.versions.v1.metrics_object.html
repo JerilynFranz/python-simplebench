@@ -259,9 +259,30 @@
         <article role="main" id="furo-main-content">
           <section id="simplebench-report-versions-v1-metrics-object-package">
 <h1>simplebench.report.versions.v1.metrics_object package<a class="headerlink" href="#simplebench-report-versions-v1-metrics-object-package" title="Link to this heading">🔗</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">🔗</a></h2>
+</section>
+<section id="module-simplebench.report.versions.v1.metrics_object.typeddict_types">
+<span id="simplebench-report-versions-v1-metrics-object-typeddict-types-module"></span><h2>simplebench.report.versions.v1.metrics_object.typeddict_types module<a class="headerlink" href="#module-simplebench.report.versions.v1.metrics_object.typeddict_types" title="Link to this heading">🔗</a></h2>
+<p>Typed dictionaries for the V1 MetricsObject data structure.</p>
+<p>This module defines four distinct dictionary types for handling MetricsObject data,
+all modeled on the JSON schema for a MetricsObject as defined in the
+version 1: <a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.ResultsInfoSchema" title="simplebench.report.versions.v1.ResultsInfoSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultsInfoSchema</span></code></a>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>MetricsObjectData</cite>: For use as INPUT (e.g., to <cite>from_dict</cite>). It is more</p></li>
+</ul>
+<p>lenient, making <cite>type</cite>, <cite>version</cite>, and <cite>hash_id</cite> optional.
+- <cite>ImmutableMetricsObjectData</cite>: An immutable version of <cite>MetricsObjectData</cite>.
+- <cite>MetricsObjectDict</cite>: For use as OUTPUT (e.g., from <cite>to_dict</cite>). It is
+stricter, guaranteeing that <cite>type</cite>, <cite>version</cite>, and <cite>hash_id</cite> are present.
+- <cite>ImmutableMetricsObjectDict</cite>: An immutable version of <cite>MetricsObjectDict</cite>.</p>
+<p>These types ensure proper validation and serialization of MetricsObject data</p>
+</div></blockquote>
+</section>
 <section id="module-simplebench.report.versions.v1.metrics_object">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.report.versions.v1.metrics_object" title="Link to this heading">🔗</a></h2>
-<p>Metrics block for results</p>
+<p>Metrics block for results-info report version v1.</p>
 </section>
 </section>
 
@@ -303,6 +324,8 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.report.versions.v1.metrics_object package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simplebench.report.versions.v1.metrics_object.typeddict_types">simplebench.report.versions.v1.metrics_object.typeddict_types module</a></li>
 <li><a class="reference internal" href="#module-simplebench.report.versions.v1.metrics_object">Module contents</a></li>
 </ul>
 </li>

@@ -18,7 +18,7 @@ from typing import Sequence
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 
-from .._machine_info._typeddict_types import MachineInfoData, MachineInfoDict
+from ..machine_info.typeddict_types import MachineInfoData, MachineInfoDict
 from ..results_info.typeddict_types import ResultsInfoData, ResultsInfoDict
 
 if sys.version_info >= (3, 11):

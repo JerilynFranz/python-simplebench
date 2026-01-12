@@ -264,9 +264,11 @@
 
 <span class="n">E</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="ne">Exception</span><span class="p">)</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[]</span>
+
 
 <div class="viewcode-block" id="TaggedException">
-<a class="viewcode-back" href="../../../source/simplebench.exceptions.html#simplebench.exceptions.tagged_exception.TaggedException">[docs]</a>
+<a class="viewcode-back" href="../../../source/simplebench.exceptions.html#simplebench.exceptions.TaggedException">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TaggedException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">E</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A generic exception that can be specialized with a base exception type</span>

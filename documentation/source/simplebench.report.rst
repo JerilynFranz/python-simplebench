@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   simplebench.report.base
    simplebench.report.validate
    simplebench.report.versions
 

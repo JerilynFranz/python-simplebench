@@ -25,7 +25,7 @@ from simplebench.types import (
     VariationMarksType,
 )
 
-from .._metrics_object import MetricsObjectDict
+from ..metrics_object import MetricsObjectDict
 
 __all__ = []
 
@@ -203,6 +203,7 @@ class ImmutableResultsInfoDict(_ImmutableRequiredResultsInfoDict, total=False):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     :param Required[ImmutableCoreDataMappingType] extra_info: Additional information.
+
     """
 
     __immutable__: NotRequired[Never]

@@ -664,6 +664,9 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.exceptions.html">simplebench.exceptions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.exceptions.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.exceptions.html#module-simplebench.exceptions.error_tag">simplebench.exceptions.error_tag module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simplebench.exceptions.html#module-simplebench.exceptions.tagged_exception">simplebench.exceptions.tagged_exception module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.exceptions.html#module-simplebench.exceptions">Module contents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.ErrorTag"><code class="docutils literal notranslate"><span class="pre">ErrorTag</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchArgumentError"><code class="docutils literal notranslate"><span class="pre">SimpleBenchArgumentError</span></code></a></li>
@@ -810,6 +813,13 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simplebench.report.html">simplebench.report package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="simplebench.report.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="simplebench.report.base.html">simplebench.report.base package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.base.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.base.html#module-simplebench.report.base.metrics">simplebench.report.base.metrics module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.base.html#module-simplebench.report.base.report">simplebench.report.base.report module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="simplebench.report.base.html#module-simplebench.report.base">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="simplebench.report.validate.html">simplebench.report.validate package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.validate.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="simplebench.report.validate.html#module-simplebench.report.validate">Module contents</a></li>
@@ -2205,7 +2215,7 @@ accept them.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="simplebench.Case.machine_info">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">machine_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.MachineInfo" title="simplebench.report.versions.v1._machine_info._machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></em><a class="headerlink" href="#simplebench.Case.machine_info" title="Link to this definition">🔗</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">machine_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.MachineInfo" title="simplebench.report.versions.v1.machine_info.machine_info.MachineInfo"><span class="pre">MachineInfo</span></a></em><a class="headerlink" href="#simplebench.Case.machine_info" title="Link to this definition">🔗</a></dt>
 <dd><p>Get the MachineInfo for the benchmark case.</p>
 <p>This property retrieves the MachineInfo associated with the benchmark case.
 If the MachineInfo has not been set yet, it will be created and cached
@@ -2243,7 +2253,7 @@ for future access.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">include_raw_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.Report" title="simplebench.report.versions.v1.report.report.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/case.html#Case.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Case.report" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.Report" title="simplebench.report.versions.v1.Report"><span class="pre">Report</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/case.html#Case.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Case.report" title="Link to this definition">🔗</a></dt>
 <dd><p>Returns the benchmark case and results as a Report object.</p>
 <p>The Report format is a JSON serializable object that includes all the necessary
 information about the benchmark case and its results. This format can be used to
@@ -2663,7 +2673,7 @@ Defaults to {}.</p></li>
 <dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.RawDataBlock" title="simplebench.report.versions.v1._raw_data_block._raw_data_block.RawDataBlock"><span class="pre">RawDataBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.raw_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.raw_block" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.RawDataBlock" title="simplebench.report.versions.v1.raw_data_block.raw_data_block.RawDataBlock"><span class="pre">RawDataBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.raw_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.raw_block" title="Link to this definition">🔗</a></dt>
 <dd><p>Returns the RawDataBlock representation of the raw data for the given metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2683,7 +2693,7 @@ Defaults to {}.</p></li>
 <dd><em class="sig-param"><span class="n"><span class="pre">full_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.results_info.html#simplebench.report.versions.v1.results_info.ResultsInfo" title="simplebench.report.versions.v1.results_info.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.results_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.results_info" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.ResultsInfo" title="simplebench.report.versions.v1.results_info.results_info.ResultsInfo"><span class="pre">ResultsInfo</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.results_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.results_info" title="Link to this definition">🔗</a></dt>
 <dd><p>Returns a summary of the benchmark results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2753,7 +2763,7 @@ Defaults to {}.</p></li>
 <dd><em class="sig-param"><span class="n"><span class="pre">full_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.StatsBlock" title="simplebench.report.versions.v1._stats_block._stats_block.StatsBlock"><span class="pre">StatsBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.stats_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.stats_block" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.StatsBlock" title="simplebench.report.versions.v1.stats_block.stats_block.StatsBlock"><span class="pre">StatsBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.stats_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.stats_block" title="Link to this definition">🔗</a></dt>
 <dd><p>Returns the StatsBlock representation of the Stats for the given metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2798,7 +2808,7 @@ Defaults to {}.</p></li>
 <dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.ValueBlock" title="simplebench.report.versions.v1._value_block._value_block.ValueBlock"><span class="pre">ValueBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.sum_value_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.sum_value_block" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.ValueBlock" title="simplebench.report.versions.v1.value_block.value_block.ValueBlock"><span class="pre">ValueBlock</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.sum_value_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.Results.sum_value_block" title="Link to this definition">🔗</a></dt>
 <dd><p>Returns the ValueBlock representation of the sum for the given metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

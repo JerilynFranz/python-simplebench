@@ -13,7 +13,7 @@ preventing the accidental use of incorrect types for these known environments.
 """
 
 from simplebench.report.base import Environment
-from simplebench.report.versions.v1._python_info._python_info import PythonInfo
+from simplebench.report.versions.v1.python_info.python_info import PythonInfo
 
 __all__ = []
 
