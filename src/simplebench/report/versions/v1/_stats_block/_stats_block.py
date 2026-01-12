@@ -744,7 +744,7 @@ class StatsBlock(BaseStatsBlock):
         # The first element of the state tuple is for __dict__, which is None for this class.
         # The second element is a tuple of values for the __slots__.
         slot_values = state[1]
-        for slot, value in zip(self.__slots__, slot_values):
+        for slot, value in zip(self.__slots__, slot_values, strict=True):
             # Use object.__setattr__ to bypass our immutable setters.
             object.__setattr__(self, slot, value)
 
