@@ -4,6 +4,8 @@ from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
 
+__all__ = []
+
 
 @enum_docstrings
 class MetricsSelectionType(str, Enum):

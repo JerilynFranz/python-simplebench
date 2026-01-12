@@ -26,6 +26,8 @@ from simplebench.validators import validate_iterable_of_type
 
 from ._error_tags import _MetricTypesRegistryErrorTag
 
+__all__ = []
+
 
 def register_metric_types(metrics: MetricType | Iterable[MetricType] | MetricTypes) -> None:
     """Register one or more new metric types in the registry.

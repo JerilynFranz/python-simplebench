@@ -18,6 +18,8 @@ from simplebench.metrics.metric.metric import Metric
 
 from ._error_tags import _MetricsErrorTag
 
+__all__ = []
+
 
 class Metrics(MutableMapping[str, Metric]):
     """

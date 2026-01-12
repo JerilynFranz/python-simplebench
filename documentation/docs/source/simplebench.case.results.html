@@ -323,7 +323,7 @@
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metric_category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.metric_category.MetricCategory" title="simplebench.metrics.metric_category.MetricCategory"><span class="pre">MetricCategory</span></a></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">metric_category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.MetricCategory" title="simplebench.metrics.metric_category.MetricCategory"><span class="pre">MetricCategory</span></a></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/validate.html#belongs_to_metric_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.results.validate.belongs_to_metric_category" title="Link to this definition">🔗</a></dt>
@@ -332,7 +332,7 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>value</strong> (<a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><em>Metric</em></a>) – The metric to validate.</p></li>
-<li><p><strong>metric_category</strong> (<a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.metric_category.MetricCategory" title="simplebench.metrics.metric_category.MetricCategory"><em>MetricCategory</em></a>) – The metric category to validate against.</p></li>
+<li><p><strong>metric_category</strong> (<a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.MetricCategory" title="simplebench.metrics.MetricCategory"><em>MetricCategory</em></a>) – The metric category to validate against.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns Metric<span class="colon">:</span></dt>
@@ -683,7 +683,7 @@ Defaults to {}.</p></li>
 <dd><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.case.results.metrics.stats.html#simplebench.case.results.metrics.stats.Stats" title="simplebench.case.results.metrics.stats.stats.Stats"><span class="pre">Stats</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.results.Results.stats" title="Link to this definition">🔗</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.case.results.metrics.html#simplebench.case.results.metrics.Stats" title="simplebench.case.results.metrics.stats.stats.Stats"><span class="pre">Stats</span></a></span></span><a class="reference internal" href="../_modules/simplebench/case/results/results.html#Results.stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.case.results.Results.stats" title="Link to this definition">🔗</a></dt>
 <dd><p>Returns the statistical summary of the benchmark results for the given metric.</p>
 <p>The statistical summary includes metrics such as mean, median, standard deviation, etc.</p>
 <p>The returned Stats object is cached for efficiency.</p>

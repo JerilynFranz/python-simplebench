@@ -11,6 +11,8 @@ from ._error_tags import _MetricSelectionErrorTag
 from .metrics_selection import MetricsSelection
 from .metrics_selection_type import MetricsSelectionType
 
+__all__ = []
+
 
 class MetricsCollection(MetricsSelection):
     """Represents a resolved, immutable set of metrics selected from the registered metrics

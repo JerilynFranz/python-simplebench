@@ -5,8 +5,8 @@ import re
 from json import JSONDecodeError
 from textwrap import dedent
 
-from .error_tag import ErrorTag
-from .tagged_exception import TaggedException
+from ._error_tag import ErrorTag
+from ._tagged_exception import TaggedException
 
 __all__ = [
     'TaggedException',

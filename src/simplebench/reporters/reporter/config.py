@@ -11,6 +11,8 @@ from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter._error_tags.config import _ReporterConfigErrorTag
 from simplebench.validators import validate_dirpath, validate_iterable_of_type, validate_string, validate_type
 
+__all__ = []
+
 
 @dataclass(frozen=True, kw_only=True)
 class ReporterConfig:

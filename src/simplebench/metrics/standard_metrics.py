@@ -55,6 +55,10 @@ else:
     metric_types_registry = None  # pylint: disable=invalid-name
     Metrics = None  # pylint: disable=invalid-name
 
+
+__all__ = []
+
+
 _CACHED_METRICS = None
 
 
@@ -97,7 +101,9 @@ def metrics() -> 'Metrics':
         return _CACHED_METRICS
 
     from simplebench.metrics.metric import Metric  # pylint: disable=import-outside-toplevel
-    from simplebench.metrics.metric_types_registry import metric_types_registry  # pylint: disable=import-outside-toplevel
+    from simplebench.metrics.metric_types_registry import (
+        metric_types_registry,  # pylint: disable=import-outside-toplevel
+    )
     from simplebench.metrics.metrics import Metrics  # pylint: disable=import-outside-toplevel
 
     _CACHED_METRICS = Metrics(

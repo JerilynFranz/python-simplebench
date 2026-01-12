@@ -2,6 +2,8 @@
 
 from .metrics_selection_type import MetricsSelectionType
 
+__all__ = []
+
 
 class MetricsSelection:
     """Represents a set of metrics that can be selected from a given universe.

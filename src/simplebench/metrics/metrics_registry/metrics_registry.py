@@ -29,6 +29,8 @@ from simplebench.validators import validate_iterable_of_type
 
 from ._error_tags import _MetricsRegistryErrorTag
 
+__all__ = []
+
 
 def register_metrics(metrics: Metric | Iterable[Metric] | Metric) -> None:
     """Register one or more new metrics in the registry.

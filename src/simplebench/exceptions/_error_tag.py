@@ -2,6 +2,8 @@
 
 from enum import Enum
 
+__all__ = []
+
 
 class ErrorTag(str, Enum):
     """Base class for error tag enums.

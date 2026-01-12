@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+__all__ = []
+
 
 class ReporterOptions:
     """Marker base class for reporter related options.
