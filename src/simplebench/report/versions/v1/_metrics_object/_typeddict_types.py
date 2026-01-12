@@ -18,7 +18,7 @@ from collections.abc import Mapping
 from types import MappingProxyType
 from typing import TypeAlias
 
-from simplebench.report._base import ReportElementTypedDict
+from simplebench.report.base import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 from .._raw_data_block import ImmutableRawDataBlockData, ImmutableRawDataBlockDict, RawDataBlockData, RawDataBlockDict

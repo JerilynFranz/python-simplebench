@@ -1,11 +1,11 @@
 """Schema for JSON MemoryInfo v1 validation."""
+# ruff: noqa: E501
 
-# pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 
 class MemoryInfoSchema(JSONSchema):
@@ -130,7 +130,7 @@ class MemoryInfoSchema(JSONSchema):
                 'additionalProperties': False,
             },
         },
-        'required': ['version', 'type', 'hash_id', 'total_physical', 'total_swap'],
+        'required': ['version', 'type', 'hash_id', 'virtual_memory', 'swap_memory'],
         'additionalProperties': False,
     }
 

@@ -25,7 +25,7 @@ from collections.abc import Mapping
 from types import MappingProxyType
 from typing import Any, cast
 
-from simplebench.report._base import BaseValueBlock, JSONSchema
+from simplebench.report.base import BaseValueBlock, JSONSchema
 
 from . import _validate
 from ._value_block_dict import ImmutableValueBlockDict, ValueBlockData

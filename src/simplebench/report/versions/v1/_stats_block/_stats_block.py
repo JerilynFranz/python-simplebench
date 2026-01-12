@@ -40,7 +40,7 @@ from math import sqrt
 from typing import Any, overload
 
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.report._base import BaseStatsBlock, JSONSchema
+from simplebench.report.base import BaseStatsBlock, JSONSchema
 from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.types._values._values import Values
 

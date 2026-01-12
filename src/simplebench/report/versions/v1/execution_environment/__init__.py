@@ -1,8 +1,9 @@
 """Execution environment for the MachineInfo class."""
 # ruff: noqa: F401
 
-from ._execution_environment import ExecutionEnvironment
-from ._typeddict_types import (
+from .execution_environment import ExecutionEnvironment
+from .known_environments import KNOWN_ENVIRONMENTS
+from .typeddict_types import (
     ExecutionEnvironmentData,
     ExecutionEnvironmentDict,
     ImmutableExecutionEnvironmentData,

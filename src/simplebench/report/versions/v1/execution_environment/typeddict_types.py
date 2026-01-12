@@ -10,18 +10,13 @@ This module defines four distinct dictionary types for handling ExecutionEnviron
     These types ensure proper validation and serialization of ExecutionEnvironment data
 """
 
-from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
+from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired
 
 # Imports are directly from the specific sub-modules to avoid accidentally creating circular dependencies
 from .._python_info._typeddict_types import PythonInfoData, PythonInfoDict
 
-__all__ = [
-    'ExecutionEnvironmentData',
-    'ImmutableExecutionEnvironmentData',
-    'ExecutionEnvironmentDict',
-    'ImmutableExecutionEnvironmentDict',
-]
+__all__ = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

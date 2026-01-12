@@ -13,7 +13,7 @@ of V1 report data.
 """
 
 from ._cpu_info import CPUInfo, CPUInfoData, CPUInfoDict, CPUInfoSchema, ImmutableCPUInfoData, ImmutableCPUInfoDict
-from ._execution_environment import (
+from .execution_environment import (
     ExecutionEnvironment,
     ExecutionEnvironmentData,
     ExecutionEnvironmentDict,

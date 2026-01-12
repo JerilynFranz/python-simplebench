@@ -1,11 +1,11 @@
 """Schema for JSON RawDataBlock v1 validation."""
+# ruff: noqa: E501
 
-# pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 
 class RawDataBlockSchema(JSONSchema):
@@ -38,6 +38,12 @@ class RawDataBlockSchema(JSONSchema):
                 'description': "The type of the block. Must be 'SimpleBenchRawDataBlock::V1' for Raw Data Block version 1.",
                 'type': 'string',
                 'const': TYPE,
+            },
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the stats-block data.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
             },
             'semantic_type': {
                 'title': 'Measurement Type',
@@ -74,7 +80,7 @@ class RawDataBlockSchema(JSONSchema):
                 'items': {'type': 'number'},
             },
         },
-        'required': ['version', 'type', 'semantic_type', 'unit', 'scale', 'data'],
+        'required': ['version', 'type', 'hash_id', 'semantic_type', 'unit', 'scale', 'data'],
         'additionalProperties': False,
     }
 

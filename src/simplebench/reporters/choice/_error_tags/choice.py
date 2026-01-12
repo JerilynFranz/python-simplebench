@@ -1,7 +1,7 @@
 """ErrorTags for Choice() class related exceptions."""
 
 from simplebench.doc_utils import enum_docstrings
-from simplebench.exceptions._error_tag import ErrorTag
+from simplebench.exceptions.error_tag import ErrorTag
 
 
 @enum_docstrings

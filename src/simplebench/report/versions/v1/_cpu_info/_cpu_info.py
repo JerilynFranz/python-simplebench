@@ -18,8 +18,8 @@ import json
 from types import MappingProxyType
 from typing import cast
 
-from simplebench.report._base._cpu_info import BaseCPUInfo
-from simplebench.report._base._json_schema import JSONSchema
+from simplebench.report.base._cpu_info import BaseCPUInfo
+from simplebench.report.base._json_schema import JSONSchema
 from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
 
 from . import _validate

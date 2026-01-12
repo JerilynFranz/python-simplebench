@@ -1,11 +1,11 @@
 """Schema for JSON GenericEnvironment v1 validation."""
+# ruff: noqa: E501
 
-# pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 
 class GenericEnvironmentSchema(JSONSchema):

@@ -1,6 +1,6 @@
 """V1 SystemInfo implementation."""
 
-from simplebench.report._base import BaseSystemInfo, JSONSchema
+from simplebench.report.base import BaseSystemInfo, JSONSchema
 
 from . import _validate
 from ._system_info_schema import SystemInfoSchema

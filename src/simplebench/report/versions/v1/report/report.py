@@ -17,7 +17,7 @@ and serves as a foundation for future versions.
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, Sequence
 
-from simplebench.report._base import BaseReport, JSONSchema
+from simplebench.report.base import BaseReport, JSONSchema
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report.versions.v1 import MachineInfo
 from simplebench.types import ImmutableVariationColsType, VariationColsType

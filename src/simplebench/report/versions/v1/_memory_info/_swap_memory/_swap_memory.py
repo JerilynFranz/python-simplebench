@@ -9,7 +9,7 @@ https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v
 
 """
 
-from simplebench.report._base import BaseSwapMemoryObject
+from simplebench.report.base import BaseSwapMemoryObject
 
 from . import _validate
 from ._typeddict_types import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict

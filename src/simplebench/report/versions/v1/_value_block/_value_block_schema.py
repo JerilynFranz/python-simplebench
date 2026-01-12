@@ -1,11 +1,12 @@
 """Schema for JSON ValueBlock v1 validation."""
+# ruff: noqa: E501
 
 from copy import deepcopy
 from json import JSONEncoder
 
 # pylint: disable=line-too-long
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 __all__ = []
 
@@ -41,6 +42,12 @@ class ValueBlockSchema(JSONSchema):
                 'type': 'string',
                 'const': TYPE,
             },
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the value-block data.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
+            },
             'semantic_type': {
                 'title': 'Measurement Type',
                 'description': "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
@@ -71,7 +78,7 @@ class ValueBlockSchema(JSONSchema):
             },
             'value': {'title': 'Value', 'description': 'The single measurement value.', 'type': 'number'},
         },
-        'required': ['version', 'type', 'semantic_type', 'unit', 'scale', 'value'],
+        'required': ['version', 'type', 'hash_id', 'semantic_type', 'unit', 'scale', 'value'],
         'additionalProperties': False,
     }
     """The JSON schema as a dictionary."""

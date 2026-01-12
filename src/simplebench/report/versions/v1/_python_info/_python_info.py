@@ -15,7 +15,7 @@ import threading
 from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 
-from simplebench.report._base import BasePythonInfo, JSONSchema
+from simplebench.report.base import BasePythonInfo, JSONSchema
 
 from . import _validate
 from ._python_info_schema import PythonInfoSchema

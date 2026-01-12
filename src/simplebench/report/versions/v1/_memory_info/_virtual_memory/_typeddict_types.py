@@ -14,7 +14,7 @@ version 1: :class:`~simplebench.report.versions.v1.MemoryInfoSchema`.
     These types ensure proper validation and serialization of MemoryInfo data
 """
 
-from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
+from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 __all__ = ['VirtualMemoryObjectDict', 'ImmutableVirtualMemoryObjectDict']

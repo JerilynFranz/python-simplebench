@@ -16,7 +16,7 @@ of the base CPUInfo representation at the time of the V1 schema release.
 
 from abc import ABC
 
-from simplebench.report._base._report_element import ReportElement
+from simplebench.report.base._report_element import ReportElement
 
 __all__ = []
 

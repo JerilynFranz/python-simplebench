@@ -16,7 +16,7 @@ from typechecked import Immutable
 from simplebench.base._hydrator import Hydrator
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBenchTypeError
-from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
+from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.report.validate import report_element_typed_dict_mimic
 from simplebench.types import IMMUTABLE_CORE_DATA_TYPES_TUPLE, ImmutableCoreDataMappingType
 from simplebench.validators import is_immutable_core_data

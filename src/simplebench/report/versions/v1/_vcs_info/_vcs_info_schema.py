@@ -5,7 +5,7 @@ from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 __all__ = ['VCSInfoSchema']
 
@@ -40,6 +40,12 @@ class VCSInfoSchema(JSONSchema):
                 'description': 'The type of the VCS info schema',
                 'type': 'string',
                 'const': 'SimpleBenchVCSInfo::V1',
+            },
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the vcs-info data.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
             },
             'vcs': {
                 'title': 'VCS Type',
@@ -77,7 +83,16 @@ class VCSInfoSchema(JSONSchema):
                 'type': 'boolean',
             },
         },
-        'required': ['version', 'type', 'vcs', 'repository_url', 'commit_id', 'commit_datetimebranch', 'is_dirty'],
+        'required': [
+            'version',
+            'type',
+            'hash_id',
+            'vcs',
+            'repository_url',
+            'commit_id',
+            'commit_datetimebranch',
+            'is_dirty',
+        ],
         'additionalProperties': False,
     }
 

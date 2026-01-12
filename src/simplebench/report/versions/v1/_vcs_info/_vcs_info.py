@@ -14,7 +14,7 @@ of the JSON report schema and the V1 implementation itself is essentially a froz
 of the base VCSInfo representation at the time of the V1 schema release.
 """
 
-from simplebench.report._base import BaseVCSInfo, JSONSchema
+from simplebench.report.base import BaseVCSInfo, JSONSchema
 
 from . import _validate
 from ._typeddict_types import ImmutableVCSInfoDict, VCSInfoData

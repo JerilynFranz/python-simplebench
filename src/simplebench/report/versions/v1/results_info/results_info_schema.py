@@ -5,7 +5,7 @@ from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 
 class ResultsInfoSchema(JSONSchema):
@@ -34,6 +34,12 @@ class ResultsInfoSchema(JSONSchema):
                 'const': VERSION,
             },
             'type': {'title': 'Type', 'description': 'Type of the result', 'type': 'string', 'const': TYPE},
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the results-info data. This can be used to identify identical Python interpreter configurations without revealing details.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
+            },
             'group': {'title': 'Group', 'description': 'Group of the result', 'type': 'string'},
             'title': {'title': 'Title', 'description': 'Title of the result', 'type': 'string'},
             'description': {'title': 'Description', 'description': 'Description of the result', 'type': 'string'},
@@ -55,12 +61,13 @@ class ResultsInfoSchema(JSONSchema):
         'required': [
             'type',
             'version',
+            'hash_id',
             'semantic_type',
             'group',
             'title',
             'description',
             'n',
-            'variation_cols',
+            'variation_marks',
             'metrics',
             'extra_info',
         ],

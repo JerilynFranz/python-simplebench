@@ -16,7 +16,7 @@ of the base MemoryInfo representation at the time of the V1 schema release.
 
 from typing import cast
 
-from simplebench.report._base import BaseMemoryInfo, JSONSchema
+from simplebench.report.base import BaseMemoryInfo, JSONSchema
 
 from . import _validate
 from ._memory_info_schema import MemoryInfoSchema

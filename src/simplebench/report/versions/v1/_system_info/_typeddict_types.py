@@ -16,7 +16,7 @@ version 1: :class:`~simplebench.report.versions.v1.SystemInfoSchema`.
     These types ensure proper validation and serialization of SystemInfo data
 """
 
-from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
+from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 __all__ = ['SystemInfoData', 'SystemInfoDict', 'ImmutableSystemInfoData', 'ImmutableSystemInfoDict']

@@ -1,11 +1,11 @@
 """Schema for JSON PythonInfo v1 validation."""
+# ruff: noqa: E501
 
-# pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 
 class PythonInfoSchema(JSONSchema):
@@ -41,7 +41,7 @@ class PythonInfoSchema(JSONSchema):
             },
             'hash_id': {
                 'title': 'Hash ID',
-                'description': 'Unique 64 byte hexadecimal hash identifier for the Python interpreter information data. This can be used to identify identical Python interpreter configurations without revealing details.',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the python-info data.',
                 'type': 'string',
                 'pattern': '^[a-f0-9]{64}$',
             },

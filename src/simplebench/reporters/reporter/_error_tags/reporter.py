@@ -1,7 +1,7 @@
 """Exceptions for the simplebench.reporters.reporter module."""
 
 from simplebench.doc_utils import enum_docstrings
-from simplebench.exceptions._error_tag import ErrorTag
+from simplebench.exceptions.error_tag import ErrorTag
 
 __all__ = []
 

@@ -2,7 +2,7 @@
 
 from simplebench.doc_utils import enum_docstrings
 
-from ..exceptions._error_tag import ErrorTag
+from ..exceptions.error_tag import ErrorTag
 
 
 @enum_docstrings

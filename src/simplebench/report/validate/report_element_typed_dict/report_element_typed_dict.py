@@ -22,7 +22,7 @@ from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_or
 from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
+from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.validators import is_core_data_primitive, is_core_data_primitive_type
 
 from . import _cache

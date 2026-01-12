@@ -5,7 +5,7 @@ from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
-from simplebench.report._base import JSONSchema
+from simplebench.report.base import JSONSchema
 
 
 class StatsBlockSchema(JSONSchema):
@@ -38,6 +38,12 @@ class StatsBlockSchema(JSONSchema):
                 'description': 'The version of the schema. Must be 1 for Statistics Block version 1.',
                 'type': 'integer',
                 'const': VERSION,
+            },
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the stats-block data. This can be used to identify identical Python interpreter configurations without revealing details.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
             },
             'semantic_type': {
                 'title': 'Measurement Type',
@@ -137,6 +143,7 @@ class StatsBlockSchema(JSONSchema):
         'required': [
             'type',
             'version',
+            'hash_id',
             'name',
             'semantic_type',
             'unit',

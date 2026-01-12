@@ -4,14 +4,14 @@ from collections.abc import Mapping
 from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.report._base import Environment
+from simplebench.report.base import Environment
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.validators import validate_core_data_mapping, validate_type
 
 from .._generic_environment import GenericEnvironment
-from ._known_environments import KNOWN_ENVIRONMENTS
+from .known_environments import KNOWN_ENVIRONMENTS
 
-__all__ = ['environments']
+__all__ = []
 
 
 def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environment]:

@@ -4,7 +4,7 @@ from collections.abc import Mapping, Sequence
 from copy import copy
 from typing import Any
 
-from simplebench.report._base import BaseRawDataBlock, JSONSchema
+from simplebench.report.base import BaseRawDataBlock, JSONSchema
 from simplebench.types import Values
 
 from . import _validate

@@ -14,7 +14,7 @@ type-checking purposes.
 These types ensure proper validation and serialization of PythonInfo data
 """
 
-from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
+from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 __all__ = ['PythonInfoData', 'PythonInfoDict', 'ImmutablePythonInfoData', 'ImmutablePythonInfoDict']

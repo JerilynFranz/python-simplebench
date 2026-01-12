@@ -20,7 +20,7 @@ from types import MappingProxyType
 from typing import Any, cast
 
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.report._base import Environment, JSONSchema
+from simplebench.report.base import Environment, JSONSchema
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
 from simplebench.types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, ImmutableCoreDataMappingType
 from simplebench.validators import validate_core_data_mapping
