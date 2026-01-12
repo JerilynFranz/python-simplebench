@@ -4,6 +4,7 @@ This module defines a base class `Hydrator` for objects, which includes methods
 for initializing, converting to and from dictionaries, and validating against a
 set of allowed parameters.
 """
+
 import dataclasses
 import inspect
 from collections.abc import Mapping
@@ -11,9 +12,10 @@ from copy import copy
 from functools import cache
 from typing import Any, Callable, Iterable, Union, get_args, get_origin, get_type_hints, is_typeddict
 
-from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
-
+from .._typed_dict_key_info import TypedDictKeyInfo
 from . import _validate
+
+__all__ = []
 
 
 class Hydrator:
@@ -30,7 +32,7 @@ class Hydrator:
     It is not intended to be used for cases where simple **kwargs unpacking
     is sufficient, or where deep type checking is required beyond basic validation
     and processing.
-    
+
     This class provides two main functionalities:
     1. Initializing a mapping of constructor parameters and their types (`init_params`)
        for a class using keyword-only arguments, and
@@ -45,7 +47,7 @@ class Hydrator:
     the `process_as` parameter) while allowing customization of import rules. This includes
     specifying fields to be skipped, providing default values, specifying optional fields,
     and matching rules for fields during import.
-     
+
     It uses type hints to determine the expected types of fields for validation purposes
     during import. Because it is mainly intended to be used for data serialization/deserialization
     of dictionaries using only basic Python types such as dictionaries, lists, and primitives,
@@ -59,42 +61,33 @@ class Hydrator:
         from typing import Any
         from simplebench.base.hydrator.hydrator import Hydrator
 
-        data: dict[str, Any] = {
-            'field1': 42,
-            'field2': {'some': 'data'},
-            'field3': 3.14
-        }
+        data: dict[str, Any] = {'field1': 42, 'field2': {'some': 'data'}, 'field3': 3.14}
 
         MyDataClassInstance = MyDataClass.from_dict(data)
 
+
         class MyDataClass(Hydrator):
             '''A simple data class unpacking nested objects from dicts.'''
-            def __init__(self, *,
-                         field1: int,
-                         field2: AnotherClass,
-                         field3: float = 0.0,
-                         field4: AThirdClass):
+
+            def __init__(self, *, field1: int, field2: AnotherClass, field3: float = 0.0, field4: AThirdClass):
                 self.field1 = field1
                 self.field2 = field2
                 self.field3 = field3
                 self.field4 = field4
 
             @classmethod
-            def from_dict(cls, data: dict[str, Any]) -> "MyDataClass":
+            def from_dict(cls, data: dict[str, Any]) -> 'MyDataClass':
                 allowed_fields = cls.init_params()
 
                 def process_field4(value: dict) -> AThirdClass:
                     return AThirdClass(**value)
-            
+
                 validated_data = cls.import_data(
                     data=data,
                     allowed_fields=allowed_fields,
                     optional_fields=['field3'],
                     defaults={'field3': 0.0},
-                    process_as={
-                        'field2': AnotherClass.from_dict,
-                        'field4': process_field4
-                    }
+                    process_as={'field2': AnotherClass.from_dict, 'field4': process_field4},
                 )
                 return cls(**validated_data)
 
@@ -103,34 +96,36 @@ class Hydrator:
                     'field1': self.field1,
                     'field2': self.field2.to_dict(),
                     'field3': self.field3,
-                    'field4': {
-                        'value': self.field4.value
-                    }
+                    'field4': {'value': self.field4.value},
                 }
+
 
         class AThirdClass:
             '''Another simple class to demonstrate nested object processing
             of an unrelated class that can be constructed using a helper function
             shim to illustrate custom processing during data import.
             '''
+
             def __init__(self, *, value: float):
                 self.value = value
 
+
         class AnotherClass:
             '''A simple class to demonstrate nested object processing
-            
+
             This is a simple class that can be constructed from a dictionary
             using **kwargs unpacking to illustrate nested object handling
             in the Hydrator base class.
-            
+
             It is the kind of class that might be used as a field by a Hydrator subclass
             but does not itself need to inherit from Hydrator.
             '''
+
             def __init__(self, *, some: str):
                 self.some = some
 
             @classmethod
-            def from_dict(cls, data: dict[str, Any]) -> "AnotherClass":
+            def from_dict(cls, data: dict[str, Any]) -> 'AnotherClass':
                 return cls(**data)
 
             def to_dict(self) -> dict[str, Any]:
@@ -138,6 +133,7 @@ class Hydrator:
 
 
     """
+
     @classmethod
     @cache
     def init_params(cls, target_cls: type | None = None) -> dict[str, Any]:
@@ -156,9 +152,11 @@ class Hydrator:
 
             from typing import TypedDict
 
+
             class MyTypedDict(TypedDict):
                 field1: int
                 field2: str
+
 
             params = Hydrator.init_params(MyTypedDict)
             # params will be {'field1': int, 'field2': str}
@@ -189,9 +187,7 @@ class Hydrator:
         # Regular class logic (Python 3.10+)
         try:
             type_hints = get_type_hints(
-                target_cls.__init__,
-                globalns=vars(inspect.getmodule(target_cls)),
-                localns=dict(vars(target_cls))
+                target_cls.__init__, globalns=vars(inspect.getmodule(target_cls)), localns=dict(vars(target_cls))
             )
         except Exception:  # pylint: disable=broad-exception-caught
             return {}
@@ -199,7 +195,7 @@ class Hydrator:
         return {  # __immutable__ is internal marker for Immutable TypedDicts
             name: type_hints[name]
             for name, param in inspect.signature(target_cls.__init__).parameters.items()
-                if name != '__immutable__' and param.kind == inspect.Parameter.KEYWORD_ONLY and name in type_hints
+            if name != '__immutable__' and param.kind == inspect.Parameter.KEYWORD_ONLY and name in type_hints
         }
 
     @classmethod
@@ -212,7 +208,7 @@ class Hydrator:
         optional_fields: Iterable[str] | None = None,
         defaults: Mapping[str, Any] | None = None,
         match_on: Mapping[str, Any] | None = None,
-        process_as: Mapping[str, Callable[[Any], Any]] | None = None
+        process_as: Mapping[str, Callable[[Any], Any]] | None = None,
     ) -> dict[str, Any]:
         """Process and validate the data dictionary.
 
@@ -220,7 +216,7 @@ class Hydrator:
         :param Mapping[str, Any] allowed_fields: A dictionary of allowed input keys and their types.
                     It cannot be empty. The types must in the form suitable for isinstance checks.
                     e.g., str, int, list, dict, or (class, otherclass, ...) for multiple allowed types.
-        
+
         :param Iterable[str] | None skip_fields: (optional) A list of input keys to NOT include in the output.
                     Only keys that are present in the `allowed_fields` dictionary can be skipped.
         :param Iterable[str] | None optional_fields: (optional) An iterable of input keys that are optional and
@@ -264,7 +260,7 @@ class Hydrator:
     @staticmethod
     def _apply_defaults(data: dict[str, Any], defaults: Mapping[str, Any]) -> dict[str, Any]:
         """Apply default values to the data dictionary.
-        
+
         :param dict[str, Any] data: The data dictionary to apply defaults to.
         :param Mapping[str, Any] defaults: The default values to apply.
         :return dict[str, Any]: The data dictionary with defaults applied.
@@ -316,7 +312,9 @@ class Hydrator:
         output: dict[str, Any] = {}
         annotations = get_type_hints(typeddict_cls)
         for key in annotations:
-            value_info = _TypedDictKeyInfo(key, typeddict_cls)
+            if key == '__immutable__':
+                continue
+            value_info = TypedDictKeyInfo(key, typeddict_cls)
             value_type = value_info.value_type
             annotations[key] = cls._unwrap_typeddict_type(value_type)
         return output
@@ -341,9 +339,11 @@ class Hydrator:
         origin = get_origin(tp)
         if origin is not None:
             # Handle Union types
-            if (origin is getattr(__import__('typing'), 'Union', None)
+            if (
+                origin is getattr(__import__('typing'), 'Union', None)
                 or origin is getattr(__import__('types'), 'UnionType', None)
-                or origin is Union):
+                or origin is Union
+            ):
                 args = get_args(tp)
                 return tuple(cls._unwrap_typeddict_type(arg) for arg in args)
             # Handle Literal types

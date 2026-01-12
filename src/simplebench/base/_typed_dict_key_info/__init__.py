@@ -1,4 +1,5 @@
 """TypedDict key information extraction package."""
-from ._typed_dict_key_info import _TypedDictKeyInfo
+# ruff: noqa F401
+from ._typed_dict_key_info import TypedDictKeyInfo
 
-__all__ = ["_TypedDictKeyInfo"]
+__all__ = []
