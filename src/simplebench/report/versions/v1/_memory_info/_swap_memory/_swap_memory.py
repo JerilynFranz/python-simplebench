@@ -9,9 +9,9 @@ https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v
 
 """
 from simplebench.report._base import BaseSwapMemoryObject
-from simplebench.report.versions.v1 import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 
 from . import _validate
+from ._typeddict_types import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 
 
 class SwapMemoryObject(BaseSwapMemoryObject):

@@ -15,10 +15,10 @@ from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 
 from simplebench.report._base import BasePythonInfo, JSONSchema
-from simplebench.report.versions.v1 import ImmutablePythonInfoDict, PythonInfoData
 
 from . import _validate
 from ._python_info_schema import PythonInfoSchema
+from ._typeddict_types import ImmutablePythonInfoDict, PythonInfoData
 
 _LOCK = threading.Lock()
 

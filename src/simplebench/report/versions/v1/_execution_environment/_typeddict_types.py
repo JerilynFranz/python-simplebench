@@ -24,7 +24,7 @@ __all__ = [
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class ExecutionEnvironmentData(ReportElementTypedDict, total=False, extra_items=CoreDataMappingType):
+class ExecutionEnvironmentData(ReportElementTypedDict, total=False):
     """Typed dictionary for V1 ExecutionEnvironment data used as INPUT.
 
     .. warning:: :class:`ImmutableExecutionEnvironmentData` does **NOT** inherit from :class:`ExecutionEnvironmentData`
@@ -47,7 +47,7 @@ class ExecutionEnvironmentData(ReportElementTypedDict, total=False, extra_items=
     python: NotRequired[PythonInfoData]
 
 
-class ImmutableExecutionEnvironmentData(ReportElementTypedDict, total=False, extra_items=CoreDataMappingType):
+class ImmutableExecutionEnvironmentData(ReportElementTypedDict, total=False):
     """Immutable typed dictionary for V1 ExecutionEnvironment data used as INPUT.
     
     .. warning::
@@ -86,7 +86,7 @@ class ImmutableExecutionEnvironmentData(ReportElementTypedDict, total=False, ext
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class ExecutionEnvironmentDict(ReportElementTypedDict, total=False, extra_items=CoreDataMappingType):
+class ExecutionEnvironmentDict(ReportElementTypedDict, total=False):
     """Typed dictionary for the JSON representation of a V1 ExecutionEnvironment (OUTPUT).
 
     This is a container for execution environment information.
@@ -112,7 +112,7 @@ class ExecutionEnvironmentDict(ReportElementTypedDict, total=False, extra_items=
     python: NotRequired[PythonInfoDict]
 
 
-class ImmutableExecutionEnvironmentDict(ReportElementTypedDict, total=False, extra_items=CoreDataMappingType):
+class ImmutableExecutionEnvironmentDict(ReportElementTypedDict, total=False):
     """Immutable typed dictionary for V1 ExecutionEnvironment data used as OUTPUT.
 
     ... warning::

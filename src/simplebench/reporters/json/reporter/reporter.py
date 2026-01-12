@@ -200,6 +200,6 @@ class JSONReporter(Reporter):
     @property
     def schema_version(self) -> int:
         """The current schema version for the JSON reporter."""
-        from simplebench.report.versions import CURRENT_VERSION  # pylint: disable=import-outside-toplevel
+        from simplebench.report.versions import CURRENT  # pylint: disable=import-outside-toplevel
 
-        return CURRENT_VERSION.ReportSchema.VERSION
+        return CURRENT.ReportSchema.VERSION

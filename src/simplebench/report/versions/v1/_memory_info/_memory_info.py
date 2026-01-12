@@ -16,11 +16,11 @@ of the base MemoryInfo representation at the time of the V1 schema release.
 from typing import cast
 
 from simplebench.report._base import BaseMemoryInfo, JSONSchema
-from simplebench.report.versions.v1 import ImmutableMemoryInfoDict, MemoryInfoData, MemoryInfoDict
 
 from . import _validate
 from ._memory_info_schema import MemoryInfoSchema
 from ._swap_memory import SwapMemoryObject
+from ._typeddict_types import ImmutableMemoryInfoDict, MemoryInfoData, MemoryInfoDict
 from ._virtual_memory import VirtualMemoryObject
 
 
