@@ -1,5 +1,5 @@
 """Schema for JSON CPUInfo v1 validation."""
-# pylint: disable=line-too-long
+# ruff: noqa: E501
 from copy import deepcopy
 from json import JSONEncoder
 

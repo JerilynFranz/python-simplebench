@@ -20,21 +20,20 @@ from simplebench.report._base.report_element_typed_dict import ReportElementType
 from simplebench.types import CoreDataMappingType, Never, NotRequired, Required
 
 __all__ = [
-    'CPUInfoData',
-    'CPUInfoDict',
-    'ImmutableCPUInfoData',
-    'ImmutableCPUInfoDict',
+    'CPUInfoData', 'CPUInfoDict', 'ImmutableCPUInfoData',
+    'ImmutableCPUInfoDict'
 ]
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
+
 class _RequiredCPUInfoData(ReportElementTypedDict, total=True):
     """Required fields for V1 CPUInfo data used as INPUT.
-    
+
     :param CoreDataMappingType data: The CPU information data.
     """
-    data: Required[CoreDataMappingType]
 
+    data: Required[CoreDataMappingType]
 
 
 class CPUInfoData(_RequiredCPUInfoData, total=False):
@@ -47,9 +46,11 @@ class CPUInfoData(_RequiredCPUInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
+
 
 class ImmutableCPUInfoData(CPUInfoData, total=False):
     """Immutable typed dictionary for V1 CPUInfo data used as INPUT.
@@ -68,22 +69,27 @@ class ImmutableCPUInfoData(CPUInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
+
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
+
 class _RequiredCPUInfoDict(ReportElementTypedDict, total=True):
     """Required fields for V1 CPUInfo data used as OUTPUT.
-    
+
     :param CoreDataMappingType data: The CPU information data.
     :param str hash_id: The unique hash identifier for the CPU information.
     :param str type: The type identifier for the block.
     :param int version: The version of the block's data structure.
     """
+
     data: Required[CoreDataMappingType]
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
+
 
 class CPUInfoDict(_RequiredCPUInfoDict, total=True):
     """Typed dictionary for the JSON representation of a V1 CPUInfo (OUTPUT).
@@ -93,6 +99,7 @@ class CPUInfoDict(_RequiredCPUInfoDict, total=True):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
+
 
 class ImmutableCPUInfoDict(CPUInfoDict, total=False):
     """Immutable typed dictionary for the JSON representation of a V1 CPUInfo (OUTPUT).
@@ -111,4 +118,5 @@ class ImmutableCPUInfoDict(CPUInfoDict, total=False):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

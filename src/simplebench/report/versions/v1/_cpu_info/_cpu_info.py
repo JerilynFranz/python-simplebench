@@ -67,7 +67,7 @@ class CPUInfo(BaseCPUInfo):
 
             It is recommended to let the hash_id be computed automatically to ensure
             consistency and correctness unless importing data from an external source.
-            
+
             hash_id values are NOT validated against the data content on initialization
             because it is only an opaque identifier, not a data validation mechanism.
 
