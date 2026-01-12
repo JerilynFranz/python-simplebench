@@ -1,11 +1,12 @@
 """Validation functions for type hints and instances against those type hints."""
+# TODO: Refactor to use typechecked isinstance_of_typehint where possible
 
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypedDict, TypeGuard, TypeVar, cast, get_args, get_origin, get_type_hints
 
 from typechecked import isinstance_of_typehint
 
-from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
+from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.validators._cache import ValidationCache
@@ -158,7 +159,7 @@ def _validate_and_check_immutability_of_mimic(
     while keys_to_check:
         key = keys_to_check.pop()
         value = data[key]
-        key_info = _TypedDictKeyInfo(key, td_cls)
+        key_info = TypedDictKeyInfo(key, td_cls)
         expected_type_hint = key_info.value_type
 
         if is_core_data_primitive_type(expected_type_hint):
@@ -302,7 +303,9 @@ def _validate_has_required_and_no_extra_keys(
     return True
 
 
-def _validate_field_value(value, expected_type, parents: set[int], raise_on_error: bool = True) -> tuple[bool, bool]:
+def _validate_field_value(
+    value: Any, expected_type: Any, parents: set[int], raise_on_error: bool = True
+) -> tuple[bool, bool]:
     """Validate a single field value against its expected type.
 
     The field must be one of:
@@ -458,7 +461,7 @@ def _validate_sequence_field(origin: Any, args: tuple[Any, ...], value: Any, par
         if len(value) != len(args):
             return (False, False)
         immutable = True
-        for v, elem_type in zip(value, args):
+        for v, elem_type in zip(value, args, strict=True):
             parents.add(id(v))
             v_valid, v_immutable = _validate_field_value(v, elem_type, parents)
             parents.remove(id(v))
@@ -595,7 +598,5 @@ def _is_string_key_type(key_type: Any) -> bool:
         return True
     try:
         return issubclass(key_type, str)
-    except TypeError:
-        return False
     except TypeError:
         return False

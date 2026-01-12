@@ -40,5 +40,5 @@ class CacheKey:
             return NotImplemented
         return (self.obj_type, self.instance_id) == (other.obj_type, other.instance_id)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'CacheKey(cls_type={repr(self.obj_type)}, instance_id={self.instance_id})'

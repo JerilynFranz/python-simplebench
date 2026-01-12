@@ -1,4 +1,5 @@
 """JSON Stats Summary version 1 package"""
+# ruff: noqa: F401
 
 from ._stats_block import StatsBlock
 from ._stats_block_dict import ImmutableStatsBlockData, ImmutableStatsBlockDict, StatsBlockData, StatsBlockDict
