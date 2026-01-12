@@ -16,27 +16,37 @@ of the JSON report schema and the V1 implementation itself is essentially a froz
 of the results object representation at the time of the V1 schema release."""
 
 import hashlib
-from collections import UserDict
-from collections.abc import Mapping
-from copy import copy
-from typing import Any, TypeAlias
+from collections.abc import Iterable, Iterator, Mapping
+from types import MappingProxyType
+from typing import Any, TypeAlias, cast
 
-from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from typechecked import Immutable
+
+from simplebench.exceptions import (
+    SimpleBenchAttributeError,
+    SimpleBenchKeyError,
+    SimpleBenchTypeError,
+    SimpleBenchValueError,
+)
 from simplebench.report._error_tags import _MetricsErrorTag
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
 from .._raw_data_block import RawDataBlock
 from .._stats_block import StatsBlock
 from .._value_block import ValueBlock
+from ._typeddict_types import ImmutableMetricDictTypes, ImmutableMetricsObjectDict
 
 MetricItem: TypeAlias = StatsBlock | ValueBlock | RawDataBlock
 """Type alias for the possible types of metric items in the metrics dictionary."""
+
+MetricItemsDict: TypeAlias = MappingProxyType[str, MetricItem]
+"""Type alias for the metrics dictionary type."""
 
 METRIC_ITEM_TYPES: tuple[type, ...] = (StatsBlock, ValueBlock, RawDataBlock)
 """Tuple of the possible types of metric items in the metrics dictionary."""
 
 
-class MetricsObject(UserDict):
+class MetricsObject(Mapping, Immutable):
     """Immutable base class representing the 'metrics' object in a report ResultsInfo object.
 
     This is a dictionary (a UserDict) where the keys are metric names (strings) and the values
@@ -55,7 +65,9 @@ class MetricsObject(UserDict):
     - :class:`~simplebench.report.versions.v1.RawDataBlock`
     """
 
-    def __init__(self, metrics: Mapping[str, MetricItem]):
+    __slots__ = ('_metric_items', '_hash', '_hash_id')
+
+    def __init__(self, metrics: Mapping[str, MetricItem]) -> None:
         """Initialize a Metrics v1 instance.
 
         :param Mapping[str, MetricItem] metrics: The metrics dictionary. The keys are metric names
@@ -75,9 +87,14 @@ class MetricsObject(UserDict):
                     f'Metric item must be a StatsBlock, ValueBlock, RawDataBlock - got {type(metric_object)}',
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
                 )
-        super().__init__(copy(metrics))
-        self._hash_id: str = ''
-        self._frozen: bool = True
+        self._metric_items: MetricItemsDict = cast(MetricItemsDict, MappingProxyType(metrics))
+
+        # Precompute the hash for immutability and fast comparisons
+        metric_hashes: list[tuple[str, str]] = []
+        for key, value in sorted(self._metric_items.items()):
+            metric_hashes.append((key, value.hash_id))
+        self._hash_id = hashlib.sha256(repr(metric_hashes).encode('utf-8')).hexdigest()
+        self._hash = hash(self._hash_id)
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Mapping[str, Any]]) -> 'MetricsObject':
@@ -93,7 +110,7 @@ class MetricsObject(UserDict):
         }
 
         metrics: dict[str, MetricItem] = {}
-        for metric_name, metric_data in data.get('metrics', {}).items():
+        for metric_name, metric_data in data.items():
             validated_metric_name: str = validate_string(
                 metric_name,
                 'metric name',
@@ -109,13 +126,38 @@ class MetricsObject(UserDict):
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
                 )
             discriminator_type = metric_data.get('type')
-            if not discriminator_type in supported_metric_types:
+            if discriminator_type not in supported_metric_types:
                 raise SimpleBenchValueError(
                     f'Invalid metric item type: {discriminator_type}', tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE
                 )
             metrics[metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data)
 
         return cls(metrics)
+
+    def to_dict(self) -> ImmutableMetricsObjectDict:
+        """Convert the Metrics object instance to a dictionary.
+
+        The returned dictionary is immutable and suitable for JSON serialization.
+        It matches the expected structure of the 'metrics' property in the JSON report schema
+        as mirrored in the :class:`ImmutableMetricsObjectDict` typed dictionary.
+
+        :return: Dictionary representation of the Metrics object.
+        """
+        result: dict[str, ImmutableMetricDictTypes] = {}
+        for metric_name, metric_item in self._metric_items.items():
+            result[metric_name] = metric_item.to_dict()
+        return cast(ImmutableMetricsObjectDict, result)
+
+    @property
+    def hash_id(self) -> str:
+        """Get the hash ID of the MetricsObject.
+
+        The hash ID is a SHA-256 hash of the metric names and their corresponding
+        metric item hash IDs, ensuring immutability and consistent hashing.
+
+        :return str: The hash ID string.
+        """
+        return self._hash_id
 
     def __setitem__(self, key: str, value: MetricItem) -> None:
         """Set a metric item in the metrics dictionary.
@@ -132,31 +174,14 @@ class MetricsObject(UserDict):
 
         :param key: The metric name.
         :param value: The MetricItem object (either a StatsBlock or a ValueBlock).
-        :raises SimpleBenchKeyError: If the metric name is invalid.
-        :raises SimpleBenchTypeError: If the metric item is not of the correct type.
+        :raises SimpleBenchAttributeError: Always, since the MetricsObject is immutable.
         """
-        if self._frozen:
-            raise SimpleBenchTypeError(
-                'MetricsObject is frozen and cannot be modified after initialization.',
-                tag=_MetricsErrorTag.METRICS_OBJECT_FROZEN,
-            )
-        try:
-            validate_namespaced_identifier(key)
-        except SimpleBenchValueError as e:
-            raise SimpleBenchKeyError(
-                f"Invalid metric name '{key}': {e}", tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE
-            ) from e
-        if not isinstance(value, MetricItem):
-            raise SimpleBenchTypeError(
-                f'Metric item must be a StatsBlock or ValueBlock, got {type(value)}',
-                tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
-            )
-        if value.semantic_type != key:
-            raise SimpleBenchValueError(
-                f"Metric item semantic type '{value.semantic_type}' does not match metric name '{key}'",
-                tag=_MetricsErrorTag.INVALID_METRIC_ITEM_SEMANTIC_TYPE,
-            )
-        super().__setitem__(key, value)
+        raise SimpleBenchAttributeError(
+            'MetricsObject is immutable and cannot be modified after initialization.',
+            tag=_MetricsErrorTag.METRICS_OBJECT_IMMUTABLE,
+            name=key,
+            obj=self,
+        )
 
     def __getitem__(self, key: str) -> 'MetricItem':
         """Get a metric item from the metrics dictionary.
@@ -166,50 +191,105 @@ class MetricsObject(UserDict):
         :raises SimpleBenchKeyError: If the metric name does not exist.
         """
         try:
-            return super().__getitem__(key)
+            return self._metric_items[key]
         except KeyError as e:
             raise SimpleBenchKeyError(
-                f"Metric name '{key}' does not exist in metrics.", tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE
+                f"Metric name '{key}' does not exist in metrics.",
+                tag=_MetricsErrorTag.KEY_ERROR_INVALID_METRIC_NAME_VALUE,
             ) from e
 
     def __delitem__(self, key: str) -> None:
         """Delete a metric item from the metrics dictionary.
 
         :param key: The metric name.
-        :raises SimpleBenchKeyError: If the metric name does not exist.
+        :raises SimpleBenchAttributeError: Always, since the MetricsObject is immutable.
         """
-        try:
-            super().__delitem__(key)
-        except KeyError as e:
-            raise SimpleBenchKeyError(
-                f"Metric name '{key}' does not exist in metrics.", tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE
-            ) from e
+        raise SimpleBenchAttributeError(
+            f"Metric name '{key}' does not exist in metrics.",
+            tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE,
+            name=key,
+            obj=self,
+        )
 
-    def __eq__(self, other):
-        """Check equality with another MetricsObject."""
+    def __eq__(self, other: object) -> bool:
+        """Check equality with another MetricsObject.
+
+        :param other: The other MetricsObject to compare with.
+        :return bool: True if equal, False otherwise.
+        """
         if not isinstance(other, MetricsObject):
             return False
         return self.hash_id == other.hash_id
 
     def __hash__(self) -> int:
         """Get the hash of the MetricsObject based on its hash_id."""
-        return hash(self.hash_id)
+        return self._hash
 
-    @property
-    def hash_id(self) -> str:
-        """Get the hash_id property.
+    def __len__(self) -> int:
+        """Get the number of metric items in the metrics dictionary.
 
-        The hash_id is a SHA-256 hash of the concatenated hash_ids of all metric items
-        in the metrics dictionary, sorted by metric name for consistency.
-
-        :return: The hash_id string.
+        :return int: The number of metric items.
         """
-        if self._hash_id == '':
-            hash_keys = sorted(k for k in self.data.items())
-            hashed_subelements: list[str] = []
-            for key, value in hash_keys:
-                if hasattr(value, 'hash_id'):
-                    hashed_subelements.append(f'{key}:{value.hash_id}')
-            hash_input = '\x00'.join(hashed_subelements).encode('utf-8')
-            self._hash_id = hashlib.sha256(hash_input).hexdigest()
-        return self._hash_id
+        return len(self._metric_items)
+
+    def __iter__(self) -> Iterator[str]:
+        """Get an iterator over the metric names in the metrics dictionary.
+
+        :return Iterator[str]: An iterator over the metric names.
+        """
+        return iter(self._metric_items)
+
+    def __repr__(self) -> str:
+        """Get the string representation of the MetricsObject instance.
+
+        :return str: The string representation.
+        """
+        entries = dict(self._metric_items)
+        return f'MetricsObject({entries!r})'
+
+    def __or__(self, other: object) -> 'MetricsObject':
+        """Return a new MetricsObject that is the union of this and another MetricsObject.
+
+        .. code-block:: python
+            new_metrics = this_metrics | other_metrics
+
+        :param other: The other MetricsObject to union with.
+        :return MetricsObject: A new MetricsObject that is the union of both.
+        """
+        if isinstance(other, MetricsObject):
+            return self.__class__(dict(self._metric_items) | dict(other._metric_items))
+        return NotImplemented
+
+    def __ror__(self, other: object) -> 'MetricsObject':
+        """Return a new MetricsObject that is the union of another MetricsObject and this one. (reversed)
+
+        .. code-block:: python
+            new_metrics = other_metrics | this_metrics
+
+        :param other: The other MetricsObject to union with.
+        :return MetricsObject: A new MetricsObject that is the union of both.
+        """
+        if isinstance(other, MetricsObject):
+            return self.__class__(dict(other._metric_items) | dict(self._metric_items))
+        return NotImplemented
+
+    def __ior__(self, other: object) -> 'MetricsObject':
+        return NotImplemented
+
+    def __copy__(self) -> 'MetricsObject':
+        inst = self.__class__.__new__(self.__class__)
+        inst._metric_items = self._metric_items
+        inst._hash = self._hash
+        return inst
+
+    def copy(self) -> 'MetricsObject':
+        """Get a copy of the MetricsObject.
+
+        :return MetricsObject: A copy of the MetricsObject instance.
+        """
+        cls = self.__class__
+        return cls(self._metric_items)
+
+    @classmethod
+    def fromkeys(cls, iterable: Iterable, value: MetricItem | None = None) -> 'MetricsObject':
+        return NotImplemented

@@ -14,7 +14,7 @@ version 1: :class:`~simplebench.report.versions.v1.results_info.results_info_sch
 
 import sys
 
-from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
@@ -22,7 +22,7 @@ from simplebench.types import (
     VariationMarksType,
 )
 
-from ..metrics_object._typeddict_types import MetricsObjectDict
+from .._metrics_object._typeddict_types import MetricsObjectDict
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired, Required

@@ -10,8 +10,10 @@ __all__ = []
 class _MetricsErrorTag(ErrorTag):
     """Error tags for JSON Metrics v1 exceptions."""
 
-    METRICS_OBJECT_FROZEN = 'METRICS_OBJECT_FROZEN'
-    """The MetricsObject is frozen and cannot be modified after initialization."""
+    KEY_ERROR_INVALID_METRIC_NAME_VALUE = 'KEY_ERROR_INVALID_METRIC_NAME_VALUE'
+    """The metric name key does not exist in metrics."""
+    METRICS_OBJECT_IMMUTABLE = 'METRICS_OBJECT_IMMUTABLE'
+    """The MetricsObject is immutable and cannot be modified after initialization."""
     INVALID_METRIC_ITEM_SEMANTIC_TYPE = 'INVALID_METRIC_ITEM_SEMANTIC_TYPE'
     """The semantic type of a metric item is invalid."""
     INVALID_VERSION_TYPE = 'INVALID_VERSION_TYPE'

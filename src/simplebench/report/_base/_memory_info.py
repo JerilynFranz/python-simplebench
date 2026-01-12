@@ -14,7 +14,7 @@ from abc import ABC
 
 from simplebench.base._hydrator import Hydrator
 
-from .report_element import ReportElement
+from ._report_element import ReportElement
 
 __all__ = []
 

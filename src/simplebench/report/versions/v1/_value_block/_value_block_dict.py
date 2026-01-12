@@ -16,7 +16,7 @@ version 1: :class:`~simplebench.report.versions.v1.ValueBlockSchema`.
     These types ensure proper validation and serialization of ValueBlock data
 """
 
-from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 __all__ = []

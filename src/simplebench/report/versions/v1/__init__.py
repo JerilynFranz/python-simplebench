@@ -76,7 +76,7 @@ from ._value_block import (
     ValueBlockSchema,
 )
 from ._vcs_info import ImmutableVCSInfoData, ImmutableVCSInfoDict, VCSInfo, VCSInfoData, VCSInfoDict, VCSInfoSchema
-from .metrics_object import MetricsObject
+from ._metrics_object import MetricsObject
 from .report import Report, ReportSchema
 from .results_info import ResultsInfo, ResultsInfoSchema
 

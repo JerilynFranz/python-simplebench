@@ -12,7 +12,7 @@ It is the base implemention of the report vcs info representation.
 
 from abc import ABC
 
-from .report_element import ReportElement
+from ._report_element import ReportElement
 
 
 __all__ = []

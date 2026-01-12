@@ -1,6 +1,6 @@
 """Schema for JSON ResultsInfo v1 validation."""
+# ruff: noqa: E501
 
-# pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
 

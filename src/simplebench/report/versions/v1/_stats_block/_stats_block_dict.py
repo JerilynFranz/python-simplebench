@@ -18,7 +18,7 @@ version 1: :class:`~simplebench.report.versions.v1.StatsBlockSchema`.
 
 from typing import Sequence
 
-from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 __all__ = []

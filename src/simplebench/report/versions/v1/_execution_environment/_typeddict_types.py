@@ -10,7 +10,7 @@ This module defines four distinct dictionary types for handling ExecutionEnviron
     These types ensure proper validation and serialization of ExecutionEnvironment data
 """
 
-from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired
 
 # Imports are directly from the specific sub-modules to avoid accidentally creating circular dependencies

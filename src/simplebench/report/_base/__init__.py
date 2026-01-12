@@ -15,9 +15,9 @@ from .metrics import Metrics
 from ._python_info import BasePythonInfo
 from ._raw_data_block import BaseRawDataBlock
 from .report import BaseReport
-from .report_element import ReportElement
-from .report_element_typed_dict import ReportElementTypedDict
-from .results_info import BaseResultsInfo
+from ._report_element import ReportElement
+from ._report_element_typed_dict import ReportElementTypedDict
+from ._results_info import BaseResultsInfo
 from ._stats_block import BaseStatsBlock
 
 __all__ = []

@@ -17,7 +17,7 @@ version 1: :class:`~simplebench.report.versions.v1.RawDataBlockSchema`.
 
 from collections.abc import Sequence
 
-from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
+from simplebench.report._base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 __all__ = []
@@ -118,7 +118,7 @@ class ImmutableRawDataBlockData(_RequiredImmutableRawDataBlockData, total=False)
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
 
-class _RequiredRawDataBlockDict(ReportElementTypedDict, total=True):
+class _RequiredRawDataBlock(ReportElementTypedDict, total=True):
     """Required fields for V1 RawDataBlock data used as OUTPUT.
 
     It requires that `type`, `version`, and `hash_id` are present.
@@ -143,7 +143,7 @@ class _RequiredRawDataBlockDict(ReportElementTypedDict, total=True):
     hash_id: Required[str]
 
 
-class RawDataBlockDict(_RequiredRawDataBlockDict, total=False):
+class RawDataBlockDict(_RequiredRawDataBlock, total=False):
     """Typed dictionary for the JSON representation of a V1 RawDataBlock (OUTPUT).
 
     This type is strict, requiring `type` and`version` to be present.

@@ -14,7 +14,7 @@ not a standalone implementation of a JSON report schema.
 from abc import ABC
 from typing import TypeAlias
 
-from .report_element import ReportElement
+from ._report_element import ReportElement
 
 __all__ = []
 
