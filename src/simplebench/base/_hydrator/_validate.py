@@ -4,10 +4,10 @@ import inspect
 from collections.abc import Callable, Iterable, Mapping, Sequence, Set
 from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
 
-from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_iterable_of_type, validate_type
 
+from .._typed_dict_key_info import TypedDictKeyInfo
 from ._error_tags import _HydratorErrorTag
 
 
@@ -324,7 +324,7 @@ def _is_basetype(typeddict_cls: type) -> dict[str, Any]:
     output: dict[str, Any] = {}
     annotations = get_type_hints(typeddict_cls)
     for key in annotations:
-        value_info = _TypedDictKeyInfo(key, typeddict_cls)
+        value_info = TypedDictKeyInfo(key, typeddict_cls)
         value_type = value_info.value_type
         annotations[key] = _unwrap_typeddict_type(value_type)
     return output

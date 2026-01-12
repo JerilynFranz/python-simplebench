@@ -1,0 +1,400 @@
+/* Custom CSS for SimpleBench documentation */
+
+/* Adjust font sizes for better readability */
+body {
+    --color-header-1-text: #7b7b11;
+    --color-header-2-text: #408040;
+    --color-header-3-text: #297c6d;
+    --color-cite-text: #3b8397;
+
+    --font-size--small--4: small;
+    --font-size--small--3: medium;
+    --font-size--small--2: large;
+    --font-size--small: x-large;
+    --font-size--normal: xx-large;
+    --code-font-size: var(--font-size--small--3);
+
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 3em;
+    width: 60%
+}
+
+.sidebar-drawer {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 25em;
+    width: calc(35% - 25em)
+}
+
+.toc-drawer {
+    box-sizing: border-box;
+    width: 15em
+}
+
+
+@media(max-width:102em) {
+    
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+
+    .theme-toggle-header, .toc-header-icon {
+        display: flex
+    }
+
+    .theme-toggle-content, .toc-content-icon {
+        display: none
+    }
+
+    .mobile-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        position: sticky;
+        top: 0
+    }
+
+    .mobile-header .header-left, .mobile-header .header-right {
+        display: flex;
+        height: var(--header-height);
+        padding: 0 var(--header-padding)
+    }
+
+    .mobile-header .header-left label, .mobile-header .header-right label {
+        height: 100%;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        width: 100%
+    }
+
+    .nav-overlay-icon .icon, .theme-toggle svg {
+        height: 1.5rem;
+        width: 1.5rem
+    }
+
+    :target {
+        scroll-margin-top: calc(var(--header-height) + 2.5rem)
+    }
+
+    .back-to-top {
+        top: calc(var(--header-height) + .5rem)
+    }
+
+    .page {
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+@media(max-width:82em) {
+
+    .nav-overlay-icon {
+        display: flex
+    }
+
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        height: 100vh;
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+
+    .theme-toggle-header, .toc-header-icon {
+        display: flex
+    }
+
+    .theme-toggle-content, .toc-content-icon {
+        display: none
+    }
+
+    .mobile-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        position: sticky;
+        top: 0
+    }
+
+    .mobile-header .header-left, .mobile-header .header-right {
+        display: flex;
+        height: var(--header-height);
+        padding: 0 var(--header-padding)
+    }
+
+    .mobile-header .header-left label, .mobile-header .header-right label {
+        height: 100%;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        width: 100%
+    }
+
+    .nav-overlay-icon .icon, .theme-toggle svg {
+        height: 1.5rem;
+        width: 1.5rem
+    }
+
+    :target {
+        scroll-margin-top: calc(var(--header-height) + 2.5rem)
+    }
+
+    .back-to-top {
+        top: calc(var(--header-height) + .5rem)
+    }
+
+    .page {
+        flex-direction: column;
+        justify-content: center
+    }
+
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+
+@media(max-width:63em) {
+
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+    .content {
+        overflow-x: auto;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 1em;
+        width:100%;
+    }
+
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+
+@media(max-width:48em) {
+
+    .toc-drawer {
+        position: fixed;
+        right: -15em;
+        width: 15em;
+        top: 0
+    }
+
+    .sidebar-drawer {
+        left: -25em;
+        position: fixed;
+        top: 0;
+        width: 25em
+    }
+    .content {
+        overflow-x: auto;
+        width: 100%
+    }
+}
+
+
+/* Make code blocks scrollable if they exceed a certain height */
+.scrollable-block {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    margin-bottom: 24px;
+}
+
+/* Optional: Ensure the code block inside doesn't have weird margins */
+.scrollable-block .highlight {
+    margin: 0;
+}
+
+figure.caption-first {
+  display: flex;
+  flex-direction: column-reverse; /* This is the magic part */
+  align-items: center; /* Re-applies the centering */
+  font-size: var(--font-size--small);
+  text-align: center;
+  background-color: var(--color-code-background);
+  border-bottom: 1px solid;
+  border-radius: .25rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-color: var(--color-background-border);
+  color: var(--color-code-foreground);
+  font-weight: 300;
+}
+
+/* Add a new rule to apply padding to the image inside the figure */
+figure.caption-first img {
+  padding: 0rem 1rem 1rem 1rem; /* Add padding to all sides */
+  box-sizing: border-box; /* Ensures padding is included in the element's total width/height */
+}
+
+/* The default figure has a line-height that can add weird spacing in flexbox */
+figure.caption-first figcaption {
+  width: 100%; /* Make the caption span the full width of the figure */
+  line-height: normal;
+  margin-bottom: 1em; /* This creates space between the rule and the image */
+  padding-bottom: 1em; /* This creates space between the caption text and the rule */
+  border-bottom: 1px solid var(--color-background-border); /* The gray horizontal rule */
+}
+
+
+
+
+.image-block-caption {
+    font-size: var(--font-size--small);
+    text-align: center;
+    background-color: var(--color-code-background);
+    border-bottom: 1px solid;
+    border-radius: .25rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: var(--color-background-border);
+    color: var(--color-code-foreground);
+    display: flex;
+    font-weight: 300;
+}
+
+.image-block-wrapper:target .image-block-caption, .this-will-duplicate-information-and-it-is-still-useful-here li :target, figure:target, table:target>caption {
+    background-color: var(--color-highlight-on-target)
+}
+
+/* Make field list terms for method parameters bold and not all uppercase */
+dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-odd {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+/* field names for class parameters */
+dl.py.class dd dl.field-list.simple dd.field-odd ul.simple li p:first-child strong {
+    font-weight: bold;
+    color: #7b7b11;
+}
+
+/* field names for method parameters */
+dl.py.class dd dl.py.method dd dl.simple.field-list dd.field-odd p:first-child strong {
+    font-weight: bold;
+    color: #7b7b11;
+}
+
+/* field names for function parameters */
+dl.py.function dd dl.simple.field-list dd.field-odd ul.simple li p:first-child strong {
+    font-weight: bold;
+    color: #7b7b11;
+}
+
+/* Make field list terms for method 'raises' bold and not all uppercase */
+dl.py.class dd dl.py.method dd dl.simple.field-list dt.field-even {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+/* Make field list terms for class paramaters bold and not all uppercase */
+div.content div.article-container article section dl.py.class dd dl.field-list.simple dt.field-odd {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+/* Make field list terms for class 'raises' bold and not all uppercase */
+div.content div.article-container article section dl.py.class dd dl.field-list.simple dt.field-even {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+/* 'property' fields in class documentation */
+dl.py.class dd dl.py.property dt.py.sig.sig-object em.property:first-child span.pre {
+    font-weight: bold;
+    color: #a0a000;
+}
+
+/* parameters for non-class functions */
+div.content div.article-container article section dl.py.function dd dl.simple.field-list dt.field-odd {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+
+/* parameters for non-class functions returns */
+div.content div.article-container article section dl.py.function dd dl.simple.field-list dt.field-even {
+    text-transform: none;
+    color: #00a040;
+    font-weight: bold;
+    margin-top: .25rem
+}
+
+/* Generic definition list field terms */
+
+.definitions dl dt {
+  font-weight: bold;
+  color: #00a040;
+}
+
+h1 {
+    color: var(--color-header-1-text);
+}
+
+h2 {
+    color: var(--color-header-2-text);
+}
+
+h3 {
+    color: var(--color-header-3-text);
+}
+
+cite {
+    color: var(--color-cite-text);
+}

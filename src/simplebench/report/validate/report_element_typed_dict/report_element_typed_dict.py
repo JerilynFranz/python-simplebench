@@ -19,7 +19,7 @@ only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_origin, get_type_hints
 
-from simplebench.base._typed_dict_key_info import _TypedDictKeyInfo
+from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
@@ -172,7 +172,7 @@ def _validate_and_check_immutability_of_mimic(
     while keys_to_check:
         key = keys_to_check.pop()
         value = data[key]
-        key_info = _TypedDictKeyInfo(key, td_cls)
+        key_info = TypedDictKeyInfo(key, td_cls)
         expected_type = key_info.value_type
 
         if is_core_data_primitive_type(expected_type):
