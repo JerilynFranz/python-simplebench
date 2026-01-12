@@ -6,6 +6,7 @@ Exportable:
 - clear_registered_reporters
 - RegisterReporterErrorTag
 """
+
 from simplebench.reporters.reporter_manager.decorators.register_reporter._error_tags import _RegisterReporterErrorTag
 from simplebench.reporters.reporter_manager.decorators.register_reporter.register_reporter import (
     clear_registered_reporters,
@@ -13,12 +14,7 @@ from simplebench.reporters.reporter_manager.decorators.register_reporter.registe
     register_reporter,
 )
 
-__all__ = [
-    "register_reporter",
-    "get_registered_reporters",
-    "clear_registered_reporters",
-    "_RegisterReporterErrorTag",
-]
+__all__ = ['register_reporter', 'get_registered_reporters', 'clear_registered_reporters', '_RegisterReporterErrorTag']
 """'*' exportable identifiers for the register_reporter decorator package"
 - register_reporter
 - get_registered_reporters

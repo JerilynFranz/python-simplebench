@@ -1,4 +1,5 @@
 """Configuration for a JSONReporter."""
+
 from __future__ import annotations
 
 from typing import Any, Iterable
@@ -32,7 +33,7 @@ class JSONConfig(ReporterConfig):
         file_suffix: str | None = None,
         file_unique: bool | None = None,
         file_append: bool | None = None,
-        subdir: str | None = None
+        subdir: str | None = None,
     ) -> None:
         """Initialize the JSONReporter configuration.
 
@@ -53,23 +54,32 @@ class JSONConfig(ReporterConfig):
             'file_unique': True,
             'file_append': False,
             'subdir': '',
-            'choices': ChoicesConf([
-                ChoiceConf(
-                    flags=['--json'], flag_type=FlagType.TARGET_LIST, name='json',
-                    description='statistical results to JSON (filesystem, console, callback, default=filesystem)',
-                    metrics=init_metrics,
-                    targets=allowed_targets,
-                    output_format=Format.JSON,
-                    options=JSONOptions(full_data=False)),
-                ChoiceConf(
-                    flags=['--json-data'], flag_type=FlagType.TARGET_LIST, name='json-data',
-                    description=(
-                        'statistical results + full data to JSON (filesystem, console, callback, default=filesystem)'),
-                    metrics=init_metrics,
-                    targets=allowed_targets,
-                    output_format=Format.JSON,
-                    options=JSONOptions(full_data=True)),
-            ])
+            'choices': ChoicesConf(
+                [
+                    ChoiceConf(
+                        flags=['--json'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='json',
+                        description='statistical results to JSON (filesystem, console, callback, default=filesystem)',
+                        metrics=init_metrics,
+                        targets=allowed_targets,
+                        output_format=Format.JSON,
+                        options=JSONOptions(full_data=False),
+                    ),
+                    ChoiceConf(
+                        flags=['--json-data'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='json-data',
+                        description=(
+                            'statistical results + full data to JSON (filesystem, console, callback, default=filesystem)'
+                        ),
+                        metrics=init_metrics,
+                        targets=allowed_targets,
+                        output_format=Format.JSON,
+                        options=JSONOptions(full_data=True),
+                    ),
+                ]
+            ),
         }
         # Collect all provided overrides from the method signature, filtering out `None`s.
         overrides = {k: v for k, v in locals().items() if k in defaults and v is not None}

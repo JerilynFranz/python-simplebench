@@ -11,6 +11,7 @@ Supported timers include:
   - `fake_timer()`: A fake timer that always returns zero, used only for testing purposes.
 
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -45,11 +46,11 @@ _SUPPORTED_TIMERS: set[Callable[[], int]] = {
 }
 
 _BASE_TIMER_NAMES: dict[Callable[[], int], str] = {
-    time.monotonic_ns: "time.monotonic_ns",
-    time.perf_counter_ns: "time.perf_counter_ns",
-    time.process_time_ns: "time.process_time_ns",
-    time.thread_time_ns: "time.thread_time_ns",
-    fake_timer: "fake_timer",
+    time.monotonic_ns: 'time.monotonic_ns',
+    time.perf_counter_ns: 'time.perf_counter_ns',
+    time.process_time_ns: 'time.process_time_ns',
+    time.thread_time_ns: 'time.thread_time_ns',
+    fake_timer: 'fake_timer',
 }
 
 
@@ -64,7 +65,8 @@ def timer_identifier(timer: Callable[[], int]) -> str:
     if timer not in _BASE_TIMER_NAMES:
         raise SimpleBenchTypeError(
             f"The timer argument function '{str(timer)}' is not a supported timer function",
-            tag=_TimersErrorTag.TIMER_IDENTIFIER_INVALID_TIMER_FUNCTION)
+            tag=_TimersErrorTag.TIMER_IDENTIFIER_INVALID_TIMER_FUNCTION,
+        )
     return _BASE_TIMER_NAMES[timer]
 
 
@@ -80,10 +82,11 @@ def _create_timers_profiles_module() -> ModuleType:
     :raises SimpleBenchImportError: If the module could not be created.
     """
     spec = importlib.util.spec_from_loader('simplebench._timers_profiles', loader=None)
-    if spec is None:   # pragma: no cover   # Should not ever happen
+    if spec is None:  # pragma: no cover   # Should not ever happen
         raise SimpleBenchImportError(  # pragma: no cover
             'Could not create spec for simplebench._timers_profiles module',
-            tag=_TimersErrorTag.TIMERS_CREATE_TIMERS_PROFILES_MODULE_SPEC_FAILED)
+            tag=_TimersErrorTag.TIMERS_CREATE_TIMERS_PROFILES_MODULE_SPEC_FAILED,
+        )
     if 'simplebench._timers_profiles' in sys.modules:
         return sys.modules['simplebench._timers_profiles']  # Return existing module
     timers_module = importlib.util.module_from_spec(spec)
@@ -109,9 +112,11 @@ def _timer_collector_function(samples: int) -> Callable[[Callable[[], int]], tup
     :return: A function that takes a timer and returns a tuple of readings.
     """
     samples = validate_positive_int(
-        samples, 'samples',
+        samples,
+        'samples',
         _TimersErrorTag.TIMER_PROFILE_FUNCTION_INVALID_ROUNDS_TYPE,
-        _TimersErrorTag.TIMER_PROFILE_FUNCTION_INVALID_ROUNDS_VALUE)
+        _TimersErrorTag.TIMER_PROFILE_FUNCTION_INVALID_ROUNDS_VALUE,
+    )
 
     collector_name = f'_timer_collector_function_{samples}'
     if not hasattr(_timers_profiles_module, collector_name):
@@ -181,7 +186,7 @@ def timer_precision_ns(timer: Callable[[], int]) -> float:
         timer_name = _BASE_TIMER_NAMES[timer]
         raise SimpleBenchRuntimeError(
             f"The timer function '{timer_name}' did not advance during profiling; "
-            "it may be on a system with very low resolution. This timer cannot be used.",
+            'it may be on a system with very low resolution. This timer cannot be used.',
             tag=_TimersErrorTag.TIMER_PRECISION_NS_UNUSABLE_TIMER,
         )
 
@@ -285,7 +290,7 @@ def timer_overhead_ns(timer: Callable[[], int], samples: int = 50000) -> float:
         timer_name = _BASE_TIMER_NAMES[timer]
         raise SimpleBenchRuntimeError(
             f"The timer function '{timer_name}' did not advance during profiling; "
-            "it may be on a system with very low resolution. This timer cannot be used.",
+            'it may be on a system with very low resolution. This timer cannot be used.',
             tag=_TimersErrorTag.TIMER_OVERHEAD_NS_UNUSABLE_TIMER,
         )
 

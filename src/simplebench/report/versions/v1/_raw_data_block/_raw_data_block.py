@@ -1,4 +1,5 @@
 """Class for JSON raw data block representation."""
+
 from collections.abc import Mapping, Sequence
 from copy import copy
 from typing import Any
@@ -52,26 +53,18 @@ class RawDataBlock(BaseRawDataBlock):
 
         return cls._init_params_cache
 
-
-    __slots__ = (
-        '_hash_id',
-        '_semantic_type',
-        '_timer',
-        '_unit',
-        '_scale',
-        '_data',
-        '_to_dict_cache',
-    )
+    __slots__ = ('_hash_id', '_semantic_type', '_timer', '_unit', '_scale', '_data', '_to_dict_cache')
 
     def __init__(
-            self,
-            *,
-            hash_id: str = '',
-            semantic_type: str,
-            timer: str | None = None,
-            unit: str,
-            scale: float,
-            data: Sequence[int | float] | Values) -> None:
+        self,
+        *,
+        hash_id: str = '',
+        semantic_type: str,
+        timer: str | None = None,
+        unit: str,
+        scale: float,
+        data: Sequence[int | float] | Values,
+    ) -> None:
         """Initialize RawDataBlock class.
 
         :param str hash_id: The hash ID string for the raw data block.
@@ -94,7 +87,6 @@ class RawDataBlock(BaseRawDataBlock):
             self._hash_id = self._hash_id_helper(RawDataBlockData)
 
         self._to_dict_cache: ImmutableRawDataBlockDict | None = None  # Cache for to_dict output
-
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> 'RawDataBlock':
@@ -185,11 +177,11 @@ class RawDataBlock(BaseRawDataBlock):
         :return str: String representation of the RawDataBlock instance.
         """
         return (
-            f"RawDataBlock(hash_id={self.hash_id!r}, "
-            f"semantic_type={self.semantic_type!r}, "
-            f"timer={self.timer!r}, "
-            f"unit={self.unit!r}, scale={self.scale!r}, "
-            f"data={self.data!r})"
+            f'RawDataBlock(hash_id={self.hash_id!r}, '
+            f'semantic_type={self.semantic_type!r}, '
+            f'timer={self.timer!r}, '
+            f'unit={self.unit!r}, scale={self.scale!r}, '
+            f'data={self.data!r})'
         )
 
     def __eq__(self, other: object) -> bool:
@@ -259,7 +251,7 @@ class RawDataBlock(BaseRawDataBlock):
             # Use object.__setattr__ to bypass our immutable setters.
             object.__setattr__(self, slot, value)
 
-    def __deepcopy__(self, memo: dict[int, Any]) -> "RawDataBlock":
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'RawDataBlock':
         """Return a shallow copy of the instance as an optimized deep copy.
 
         Since the RawDataBlock instance is immutable and composed of immutable components,

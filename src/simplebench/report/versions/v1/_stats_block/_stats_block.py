@@ -32,6 +32,7 @@ implements size-optimized pickling support for serialization/deserialization.
 The dictionary serialized representation matches the JSON schema for version 1 reports
 and can be used for JSON serialization and deserialization.
 """
+
 import statistics
 from collections.abc import Mapping, Sequence
 from copy import copy
@@ -76,6 +77,7 @@ class StatsBlock(BaseStatsBlock):
     :raise SimpleBenchTypeError: If any parameter is of an invalid type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
+
     SCHEMA: type[JSONSchema] = StatsBlockSchema
     """The JSON schema class for the stats summary block in version 1 reports."""
 
@@ -108,50 +110,53 @@ class StatsBlock(BaseStatsBlock):
         return cls._init_params_cache
 
     _DERIVABLE_PROPERTIES = (
-        "iterations",
-        "mean",
-        "median",
-        "minimum",
-        "maximum",
-        "stdev",
-        "relative_stdev",
-        "percentiles",
+        'iterations',
+        'mean',
+        'median',
+        'minimum',
+        'maximum',
+        'stdev',
+        'relative_stdev',
+        'percentiles',
     )
 
     __slots__ = (
-        "_hash_id",
-        "_name",
-        "_description",
-        "_semantic_type",
-        "_unit",
-        "_scale",
-        "_iterations",
-        "_rounds",
-        "_timer",
-        "_mean",
-        "_median",
-        "_minimum",
-        "_maximum",
-        "_stdev",
-        "_relative_stdev",
-        "_percentiles",
-        "_measurements",
-        "_to_dict_cache",
+        '_hash_id',
+        '_name',
+        '_description',
+        '_semantic_type',
+        '_unit',
+        '_scale',
+        '_iterations',
+        '_rounds',
+        '_timer',
+        '_mean',
+        '_median',
+        '_minimum',
+        '_maximum',
+        '_stdev',
+        '_relative_stdev',
+        '_percentiles',
+        '_measurements',
+        '_to_dict_cache',
     )
 
     @overload
-    def __init__(self, *,
-                 hash_id: str,
-                 name: str,
-                 semantic_type: str,
-                 description: str = '',
-                 unit: str,
-                 scale: float,
-                 rounds: int,
-                 timer: str,
-                 measurements: Sequence[float] | Values) -> None:
+    def __init__(
+        self,
+        *,
+        hash_id: str,
+        name: str,
+        semantic_type: str,
+        description: str = '',
+        unit: str,
+        scale: float,
+        rounds: int,
+        timer: str,
+        measurements: Sequence[float] | Values,
+    ) -> None:
         """Initialize a StatsBlock by calculating statistics from raw measurements.
-        
+
         :param str hash_id: The hash identifier for the stats block.
         :param str name: The name of the stats block.
         :param str description: The description of the stats block.
@@ -164,25 +169,28 @@ class StatsBlock(BaseStatsBlock):
         """
 
     @overload
-    def __init__(self, *,
-                 hash_id: str,
-                 name: str,
-                 description: str = '',
-                 semantic_type: str,
-                 unit: str,
-                 scale: float,
-                 iterations: int,
-                 rounds: int,
-                 timer: str,
-                 mean: float,
-                 median: float,
-                 minimum: float,
-                 maximum: float,
-                 stdev: float,
-                 relative_stdev: float,
-                 percentiles: Sequence[float]) -> None:
+    def __init__(
+        self,
+        *,
+        hash_id: str,
+        name: str,
+        description: str = '',
+        semantic_type: str,
+        unit: str,
+        scale: float,
+        iterations: int,
+        rounds: int,
+        timer: str,
+        mean: float,
+        median: float,
+        minimum: float,
+        maximum: float,
+        stdev: float,
+        relative_stdev: float,
+        percentiles: Sequence[float],
+    ) -> None:
         """Initialize a StatsBlock with pre-calculated statistical values.
-        
+
         :param str name: The name of the stats block.
         :param str description: The description of the stats block.
         :param str semantic_type: The semantic type of the stats block.
@@ -197,27 +205,30 @@ class StatsBlock(BaseStatsBlock):
         :param float | None maximum: The maximum value of the stats block.
         :param float | None stdev: The standard deviation of the stats block.
         :param float | None relative_stdev: The relative standard deviation of the stats block.
-        :param Sequence[float] | None percentiles: The list of percentiles for the stats block.        
+        :param Sequence[float] | None percentiles: The list of percentiles for the stats block.
         """
 
-    def __init__(self, *,
-                 hash_id: str,
-                 name: str,
-                 description: str = '',
-                 semantic_type: str,
-                 unit: str,
-                 scale: float,
-                 iterations: int | None = None,
-                 rounds: int,
-                 timer: str = '',
-                 mean: float | None = None,
-                 median: float | None = None,
-                 minimum: float | None = None,
-                 maximum: float | None = None,
-                 stdev: float | None = None,
-                 relative_stdev: float | None = None,
-                 percentiles: Sequence[float] | None = None,
-                 measurements: Sequence[float] | Values | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        hash_id: str,
+        name: str,
+        description: str = '',
+        semantic_type: str,
+        unit: str,
+        scale: float,
+        iterations: int | None = None,
+        rounds: int,
+        timer: str = '',
+        mean: float | None = None,
+        median: float | None = None,
+        minimum: float | None = None,
+        maximum: float | None = None,
+        stdev: float | None = None,
+        relative_stdev: float | None = None,
+        percentiles: Sequence[float] | None = None,
+        measurements: Sequence[float] | Values | None = None,
+    ) -> None:
         """Initialize a StatsBlock object with the given parameters.
 
         The parameters are validated to ensure they meet the required types and constraints
@@ -311,7 +322,7 @@ class StatsBlock(BaseStatsBlock):
         self._validate_stats_block_consistency()
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "StatsBlock":
+    def from_dict(cls, data: Mapping[str, Any]) -> 'StatsBlock':
         """Create a StatsBlock object from a dictionary representation
         that conforms to the version 1 :class:`StatsBlockSchema`.
 
@@ -335,7 +346,8 @@ class StatsBlock(BaseStatsBlock):
             optional_fields={'description', 'version', 'type'},
             defaults={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={'percentiles': Values})
+            process_as={'percentiles': Values},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableStatsBlockDict:
@@ -440,7 +452,7 @@ class StatsBlock(BaseStatsBlock):
             `measurements` are not available either.
         """
         if self._iterations is None:
-            self._iterations = len(self._measurements) # type: ignore[reportArgumentType]  # validated in __init__
+            self._iterations = len(self._measurements)  # type: ignore[reportArgumentType]  # validated in __init__
         return self._iterations
 
     @property
@@ -461,8 +473,7 @@ class StatsBlock(BaseStatsBlock):
         :return float: The mean value.
         """
         if self._mean is None:
-            self._mean = float(
-                statistics.mean(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
+            self._mean = float(statistics.mean(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
         return self._mean
 
     @property
@@ -475,8 +486,7 @@ class StatsBlock(BaseStatsBlock):
         :return float: The median value.
         """
         if self._median is None:
-            self._median = float(
-                statistics.median(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
+            self._median = float(statistics.median(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
         return self._median
 
     @property
@@ -502,8 +512,7 @@ class StatsBlock(BaseStatsBlock):
         :return: The maximum value.
         """
         if self._maximum is None:
-            self._maximum = float(
-                max(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
+            self._maximum = float(max(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
         return self._maximum
 
     @property
@@ -515,7 +524,7 @@ class StatsBlock(BaseStatsBlock):
         .. note::
             The standard deviation is scaled from the raw calculated standard deviation of the iterations
             by the square root of the number of rounds per iteration.
-            
+
             This counters the effect of averaging multiple rounds to a single iteration measurement which
             would otherwise **reduce** the apparent variability by the square root of the number of rounds
             per iteration and conceal the true variability of a single round.
@@ -528,9 +537,9 @@ class StatsBlock(BaseStatsBlock):
         if self._stdev is None:
             if len(self._measurements) > 1:  # type: ignore[reportArgumentType]  # validated in __init__
                 self._stdev = float(
-                    statistics.stdev(
-                        self._measurements) *   # type: ignore[reportArgumentType]  # validated in __init__
-                        sqrt(self.rounds))
+                    statistics.stdev(self._measurements)  # type: ignore[reportArgumentType]  # validated in __init__
+                    * sqrt(self.rounds)
+                )
             else:
                 self._stdev = 0.0  # Standard deviation is 0 if only one measurement
         return self._stdev
@@ -600,8 +609,9 @@ class StatsBlock(BaseStatsBlock):
         data = self._measurements
         if data is None:
             raise SimpleBenchValueError(
-                "Cannot calculate percentiles because measurements are not set",
-                tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE)
+                'Cannot calculate percentiles because measurements are not set',
+                tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+            )
         if len(data) == 1:
             data_value = float(data[0])
             return Values([data_value] * 101)
@@ -624,15 +634,16 @@ class StatsBlock(BaseStatsBlock):
         # If no measurements, all derivable properties must have been set.
         unset_properties: list[str] = []
         for attr in self._DERIVABLE_PROPERTIES:
-            backing_attr = f"_{attr}"
+            backing_attr = f'_{attr}'
             if getattr(self, backing_attr, None) is None:
                 unset_properties.append(attr)
 
         if unset_properties:
             raise SimpleBenchValueError(
                 "Either the 'measurements' argument must be provided, or all of the following arguments must be set: "
-                f"{', '.join(unset_properties)}",
-                tag=_StatsBlockErrorTag.INVALID_STATS_BLOCK_ARGUMENTS)
+                f'{", ".join(unset_properties)}',
+                tag=_StatsBlockErrorTag.INVALID_STATS_BLOCK_ARGUMENTS,
+            )
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two StatsBlock instances.
@@ -680,12 +691,12 @@ class StatsBlock(BaseStatsBlock):
         :return str: The string representation of the StatsBlock.
         """
         # Get the init parameters excluding 'type' and 'version'
-        init_params =  self._stats_block_params()
+        init_params = self._stats_block_params()
 
         # Build the key-value argument string. Accessing the properties via getattr
         # will trigger their lazy calculation if they haven't been computed yet.
-        calling_args = ', '.join(f"{key}={getattr(self, key)!r}" for key in init_params)
-        return f"{self.__class__.__name__}({calling_args})"
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
 
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
         """Prepare the object's state for pickling, prioritizing size.
@@ -737,7 +748,7 @@ class StatsBlock(BaseStatsBlock):
             # Use object.__setattr__ to bypass our immutable setters.
             object.__setattr__(self, slot, value)
 
-    def __deepcopy__(self, memo: dict[int, Any]) -> "StatsBlock":
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'StatsBlock':
         """Return a shallow copy of the instance as an optimized deep copy.
 
         Since the StatsBlock instance is immutable and composed of immutable components,

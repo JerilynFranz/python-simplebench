@@ -1,4 +1,5 @@
 """Utility functions for command-line flags and argument names."""
+
 import re
 from argparse import Namespace
 from typing import Sequence
@@ -23,17 +24,16 @@ def flag_to_arg(flag: str) -> str:
     :rtype: str
     """
     if not isinstance(flag, str):
-        raise SimpleBenchTypeError(
-            "flag arg must be a str",
-            tag=_UtilsErrorTag.FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE)
+        raise SimpleBenchTypeError('flag arg must be a str', tag=_UtilsErrorTag.FLAG_TO_ARG_INVALID_FLAG_ARG_TYPE)
     if flag == '':
         raise SimpleBenchValueError(
-            "flag arg must not be an empty string",
-            tag=_UtilsErrorTag.FLAG_TO_ARG_EMPTY_FLAG_ARG)
+            'flag arg must not be an empty string', tag=_UtilsErrorTag.FLAG_TO_ARG_EMPTY_FLAG_ARG
+        )
     if not (flag.startswith('--') and len(flag) > 2):
         raise SimpleBenchValueError(
             "flag arg must start with '--' and have additional characters",
-            tag=_UtilsErrorTag.FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE)
+            tag=_UtilsErrorTag.FLAG_TO_ARG_INVALID_FLAG_ARG_VALUE,
+        )
 
     arg_name: str = flag.replace('--', '', 1).replace('-', '_')
     return arg_name
@@ -54,13 +54,11 @@ def arg_to_flag(arg: str) -> str:
     :rtype: str
     """
     if not isinstance(arg, str):
-        raise SimpleBenchTypeError(
-            "arg arg must be a str",
-            tag=_UtilsErrorTag.ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE)
+        raise SimpleBenchTypeError('arg arg must be a str', tag=_UtilsErrorTag.ARG_TO_FLAG_INVALID_FLAG_ARG_TYPE)
     if arg == '':
         raise SimpleBenchValueError(
-            "arg arg must not be an empty string",
-            tag=_UtilsErrorTag.ARG_TO_FLAG_EMPTY_FLAG_ARG)
+            'arg arg must not be an empty string', tag=_UtilsErrorTag.ARG_TO_FLAG_EMPTY_FLAG_ARG
+        )
 
     flag_name: str = '--' + arg.replace('_', '-')
 
@@ -93,20 +91,21 @@ def collect_arg_list(*, args: Namespace, flag: str) -> list[str]:
     """
     if not isinstance(args, Namespace):
         raise SimpleBenchTypeError(
-            "args arg must be an argparse.Namespace instance",
-            tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE)
+            'args arg must be an argparse.Namespace instance', tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARGS_ARG_TYPE
+        )
 
     if not isinstance(flag, str):
-        raise SimpleBenchTypeError(
-            "flag arg must be a str",
-            tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_FLAG_ARG_TYPE)
+        raise SimpleBenchTypeError('flag arg must be a str', tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_FLAG_ARG_TYPE)
 
     if not re.match(r'^--[A-Za-z0-9\-_.]+$', flag):
-        raise SimpleBenchValueError((
-            "flag arg contains invalid characters for a command-line flag. "
-            "It must be prefixed with '--' and only letters, numbers, hyphens, underscores, "
-            "and periods are allowed after the prefix."),
-            tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE)
+        raise SimpleBenchValueError(
+            (
+                'flag arg contains invalid characters for a command-line flag. '
+                "It must be prefixed with '--' and only letters, numbers, hyphens, underscores, "
+                'and periods are allowed after the prefix.'
+            ),
+            tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE,
+        )
 
     arg_name = flag_to_arg(flag)
     arg_value = getattr(args, arg_name, NO_ATTRIBUTE)
@@ -124,11 +123,13 @@ def collect_arg_list(*, args: Namespace, flag: str) -> list[str]:
                 intermediate_values.update(item)
             else:
                 raise SimpleBenchTypeError(
-                    "Argument value items must be str or sequence of str",
-                    tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE)
+                    'Argument value items must be str or sequence of str',
+                    tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_ITEM_TYPE,
+                )
     else:
         raise SimpleBenchTypeError(
-            f"Argument value must be a Sequence (but not str or bytes): found: {arg_value} ",
-            tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE)
+            f'Argument value must be a Sequence (but not str or bytes): found: {arg_value} ',
+            tag=_UtilsErrorTag.COLLECT_ARG_LIST_INVALID_ARG_VALUE_TYPE,
+        )
 
     return list(intermediate_values)

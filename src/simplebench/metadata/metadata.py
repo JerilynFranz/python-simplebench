@@ -4,6 +4,7 @@ This module defines the Metadata class, which encapsulates metadata
 information for benchmarks, including file paths, timestamps, and
 associations with Case and Choice instances.
 """
+
 from __future__ import annotations
 
 from abc import ABC
@@ -44,6 +45,7 @@ class Metadata(ABC):
     :ivar case: The Case instance containing benchmark results.
     :ivar choice: The Choice instance specifying the report configuration.
     """
+
     VERSION: int = 0
     """The version of the Metadata structure."""
 
@@ -128,8 +130,8 @@ class Metadata(ABC):
         self._reports_log_path: Path | None = None
         if value is not None:
             self._reports_log_path = validate_type(
-                value, Path, 'reports_log_path',
-                _MetadataErrorTag.INVALID_REPORTS_LOG_PATH_ARG_TYPE)
+                value, Path, 'reports_log_path', _MetadataErrorTag.INVALID_REPORTS_LOG_PATH_ARG_TYPE
+            )
 
     @property
     def case(self) -> Case:
@@ -146,8 +148,8 @@ class Metadata(ABC):
         """
         if not is_case(value):
             raise SimpleBenchTypeError(
-                f"Expected a Case instance for 'case', got: {type(value)}",
-                tag=_MetadataErrorTag.INVALID_CASE_ARG_TYPE)
+                f"Expected a Case instance for 'case', got: {type(value)}", tag=_MetadataErrorTag.INVALID_CASE_ARG_TYPE
+            )
         self._case: Case = value
 
     @property
@@ -166,15 +168,16 @@ class Metadata(ABC):
         if not is_choice(value):
             raise SimpleBenchTypeError(
                 f"Expected a Choice instance for 'choice', got: {type(value)}",
-                tag=_MetadataErrorTag.INVALID_CHOICE_ARG_TYPE)
+                tag=_MetadataErrorTag.INVALID_CHOICE_ARG_TYPE,
+            )
         self._choice: Choice = value
 
     def save_to_log(self) -> None:
         """Append the metadata as a JSON entry to the reports log file."""
         if self.reports_log_path is None:
             raise SimpleBenchValueError(
-                "Cannot save to log: 'reports_log_path' is not set.",
-                tag=_MetadataErrorTag.REPORTS_LOG_PATH_NOT_SET)
+                "Cannot save to log: 'reports_log_path' is not set.", tag=_MetadataErrorTag.REPORTS_LOG_PATH_NOT_SET
+            )
         json_log_entry = self.to_json()
         reports_log_path = self.reports_log_path
         if not reports_log_path.parent.exists():
@@ -189,16 +192,14 @@ class Metadata(ABC):
         """
         version = self.__class__.VERSION
         log_entry_class = json_class(
-            version,
-            ReportLogEntry,
-            _MetadataErrorTag.INVALID_VERSION_TYPE,
-            _MetadataErrorTag.UNSUPPORTED_VERSION)
+            version, ReportLogEntry, _MetadataErrorTag.INVALID_VERSION_TYPE, _MetadataErrorTag.UNSUPPORTED_VERSION
+        )
         git_info = self.case.git_info.to_dict() if isinstance(self.case.git_info, GitInfo) else None
 
         return log_entry_class(
             reports_log_path=self.reports_log_path,  # may be None
             filepath=self.filepath,  # may be None
-            #uri=self.uri_reference, # may be None
+            # uri=self.uri_reference, # may be None
             version=version,
             timestamp=self.timestamp,
             benchmark_id=self.case.benchmark_id,
@@ -209,6 +210,5 @@ class Metadata(ABC):
             output_format=self.choice.output_format.name,
             benchmark_title=self.case.title,
             git=git_info,
-            machine_info=MachineInfo()
+            machine_info=MachineInfo(),
         )
-

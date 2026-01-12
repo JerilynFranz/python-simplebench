@@ -4,6 +4,7 @@ The CaseTypeProxy class acts as a stand-in for the actual Case type, allowing fo
 deferred imports and avoiding circular dependencies while still enabling runtime type
 checks and static type checking.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeGuard

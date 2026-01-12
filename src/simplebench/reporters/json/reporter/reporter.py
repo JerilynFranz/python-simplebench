@@ -1,4 +1,5 @@
 """Reporter for benchmark results using JSON files."""
+
 from __future__ import annotations
 
 import json
@@ -71,6 +72,7 @@ class JSONReporter(Reporter):
     :ivar formats: The supported output formats for the reporter.
     :vartype formats: set[~simplebench.enums.Format]
     """
+
     _OPTIONS_TYPE: ClassVar[type[JSONOptions]] = JSONOptions  # type: ignore[reportIncompatibleVariableOveride]
     """:ivar: The type of :class:`~.ReporterOptions` used by the :class:`~.JSONReporter`.
     :vartype: ~typing.ClassVar[type[~.JSONOptions]]
@@ -108,16 +110,17 @@ class JSONReporter(Reporter):
 
         super().__init__(config)
 
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   log_metadata: Metadata,
-                   case: Case,
-                   choice: Choice,
-                   path: Path | None = None,
-                   session: Session | None = None,
-                   callback: ReporterCallback | None = None
-                   ) -> None:
+    def run_report(
+        self,
+        *,
+        args: Namespace,
+        log_metadata: Metadata,
+        case: Case,
+        choice: Choice,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None,
+    ) -> None:
         """Output the benchmark results to a file as tagged JSON if available.
 
         This method is called by the base class's :meth:`~.Reporter.report` method after
@@ -156,7 +159,8 @@ class JSONReporter(Reporter):
             choice=choice,
             path=path,
             session=session,
-            callback=callback)
+            callback=callback,
+        )
 
     def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:
         """Convert the Case data for all metrics to a JSON string.
@@ -176,11 +180,10 @@ class JSONReporter(Reporter):
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
-                tag=_JSONReporterErrorTag.RENDER_INVALID_CASE)
-        metric = validate_type(metric, Metric, 'metric',
-                               _JSONReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(options, Options, 'options',
-                                _JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
+                tag=_JSONReporterErrorTag.RENDER_INVALID_CASE,
+            )
+        metric = validate_type(metric, Metric, 'metric', _JSONReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, Options, 'options', _JSONReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         full_data: bool = options.full_data if isinstance(options, Options) else False
 
@@ -194,7 +197,8 @@ class JSONReporter(Reporter):
             except Exception as exc:
                 raise SimpleBenchTypeError(
                     f'Error generating JSON output for case {case.title}: {exc}',
-                    tag=_JSONReporterErrorTag.JSON_OUTPUT_ERROR) from exc
+                    tag=_JSONReporterErrorTag.JSON_OUTPUT_ERROR,
+                ) from exc
             return jsonfile.read()
 
     @property

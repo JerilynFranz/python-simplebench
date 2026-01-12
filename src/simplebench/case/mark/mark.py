@@ -37,6 +37,7 @@ class Mark:
     :ivar value: The value associated with the mark.
     :vartype value: Any
     """
+
     __slots__ = ('_name', '_value')
 
     def __init__(self, name: str, value: Any) -> None:
@@ -47,10 +48,14 @@ class Mark:
         :raises SimpleBenchTypeError: If `name` is not a non-empty string.
         """
         self._name: str = validate_string(
-            name, 'name',
+            name,
+            'name',
             _MarkErrorTag.NAME_ARG_TYPE,
             _MarkErrorTag.NAME_ARG_EMPTY,
-            allow_empty=False, strip=True, allow_blank=False)
+            allow_empty=False,
+            strip=True,
+            allow_blank=False,
+        )
         self._value: Any = value
 
     @property

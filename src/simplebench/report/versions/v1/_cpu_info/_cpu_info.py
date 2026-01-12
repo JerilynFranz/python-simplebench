@@ -12,6 +12,7 @@ As the foundational version, this class is considered immutable. Future versions
 will inherit from this class to extend its functionality, but this implementation
 will not be changed.
 """
+
 import hashlib
 import json
 from types import MappingProxyType
@@ -38,11 +39,7 @@ class CPUInfo(BaseCPUInfo):
     SCHEMA: type[JSONSchema] = CPUInfoSchema
     """The JSON schema class for version 1 reports."""
 
-
-    def __init__(self,
-                 *,
-                 hash_id: str | None = None,
-                 data: CoreDataMappingType) -> None:
+    def __init__(self, *, hash_id: str | None = None, data: CoreDataMappingType) -> None:
         """Initialize CPUInfo.
 
         :param str | None hash_id: The unique hash identifier for the CPU information.
@@ -134,7 +131,8 @@ class CPUInfo(BaseCPUInfo):
             skip_fields={'version', 'type'},
             optional_fields={'hash_id', 'version', 'type'},
             defaults={'hash_id': None, 'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE})
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableCPUInfoDict:
@@ -147,11 +145,15 @@ class CPUInfo(BaseCPUInfo):
         """
         if self._to_dict_cache is None:
             cls = self.__class__
-            self._to_dict_cache = cast(ImmutableCPUInfoDict,
-                MappingProxyType({
-                'type': cls.TYPE,
-                'version': cls.VERSION,
-                'hash_id': self.hash_id,
-                'data': cast(ImmutableCoreDataMappingType, self.data)
-            }))
+            self._to_dict_cache = cast(
+                ImmutableCPUInfoDict,
+                MappingProxyType(
+                    {
+                        'type': cls.TYPE,
+                        'version': cls.VERSION,
+                        'hash_id': self.hash_id,
+                        'data': cast(ImmutableCoreDataMappingType, self.data),
+                    }
+                ),
+            )
         return self._to_dict_cache

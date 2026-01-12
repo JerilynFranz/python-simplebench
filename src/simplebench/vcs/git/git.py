@@ -1,4 +1,5 @@
 """Git Version Control System facade."""
+
 from __future__ import annotations
 
 import re
@@ -39,9 +40,7 @@ class Git:
         If cwd is provided, sets the initial git working directory.
         """
         if cwd is not None:
-            self.git_cwd = validate_type(
-                cwd, Path, "cwd",
-                _GitErrorTag.INVALID_GIT_CWD_ARG_TYPE)
+            self.git_cwd = validate_type(cwd, Path, 'cwd', _GitErrorTag.INVALID_GIT_CWD_ARG_TYPE)
         else:
             self.git_cwd = None
 
@@ -96,54 +95,48 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found.
         """
         cmd = validate_sequence_of_str(
-            cmd, "cmd",
+            cmd,
+            'cmd',
             _GitErrorTag.INVALID_CMD_ARG_TYPE,
             _GitErrorTag.INVALID_CMD_ARG_ELEMENT_VALUE,
-            allow_empty=False, allow_blank=False)
+            allow_empty=False,
+            allow_blank=False,
+        )
 
         if cwd is not None:
-            cwd = validate_type(
-                cwd, Path, "cwd",
-                _GitErrorTag.INVALID_GIT_CWD_ARG_TYPE)
+            cwd = validate_type(cwd, Path, 'cwd', _GitErrorTag.INVALID_GIT_CWD_ARG_TYPE)
 
         working_cwd = cwd or self.git_cwd or Path.cwd()
 
-        run_command = ["git"] + list(cmd)
+        run_command = ['git'] + list(cmd)
         try:
-            result = subprocess.run(
-                run_command,
-                cwd=str(working_cwd),
-                capture_output=True,
-                text=True,
-                check=True
-            )
+            result = subprocess.run(run_command, cwd=str(working_cwd), capture_output=True, text=True, check=True)
         except FileNotFoundError as exc:
             if self.is_available:
                 raise SimpleBenchRepositoryActionFailedError(
-                    ("The git command failed to execute, possibly due to an invalid working "
-                     f"directory '{working_cwd} or a missing file: {run_command!r}"),
-                    tag=_GitErrorTag.GIT_COMMAND_FAILED
+                    (
+                        'The git command failed to execute, possibly due to an invalid working '
+                        f"directory '{working_cwd} or a missing file: {run_command!r}"
+                    ),
+                    tag=_GitErrorTag.GIT_COMMAND_FAILED,
                 ) from exc
             else:
                 raise SimpleBenchSubprocessExecutableNotFoundError(
-                    f"The 'git' command line tool was not found: {run_command!r}",
-                    tag=_GitErrorTag.GIT_NOT_AVAILABLE
+                    f"The 'git' command line tool was not found: {run_command!r}", tag=_GitErrorTag.GIT_NOT_AVAILABLE
                 ) from exc
         except subprocess.CalledProcessError as exc:
             common_code = self.common_code(exc.returncode, cmd[0])
             match common_code:
                 case CommonCode.NOT_A_REPOSITORY:
                     raise SimpleBenchNotARepositoryError(
-                        "The specified directory is not a Git repository.",
-                        tag=_GitErrorTag.GIT_NOT_A_REPOSITORY
+                        'The specified directory is not a Git repository.', tag=_GitErrorTag.GIT_NOT_A_REPOSITORY
                     ) from exc
                 case CommonCode.USER_INTERRUPT:
-                    raise KeyboardInterrupt(
-                        "The git command was interrupted by the user.") from exc
+                    raise KeyboardInterrupt('The git command was interrupted by the user.') from exc
                 case _:
                     raise SimpleBenchRepositoryActionFailedError(
-                        f"The git command failed with exit code {exc.returncode}: {exc.stderr.strip()}",
-                        tag=_GitErrorTag.GIT_COMMAND_FAILED
+                        f'The git command failed with exit code {exc.returncode}: {exc.stderr.strip()}',
+                        tag=_GitErrorTag.GIT_COMMAND_FAILED,
                     ) from exc
 
         return result.stdout.strip()
@@ -166,8 +159,8 @@ class Git:
         """
         if value is not None and not isinstance(value, Path):
             raise SimpleBenchTypeError(
-                f"Expected a Path or None for 'git_cwd', got: {type(value)}",
-                tag=_GitErrorTag.INVALID_GIT_CWD_ARG_TYPE)
+                f"Expected a Path or None for 'git_cwd', got: {type(value)}", tag=_GitErrorTag.INVALID_GIT_CWD_ARG_TYPE
+            )
         self._git_cwd = value
 
     @property
@@ -181,7 +174,7 @@ class Git:
         self.validate_available()
         global _GIT_VERSION_CACHE  # pylint: disable=global-statement
         if _GIT_VERSION_CACHE is None:
-            raw_version = self.run(["--version"])
+            raw_version = self.run(['--version'])
             git_version_regex = re.compile(r'git version (\d+\.\d+\.\d+)')
             match = git_version_regex.search(raw_version)
             if match is not None:
@@ -204,12 +197,9 @@ class Git:
             # First time check for git availability
             # has to be run outside of .run() to avoid recursion
             try:
-                run_command = ["git", "--version"]
+                run_command = ['git', '--version']
                 git_version: str = subprocess.run(
-                    run_command,
-                    capture_output=True,
-                    text=True,
-                    check=True
+                    run_command, capture_output=True, text=True, check=True
                 ).stdout.strip()
                 git_regex = re.compile(r'git version', re.IGNORECASE)
                 match = git_regex.search(git_version)
@@ -236,8 +226,7 @@ class Git:
         """
         if not self.is_available:
             raise SimpleBenchSubprocessExecutableNotFoundError(
-                "The 'git' command line tool is not available.",
-                tag=_GitErrorTag.GIT_NOT_AVAILABLE
+                "The 'git' command line tool is not available.", tag=_GitErrorTag.GIT_NOT_AVAILABLE
             )
 
     def is_repo(self, cwd: Path | None = None) -> bool:
@@ -250,7 +239,7 @@ class Git:
         :raises SimpleBenchNotARepositoryError: If not inside a git repository.
         """
         try:
-            self.run(cmd=["rev-parse", "--is-inside-work-tree"], cwd=cwd)
+            self.run(cmd=['rev-parse', '--is-inside-work-tree'], cwd=cwd)
             return True
         except SimpleBenchNotARepositoryError:
             return False
@@ -275,8 +264,7 @@ class Git:
         """
         if not self.is_repo(cwd=cwd):
             raise SimpleBenchNotARepositoryError(
-                "The current directory is not inside a Git repository.",
-                tag=_GitErrorTag.GIT_NOT_A_REPOSITORY
+                'The current directory is not inside a Git repository.', tag=_GitErrorTag.GIT_NOT_A_REPOSITORY
             )
 
     def branch(self, cwd: Path | None = None) -> str:
@@ -289,7 +277,7 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found.
         """
         self.validate_is_repo(cwd=cwd)
-        return self.run(cmd=["branch", "--show-current"], cwd=cwd)
+        return self.run(cmd=['branch', '--show-current'], cwd=cwd)
 
     def root(self, cwd: Path | None = None) -> Path:
         """Get the root path of the git repository.
@@ -301,7 +289,7 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found.
         """
         self.validate_is_repo(cwd=cwd)
-        return Path(self.run(cmd=["rev-parse", "--show-toplevel"], cwd=cwd))
+        return Path(self.run(cmd=['rev-parse', '--show-toplevel'], cwd=cwd))
 
     def is_dirty(self, cwd: Path | None = None) -> bool:
         """Check if the git repository has uncommitted changes.
@@ -313,7 +301,7 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found
         """
         self.validate_is_repo(cwd=cwd)
-        status_output = self.run(cmd=["status", "--porcelain", "v1"], cwd=cwd)
+        status_output = self.run(cmd=['status', '--porcelain', 'v1'], cwd=cwd)
         return bool(status_output)
 
     def status(self, cwd: Path | None = None) -> str:
@@ -327,7 +315,7 @@ class Git:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the git command is not found.
         """
         self.validate_is_repo(cwd=cwd)
-        return self.run(cmd=["status", "--porcelain", "v1"], cwd=cwd)
+        return self.run(cmd=['status', '--porcelain', 'v1'], cwd=cwd)
 
     def head(self, cwd: Path | None = None) -> GitInfo:
         """Fetch git repository information for the current HEAD.
@@ -343,31 +331,23 @@ class Git:
         self.validate_is_repo(cwd=cwd)
 
         branch = self.branch(cwd=cwd)
-        fields = {
-            "commit": "%H",
-            "date": "%ct",
-        }
-        fields_list = [f"{key}: {value}" for key, value in fields.items()]
-        log_format = f"--format={'%x00'.join(fields_list)}"
-        commit_info = self.run(cmd=["log", "-1", log_format], cwd=cwd)
-        commit_id: str = ""
+        fields = {'commit': '%H', 'date': '%ct'}
+        fields_list = [f'{key}: {value}' for key, value in fields.items()]
+        log_format = f'--format={"%x00".join(fields_list)}'
+        commit_info = self.run(cmd=['log', '-1', log_format], cwd=cwd)
+        commit_id: str = ''
         epoch_date: float = 0.0
         for line in commit_info.split('\x00'):
             if not line:
                 continue
-            key, value = line.split(": ", 1)
+            key, value = line.split(': ', 1)
             match key:
-                case "commit":
+                case 'commit':
                     commit_id = value.strip()
-                case "date":
+                case 'date':
                     epoch_date: float = float(value.strip())
                 case _:
                     continue
         date: str = timestamp_to_iso8601(epoch_date)
         dirty: bool = self.is_dirty(cwd=cwd)
-        return GitInfo(
-            branch=branch,
-            commit_id=commit_id,
-            commit_datetime=date,
-            dirty=dirty
-        )
+        return GitInfo(branch=branch, commit_id=commit_id, commit_datetime=date, dirty=dirty)

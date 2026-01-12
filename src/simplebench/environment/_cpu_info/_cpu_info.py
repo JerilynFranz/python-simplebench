@@ -3,9 +3,8 @@
 This provides an immutable CPUInfo class that gathers and exposes information
 about the CPU environment at the time of its creation using
 the :module:`cpuinfo` module.
-
-
 """
+
 from functools import cache
 
 from cpuinfo import get_cpu_info
@@ -15,6 +14,8 @@ from simplebench.report.versions.v1 import ImmutableCPUInfoData
 from simplebench.validators import typed_dict_mimic, validate_core_data_mapping
 
 from . import _validate
+
+__all__ = []
 
 
 class CPUInfo(Immutable):
@@ -41,6 +42,7 @@ class CPUInfo(Immutable):
         the CPU information gathered by the :module:`cpuinfo` module at the
         time of the instance's creation.
     """
+
     __slots__ = ('_cache_key', '_info')
 
     @cache
@@ -55,7 +57,7 @@ class CPUInfo(Immutable):
         :param str | None cache_key: An optional key to identify a cache entry.
         :return ImmutableCPUInfoData: The CPU information as an immutable dictionary.
         """
-        validated_data = validate_core_data_mapping(get_cpu_info(), "CPUInfo.data", max_depth=10)
+        validated_data = validate_core_data_mapping(get_cpu_info(), 'CPUInfo.data', max_depth=10)
         cpu_info: ImmutableCPUInfoData = typed_dict_mimic(validated_data, ImmutableCPUInfoData)
         return cpu_info
 
@@ -63,7 +65,7 @@ class CPUInfo(Immutable):
         """Initializes the instance by gathering data from the `cpuinfo` module.
 
         The returned instance is immutable.
-        
+
         :param str | None cache_key: An optional key to identify a cache entry.
             If provided, this key can be used to manage multiple cache entries
             for snapshots taken at different times. If ``None``, then a new value
@@ -83,11 +85,10 @@ class CPUInfo(Immutable):
         self._cache_key: str | None = _validate.cache_key(cache_key)
         cls = self.__class__
         if cache_key is None:  # No caching; always gather fresh data if None
-            validated_data = validate_core_data_mapping(get_cpu_info(), "CPUInfo.data", max_depth=10)
+            validated_data = validate_core_data_mapping(get_cpu_info(), 'CPUInfo.data', max_depth=10)
             self._info = typed_dict_mimic(validated_data, ImmutableCPUInfoData)
         else:
             self._info = cls._get_cached_cpu_info(cache_key)
-
 
     def to_dict(self) -> ImmutableCPUInfoData:
         """Get the CPU information dictionary.

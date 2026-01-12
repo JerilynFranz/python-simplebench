@@ -1,4 +1,5 @@
 """Configuration for a RichTableReporter."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -38,7 +39,7 @@ class RichTableConfig(ReporterConfig):
         file_suffix: str | None = None,
         file_unique: bool | None = None,
         file_append: bool | None = None,
-        subdir: str | None = None
+        subdir: str | None = None,
     ) -> None:
         """Initialize the RichTableReporter configuration.
 
@@ -85,8 +86,7 @@ class RichTableConfig(ReporterConfig):
         :raises SimpleBenchTypeError: If any provided argument has an invalid type.
         :raises SimpleBenchValueError: If any provided argument has an invalid value or combination of values.
         """
-        all_processable_metrics: Metrics = filtered_metrics(
-            metric_categories=MetricCategory.STATISTICAL)
+        all_processable_metrics: Metrics = filtered_metrics(metric_categories=MetricCategory.STATISTICAL)
         all_processable_metrics += metrics_registry['STD_TOTAL_ELAPSED_TIME']
         allowed_targets = {Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK}
 
@@ -101,37 +101,56 @@ class RichTableConfig(ReporterConfig):
             'file_unique': False,
             'file_append': True,
             'subdir': 'rich',
-            'choices': ChoicesConf([
-                ChoiceConf(
-                    flags=['--rich-table'], flag_type=FlagType.TARGET_LIST, name='rich-table',
-                    description='All results as rich text tables (filesystem, console, callback, default=console)',
-                    metrics=MetricsCollection(metrics=all_processable_metrics),
-                    targets=allowed_targets,
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--rich-table.ops'], flag_type=FlagType.TARGET_LIST, name='rich-table-ops',
-                    description=(
-                        'Ops/second results as rich text tables (filesystem, console, callback, default=console)'),
-                    metrics=MetricsCollection(metrics_registry['STD_OPS_STATS'],
-                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
-                    targets=allowed_targets,
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--rich-table.timing'], flag_type=FlagType.TARGET_LIST, name='rich-table-timing',
-                    description='Timing results as rich text tables (filesystem, console, callback, default=console)',
-                    metrics=MetricsCollection(metrics_registry['STD_TIMING_STATS'],
-                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
-                    targets=allowed_targets,
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--rich-table.memory'], flag_type=FlagType.TARGET_LIST, name='rich-table-memory',
-                    description='Memory results as rich text tables (filesystem, console, callback, default=console)',
-                    metrics=MetricsCollection(metrics_registry['STD_MEMORY_STATS'],
-                                              metrics_registry['STD_PEAK_MEMORY_STATS'],
-                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
-                    targets=allowed_targets,
-                    output_format=Format.RICH_TEXT),
-            ])
+            'choices': ChoicesConf(
+                [
+                    ChoiceConf(
+                        flags=['--rich-table'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='rich-table',
+                        description='All results as rich text tables (filesystem, console, callback, default=console)',
+                        metrics=MetricsCollection(metrics=all_processable_metrics),
+                        targets=allowed_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                    ChoiceConf(
+                        flags=['--rich-table.ops'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='rich-table-ops',
+                        description=(
+                            'Ops/second results as rich text tables (filesystem, console, callback, default=console)'
+                        ),
+                        metrics=MetricsCollection(
+                            metrics_registry['STD_OPS_STATS'], metrics_registry['STD_TOTAL_ELAPSED_TIME']
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                    ChoiceConf(
+                        flags=['--rich-table.timing'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='rich-table-timing',
+                        description='Timing results as rich text tables (filesystem, console, callback, default=console)',
+                        metrics=MetricsCollection(
+                            metrics_registry['STD_TIMING_STATS'], metrics_registry['STD_TOTAL_ELAPSED_TIME']
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                    ChoiceConf(
+                        flags=['--rich-table.memory'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='rich-table-memory',
+                        description='Memory results as rich text tables (filesystem, console, callback, default=console)',
+                        metrics=MetricsCollection(
+                            metrics_registry['STD_MEMORY_STATS'],
+                            metrics_registry['STD_PEAK_MEMORY_STATS'],
+                            metrics_registry['STD_TOTAL_ELAPSED_TIME'],
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                ]
+            ),
         }
         # Collect all provided overrides from the method signature, filtering out `None`s.
         overrides = {k: v for k, v in locals().items() if k in defaults and v is not None}

@@ -1,4 +1,5 @@
 """Schema for JSON CPUInfo v1 validation."""
+
 # ruff: noqa: E501
 from copy import deepcopy
 from json import JSONEncoder
@@ -13,59 +14,54 @@ class CPUInfoSchema(JSONSchema):
     VERSION: int = 1
     """The JSON CPUInfo schema version number."""
 
-    TYPE: str = "SimpleBenchCPUInfo::V1"
+    TYPE: str = 'SimpleBenchCPUInfo::V1'
     """The JSON CPUInfo schema type property value for version 1 reports."""
 
-    ID: str = "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json"
+    ID: str = 'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/cpu-info.json'
     """The JSON CPUInfo schema $id value for version 1 reports."""
 
     _JSON_SCHEMA_DICT: dict[str, object] = {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": ID,
-            "title": "CPU (V1)",
-            "description": "CPU information (V1)",
-            "type": "object",
-            "properties": {
-                "version": {
-                    "description": "The version of the CPU information schema",
-                    "type": "integer",
-                    "const": VERSION
-                },
-                "type": {
-                    "title": "Type",
-                    "description": "Type of the CPU information schema",
-                    "type": "string",
-                    "const": TYPE
-                },
-                "hash_id": {
-                    "title": "Hash ID",
-                    "description": "Unique 64 byte hexadecimal hash identifier for the CPU information data. This can be used to identify the generator and uniqueness of the data.",
-                    "type": "string",
-                    "pattern": "^[a-f0-9]{64}$"
-                },
-                "data": {
-                    "title": "CPU Info Data",
-                    "description": "Raw CPU information data collected from the system using the cpuinfo library.",
-                    "type": "object",
-                    "additionalProperties": True
-                },
+        '$schema': 'https://json-schema.org/draft/2020-12/schema',
+        '$id': ID,
+        'title': 'CPU (V1)',
+        'description': 'CPU information (V1)',
+        'type': 'object',
+        'properties': {
+            'version': {
+                'description': 'The version of the CPU information schema',
+                'type': 'integer',
+                'const': VERSION,
             },
-            "required": [
-                "hash_id",
-                "type",
-                "version",
-                "data"
-            ],
-            "additionalProperties": False
-        }
+            'type': {
+                'title': 'Type',
+                'description': 'Type of the CPU information schema',
+                'type': 'string',
+                'const': TYPE,
+            },
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the CPU information data. This can be used to identify the generator and uniqueness of the data.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
+            },
+            'data': {
+                'title': 'CPU Info Data',
+                'description': 'Raw CPU information data collected from the system using the cpuinfo library.',
+                'type': 'object',
+                'additionalProperties': True,
+            },
+        },
+        'required': ['hash_id', 'type', 'version', 'data'],
+        'additionalProperties': False,
+    }
 
     _JSON_SCHEMA_TEXT: str = JSONEncoder(indent=2).encode(_JSON_SCHEMA_DICT)
     """The JSON schema as a pretty-printed JSON string."""
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption="JSON Schema for ValueBlock V1",
-        intro_text="The JSON schema is as follows:"
+        caption='JSON Schema for ValueBlock V1',
+        intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""
 

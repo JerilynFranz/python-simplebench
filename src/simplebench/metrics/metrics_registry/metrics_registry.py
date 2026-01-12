@@ -15,6 +15,7 @@ and can be extended or modified using the provided functions.
 The registry itself is a global variable named `registry`
 and is an instance of :class:`simplebench.metric.Metrics`.
 """
+
 from typing import Iterable
 
 import simplebench.metrics.standard_metrics as standard_metrics
@@ -46,9 +47,12 @@ def register_metrics(metrics: Metric | Iterable[Metric] | Metric) -> None:
         return
 
     validated_metrics = validate_iterable_of_type(
-        metrics, Metric, "metrics",
+        metrics,
+        Metric,
+        'metrics',
         _MetricsRegistryErrorTag.NOT_ITERABLE_OF_METRIC,
-        _MetricsRegistryErrorTag.NOT_ITERABLE_OF_METRIC)
+        _MetricsRegistryErrorTag.NOT_ITERABLE_OF_METRIC,
+    )
     metrics_registry.extend(validated_metrics)
 
 
@@ -71,8 +75,9 @@ def unregister_metrics(metrics: str | Iterable[str] | Metric | Metrics) -> None:
             del metrics_registry[metric_label]
     else:
         raise SimpleBenchTypeError(
-            "metrics must be a string, Metric, an iterable of strings, or a Metrics instance",
-            tag=_MetricsRegistryErrorTag.NOT_STRING_OR_ITERABLE_OF_STRINGS)
+            'metrics must be a string, Metric, an iterable of strings, or a Metrics instance',
+            tag=_MetricsRegistryErrorTag.NOT_STRING_OR_ITERABLE_OF_STRINGS,
+        )
 
 
 def reset_metrics() -> None:
@@ -93,9 +98,11 @@ This is a global variable that maps metric labels to their corresponding functio
 reset_metrics()  # Initialize with default metrics
 
 
-def filtered_metrics(*,
-                     metric_types: Iterable[MetricType] | MetricTypes | MetricType | None = None,
-                     metric_categories: Iterable[MetricCategory] | MetricCategory | None = None) -> Metrics:
+def filtered_metrics(
+    *,
+    metric_types: Iterable[MetricType] | MetricTypes | MetricType | None = None,
+    metric_categories: Iterable[MetricCategory] | MetricCategory | None = None,
+) -> Metrics:
     """Create a Metrics object by filtering the metrics registry based on metric types and/or metric categories.
 
     If given both metric_types and metric_categories, the resulting Metrics object
@@ -105,21 +112,15 @@ def filtered_metrics(*,
     :param metric_categories: A single MetricCategory or an iterable of MetricCategory to filter the metrics.
     :return: A new Metrics object containing the filtered metrics.
     """
-    filtered: Metrics = _filtered_metrics_by_category(
-        metrics=metrics_registry,
-        metric_categories=metric_categories)
+    filtered: Metrics = _filtered_metrics_by_category(metrics=metrics_registry, metric_categories=metric_categories)
 
-    filtered = _filtered_metrics_by_type(
-        metrics=filtered,
-        metric_types=metric_types)
+    filtered = _filtered_metrics_by_type(metrics=filtered, metric_types=metric_types)
 
     return filtered
 
 
 def _filtered_metrics_by_type(
-        *,
-        metrics: Metrics,
-        metric_types: Iterable[MetricType] | MetricTypes | MetricType | None = None,
+    *, metrics: Metrics, metric_types: Iterable[MetricType] | MetricTypes | MetricType | None = None
 ) -> Metrics:
     """Create a Metrics object by filtering the metrics registry based on metric types.
 
@@ -128,8 +129,8 @@ def _filtered_metrics_by_type(
     """
     if not isinstance(metrics, Metrics):
         raise SimpleBenchTypeError(
-            "metrics must be a Metrics instance.",
-            tag=_MetricsRegistryErrorTag.INVALID_METRICS_ARGUMENT)
+            'metrics must be a Metrics instance.', tag=_MetricsRegistryErrorTag.INVALID_METRICS_ARGUMENT
+        )
 
     if metric_types is None:
         return metrics
@@ -143,17 +144,17 @@ def _filtered_metrics_by_type(
         filter_types = MetricTypes(metric_types)
     else:
         raise SimpleBenchTypeError(
-            "metric_types must be a MetricType, an iterable of MetricType, or a MetricTypes instance.",
-            tag=_MetricsRegistryErrorTag.INVALID_FILTER_TYPE)
+            'metric_types must be a MetricType, an iterable of MetricType, or a MetricTypes instance.',
+            tag=_MetricsRegistryErrorTag.INVALID_FILTER_TYPE,
+        )
 
     filtered_items = [metric for metric in metrics.values() if metric.metric_type in filter_types]
     return Metrics(filtered_items)
 
 
 def _filtered_metrics_by_category(
-        *,
-        metrics: Metrics,
-        metric_categories: Iterable[MetricCategory] | MetricCategory | None) -> Metrics:
+    *, metrics: Metrics, metric_categories: Iterable[MetricCategory] | MetricCategory | None
+) -> Metrics:
     """Create a Metrics object by filtering the metrics registry based on metric categories.
 
     :param metric_categories: A single MetricCategory or an iterable of MetricCategory to filter the metrics.
@@ -161,8 +162,8 @@ def _filtered_metrics_by_category(
     """
     if not isinstance(metrics, Metrics):
         raise SimpleBenchTypeError(
-            "metrics must be a Metrics instance.",
-            tag=_MetricsRegistryErrorTag.INVALID_METRICS_ARGUMENT)
+            'metrics must be a Metrics instance.', tag=_MetricsRegistryErrorTag.INVALID_METRICS_ARGUMENT
+        )
 
     if metric_categories is None:
         return metrics
@@ -174,13 +175,15 @@ def _filtered_metrics_by_category(
         filter_categories = set(metric_categories)
         if not all(isinstance(cat, MetricCategory) for cat in filter_categories):
             raise SimpleBenchTypeError(
-                "All items in metric_categories iterable must be of type MetricCategory.",
-                tag=_MetricsRegistryErrorTag.INVALID_FILTER_CATEGORY)
+                'All items in metric_categories iterable must be of type MetricCategory.',
+                tag=_MetricsRegistryErrorTag.INVALID_FILTER_CATEGORY,
+            )
 
     else:
         raise SimpleBenchTypeError(
-            "metric_categories must be a MetricCategory or an iterable of MetricCategory.",
-            tag=_MetricsRegistryErrorTag.INVALID_FILTER_CATEGORY)
+            'metric_categories must be a MetricCategory or an iterable of MetricCategory.',
+            tag=_MetricsRegistryErrorTag.INVALID_FILTER_CATEGORY,
+        )
 
     filtered_items: Metrics = Metrics(
         [metric for metric in metrics.values() if metric.metric_type.category in filter_categories]

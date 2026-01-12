@@ -3,6 +3,7 @@
 These functions raise appropriate exceptions with error tags from exceptions.py
 and return the validated and/or normalized value.
 """
+
 import re
 from pathlib import Path
 from typing import Any, Sequence, TypeVar, overload
@@ -14,10 +15,7 @@ T = TypeVar('T')
 
 
 @overload
-def validate_bool(
-        value: Any,
-        name: str,
-        error_tag: ErrorTag) -> bool:
+def validate_bool(value: Any, name: str, error_tag: ErrorTag) -> bool:
     """Validate that the passed value is either a boolean (bool) value.
 
         (validation primitive - does not depend on other validators)
@@ -35,12 +33,7 @@ def validate_bool(
 
 
 @overload
-def validate_bool(
-        value: Any,
-        name: str,
-        error_tag: ErrorTag,
-        *,
-        allow_none: bool) -> bool | None:
+def validate_bool(value: Any, name: str, error_tag: ErrorTag, *, allow_none: bool) -> bool | None:
     """Validate that the passed value is either a bool or None.
 
         (validation primitive - does not depend on other validators)
@@ -58,12 +51,7 @@ def validate_bool(
     """
 
 
-def validate_bool(
-        value: Any,
-        name: str,
-        error_tag: ErrorTag,
-        *,
-        allow_none: bool = False) -> bool | None:
+def validate_bool(value: Any, name: str, error_tag: ErrorTag, *, allow_none: bool = False) -> bool | None:
     """Validate that a value is a boolean.
 
             (validation primitive - does not depend on other validators)
@@ -90,31 +78,26 @@ def validate_bool(
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
             f'Invalid name argument type: {type(name)}. Must be a str.',
-            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_NAME_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_NAME_ARG_TYPE,
         )
     if not isinstance(error_tag, ErrorTag):
         raise SimpleBenchTypeError(
             f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
-            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ERROR_TAG_TYPE,
         )
     if not isinstance(allow_none, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_none argument type: {type(allow_none)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_BOOL_INVALID_ALLOW_NONE_ARG_TYPE,
         )
 
     if not isinstance(value, bool):
         if allow_none:  # bool | None branch for not a bool
             if value is None:
                 return None
-            raise SimpleBenchTypeError(
-                f'Invalid {name} type: {type(value)}. Must be a bool or None.',
-                tag=error_tag)
+            raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a bool or None.', tag=error_tag)
         # bool-only branch for not a bool
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(value)}. Must be a bool.',
-            tag=error_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a bool.', tag=error_tag)
 
     return value
 
@@ -132,10 +115,7 @@ def validate_int(value: Any, name: str, type_tag: ErrorTag) -> int:
     :raises SimpleBenchTypeError: If the value is not an integer.
     """
     if not isinstance(value, int):
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(value)}. Must be an int.',
-            tag=type_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be an int.', tag=type_tag)
     return value
 
 
@@ -155,10 +135,7 @@ def validate_float(value: Any, name: str, type_tag: ErrorTag) -> float:
     :raises SimpleBenchTypeError: If the value is not a float.
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(value)}. Must be a float or int.',
-            tag=type_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a float or int.', tag=type_tag)
     return float(value)
 
 
@@ -177,15 +154,9 @@ def validate_positive_int(value: Any, field_name: str, type_tag: ErrorTag, value
     :raises SimpleBenchValueError: If the value is not positive.
     """
     if not isinstance(value, int):
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be an int.',
-            tag=type_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {field_name} type: {type(value)}. Must be an int.', tag=type_tag)
     if value <= 0:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: must be a positive integer.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {field_name}: must be a positive integer.', tag=value_tag)
     return value
 
 
@@ -204,20 +175,13 @@ def validate_non_negative_int(value: Any, field_name: str, type_tag: ErrorTag, v
     :raises SimpleBenchValueError: If the value is negative.
     """
     if not isinstance(value, int):
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be an int.',
-            tag=type_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {field_name} type: {type(value)}. Must be an int.', tag=type_tag)
     if value < 0:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: must be a non-negative integer.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {field_name}: must be a non-negative integer.', tag=value_tag)
     return value
 
 
-def validate_positive_float(
-        value: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> float:
+def validate_positive_float(value: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> float:
     """Validate that a value is a positive float or integer.
 
     Validates that the value is either a float or an int and that it is positive.
@@ -233,20 +197,13 @@ def validate_positive_float(
     :raises SimpleBenchValueError: If the value is not positive.
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be a float or int.',
-            tag=type_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {field_name} type: {type(value)}. Must be a float or int.', tag=type_tag)
     if value <= 0.0:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: must be a positive float or int.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {field_name}: must be a positive float or int.', tag=value_tag)
     return float(value)
 
 
-def validate_non_negative_float(
-        value: float | int, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> float:
+def validate_non_negative_float(value: float | int, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> float:
     """Validate that a value is a non-negative float or integer.
 
         (validation primitive - does not depend on other validators)
@@ -264,48 +221,39 @@ def validate_non_negative_float(
     :raises SimpleBenchValueError: If the value is negative.
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value)}. Must be a float or int.',
-            tag=type_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {field_name} type: {type(value)}. Must be a float or int.', tag=type_tag)
     if value < 0.0:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: must be a non-negative float or int.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {field_name}: must be a non-negative float or int.', tag=value_tag)
     return float(value)
 
 
 @overload
 def validate_sequence_of_type(
-        value: Any,
-        types: type[T],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        *,
-        allow_empty: bool = True) -> list[T]: ...
+    value: Any, types: type[T], field_name: str, type_tag: ErrorTag, value_tag: ErrorTag, *, allow_empty: bool = True
+) -> list[T]: ...
 
 
 @overload
 def validate_sequence_of_type(
-        value: Any,
-        types: tuple[type, ...],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        *,
-        allow_empty: bool = True) -> list[Any]: ...
+    value: Any,
+    types: tuple[type, ...],
+    field_name: str,
+    type_tag: ErrorTag,
+    value_tag: ErrorTag,
+    *,
+    allow_empty: bool = True,
+) -> list[Any]: ...
 
 
 def validate_sequence_of_type(
-        value: Any,
-        types: type[T] | tuple[type, ...],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        *,
-        allow_empty: bool = True) -> list[T] | list[Any]:
+    value: Any,
+    types: type[T] | tuple[type, ...],
+    field_name: str,
+    type_tag: ErrorTag,
+    value_tag: ErrorTag,
+    *,
+    allow_empty: bool = True,
+) -> list[T] | list[Any]:
     """Validate that a value is a sequence of specified type(s).
 
         (validation primitive - does not depend on other validators)
@@ -339,23 +287,16 @@ def validate_sequence_of_type(
 
         .. code-block:: python
 
-            mixed: list[str | int] = validate_sequence_of_type(
-                ['a', 1], (str, int), 'items', ...
-            )
+            mixed: list[str | int] = validate_sequence_of_type(['a', 1], (str, int), 'items', ...)
             # Type: list[str | int]
     """
     if not isinstance(value, Sequence) or isinstance(value, str):
         raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value).__name__}. '
-            f'Must be a sequence (list, tuple, etc.).',
-            tag=type_tag
+            f'Invalid {field_name} type: {type(value).__name__}. Must be a sequence (list, tuple, etc.).', tag=type_tag
         )
 
     if len(value) == 0 and not allow_empty:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: sequence cannot be empty.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {field_name}: sequence cannot be empty.', tag=value_tag)
 
     # Format type names for error messages
     if isinstance(types, tuple):
@@ -367,9 +308,7 @@ def validate_sequence_of_type(
     for i, item in enumerate(value):
         if not isinstance(item, types):
             raise SimpleBenchTypeError(
-                f'Invalid {field_name} element at index {i}: {type(item).__name__}. '
-                f'Must be {type_names}.',
-                tag=type_tag
+                f'Invalid {field_name} element at index {i}: {type(item).__name__}. Must be {type_names}.', tag=type_tag
             )
         result.append(item)
 
@@ -378,31 +317,34 @@ def validate_sequence_of_type(
 
 @overload
 def validate_frozenset_of_type(
-        value: frozenset[Any],
-        types: type[T],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        allow_empty: bool = True) -> frozenset[T]: ...
+    value: frozenset[Any],
+    types: type[T],
+    field_name: str,
+    type_tag: ErrorTag,
+    value_tag: ErrorTag,
+    allow_empty: bool = True,
+) -> frozenset[T]: ...
 
 
 @overload
 def validate_frozenset_of_type(
-        value: frozenset[Any],
-        types: tuple[type, ...],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        allow_empty: bool = True) -> frozenset[Any]: ...
+    value: frozenset[Any],
+    types: tuple[type, ...],
+    field_name: str,
+    type_tag: ErrorTag,
+    value_tag: ErrorTag,
+    allow_empty: bool = True,
+) -> frozenset[Any]: ...
 
 
 def validate_frozenset_of_type(
-        value: frozenset[Any],
-        types: type[T] | tuple[type, ...],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        allow_empty: bool = True) -> frozenset[T] | frozenset[Any]:
+    value: frozenset[Any],
+    types: type[T] | tuple[type, ...],
+    field_name: str,
+    type_tag: ErrorTag,
+    value_tag: ErrorTag,
+    allow_empty: bool = True,
+) -> frozenset[T] | frozenset[Any]:
     """Validate that a value is a frozenset of specified type(s).
 
         (validation primitive - does not depend on other validators)
@@ -417,10 +359,7 @@ def validate_frozenset_of_type(
 
         friends_names: frozenset[str] = frozenset(['Alice', 'Bob'])
         names = validate_frozenset_of_type(
-            friends_names, str, 'names',
-            ErrorTag.SOME_TYPE_TAG,
-            ErrorTag.SOME_VALUE_TAG,
-            allow_empty=False
+            friends_names, str, 'names', ErrorTag.SOME_TYPE_TAG, ErrorTag.SOME_VALUE_TAG, allow_empty=False
         )
         # Type: frozenset[str]
 
@@ -430,10 +369,8 @@ def validate_frozenset_of_type(
 
         mixed_values: frozenset[str | int] = frozenset(['a', 1, 'b', 2])
         mixed: frozenset[str | int] = validate_frozenset_of_type(
-            mixed_values, (str, int), 'items',
-            ErrorTag.SOME_TYPE_TAG,
-            ErrorTag.SOME_VALUE_TAG,
-            allow_empty=True)
+            mixed_values, (str, int), 'items', ErrorTag.SOME_TYPE_TAG, ErrorTag.SOME_VALUE_TAG, allow_empty=True
+        )
         # Type: frozenset[str | int]
 
     :param Any value: The frozenset of values to validate.
@@ -451,16 +388,11 @@ def validate_frozenset_of_type(
     """
     if not isinstance(value, frozenset):
         raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(value).__name__}. '
-            f'Must be a frozenset.',
-            tag=type_tag
+            f'Invalid {field_name} type: {type(value).__name__}. Must be a frozenset.', tag=type_tag
         )
 
     if len(value) == 0 and not allow_empty:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: sequence cannot be empty.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {field_name}: sequence cannot be empty.', tag=value_tag)
 
     # Format type names for error messages
     if isinstance(types, tuple):
@@ -471,9 +403,7 @@ def validate_frozenset_of_type(
     for i, item in enumerate(value):
         if not isinstance(item, types):
             raise SimpleBenchTypeError(
-                f'Invalid {field_name} element at index {i}: {type(item).__name__}. '
-                f'Must be {type_names}.',
-                tag=type_tag
+                f'Invalid {field_name} element at index {i}: {type(item).__name__}. Must be {type_names}.', tag=type_tag
             )
     result: frozenset[T] = frozenset(value)
     # Return the now validated frozenset
@@ -481,11 +411,8 @@ def validate_frozenset_of_type(
 
 
 def validate_sequence_of_numbers(
-        value: Sequence[int | float],
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        allow_empty: bool = True) -> Sequence[int | float]:
+    value: Sequence[int | float], field_name: str, type_tag: ErrorTag, value_tag: ErrorTag, allow_empty: bool = True
+) -> Sequence[int | float]:
     """Validate that a value is a sequence of numbers (ints or floats).
 
         (validation primitive - does not depend on other validators)
@@ -521,31 +448,28 @@ def validate_sequence_of_numbers(
     if not isinstance(value, Sequence) or isinstance(value, str):
         raise SimpleBenchTypeError(
             f'Invalid {field_name} type: {type(value)}. Must be a sequence (list, tuple, etc.) of numbers.',
-            tag=type_tag
+            tag=type_tag,
         )
     if len(value) == 0 and not allow_empty:
-        raise SimpleBenchValueError(
-            f'Invalid {field_name}: sequence cannot be empty.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {field_name}: sequence cannot be empty.', tag=value_tag)
     for i, item in enumerate(value):
         if not isinstance(item, (int, float)):
             raise SimpleBenchTypeError(
-                f'Invalid {field_name} element at index {i}: {type(item)}. Must be an int or float.',
-                tag=type_tag
+                f'Invalid {field_name} element at index {i}: {type(item)}. Must be an int or float.', tag=type_tag
             )
     return value
 
 
 def validate_sequence_of_str(
-        value: Any,
-        name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        *,
-        allow_empty: bool = True,
-        allow_blank: bool = True,
-        allow_whitespace: bool = True) -> list[str]:
+    value: Any,
+    name: str,
+    type_tag: ErrorTag,
+    value_tag: ErrorTag,
+    *,
+    allow_empty: bool = True,
+    allow_blank: bool = True,
+    allow_whitespace: bool = True,
+) -> list[str]:
     """Validate that a value is a sequence of strings.
 
         (validation primitive - does not depend on other validators)
@@ -570,40 +494,29 @@ def validate_sequence_of_str(
             blank and allow_blank is False.
     """
     if not all(isinstance(item, str) for item in value):
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(value)}. Must be a sequence of strings.',
-            tag=type_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a sequence of strings.', tag=type_tag)
     if not allow_empty and len(value) == 0:
-        raise SimpleBenchValueError(
-            f'Invalid {name}: sequence cannot be empty.',
-            tag=value_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {name}: sequence cannot be empty.', tag=value_tag)
 
     list_of_str: list[str] = list(value)
     if not allow_blank:
         for i, item in enumerate(list_of_str):
             if item.strip() == '':
                 raise SimpleBenchValueError(
-                    f'Invalid {name} element at index {i}: cannot be blank or whitespace.',
-                    tag=value_tag
+                    f'Invalid {name} element at index {i}: cannot be blank or whitespace.', tag=value_tag
                 )
     if not allow_whitespace:
         for i, item in enumerate(list_of_str):
             if any(c.isspace() for c in item):
                 raise SimpleBenchValueError(
-                    f'Invalid {name} element at index {i}: cannot contain whitespace characters.',
-                    tag=value_tag
+                    f'Invalid {name} element at index {i}: cannot contain whitespace characters.', tag=value_tag
                 )
     return list_of_str
 
 
-def validate_int_range(number: Any,
-                       name: str,
-                       type_tag: ErrorTag,
-                       value_tag: ErrorTag,
-                       min_value: int,
-                       max_value: int) -> int:
+def validate_int_range(
+    number: Any, name: str, type_tag: ErrorTag, value_tag: ErrorTag, min_value: int, max_value: int
+) -> int:
     """Validate that a value is an integer within a specified range.
 
         (validation primitive - does not depend on other validators)
@@ -623,39 +536,37 @@ def validate_int_range(number: Any,
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_int_range: field_name type: {type(name)}. Must be a str.',
-            tag=_ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE,
+        )
     if not isinstance(min_value, int):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_int_range: min_value type {type(min_value)}. Must be an int.',
-            tag=_ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE,
+        )
     if not isinstance(max_value, int):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_int_range: max_value type {type(max_value)}. Must be an int.',
-            tag=_ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE,
+        )
     if min_value > max_value:
         raise SimpleBenchValueError(
             f'Invalid call to validate_int_range: min_value ({min_value}) '
             f'cannot be greater than max_value ({max_value}).',
-            tag=_ValidatorsErrorTag.INVALID_RANGE)
+            tag=_ValidatorsErrorTag.INVALID_RANGE,
+        )
     if not isinstance(number, int):
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(number)}. Must be an int.',
-            tag=type_tag)
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(number)}. Must be an int.', tag=type_tag)
     if not min_value <= number <= max_value:
         raise SimpleBenchValueError(
-            f'Invalid {name}: {number}. Must be an int between {min_value} and {max_value}, inclusive.',
-            tag=value_tag)
+            f'Invalid {name}: {number}. Must be an int between {min_value} and {max_value}, inclusive.', tag=value_tag
+        )
 
     return number
 
 
 def validate_float_range(
-        number: Any,
-        field_name: str,
-        type_tag: ErrorTag,
-        value_tag: ErrorTag,
-        min_value: float,
-        max_value: float) -> float:
+    number: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag, min_value: float, max_value: float
+) -> float:
     """Validate that a value is a float within a specified range.
 
     Accepts both float and int types for the number parameter,
@@ -678,28 +589,31 @@ def validate_float_range(
     if not isinstance(field_name, str):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_float_range: field_name type: {type(field_name)}. Must be a str.',
-            tag=_ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_FIELD_NAME_TYPE,
+        )
     if not isinstance(min_value, float):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_float_range: min_value type {type(min_value)}. Must be a float.',
-            tag=_ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MIN_VALUE_TYPE,
+        )
     if not isinstance(max_value, float):
         raise SimpleBenchTypeError(
             f'Invalid call to validate_float_range: max_value type {type(max_value)}. Must be a float.',
-            tag=_ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE)
+            tag=_ValidatorsErrorTag.INVALID_MAX_VALUE_TYPE,
+        )
     if min_value > max_value:
         raise SimpleBenchValueError(
             f'Invalid call to validate_float_range: min_value ({min_value}) '
             f'cannot be greater than max_value ({max_value}).',
-            tag=_ValidatorsErrorTag.INVALID_RANGE)
+            tag=_ValidatorsErrorTag.INVALID_RANGE,
+        )
     if not isinstance(number, float | int):  # Allow ints as valid floats
-        raise SimpleBenchTypeError(
-            f'Invalid {field_name} type: {type(number)}. Must be a float or int.',
-            tag=type_tag)
+        raise SimpleBenchTypeError(f'Invalid {field_name} type: {type(number)}. Must be a float or int.', tag=type_tag)
     if not min_value <= number <= max_value:
         raise SimpleBenchValueError(
             f'Invalid {field_name}: {number}. Must be a float between {min_value} and {max_value}, inclusive.',
-            tag=value_tag)
+            tag=value_tag,
+        )
 
     return float(number)
 
@@ -732,35 +646,41 @@ def validate_filename(filename: Any) -> str:
     if not isinstance(filename, str):
         raise SimpleBenchTypeError(
             f'Invalid filename type: {type(filename)}. Must be a str.',
-            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_FILENAME_ARG_TYPE,
+        )
 
     file = Path(filename)
     file_suffix = file.suffix.replace('.', '', 1)
     if file_suffix != '' and len(file_suffix) > 10:
         raise SimpleBenchValueError(
             f"Filename suffix cannot be longer than 10 characters (passed suffix was '{file_suffix}')",
-            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_TOO_LONG)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_TOO_LONG,
+        )
     if file_suffix != '' and not file_suffix.isalnum():
         raise SimpleBenchValueError(
-            "Filename suffix must be alphanumeric (contain only A-Z, a-z, 0-9)",
-            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_NOT_ALPHANUMERIC)
+            'Filename suffix must be alphanumeric (contain only A-Z, a-z, 0-9)',
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_SUFFIX_NOT_ALPHANUMERIC,
+        )
     file_stem = file.stem
     if file_stem == '':
         raise SimpleBenchValueError(
-            "Filename must have a valid stem (name without suffix). It cannot be empty or blank.",
-            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_STEM)
+            'Filename must have a valid stem (name without suffix). It cannot be empty or blank.',
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_INVALID_STEM,
+        )
     if not re.match(_FILENAME_STEM_RE, file_stem):
         raise SimpleBenchValueError(
-            "Filename stem (name without suffix) must consist of "
-            "only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, "
-            "cannot start or end with an underscore or dash, and must be "
-            "at least one character long "
+            'Filename stem (name without suffix) must consist of '
+            'only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, '
+            'cannot start or end with an underscore or dash, and must be '
+            'at least one character long '
             f"(passed stem was '{file_stem}')",
-            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_STEM_NOT_ALPHANUMERIC,
+        )
     if len(filename) > 255:
         raise SimpleBenchValueError(
             f"Filename cannot be longer than 255 characters (passed filename was '{filename}')",
-            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_TOO_LONG)
+            tag=_ValidatorsErrorTag.VALIDATE_FILENAME_TOO_LONG,
+        )
     return filename
 
 
@@ -797,57 +717,66 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
     if not isinstance(allow_empty, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE,
+        )
 
     if not isinstance(dirpath, str):
         raise SimpleBenchTypeError(
             f'Invalid dirpath type: {type(dirpath)}. Must be a str.',
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE,
+        )
 
     if not allow_empty and dirpath == '':
         raise SimpleBenchValueError(
-            "Directory path cannot be an empty string.",
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE)
+            'Directory path cannot be an empty string.',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE,
+        )
 
     if not dirpath and allow_empty:
-        return ""
+        return ''
 
     if len(dirpath) > 255:
         raise SimpleBenchValueError(
             f"Directory path cannot be longer than 255 characters (passed directory path was '{dirpath}')",
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_TOO_LONG)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_TOO_LONG,
+        )
 
     if not re.match(r'^[A-Za-z0-9_\\/-]+$', dirpath):
         raise SimpleBenchValueError(
-            "Directory path must consist of only alphanumeric characters (A-Za-z0-9), underscores (_), dashes (-), "
+            'Directory path must consist of only alphanumeric characters (A-Za-z0-9), underscores (_), dashes (-), '
             f"slashes (/) or backslashes (\\) (passed directory path was '{dirpath}')",
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS,
+        )
 
     # Use the validated 'dirpath' variable consistently and simplify the check.
     if dirpath.startswith(('/', '\\')) or dirpath.endswith(('/', '\\')):
         raise SimpleBenchValueError(
-            "Directory path cannot start or end with a slash (/) or backslash (\\)",
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_START_END)
+            'Directory path cannot start or end with a slash (/) or backslash (\\)',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_START_END,
+        )
 
     path = Path(dirpath)
     for element in path.parts:
         if not element:
             raise SimpleBenchValueError(
-                "Directory path cannot contain empty elements, which can be caused by "
+                'Directory path cannot contain empty elements, which can be caused by '
                 f"consecutive slashes (e.g., '//') (passed directory path was '{dirpath}')",
-                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_EMPTY)
+                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_EMPTY,
+            )
 
         if not re.match(_DIRPATH_ELEMENT_RE, element):
             raise SimpleBenchValueError(
-                "Directory path elements (names between slashes or backslashes) must consist of "
-                "only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, "
-                "cannot start or end with an underscore or dash, and must be "
+                'Directory path elements (names between slashes or backslashes) must consist of '
+                'only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, '
+                'cannot start or end with an underscore or dash, and must be '
                 f"at least one character long (invalid element was '{element}')",
-                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS)
+                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_HAS_INVALID_CHARACTERS,
+            )
         if len(element) > 64:
             raise SimpleBenchValueError(
-                "Directory path elements (names between slashes or backslashes) cannot be longer than 64 characters "
+                'Directory path elements (names between slashes or backslashes) cannot be longer than 64 characters '
                 f"(invalid element was '{element}')",
-                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)
+                tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG,
+            )
 
     return path.as_posix()

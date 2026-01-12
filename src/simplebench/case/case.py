@@ -1,4 +1,5 @@
 """Benchmark case declaration and execution."""
+
 from __future__ import annotations
 
 import inspect
@@ -40,6 +41,7 @@ if TYPE_CHECKING:
     from simplebench.session import Session
 
     from .results import Results
+
     _deferred_imports_done = True
 
 
@@ -48,6 +50,7 @@ def _deferred_imports() -> None:
     global _deferred_imports_done, Report  # pylint: disable=global-statement
     if not _deferred_imports_done:
         from simplebench.report.versions.v1 import Report  # pylint: disable=import-outside-toplevel
+
         _deferred_imports_done = True
 
 
@@ -73,7 +76,8 @@ def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str
                 'Lambda functions do not have stable names.',
                 tag=_CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
                 obj=obj,
-                name='__qualname__')
+                name='__qualname__',
+            )
 
         # Get the filename where the action is defined.
         module_file = Path(inspect.getfile(action)).name
@@ -99,7 +103,7 @@ def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str
 
 
 class Case:
-    '''
+    """
     A benchmark case defines the specific benchmark to be run, including the
     action to be performed, the parameters for the benchmark, and any variations
     of those parameters as well as the reporting group and title for the benchmark.
@@ -163,12 +167,10 @@ class Case:
     .. code-block:: python3
       :caption: Minimal Example
 
-        from simplebench import (
-            Case, BenchmarkRunner, Results, main)
+        from simplebench import Case, BenchmarkRunner, Results, main
 
 
-        def my_benchmark_action(_bench: BenchmarkRunner,
-                                **kwargs) -> Results:
+        def my_benchmark_action(_bench: BenchmarkRunner, **kwargs) -> Results:
             # Perform benchmark action here
             def benchmark_operation():
                 sum(range(1000))  # Example operation to benchmark
@@ -177,45 +179,71 @@ class Case:
 
 
         if __name__ == '__main__':
-            cases_list: list[Case] = [
-                Case(action=my_benchmark_action)
-            ]
+            cases_list: list[Case] = [Case(action=my_benchmark_action)]
             main(cases_list)
 
-    '''
-    __slots__ = ('_group', '_title', '_description', '_action',
-                 '_iterations', '_warmup_iterations', '_min_time', '_max_time',
-                 '_variation_cols', '_kwargs_variations', '_variation_marks', '_runners',
-                 '_callback', '_results', '_options', '_rounds',
-                 '_benchmark_id', '_vcs_info', '_timeout', '_timer', '_cpu_timer',
-                 '_report_cache', '_report_cache_raw_data', '_benchmarks_have_run',
-                 '_timestamp', '_epoch_timestamp', '_machine_info', '_node')
+    """
 
-    @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD,
-                      DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,
-                      DEFAULT_CPU_TIMER=defaults.DEFAULT_CPU_TIMER.__name__,
-                      )
-    def __init__(self, *,
-                 benchmark_id: Optional[str] = None,
-                 vcs_info: Optional[vcs.VCSInfo] = None,
-                 action: FunctionRunner,
-                 group: str = 'default',
-                 title: Optional[str] = None,
-                 description: Optional[str] = None,
-                 iterations: int = defaults.DEFAULT_ITERATIONS,
-                 warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
-                 rounds: int | None = None,
-                 timer: Callable[[], int] | None = None,
-                 cpu_timer: Callable[[], int] | None = None,
-                 min_time: float = defaults.DEFAULT_MIN_TIME,
-                 max_time: float = defaults.DEFAULT_MAX_TIME,
-                 timeout: float | int | None = None,
-                 variation_cols: Optional[dict[str, str]] = None,
-                 kwargs_variations: Optional[dict[str, list[Any]]] = None,
-                 runners: Sequence[type[BenchmarkRunner]] | None = None,
-                 callback: ReporterCallback | None = None,
-                 options: Optional[Iterable[ReporterOptions]] = None,
-                 node: str | None = '') -> None:
+    __slots__ = (
+        '_group',
+        '_title',
+        '_description',
+        '_action',
+        '_iterations',
+        '_warmup_iterations',
+        '_min_time',
+        '_max_time',
+        '_variation_cols',
+        '_kwargs_variations',
+        '_variation_marks',
+        '_runners',
+        '_callback',
+        '_results',
+        '_options',
+        '_rounds',
+        '_benchmark_id',
+        '_vcs_info',
+        '_timeout',
+        '_timer',
+        '_cpu_timer',
+        '_report_cache',
+        '_report_cache_raw_data',
+        '_benchmarks_have_run',
+        '_timestamp',
+        '_epoch_timestamp',
+        '_machine_info',
+        '_node',
+    )
+
+    @format_docstring(
+        DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD,
+        DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__,
+        DEFAULT_CPU_TIMER=defaults.DEFAULT_CPU_TIMER.__name__,
+    )
+    def __init__(
+        self,
+        *,
+        benchmark_id: Optional[str] = None,
+        vcs_info: Optional[vcs.VCSInfo] = None,
+        action: FunctionRunner,
+        group: str = 'default',
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        iterations: int = defaults.DEFAULT_ITERATIONS,
+        warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
+        rounds: int | None = None,
+        timer: Callable[[], int] | None = None,
+        cpu_timer: Callable[[], int] | None = None,
+        min_time: float = defaults.DEFAULT_MIN_TIME,
+        max_time: float = defaults.DEFAULT_MAX_TIME,
+        timeout: float | int | None = None,
+        variation_cols: Optional[dict[str, str]] = None,
+        kwargs_variations: Optional[dict[str, list[Any]]] = None,
+        runners: Sequence[type[BenchmarkRunner]] | None = None,
+        callback: ReporterCallback | None = None,
+        options: Optional[Iterable[ReporterOptions]] = None,
+        node: str | None = '',
+    ) -> None:
         """The only REQUIRED parameter is `action`.
 
         :param benchmark_id: An optional unique identifier for the benchmark case.
@@ -314,15 +342,14 @@ class Case:
                 from simplebench.case import Case, Mark, Results
                 from simplebench.benchmark_runner import SimpleRunner
 
+
                 def my_benchmark_action(_bench: SimpleRunner, mode: str) -> Results:
                     # Benchmark action implementation
                     pass
 
+
                 case = Case(
-                    action=my_benchmark_action,
-                    kwargs_variations={
-                        'mode': [Mark('ModeA', 1), Mark('ModeB', 2)]
-                    }
+                    action=my_benchmark_action, kwargs_variations={'mode': [Mark('ModeA', 1), Mark('ModeB', 2)]}
                 )
 
         :param runners: A list of runners for the benchmark.
@@ -392,7 +419,7 @@ class Case:
         self._variation_marks: dict[str, tuple[str, ...]] = self._generate_variation_marks()
         self._runners: list[type[BenchmarkRunner]] = validate.runners(runners)
         self._callback: ReporterCallback | None = validate_reporter_callback(callback, allow_none=True)
-        self._options : list[ReporterOptions] = validate.options(options)
+        self._options: list[ReporterOptions] = validate.options(options)
         self._results: list[Results] = []  # No validation needed here
         self._vcs_info: vcs.VCSInfo | None = validate.vcs_info(vcs_info or vcs.get_vcs_info())
 
@@ -451,7 +478,7 @@ class Case:
 
     @property
     def description(self) -> str:
-        """ A brief description of the benchmark case.
+        """A brief description of the benchmark case.
 
         If not specified, defaults to the docstring of the action function or
         '(no description)' if no docstring is available.
@@ -486,8 +513,11 @@ class Case:
                 # Perform the benchmark using the provided BenchmarkRunner instance
                 results: Results = bench.run(
                     n=kwargs.get('size', 1),
-                    setup=setup_function, teardown=teardown_function,
-                    action=action_function, **kwargs)
+                    setup=setup_function,
+                    teardown=teardown_function,
+                    action=action_function,
+                    **kwargs,
+                )
                 return results
         """
         return self._action
@@ -617,10 +647,7 @@ class Case:
           :caption: `kwargs_variations` argument example
 
             ...
-            kwargs_variations = {
-                    'size': [10, 100],
-                    'mode': ['fast', 'accurate']
-                },
+            kwargs_variations = ({'size': [10, 100], 'mode': ['fast', 'accurate']},)
             ...
 
         The benchmark will be run 4 times with the following combinations of keyword arguments:
@@ -715,10 +742,7 @@ class Case:
           :caption: `kwargs_variations` argument example
 
             ...
-            kwargs_variations = {
-                    'size': [10, 100],
-                    'mode': ['fast', 'accurate']
-                },
+            kwargs_variations = ({'size': [10, 100], 'mode': ['fast', 'accurate']},)
             ...
 
         The benchmark will be run 4 times with the following combinations of keyword arguments:
@@ -787,7 +811,8 @@ class Case:
             task_name='Case:run',
             progress_max=len(all_variations),
             description=f'Running case {self.title}',
-            color=Color.CYAN)
+            color=Color.CYAN,
+        )
         progress_tracker.reset()
 
         # BenchmarkRunner prioritization is Case().runners -> Session().default_runners -> defaults.DEFAULT_RUNNERS
@@ -811,20 +836,20 @@ class Case:
                     raise SimpleBenchTimeoutError(
                         f'Timeout occurred running benchmark action {str(self.action)} for case '
                         f'"{self.title}" with kwargs {kwargs}: {e}',
-                        tag=_CaseErrorTag.BENCHMARK_ACTION_TIMEOUT_OCCURRED
-                        ) from e
+                        tag=_CaseErrorTag.BENCHMARK_ACTION_TIMEOUT_OCCURRED,
+                    ) from e
                 except Exception as e:
                     raise SimpleBenchBenchmarkError(
                         f'Error occurred running benchmark action {str(self.action)} for case '
                         f'"{self.title}" with kwargs {kwargs}: {e}, {type(e)}',
-                        tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION
-                        ) from e
+                        tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION,
+                    ) from e
                 self._results.append(results)
             progress_tracker.update(
-                description=(
-                    f'Running case {self.title} ({variations_counter + 1}/{len(all_variations)})'),
+                description=(f'Running case {self.title} ({variations_counter + 1}/{len(all_variations)})'),
                 completed=variations_counter + 1,
-                refresh=True)
+                refresh=True,
+            )
         progress_tracker.stop()
         self._mark_case_as_run()
 
@@ -871,11 +896,10 @@ class Case:
         :return: The MachineInfo instance for the benchmark case.
         """
         if self._machine_info is None:
-            self._machine_info = reports.MachineInfo(
-                
-            )
+            self._machine_info = reports.MachineInfo()
 
         return self._machine_info
+
     @property
     def has_run(self) -> bool:
         """Returns whether the benchmarks for this case have been run.
@@ -898,9 +922,7 @@ class Case:
         :return: A JSON serializable representation of the benchmark case and results.
         """
         self.validate_has_run()
-        validate_bool(
-            include_raw_data, 'include_raw_data',
-            _CaseErrorTag.INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL)
+        validate_bool(include_raw_data, 'include_raw_data', _CaseErrorTag.INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL)
 
         if include_raw_data:
             return self._report_with_raw_data()
@@ -928,6 +950,8 @@ class Case:
         """
         if not self.has_run:
             raise SimpleBenchValueError(
-                    message or f'Cannot generate report for case "{self.title}" because benchmarks have not been run yet. '
-                    f'Please run the benchmarks using the `run()` method before generating a report.',
-                    tag=_CaseErrorTag.HAVE_NOT_RUN_CASE)
+                message
+                or f'Cannot generate report for case "{self.title}" because benchmarks have not been run yet. '
+                f'Please run the benchmarks using the `run()` method before generating a report.',
+                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE,
+            )

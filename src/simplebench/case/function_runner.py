@@ -1,4 +1,5 @@
 """ActionRunner protocol for SimpleBench."""
+
 from __future__ import annotations
 
 from typing import Protocol
@@ -22,8 +23,10 @@ class FunctionRunner(Protocol):
             # Benchmark logic here
             def some_function_to_benchmark():
                 pass
+
             return bench.run(action=some_function_to_benchmark, **kwargs)
     """
+
     def __call__(self, _bench: BenchmarkRunner, **kwargs) -> Results:  # type: ignore[reportReturnType]
         """Run the benchmark action.
 

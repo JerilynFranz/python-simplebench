@@ -8,6 +8,7 @@ cannot be changed. The class also provides a method to delete a metric type from
 MetricTypes object.
 
 """
+
 import re
 from collections.abc import MutableMapping
 from typing import Any, Iterable, Iterator
@@ -86,9 +87,7 @@ class MetricTypes(MutableMapping[str, MetricType]):
         """
         return bool(isinstance(key, str) and self._VALID_KEY_REGEX.match(key))
 
-    def _validate_metric_types_iterable(
-            self,
-            metric_types: Iterable[MetricType]) -> list[MetricType]:
+    def _validate_metric_types_iterable(self, metric_types: Iterable[MetricType]) -> list[MetricType]:
         """Validate that the input is an Iterable of MetricType objects.
 
         :param metric_types: An Iterable of MetricType objects.
@@ -96,16 +95,14 @@ class MetricTypes(MutableMapping[str, MetricType]):
         :raises SimpleBenchTypeError: If the input is not an Iterable of MetricType.
         """
         if not isinstance(metric_types, Iterable):
-            raise SimpleBenchTypeError(
-                "Not an Iterable of MetricType",
-                tag=_MetricTypesErrorTag.NOT_ITERABLE_ERROR)
+            raise SimpleBenchTypeError('Not an Iterable of MetricType', tag=_MetricTypesErrorTag.NOT_ITERABLE_ERROR)
 
         # Convert to a list *once* to avoid exhausting the iterator.
         metric_types_list = list(metric_types)
         if not all(isinstance(metric_type, MetricType) for metric_type in metric_types_list):
             raise SimpleBenchTypeError(
-                "Not an Iterable of MetricType",
-                tag=_MetricTypesErrorTag.INVALID_METRICS_LIST_ITEM_TYPE)
+                'Not an Iterable of MetricType', tag=_MetricTypesErrorTag.INVALID_METRICS_LIST_ITEM_TYPE
+            )
 
         return metric_types_list
 
@@ -118,14 +115,13 @@ class MetricTypes(MutableMapping[str, MetricType]):
         :raises SimpleBenchValueError: If the key does not match the regex pattern.
         """
         if not isinstance(key, str):
-            raise SimpleBenchTypeError(
-                "Key must be a string",
-                tag=_MetricTypesErrorTag.TYPE_ERROR)
+            raise SimpleBenchTypeError('Key must be a string', tag=_MetricTypesErrorTag.TYPE_ERROR)
         if not self._VALID_KEY_REGEX.match(key):
             raise SimpleBenchValueError(
-                "Key must start with an uppercase letter or underscore, "
-                "followed by uppercase letters, digits, or underscores",
-                tag=_MetricTypesErrorTag.INVALID_KEY_FORMAT)
+                'Key must start with an uppercase letter or underscore, '
+                'followed by uppercase letters, digits, or underscores',
+                tag=_MetricTypesErrorTag.INVALID_KEY_FORMAT,
+            )
         return key
 
     def __setattr__(self, name: str, value: Any) -> None:
@@ -180,12 +176,12 @@ class MetricTypes(MutableMapping[str, MetricType]):
         name = self._validate_key_name(name)
         if not isinstance(value, MetricType):
             raise SimpleBenchTypeError(
-                "value must be an instance of MetricDefinition",
-                tag=_MetricTypesErrorTag.TYPE_ERROR)
+                'value must be an instance of MetricDefinition', tag=_MetricTypesErrorTag.TYPE_ERROR
+            )
         if name != value.label:
             raise SimpleBenchValueError(
-                "Key must match the label of the MetricDefinition object",
-                tag=_MetricTypesErrorTag.MISMATCHED_KEY)
+                'Key must match the label of the MetricDefinition object', tag=_MetricTypesErrorTag.MISMATCHED_KEY
+            )
         if hasattr(self, name):
             # If the exact same object is already registered, it's a no-op.
             if getattr(self, name) is value:
@@ -193,8 +189,8 @@ class MetricTypes(MutableMapping[str, MetricType]):
 
             # Otherwise, it's a different object trying to use the same key.
             raise SimpleBenchDuplicateKeyError(
-                f"Duplicate key '{name}' found in metrics",
-                tag=_MetricTypesErrorTag.DUPLICATE_KEY)
+                f"Duplicate key '{name}' found in metrics", tag=_MetricTypesErrorTag.DUPLICATE_KEY
+            )
 
         # The key is not yet present, so we can safely set it.
         # Use object.__setattr__ to bypass our custom __setattr__ method.

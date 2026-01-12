@@ -1,4 +1,5 @@
 """Utility functions to get machine information."""
+
 import platform
 from dataclasses import dataclass
 from types import MappingProxyType
@@ -17,6 +18,7 @@ from . import _validate
 @dataclass(frozen=True, kw_only=True)
 class MachineInfo:
     """Data class holding information about the current machine and execution environment."""
+
     node: str
     """The node name of the machine."""
     cpu: CPUInfo
@@ -32,23 +34,29 @@ class MachineInfo:
 
     def __post_init__(self) -> None:
         """Post-initialization to validate the object's fields.
-        
-        The 'execution_environment' field is constructed from the 'python' field for 
+
+        The 'execution_environment' field is constructed from the 'python' field for
         compatibility with report MachineInfo structure.
-        
+
         """
         _validate.node(self.node)
         _validate.cpu_info(self.cpu)
         _validate.python_info(self.python)
         _validate.system_info(self.system)
         _validate.memory_info(self.memory)
-        object.__setattr__(self, '_dict_cache', MappingProxyType({
-                'node': self.node,
-                'cpu': self.cpu.to_dict(),
-                'execution_environment': MappingProxyType({'python': self.python.to_dict()}),
-                'system': self.system.to_dict(),
-                'memory': self.memory.to_dict()
-            }))
+        object.__setattr__(
+            self,
+            '_dict_cache',
+            MappingProxyType(
+                {
+                    'node': self.node,
+                    'cpu': self.cpu.to_dict(),
+                    'execution_environment': MappingProxyType({'python': self.python.to_dict()}),
+                    'system': self.system.to_dict(),
+                    'memory': self.memory.to_dict(),
+                }
+            ),
+        )
         object.__setattr__(self, '_report_machine_info', ReportMachineInfo.from_dict(self._to_dict()))
 
     @property
@@ -73,7 +81,7 @@ class MachineInfo:
 
 class MachineInfoFactory:
     """Factory for creating and caching MachineInfo instances.
-    
+
     This factory uses caching to avoid redundant creation of MachineInfo instances.
     It supports caching based on a cache key and allows for fresh instances to be created
     when requested.
@@ -83,6 +91,7 @@ class MachineInfoFactory:
 
     .. code-block:: python
         from simplebench.environment import MachineInfoFactory
+
         # Machine info with default node name (empty string)
         machine_info_default = MachineInfoFactory.create(node='')
 
@@ -92,9 +101,10 @@ class MachineInfoFactory:
         machine_info_fresh = MachineInfoFactory.create(node=None, fresh=True)
         # Fresh machine info with the real node name
 
-        machine_info_cached = MachineInfoFactory.create(cache_key="my_cache_key")
+        machine_info_cached = MachineInfoFactory.create(cache_key='my_cache_key')
         # Cached machine info with the real node name
     """
+
     _cached_core_info: ClassVar[MachineInfo | None] = None
     _real_node_name: ClassVar[str] = ''
     _keyed_cache: ClassVar[dict[str, 'MachineInfo']] = {}
@@ -102,23 +112,19 @@ class MachineInfoFactory:
     @classmethod
     def _get_core_info(cls) -> MachineInfo:
         """Get core machine info, from cache or by creating it.
-        
+
         :return MachineInfo: The core MachineInfo instance.
         """
         if cls._cached_core_info is None:
             cls._cached_core_info = MachineInfo(
-                node='',
-                cpu=CPUInfo(),
-                python=PythonInfo(),
-                system=SystemInfo(),
-                memory=MemoryInfo()
+                node='', cpu=CPUInfo(), python=PythonInfo(), system=SystemInfo(), memory=MemoryInfo()
             )
         return cls._cached_core_info
 
     @classmethod
     def _get_real_node_name(cls) -> str:
         """Get the real node name, from cache or by calling platform.node().
-        
+
         :return str: The real node name.
         """
         if not cls._real_node_name:
@@ -126,11 +132,7 @@ class MachineInfoFactory:
         return cls._real_node_name
 
     @classmethod
-    def create(cls,
-               node: str | None = '',
-               cache_key: str | None = None,
-               fresh: bool = False,
-               ) -> MachineInfo:
+    def create(cls, node: str | None = '', cache_key: str | None = None, fresh: bool = False) -> MachineInfo:
         """
         Create a MachineInfo instance, using caching to avoid redundant work.
 
@@ -146,8 +148,9 @@ class MachineInfoFactory:
         if cache_key and cache_key in cls._keyed_cache:
             cached_instance = cls._keyed_cache[cache_key]
             if not fresh:
-                if (node is None and cached_instance.node == cls._get_real_node_name()) or \
-                   (node is not None and cached_instance.node == node):
+                if (node is None and cached_instance.node == cls._get_real_node_name()) or (
+                    node is not None and cached_instance.node == node
+                ):
                     return cached_instance
 
         core_info = cls._get_core_info()
@@ -157,11 +160,7 @@ class MachineInfoFactory:
         python_info = PythonInfo() if fresh else core_info.python
 
         instance = MachineInfo(
-            node=final_node,
-            cpu=cpu_info,
-            python=python_info,
-            system=core_info.system,
-            memory=memory_info
+            node=final_node, cpu=cpu_info, python=python_info, system=core_info.system, memory=memory_info
         )
 
         # We DO NOT refresh the cache for existing keys

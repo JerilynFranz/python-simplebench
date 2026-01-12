@@ -7,14 +7,25 @@ This module provides two key `TypeAlias` definitions:
 There are also several related `TypeAlias` definitions for mappings, sequences, and sets
 built upon these core types and is_* functions to validate instances of these types.
 """
+
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence, Set
 from types import MappingProxyType, NoneType
 from typing import TypeAlias
 
-CoreDataTypes: TypeAlias = str | bytes |int | float | bool | complex | None | \
-    Sequence['CoreDataTypes'] | Mapping[str, 'CoreDataTypes'] | Set['CoreDataTypes']
+CoreDataTypes: TypeAlias = (
+    str
+    | bytes
+    | int
+    | float
+    | bool
+    | complex
+    | None
+    | Sequence['CoreDataTypes']
+    | Mapping[str, 'CoreDataTypes']
+    | Set['CoreDataTypes']
+)
 """Type alias for the core data type primitives used in SimpleBench.
 
 These are the primitive data types that can be safely used in various
@@ -35,8 +46,7 @@ Allowed types are:
     - `Set[CoreDataTypes]` (covers set, frozenset)
 """
 
-IMMUTABLE_CORE_DATA_TYPES_TUPLE = (
-    str, bytes, int, float, bool, complex, NoneType, tuple, frozenset, MappingProxyType)
+IMMUTABLE_CORE_DATA_TYPES_TUPLE = (str, bytes, int, float, bool, complex, NoneType, tuple, frozenset, MappingProxyType)
 """Tuple of types representing immutable core data primitive types.
 
 Includes:
@@ -52,9 +62,18 @@ Includes:
     - MappingProxyType
 """
 
-ImmutableCoreDataTypes: TypeAlias = str | bytes | int | float | bool | complex | None | \
-    tuple['ImmutableCoreDataTypes', ...] | frozenset['ImmutableCoreDataTypes'] | \
-    MappingProxyType[str, 'ImmutableCoreDataTypes']
+ImmutableCoreDataTypes: TypeAlias = (
+    str
+    | bytes
+    | int
+    | float
+    | bool
+    | complex
+    | None
+    | tuple['ImmutableCoreDataTypes', ...]
+    | frozenset['ImmutableCoreDataTypes']
+    | MappingProxyType[str, 'ImmutableCoreDataTypes']
+)
 """Type alias for the immutable core data type primitives used in SimpleBench.
 
 These are the immutable primitive data types that can be used in various

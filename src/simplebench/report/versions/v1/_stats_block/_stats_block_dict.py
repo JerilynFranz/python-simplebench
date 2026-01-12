@@ -15,6 +15,7 @@ version 1: :class:`~simplebench.report.versions.v1.StatsBlockSchema`.
 
     These types ensure proper validation and serialization of StatsBlock data
 """
+
 from typing import Sequence
 
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
@@ -24,9 +25,10 @@ __all__ = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
+
 class _RequiredStatsBlockBase(ReportElementTypedDict, total=True):
     """Required base fields for V1 StatsBlock
-    
+
     :param Required[str] name: The name of the statistic.
     :param Required[str] semantic_type: The semantic type of the value.
     :param Required[str] unit: The unit of the value.
@@ -40,6 +42,7 @@ class _RequiredStatsBlockBase(ReportElementTypedDict, total=True):
     :param Required[float] stdev: The standard deviation.
     :param Required[float] relative_stdev: The relative standard deviation.
     """
+
     name: Required[str]
     semantic_type: Required[str]
     unit: Required[str]
@@ -52,6 +55,7 @@ class _RequiredStatsBlockBase(ReportElementTypedDict, total=True):
     maximum: Required[float]
     stdev: Required[float]
     relative_stdev: Required[float]
+
 
 class _AllStatsBlockBase(_RequiredStatsBlockBase, total=False):
     """All base fields for V1 StatsBlock data.
@@ -73,8 +77,10 @@ class _AllStatsBlockBase(_RequiredStatsBlockBase, total=False):
     :param NotRequired[str] description: A description of the statistic.
     :param NotRequired[str] timer: The name of the timer associated with this value.
     """
+
     description: NotRequired[str]
     timer: NotRequired[str]
+
 
 class _StatsBlockData(_AllStatsBlockBase, total=False):
     """Typed dictionary for V1 StatsBlock data used as INPUT.
@@ -105,6 +111,7 @@ class _StatsBlockData(_AllStatsBlockBase, total=False):
     :param NotRequired[int] version: The version of the block's data structure.
     :param NotRequired[str] hash_id: The hash ID of the block (64-character hex string).
     """
+
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
@@ -144,6 +151,7 @@ class StatsBlockData(_StatsBlockData, total=True):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     percentiles: Required[Sequence[float]]
 
 
@@ -170,10 +178,12 @@ class _StatsBlockDict(_AllStatsBlockBase, total=True):
     :param Required[float] rstdev: The relative standard deviation.
     :param Required[tuple[float, ...]] percentiles: The percentiles data (101-item tuple).
     """
+
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
     percentiles: Required[tuple[float, ...]]
+
 
 class _ImmutableStatsBlockDataWithImmutablePercentiles(_StatsBlockData, total=True):
     """Immutable typed dictionary for V1 StatsBlock data used as INPUT (lenient).
@@ -190,6 +200,7 @@ class _ImmutableStatsBlockDataWithImmutablePercentiles(_StatsBlockData, total=Tr
     percentiles is defined here as `tuple[float, ...]` to allow
     only an immutable sequences of floats.
     """
+
     percentiles: Required[tuple[float, ...]]
 
 
@@ -230,6 +241,7 @@ class ImmutableStatsBlockData(_StatsBlockData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]
 
 
@@ -263,6 +275,7 @@ class StatsBlockDict(_AllStatsBlockBase, total=True):
     :param NotRequired[str] description: A description of the statistic.
 
     """
+
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
@@ -279,6 +292,7 @@ class _ImmutableStatsBlockDictBase(_AllStatsBlockBase, total=True):
     percentiles is defined here as `tuple[float, ...]` to allow
     only an immutable sequences of floats.
     """
+
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
@@ -318,4 +332,5 @@ class ImmutableStatsBlockDict(_ImmutableStatsBlockDictBase, total=False):
     :param NotRequired[str] timer: The name of the timer associated with this value.
     :param NotRequired[str] description: A description of the statistic.
     """
+
     __immutable__: NotRequired[Never]

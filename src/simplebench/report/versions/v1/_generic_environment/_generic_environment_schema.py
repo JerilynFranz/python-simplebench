@@ -1,4 +1,5 @@
 """Schema for JSON GenericEnvironment v1 validation."""
+
 # pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
@@ -13,59 +14,56 @@ class GenericEnvironmentSchema(JSONSchema):
     VERSION: int = 1
     """The JSON GenericEnvironment schema version number."""
 
-    TYPE: str = "SimpleBenchGenericEnvironment::V1"
+    TYPE: str = 'SimpleBenchGenericEnvironment::V1'
     """The JSON GenericEnvironment schema type property value for version 1 reports."""
 
-    ID: str = "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/generic-environment.json"
+    ID: str = (
+        'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/generic-environment.json'
+    )
     """The JSON GenericEnvironment schema $id value for version 1 reports."""
 
     _JSON_SCHEMA_DICT: dict[str, object] = {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": ID,
-            "title": "Generic Environment (V1)",
-            "description": "Generic Environment information (V1)",
-            "type": "object",
-            "properties": {
-                "version": {
-                    "description": "The version of the Generic Environment schema",
-                    "type": "integer",
-                    "const": VERSION
-                },
-                "type": {
-                    "title": "Type",
-                    "description": "Type of the Generic Environment schema",
-                    "type": "string",
-                    "const": TYPE
-                },
-                "hash_id": {
-                    "title": "Hash ID",
-                    "description": "Unique 64 byte hexadecimal hash identifier for the Generic Environment data. This can be used to identify the generator and uniqueness of the data.",
-                    "type": "string",
-                    "pattern": "^[a-f0-9]{64}$"
-                },
-                "data": {
-                    "title": "Generic Environment Data",
-                    "description": "Raw Generic Environment data collected from the system.",
-                    "type": "object",
-                    "additionalProperties": True
-                },
+        '$schema': 'https://json-schema.org/draft/2020-12/schema',
+        '$id': ID,
+        'title': 'Generic Environment (V1)',
+        'description': 'Generic Environment information (V1)',
+        'type': 'object',
+        'properties': {
+            'version': {
+                'description': 'The version of the Generic Environment schema',
+                'type': 'integer',
+                'const': VERSION,
             },
-            "required": [
-                "hash_id",
-                "type",
-                "version",
-                "data"
-            ],
-            "additionalProperties": False
-        }
+            'type': {
+                'title': 'Type',
+                'description': 'Type of the Generic Environment schema',
+                'type': 'string',
+                'const': TYPE,
+            },
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the Generic Environment data. This can be used to identify the generator and uniqueness of the data.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
+            },
+            'data': {
+                'title': 'Generic Environment Data',
+                'description': 'Raw Generic Environment data collected from the system.',
+                'type': 'object',
+                'additionalProperties': True,
+            },
+        },
+        'required': ['hash_id', 'type', 'version', 'data'],
+        'additionalProperties': False,
+    }
 
     _JSON_SCHEMA_TEXT: str = JSONEncoder(indent=2).encode(_JSON_SCHEMA_DICT)
     """The JSON schema as a pretty-printed JSON string."""
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption="JSON Schema for ValueBlock V1",
-        intro_text="The JSON schema is as follows:"
+        caption='JSON Schema for ValueBlock V1',
+        intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""
 

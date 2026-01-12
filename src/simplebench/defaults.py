@@ -1,4 +1,5 @@
 """Defaults for SimpleBench."""
+
 import time
 from typing import TYPE_CHECKING
 
@@ -8,7 +9,7 @@ if TYPE_CHECKING:
 # Note: The following constants are defined here for easy access and modification.
 # They are used throughout the SimpleBench framework.
 
-_DEFAULT_RUNNERS: list[type["BenchmarkRunner"]] = []
+_DEFAULT_RUNNERS: list[type['BenchmarkRunner']] = []
 
 
 class _NoDefault:
@@ -19,7 +20,8 @@ _NO_DEFAULT = _NoDefault()
 
 
 def default_runners(
-        runners: list[type["BenchmarkRunner"]] | _NoDefault | None = _NO_DEFAULT) -> list[type["BenchmarkRunner"]]:
+    runners: list[type['BenchmarkRunner']] | _NoDefault | None = _NO_DEFAULT,
+) -> list[type['BenchmarkRunner']]:
     """Default list of runner classes to use for benchmarking.
 
     This function allows you to set or get the default list of runner classes
@@ -41,13 +43,14 @@ def default_runners(
     # THIS IS WHERE THE BASE DEFAULT RUNNERS ARE SET
     if is_first_call or is_reset_call:
         from simplebench.benchmark_runner import SimpleRunner  # pylint: disable=import-outside-toplevel
+
         _DEFAULT_RUNNERS.clear()
         _DEFAULT_RUNNERS.append(SimpleRunner)
         return _DEFAULT_RUNNERS
 
     if isinstance(runners, list):
         if not all(issubclass(runner, BenchmarkRunner) for runner in runners):
-            raise TypeError("All items in runners must be subclasses of BenchmarkRunner")
+            raise TypeError('All items in runners must be subclasses of BenchmarkRunner')
         _DEFAULT_RUNNERS.clear()
         _DEFAULT_RUNNERS.extend(runners)  # Mutate in-place
         return _DEFAULT_RUNNERS
@@ -56,7 +59,7 @@ def default_runners(
         return _DEFAULT_RUNNERS
 
     # If we get here, the input was invalid
-    raise TypeError(f"runners must be a list of BenchmarkRunner subclasses or None, not {type(runners)}")
+    raise TypeError(f'runners must be a list of BenchmarkRunner subclasses or None, not {type(runners)}')
 
 
 DEFAULT_TIMEOUT_GRACE_PERIOD: float = 10.0

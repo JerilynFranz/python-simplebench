@@ -19,10 +19,7 @@ These types ensure proper validation and serialization of CPUInfo data
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import CoreDataMappingType, Never, NotRequired, Required
 
-__all__ = [
-    'CPUInfoData', 'CPUInfoDict', 'ImmutableCPUInfoData',
-    'ImmutableCPUInfoDict'
-]
+__all__ = ['CPUInfoData', 'CPUInfoDict', 'ImmutableCPUInfoData', 'ImmutableCPUInfoDict']
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

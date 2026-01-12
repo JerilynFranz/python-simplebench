@@ -9,6 +9,7 @@ session, and executes the benchmarks based on user-specified options.
 It provides functionality to list available benchmarks, select specific benchmarks to run,
 configure output verbosity, and specify output paths.
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -51,17 +52,23 @@ def _create_parser() -> ArgumentParser:
     parser.add_argument('--progress', action='store_true', help='Enable progress display during benchmarking')
     parser.add_argument('--list', action='store_true', help='List all available benchmarks')
     parser.add_argument(
-        '--run', nargs="+", default='all', metavar='<benchmark>',
-        help='Run specific benchmarks selected by group name or "all" for all benchmarks (default: all)')
-    parser.add_argument('--output_path', default='.benchmarks', metavar='<path>', type=pathlib.Path,
-                        help='Output destination directory (default: .benchmarks)')
+        '--run',
+        nargs='+',
+        default='all',
+        metavar='<benchmark>',
+        help='Run specific benchmarks selected by group name or "all" for all benchmarks (default: all)',
+    )
+    parser.add_argument(
+        '--output_path',
+        default='.benchmarks',
+        metavar='<path>',
+        type=pathlib.Path,
+        help='Output destination directory (default: .benchmarks)',
+    )
     return parser
 
 
-def _configure_session_from_args(
-        session: Session,
-        cases: Sequence[Case],
-        args: Namespace | None) -> None:
+def _configure_session_from_args(session: Session, cases: Sequence[Case], args: Namespace | None) -> None:
     """Configure the Session instance based on parsed command-line arguments.
 
     :param session: The Session instance to configure.
@@ -78,13 +85,10 @@ def _configure_session_from_args(
         if 'all' in args.run:
             session.cases = cases
         else:
-            session.cases = [
-                case for case in cases if case.group in args.run
-            ]
+            session.cases = [case for case in cases if case.group in args.run]
             if not session.cases:
                 error_msg = 'No matching benchmarks found for the specified --run options'
-                raise SimpleBenchUsageError(
-                    error_msg, tag=_CLIErrorTag.NO_MATCHING_CASES)
+                raise SimpleBenchUsageError(error_msg, tag=_CLIErrorTag.NO_MATCHING_CASES)
 
     if args.output_path:
         session.output_path = args.output_path
@@ -103,22 +107,24 @@ def _configure_session_from_args(
     if len(report_keys) == 0:
         error_msg = 'Please specify at least one reporter via command-line flags'
         session.args_parser.print_usage()
-        raise SimpleBenchUsageError(error_msg,
-                                    tag=_CLIErrorTag.NO_REPORTERS_SPECIFIED)
+        raise SimpleBenchUsageError(error_msg, tag=_CLIErrorTag.NO_REPORTERS_SPECIFIED)
 
 
-@format_docstring(KEYBOARD_INTERRUPT=ExitCode.KEYBOARD_INTERRUPT.value,
-                  RUNTIME_ERROR=ExitCode.RUNTIME_ERROR.value,
-                  CLI_ARGUMENTS_ERROR=ExitCode.CLI_ARGUMENTS_ERROR.value,
-                  SUCCESS=ExitCode.SUCCESS.value,
-                  BENCHMARK_TIMED_OUT=ExitCode.BENCHMARK_TIMED_OUT.value,
-                  BENCHMARK_ERROR=ExitCode.BENCHMARK_ERROR.value)
+@format_docstring(
+    KEYBOARD_INTERRUPT=ExitCode.KEYBOARD_INTERRUPT.value,
+    RUNTIME_ERROR=ExitCode.RUNTIME_ERROR.value,
+    CLI_ARGUMENTS_ERROR=ExitCode.CLI_ARGUMENTS_ERROR.value,
+    SUCCESS=ExitCode.SUCCESS.value,
+    BENCHMARK_TIMED_OUT=ExitCode.BENCHMARK_TIMED_OUT.value,
+    BENCHMARK_ERROR=ExitCode.BENCHMARK_ERROR.value,
+)
 def main(  # pylint: disable=too-many-branches,too-many-statements  # noqa: C901
-        benchmark_cases: Optional[Sequence[Case]] = None,
-        *,
-        argv: Optional[list[str]] = None,
-        extra_args: Optional[list[str]] = None,
-        no_exit: bool = False) -> ExitCode:
+    benchmark_cases: Optional[Sequence[Case]] = None,
+    *,
+    argv: Optional[list[str]] = None,
+    extra_args: Optional[list[str]] = None,
+    no_exit: bool = False,
+) -> ExitCode:
     """Main entry point for running benchmarks via a command-line interface.
 
     This function is responsible for setting up the command-line interface,
@@ -165,13 +171,15 @@ def main(  # pylint: disable=too-many-branches,too-many-statements  # noqa: C901
             raise SimpleBenchTypeError(
                 "'extra_args' argument must either be None or a list of str: "
                 f"type of passed 'extra_args' was {type(extra_args).__name__}",
-                tag=_CLIErrorTag.CLI_INVALID_EXTRA_ARGS_TYPE)
+                tag=_CLIErrorTag.CLI_INVALID_EXTRA_ARGS_TYPE,
+            )
         extra_args = list(extra_args)
         if not all(isinstance(item, str) for item in extra_args):
             raise SimpleBenchTypeError(
                 "'extra_args' argument must either be None or a list of str: "
-                "A non-str item was found in the passed list",
-                tag=_CLIErrorTag.CLI_INVALID_EXTRA_ARGS_ITEM_TYPE)
+                'A non-str item was found in the passed list',
+                tag=_CLIErrorTag.CLI_INVALID_EXTRA_ARGS_ITEM_TYPE,
+            )
 
     effective_argv = argv if argv is not None else sys.argv[1:]
     if extra_args:
@@ -201,8 +209,7 @@ def main(  # pylint: disable=too-many-branches,too-many-statements  # noqa: C901
                 return ExitCode.SUCCESS
             sys.exit(int(ExitCode.SUCCESS))
 
-        _configure_session_from_args(
-            session=session, args=session.args, cases=available_cases)
+        _configure_session_from_args(session=session, args=session.args, cases=available_cases)
 
         session.run()
         session.report()

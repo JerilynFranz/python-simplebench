@@ -1,10 +1,16 @@
 """Validation functions for ResultsInfo v1."""
+
 from collections.abc import Mapping
 from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
-from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType, VariationMarksType, ImmutableVariationMarksType
+from simplebench.types import (
+    CoreDataMappingType,
+    ImmutableCoreDataMappingType,
+    VariationMarksType,
+    ImmutableVariationMarksType,
+)
 from simplebench.validators import validate_core_data_mapping, validate_float, validate_string, validate_type
 
 from .. import MetricsObject
@@ -19,10 +25,13 @@ def group(value: str) -> str:
     :raises SimpleBenchValueError: If the group is an empty string.
     """
     return validate_string(
-            value, 'group',
-            _ResultsInfoErrorTag.INVALID_GROUP_TYPE,
-            _ResultsInfoErrorTag.INVALID_GROUP_VALUE_EMPTY_STRING,
-            allow_empty=False)
+        value,
+        'group',
+        _ResultsInfoErrorTag.INVALID_GROUP_TYPE,
+        _ResultsInfoErrorTag.INVALID_GROUP_VALUE_EMPTY_STRING,
+        allow_empty=False,
+    )
+
 
 def title(value: str) -> str:
     """Validate the title property.
@@ -33,10 +42,13 @@ def title(value: str) -> str:
     :raises SimpleBenchValueError: If the title is an empty string.
     """
     return validate_string(
-            value, 'title',
-            _ResultsInfoErrorTag.INVALID_TITLE_TYPE,
-            _ResultsInfoErrorTag.INVALID_TITLE_VALUE_EMPTY_STRING,
-            allow_empty=False)
+        value,
+        'title',
+        _ResultsInfoErrorTag.INVALID_TITLE_TYPE,
+        _ResultsInfoErrorTag.INVALID_TITLE_VALUE_EMPTY_STRING,
+        allow_empty=False,
+    )
+
 
 def description(value: str) -> str:
     """Validate the description property.
@@ -47,10 +59,13 @@ def description(value: str) -> str:
     :raises SimpleBenchValueError: If the description is an empty string.
     """
     return validate_string(
-            value, 'description',
-            _ResultsInfoErrorTag.INVALID_DESCRIPTION_TYPE,
-            _ResultsInfoErrorTag.INVALID_DESCRIPTION_EMPTY_STRING,
-            allow_empty=False)
+        value,
+        'description',
+        _ResultsInfoErrorTag.INVALID_DESCRIPTION_TYPE,
+        _ResultsInfoErrorTag.INVALID_DESCRIPTION_EMPTY_STRING,
+        allow_empty=False,
+    )
+
 
 def n(value: float) -> float:
     """Validate the n property.
@@ -60,13 +75,9 @@ def n(value: float) -> float:
     :raises SimpleBenchTypeError: If n is not a float.
     :raises SimpleBenchValueError: If n is less than 1.
     """
-    value = validate_float(
-        value, 'n',
-        _ResultsInfoErrorTag.INVALID_N_TYPE)
+    value = validate_float(value, 'n', _ResultsInfoErrorTag.INVALID_N_TYPE)
     if value < 1:
-        raise SimpleBenchValueError(
-            f"n must be >= 1, got {value}",
-            tag=_ResultsInfoErrorTag.INVALID_N_VALUE)
+        raise SimpleBenchValueError(f'n must be >= 1, got {value}', tag=_ResultsInfoErrorTag.INVALID_N_VALUE)
     return value
 
 
@@ -81,16 +92,20 @@ def variation_marks(value: VariationMarksType) -> ImmutableVariationMarksType:
     :raises SimpleBenchTypeError: If variation_marks is not a mapping of strings to strings.
     """
     validate_type(
-        value, Mapping, 'variation_marks',
+        value,
+        Mapping,
+        'variation_marks',
         _ResultsInfoErrorTag.INVALID_VARIATION_MARKS_TYPE,
-        message=f"variation_marks must be a Mapping, got {type(value)}"
+        message=f'variation_marks must be a Mapping, got {type(value)}',
     )
     if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
         raise SimpleBenchTypeError(
-            "All keys and values in variation_marks must be strings",
-            tag=_ResultsInfoErrorTag.INVALID_VARIATION_MARKS_CONTENT)
+            'All keys and values in variation_marks must be strings',
+            tag=_ResultsInfoErrorTag.INVALID_VARIATION_MARKS_CONTENT,
+        )
 
     return MappingProxyType(value)
+
 
 def metrics(value: MetricsObject) -> MetricsObject:
     """Validate the metrics property.
@@ -100,16 +115,19 @@ def metrics(value: MetricsObject) -> MetricsObject:
     :raises SimpleBenchTypeError: If metrics is not a list of dictionaries.
     """
     validate_type(
-        value, list, 'metrics',
+        value,
+        list,
+        'metrics',
         _ResultsInfoErrorTag.INVALID_METRICS_TYPE,
-        message=f"metrics must be a list, got {type(value)}"
+        message=f'metrics must be a list, got {type(value)}',
     )
     if not all(isinstance(item, dict) for item in value):
         raise SimpleBenchTypeError(
-            "All items in metrics must be of type dict",
-            tag=_ResultsInfoErrorTag.INVALID_METRICS_CONTENT)
+            'All items in metrics must be of type dict', tag=_ResultsInfoErrorTag.INVALID_METRICS_CONTENT
+        )
 
     return value
+
 
 def extra_info(value: CoreDataMappingType) -> ImmutableCoreDataMappingType:
     """Validate the extra_info property.

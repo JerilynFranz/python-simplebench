@@ -1,4 +1,5 @@
 """Serialization utilities for simplebench."""
+
 import json
 from collections.abc import Mapping, Sequence, Set
 from dataclasses import asdict, is_dataclass
@@ -18,18 +19,19 @@ JSONSerializableType: TypeAlias = JSONPrimitiveTypes | JSONDictTypes | JSONListT
 
 
 def serialize_to_json(
-        obj: object,
-        *,
-        skipkeys: bool = False,
-        ensure_ascii: bool = True,
-        check_circular: bool = True,
-        allow_nan: bool = True,
-        cls: type[JSONEncoder] | None = None,
-        indent: int | str | None = None,
-        separators: tuple[str, str] | None = None,
-        default: Callable[[Any], Any] | None = None,
-        sort_keys: bool = False,
-        **kwargs: Any) -> str:
+    obj: object,
+    *,
+    skipkeys: bool = False,
+    ensure_ascii: bool = True,
+    check_circular: bool = True,
+    allow_nan: bool = True,
+    cls: type[JSONEncoder] | None = None,
+    indent: int | str | None = None,
+    separators: tuple[str, str] | None = None,
+    default: Callable[[Any], Any] | None = None,
+    sort_keys: bool = False,
+    **kwargs: Any,
+) -> str:
     """Serialize an object to a JSON string.
 
     It uses `serialize_to_dict_list_or_primitive` to convert the object to a JSON-compatible dictionary
@@ -52,28 +54,30 @@ def serialize_to_json(
     :param kwargs: Additional keyword arguments to pass to `json.dumps()`.
     :return str: JSON string representation of the object.
     """
-    validate_bool(skipkeys, "skipkeys", _UtilsErrorTag.INVALID_SKIPKEYS_ARG_TYPE)
-    validate_bool(ensure_ascii, "ensure_ascii", _UtilsErrorTag.INVALID_ENSURE_ASCII_ARG_TYPE)
-    validate_bool(check_circular, "check_circular", _UtilsErrorTag.INVALID_CHECK_CIRCULAR_ARG_TYPE)
-    validate_bool(allow_nan, "allow_nan", _UtilsErrorTag.INVALID_ALLOW_NAN_ARG_TYPE)
+    validate_bool(skipkeys, 'skipkeys', _UtilsErrorTag.INVALID_SKIPKEYS_ARG_TYPE)
+    validate_bool(ensure_ascii, 'ensure_ascii', _UtilsErrorTag.INVALID_ENSURE_ASCII_ARG_TYPE)
+    validate_bool(check_circular, 'check_circular', _UtilsErrorTag.INVALID_CHECK_CIRCULAR_ARG_TYPE)
+    validate_bool(allow_nan, 'allow_nan', _UtilsErrorTag.INVALID_ALLOW_NAN_ARG_TYPE)
     if cls is not None:
         if not issubclass(cls, JSONEncoder):
             raise SimpleBenchTypeError(
                 "The 'cls' argument must be a subclass of json.JSONEncoder",
-                tag=_UtilsErrorTag.INVALID_JSON_ENCODER_CLASS_ARG_TYPE)
+                tag=_UtilsErrorTag.INVALID_JSON_ENCODER_CLASS_ARG_TYPE,
+            )
     if indent is not None:
-        validate_type(indent, (int, str), "indent", _UtilsErrorTag.INVALID_INDENT_ARG_TYPE)
+        validate_type(indent, (int, str), 'indent', _UtilsErrorTag.INVALID_INDENT_ARG_TYPE)
     if separators is not None:
-        validate_type(separators, tuple, "separators", _UtilsErrorTag.INVALID_SEPARATORS_ARG_TYPE)
+        validate_type(separators, tuple, 'separators', _UtilsErrorTag.INVALID_SEPARATORS_ARG_TYPE)
         if len(separators) != 2 or not all(isinstance(s, str) for s in separators):
             raise SimpleBenchTypeError(
                 "The 'separators' argument must be a tuple of two strings",
-                tag=_UtilsErrorTag.INVALID_SEPARATORS_ARG_VALUE)
+                tag=_UtilsErrorTag.INVALID_SEPARATORS_ARG_VALUE,
+            )
     if default is not None and not callable(default):
         raise SimpleBenchTypeError(
-            "The 'default' argument must be a callable",
-            tag=_UtilsErrorTag.INVALID_DEFAULT_ARG_TYPE)
-    validate_bool(sort_keys, "sort_keys", _UtilsErrorTag.INVALID_SORT_KEYS_ARG_TYPE)
+            "The 'default' argument must be a callable", tag=_UtilsErrorTag.INVALID_DEFAULT_ARG_TYPE
+        )
+    validate_bool(sort_keys, 'sort_keys', _UtilsErrorTag.INVALID_SORT_KEYS_ARG_TYPE)
 
     serializable = serialize_to_dict_list_or_primitive(obj)
     return json.dumps(
@@ -87,11 +91,13 @@ def serialize_to_json(
         separators=separators,
         default=default,
         sort_keys=sort_keys,
-        **kwargs)
+        **kwargs,
+    )
+
 
 def serialize_to_dict_list_or_primitive(obj: object) -> JSONSerializableType:
     """Serialize an object to a `json.dumps()` compatible dictionary, list, or primitive type.
-    
+
     It recursively converts the object and its nested structures into types that can be
     directly serialized to JSON (i.e., dicts, lists, strings, numbers, booleans, and None).
 
@@ -111,14 +117,15 @@ def serialize_to_dict_list_or_primitive(obj: object) -> JSONSerializableType:
     """
     return _internal_serialize_to_dict_list_or_primitive(obj, set())
 
+
 def _internal_serialize_to_dict_list_or_primitive(current: object, parents: set[int]) -> JSONSerializableType:
     """Serialize an object to a JSON-compatible dictionary, list, or primitive type."""
 
     current_id = id(current)
     if current_id in parents:
         raise SimpleBenchValueError(
-            "Cyclic reference detected during serialization",
-            tag=_UtilsErrorTag.SERIALIZATION_CYCLIC_REFERENCE_DETECTED)
+            'Cyclic reference detected during serialization', tag=_UtilsErrorTag.SERIALIZATION_CYCLIC_REFERENCE_DETECTED
+        )
 
     if isinstance(current, (str, int, float, bool)) or current is None:
         return current
@@ -135,7 +142,7 @@ def _internal_serialize_to_dict_list_or_primitive(current: object, parents: set[
     else:
         # See if we can get a Mapping representation of the current object
         temp_dict = None
-        to_dict = getattr(current, "to_dict", None)
+        to_dict = getattr(current, 'to_dict', None)
         if to_dict is not None and callable(to_dict):
             temp_dict = to_dict()
         elif is_dataclass(current) and not isinstance(current, type):
@@ -148,8 +155,10 @@ def _internal_serialize_to_dict_list_or_primitive(current: object, parents: set[
             return results
 
     raise SimpleBenchTypeError(
-        f"Object of type {type(current).__name__} is not JSON-serializable",
-        tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE)
+        f'Object of type {type(current).__name__} is not JSON-serializable',
+        tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE,
+    )
+
 
 def _internal_serialize_to_dict(current: object, parents: set[int]) -> JSONSerializableType:
     """Serialize an object to a JSON-compatible dictionary representation."""
@@ -157,13 +166,13 @@ def _internal_serialize_to_dict(current: object, parents: set[int]) -> JSONSeria
     current_id = id(current)
     if current_id in parents:
         raise SimpleBenchValueError(
-            "Cyclic reference detected during serialization",
-            tag=_UtilsErrorTag.SERIALIZATION_CYCLIC_REFERENCE_DETECTED)
+            'Cyclic reference detected during serialization', tag=_UtilsErrorTag.SERIALIZATION_CYCLIC_REFERENCE_DETECTED
+        )
     parents.add(current_id)
 
     # See if we can get a Mapping representation of the current object
     temp_dict = None
-    to_dict = getattr(current, "to_dict", None)
+    to_dict = getattr(current, 'to_dict', None)
     if to_dict is not None and callable(to_dict):
         temp_dict = to_dict()
     elif is_dataclass(current) and not isinstance(current, type):
@@ -173,16 +182,18 @@ def _internal_serialize_to_dict(current: object, parents: set[int]) -> JSONSeria
 
     if not isinstance(temp_dict, Mapping):
         raise SimpleBenchTypeError(
-            f"Object of type {type(current).__name__} is not JSON-serializable",
-            tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE)
+            f'Object of type {type(current).__name__} is not JSON-serializable',
+            tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE,
+        )
 
     # Now turn it into a serializable dictionary recursively
     dictionary: JSONDictTypes = {}
     for key, value in temp_dict.items():
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
-                f"Dictionary key of type {type(key).__name__} is not JSON-serializable; keys must be strings",
-                tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE)
+                f'Dictionary key of type {type(key).__name__} is not JSON-serializable; keys must be strings',
+                tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE,
+            )
         if isinstance(value, (str, int, float, bool)) or value is None:
             dictionary[key] = value
         elif isinstance(value, Mapping):
@@ -196,16 +207,18 @@ def _internal_serialize_to_dict(current: object, parents: set[int]) -> JSONSeria
         else:
             raise SimpleBenchTypeError(
                 f"Value of type {type(value).__name__} for key '{key}' is not JSON-serializable",
-                tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE)
+                tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE,
+            )
     return dictionary
+
 
 def _internal_serialize_to_list(current: Sequence | Set, parents: set[int]) -> JSONListTypes:
     """Serialize a sequence to a JSON-compatible list representation."""
     current_id = id(current)
     if current_id in parents:
         raise SimpleBenchValueError(
-            "Cyclic reference detected during serialization",
-            tag=_UtilsErrorTag.SERIALIZATION_CYCLIC_REFERENCE_DETECTED)
+            'Cyclic reference detected during serialization', tag=_UtilsErrorTag.SERIALIZATION_CYCLIC_REFERENCE_DETECTED
+        )
     parents.add(current_id)
 
     try:
@@ -229,6 +242,7 @@ def _internal_serialize_to_list(current: Sequence | Set, parents: set[int]) -> J
             parents.remove(current_id)
         else:
             raise SimpleBenchTypeError(
-                f"Item of type {type(item).__name__} in sequence is not JSON-serializable",
-                tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE)
+                f'Item of type {type(item).__name__} in sequence is not JSON-serializable',
+                tag=_UtilsErrorTag.SERIALIZATION_INVALID_OBJ_TYPE,
+            )
     return lst

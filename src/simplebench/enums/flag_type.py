@@ -22,6 +22,7 @@ class FlagType(str, Enum):
       - TARGET_LIST: List of output targets
       - INVALID: Invalid flag type. This is a testing placeholder and should not be used.
     """
+
     BOOLEAN = 'boolean'
     """Boolean flag type.
 

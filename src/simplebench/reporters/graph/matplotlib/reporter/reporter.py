@@ -3,6 +3,7 @@
 Intended to provide a common base for MatPlotLib based graph reporters,
 such as line plots, bar charts, scatter plots, etc.
 """
+
 from __future__ import annotations
 
 from typing import TypeAlias

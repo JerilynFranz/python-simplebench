@@ -13,15 +13,14 @@ This makes the implementations of VCSInfo backwards compatible with future versi
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base VCSInfo representation at the time of the V1 schema release.
 """
+
 from simplebench.report._base import BaseVCSInfo, JSONSchema
 
 from . import _validate
 from ._typeddict_types import ImmutableVCSInfoDict, VCSInfoData
 from ._vcs_info_schema import VCSInfoSchema
 
-__all__ = [
-    'VCSInfo',
-]
+__all__ = ['VCSInfo']
 
 
 class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
@@ -39,14 +38,17 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
     SCHEMA: type[JSONSchema] = VCSInfoSchema
     """The JSON schema class for version 1 reports."""
 
-    def __init__(self, *,  # pylint: disable=too-many-arguments
-            hash_id: str = '',
-            vcs: str,
-            commit_id: str,
-            commit_datetime: str,
-            branch: str,
-            repository_url: str,
-            is_dirty: bool) -> None:
+    def __init__(
+        self,
+        *,  # pylint: disable=too-many-arguments
+        hash_id: str = '',
+        vcs: str,
+        commit_id: str,
+        commit_datetime: str,
+        branch: str,
+        repository_url: str,
+        is_dirty: bool,
+    ) -> None:
         """Initialize JSONVCSInfo.
 
         :param str hash_id: The unique hash identifier for the machine information.
@@ -91,7 +93,8 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
             skip_fields={'version', 'type'},
             optional_fields={'hash_id', 'version', 'type'},
             defaults={'hash_id': '', 'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE})
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableVCSInfoDict:

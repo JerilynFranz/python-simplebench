@@ -1,4 +1,5 @@
 """Validators for reporters stuff."""
+
 import inspect
 from types import UnionType
 from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast, get_type_hints, overload
@@ -26,6 +27,7 @@ from simplebench.reporters.validators.exceptions import _ReportersValidatorsErro
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+
     _CORE_TYPES_IMPORTED = True
 else:
     Case = None  # pylint: disable=invalid-name  # type: ignore
@@ -43,6 +45,7 @@ def _deferred_core_imports() -> None:
     if _CORE_TYPES_IMPORTED:
         return
     from simplebench.case import Case  # pylint: disable=import-outside-toplevel,redefined-outer-name
+
     _CORE_TYPES_IMPORTED = True
 
 
@@ -59,20 +62,17 @@ def resolve_type_hints(callback: Callable) -> dict[str, type]:
     """
     _deferred_core_imports()
     try:
-        resolved_hints = get_type_hints(
-            callback, globalns=callback.__globals__)  # pyright: ignore[reportAttributeAccessIssue]
+        resolved_hints = get_type_hints(callback, globalns=callback.__globals__)  # pyright: ignore[reportAttributeAccessIssue]
     except (NameError, TypeError) as e:
         # This can happen if an annotation refers to a type that doesn't exist.
         raise SimpleBenchTypeError(
-            f"Invalid callback: {callback}. Could not resolve type hints. Original error: {e}",
-            tag=_ReportersValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS
+            f'Invalid callback: {callback}. Could not resolve type hints. Original error: {e}',
+            tag=_ReportersValidatorsErrorTag.INVALID_CALLBACK_UNRESOLVABLE_HINTS,
         ) from e
     return resolved_hints
 
 
-def validate_call_parameter(call: Callable,
-                            expected_type: type | Any,
-                            param_name: str) -> None:
+def validate_call_parameter(call: Callable, expected_type: type | Any, param_name: str) -> None:
     """Validate a parameter of the callback function.
 
     The parameter must exist, be of the expected type, and be a keyword-only parameter.
@@ -86,25 +86,29 @@ def validate_call_parameter(call: Callable,
     if param_name not in signature.parameters:
         raise SimpleBenchTypeError(
             f'Invalid callback: {call}. Must accept an "{param_name}" parameter.',
-            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER)
+            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER,
+        )
     resolved_hints = resolve_type_hints(call)
     if param_name not in resolved_hints:
         raise SimpleBenchTypeError(
             f'Invalid callback: {call}. "{param_name}" parameter does not have a type hint',
-            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT)
+            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT,
+        )
     param_type = resolved_hints.get(param_name)
     if param_type is not expected_type:
         raise SimpleBenchTypeError(
             f"Invalid callback: {call}. '{param_name}' parameter must be of type "
             f"'{expected_type}', not '{param_type}'.",
-            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE)
+            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE,
+        )
 
     callback_signature = inspect.signature(call)
     param = callback_signature.parameters[param_name]
     if param.kind is not inspect.Parameter.KEYWORD_ONLY:
         raise SimpleBenchTypeError(
             f'Invalid call: {call}. "{param_name}" parameter must be a keyword-only parameter.',
-            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY)
+            tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY,
+        )
 
 
 @overload
@@ -150,7 +154,8 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
     if not callable(callback):
         raise SimpleBenchTypeError(
             f'Invalid callback: {callback}. Must be a callable or None.',
-            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE)
+            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_NOT_CALLABLE_OR_NONE,
+        )
     callback_signature = inspect.signature(callback)
     validate_call_parameter(callback, Case, 'case')
     validate_call_parameter(callback, Metric, 'metric')
@@ -162,13 +167,15 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
             'Invalid callback: {callback}. Must accept exactly four keyword-only parameters '
             'with the following names and types: case: Case, metric: Metric, '
             'output_format: Format, output: Any',
-            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS)
+            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS,
+        )
 
     resolved_hints = resolve_type_hints(callback)
     if 'return' not in resolved_hints:
         raise SimpleBenchTypeError(
             'Invalid call argument. Must have a return type annotation.',
-            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION)
+            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_MISSING_RETURN_ANNOTATION,
+        )
     actual_type = resolved_hints.get('return')
 
     # Normalize NoneType to None for comparison
@@ -177,7 +184,8 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
     if actual_type is not None:
         raise SimpleBenchTypeError(
             f"Invalid call argument. Return type must be None, not '{actual_type}'.",
-            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE)
+            tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_RETURN_ANNOTATION_TYPE,
+        )
 
     return cast(ReporterCallback, callback)
 
@@ -202,7 +210,8 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
     if not callable(renderer):
         raise SimpleBenchTypeError(
             f'Invalid renderer: {renderer}. Must be a callable.',
-            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_NOT_CALLABLE)
+            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_NOT_CALLABLE,
+        )
     signature = inspect.signature(renderer)
     validate_call_parameter(renderer, Case, 'case')
     validate_call_parameter(renderer, Metric, 'metric')
@@ -213,13 +222,15 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
             'Invalid renderer: {renderer}. Must accept exactly three keyword-only '
             'parameters with the following names and types: case: Case, metric: Metric, '
             'options: ReporterOptions',
-            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS)
+            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS,
+        )
 
     resolved_hints = resolve_type_hints(renderer)
     if 'return' not in resolved_hints:
         raise SimpleBenchTypeError(
             'Invalid renderer return type: Must have a return type annotation.',
-            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_MISSING_RETURN_ANNOTATION)
+            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_MISSING_RETURN_ANNOTATION,
+        )
     actual_return_type: type | Any = resolved_hints['return']
     allowed_return_types: set[type | Any] = {str, bytes, Text, Table}
 
@@ -233,13 +244,15 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
         if allowed_return_types.issuperset(return_types):
             return renderer
         raise SimpleBenchTypeError(
-            f"Invalid renderer return type: Return type must only include types "
+            f'Invalid renderer return type: Return type must only include types '
             f"'{allowed_return_types}, 'actual return type of '{actual_return_type} "
             "includes other types'.",
-            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE)
+            tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_RETURN_ANNOTATION_TYPE,
+        )
 
     # Something else entirely. Whatever it is, it is not valid.
     raise SimpleBenchTypeError(
-        f"Unexpected renderer return type: Return type must be one of types "
+        f'Unexpected renderer return type: Return type must be one of types '
         f"'{allowed_return_types}', but found '{actual_return_type}'.",
-        tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE)
+        tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_UNEXPECTED_RETURN_ANNOTATION_TYPE,
+    )

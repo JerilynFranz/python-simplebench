@@ -10,6 +10,7 @@ https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v
 It is the base implemention of the metrics representation property in ResultsInfo objects,
 not a standalone implementation of a JSON report schema.
 """
+
 from abc import ABC
 from typing import TypeAlias
 
@@ -19,8 +20,7 @@ __all__ = []
 
 
 class Metrics(ReportElement, ABC):
-    """Abstract class representing the metrics property for a results info object in a JSON report.
-    """
+    """Abstract class representing the metrics property for a results info object in a JSON report."""
 
     MetricItem: TypeAlias
     """Type alias for allowed metric items in the metrics property.

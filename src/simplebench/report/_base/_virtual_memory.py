@@ -9,6 +9,7 @@ https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v
 
 It is the base implemention of the report memory info representation.
 """
+
 from abc import ABC
 
 from simplebench.base._hydrator import Hydrator

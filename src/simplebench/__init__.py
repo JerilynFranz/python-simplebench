@@ -12,17 +12,17 @@ from simplebench.reporters.rich_table.reporter.options import RichTableOptions
 from simplebench.session import Session
 
 __all__ = [
-    "main",
-    "benchmark",
-    "register_reporter",
-    "Case",
-    "Mark",
-    "Results",
-    "CSVOptions",
-    "JSONOptions",
-    "RichTableOptions",
-    "Session",
-    "Verbosity",
+    'main',
+    'benchmark',
+    'register_reporter',
+    'Case',
+    'Mark',
+    'Results',
+    'CSVOptions',
+    'JSONOptions',
+    'RichTableOptions',
+    'Session',
+    'Verbosity',
 ]
 
 # Optional imports for graph reporting functionality
@@ -31,7 +31,7 @@ try:
     from simplebench.reporters.graph.matplotlib import Style, Theme  # noqa: F401
     from simplebench.reporters.graph.scatterplot.reporter import ScatterPlotOptions  # noqa: F401
 
-    __all__.extend(["ImageType", "Style", "Theme", "ScatterPlotOptions"])
+    __all__.extend(['ImageType', 'Style', 'Theme', 'ScatterPlotOptions'])
 except ImportError:
     pass
 
@@ -39,6 +39,6 @@ except ImportError:
 try:
     from simplebench._pytest import BenchmarkRegistrar  # noqa: F401
 
-    __all__.append("BenchmarkRegistrar")
+    __all__.append('BenchmarkRegistrar')
 except ImportError:
     pass

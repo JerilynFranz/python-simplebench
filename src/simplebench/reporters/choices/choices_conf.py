@@ -14,6 +14,7 @@ a collection of :class:`~simplebench.reporters.choice.ChoiceConf` instances.
 It has no methods of its own; all functionality is inherited from
 :class:`~simplebench.reporters.choices._base._BaseChoices`.
 """
+
 # pylint: disable=useless-parent-delegation
 from __future__ import annotations
 
@@ -35,6 +36,7 @@ class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):
     It is designed to be used in the context of reporters that require
     a collection of :class:`~simplebench.reporters.choice.ChoiceConf` instances.
     """
+
     def __init__(self, choices: Iterable[ChoiceConf] | ChoicesConf | None = None) -> None:
         """Construct a :class:`~.Choices` container.
 
@@ -46,9 +48,7 @@ class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):
         :type choices: Iterable[:class:`~simplebench.reporters.choice.ChoiceConf`] | \
             :class:`~.ChoicesConf` | None
         """
-        super().__init__(item_type=ChoiceConf,
-                         error_tag_enum=_ChoicesErrorTag,
-                         choices=choices)
+        super().__init__(item_type=ChoiceConf, error_tag_enum=_ChoicesErrorTag, choices=choices)
 
     def add(self, choice: ChoiceConf) -> None:
         """Add a :class:`~simplebench.reporters.choice.ChoiceConf` instance to the container.
@@ -68,7 +68,8 @@ class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):
         super().add(choice)
 
     def extend(  # type: ignore[reportIncompatibleMethodOverride, override]
-            self, choices: Iterable[ChoiceConf] | ChoicesConf) -> None:
+        self, choices: Iterable[ChoiceConf] | ChoicesConf
+    ) -> None:
         """Add :class:`~simplebench.reporters.choice.ChoiceConf` instances to the container.
 
         It does so by adding each :class:`~simplebench.reporters.choice.ChoiceConf` in the

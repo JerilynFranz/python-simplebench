@@ -1,4 +1,5 @@
 """``@register_reporter`` decorator and supporting functions."""
+
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter_manager.decorators.register_reporter._error_tags import _RegisterReporterErrorTag
@@ -17,16 +18,14 @@ def register_reporter(cls: type[Reporter]) -> type[Reporter]:
     """
     if not issubclass(cls, Reporter):
         raise SimpleBenchTypeError(
-            "reporter_cls must be a subclass of Reporter",
-            tag=_RegisterReporterErrorTag.INVALID_REPORTER_TYPE_ARG
+            'reporter_cls must be a subclass of Reporter', tag=_RegisterReporterErrorTag.INVALID_REPORTER_TYPE_ARG
         )
     # non-base classes only because the base class cannot be instantiated without
     # required arguments and is not useful as a registered reporter by itself
     # This is mainly to prevent someone from trying to register the base Reporter class itself
     if cls is Reporter:
         raise SimpleBenchTypeError(
-            "Cannot register the base Reporter class",
-            tag=_RegisterReporterErrorTag.BASE_REPORTER_TYPE_ARG
+            'Cannot register the base Reporter class', tag=_RegisterReporterErrorTag.BASE_REPORTER_TYPE_ARG
         )
     if cls in _REGISTERED_REPORTER_TYPES:
         # Already registered, do nothing

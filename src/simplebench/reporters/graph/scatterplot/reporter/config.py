@@ -1,4 +1,5 @@
 """Configuration for a ScatterPlotReporter."""
+
 from __future__ import annotations
 
 from typing import Any, Iterable
@@ -38,7 +39,7 @@ class ScatterPlotConfig(ReporterConfig):
         file_suffix: str | None = None,
         file_unique: bool | None = None,
         file_append: bool | None = None,
-        subdir: str | None = None
+        subdir: str | None = None,
     ) -> None:
         """Initialize the ScatterPlotReporter configuration.
 
@@ -46,8 +47,7 @@ class ScatterPlotConfig(ReporterConfig):
         All arguments are optional. If not provided, the default value for
         ScatterPlotReporter will be used.
         """
-        all_processable_metrics: Metrics = filtered_metrics(
-            metric_categories=MetricCategory.STATISTICAL)
+        all_processable_metrics: Metrics = filtered_metrics(metric_categories=MetricCategory.STATISTICAL)
         all_processable_metrics += metrics_registry['STD_TOTAL_ELAPSED_TIME']
         allowed_targets = {Target.FILESYSTEM, Target.CALLBACK}
         defaults: dict[str, Any] = {
@@ -61,39 +61,56 @@ class ScatterPlotConfig(ReporterConfig):
             'file_unique': True,
             'file_append': False,
             'subdir': 'graphs',
-            'choices': ChoicesConf([
-                ChoiceConf(
-                    flags=['--scatter-plot'], flag_type=FlagType.TARGET_LIST, name='scatter-plot',
-                    description='Output scatter plot graphs of all available benchmark results',
-                    metrics=MetricsCollection(metrics=all_processable_metrics),
-                    targets=allowed_targets,
-                    output_format=Format.GRAPH),
-                ChoiceConf(
-                    flags=['--scatter-plot.ops'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-ops',
-                    description='Create scatter plots of operations per second results.',
-                    metrics=MetricsCollection(metrics=[
-                        metrics_registry['STD_OPS_STATS'],
-                        metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
-                    targets=allowed_targets,
-                    output_format=Format.GRAPH),
-                ChoiceConf(
-                    flags=['--scatter-plot.timings'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-timings',
-                    description='Create scatter plots of timing results.',
-                    metrics=MetricsCollection(metrics=[
-                        metrics_registry['STD_TIMING_STATS'],
-                        metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
-                    targets=allowed_targets,
-                    output_format=Format.GRAPH),
-                ChoiceConf(
-                    flags=['--scatter-plot.memory'], flag_type=FlagType.TARGET_LIST, name='scatter-plot-memory',
-                    description='Create scatter plots of memory usage results.',
-                    metrics=MetricsCollection(metrics=[
-                        metrics_registry['STD_MEMORY_STATS'],
-                        metrics_registry['STD_PEAK_MEMORY_STATS'],
-                        metrics_registry['STD_TOTAL_ELAPSED_TIME']]),
-                    targets=allowed_targets,
-                    output_format=Format.GRAPH),
-            ])
+            'choices': ChoicesConf(
+                [
+                    ChoiceConf(
+                        flags=['--scatter-plot'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='scatter-plot',
+                        description='Output scatter plot graphs of all available benchmark results',
+                        metrics=MetricsCollection(metrics=all_processable_metrics),
+                        targets=allowed_targets,
+                        output_format=Format.GRAPH,
+                    ),
+                    ChoiceConf(
+                        flags=['--scatter-plot.ops'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='scatter-plot-ops',
+                        description='Create scatter plots of operations per second results.',
+                        metrics=MetricsCollection(
+                            metrics=[metrics_registry['STD_OPS_STATS'], metrics_registry['STD_TOTAL_ELAPSED_TIME']]
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.GRAPH,
+                    ),
+                    ChoiceConf(
+                        flags=['--scatter-plot.timings'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='scatter-plot-timings',
+                        description='Create scatter plots of timing results.',
+                        metrics=MetricsCollection(
+                            metrics=[metrics_registry['STD_TIMING_STATS'], metrics_registry['STD_TOTAL_ELAPSED_TIME']]
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.GRAPH,
+                    ),
+                    ChoiceConf(
+                        flags=['--scatter-plot.memory'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='scatter-plot-memory',
+                        description='Create scatter plots of memory usage results.',
+                        metrics=MetricsCollection(
+                            metrics=[
+                                metrics_registry['STD_MEMORY_STATS'],
+                                metrics_registry['STD_PEAK_MEMORY_STATS'],
+                                metrics_registry['STD_TOTAL_ELAPSED_TIME'],
+                            ]
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.GRAPH,
+                    ),
+                ]
+            ),
         }
         # Collect all provided overrides from the method signature, filtering out `None`s.
         overrides = {k: v for k, v in locals().items() if k in defaults and v is not None}

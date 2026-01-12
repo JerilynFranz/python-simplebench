@@ -1,4 +1,5 @@
 """Validation functions for CPUInfo report version v1"""
+
 import re
 from typing import Any, cast
 
@@ -12,11 +13,10 @@ from ._typeddict_types import CPUInfoData, ImmutableCPUInfoData
 
 _HASH_RE = re.compile(r'^[a-f0-9]{64}$')
 
-def hash_id(value: str | None,
-            name: str = 'hash_id',
-            *,
-            allow_none: bool = False,
-            allow_empty: bool = False) -> str | None:
+
+def hash_id(
+    value: str | None, name: str = 'hash_id', *, allow_none: bool = False, allow_empty: bool = False
+) -> str | None:
     """Validate the hash_id property of CPUInfo.
 
     .. note:: This is a composite validator, not a primitive.
@@ -27,7 +27,7 @@ def hash_id(value: str | None,
        first inspecting its implementation to ensure it will avoid a case where
        two validators invoke each other recursively.
 
-    The hash_id must be a 64-character hexadecimal string 
+    The hash_id must be a 64-character hexadecimal string
     or an empty string or None if allowed.
 
     - If passed as None and allow_none is True, None is returned.
@@ -44,20 +44,25 @@ def hash_id(value: str | None,
         return None
 
     value = validate_string(
-        value, name,
+        value,
+        name,
         _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
         _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
         strip=True,
         allow_empty=allow_empty,
-        message=f"{name} must be a string.")
+        message=f'{name} must be a string.',
+    )
     if allow_empty and value == '':
         return None
 
     return validate_string_with_regex(
-              value, name, _HASH_RE,
-              _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
-              _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
-              message=f"{name} must be a 64-character hexadecimal string")
+        value,
+        name,
+        _HASH_RE,
+        _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
+        _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
+        message=f'{name} must be a 64-character hexadecimal string',
+    )
 
 
 def data(value: Any) -> ImmutableCPUInfoData:
@@ -79,7 +84,7 @@ def data(value: Any) -> ImmutableCPUInfoData:
     - The tree structure must not contain cyclic references, unsupported types,
         non-finite floats (NaN, Infinity) or be deeply nested beyond reasonable limits
         (10 levels deep).
-    
+
     :param Any value: The data dictionary to validate. Should conform to `CPUInfoData` TypedDict.
     :return ImmutableCPUInfoData: The validated data dictionary as an immutable mapping.
     :raises SimpleBenchValueError: If any key in the dictionary is not a non-blank,
@@ -89,7 +94,8 @@ def data(value: Any) -> ImmutableCPUInfoData:
     if not isinstance_of_typehint(value, CPUInfoData):
         raise SimpleBenchTypeError(
             "CPUInfo.data must be a 'CPUInfoData' TypedDict - validation failed.",
-            tag=_CPUInfoErrorTag.INVALID_DATA_ARG_TYPE)
+            tag=_CPUInfoErrorTag.INVALID_DATA_ARG_TYPE,
+        )
     if is_immutable(value):
         return cast(ImmutableCPUInfoData, value)
 

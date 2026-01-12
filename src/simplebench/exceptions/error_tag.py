@@ -1,4 +1,5 @@
 """Base class for error tag enums."""
+
 from enum import Enum
 
 

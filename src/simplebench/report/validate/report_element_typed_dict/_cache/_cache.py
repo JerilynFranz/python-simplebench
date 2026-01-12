@@ -1,5 +1,5 @@
-"""Cache for immutable core data type references used in TypedDict validation.
-"""
+"""Cache for immutable core data type references used in TypedDict validation."""
+
 import threading
 from collections import OrderedDict
 
@@ -37,6 +37,7 @@ object id and class it can be reused directly from the cache without re-validati
 _CACHE_LOCK = threading.Lock()
 """Lock for thread-safe access to the cache."""
 
+
 def valid_in_cache(td_cls: type, obj: object) -> bool | None:
     """
     Check if a reference validity is cached and return its validity if found.
@@ -71,6 +72,7 @@ def valid_in_cache(td_cls: type, obj: object) -> bool | None:
             return None
     return None
 
+
 def add_cache_entry(td_cls: type, obj: object, is_valid: bool) -> None:
     """Cache a CacheEntry
 
@@ -81,6 +83,7 @@ def add_cache_entry(td_cls: type, obj: object, is_valid: bool) -> None:
     with _CACHE_LOCK:
         _CACHE.setdefault(item.cache_key, item)
         trim_cache(_MAX_CACHE_SIZE)
+
 
 def trim_cache(size: int) -> None:
     """Trim the cache to the specified size.
@@ -102,24 +105,27 @@ def trim_cache(size: int) -> None:
     """
     if not isinstance(size, int):
         raise SimpleBenchTypeError(
-            'Cache size must be an integer.',
-            tag=_ReportElementTypedDictCacheErrorTag.INVALID_CACHE_SIZE_TYPE)
+            'Cache size must be an integer.', tag=_ReportElementTypedDictCacheErrorTag.INVALID_CACHE_SIZE_TYPE
+        )
 
     # Minimum size to ensure effective caching and no exceptions during trimming
     if size < _MIN_CACHE_SIZE:
         raise SimpleBenchValueError(
             f'Cache size must be at least {_MIN_CACHE_SIZE}.',
-            tag=_ReportElementTypedDictCacheErrorTag.INVALID_CACHE_SIZE)
+            tag=_ReportElementTypedDictCacheErrorTag.INVALID_CACHE_SIZE,
+        )
 
     with _CACHE_LOCK:
         target_size = max(int(size * 0.75), 2)  # backstopped at 2 to prevent exceptions
         while len(_CACHE) > target_size:
             _CACHE.popitem(last=False)
 
+
 def clear_cache() -> None:
     """Clear the entire cache."""
     with _CACHE_LOCK:
         _CACHE.clear()
+
 
 def get_cache_size() -> int:
     """Get the current size of the cache.
@@ -129,8 +135,5 @@ def get_cache_size() -> int:
     with _CACHE_LOCK:
         return len(_CACHE)
 
-__all__ = [
-    "valid_in_cache",
-    "add_cache_entry",
-    "clear_cache",
-]
+
+__all__ = ['valid_in_cache', 'add_cache_entry', 'clear_cache']

@@ -1,4 +1,5 @@
 """Configuration for a PytestReporter."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -31,7 +32,7 @@ class PytestConfig(ReporterConfig):
         file_suffix: str | None = None,
         file_unique: bool | None = None,
         file_append: bool | None = None,
-        subdir: str | None = None
+        subdir: str | None = None,
     ) -> None:
         """Initialize the PytestReporter configuration.
 
@@ -78,7 +79,12 @@ class PytestConfig(ReporterConfig):
         :raises SimpleBenchTypeError: If any provided argument has an invalid type.
         :raises SimpleBenchValueError: If any provided argument has an invalid value or combination of values.
         """
-        init_metrics = {metric_types_registry.OPS, metric_types_registry.TIMING, metric_types_registry.MEMORY, metric_types_registry.PEAK_MEMORY}
+        init_metrics = {
+            metric_types_registry.OPS,
+            metric_types_registry.TIMING,
+            metric_types_registry.MEMORY,
+            metric_types_registry.PEAK_MEMORY,
+        }
         init_targets = {Target.CUSTOM}
 
         defaults: dict[str, Any] = {
@@ -92,33 +98,46 @@ class PytestConfig(ReporterConfig):
             'file_unique': False,
             'file_append': True,
             'subdir': 'rich',
-            'choices': ChoicesConf([
-                ChoiceConf(
-                    flags=['--pytest'], flag_type=FlagType.TARGET_LIST, name='pytest',
-                    description='All results as rich text tables',
-                    metrics=init_metrics,
-                    targets=init_targets,
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--pytest.ops'], flag_type=FlagType.TARGET_LIST, name='pytest-ops',
-                    description=(
-                        'Ops/second results as rich text tables'),
-                    metrics={metric_types_registry.OPS},
-                    targets=init_targets,
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--pytest.timing'], flag_type=FlagType.TARGET_LIST, name='pytest-timing',
-                    description='Timing results as rich text tables',
-                    metrics={metric_types_registry.TIMING},
-                    targets=init_targets,
-                    output_format=Format.RICH_TEXT),
-                ChoiceConf(
-                    flags=['--pytest.memory'], flag_type=FlagType.TARGET_LIST, name='pytest-memory',
-                    description='Memory results as rich text tables',
-                    metrics={metric_types_registry.MEMORY, metric_types_registry.PEAK_MEMORY},
-                    targets=init_targets,
-                    output_format=Format.RICH_TEXT),
-            ])
+            'choices': ChoicesConf(
+                [
+                    ChoiceConf(
+                        flags=['--pytest'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='pytest',
+                        description='All results as rich text tables',
+                        metrics=init_metrics,
+                        targets=init_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                    ChoiceConf(
+                        flags=['--pytest.ops'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='pytest-ops',
+                        description=('Ops/second results as rich text tables'),
+                        metrics={metric_types_registry.OPS},
+                        targets=init_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                    ChoiceConf(
+                        flags=['--pytest.timing'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='pytest-timing',
+                        description='Timing results as rich text tables',
+                        metrics={metric_types_registry.TIMING},
+                        targets=init_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                    ChoiceConf(
+                        flags=['--pytest.memory'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='pytest-memory',
+                        description='Memory results as rich text tables',
+                        metrics={metric_types_registry.MEMORY, metric_types_registry.PEAK_MEMORY},
+                        targets=init_targets,
+                        output_format=Format.RICH_TEXT,
+                    ),
+                ]
+            ),
         }
         # Collect all provided overrides from the method signature, filtering out `None`s.
         overrides = {k: v for k, v in locals().items() if k in defaults and v is not None}

@@ -10,6 +10,9 @@
 		"python-env.workspaceSearchPaths": [
 			"venv"
 		],
-		"python.terminal.useEnvFile": true
+		"python.terminal.useEnvFile": true,
+		"editor.formatOnSave": true,
+		"files.autoSave": "afterDelay",
+		"editor.defaultFormatter": "charliermarsh.ruff"
 	},
 }

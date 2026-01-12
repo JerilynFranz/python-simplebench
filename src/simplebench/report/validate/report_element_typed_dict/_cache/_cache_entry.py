@@ -1,4 +1,5 @@
 """Cache entry for immutable core data type references."""
+
 import threading
 import weakref
 from collections import OrderedDict
@@ -8,18 +9,21 @@ from ._cache_key import CacheKey
 
 class CacheEntry:
     """Cache entry for complex immutable core data types.
-    
+
     :param type td_cls: The type associated with the cached object.
     :property object obj: The object having its validity cached.
     :property bool is_valid: Whether the object is valid.
     :property CacheKey cache_key: The cache key for the cached object.
     """
-    def __init__(self,
-                 td_cls: type,
-                 obj: object,
-                 is_valid: bool,
-                 cache: OrderedDict[CacheKey, "CacheEntry"],
-                 lock: threading.Lock) -> None:
+
+    def __init__(
+        self,
+        td_cls: type,
+        obj: object,
+        is_valid: bool,
+        cache: OrderedDict[CacheKey, 'CacheEntry'],
+        lock: threading.Lock,
+    ) -> None:
         """Initialize the CacheEntry.
 
         :param ImmutableCoreDataTypes value: The immutable core data type value.

@@ -8,6 +8,7 @@ This registry is global. When a :class:`~simplebench.reporters.reporter.Reporter
 it is added to the global registry, and when it is unregistered, it is removed from the
 global registry.
 """
+
 from __future__ import annotations
 
 import importlib
@@ -22,10 +23,10 @@ from .decorators.register_reporter import get_registered_reporters
 from ._error_tags import _ReporterManagerErrorTag
 
 _PREDEFINED_REPORTERS: list[tuple[str, str]] = [
-    ("simplebench.reporters.csv", "CSVReporter"),
-    ("simplebench.reporters.graph.scatterplot", "ScatterPlotReporter"),
-    ("simplebench.reporters.rich_table", "RichTableReporter"),
-    ("simplebench.reporters.json", "JSONReporter"),
+    ('simplebench.reporters.csv', 'CSVReporter'),
+    ('simplebench.reporters.graph.scatterplot', 'ScatterPlotReporter'),
+    ('simplebench.reporters.rich_table', 'RichTableReporter'),
+    ('simplebench.reporters.json', 'JSONReporter'),
 ]
 """Container for all predefined Reporter classes.
 
@@ -37,7 +38,7 @@ These reporters are registered by default in the ReporterManager.
 """
 
 
-class ReporterManager():
+class ReporterManager:
     """Manager for all available :class:`~simplebench.reporters.reporter.Reporter` classes.
 
     This class maintains a registry of :class:`~simplebench.reporters.reporter.Reporter`
@@ -146,39 +147,40 @@ class ReporterManager():
         """
         if type(reporter) is Reporter:  # pylint: disable=unidiomatic-typecheck
             raise SimpleBenchValueError(
-                "Cannot register the base Reporter class itself, please register a subclass instead.",
-                tag=_ReporterManagerErrorTag.CANNOT_REGISTER_BASE_CLASS
+                'Cannot register the base Reporter class itself, please register a subclass instead.',
+                tag=_ReporterManagerErrorTag.CANNOT_REGISTER_BASE_CLASS,
             )
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
-                "reporter must be an instance of Reporter",
-                tag=_ReporterManagerErrorTag.REGISTER_INVALID_REPORTER_ARG
+                'reporter must be an instance of Reporter', tag=_ReporterManagerErrorTag.REGISTER_INVALID_REPORTER_ARG
             )
         choices: Choices = reporter.choices
         if not isinstance(choices, Choices):
             raise SimpleBenchTypeError(
-                "reporter.choices must return a Choices instance",
-                tag=_ReporterManagerErrorTag.REGISTER_INVALID_CHOICES_RETURNED
+                'reporter.choices must return a Choices instance',
+                tag=_ReporterManagerErrorTag.REGISTER_INVALID_CHOICES_RETURNED,
             )
         all_choice_flags: set[str] = self._registered_reporter_choices.all_choice_flags()
         for choice in choices.values():
             if not isinstance(choice, Choice):
                 print(f'Invalid choice type: {choice} ({type(choice)})')
-                raise SimpleBenchTypeError((
-                    "reporter.choices must return a Choices instance containing only Choice instances: "
-                    f'Found {choices} {type(choice)} from reporter {reporter.name!r}'),
-                    tag=_ReporterManagerErrorTag.REGISTER_INVALID_CHOICES_CONTENT
+                raise SimpleBenchTypeError(
+                    (
+                        'reporter.choices must return a Choices instance containing only Choice instances: '
+                        f'Found {choices} {type(choice)} from reporter {reporter.name!r}'
+                    ),
+                    tag=_ReporterManagerErrorTag.REGISTER_INVALID_CHOICES_CONTENT,
                 )
             if choice.name in self._registered_reporter_choices:
                 raise SimpleBenchValueError(
                     f"A reporter with the name '{choice.name}' is already registered.",
-                    tag=_ReporterManagerErrorTag.REGISTER_DUPLICATE_NAME
+                    tag=_ReporterManagerErrorTag.REGISTER_DUPLICATE_NAME,
                 )
             for flag in choice.flags:
                 if flag in all_choice_flags:
                     raise SimpleBenchValueError(
                         f"A reporter with the same CLI argument '{flag}' is already registered.",
-                        tag=_ReporterManagerErrorTag.REGISTER_DUPLICATE_CLI_ARG
+                        tag=_ReporterManagerErrorTag.REGISTER_DUPLICATE_CLI_ARG,
                     )
         self._registered_reporter_choices.extend(choices)
         self._registered_reporters[reporter.name] = reporter
@@ -211,13 +213,12 @@ class ReporterManager():
         """
         if not isinstance(reporter, Reporter):
             raise SimpleBenchTypeError(
-                "reporter must be an instance of Reporter",
-                tag=_ReporterManagerErrorTag.UNREGISTER_INVALID_REPORTER_ARG
+                'reporter must be an instance of Reporter', tag=_ReporterManagerErrorTag.UNREGISTER_INVALID_REPORTER_ARG
             )
         if reporter.name not in self._registered_reporters:
             raise SimpleBenchKeyError(
                 f"No reporter with the name '{reporter.name}' is registered.",
-                tag=_ReporterManagerErrorTag.UNREGISTER_UNKNOWN_NAME
+                tag=_ReporterManagerErrorTag.UNREGISTER_UNKNOWN_NAME,
             )
         for choice in reporter.choices.values():
             del self._registered_reporter_choices[choice.name]
@@ -234,7 +235,7 @@ class ReporterManager():
         if name not in self._registered_reporters:
             raise SimpleBenchKeyError(
                 f"No reporter with the name '{name}' is registered.",
-                tag=_ReporterManagerErrorTag.UNREGISTER_UNKNOWN_NAME
+                tag=_ReporterManagerErrorTag.UNREGISTER_UNKNOWN_NAME,
             )
         self.unregister(self._registered_reporters[name])
 
@@ -261,7 +262,7 @@ class ReporterManager():
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 f'parser must be an ArgumentParser instance - cannot be a {type(parser)}',
-                tag=_ReporterManagerErrorTag.ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG
+                tag=_ReporterManagerErrorTag.ADD_REPORTERS_TO_ARGPARSE_INVALID_PARSER_ARG,
             )
         # Add flags for each registered reporter
         # The reporter is responsible for adding its own flags, so we just call its method

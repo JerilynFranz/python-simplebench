@@ -1,7 +1,5 @@
-"""LazyProperty descriptor module
+"""LazyProperty descriptor module"""
 
-
-"""
 import inspect
 from threading import Lock
 from typing import Callable, Generic, TypeVar
@@ -10,7 +8,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 
 from ._error_tags import _LazyPropertyErrorTags
 
-_T = TypeVar("_T")
+_T = TypeVar('_T')
 
 
 class LazyProperty(Generic[_T]):
@@ -38,9 +36,10 @@ class LazyProperty(Generic[_T]):
             def _compute_heavy_property(self) -> str:
                 # Simulate an expensive calculation
                 self._heavy_computation_was_run = True
-                return "this was a lot of work"
+                return 'this was a lot of work'
 
             heavy_property: LazyProperty[str] = LazyProperty(_compute_heavy_property)
+
 
         # >>> instance = MyClass()
         # >>> instance._heavy_computation_was_run
@@ -53,6 +52,7 @@ class LazyProperty(Generic[_T]):
         # this was a lot of work
         # The computation function is only called once.
     """
+
     def __init__(self, func: Callable[[object], _T]):
         """Initialize the descriptor.
 
@@ -70,7 +70,7 @@ class LazyProperty(Generic[_T]):
         """The function that computes the property's value."""
 
         # Uses __set_name__ to get the name of the attribute
-        self.name: str = ""
+        self.name: str = ''
         """The name of the attribute this descriptor is assigned to."""
 
         self.lock: Lock = Lock()
@@ -129,11 +129,12 @@ class LazyProperty(Generic[_T]):
         """
         if not callable(func):
             raise SimpleBenchTypeError(
-                f"Expected a callable, got {type(func).__name__}",
-                tag=_LazyPropertyErrorTags.INVALID_FUNC)
+                f'Expected a callable, got {type(func).__name__}', tag=_LazyPropertyErrorTags.INVALID_FUNC
+            )
         signature = inspect.signature(func)
         if len(signature.parameters) != 1:
             raise SimpleBenchTypeError(
-                f"Expected a function with exactly one parameter, got {len(signature.parameters)}",
-                tag=_LazyPropertyErrorTags.INVALID_FUNC_WRONG_PARAM_COUNT)
+                f'Expected a function with exactly one parameter, got {len(signature.parameters)}',
+                tag=_LazyPropertyErrorTags.INVALID_FUNC_WRONG_PARAM_COUNT,
+            )
         return func

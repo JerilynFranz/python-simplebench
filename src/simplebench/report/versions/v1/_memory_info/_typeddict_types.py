@@ -13,18 +13,14 @@ version 1: :class:`~simplebench.report.versions.v1.MemoryInfoSchema`.
 
     These types ensure proper validation and serialization of MemoryInfo data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
 from ._swap_memory import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 from ._virtual_memory import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
 
-__all__ = [
-    'MemoryInfoData', 
-    'ImmutableMemoryInfoData',
-    'MemoryInfoDict',
-    'ImmutableMemoryInfoDict',
-]
+__all__ = ['MemoryInfoData', 'ImmutableMemoryInfoData', 'MemoryInfoDict', 'ImmutableMemoryInfoDict']
 
 
 class _RequiredMemoryInfo(ReportElementTypedDict, total=True):
@@ -33,6 +29,7 @@ class _RequiredMemoryInfo(ReportElementTypedDict, total=True):
     :param Required[SwapMemoryObjectDict] swap_memory: Swap memory object.
     :param Required[VirtualMemoryObjectDict] virtual_memory: Virtual memory object.
     """
+
     swap_memory: Required[SwapMemoryObjectDict]
     virtual_memory: Required[VirtualMemoryObjectDict]
 
@@ -51,7 +48,8 @@ class MemoryInfoData(_RequiredMemoryInfo, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     :param NotRequired[str] hash_id: The unique hash identifier for the memory information.
-        """
+    """
+
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
@@ -63,6 +61,7 @@ class _RequiredImmutableMemoryInfo(ReportElementTypedDict, total=True):
     :param Required[ImmutableSwapMemoryObjectDict] swap_memory: Swap memory object.
     :param Required[ImmutableVirtualMemoryObjectDict] virtual_memory: Virtual memory object.
     """
+
     swap_memory: Required[ImmutableSwapMemoryObjectDict]
     virtual_memory: Required[ImmutableVirtualMemoryObjectDict]
 
@@ -85,9 +84,12 @@ class ImmutableMemoryInfoData(_RequiredImmutableMemoryInfo, total=False):
     :param NotRequired[int] version: The version of the block's data structure.
     :param NotRequired[str] hash_id: The unique hash identifier for the memory information.
     """
+
     __immutable__: NotRequired[Never]
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class MemoryInfoDict(_RequiredMemoryInfo, total=True):
     """Typed dictionary for the JSON representation of a V1 MemoryInfo (OUTPUT).
@@ -108,6 +110,7 @@ class MemoryInfoDict(_RequiredMemoryInfo, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the memory information.
     """
+
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
@@ -128,4 +131,5 @@ class ImmutableMemoryInfoDict(MemoryInfoDict, total=False):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the memory information.
     """
+
     __immutable__: NotRequired[Never]

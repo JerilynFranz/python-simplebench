@@ -1,4 +1,5 @@
 """Decorators for simplifying benchmark case creation."""
+
 from __future__ import annotations
 
 from typing import Any, Callable, ParamSpec, Sequence, TypeVar
@@ -29,24 +30,26 @@ R = TypeVar('R')
 
 @format_docstring(DEFAULT_TIMEOUT_GRACE_PERIOD=defaults.DEFAULT_TIMEOUT_GRACE_PERIOD)
 def benchmark(  # noqa: C901
-        group: str | Callable[..., Any] = 'default',  # group can be the function when used without params
-        /, *,  # keyword-only parameters after this point
-        title: str | None = None,
-        benchmark_id: str | None = None,
-        description: str | None = None,
-        runners: Sequence[type[BenchmarkRunner]] | None = None,
-        iterations: int = defaults.DEFAULT_ITERATIONS,
-        warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
-        rounds: int | None = None,
-        timer: Callable[[], int] | None = None,
-        min_time: float = defaults.DEFAULT_MIN_TIME,
-        max_time: float = defaults.DEFAULT_MAX_TIME,
-        timeout: float | None = None,
-        variation_cols: dict[str, str] | None = None,
-        kwargs_variations: dict[str, list[Any]] | None = None,
-        options: list[ReporterOptions] | None = None,
-        n: int | float = 1,
-        use_field_for_n: str | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]:
+    group: str | Callable[..., Any] = 'default',  # group can be the function when used without params
+    /,
+    *,  # keyword-only parameters after this point
+    title: str | None = None,
+    benchmark_id: str | None = None,
+    description: str | None = None,
+    runners: Sequence[type[BenchmarkRunner]] | None = None,
+    iterations: int = defaults.DEFAULT_ITERATIONS,
+    warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
+    rounds: int | None = None,
+    timer: Callable[[], int] | None = None,
+    min_time: float = defaults.DEFAULT_MIN_TIME,
+    max_time: float = defaults.DEFAULT_MAX_TIME,
+    timeout: float | None = None,
+    variation_cols: dict[str, str] | None = None,
+    kwargs_variations: dict[str, list[Any]] | None = None,
+    options: list[ReporterOptions] | None = None,
+    n: int | float = 1,
+    use_field_for_n: str | None = None,
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """A decorator to register a function as a benchmark case.
 
     This module uses a global registry to store benchmark cases created via the
@@ -176,98 +179,99 @@ def benchmark(  # noqa: C901
         func = group
         group = 'default'
 
-    group = validate_non_blank_string(group, 'group',
-                                      _BenchmarkErrorTag.BENCHMARK_GROUP_TYPE,
-                                      _BenchmarkErrorTag.BENCHMARK_GROUP_VALUE)
+    group = validate_non_blank_string(
+        group, 'group', _BenchmarkErrorTag.BENCHMARK_GROUP_TYPE, _BenchmarkErrorTag.BENCHMARK_GROUP_VALUE
+    )
 
     # we can't fully validate title and description yet if they are None
     # because they will be inferred later from the function being decorated
     if title is not None:
         title = validate_non_blank_string(
-            title, 'title',
-            _BenchmarkErrorTag.BENCHMARK_TITLE_TYPE,
-            _BenchmarkErrorTag.BENCHMARK_TITLE_VALUE)
+            title, 'title', _BenchmarkErrorTag.BENCHMARK_TITLE_TYPE, _BenchmarkErrorTag.BENCHMARK_TITLE_VALUE
+        )
 
     if description is not None:
         description = validate_non_blank_string(
-            description, 'description',
+            description,
+            'description',
             _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_TYPE,
-            _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_VALUE)
+            _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_VALUE,
+        )
 
     runners = Case.validate_runners(runners)
 
     iterations = validate_positive_int(
-        iterations, 'iterations',
+        iterations,
+        'iterations',
         _BenchmarkErrorTag.BENCHMARK_ITERATIONS_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_ITERATIONS_VALUE)
+        _BenchmarkErrorTag.BENCHMARK_ITERATIONS_VALUE,
+    )
 
     warmup_iterations = validate_non_negative_int(
-        warmup_iterations, 'warmup_iterations',
+        warmup_iterations,
+        'warmup_iterations',
         _BenchmarkErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE)
+        _BenchmarkErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE,
+    )
 
     if rounds is not None:
         rounds = validate_positive_int(
-            rounds, 'rounds',
-            _BenchmarkErrorTag.BENCHMARK_ROUNDS_TYPE,
-            _BenchmarkErrorTag.BENCHMARK_ROUNDS_VALUE)
+            rounds, 'rounds', _BenchmarkErrorTag.BENCHMARK_ROUNDS_TYPE, _BenchmarkErrorTag.BENCHMARK_ROUNDS_VALUE
+        )
 
     timer = validate_timer(
-        timer, 'timer',
-        _BenchmarkErrorTag.BENCHMARK_TIMER_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_TIMER_RETURN_TYPE)
+        timer, 'timer', _BenchmarkErrorTag.BENCHMARK_TIMER_TYPE, _BenchmarkErrorTag.BENCHMARK_TIMER_RETURN_TYPE
+    )
 
     min_time = validate_positive_float(
-        min_time, 'min_time',
-        _BenchmarkErrorTag.BENCHMARK_MIN_TIME_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_MIN_TIME_VALUE)
+        min_time, 'min_time', _BenchmarkErrorTag.BENCHMARK_MIN_TIME_TYPE, _BenchmarkErrorTag.BENCHMARK_MIN_TIME_VALUE
+    )
 
     max_time = validate_positive_float(
-        max_time, 'max_time',
-        _BenchmarkErrorTag.BENCHMARK_MAX_TIME_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_MAX_TIME_VALUE)
+        max_time, 'max_time', _BenchmarkErrorTag.BENCHMARK_MAX_TIME_TYPE, _BenchmarkErrorTag.BENCHMARK_MAX_TIME_VALUE
+    )
 
     timeout_value = max_time + defaults.DEFAULT_TIMEOUT_GRACE_PERIOD if timeout is None else timeout
     timeout = validate_positive_float(
-        timeout_value, 'timeout',
-        _BenchmarkErrorTag.BENCHMARK_TIMEOUT_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_TIMEOUT_VALUE)
+        timeout_value, 'timeout', _BenchmarkErrorTag.BENCHMARK_TIMEOUT_TYPE, _BenchmarkErrorTag.BENCHMARK_TIMEOUT_VALUE
+    )
     if timeout <= 0:
         raise SimpleBenchValueError(
             "The 'timeout' parameter to the @benchmark decorator must be a positive float or None.",
-            tag=_BenchmarkErrorTag.BENCHMARK_TIMEOUT_CANNOT_BE_ZERO_OR_NEGATIVE)
+            tag=_BenchmarkErrorTag.BENCHMARK_TIMEOUT_CANNOT_BE_ZERO_OR_NEGATIVE,
+        )
 
-    n = validate_positive_float(
-        n, 'n',
-        _BenchmarkErrorTag.BENCHMARK_N_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_N_VALUE)
+    n = validate_positive_float(n, 'n', _BenchmarkErrorTag.BENCHMARK_N_TYPE, _BenchmarkErrorTag.BENCHMARK_N_VALUE)
 
     kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
-    variation_cols = Case.validate_variation_cols(variation_cols=variation_cols,
-                                                  kwargs_variations=kwargs_variations)
+    variation_cols = Case.validate_variation_cols(variation_cols=variation_cols, kwargs_variations=kwargs_variations)
     options = Case.validate_options(options)
 
     if not isinstance(use_field_for_n, str) and use_field_for_n is not None:
-        raise SimpleBenchTypeError("The 'use_field_for_n' parameter to the @benchmark decorator "
-                                   "must be a string if passed.",
-                                   tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE)
+        raise SimpleBenchTypeError(
+            "The 'use_field_for_n' parameter to the @benchmark decorator must be a string if passed.",
+            tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE,
+        )
 
-    if (isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict)):
+    if isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict):
         if use_field_for_n not in kwargs_variations:
             raise SimpleBenchValueError(
                 "The 'use_field_for_n' parameter to the @benchmark decorator must "
-                f"match one of the kwargs_variations keys: {list(kwargs_variations.keys())}",
-                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS)
+                f'match one of the kwargs_variations keys: {list(kwargs_variations.keys())}',
+                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS,
+            )
         if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
             raise SimpleBenchValueError(
                 f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
                 "must all be positive integers when used with 'use_field_for_n'.",
-                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE)
+                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE,
+            )
 
     vcs_info = get_vcs_info()
 
     def _decorator(func):
         """The actual decorator that wraps the user's function."""
+
         def case_action_wrapper(_bench: BenchmarkRunner, **kwargs) -> Any:
             """This wrapper becomes the `action` for the `Case`.
 
@@ -282,7 +286,8 @@ def benchmark(  # noqa: C901
             if not isinstance(n_for_run, (int, float)) or n_for_run <= 0:
                 raise SimpleBenchValueError(
                     "The 'n' value determined for the benchmark run must be a positive integer.",
-                    tag=_BenchmarkErrorTag.BENCHMARK_N_FOR_RUN_INVALID_VALUE)
+                    tag=_BenchmarkErrorTag.BENCHMARK_N_FOR_RUN_INVALID_VALUE,
+                )
             return _bench.run(action=func, n=n_for_run, kwargs=kwargs)
 
         final_benchmark_id = benchmark_id
@@ -290,9 +295,11 @@ def benchmark(  # noqa: C901
             final_benchmark_id = generate_benchmark_id(obj=func, action=func)
 
         final_benchmark_id = validate_non_blank_string(
-            final_benchmark_id, 'benchmark_id',
+            final_benchmark_id,
+            'benchmark_id',
             _BenchmarkErrorTag.BENCHMARK_ID_TYPE,
-            _BenchmarkErrorTag.BENCHMARK_ID_VALUE)
+            _BenchmarkErrorTag.BENCHMARK_ID_VALUE,
+        )
 
         # Create the Case instance, using sensible defaults from the function.
         if title is None:
@@ -300,7 +307,7 @@ def benchmark(  # noqa: C901
         else:
             inferred_title = title
         if description is None:
-            inferred_description = '(no description)'if func.__doc__ is None else func.__doc__
+            inferred_description = '(no description)' if func.__doc__ is None else func.__doc__
         else:
             inferred_description = description
 
@@ -353,10 +360,10 @@ def clear_registered_cases() -> None:
 
 
 def validate_timer(
-        timer: Callable[[], int] | None,
-        param_name: str,
-        type_error_tag: _BenchmarkErrorTag,
-        return_type_error_tag: _BenchmarkErrorTag
+    timer: Callable[[], int] | None,
+    param_name: str,
+    type_error_tag: _BenchmarkErrorTag,
+    return_type_error_tag: _BenchmarkErrorTag,
 ) -> Callable[[], int] | None:
     """Validate the timer parameter for the benchmark decorator.
 
@@ -372,13 +379,15 @@ def validate_timer(
         if not callable(timer):
             raise SimpleBenchTypeError(
                 f"The '{param_name}' parameter to the @benchmark decorator must be a callable if provided.",
-                tag=type_error_tag)
+                tag=type_error_tag,
+            )
 
         test_value = timer()
         if not isinstance(test_value, int):
             raise SimpleBenchTypeError(
                 f"The callable provided for the '{param_name}' parameter to the @benchmark decorator "
-                "must return an int.",
-                tag=return_type_error_tag)
+                'must return an int.',
+                tag=return_type_error_tag,
+            )
 
     return timer

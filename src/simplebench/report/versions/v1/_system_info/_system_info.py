@@ -1,4 +1,5 @@
 """V1 SystemInfo implementation."""
+
 from simplebench.report._base import BaseSystemInfo, JSONSchema
 
 from . import _validate
@@ -21,12 +22,7 @@ class SystemInfo(BaseSystemInfo):
     ID: str = SCHEMA.ID
     """The JSON SystemInfo identifier property value for version 1 reports."""
 
-    def __init__(self, *,
-                 hash_id: str,
-                 system: str,
-                 system_version: str,
-                 release: str,
-                 machine: str) -> None:
+    def __init__(self, *, hash_id: str, system: str, system_version: str, release: str, machine: str) -> None:
         """Initialize the SystemInfo instance.
 
         :param str hash_id: The unique hash identifier for the system info.
@@ -67,7 +63,8 @@ class SystemInfo(BaseSystemInfo):
             skip_fields={'version', 'type'},
             optional_fields={'hash_id', 'version', 'type'},
             defaults={'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE})
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableSystemInfoDict:

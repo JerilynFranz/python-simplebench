@@ -23,6 +23,7 @@ It provides the following exports:
     - `is_session()`: A type-guard function to check if an object is a `Session` instance.
 
 """
+
 from .case_type_proxy import CaseTypeProxy, is_case
 from .choice_type_proxy import ChoiceTypeProxy, is_choice
 from .reporter_type_proxy import ReporterTypeProxy, is_reporter

@@ -8,6 +8,7 @@ It wraps several :module:`platform` module functions to provide a clean,
 typed set of properties to access system, release, version, machine, and node.
 
 """
+
 import dataclasses
 import platform
 from types import MappingProxyType
@@ -17,6 +18,7 @@ from simplebench.report.versions.v1 import ImmutableSystemInfoData
 
 if TYPE_CHECKING:
     from typing import ClassVar
+
 
 @dataclasses.dataclass(frozen=True)
 class SystemInfo:
@@ -36,6 +38,7 @@ class SystemInfo:
     in other parts of the application or reporting tools and makes it possible to
     serialize (such as by pickling) this information if needed.
     """
+
     system: str
     """The System OS identifier string.
 

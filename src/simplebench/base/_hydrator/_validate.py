@@ -1,4 +1,5 @@
 """Validation functions for Hydrator parameters."""
+
 import inspect
 from collections.abc import Callable, Iterable, Mapping, Sequence, Set
 from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
@@ -17,19 +18,17 @@ def data(value: Mapping[str, Any]) -> dict[str, Any]:
     :return: A validated, mutable `dict` copy of the data.
     :raises: SimpleBenchTypeError if the data dictionary is invalid.
     """
-    validate_type(value, Mapping, 'data',
-                  _HydratorErrorTag.INVALID_DATA_TYPE)
+    validate_type(value, Mapping, 'data', _HydratorErrorTag.INVALID_DATA_TYPE)
 
     if not all(isinstance(key, str) for key in value.keys()):
         raise SimpleBenchTypeError(
-            "All keys in the data dictionary must be of type 'str'",
-            tag=_HydratorErrorTag.INVALID_DATA_KEY_TYPE)
+            "All keys in the data dictionary must be of type 'str'", tag=_HydratorErrorTag.INVALID_DATA_KEY_TYPE
+        )
 
     return dict(value)
 
 
-def allowed(
-        allowed_fields: Mapping[str, Any]) -> Mapping[str, Any]:
+def allowed(allowed_fields: Mapping[str, Any]) -> Mapping[str, Any]:
     """Validate the allowed parameters dictionary.
 
     A valid type annotation is a simple type (e.g., `int`) or a generic
@@ -40,13 +39,12 @@ def allowed(
     :raises: SimpleBenchTypeError if the allowed parameters dictionary is invalid.
     :raises: SimpleBenchValueError if the allowed parameters dictionary is empty.
     """
-    validate_type(allowed_fields, Mapping, 'allowed',
-                  _HydratorErrorTag.INVALID_ALLOWED_TYPE)
+    validate_type(allowed_fields, Mapping, 'allowed', _HydratorErrorTag.INVALID_ALLOWED_TYPE)
 
     if len(allowed_fields) == 0:
         raise SimpleBenchValueError(
-            "The `allowed` dictionary cannot be empty",
-            tag=_HydratorErrorTag.INVALID_ALLOWED_EMPTY)
+            'The `allowed` dictionary cannot be empty', tag=_HydratorErrorTag.INVALID_ALLOWED_EMPTY
+        )
 
     for field in allowed_fields.values():
         # A valid type annotation is either a simple type (like `int`)
@@ -55,8 +53,9 @@ def allowed(
         is_generic_type = hasattr(field, '__origin__')
         if not (is_simple_type or is_generic_type):
             raise SimpleBenchTypeError(
-                f"All values in `allowed` must be a valid type annotation, but got {allowed_fields}",
-                tag=_HydratorErrorTag.INVALID_ALLOWED_VALUE_TYPE)
+                f'All values in `allowed` must be a valid type annotation, but got {allowed_fields}',
+                tag=_HydratorErrorTag.INVALID_ALLOWED_VALUE_TYPE,
+            )
 
     return allowed_fields
 
@@ -68,15 +67,21 @@ def skip(skip_fields: Iterable[str], allowed_fields: Mapping[str, Any]) -> set[s
     :return: The validated skip set.
     :raises: SimpleBenchTypeError if the skip iterable is invalid.
     """
-    skip_set = set(validate_iterable_of_type(
-        skip_fields, str, 'skip',
-        _HydratorErrorTag.INVALID_SKIP_TYPE,
-        _HydratorErrorTag.INVALID_SKIP_ITEM_TYPE,
-        allow_empty=True, exact_type=False))
+    skip_set = set(
+        validate_iterable_of_type(
+            skip_fields,
+            str,
+            'skip',
+            _HydratorErrorTag.INVALID_SKIP_TYPE,
+            _HydratorErrorTag.INVALID_SKIP_ITEM_TYPE,
+            allow_empty=True,
+            exact_type=False,
+        )
+    )
     if not all(field in allowed_fields for field in skip_set):
         raise SimpleBenchValueError(
-            "All values in `skip` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_SKIP_VALUE)
+            'All values in `skip` must match a key in `allowed`', tag=_HydratorErrorTag.INVALID_SKIP_VALUE
+        )
 
     return skip_set
 
@@ -90,15 +95,21 @@ def optional(optional_fields: Iterable[str], allowed_fields: Mapping[str, Any]) 
     :raises: SimpleBenchTypeError if the optional iterable is invalid.
     :raises: SimpleBenchValueError if the optional iterable contains invalid values.
     """
-    optional_set = set(validate_iterable_of_type(
-        optional_fields, str, 'optional',
-        _HydratorErrorTag.INVALID_OPTIONAL_TYPE,
-        _HydratorErrorTag.INVALID_OPTIONAL_ITEM_TYPE,
-        allow_empty=True, exact_type=False))
+    optional_set = set(
+        validate_iterable_of_type(
+            optional_fields,
+            str,
+            'optional',
+            _HydratorErrorTag.INVALID_OPTIONAL_TYPE,
+            _HydratorErrorTag.INVALID_OPTIONAL_ITEM_TYPE,
+            allow_empty=True,
+            exact_type=False,
+        )
+    )
     if not all(field in allowed_fields for field in optional_set):
         raise SimpleBenchValueError(
-            "All values in `optional` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_OPTIONAL_ITEM_VALUE)
+            'All values in `optional` must match a key in `allowed`', tag=_HydratorErrorTag.INVALID_OPTIONAL_ITEM_VALUE
+        )
 
     return optional_set
 
@@ -114,13 +125,13 @@ def defaults(default_values: Mapping[str, Any], optional_fields: set[str]) -> Ma
     """
     if not isinstance(default_values, Mapping):
         raise SimpleBenchTypeError(
-            "The `default` parameter must be of type `Mapping`",
-            tag=_HydratorErrorTag.INVALID_DEFAULT_TYPE)
+            'The `default` parameter must be of type `Mapping`', tag=_HydratorErrorTag.INVALID_DEFAULT_TYPE
+        )
 
     if not all(field in optional_fields for field in default_values.keys()):
         raise SimpleBenchValueError(
-            "All keys in `default` must match a key in `optional`",
-            tag=_HydratorErrorTag.INVALID_DEFAULT_KEY)
+            'All keys in `default` must match a key in `optional`', tag=_HydratorErrorTag.INVALID_DEFAULT_KEY
+        )
 
     return default_values
 
@@ -136,20 +147,20 @@ def match_on(match_on_param: Mapping[str, Any], allowed_fields: Mapping[str, Any
     """
     if not isinstance(match_on_param, Mapping):
         raise SimpleBenchTypeError(
-            "The `match_on` parameter must be of type `Mapping`",
-            tag=_HydratorErrorTag.INVALID_MATCH_ON_TYPE)
+            'The `match_on` parameter must be of type `Mapping`', tag=_HydratorErrorTag.INVALID_MATCH_ON_TYPE
+        )
 
     if not all(field in allowed_fields for field in match_on_param.keys()):
         raise SimpleBenchValueError(
-            "All keys in `match_on` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_MATCH_ON_KEY)
+            'All keys in `match_on` must match a key in `allowed`', tag=_HydratorErrorTag.INVALID_MATCH_ON_KEY
+        )
 
     return match_on_param
 
 
 def process_as(
-        process_as_handlers: Mapping[str, Callable[[Any], Any]],
-        allowed_fields: Mapping[str, Any]) -> Mapping[str, Callable[[Any], Any]]:
+    process_as_handlers: Mapping[str, Callable[[Any], Any]], allowed_fields: Mapping[str, Any]
+) -> Mapping[str, Callable[[Any], Any]]:
     """Validate the process_as mapping.
 
     :param Mapping[str, Callable[[Any], Any]] process_as_handlers: The process_as mapping to validate.
@@ -160,37 +171,40 @@ def process_as(
     """
     if not isinstance(process_as_handlers, Mapping):
         raise SimpleBenchTypeError(
-            "The `process_as` parameter must be of type `Mapping`",
-            tag=_HydratorErrorTag.INVALID_PROCESS_AS_TYPE)
+            'The `process_as` parameter must be of type `Mapping`', tag=_HydratorErrorTag.INVALID_PROCESS_AS_TYPE
+        )
 
     if not all(field in allowed_fields for field in process_as_handlers.keys()):
         raise SimpleBenchValueError(
-            "All keys in `process_as` must match a key in `allowed`",
-            tag=_HydratorErrorTag.INVALID_PROCESS_AS_KEY)
+            'All keys in `process_as` must match a key in `allowed`', tag=_HydratorErrorTag.INVALID_PROCESS_AS_KEY
+        )
 
     for call in process_as_handlers.values():
         # must be callable with exactly one parameter and a return type annotation
         if not callable(call):
             raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_CALLABLE)
+                'All values in `process_as` must be callable', tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_CALLABLE
+            )
 
         call_signature = inspect.signature(call)
         if len(call_signature.parameters) != 1:
             raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable with exactly one parameter",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_TOO_MANY_PARAMETERS)
+                'All values in `process_as` must be callable with exactly one parameter',
+                tag=_HydratorErrorTag.INVALID_PROCESS_AS_TOO_MANY_PARAMETERS,
+            )
         param = list(call_signature.parameters.values())[0]
         if param.kind not in [inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.POSITIONAL_ONLY]:
             raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable with a single positional parameter",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_POSITIONAL)
+                'All values in `process_as` must be callable with a single positional parameter',
+                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NOT_POSITIONAL,
+            )
 
         return_annotation = call_signature.return_annotation
         if return_annotation == inspect.Parameter.empty:
             raise SimpleBenchTypeError(
-                "All values in `process_as` must be callable with a return type annotation",
-                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NO_RETURN_ANNOTATION)
+                'All values in `process_as` must be callable with a return type annotation',
+                tag=_HydratorErrorTag.INVALID_PROCESS_AS_NO_RETURN_ANNOTATION,
+            )
 
     return process_as_handlers
 
@@ -199,20 +213,19 @@ def allowed_keys_against_data(data_values: dict[str, Any], allowed_fields_map: M
     """Validate that all keys in the data dictionary are allowed.
 
     This does not check types, only that the keys exist in the allowed fields.
-    
+
     :param dict[str, Any] data_values: The data dictionary to validate.
     :param Mapping[str, Any] allowed_fields_map: The allowed fields map.
     :raises: SimpleBenchValueError if any key is not allowed.
     """
     for field in data_values.keys():
         if field not in allowed_fields_map:
-            raise SimpleBenchValueError(
-                f"The key '{field}' is not allowed",
-                tag=_HydratorErrorTag.INVALID_DATA_KEY)
+            raise SimpleBenchValueError(f"The key '{field}' is not allowed", tag=_HydratorErrorTag.INVALID_DATA_KEY)
 
-def required_keys_against_data(data_values: dict[str, Any],
-                               allowed_fields_map: Mapping[str, Any],
-                               optional_fields_set: set[str]) -> None:
+
+def required_keys_against_data(
+    data_values: dict[str, Any], allowed_fields_map: Mapping[str, Any], optional_fields_set: set[str]
+) -> None:
     """Validate that all required keys are present in the data dictionary.
 
     :param dict[str, Any] data_values: The data dictionary to validate.
@@ -222,9 +235,8 @@ def required_keys_against_data(data_values: dict[str, Any],
     """
     for field in allowed_fields_map:
         if field not in data_values and field not in optional_fields_set:
-            raise SimpleBenchValueError(
-                f"The key '{field}' is missing",
-                tag=_HydratorErrorTag.INVALID_DATA_KEY)
+            raise SimpleBenchValueError(f"The key '{field}' is missing", tag=_HydratorErrorTag.INVALID_DATA_KEY)
+
 
 def data_types(output: dict[str, Any], allowed_fields_map: Mapping[str, Any]) -> None:
     """Validate that all values in the data dictionary match the allowed types.
@@ -237,7 +249,9 @@ def data_types(output: dict[str, Any], allowed_fields_map: Mapping[str, Any]) ->
         if not is_instance_of_generic(value, allowed_fields_map[field]):
             raise SimpleBenchTypeError(
                 f"The value of '{field}' does not match the expected type '{allowed_fields_map[field]}'",
-                tag=_HydratorErrorTag.INVALID_DATA_VALUE_TYPE)
+                tag=_HydratorErrorTag.INVALID_DATA_VALUE_TYPE,
+            )
+
 
 def is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
     """
@@ -262,8 +276,9 @@ def is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
         if not isinstance(obj, Mapping):
             return False
         key_type, value_type = args
-        return all(is_instance_of_generic(
-            k, key_type) and is_instance_of_generic(v, value_type) for k, v in obj.items())
+        return all(
+            is_instance_of_generic(k, key_type) and is_instance_of_generic(v, value_type) for k, v in obj.items()
+        )
 
     # Case 3: Iterable (but not a Mapping)
     if inspect.isclass(origin) and issubclass(origin, Iterable):
@@ -284,7 +299,7 @@ def is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
 
 def match_on_values(data_values: dict[str, Any], match_on_fields: Mapping[str, Any]) -> None:
     """Validate match_on rules against the data dictionary.
-    
+
     :param dict[str, Any] data_values: The data dictionary to validate.
     :param Mapping[str, Any] match_on_fields: The match_on rules to apply.
     :raises: SimpleBenchValueError for any mismatch.
@@ -292,8 +307,9 @@ def match_on_values(data_values: dict[str, Any], match_on_fields: Mapping[str, A
     for field, expected_value in match_on_fields.items():
         if data_values.get(field) != expected_value:
             raise SimpleBenchValueError(
-                f"The value of '{field}' must be '{expected_value}'",
-                tag=_HydratorErrorTag.INVALID_MATCH_ON_VALUE)
+                f"The value of '{field}' must be '{expected_value}'", tag=_HydratorErrorTag.INVALID_MATCH_ON_VALUE
+            )
+
 
 def _is_basetype(typeddict_cls: type) -> dict[str, Any]:
     """Return a dictionary of the parameters and their types for a TypedDict class.
@@ -312,6 +328,7 @@ def _is_basetype(typeddict_cls: type) -> dict[str, Any]:
         value_type = value_info.value_type
         annotations[key] = _unwrap_typeddict_type(value_type)
     return output
+
 
 def _unwrap_typeddict_type(tp: Any) -> Any:
     """Unwrap a type annotation to its base type for isinstance checks.
@@ -332,9 +349,11 @@ def _unwrap_typeddict_type(tp: Any) -> Any:
     origin = get_origin(tp)
     if origin is not None:
         # Handle Union types
-        if (origin is getattr(__import__('typing'), 'Union', None)
+        if (
+            origin is getattr(__import__('typing'), 'Union', None)
             or origin is getattr(__import__('types'), 'UnionType', None)
-            or origin is Union):
+            or origin is Union
+        ):
             args = get_args(tp)
             return tuple(_unwrap_typeddict_type(arg) for arg in args)
         # Handle Literal types
@@ -343,6 +362,7 @@ def _unwrap_typeddict_type(tp: Any) -> Any:
         return origin
 
     return tp  # Fallback: return the type itself
+
 
 def is_instance_of_typehint(obj: Any, type_hint: Any, recurse: bool = False) -> bool:
     """
@@ -370,9 +390,11 @@ def is_instance_of_typehint(obj: Any, type_hint: Any, recurse: bool = False) -> 
         return True
 
     # Handle Union types
-    if (origin is getattr(__import__('typing'), 'Union', None)
-            or origin is getattr(__import__('types'), 'UnionType', None)
-            or origin is Union):
+    if (
+        origin is getattr(__import__('typing'), 'Union', None)
+        or origin is getattr(__import__('types'), 'UnionType', None)
+        or origin is Union
+    ):
         return any(is_instance_of_typehint(obj, arg, recurse=recurse) for arg in args)
 
     # Handle Literal types

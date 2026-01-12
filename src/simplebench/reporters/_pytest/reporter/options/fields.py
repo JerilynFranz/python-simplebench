@@ -1,4 +1,5 @@
 """Report fields for Pytest reporter."""
+
 from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
@@ -7,35 +8,36 @@ from simplebench.doc_utils import enum_docstrings
 @enum_docstrings
 class PytestField(str, Enum):
     """Fields available for Rich Table reporter output."""
-    N = "N"
+
+    N = 'N'
     """The O() complexity value."""
-    ITERATIONS = "Iterations"
+    ITERATIONS = 'Iterations'
     """The number of iterations performed."""
-    ROUNDS = "Rounds"
+    ROUNDS = 'Rounds'
     """The number of rounds performed."""
-    ELAPSED_SECONDS = "Elapsed Seconds"
+    ELAPSED_SECONDS = 'Elapsed Seconds'
     """The total elapsed time in seconds."""
-    MEAN = "mean"
+    MEAN = 'mean'
     """The statistical mean value."""
-    MEDIAN = "median"
+    MEDIAN = 'median'
     """The statistical median value."""
-    MIN = "min"
+    MIN = 'min'
     """The statistical minimum value."""
-    MAX = "max"
+    MAX = 'max'
     """The statistical maximum value."""
-    P1 = "1st"
+    P1 = '1st'
     """The statistical 1st percentile."""
-    P5 = "5th"
+    P5 = '5th'
     """The statistical 5th percentile."""
-    P25 = "25th"
+    P25 = '25th'
     """The statistical 25th percentile."""
-    P75 = "75th"
+    P75 = '75th'
     """The statistical 75th percentile."""
-    P95 = "95th"
+    P95 = '95th'
     """The statistical 95th percentile."""
-    P99 = "99th"
+    P99 = '99th'
     """The statistical 99th percentile."""
-    STD_DEV = "std dev"
+    STD_DEV = 'std dev'
     """The adjusted standard deviation of operation times."""
-    RSD_PERCENT = "rsd%"
+    RSD_PERCENT = 'rsd%'
     """The relative standard deviation percentage."""

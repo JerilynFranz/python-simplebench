@@ -3,6 +3,7 @@
 The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
+
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, cast
 
@@ -23,9 +24,11 @@ _deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
     from .. import MetricsObject
+
     _deferred_imports_done = True
 else:
     MetricsObject = None  # pylint: disable=invalid-name
+
 
 def _deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
@@ -33,7 +36,9 @@ def _deferred_imports() -> None:
     if _deferred_imports_done:
         return
     from .. import MetricsObject  # pylint: disable=import-outside-toplevel
+
     _deferred_imports_done = True
+
 
 class ResultsInfo(BaseResultsInfo):
     """An immutable class representing the results-info object for V1 reports.
@@ -41,6 +46,7 @@ class ResultsInfo(BaseResultsInfo):
     This class encapsulates the structure and validation logic
     of the results-info section.
     """
+
     SCHEMA = ResultsInfoSchema
     """The JSON report schema for version 1 reports."""
 
@@ -53,16 +59,17 @@ class ResultsInfo(BaseResultsInfo):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
-    def __init__(self,
-                 *,
-                 group: str,
-                 title: str,
-                 description: str,
-                 n: float,
-                 variation_marks: VariationMarksType,
-                 metrics: MetricsObject,
-                 extra_info: CoreDataMappingType,
-                 ):
+    def __init__(
+        self,
+        *,
+        group: str,
+        title: str,
+        description: str,
+        n: float,
+        variation_marks: VariationMarksType,
+        metrics: MetricsObject,
+        extra_info: CoreDataMappingType,
+    ):
         """Initialize a Results v1 instance.
 
         The input parameters are validated, converted to immutable types as needed,
@@ -107,7 +114,8 @@ class ResultsInfo(BaseResultsInfo):
             optional_fields={'version', 'type'},
             defaults={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={'metrics': MetricsObject.from_dict})
+            process_as={'metrics': MetricsObject.from_dict},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ResultsInfoDict:
@@ -131,15 +139,14 @@ class ResultsInfo(BaseResultsInfo):
             if key in {'type', 'version'}:
                 continue
             value = getattr(self, key)
-            to_dict_fn = getattr(value, "to_dict", None)
+            to_dict_fn = getattr(value, 'to_dict', None)
             data[key] = to_dict_fn() if callable(to_dict_fn) else value
         cls = self.__class__
         data['type'] = cls.TYPE
         data['version'] = cls.VERSION
 
         # We control the data structure here, so this cast is safe
-        self._to_dict_cache = cast(ResultsInfoDict,
-            validate_core_data_mapping(data, 'ResultsInfo.to_dict output'))
+        self._to_dict_cache = cast(ResultsInfoDict, validate_core_data_mapping(data, 'ResultsInfo.to_dict output'))
         return self._to_dict_cache
 
     @property

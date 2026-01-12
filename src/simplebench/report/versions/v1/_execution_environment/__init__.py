@@ -1,4 +1,5 @@
 """Execution environment for the MachineInfo class."""
+
 from ._execution_environment import ExecutionEnvironment
 from ._typeddict_types import (
     ExecutionEnvironmentData,
@@ -8,9 +9,9 @@ from ._typeddict_types import (
 )
 
 __all__ = [
-    "ExecutionEnvironment",
-    "ExecutionEnvironmentData",
-    "ExecutionEnvironmentDict",
-    "ImmutableExecutionEnvironmentData",
-    "ImmutableExecutionEnvironmentDict",
+    'ExecutionEnvironment',
+    'ExecutionEnvironmentData',
+    'ExecutionEnvironmentDict',
+    'ImmutableExecutionEnvironmentData',
+    'ImmutableExecutionEnvironmentDict',
 ]

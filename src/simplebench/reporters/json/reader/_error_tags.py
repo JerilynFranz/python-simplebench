@@ -7,6 +7,7 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _JSONReaderErrorTag(ErrorTag):
     """Error tags for JSON reporter reader exceptions."""
+
     INVALID_DICTIONARY_PROPERTY_TYPE = 'INVALID_DICTIONARY_PROPERTY_TYPE'
     """Invalid type for dictionary property assignment."""
     INVALID_FILEPATH_PROPERTY_TYPE = 'INVALID_FILEPATH_PROPERTY_TYPE'

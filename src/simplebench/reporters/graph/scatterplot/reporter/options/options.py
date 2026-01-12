@@ -1,4 +1,5 @@
 """Options for the scatter plot reporter"""
+
 from simplebench.reporters.graph.matplotlib import MatPlotLibOptions
 
 

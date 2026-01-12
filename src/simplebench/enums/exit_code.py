@@ -1,4 +1,5 @@
 """Exit codes used by SimpleBench."""
+
 from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
@@ -16,6 +17,7 @@ class ExitCode(int, Enum):
       - BENCHMARK_TIMED_OUT: Benchmark execution timed out.
 
     """
+
     SUCCESS = 0
     """Successful execution."""
     RUNTIME_ERROR = 1

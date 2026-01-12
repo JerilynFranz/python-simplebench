@@ -1,4 +1,5 @@
 """Base class for all benchmarkrunners"""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -20,25 +21,29 @@ class BenchmarkRunner(ABC):
     """Base class for all benchmark runners"""
 
     @abstractmethod
-    def __init__(self,
-                 *,
-                 case: Case,
-                 kwargs: dict[str, Any],
-                 session: Session | None = None,
-                 runner: Callable[..., Any] | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        case: Case,
+        kwargs: dict[str, Any],
+        session: Session | None = None,
+        runner: Callable[..., Any] | None = None,
+    ) -> None:
         """Initialize the runner with the given case, kwargs, session, and additional arguments"""
-        raise NotImplementedError("Subclasses must implement the __init__ method")
+        raise NotImplementedError('Subclasses must implement the __init__ method')
 
     @abstractmethod
-    def run(self,
-            *,
-            n: int | float,
-            action: Callable[..., Any],
-            setup: Callable[..., Any] | None = None,
-            teardown: Callable[..., Any] | None = None,
-            kwargs: dict[str, Any] | None = None) -> Results:
+    def run(
+        self,
+        *,
+        n: int | float,
+        action: Callable[..., Any],
+        setup: Callable[..., Any] | None = None,
+        teardown: Callable[..., Any] | None = None,
+        kwargs: dict[str, Any] | None = None,
+    ) -> Results:
         """Run the benchmark and return the results"""
-        raise NotImplementedError("Subclasses must implement the run method")
+        raise NotImplementedError('Subclasses must implement the run method')
 
     @property
     def case(self) -> Case:
@@ -55,9 +60,7 @@ class BenchmarkRunner(ABC):
         :param value: The new case for the benchmark.
         """
         if not is_case(value):
-            raise SimpleBenchTypeError(
-                "case must be an instance of Case",
-                tag=_RunnerErrorTag.NOT_A_CASE)
+            raise SimpleBenchTypeError('case must be an instance of Case', tag=_RunnerErrorTag.NOT_A_CASE)
         self._case: Case = value
 
     @property
@@ -79,8 +82,8 @@ class BenchmarkRunner(ABC):
         """
         if value is not None and not is_session(value):
             raise SimpleBenchValueError(
-                "session must be an instance of Session or None",
-                tag=_RunnerErrorTag.NOT_A_SESSION)
+                'session must be an instance of Session or None', tag=_RunnerErrorTag.NOT_A_SESSION
+            )
         self._session: Session | None = value
 
     @property
@@ -98,9 +101,7 @@ class BenchmarkRunner(ABC):
         :param value: The new keyworded arguments for the benchmark.
         """
         if not isinstance(value, dict):
-            raise SimpleBenchTypeError(
-                "kwargs must be a dictionary",
-                tag=_RunnerErrorTag.KWARGS_NOT_A_DICT)
+            raise SimpleBenchTypeError('kwargs must be a dictionary', tag=_RunnerErrorTag.KWARGS_NOT_A_DICT)
         self._kwargs: dict[str, Any] = value
 
     @property
@@ -125,5 +126,5 @@ class BenchmarkRunner(ABC):
         """
         if not isinstance(value, dict):
             raise SimpleBenchTypeError(
-                "variation_marks must be a dictionary",
-                tag=_RunnerErrorTag.VARIATION_MARKS_NOT_A_DICT)
+                'variation_marks must be a dictionary', tag=_RunnerErrorTag.VARIATION_MARKS_NOT_A_DICT
+            )

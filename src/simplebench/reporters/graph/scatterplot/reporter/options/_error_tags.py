@@ -1,4 +1,5 @@
 """ErrorTags for the ``graph.scatterplot.options`` module in the reporters package."""
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 

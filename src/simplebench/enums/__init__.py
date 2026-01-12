@@ -12,6 +12,7 @@ Provides
 - :class:`Verbosity`
 
 """
+
 from .color import Color
 from .exit_code import ExitCode
 from .flag_type import FlagType
@@ -19,11 +20,4 @@ from .format import Format
 from .target import Target
 from .verbosity import Verbosity
 
-__all__ = [
-    'Color',
-    'ExitCode',
-    'FlagType',
-    'Format',
-    'Target',
-    'Verbosity',
-]
+__all__ = ['Color', 'ExitCode', 'FlagType', 'Format', 'Target', 'Verbosity']

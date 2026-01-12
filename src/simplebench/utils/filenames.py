@@ -1,4 +1,5 @@
 """Utility functions for file names."""
+
 import re
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -23,10 +24,10 @@ def sanitize_filename(name: str) -> str:
 
     .. code-block:: python3
 
-        sanitize_filename("My File-Name.txt")  # returns "My_File-Name_txt"
-        sanitize_filename("Invalid/Chars\\In:Name*?")  # returns "Invalid_Chars_In_Name"
-        sanitize_filename("   Leading and Trailing   ")  # returns "Leading_and_Trailing"
-        sanitize_filename("!!!")  # returns "_"
+        sanitize_filename('My File-Name.txt')  # returns "My_File-Name_txt"
+        sanitize_filename('Invalid/Chars\\In:Name*?')  # returns "Invalid_Chars_In_Name"
+        sanitize_filename('   Leading and Trailing   ')  # returns "Leading_and_Trailing"
+        sanitize_filename('!!!')  # returns "_"
 
     .. note::
         This function does not check for reserved filenames on any operating system.
@@ -46,13 +47,11 @@ def sanitize_filename(name: str) -> str:
     :raises SimpleBenchValueError: If the ``name`` arg is an empty string.
     """
     if not isinstance(name, str):
-        raise SimpleBenchTypeError(
-            "name arg must be a str",
-            tag=_UtilsErrorTag.SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE)
+        raise SimpleBenchTypeError('name arg must be a str', tag=_UtilsErrorTag.SANITIZE_FILENAME_INVALID_NAME_ARG_TYPE)
     if name == '':
         raise SimpleBenchValueError(
-            "name arg must not be an empty string",
-            tag=_UtilsErrorTag.SANITIZE_FILENAME_EMPTY_NAME_ARG)
+            'name arg must not be an empty string', tag=_UtilsErrorTag.SANITIZE_FILENAME_EMPTY_NAME_ARG
+        )
     first_pass: str = re.sub(_SANITIZE_FILENAME_RE, '_', name)
     second_pass: str = re.sub(_COLLAPSE_UNDERSCORES_RE, '_', first_pass)
     third_pass: str = second_pass.strip('_-')

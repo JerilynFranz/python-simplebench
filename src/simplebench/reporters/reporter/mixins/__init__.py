@@ -21,8 +21,8 @@ from ._prioritization import _ReporterPrioritizationMixin
 from ._targets import _ReporterTargetMixin
 
 __all__ = [
-    "_ReporterArgparseMixin",
-    "_ReporterOrchestrationMixin",
-    "_ReporterPrioritizationMixin",
-    "_ReporterTargetMixin",
+    '_ReporterArgparseMixin',
+    '_ReporterOrchestrationMixin',
+    '_ReporterPrioritizationMixin',
+    '_ReporterTargetMixin',
 ]

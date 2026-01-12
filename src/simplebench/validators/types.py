@@ -1,4 +1,5 @@
 """Validators for type checking of values."""
+
 from typing import Any, TypeVar, cast, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
@@ -10,44 +11,26 @@ T = TypeVar('T')
 
 @overload
 def validate_type(
-        value: Any,
-        types: tuple[type | LazyTypeProxy[Any], ...],
-        name: str,
-        error_tag: ErrorTag,
-        *,
-        message: str = '') -> Any:
-    ...
+    value: Any, types: tuple[type | LazyTypeProxy[Any], ...], name: str, error_tag: ErrorTag, *, message: str = ''
+) -> Any: ...
 
 
 @overload
-def validate_type(
-        value: Any,
-        types: type[T],
-        name: str,
-        error_tag: ErrorTag,
-        *,
-        message: str = '') -> T:
-    ...
+def validate_type(value: Any, types: type[T], name: str, error_tag: ErrorTag, *, message: str = '') -> T: ...
 
 
 @overload
-def validate_type(
-        value: Any,
-        types: LazyTypeProxy[T],
-        name: str,
-        error_tag: ErrorTag,
-        *,
-        message: str = '') -> T:
-    ...
+def validate_type(value: Any, types: LazyTypeProxy[T], name: str, error_tag: ErrorTag, *, message: str = '') -> T: ...
 
 
 def validate_type(
-        value: Any,
-        types: type[T] | tuple[type | LazyTypeProxy[Any], ...] | LazyTypeProxy[T],
-        name: str,
-        error_tag: ErrorTag,
-        *,
-        message: str = '') -> T | Any:
+    value: Any,
+    types: type[T] | tuple[type | LazyTypeProxy[Any], ...] | LazyTypeProxy[T],
+    name: str,
+    error_tag: ErrorTag,
+    *,
+    message: str = '',
+) -> T | Any:
     """Validate that a value is of the expected type.
 
         (validation primitive - does not depend on other validators)
@@ -66,10 +49,8 @@ def validate_type(
         .. code-block:: python
 
             mixed: str | int = validate_type(
-                value=some_value,
-                expected=(str, int),
-                name='mixed',
-                error_tag=ErrorTag.INVALID_EXPECTED_ARG_TYPE)
+                value=some_value, expected=(str, int), name='mixed', error_tag=ErrorTag.INVALID_EXPECTED_ARG_TYPE
+            )
 
     :param Any value: The value to validate.
     :param type types: The expected type of the value.
@@ -87,7 +68,7 @@ def validate_type(
     if not isinstance(types, (type, tuple, LazyTypeProxy)):
         raise SimpleBenchTypeError(
             f'Invalid expected argument type: {type(types)}. Must be a type, tuple of types, or LazyType.',
-            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_TYPE,
         )
 
     if isinstance(types, tuple):
@@ -95,19 +76,19 @@ def validate_type(
             if not isinstance(item, (type, LazyTypeProxy)):
                 raise SimpleBenchTypeError(
                     f'Invalid expected argument item type in tuple: {type(item)}. Must be a type or LazyType.',
-                    tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE
+                    tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_EXPECTED_ARG_ITEM_TYPE,
                 )
-
 
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
             f'Invalid name argument type: {type(name)}. Must be a str.',
-            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE
+            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_NAME_ARG_TYPE,
         )
     if not isinstance(error_tag, ErrorTag):
         raise SimpleBenchTypeError(
             f'Invalid error_tag argument type: {type(error_tag)}. Must be an ErrorTag.',
-            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)
+            tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE,
+        )
 
     formatted_message: str = message.format(name=name, value=value)
 
@@ -116,7 +97,6 @@ def validate_type(
     # This suppresses the Pylance warning without affecting runtime behavior.
     if not isinstance(value, cast(type, types)):
         raise SimpleBenchTypeError(
-            formatted_message or f'Invalid "{name}" type: {type(value)}. Must be {repr(types)}.',
-            tag=error_tag
+            formatted_message or f'Invalid "{name}" type: {type(value)}. Must be {repr(types)}.', tag=error_tag
         )
     return value  # type: ignore[return-value]

@@ -5,10 +5,7 @@ from datetime import datetime, timezone
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 
 
-def validate_iso8601_datetime(dt_str: str,
-                              field_name: str,
-                              type_tag: ErrorTag,
-                              value_tag: ErrorTag) -> str:
+def validate_iso8601_datetime(dt_str: str, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> str:
     """Validate that a string is a valid ISO 8601 datetime and return a string representation in UTC time.
 
     The datetime string is parsed as an ISO8601 date and then returned in UTC timezone as the canonical form.
@@ -20,17 +17,13 @@ def validate_iso8601_datetime(dt_str: str,
     """
     if not isinstance(dt_str, str):
         raise SimpleBenchTypeError(
-            f"Expected a string for {field_name} ISO 8601 datetime, got {type(dt_str)}",
-            tag=type_tag)
+            f'Expected a string for {field_name} ISO 8601 datetime, got {type(dt_str)}', tag=type_tag
+        )
     if not dt_str:
-        raise SimpleBenchValueError(
-            f"{field_name} ISO 8601 datetime string cannot be empty",
-            tag=value_tag)
+        raise SimpleBenchValueError(f'{field_name} ISO 8601 datetime string cannot be empty', tag=value_tag)
     try:
         dt = datetime.fromisoformat(dt_str)
         dt = dt.replace(tzinfo=timezone.utc)
         return dt.isoformat()
     except ValueError as e:
-        raise SimpleBenchValueError(
-            f"Invalid {field_name} ISO 8601 datetime string: {dt_str}",
-            tag=value_tag) from e
+        raise SimpleBenchValueError(f'Invalid {field_name} ISO 8601 datetime string: {dt_str}', tag=value_tag) from e

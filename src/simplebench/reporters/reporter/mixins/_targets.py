@@ -1,4 +1,5 @@
 """Mixin for target-related functionality for the Reporter class."""
+
 from __future__ import annotations
 
 from io import StringIO
@@ -26,14 +27,17 @@ if TYPE_CHECKING:
 class _ReporterTargetMixin:
     """Mixin for target-related functionality for the Reporter class."""
 
-    def target_filesystem(self: ReporterProtocol, *,
-                          log_metadata: Metadata,
-                          path: Path | None,
-                          subdir: str,
-                          filename: str,
-                          output: str | bytes | Text | Table,
-                          unique: bool,
-                          append: bool,) -> None:
+    def target_filesystem(
+        self: ReporterProtocol,
+        *,
+        log_metadata: Metadata,
+        path: Path | None,
+        subdir: str,
+        filename: str,
+        output: str | bytes | Text | Table,
+        unique: bool,
+        append: bool,
+    ) -> None:
         """Helper method to output report data to the filesystem.
 
         path, subdir, and filename are combined to form the full path to the output file.
@@ -78,36 +82,39 @@ class _ReporterTargetMixin:
             already exists and neither append nor unique options were specified.
         """
         validate_type(
-            log_metadata, Metadata, 'log_metadata',
-            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_LOG_METADATA_ARG_TYPE)
-        path = validate_type(
-            path, Path, 'path',
-            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
+            log_metadata, Metadata, 'log_metadata', _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_LOG_METADATA_ARG_TYPE
+        )
+        path = validate_type(path, Path, 'path', _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_PATH_ARG_TYPE)
         subdir = validate_string(
-            subdir, 'subdir',
+            subdir,
+            'subdir',
             _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_TYPE,
             _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_SUBDIR_ARG_VALUE,
-            strip=False, allow_empty=True, allow_blank=False, alphanumeric_only=True)
+            strip=False,
+            allow_empty=True,
+            allow_blank=False,
+            alphanumeric_only=True,
+        )
         filename = validate_filename(filename)
-        append = validate_type(
-            append, bool, 'append',
-            _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE)
+        append = validate_type(append, bool, 'append', _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_APPEND_ARG_TYPE)
         unique = validate_type(
-            unique, bool, 'unique',
-            error_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE)
+            unique, bool, 'unique', error_tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_UNIQUE_ARG_TYPE
+        )
         if not isinstance(output, (str, bytes, Text, Table)):
             raise SimpleBenchTypeError(
-                "output must be of type str, bytes, Text, or Table",
-                tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE)
+                'output must be of type str, bytes, Text, or Table',
+                tag=_ReporterErrorTag.TARGET_FILESYSTEM_INVALID_OUTPUT_ARG_TYPE,
+            )
         if append == unique:
             raise SimpleBenchValueError(
-                "one, and only one, of append or unique must be True when writing to filesystem",
-                tag=_ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS)
+                'one, and only one, of append or unique must be True when writing to filesystem',
+                tag=_ReporterErrorTag.TARGET_FILESYSTEM_APPEND_UNIQUE_INCOMPATIBLE_ARGS,
+            )
         if unique:
             counter = 1
-            while (path / subdir / f"{counter:03d}_{filename}").exists():
+            while (path / subdir / f'{counter:03d}_{filename}').exists():
                 counter += 1
-            filename = f"{counter:03d}_{filename}"
+            filename = f'{counter:03d}_{filename}'
 
         if isinstance(output, (Text, Table)):
             output = self.rich_text_to_plain_text(output)
@@ -121,12 +128,14 @@ class _ReporterTargetMixin:
         log_metadata.filepath = output_path
         log_metadata.save_to_log()
 
-    def target_callback(self: ReporterProtocol,
-                        callback: ReporterCallback | None,
-                        case: Case,
-                        metric: Metric,
-                        output_format: Format,
-                        output: str | bytes | Text | Table) -> None:
+    def target_callback(
+        self: ReporterProtocol,
+        callback: ReporterCallback | None,
+        case: Case,
+        metric: Metric,
+        output_format: Format,
+        output: str | bytes | Text | Table,
+    ) -> None:
         """Helper method to send report data to a callback function.
 
         :param callback: The callback function to send the output to.
@@ -193,9 +202,9 @@ class _ReporterTargetMixin:
         """
         if not isinstance(rich_text, (Text, Table)):
             raise SimpleBenchTypeError(
-                f'rich_text argument is of invalid type: {type(rich_text)}. '
-                f'Must be rich.Text or rich.Table.',
-                tag=_ReporterErrorTag.RICH_TEXT_TO_PLAIN_TEXT_INVALID_RICH_TEXT_ARG_TYPE)
+                f'rich_text argument is of invalid type: {type(rich_text)}. Must be rich.Text or rich.Table.',
+                tag=_ReporterErrorTag.RICH_TEXT_TO_PLAIN_TEXT_INVALID_RICH_TEXT_ARG_TYPE,
+            )
 
         output_io = StringIO()  # just a string buffer to capture console output
         console = Console(file=output_io, width=None, record=True)

@@ -3,6 +3,7 @@
 This module provides the :class:`~.CSVReporter` class, which is responsible for
 outputting benchmark results to CSV files.
 """
+
 from __future__ import annotations
 
 import csv
@@ -66,6 +67,7 @@ class CSVReporter(Reporter):
     :ivar formats: The supported output formats for the reporter.
     :vartype formats: set[:class:`~simplebench.enums.Format`]
     """
+
     _OPTIONS_TYPE: ClassVar[type[CSVOptions]] = CSVOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
     """:meta private:"""
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
@@ -94,7 +96,8 @@ class CSVReporter(Reporter):
         super().__init__(config)
 
     def render(  # noqa: C901
-            self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:
+        self, *, case: Case, metric: Metric, options: ReporterOptions
+    ) -> str:
         """Renders the benchmark results for the specified metric as tagged CSV data and returns it as a string.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the
@@ -107,12 +110,11 @@ class CSVReporter(Reporter):
         """
         if not is_case(case):  # Handle deferred import type checking
             raise SimpleBenchTypeError(
-                f"Invalid case argument: expected Case instance, got {type(case).__name__}",
-                tag=_CSVReporterErrorTag.RENDER_INVALID_CASE)
-        metric = validate_type(metric, Metric, 'metric',
-                               _CSVReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(options, Options, 'options',
-                                _CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
+                f'Invalid case argument: expected Case instance, got {type(case).__name__}',
+                tag=_CSVReporterErrorTag.RENDER_INVALID_CASE,
+            )
+        metric = validate_type(metric, Metric, 'metric', _CSVReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, Options, 'options', _CSVReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         included_fields = options.fields
 

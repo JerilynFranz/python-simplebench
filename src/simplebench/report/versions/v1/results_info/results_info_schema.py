@@ -1,4 +1,5 @@
 """Schema for JSON ResultsInfo v1 validation."""
+
 # pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
@@ -13,122 +14,85 @@ class ResultsInfoSchema(JSONSchema):
     VERSION: int = 1
     """The JSON ResultsInfo schema version number."""
 
-    TYPE: str = "SimpleBenchResultsInfo::V1"
+    TYPE: str = 'SimpleBenchResultsInfo::V1'
     """The JSON ResultsInfo schema type property value for version 1 reports."""
 
-    ID: str = "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json"
+    ID: str = 'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json'
     """The JSON ResultsInfo schema $id value for version 1 reports."""
 
     _JSON_SCHEMA_DICT: dict[str, object] = {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": ID,
-            "title": "Results Schema (V1)",
-            "description": "SimpleBench JSON Results Schema (V1)",
-            "type": "object",
-            "properties": {
-                "version": {
-                    "title": "Version",
-                    "description": "Version of the schema",
-                    "type": "integer",
-                    "const": VERSION
-                },
-                "type": {
-                    "title": "Type",
-                    "description": "Type of the result",
-                    "type": "string",
-                    "const": TYPE
-                },
-                "group": {
-                    "title": "Group",
-                    "description": "Group of the result",
-                    "type": "string"
-                },
-                "title": {
-                    "title": "Title",
-                    "description": "Title of the result",
-                    "type": "string"
-                },
-                "description": {
-                    "title": "Description",
-                    "description": "Description of the result",
-                    "type": "string"
-                },
-                "n": {
-                    "title": "N",
-                    "description": "Complexity analysis N value for the result",
-                    "type": "number"
-                },
-                "variation_marks": {
-                    "title": "Variation Marks",
-                    "description": "Variation marks for the result. Variation marks identify the kwargs combination used for a specific benchmark result",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "metrics": {
-                    "$ref": "#/$defs/metrics"
-                },
-                "extra_info": {
-                    "title": "Extra Info",
-                    "description": "A free-form object for third-party extensions or extra data.",
-                    "type": "object",
-                    "additionalProperties": True
-                }
+        '$schema': 'https://json-schema.org/draft/2020-12/schema',
+        '$id': ID,
+        'title': 'Results Schema (V1)',
+        'description': 'SimpleBench JSON Results Schema (V1)',
+        'type': 'object',
+        'properties': {
+            'version': {
+                'title': 'Version',
+                'description': 'Version of the schema',
+                'type': 'integer',
+                'const': VERSION,
             },
-            "required": [
-                "type",
-                "version",
-                "semantic_type",
-                "group",
-                "title",
-                "description",
-                "n",
-                "variation_cols",
-                "metrics",
-                "extra_info"
-            ],
-            "additionalProperties": False,
-            "$defs": {
-                "metrics": {
-                    "type": "object",
-                    "title": "Metrics",
-                    "description": "A collection of metric blocks, indexed by a unique, namespaced metric ID.\n\nExamples of valid keys:\n- `simplebench_std::time_per_operation`\n- `simplebench_std::operations_per_second`\n- `simplebench_std::memory_usage`\n- `simplebench_std::peak_memory_usage`\n- `simplebench_std::wallclock_time`\n- `my_plugin::custom_metric`",
-                    "patternProperties": {
-                        "^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$": {
-                            "$ref": "#/$defs/metric_block"
-                        }
-                    },
-                    "additionalProperties": False
-                },
-                "metric_block": {
-                    "title": "Metric Block",
-                    "description": "A container for a measurement, which can be a single value, a statistical summary, or raw data.",
-                    "oneOf": [
-                        {
-                            "$ref": "stats-block.json"
-                        },
-                        {
-                            "$ref": "value-block.json"
-                        },
-                        {
-                            "$ref": "raw-data-block.json"
-                        }
-                    ],
-                    "discriminator": {
-                        "propertyName": "type"
+            'type': {'title': 'Type', 'description': 'Type of the result', 'type': 'string', 'const': TYPE},
+            'group': {'title': 'Group', 'description': 'Group of the result', 'type': 'string'},
+            'title': {'title': 'Title', 'description': 'Title of the result', 'type': 'string'},
+            'description': {'title': 'Description', 'description': 'Description of the result', 'type': 'string'},
+            'n': {'title': 'N', 'description': 'Complexity analysis N value for the result', 'type': 'number'},
+            'variation_marks': {
+                'title': 'Variation Marks',
+                'description': 'Variation marks for the result. Variation marks identify the kwargs combination used for a specific benchmark result',
+                'type': 'object',
+                'additionalProperties': {'type': 'string'},
+            },
+            'metrics': {'$ref': '#/$defs/metrics'},
+            'extra_info': {
+                'title': 'Extra Info',
+                'description': 'A free-form object for third-party extensions or extra data.',
+                'type': 'object',
+                'additionalProperties': True,
+            },
+        },
+        'required': [
+            'type',
+            'version',
+            'semantic_type',
+            'group',
+            'title',
+            'description',
+            'n',
+            'variation_cols',
+            'metrics',
+            'extra_info',
+        ],
+        'additionalProperties': False,
+        '$defs': {
+            'metrics': {
+                'type': 'object',
+                'title': 'Metrics',
+                'description': 'A collection of metric blocks, indexed by a unique, namespaced metric ID.\n\nExamples of valid keys:\n- `simplebench_std::time_per_operation`\n- `simplebench_std::operations_per_second`\n- `simplebench_std::memory_usage`\n- `simplebench_std::peak_memory_usage`\n- `simplebench_std::wallclock_time`\n- `my_plugin::custom_metric`',
+                'patternProperties': {
+                    '^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$': {
+                        '$ref': '#/$defs/metric_block'
                     }
-                }
-            }
-        }
+                },
+                'additionalProperties': False,
+            },
+            'metric_block': {
+                'title': 'Metric Block',
+                'description': 'A container for a measurement, which can be a single value, a statistical summary, or raw data.',
+                'oneOf': [{'$ref': 'stats-block.json'}, {'$ref': 'value-block.json'}, {'$ref': 'raw-data-block.json'}],
+                'discriminator': {'propertyName': 'type'},
+            },
+        },
+    }
 
     _JSON_SCHEMA_TEXT: str = JSONEncoder(indent=2).encode(_JSON_SCHEMA_DICT)
     """The JSON schema as a pretty-printed JSON string."""
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption="JSON Schema for ValueBlock V1",
-        intro_text="The JSON schema is as follows:"
+        caption='JSON Schema for ValueBlock V1',
+        intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""
 

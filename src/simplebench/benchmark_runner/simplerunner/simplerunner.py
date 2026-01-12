@@ -44,6 +44,7 @@ timing measurement, and are therefore consistent with each other. Both are
 provided for convenience and to provide a more complete picture of the benchmark
 results.
 """
+
 from __future__ import annotations
 
 import gc
@@ -96,16 +97,19 @@ def _create_timers_module(namespace: str) -> ModuleType:
     if not isinstance(namespace, str):
         raise SimpleBenchTypeError(
             f'Namespace must be a string, got {type(namespace).__name__}',
-            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE)
+            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE,
+        )
     if not namespace.isidentifier():
         raise SimpleBenchTypeError(
             f'Namespace must be a valid identifier, got {namespace}',
-            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_VALUE)
+            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_VALUE,
+        )
     spec = importlib.util.spec_from_loader(namespace, loader=None)
     if spec is None:
         raise SimpleBenchImportError(
             f'Could not create spec for {namespace} module',
-            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED)
+            tag=_SimpleRunnerErrorTag.RUNNERS_CREATE_TIMERS_MODULE_SPEC_FAILED,
+        )
     if namespace in sys.modules:
         return sys.modules[namespace]
     timers_module = importlib.util.module_from_spec(spec)
@@ -117,12 +121,7 @@ _timers_module = _create_timers_module(_TIMERS_NAMESPACE)  # Ensure the timers m
 """A dynamically created module to hold generated timer functions."""
 
 
-_Measurement: TypeAlias = tuple[
-    float, float,
-    int, int,
-    int, int, int,
-    int, int, int,
-    int, int, int]
+_Measurement: TypeAlias = tuple[float, float, int, int, int, int, int, int, int, int, int, int, int]
 """A type alias for a measurement tuple.
 
 The tuple contains the following elements:
@@ -195,12 +194,15 @@ class SimpleRunner(BenchmarkRunner):
     :ivar run: The function to use to run the benchmark.
     :vartype run: Callable[..., Any]
     """
-    def __init__(self,
-                 *,
-                 case: Case,
-                 kwargs: dict[str, Any],
-                 session: Optional[Session] = None,
-                 runner: Optional[Callable[..., Any]] = None) -> None:
+
+    def __init__(
+        self,
+        *,
+        case: Case,
+        kwargs: dict[str, Any],
+        session: Optional[Session] = None,
+        runner: Optional[Callable[..., Any]] = None,
+    ) -> None:
         """
         :param case: The benchmark case to run.
         :param kwargs: The keyword arguments for the benchmark case.
@@ -239,13 +241,15 @@ class SimpleRunner(BenchmarkRunner):
         """
         self.session = session
 
-    def run(self,
-            *,
-            n: int | float,
-            action: Callable[..., Any],
-            setup: Optional[Callable[..., Any]] = None,
-            teardown: Optional[Callable[..., Any]] = None,
-            kwargs: Optional[dict[str, Any]] = None) -> Results:
+    def run(
+        self,
+        *,
+        n: int | float,
+        action: Callable[..., Any],
+        setup: Optional[Callable[..., Any]] = None,
+        teardown: Optional[Callable[..., Any]] = None,
+        kwargs: Optional[dict[str, Any]] = None,
+    ) -> Results:
         """Enforce a timeout while running the benchmark with the specified runner.
 
         This method wraps the benchmark execution in a :class:`~.simplebench.timeout.Timeout`
@@ -282,34 +286,26 @@ class SimpleRunner(BenchmarkRunner):
         # The run() method of the Timeout class is used to execute the benchmark
         # with the specified timeout and returns the returned value of the
         # called function, which in this case is a Results instance.
-        func_name = getattr(action, "__qualname__",
-                            getattr(action, "__name__",
-                                    repr(action)))
+        func_name = getattr(action, '__qualname__', getattr(action, '__name__', repr(action)))
         benchmark_id = self.case.benchmark_id
         timeout_interval = self.case.timeout
         try:
             result = Timeout(timeout_interval).run(
-                self._runner,
-                n=n,
-                action=action,
-                setup=setup,
-                teardown=teardown,
-                kwargs=kwargs)
+                self._runner, n=n, action=action, setup=setup, teardown=teardown, kwargs=kwargs
+            )
         except SimpleBenchTimeoutError as e:
             raise SimpleBenchTimeoutError(
                 f'Benchmark "{benchmark_id}" timed out after {timeout_interval} seconds without a result',
                 tag=_SimpleRunnerErrorTag.SIMPLERUNNER_BENCHMARK_TIMEOUT,
-                func_name=func_name) from e
+                func_name=func_name,
+            ) from e
         return result
 
-    def _timer_function(self, rounds: int) -> Callable[
-            [
-                Callable[[], int | float],
-                Callable[[], int | float],
-                Callable[..., Any],
-                dict[str, Any]
-            ],
-            tuple[float, float]]:
+    def _timer_function(
+        self, rounds: int
+    ) -> Callable[
+        [Callable[[], int | float], Callable[[], int | float], Callable[..., Any], dict[str, Any]], tuple[float, float]
+    ]:
         """Return a timer function for the benchmark.
 
         The generated function will call the action `rounds` times and return the total time
@@ -341,9 +337,11 @@ class SimpleRunner(BenchmarkRunner):
         :rtype: Callable[[Callable[[], int | float], Callable[..., Any], dict[str, Any]], tuple[float, float]]
         """
         rounds = validate_positive_int(
-            rounds, 'rounds',
+            rounds,
+            'rounds',
             _SimpleRunnerErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_TYPE,
-            _SimpleRunnerErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE)
+            _SimpleRunnerErrorTag.SIMPLERUNNER_TIMER_FUNCTION_INVALID_ROUNDS_VALUE,
+        )
 
         # If the timer function for the specified rounds does not exist, create it.
         # We create a new function for each rounds value to avoid the overhead of a loop
@@ -353,16 +351,15 @@ class SimpleRunner(BenchmarkRunner):
         timer_name = f'_simplerunner_timer_function_{rounds}'
         if not hasattr(_timers_module, timer_name):
             time_function_lines: list[str] = []
-            time_function_lines.extend([
-                f'def {timer_name}(timer: Callable[[], float | int], cpu_timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -> tuple[float, float]:',  # pylint: disable=line-too-long  # noqa: E501
-                '    start = timer()',
-                '    start_cpu = cpu_timer()'
-            ])
+            time_function_lines.extend(
+                [
+                    f'def {timer_name}(timer: Callable[[], float | int], cpu_timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -> tuple[float, float]:',  # pylint: disable=line-too-long  # noqa: E501
+                    '    start = timer()',
+                    '    start_cpu = cpu_timer()',
+                ]
+            )
             time_function_lines.extend(['    action(**kwargs)'] * rounds)
-            time_function_lines.extend([
-                '    end = timer()',
-                '    end_cpu = cpu_timer()'
-            ])
+            time_function_lines.extend(['    end = timer()', '    end_cpu = cpu_timer()'])
             time_function_lines.append('    return float(end - start), float(end_cpu - start_cpu)')
             time_function_code = '\n'.join(time_function_lines)
             exec(time_function_code, _timers_module.__dict__)  # pylint: disable=exec-used
@@ -370,15 +367,16 @@ class SimpleRunner(BenchmarkRunner):
         return getattr(_timers_module, timer_name)
 
     def _run_timed_iteration(
-            self,
-            *,
-            rounds: int,
-            timer: Callable[[], int | float],
-            cpu_timer: Callable[[], int | float],
-            action: Callable[..., Any],
-            kwargs: dict[str, Any],
-            setup: Optional[Callable[..., Any]],
-            teardown: Optional[Callable[..., Any]]) -> tuple[float, float]:
+        self,
+        *,
+        rounds: int,
+        timer: Callable[[], int | float],
+        cpu_timer: Callable[[], int | float],
+        action: Callable[..., Any],
+        kwargs: dict[str, Any],
+        setup: Optional[Callable[..., Any]],
+        teardown: Optional[Callable[..., Any]],
+    ) -> tuple[float, float]:
         """Run a single timed iteration of the benchmark action for a given number of rounds.
         This method uses an unrolled loop to call the action the specified number of rounds,
         minimizing the overhead of loop control in Python.
@@ -398,10 +396,7 @@ class SimpleRunner(BenchmarkRunner):
             timer_metrics = 1
             if callable(setup):
                 setup()
-            total_elapsed, total_elapsed_cpu = self._timer_function(rounds)(timer,
-                                                                            cpu_timer,
-                                                                            action,
-                                                                            kwargs)
+            total_elapsed, total_elapsed_cpu = self._timer_function(rounds)(timer, cpu_timer, action, kwargs)
             if callable(teardown):
                 teardown()
         else:
@@ -428,20 +423,21 @@ class SimpleRunner(BenchmarkRunner):
                 timer_metrics += 1
             if callable(teardown):
                 teardown()
-        elapsed_time = float(
-            (total_elapsed - timer_overhead_ns(timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE)
+        elapsed_time = float((total_elapsed - timer_overhead_ns(timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE)
         elapsed_cpu_time = float(
-            (total_elapsed_cpu - timer_overhead_ns(cpu_timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE)
+            (total_elapsed_cpu - timer_overhead_ns(cpu_timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE
+        )
         return elapsed_time, elapsed_cpu_time
 
     def default_runner(  # pylint: disable=too-many-arguments, too-many-locals, too-many-statements  # noqa: C901
-            self,
-            *,
-            n: int | float,
-            action: Callable[..., Any],
-            setup: Optional[Callable[..., Any]] = None,
-            teardown: Optional[Callable[..., Any]] = None,
-            kwargs: Optional[dict[str, Any]] = None) -> Results:
+        self,
+        *,
+        n: int | float,
+        action: Callable[..., Any],
+        setup: Optional[Callable[..., Any]] = None,
+        teardown: Optional[Callable[..., Any]] = None,
+        kwargs: Optional[dict[str, Any]] = None,
+    ) -> Results:
         """Run a generic benchmark using the specified action and test case.
 
         It runs a complete benchmark for a specific combination of kwarg variations
@@ -504,12 +500,8 @@ class SimpleRunner(BenchmarkRunner):
         rounds: int
         if self.case.rounds is None:
             rounds = self._calibrate_rounds(
-                timer=timer,
-                cpu_timer=cpu_timer,
-                kwargs=kwargs,
-                setup=setup,
-                teardown=teardown,
-                action=action)
+                timer=timer, cpu_timer=cpu_timer, kwargs=kwargs, setup=setup, teardown=teardown, action=action
+            )
         else:
             rounds = self.case.rounds
 
@@ -521,12 +513,12 @@ class SimpleRunner(BenchmarkRunner):
             task_name='SimpleRunner:case_runner',
             progress_max=progress_max,
             description=f'Benchmarking {group} (iteration {0:<6d}; time {0.00:<3.2f}s)',
-            color=Color.GREEN)
+            color=Color.GREEN,
+        )
 
         iterations_list: list[_Measurement] = []
 
-        while ((iteration_pass <= iterations_min or wall_time < min_stop_at)
-                and wall_time < max_stop_at):
+        while (iteration_pass <= iterations_min or wall_time < min_stop_at) and wall_time < max_stop_at:
             iteration_pass += 1
             # Time the action
             elapsed, cpu_elapsed = self._run_timed_iteration(
@@ -536,7 +528,8 @@ class SimpleRunner(BenchmarkRunner):
                 action=action,
                 kwargs=kwargs,
                 setup=setup,
-                teardown=teardown)
+                teardown=teardown,
+            )
 
             # Measure memory usage of the action
             # We force a garbage collection before measuring memory usage to reduce noise
@@ -592,7 +585,7 @@ class SimpleRunner(BenchmarkRunner):
                 int(gc_gen1_end['uncollectable'] - gc_gen1_start['uncollectable']),
                 int(gc_gen2_end['collections'] - gc_gen2_start['collections']),
                 int(gc_gen2_end['collected'] - gc_gen2_start['collected']),
-                int(gc_gen2_end['uncollectable'] - gc_gen2_start['uncollectable'])
+                int(gc_gen2_end['uncollectable'] - gc_gen2_start['uncollectable']),
             )
             iterations_list.append(iteration_result)
             wall_time = float(timer())
@@ -605,14 +598,25 @@ class SimpleRunner(BenchmarkRunner):
             progress_tracker.update(
                 completed=progress_current,
                 description=(
-                    f'Benchmarking {group} (iteration {iteration_pass:6d}; '
-                    f'time {wall_time_elapsed_seconds:<3.2f}s)'))
+                    f'Benchmarking {group} (iteration {iteration_pass:6d}; time {wall_time_elapsed_seconds:<3.2f}s)'
+                ),
+            )
 
         retained_metrics: list[int] = [
-            _TIMING, _CPU_TIME, _MEMORY, _PEAK_MEMORY,
-            _GC_GEN0_COLLECTIONS, _GC_GEN0_COLLECTED, _GC_GEN0_UNCOLLECTABLE,
-            _GC_GEN1_COLLECTIONS, _GC_GEN1_COLLECTED, _GC_GEN1_UNCOLLECTABLE,
-            _GC_GEN2_COLLECTIONS, _GC_GEN2_COLLECTED, _GC_GEN2_UNCOLLECTABLE]
+            _TIMING,
+            _CPU_TIME,
+            _MEMORY,
+            _PEAK_MEMORY,
+            _GC_GEN0_COLLECTIONS,
+            _GC_GEN0_COLLECTED,
+            _GC_GEN0_UNCOLLECTABLE,
+            _GC_GEN1_COLLECTIONS,
+            _GC_GEN1_COLLECTED,
+            _GC_GEN1_UNCOLLECTABLE,
+            _GC_GEN2_COLLECTIONS,
+            _GC_GEN2_COLLECTED,
+            _GC_GEN2_UNCOLLECTABLE,
+        ]
         values: list[Values] = [] * len(retained_metrics)
         for metric in sorted(retained_metrics):
             values[metric] = Values(iteration[metric] for iteration in iterations_list)
@@ -658,18 +662,22 @@ class SimpleRunner(BenchmarkRunner):
             n=n,
             rounds=rounds,
             iterations=iteration_results,
-            extra_info={})
+            extra_info={},
+        )
         progress_tracker.stop()
 
         return benchmark_results
 
-    def _calibrate_rounds(self, *,  # noqa: C901
-                          timer: Callable[[], int],
-                          cpu_timer: Callable[[], int],
-                          kwargs: dict[str, Any],
-                          setup: Optional[Callable[..., Any]] = None,
-                          teardown: Optional[Callable[..., Any]] = None,
-                          action: Callable[..., Any]) -> int:
+    def _calibrate_rounds(
+        self,
+        *,  # noqa: C901
+        timer: Callable[[], int],
+        cpu_timer: Callable[[], int],
+        kwargs: dict[str, Any],
+        setup: Optional[Callable[..., Any]] = None,
+        teardown: Optional[Callable[..., Any]] = None,
+        action: Callable[..., Any],
+    ) -> int:
         """Auto-calibrate the number of rounds for the benchmark.
 
         This method estimates an appropriate number of rounds to use for the benchmark
@@ -691,31 +699,38 @@ class SimpleRunner(BenchmarkRunner):
         if not is_valid_timer(timer):
             raise SimpleBenchTypeError(
                 'Invalid timer function provided for rounds calibration',
-                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION)
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION,
+            )
         if not is_valid_timer(cpu_timer):
             raise SimpleBenchTypeError(
                 'Invalid CPU timer function provided for rounds calibration',
-                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CPU_TIMER_FUNCTION)
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CPU_TIMER_FUNCTION,
+            )
         if not isinstance(kwargs, dict):
             raise SimpleBenchTypeError(
                 'Invalid kwargs provided for rounds calibration; must be a dict',
-                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_TYPE)
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_TYPE,
+            )
         if not all(isinstance(key, str) for key in kwargs.keys()):
             raise SimpleBenchTypeError(
                 'Invalid kwargs provided for rounds calibration; all keys must be strings',
-                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_KEY_TYPE)
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_KWARGS_KEY_TYPE,
+            )
         if not callable(action):
             raise SimpleBenchTypeError(
                 'Invalid action provided for rounds calibration; must be callable',
-                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_ACTION_TYPE)
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_ACTION_TYPE,
+            )
         if setup is not None and not callable(setup):
             raise SimpleBenchTypeError(
                 'Invalid setup function provided for rounds calibration; must be callable',
-                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_SETUP)
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_SETUP,
+            )
         if teardown is not None and not callable(teardown):
             raise SimpleBenchTypeError(
                 'Invalid teardown function provided for rounds calibration; must be callable',
-                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TEARDOWN)
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TEARDOWN,
+            )
 
         timer_overhead: float = timer_overhead_ns(timer)
         cpu_timer_overhead: float = timer_overhead_ns(cpu_timer)
@@ -745,10 +760,7 @@ class SimpleRunner(BenchmarkRunner):
             if estimate_rounds < 1000:
                 timer_metrics = 1
                 estimate_timer = self._timer_function(estimate_rounds)
-                total_action_time_ns, total_action_cpu_time_ns = estimate_timer(timer,
-                                                                                cpu_timer,
-                                                                                action,
-                                                                                kwargs)
+                total_action_time_ns, total_action_cpu_time_ns = estimate_timer(timer, cpu_timer, action, kwargs)
             else:
                 total_action_time_ns = 0.0
                 total_action_cpu_time_ns = 0.0
@@ -773,8 +785,10 @@ class SimpleRunner(BenchmarkRunner):
             total_measured_cpu_time_ns = total_action_cpu_time_ns - (cpu_timer_overhead * timer_metrics)
 
             # loop exit condition
-            if (total_measured_time_ns >= timer_target_time_ns and
-                    total_measured_cpu_time_ns >= cpu_timer_target_time_ns):
+            if (
+                total_measured_time_ns >= timer_target_time_ns
+                and total_measured_cpu_time_ns >= cpu_timer_target_time_ns
+            ):
                 break
 
             if total_measured_time_ns <= 0 or total_measured_cpu_time_ns <= 0:
@@ -784,8 +798,9 @@ class SimpleRunner(BenchmarkRunner):
             # Calculate the average time to estimate the next number of rounds.
             avg_action_time_ns = total_measured_time_ns / estimate_rounds
             avg_action_cpu_time_ns = total_measured_cpu_time_ns / estimate_rounds
-            required_rounds = max(timer_target_time_ns / avg_action_time_ns,
-                                  cpu_timer_target_time_ns / avg_action_cpu_time_ns)
+            required_rounds = max(
+                timer_target_time_ns / avg_action_time_ns, cpu_timer_target_time_ns / avg_action_cpu_time_ns
+            )
             estimate_rounds = int(max(required_rounds, estimate_rounds * 10))
 
         if callable(teardown):

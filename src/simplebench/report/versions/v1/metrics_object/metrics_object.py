@@ -14,6 +14,7 @@ It is the base implemention of the JSON a metrics object representation.
 This makes the implementations of Metrics backwards compatible with future versions
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the results object representation at the time of the V1 schema release."""
+
 import hashlib
 from collections import UserDict
 from collections.abc import Mapping
@@ -53,6 +54,7 @@ class MetricsObject(UserDict):
     - :class:`~simplebench.report.versions.v1.ValueBlock`
     - :class:`~simplebench.report.versions.v1.RawDataBlock`
     """
+
     def __init__(self, metrics: Mapping[str, MetricItem]):
         """Initialize a Metrics v1 instance.
 
@@ -70,14 +72,15 @@ class MetricsObject(UserDict):
             validate_namespaced_identifier(metric_name)
             if not isinstance(metric_object, METRIC_ITEM_TYPES):
                 raise SimpleBenchTypeError(
-                    f"Metric item must be a StatsBlock, ValueBlock, RawDataBlock - got {type(metric_object)}",
-                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
+                    f'Metric item must be a StatsBlock, ValueBlock, RawDataBlock - got {type(metric_object)}',
+                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
+                )
         super().__init__(copy(metrics))
         self._hash_id: str = ''
         self._frozen: bool = True
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Mapping[str, Any]]) -> "MetricsObject":
+    def from_dict(cls, data: Mapping[str, Mapping[str, Any]]) -> 'MetricsObject':
         """Create a Metrics object instance from a dictionary.
 
         :param data: Dictionary containing the JSON results object data.
@@ -92,20 +95,24 @@ class MetricsObject(UserDict):
         metrics: dict[str, MetricItem] = {}
         for metric_name, metric_data in data.get('metrics', {}).items():
             validated_metric_name: str = validate_string(
-                metric_name, 'metric name',
+                metric_name,
+                'metric name',
                 _MetricsErrorTag.INVALID_METRIC_NAME_TYPE,
                 _MetricsErrorTag.INVALID_METRIC_NAME_VALUE,
-                allow_blank=False, strip=True)
+                allow_blank=False,
+                strip=True,
+            )
             validate_namespaced_identifier(validated_metric_name)
             if not isinstance(metric_data, dict):
                 raise SimpleBenchTypeError(
-                    f"Metric item must be a dictionary, got {type(metric_data)}",
-                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
+                    f'Metric item must be a dictionary, got {type(metric_data)}',
+                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
+                )
             discriminator_type = metric_data.get('type')
             if not discriminator_type in supported_metric_types:
                 raise SimpleBenchValueError(
-                    f"Invalid metric item type: {discriminator_type}",
-                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
+                    f'Invalid metric item type: {discriminator_type}', tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE
+                )
             metrics[metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data)
 
         return cls(metrics)
@@ -130,22 +137,25 @@ class MetricsObject(UserDict):
         """
         if self._frozen:
             raise SimpleBenchTypeError(
-                "MetricsObject is frozen and cannot be modified after initialization.",
-                tag=_MetricsErrorTag.METRICS_OBJECT_FROZEN)
+                'MetricsObject is frozen and cannot be modified after initialization.',
+                tag=_MetricsErrorTag.METRICS_OBJECT_FROZEN,
+            )
         try:
             validate_namespaced_identifier(key)
         except SimpleBenchValueError as e:
             raise SimpleBenchKeyError(
-                f"Invalid metric name '{key}': {e}",
-                tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE) from e
+                f"Invalid metric name '{key}': {e}", tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE
+            ) from e
         if not isinstance(value, MetricItem):
             raise SimpleBenchTypeError(
-                f"Metric item must be a StatsBlock or ValueBlock, got {type(value)}",
-                tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE)
+                f'Metric item must be a StatsBlock or ValueBlock, got {type(value)}',
+                tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
+            )
         if value.semantic_type != key:
             raise SimpleBenchValueError(
                 f"Metric item semantic type '{value.semantic_type}' does not match metric name '{key}'",
-                tag=_MetricsErrorTag.INVALID_METRIC_ITEM_SEMANTIC_TYPE)
+                tag=_MetricsErrorTag.INVALID_METRIC_ITEM_SEMANTIC_TYPE,
+            )
         super().__setitem__(key, value)
 
     def __getitem__(self, key: str) -> 'MetricItem':
@@ -159,8 +169,8 @@ class MetricsObject(UserDict):
             return super().__getitem__(key)
         except KeyError as e:
             raise SimpleBenchKeyError(
-                f"Metric name '{key}' does not exist in metrics.",
-                tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE) from e
+                f"Metric name '{key}' does not exist in metrics.", tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE
+            ) from e
 
     def __delitem__(self, key: str) -> None:
         """Delete a metric item from the metrics dictionary.
@@ -172,8 +182,8 @@ class MetricsObject(UserDict):
             super().__delitem__(key)
         except KeyError as e:
             raise SimpleBenchKeyError(
-                f"Metric name '{key}' does not exist in metrics.",
-                tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE) from e
+                f"Metric name '{key}' does not exist in metrics.", tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE
+            ) from e
 
     def __eq__(self, other):
         """Check equality with another MetricsObject."""
@@ -199,7 +209,7 @@ class MetricsObject(UserDict):
             hashed_subelements: list[str] = []
             for key, value in hash_keys:
                 if hasattr(value, 'hash_id'):
-                    hashed_subelements.append(f"{key}:{value.hash_id}")
-            hash_input = "\x00".join(hashed_subelements).encode('utf-8')
+                    hashed_subelements.append(f'{key}:{value.hash_id}')
+            hash_input = '\x00'.join(hashed_subelements).encode('utf-8')
             self._hash_id = hashlib.sha256(hash_input).hexdigest()
         return self._hash_id

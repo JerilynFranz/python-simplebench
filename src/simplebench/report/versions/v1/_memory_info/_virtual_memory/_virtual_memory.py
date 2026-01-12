@@ -8,26 +8,21 @@ for the virtual_memory object in the following JSON Schema:
 https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/memory-info.json
 
 """
+
 from simplebench.report._base import BaseSwapMemoryObject
 
 from . import _validate
 from ._typeddict_types import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
 
-__all__ = [
-    "VirtualMemoryObject",
-]
+__all__ = ['VirtualMemoryObject']
 
 
 class VirtualMemoryObject(BaseSwapMemoryObject):
     """Class representing virtual memory information in a memory-info object."""
+
     __slots__ = ('_total', '_available', '_percent', '_used', '_free', '_hash_id')
 
-    def __init__(self, *,
-                 total: int,
-                 available: int,
-                 percent: float,
-                 used: int,
-                 free: int) -> None:
+    def __init__(self, *, total: int, available: int, percent: float, used: int, free: int) -> None:
         """Initialize MemoryInfo.
 
         :param int total: Total virtual memory in bytes.
@@ -55,10 +50,7 @@ class VirtualMemoryObject(BaseSwapMemoryObject):
         :return VirtualMemoryObject: A VirtualMemoryObject instance.
         """
         allowed_keys = cls.init_params()
-        kwargs = cls.import_data(
-            data=data,
-            allowed_fields=allowed_keys,
-            process_as={})
+        kwargs = cls.import_data(data=data, allowed_fields=allowed_keys, process_as={})
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableVirtualMemoryObjectDict:

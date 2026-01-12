@@ -1,4 +1,5 @@
 """ImageType enums for the :mod:`simplebench.graph` package."""
+
 from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
@@ -7,7 +8,8 @@ from simplebench.doc_utils import enum_docstrings
 @enum_docstrings
 class ImageType(str, Enum):
     """Enumeration of image types for graph output."""
-    SVG = "svg"
+
+    SVG = 'svg'
     """SVG (Scalable Vector Graphics) image format."""
-    PNG = "png"
+    PNG = 'png'
     """PNG (Portable Network Graphics) image format."""

@@ -11,12 +11,9 @@ Public API
 - ScatterPlotOptions: Options class for the ScatterPlot reporter.
 - ScatterPlotReporter: The ScatterPlot reporter class.
 """
+
 from .config import ScatterPlotConfig
 from .options import ScatterPlotOptions
 from .reporter import ScatterPlotReporter
 
-__all__ = [
-    "ScatterPlotConfig",
-    "ScatterPlotOptions",
-    "ScatterPlotReporter",
-]
+__all__ = ['ScatterPlotConfig', 'ScatterPlotOptions', 'ScatterPlotReporter']

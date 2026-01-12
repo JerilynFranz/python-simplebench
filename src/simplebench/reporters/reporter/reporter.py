@@ -13,6 +13,7 @@ renders a report for each metric, is sufficient.
 A `Reporter` is responsible for generating reports based on benchmark results from a `Session` and `Case`.
 Reporters can produce reports in various formats and output them to different targets.
 """
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -30,10 +31,12 @@ from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTy
 from simplebench.metadata import Metadata
 from simplebench.metrics.metric import Metric
 from simplebench.metrics.metric_types_registry import metric_types_registry as metric_registry
+
 # simplebench.reporters
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
+
 # simplebench.reporters.reporter
 from simplebench.reporters.reporter.config import ReporterConfig
 from simplebench.reporters.reporter.mixins import (
@@ -57,6 +60,7 @@ if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
+
     _CORE_IMPORTS_DONE = True
 else:
     Choice = None  # pylint: disable=invalid-name
@@ -72,11 +76,18 @@ def deferred_core_imports() -> None:
     """
     global Choice, _CORE_IMPORTS_DONE  # pylint: disable=global-statement
     from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
+
     _CORE_IMPORTS_DONE = True
 
 
-class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
-               _ReporterPrioritizationMixin, _ReporterTargetMixin, ReporterProtocol):
+class Reporter(
+    ABC,
+    _ReporterArgparseMixin,
+    _ReporterOrchestrationMixin,
+    _ReporterPrioritizationMixin,
+    _ReporterTargetMixin,
+    ReporterProtocol,
+):
     """Base class for Reporter classes.
 
     A :class:`~.Reporter` is responsible for generating reports based on benchmark results
@@ -92,6 +103,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
 
     reporting options within the SimpleBench framework.
     """
+
     @classmethod
     def _validate_subclass_config(cls) -> None:
         """Validate that the subclass has correctly defined its options configuration.
@@ -115,51 +127,68 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         # Verify that we are being called from a subclass of Reporter, not Reporter itself
         if cls is Reporter:
             raise SimpleBenchNotImplementedError(
-                ("get_hardcoded_default_options() cannot be called directly on the Reporter class"),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_CANNOT_BE_REPORTER)
+                ('get_hardcoded_default_options() cannot be called directly on the Reporter class'),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_CANNOT_BE_REPORTER,
+            )
         if not issubclass(cls, Reporter):
             raise SimpleBenchNotImplementedError(
-                ("Only sub-classes of Reporter can call get_hardcoded_default_options()"),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_MUST_BE_SUBCLASS_OF_REPORTER)
+                ('Only sub-classes of Reporter can call get_hardcoded_default_options()'),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_MUST_BE_SUBCLASS_OF_REPORTER,
+            )
 
         # Verify that the subclass has implemented the _OPTIONS_TYPE class variable correctly
         # It must be implemented in the subclass, and it must be a subclass of ReporterOptions,
         # but not ReporterOptions itself
-        if "_OPTIONS_TYPE" not in cls.__dict__:
+        if '_OPTIONS_TYPE' not in cls.__dict__:
             raise SimpleBenchNotImplementedError(
-                ("Reporter subclasses must implement the class variable '_OPTIONS_TYPE' "
-                 "and set it to the specific ReporterOptions subclass they use"),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_NOT_IMPLEMENTED)
+                (
+                    "Reporter subclasses must implement the class variable '_OPTIONS_TYPE' "
+                    'and set it to the specific ReporterOptions subclass they use'
+                ),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_NOT_IMPLEMENTED,
+            )
         options = cls._OPTIONS_TYPE  # pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]
         if options is ReporterOptions:
             raise SimpleBenchNotImplementedError(
-                ("Reporter subclasses must set '_OPTIONS_TYPE' to a ReporterOptions subclass, "
-                 "not the base ReporterOptions class"),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_INVALID_TYPE)
+                (
+                    "Reporter subclasses must set '_OPTIONS_TYPE' to a ReporterOptions subclass, "
+                    'not the base ReporterOptions class'
+                ),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_INVALID_TYPE,
+            )
         if not issubclass(options, ReporterOptions):
             raise SimpleBenchNotImplementedError(
-                ("Reporter subclasses must implement the class variable '_OPTIONS_TYPE' "
-                 "and set it to a ReporterOptions subclass."),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_MUST_BE_SUBCLASS)
+                (
+                    "Reporter subclasses must implement the class variable '_OPTIONS_TYPE' "
+                    'and set it to a ReporterOptions subclass.'
+                ),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_TYPE_MUST_BE_SUBCLASS,
+            )
 
         # Verify the subclass has implemented the _OPTIONS_KWARGS class variable correctly
         # It must be implemented in the subclass, and it must be a dict[str, Any]
-        if "_OPTIONS_KWARGS" not in cls.__dict__:
+        if '_OPTIONS_KWARGS' not in cls.__dict__:
             raise SimpleBenchNotImplementedError(
-                ("Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
-                 "and set it to a dict of keyword arguments for the ReporterOptions subclass."),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_IMPLEMENTED)
+                (
+                    "Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
+                    'and set it to a dict of keyword arguments for the ReporterOptions subclass.'
+                ),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_IMPLEMENTED,
+            )
         options_kwargs = cls._OPTIONS_KWARGS  # pylint: disable=no-member   # type: ignore[reportAttributeAccessIssue]
         if not isinstance(options_kwargs, dict):
             raise SimpleBenchNotImplementedError(
-                ("Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
-                 "and set it to a dict of keyword arguments for the ReporterOptions subclass."),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_A_DICT)
+                (
+                    "Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
+                    'and set it to a dict of keyword arguments for the ReporterOptions subclass.'
+                ),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_NOT_A_DICT,
+            )
         if not all(isinstance(k, str) for k in options_kwargs.keys()):
             raise SimpleBenchNotImplementedError(
-                ("Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' "
-                 "as a dict with string keys."),
-                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_KEYS_MUST_BE_STR)
+                ("Reporter subclasses must implement the class variable '_OPTIONS_KWARGS' as a dict with string keys."),
+                tag=_ReporterErrorTag.VALIDATE_SUBCLASS_CONFIG_OPTIONS_KWARGS_KEYS_MUST_BE_STR,
+            )
 
     @classmethod
     def get_hardcoded_default_options(cls) -> Any:
@@ -201,14 +230,16 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         options_type = getattr(cls, '_OPTIONS_TYPE')
         if options.__class__ is ReporterOptions:
             raise SimpleBenchTypeError(
-                "Invalid type for options argument in set_default_options(). "
-                "Expected ReporterOptions subclass instance or None and got ReporterOptions base class instance.",
-                tag=_ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE_BASE_CLASS_INSTANCE)
+                'Invalid type for options argument in set_default_options(). '
+                'Expected ReporterOptions subclass instance or None and got ReporterOptions base class instance.',
+                tag=_ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE_BASE_CLASS_INSTANCE,
+            )
         if not isinstance(options, options_type) and options is not None:
             raise SimpleBenchTypeError(
-                "Invalid type for options argument in set_default_options(). "
-                f"Expected {options_type} or None and got {type(options)}.",
-                tag=_ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)
+                'Invalid type for options argument in set_default_options(). '
+                f'Expected {options_type} or None and got {type(options)}.',
+                tag=_ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE,
+            )
         setattr(cls, '_DEFAULT_OPTIONS', options)
 
     @classmethod
@@ -277,27 +308,32 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
             return None
         if not isinstance(cls, type):
             raise SimpleBenchTypeError(
-                "cls argument must be a type",
-                tag=_ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE)
+                'cls argument must be a type', tag=_ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_CLS_ARG_TYPE
+            )
         options = validate_iterable_of_type(
-            options, ReporterOptions, 'options',
+            options,
+            ReporterOptions,
+            'options',
             _ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG,
             _ReporterErrorTag.FIND_OPTIONS_BY_TYPE_INVALID_OPTIONS_ARG,
-            allow_empty=True)
+            allow_empty=True,
+        )
         for item in options:
             if isinstance(item, cls):
                 return item  # type: ignore
         return None
 
-    def report(self,  # pylint: disable=too-many-arguments  # noqa: C901
-               *,
-               log_metadata: Metadata,
-               args: Namespace,
-               case: Case,
-               choice: Choice,
-               path: Optional[Path] = None,
-               session: Optional[Session] = None,
-               callback: Optional[ReporterCallback] = None) -> None:
+    def report(
+        self,  # pylint: disable=too-many-arguments  # noqa: C901
+        *,
+        log_metadata: Metadata,
+        args: Namespace,
+        case: Case,
+        choice: Choice,
+        path: Optional[Path] = None,
+        session: Optional[Session] = None,
+        callback: Optional[ReporterCallback] = None,
+    ) -> None:
         """Generate a report based on the benchmark results.
 
         This method performs validation and then calls the subclass's :meth:`~.run_report` method.
@@ -320,59 +356,53 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :param callback: A callback function for additional processing of the report. Defaults to ``None``.
         :type callback: :class:`~simplebench.reporters.protocols.reporter_callback.ReporterCallback` | None, optional
         """
-        validate_type(
-            log_metadata, Metadata, 'log_metadata',
-            _ReporterErrorTag.REPORT_INVALID_LOG_METADATA_ARG)
+        validate_type(log_metadata, Metadata, 'log_metadata', _ReporterErrorTag.REPORT_INVALID_LOG_METADATA_ARG)
         if not isinstance(args, Namespace):
             raise SimpleBenchTypeError(
-                "args argument must be an argparse.Namespace instance",
-                tag=_ReporterErrorTag.REPORT_INVALID_ARGS_ARG_TYPE)
+                'args argument must be an argparse.Namespace instance',
+                tag=_ReporterErrorTag.REPORT_INVALID_ARGS_ARG_TYPE,
+            )
         # is_* checks handle deferred import runtime type checking for Case, Choice, and Session
         if not is_case(case):
-            raise SimpleBenchTypeError(
-                "Expected a Case instance",
-                tag=_ReporterErrorTag.REPORT_INVALID_CASE_ARG)
+            raise SimpleBenchTypeError('Expected a Case instance', tag=_ReporterErrorTag.REPORT_INVALID_CASE_ARG)
         if not is_choice(choice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)
+            raise SimpleBenchTypeError('Expected a Choice instance', tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)
         if not is_session(session) and session is not None:
             raise SimpleBenchTypeError(
-                "session must be a Session instance if provided",
-                tag=_ReporterErrorTag.REPORT_INVALID_SESSION_ARG)
+                'session must be a Session instance if provided', tag=_ReporterErrorTag.REPORT_INVALID_SESSION_ARG
+            )
 
         unsupported_metrics = choice.metrics - self.supported_metrics()
         if unsupported_metrics:
-            metrics_error = f"Unsupported Metric(s) in Choice().metrics: {unsupported_metrics}"
-            raise SimpleBenchValueError(
-                metrics_error,
-                tag=_ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)
+            metrics_error = f'Unsupported Metric(s) in Choice().metrics: {unsupported_metrics}'
+            raise SimpleBenchValueError(metrics_error, tag=_ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)
 
         unsupported_targets = choice.targets - self.supported_targets()
         if unsupported_targets:
-            targets_error = f"Unsupported Target(s) in Choice().targets: {unsupported_targets}"
-            raise SimpleBenchValueError(
-                targets_error,
-                tag=_ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)
+            targets_error = f'Unsupported Target(s) in Choice().targets: {unsupported_targets}'
+            raise SimpleBenchValueError(targets_error, tag=_ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)
 
         if choice.output_format not in self.supported_formats():
             raise SimpleBenchValueError(
-                f"Unsupported Format in Choice().output_format: {choice.output_format}",
-                tag=_ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)
+                f'Unsupported Format in Choice().output_format: {choice.output_format}',
+                tag=_ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT,
+            )
 
         if Target.CALLBACK in choice.targets:
             if callback is not None and not callable(callback):
                 raise SimpleBenchTypeError(
-                    "Callback function must be callable if provided",
-                    tag=_ReporterErrorTag.REPORT_INVALID_CALLBACK_ARG)
+                    'Callback function must be callable if provided', tag=_ReporterErrorTag.REPORT_INVALID_CALLBACK_ARG
+                )
         if path is not None and not isinstance(path, Path):
             raise SimpleBenchTypeError(
-                "Path must be a pathlib.Path instance when using FILESYSTEM target",
-                tag=_ReporterErrorTag.REPORT_INVALID_PATH_ARG)
+                'Path must be a pathlib.Path instance when using FILESYSTEM target',
+                tag=_ReporterErrorTag.REPORT_INVALID_PATH_ARG,
+            )
         if log_metadata.reports_log_path is not None and not isinstance(log_metadata.reports_log_path, Path):
             raise SimpleBenchTypeError(
-                "log_metadata.reports_log_path must be a pathlib.Path instance if provided",
-                tag=_ReporterErrorTag.REPORT_INVALID_REPORTS_LOG_PATH_ARG)
+                'log_metadata.reports_log_path must be a pathlib.Path instance if provided',
+                tag=_ReporterErrorTag.REPORT_INVALID_REPORTS_LOG_PATH_ARG,
+            )
 
         # Only proceed if there are results to report
         # TODO: THINK ABOUT THIS MORE. SHOULD WE RAISE AN EXCEPTION INSTEAD?
@@ -383,16 +413,18 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         # If we reach this point, all validation has passed and execution
         # will pass through to the hook method, either the default implementation
         # or an overridden implementation in the subclass
-        self.run_report(args=args,
-                        log_metadata=log_metadata,
-                        case=case,
-                        choice=choice,
-                        path=path,
-                        session=session,
-                        callback=callback)
+        self.run_report(
+            args=args,
+            log_metadata=log_metadata,
+            case=case,
+            choice=choice,
+            path=path,
+            session=session,
+            callback=callback,
+        )
 
     @abstractmethod
-    def render(self, *, case: "Case", metric: "Metric", options: "ReporterOptions") -> str | bytes | Text | Table:
+    def render(self, *, case: 'Case', metric: 'Metric', options: 'ReporterOptions') -> str | bytes | Text | Table:
         """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.
@@ -413,18 +445,20 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         :raises NotImplementedError: If the method is not implemented in a subclass.
         """
         raise SimpleBenchNotImplementedError(
-            "Reporter subclasses must implement the render method",
-            tag=_ReporterErrorTag.RENDER_NOT_IMPLEMENTED)
+            'Reporter subclasses must implement the render method', tag=_ReporterErrorTag.RENDER_NOT_IMPLEMENTED
+        )
 
-    def run_report(self,
-                   *,
-                   args: Namespace,
-                   log_metadata: Metadata,
-                   case: Case,
-                   choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
+    def run_report(
+        self,
+        *,
+        args: Namespace,
+        log_metadata: Metadata,
+        case: Case,
+        choice: Choice,
+        path: Optional[Path] = None,
+        session: Optional[Session] = None,
+        callback: Optional[ReporterCallback] = None,
+    ) -> None:
         """Orchestration hook for report generation.
 
         This method is the primary customization point for controlling how a report is generated.
@@ -464,7 +498,7 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
             path=path,
             session=session,
             callback=callback,
-            args=args
+            args=args,
         )
 
     def add_choice(self, choice: Choice) -> None:
@@ -479,26 +513,27 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         """
         # is_choice check handles deferred import runtime type checking for Choice
         if not is_choice(choice):
-            raise SimpleBenchTypeError(
-                "Expected a Choice instance",
-                tag=_ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
+            raise SimpleBenchTypeError('Expected a Choice instance', tag=_ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)
 
         unsupported_metrics = choice.metrics - self.supported_metrics()
         if unsupported_metrics:
             raise SimpleBenchValueError(
-                f"Unsupported Metric(s) in Choice().metrics: {unsupported_metrics}",
-                tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)
+                f'Unsupported Metric(s) in Choice().metrics: {unsupported_metrics}',
+                tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION,
+            )
 
         unsupported_targets = choice.targets - self.supported_targets()
         if unsupported_targets:
             raise SimpleBenchValueError(
-                f"Unsupported Target(s) in Choice().targets: {unsupported_targets}",
-                tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)
+                f'Unsupported Target(s) in Choice().targets: {unsupported_targets}',
+                tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET,
+            )
 
         if choice.output_format not in self.supported_formats():
             raise SimpleBenchValueError(
-                f"Unsupported Format in Choice().output_format: {choice.output_format}",
-                tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)
+                f'Unsupported Format in Choice().output_format: {choice.output_format}',
+                tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT,
+            )
 
         self.choices.add(choice)
 
@@ -614,8 +649,9 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
                 return BASE_MEMORY_UNIT
             case _:
                 raise SimpleBenchValueError(
-                    f"Unsupported metric: {metric} (this should never happen)",
-                    tag=_ReporterErrorTag.RUN_REPORT_UNSUPPORTED_SECTION)
+                    f'Unsupported metric: {metric} (this should never happen)',
+                    tag=_ReporterErrorTag.RUN_REPORT_UNSUPPORTED_SECTION,
+                )
 
     def get_all_stats_values(self, results: list[Results], metric: Metric) -> list[float]:
         """Gathers all primary statistical values for a given metric across multiple results.
@@ -641,10 +677,9 @@ class Reporter(ABC, _ReporterArgparseMixin, _ReporterOrchestrationMixin,
         all_numbers = []
         for result in results:
             stats = result.results_metric(metric)
-            all_numbers.extend([
-                stats.mean, stats.median, stats.minimum, stats.maximum,
-                stats.percentiles[5], stats.percentiles[95]
-            ])
+            all_numbers.extend(
+                [stats.mean, stats.median, stats.minimum, stats.maximum, stats.percentiles[5], stats.percentiles[95]]
+            )
         return all_numbers
 
     @property

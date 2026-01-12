@@ -1,4 +1,5 @@
 """Configuration for a CSVReporter."""
+
 from __future__ import annotations
 
 from typing import Any, Iterable
@@ -46,6 +47,7 @@ class CSVConfig(ReporterConfig):
     :ivar choices: The choice configurations available for this reporter. Default includes
         several pre-defined choices for different metrics of the report.
     """
+
     def __init__(
         self,
         *,
@@ -59,7 +61,7 @@ class CSVConfig(ReporterConfig):
         file_suffix: str | None = None,
         file_unique: bool | None = None,
         file_append: bool | None = None,
-        subdir: str | None = None
+        subdir: str | None = None,
     ) -> None:
         """Initialize the CSVReporter configuration.
 
@@ -67,8 +69,7 @@ class CSVConfig(ReporterConfig):
         All arguments are optional. If not provided, the default value for
         CSVReporter will be used.
         """
-        all_processable_metrics: Metrics = filtered_metrics(
-            metric_categories=MetricCategory.STATISTICAL)
+        all_processable_metrics: Metrics = filtered_metrics(metric_categories=MetricCategory.STATISTICAL)
         all_processable_metrics += metrics_registry['STD_TOTAL_ELAPSED_TIME']
         allowed_targets = {Target.FILESYSTEM, Target.CONSOLE, Target.CALLBACK}
 
@@ -83,39 +84,63 @@ class CSVConfig(ReporterConfig):
             'file_unique': True,
             'file_append': False,
             'subdir': '',
-            'choices': ChoicesConf([
-                ChoiceConf(
-                    flags=['--csv'], flag_type=FlagType.TARGET_LIST, name='csv',
-                    description=('Output all available statistical metrics to CSV (filesystem, console, callback, '
-                                 'default=filesystem)'),
-                    metrics=MetricsCollection(metrics=all_processable_metrics),
-                    targets=allowed_targets,
-                    output_format=Format.CSV),
-                ChoiceConf(
-                    flags=['--csv.ops'], flag_type=FlagType.TARGET_LIST, name='csv-ops',
-                    description=('Output ops/second statistical metrics to CSV '
-                                 '(filesystem, console, callback, default=filesystem)'),
-                    metrics=MetricsCollection(metrics_registry['STD_OPS_STATS'],
-                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
-                    targets=allowed_targets,
-                    output_format=Format.CSV),
-                ChoiceConf(
-                    flags=['--csv.timing'], flag_type=FlagType.TARGET_LIST, name='csv-timing',
-                    description=('Output timing statistical metrics to CSV '
-                                 '(filesystem, console, callback, default=filesystem)'),
-                    metrics=MetricsCollection(metrics_registry['STD_TIMING_STATS'],
-                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
-                    targets=allowed_targets,
-                    output_format=Format.CSV),
-                ChoiceConf(
-                    flags=['--csv.memory'], flag_type=FlagType.TARGET_LIST, name='csv-memory',
-                    description='Output memory metrics to CSV (filesystem, console, callback, default=filesystem)',
-                    metrics=MetricsCollection(metrics_registry['STD_MEMORY_STATS'],
-                                              metrics_registry['STD_PEAK_MEMORY_STATS'],
-                                              metrics_registry['STD_TOTAL_ELAPSED_TIME']),
-                    targets=allowed_targets,
-                    output_format=Format.CSV),
-            ])
+            'choices': ChoicesConf(
+                [
+                    ChoiceConf(
+                        flags=['--csv'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='csv',
+                        description=(
+                            'Output all available statistical metrics to CSV (filesystem, console, callback, '
+                            'default=filesystem)'
+                        ),
+                        metrics=MetricsCollection(metrics=all_processable_metrics),
+                        targets=allowed_targets,
+                        output_format=Format.CSV,
+                    ),
+                    ChoiceConf(
+                        flags=['--csv.ops'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='csv-ops',
+                        description=(
+                            'Output ops/second statistical metrics to CSV '
+                            '(filesystem, console, callback, default=filesystem)'
+                        ),
+                        metrics=MetricsCollection(
+                            metrics_registry['STD_OPS_STATS'], metrics_registry['STD_TOTAL_ELAPSED_TIME']
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.CSV,
+                    ),
+                    ChoiceConf(
+                        flags=['--csv.timing'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='csv-timing',
+                        description=(
+                            'Output timing statistical metrics to CSV '
+                            '(filesystem, console, callback, default=filesystem)'
+                        ),
+                        metrics=MetricsCollection(
+                            metrics_registry['STD_TIMING_STATS'], metrics_registry['STD_TOTAL_ELAPSED_TIME']
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.CSV,
+                    ),
+                    ChoiceConf(
+                        flags=['--csv.memory'],
+                        flag_type=FlagType.TARGET_LIST,
+                        name='csv-memory',
+                        description='Output memory metrics to CSV (filesystem, console, callback, default=filesystem)',
+                        metrics=MetricsCollection(
+                            metrics_registry['STD_MEMORY_STATS'],
+                            metrics_registry['STD_PEAK_MEMORY_STATS'],
+                            metrics_registry['STD_TOTAL_ELAPSED_TIME'],
+                        ),
+                        targets=allowed_targets,
+                        output_format=Format.CSV,
+                    ),
+                ]
+            ),
         }
         # Collect all provided overrides from the method signature, filtering out `None`s.
         overrides = {k: v for k, v in locals().items() if k in defaults and v is not None}

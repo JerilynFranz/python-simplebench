@@ -2,6 +2,7 @@
 
 Provides a base class for MatPlotLib themes used in SimpleBench graphs.
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -23,6 +24,7 @@ class Theme(RcParams):
     <https://matplotlib.org/stable/tutorials/introductory/customizing.html>`_
     for more information on customizing Matplotlib themes.
     """
+
     def __init__(self, rcparams: dict[str, Any] | None = None) -> None:
         """Initialize a :class:`~.Theme` instance.
 
@@ -53,8 +55,7 @@ class Theme(RcParams):
                                                  after initialization.
         """
         if self._immutable:
-            raise SimpleBenchNotImplementedError("Cannot modify items in a Theme.",
-                                                 tag=_ThemeErrorTag.THEME_IMMUTABLE)
+            raise SimpleBenchNotImplementedError('Cannot modify items in a Theme.', tag=_ThemeErrorTag.THEME_IMMUTABLE)
         super().__setitem__(key, value)
 
     def __delitem__(self, key: str) -> None:
@@ -71,8 +72,9 @@ class Theme(RcParams):
                                                  :class:`~.Theme` after initialization.
         """
         if self._immutable:
-            raise SimpleBenchNotImplementedError("Cannot delete items from a Theme.",
-                                                 tag=_ThemeErrorTag.THEME_IMMUTABLE)
+            raise SimpleBenchNotImplementedError(
+                'Cannot delete items from a Theme.', tag=_ThemeErrorTag.THEME_IMMUTABLE
+            )
         super().__delitem__(key)
 
     def replace(self, rcparams: dict[str, Any]) -> Theme:

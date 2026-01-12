@@ -1,5 +1,5 @@
-"""Cache for validation results.
-"""
+"""Cache for validation results."""
+
 import logging
 import threading
 from collections import OrderedDict
@@ -14,6 +14,7 @@ from ._error_tags import _ValidationCacheErrorTag
 
 log = logging.getLogger(__name__)
 
+
 class ValidationCache:
     """Cache for validated references.
 
@@ -24,9 +25,10 @@ class ValidationCache:
     It allows quick checks for previously seen validation checks to avoid redundant
     validation of the same structure multiple times during report processing.
     """
+
     def __init__(self, min_cache_size: int = 100, max_cache_size: int = 16384) -> None:
         """Initialize the ValidationCache.
-        
+
         :param int min_cache_size: Minimum size of the cache.
             This is the smallest allowed size after trimming to ensure effective caching.
             Do not set below about 100 to ensure reasonable cache effectiveness.
@@ -73,8 +75,7 @@ class ValidationCache:
         :param object obj: The object reference to check.
         :return bool | None: The cached validity if found, or None if not found in cache.
         """
-        log.debug("valid_in_cache: Checking cache for object of type '%s' with id %d",
-                  td_cls, id(obj))
+        log.debug("valid_in_cache: Checking cache for object of type '%s' with id %d", td_cls, id(obj))
         key: CacheKey = CacheKey(td_cls, obj)
         if key in self._cache:
             try:  # optimistic access for performance
@@ -92,19 +93,18 @@ class ValidationCache:
                 return None
         return None
 
-    def add_cache_entry(self,
-            td_cls: Hashable, obj: object, is_valid: bool, noncachable_types: set[type[Any]] | None = None) -> None:
+    def add_cache_entry(
+        self, td_cls: Hashable, obj: object, is_valid: bool, noncachable_types: set[type[Any]] | None = None
+    ) -> None:
         """Cache a CacheEntry
 
         :param Hashable td_cls: The type hint of the object.
         :param object obj: The object to cache.
         :param bool is_valid: The validity of the object.
         """
-        log.debug("add_cache_entry: Caching object of type '%s' with id %d as valid=%s",
-                  td_cls, id(obj), is_valid)
+        log.debug("add_cache_entry: Caching object of type '%s' with id %d as valid=%s", td_cls, id(obj), is_valid)
         if noncachable_types is not None and type(obj) in noncachable_types:
-            log.debug("add_cache_entry: Not caching object of type '%s' as it is in noncachable_types",
-                      td_cls)
+            log.debug("add_cache_entry: Not caching object of type '%s' as it is in noncachable_types", td_cls)
             return
         item = CacheEntry(td_cls, obj, is_valid, self._cache, self._cache_lock)
         with self._cache_lock:
@@ -129,7 +129,7 @@ class ValidationCache:
         :raises SimpleBenchTypeError: If size is not an integer.
         :raises SimpleBenchValueError: If size is less than 1.
         """
-        log.debug("trim_cache: Cache size %d. Trimming cache to size %d", len(self._cache), size)
+        log.debug('trim_cache: Cache size %d. Trimming cache to size %d', len(self._cache), size)
 
         with self._cache_lock:
             if len(self._cache) <= size:
@@ -137,24 +137,24 @@ class ValidationCache:
 
         if not isinstance(size, int):
             raise SimpleBenchTypeError(
-                'Cache size must be an integer.',
-                tag=_ValidationCacheErrorTag.INVALID_CACHE_SIZE_TYPE)
+                'Cache size must be an integer.', tag=_ValidationCacheErrorTag.INVALID_CACHE_SIZE_TYPE
+            )
 
         # Minimum size to ensure effective caching and no exceptions during trimming
         if size < self._min_cache_size:
             raise SimpleBenchValueError(
-                f'Cache size must be at least {self._min_cache_size}.',
-                tag=_ValidationCacheErrorTag.INVALID_CACHE_SIZE)
+                f'Cache size must be at least {self._min_cache_size}.', tag=_ValidationCacheErrorTag.INVALID_CACHE_SIZE
+            )
 
         with self._cache_lock:
             target_size = max(int(size * 0.75), 2)  # backstopped at 2 to prevent exceptions
             while len(self._cache) > target_size:
                 self._cache.popitem(last=False)
-        log.debug("trim_cache: Cache trimmed to size %d", len(self._cache))
+        log.debug('trim_cache: Cache trimmed to size %d', len(self._cache))
 
     def clear(self) -> None:
         """Clear the entire cache."""
-        log.debug("clear_cache: Clearing entire cache")
+        log.debug('clear_cache: Clearing entire cache')
         with self._cache_lock:
             self._cache.clear()
 
@@ -163,6 +163,6 @@ class ValidationCache:
 
         :return int: The number of entries in the cache.
         """
-        log.debug("get_cache_size: Getting current cache size")
+        log.debug('get_cache_size: Getting current cache size')
         with self._cache_lock:
             return len(self._cache)

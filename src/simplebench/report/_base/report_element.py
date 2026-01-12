@@ -5,6 +5,7 @@ This class represents a report element in a report that can be serialized.
 It implements validation and serialization/deserialization methods to and from dictionaries
 for a JSON Schema version.
 """
+
 import hashlib
 from abc import ABC
 from types import MappingProxyType
@@ -22,7 +23,7 @@ from simplebench.validators import is_immutable_core_data
 
 from ._json_schema import JSONSchema
 
-T = TypeVar("T", bound=ReportElementTypedDict)
+T = TypeVar('T', bound=ReportElementTypedDict)
 
 __all__ = []
 
@@ -38,11 +39,13 @@ _NO_MATCH = _NoMatch()
 @enum_docstrings
 class _ReportElementErrorTag(ErrorTag):
     """Error tags for ReportElement errors."""
-    INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE = "INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE"
+
+    INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE = 'INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE'
     """The to_dict method of a ReportElement attribute is not callable."""
 
-    INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING = "INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING"
+    INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING = 'INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING'
     """A required attribute is missing from a ReportElement instance."""
+
 
 class ReportElement(Hydrator, Immutable, ABC):
     """abstract class representing a report element in a report."""
@@ -53,13 +56,13 @@ class ReportElement(Hydrator, Immutable, ABC):
     It must be overridden in subclasses to specify the correct version.
     """
 
-    TYPE: str = ""
+    TYPE: str = ''
     """The report element type property value.
 
     It must be overridden in subclasses to specify the correct type.
     """
 
-    ID: str = ""
+    ID: str = ''
     """The report element $id property value.
 
     It must be overridden in subclasses to specify the correct $id.
@@ -70,11 +73,10 @@ class ReportElement(Hydrator, Immutable, ABC):
 
     It must be overridden in subclasses to specify the correct schema class.
     """
+
     def __init__(self) -> None:
         """Abstract base __init__ method for all report element classes."""
-        raise NotImplementedError(
-            "__init__ is an abstract method and must be implemented by a subclass."
-        )
+        raise NotImplementedError('__init__ is an abstract method and must be implemented by a subclass.')
 
     def _to_dict_helper(self, dict_type: type[T]) -> T:
         """Helper method to convert a mapping to a ReportElementDictType.
@@ -105,18 +107,20 @@ class ReportElement(Hydrator, Immutable, ABC):
                     continue
 
                 case 'version':
-                    data['version']= cls.VERSION
+                    data['version'] = cls.VERSION
                     continue
 
-            value: Callable[[], ImmutableCoreDataMappingType] | \
-                ImmutableCoreDataMappingType | _NoMatch = getattr(self, key, _NO_MATCH)
-            to_dict_fn: Callable[[], ImmutableCoreDataMappingType] | None = getattr(value, "to_dict", None)
+            value: Callable[[], ImmutableCoreDataMappingType] | ImmutableCoreDataMappingType | _NoMatch = getattr(
+                self, key, _NO_MATCH
+            )
+            to_dict_fn: Callable[[], ImmutableCoreDataMappingType] | None = getattr(value, 'to_dict', None)
 
             # Attribute doesn't exist on instance
             if isinstance(value, _NoMatch):
                 raise SimpleBenchAttributeError(
                     f"ReportElement subclass {cls.__name__} is missing expected attribute '{key}'",
-                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING)
+                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
+                )
 
             # Already an ImmutableCoreDataMappingType
             elif is_immutable_core_data(value):
@@ -130,17 +134,19 @@ class ReportElement(Hydrator, Immutable, ABC):
             else:
                 raise SimpleBenchTypeError(
                     f"Attribute '{key}' of {cls.__name__} class "
-                    f"is of type {type(value).__name__}, does not have a callable to_dict method, "
-                    "and is not an ImmutableCoreDataMappingType. It cannot be converted to a dictionary.",
-                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE)
+                    f'is of type {type(value).__name__}, does not have a callable to_dict method, '
+                    'and is not an ImmutableCoreDataMappingType. It cannot be converted to a dictionary.',
+                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE,
+                )
 
         for key, value in data.items():
             if isinstance(value, IMMUTABLE_CORE_DATA_TYPES_TUPLE):
                 continue
             raise SimpleBenchTypeError(
                 f"ReportElement._to_dict_helper produced invalid data for key '{key}': "
-                f"value of type {type(value).__name__} is not a core data primitive or an immutable mapping.",
-                tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE)
+                f'value of type {type(value).__name__} is not a core data primitive or an immutable mapping.',
+                tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE,
+            )
 
         # Return validated immutable mapping that mimics the requested ReportElementTypedDict subclass
         return report_element_typed_dict_mimic(MappingProxyType(data), dict_type)
@@ -164,7 +170,8 @@ class ReportElement(Hydrator, Immutable, ABC):
             if not hasattr(self, key):
                 raise SimpleBenchAttributeError(
                     f"Missing required property '{key}'",
-                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING)
+                    tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
+                )
             value = getattr(self, key)
 
             # Special handling for 'hash_id' property for ReportElement sub-objects
@@ -176,18 +183,19 @@ class ReportElement(Hydrator, Immutable, ABC):
                 if value_hash_id is _NO_MATCH:
                     raise SimpleBenchAttributeError(
                         f"Missing required 'hash_id' property on sub-object for attribute '{key}' "
-                        f"or its class {value.__class__.__name__}",
-                        tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING)
-                hash_items.append(f"{key}:{value_hash_id}")
+                        f'or its class {value.__class__.__name__}',
+                        tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
+                    )
+                hash_items.append(f'{key}:{value_hash_id}')
             else:
-                hash_items.append(f"{key}:{value}")
+                hash_items.append(f'{key}:{value}')
 
         cls = self.__class__
         if hasattr(cls, 'TYPE'):
-            hash_items.append(f"type:{cls.TYPE}")
+            hash_items.append(f'type:{cls.TYPE}')
         if hasattr(cls, 'VERSION'):
-            hash_items.append(f"version:{cls.VERSION}")
+            hash_items.append(f'version:{cls.VERSION}')
         hash_items.sort()
-        hash_input = "\x00".join(hash_items).encode('utf-8')
+        hash_input = '\x00'.join(hash_items).encode('utf-8')
 
         return hashlib.sha256(hash_input).hexdigest()

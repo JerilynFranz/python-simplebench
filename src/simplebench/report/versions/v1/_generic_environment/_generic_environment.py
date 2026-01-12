@@ -12,6 +12,7 @@ It is a generic environment representation without predefined properties
 designed to allow importing and storing arbitrary environment data
 that does not match other specific environment types.
 """
+
 import base64
 import hashlib
 from collections.abc import Mapping, Sequence, Set
@@ -30,7 +31,7 @@ from ._generic_environment_schema import GenericEnvironmentSchema
 
 class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
     """Immutable class representing a benchmark execution environment in a report (V1).
-    
+
     It provides methods to convert to and from dictionary representations and
     enforces that all values are of core data mapping types.
 
@@ -65,9 +66,7 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         The values must be of core data types.
         """
         if not isinstance(data, Mapping):
-            raise SimpleBenchTypeError(
-                "data must be a mapping type",
-                tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+            raise SimpleBenchTypeError('data must be a mapping type', tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
 
         local_data = dict(data)  # Make a shallow local copy to avoid modifying the input
 
@@ -115,8 +114,9 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
 
                 else:
                     raise SimpleBenchTypeError(
-                        f"Unsupported data type for hash_id generation: {type(value)}",
-                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+                        f'Unsupported data type for hash_id generation: {type(value)}',
+                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
+                    )
 
         elif isinstance(data, Set):
             sorted_data = data
@@ -136,8 +136,9 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
 
                 else:
                     raise SimpleBenchTypeError(
-                        f"Unsupported data type for hash_id generation: {type(item)}",
-                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+                        f'Unsupported data type for hash_id generation: {type(item)}',
+                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
+                    )
 
         elif isinstance(data, Sequence) and not isinstance(data, (str, bytes, bytearray)):
             for item in data:
@@ -151,12 +152,14 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
 
                 else:
                     raise SimpleBenchTypeError(
-                        f"Unsupported data type for hash_id generation: {type(item)}",
-                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+                        f'Unsupported data type for hash_id generation: {type(item)}',
+                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
+                    )
         else:
             raise SimpleBenchTypeError(
-                f"Unsupported data type for hash_id generation: {type(data)}",
-                tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+                f'Unsupported data type for hash_id generation: {type(data)}',
+                tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
+            )
 
         hash_input = b'\x00'.join(hash_items)
         return hashlib.sha256(hash_input).hexdigest()
@@ -213,7 +216,7 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         return key in self._from_dict
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({dict(self._from_dict)!r})"
+        return f'{self.__class__.__name__}({dict(self._from_dict)!r})'
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, GenericEnvironment):

@@ -1,12 +1,10 @@
 """Utility for formatting JSON data into an RST code-block for docstrings."""
+
 from json import JSONEncoder
 from textwrap import dedent, indent
 
 
-def format_json_for_docstring(
-        json_data: dict[str, object] | str,
-        caption: str,
-        intro_text: str) -> str:
+def format_json_for_docstring(json_data: dict[str, object] | str, caption: str, intro_text: str) -> str:
     """Generate a reStructuredText (RST) formatted string containing a JSON code-block.
 
     This utility is designed to embed pretty-printed JSON data directly into
@@ -37,10 +35,6 @@ def format_json_for_docstring(
         {schema_text}
         """)
 
-    indented_json_text = indent(json_text, "   ")
+    indented_json_text = indent(json_text, '   ')
 
-    return template.format(
-        intro=intro_text,
-        caption=caption,
-        schema_text=indented_json_text
-    )
+    return template.format(intro=intro_text, caption=caption, schema_text=indented_json_text)

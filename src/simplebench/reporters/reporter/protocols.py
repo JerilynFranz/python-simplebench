@@ -1,4 +1,5 @@
 """Protocols for the Reporter class and its mixins."""
+
 # pylint: disable=unnecessary-ellipsis,line-too-long
 # noqa: E501
 from __future__ import annotations
@@ -29,6 +30,7 @@ T = TypeVar('T')
 @runtime_checkable
 class ReporterProtocol(Protocol):
     """Protocol for the Reporter class and its mixins."""
+
     _OPTIONS_TYPE: ClassVar[type[ReporterOptions]]
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]]
 
@@ -364,7 +366,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def render(self, *, case: "Case", metric: "Metric", options: "ReporterOptions") -> str | bytes | Text | Table:
+    def render(self, *, case: 'Case', metric: 'Metric', options: 'ReporterOptions') -> str | bytes | Text | Table:
         """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.
@@ -432,15 +434,17 @@ class ReporterProtocol(Protocol):
         ...
 
     def render_by_metric(
-            self, *,
-            renderer: ReportRenderer,
-            log_metadata: Metadata,
-            args: Namespace,
-            case: Case,
-            choice: Choice,
-            path: Path | None = None,
-            session: Session | None = None,
-            callback: ReporterCallback | None = None) -> None:
+        self,
+        *,
+        renderer: ReportRenderer,
+        log_metadata: Metadata,
+        args: Namespace,
+        case: Case,
+        choice: Choice,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None,
+    ) -> None:
         """Render a report by iterating through each metric specified in the choice.
 
         This method is suitable for reporters that generate a separate output for each
@@ -465,15 +469,18 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def render_by_case(self, *,
-                       renderer: ReportRenderer,
-                       log_metadata: Metadata,
-                       args: Namespace,
-                       case: Case,
-                       choice: Choice,
-                       path: Path | None = None,
-                       session: Session | None = None,
-                       callback: ReporterCallback | None = None) -> None:
+    def render_by_case(
+        self,
+        *,
+        renderer: ReportRenderer,
+        log_metadata: Metadata,
+        args: Namespace,
+        case: Case,
+        choice: Choice,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None,
+    ) -> None:
         """Render a single report for the entire case.
 
         This method is suitable for reporters that generate a single, consolidated output
@@ -612,7 +619,8 @@ class ReporterProtocol(Protocol):
         ...
 
     def _validate_render_by_args(
-        self, *,
+        self,
+        *,
         renderer: ReportRenderer,
         log_metadata: Metadata,
         args: Namespace,
@@ -620,7 +628,7 @@ class ReporterProtocol(Protocol):
         choice: Choice,
         path: Path | None = None,
         session: Session | None = None,
-        callback: ReporterCallback | None = None
+        callback: ReporterCallback | None = None,
     ) -> None:
         """Validate common arguments for render_by_case and render_by_metric methods.
 
@@ -644,17 +652,19 @@ class ReporterProtocol(Protocol):
         ...
 
     def dispatch_to_targets(
-            self, *,
-            output: str | bytes | Text | Table,
-            log_metadata: Metadata,
-            filename_base: str,
-            args: Namespace,
-            choice: Choice,
-            case: Case,
-            metric: Metric,
-            path: Path | None = None,
-            session: Session | None = None,
-            callback: ReporterCallback | None = None) -> None:
+        self,
+        *,
+        output: str | bytes | Text | Table,
+        log_metadata: Metadata,
+        filename_base: str,
+        args: Namespace,
+        choice: Choice,
+        case: Case,
+        metric: Metric,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None,
+    ) -> None:
         """Deliver the rendered output to the specified targets.
 
         This method orchestrates sending the generated report content to the various

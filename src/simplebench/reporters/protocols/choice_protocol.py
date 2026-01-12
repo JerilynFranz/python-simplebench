@@ -20,6 +20,7 @@ class ChoiceProtocol(Protocol):
         :return: The name of the choice.
         :rtype: str
         """
+
     ...
 
     @property
@@ -29,4 +30,5 @@ class ChoiceProtocol(Protocol):
         :return: An iterable of flags.
         :rtype: ~typing.Iterable[str]
         """
+
     ...

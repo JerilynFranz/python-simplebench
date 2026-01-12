@@ -11,13 +11,12 @@ This mapping is used to validate and instantiate known execution environments
 within the ExecutionEnvironment representation in MachineInfo objects while
 preventing the accidental use of incorrect types for these known environments.
 """
+
 from simplebench.report._base import Environment
 from simplebench.report.versions.v1._python_info._python_info import PythonInfo
 
-__all__ = [
-    "KNOWN_ENVIRONMENTS",
-]
+__all__ = ['KNOWN_ENVIRONMENTS']
 
 
-KNOWN_ENVIRONMENTS: dict[str, type[Environment]] = { 'python': PythonInfo }
+KNOWN_ENVIRONMENTS: dict[str, type[Environment]] = {'python': PythonInfo}
 """Mapping of known execution environments for V1 reports"""

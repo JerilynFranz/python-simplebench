@@ -1,4 +1,5 @@
 """MetricSelection class for selecting and managing metrics."""
+
 from .metrics_selection_type import MetricsSelectionType
 
 
@@ -7,6 +8,7 @@ class MetricsSelection:
 
     This class is a base class for different types of metric selections.
     """
+
     def __init__(self, selector_type: MetricsSelectionType):
         self._selector_type = selector_type
 

@@ -8,6 +8,7 @@ to validate its input parameters and is imported there as a module
 rather than having its functions defined directly in that class
 to avoid cluttering the class namespace.
 """
+
 import re
 
 from simplebench.report._error_tags import _VCSInfoErrorTag
@@ -29,15 +30,22 @@ def hash_id(value: str) -> str:
     :raises SimpleBenchTypeError: If the hash_id value is not a string.
     """
     value = validate_string(
-            value, "hash_id",
-            _VCSInfoErrorTag.INVALID_HASH_ID_TYPE,
-            _VCSInfoErrorTag.INVALID_HASH_ID_VALUE,
-            allow_empty=True, strip=True)
+        value,
+        'hash_id',
+        _VCSInfoErrorTag.INVALID_HASH_ID_TYPE,
+        _VCSInfoErrorTag.INVALID_HASH_ID_VALUE,
+        allow_empty=True,
+        strip=True,
+    )
 
     return validate_string_with_regex(
-            value, "hash_id", _HASH_ID_REGEX,
-            _VCSInfoErrorTag.INVALID_HASH_ID_STRUCTURE,  # can't trigger type error here
-            _VCSInfoErrorTag.INVALID_HASH_ID_STRUCTURE)
+        value,
+        'hash_id',
+        _HASH_ID_REGEX,
+        _VCSInfoErrorTag.INVALID_HASH_ID_STRUCTURE,  # can't trigger type error here
+        _VCSInfoErrorTag.INVALID_HASH_ID_STRUCTURE,
+    )
+
 
 def vcs(value: str) -> str:
     """Validate the VCS type string.
@@ -50,10 +58,13 @@ def vcs(value: str) -> str:
     :raises SimpleBenchTypeError: If the value type is not a string.
     """
     return validate_string(
-            value, "vcs",
-            _VCSInfoErrorTag.INVALID_VCS_TYPE,
-            _VCSInfoErrorTag.INVALID_VCS_VALUE,
-            strip=True, allow_empty=False)
+        value,
+        'vcs',
+        _VCSInfoErrorTag.INVALID_VCS_TYPE,
+        _VCSInfoErrorTag.INVALID_VCS_VALUE,
+        strip=True,
+        allow_empty=False,
+    )
 
 
 def commit_id(value: str) -> str:
@@ -67,10 +78,13 @@ def commit_id(value: str) -> str:
     :raises SimpleBenchTypeError: If the commit ID is not a string.
     """
     return validate_string(
-            value, "commit_id",
-            _VCSInfoErrorTag.INVALID_COMMIT_ID_TYPE,
-            _VCSInfoErrorTag.INVALID_COMMIT_ID_VALUE,
-            strip=True, allow_empty=False)
+        value,
+        'commit_id',
+        _VCSInfoErrorTag.INVALID_COMMIT_ID_TYPE,
+        _VCSInfoErrorTag.INVALID_COMMIT_ID_VALUE,
+        strip=True,
+        allow_empty=False,
+    )
 
 
 def commit_datetime(value: str) -> str:
@@ -82,9 +96,11 @@ def commit_datetime(value: str) -> str:
     :raises SimpleBenchTypeError: If the datetime value is not a string.
     """
     return validate_iso8601_datetime(
-            value, "commit_datetime",
-            _VCSInfoErrorTag.INVALID_COMMIT_DATETIME_TYPE,
-            _VCSInfoErrorTag.INVALID_COMMIT_DATETIME_VALUE)
+        value,
+        'commit_datetime',
+        _VCSInfoErrorTag.INVALID_COMMIT_DATETIME_TYPE,
+        _VCSInfoErrorTag.INVALID_COMMIT_DATETIME_VALUE,
+    )
 
 
 def branch(value: str) -> str:
@@ -97,10 +113,13 @@ def branch(value: str) -> str:
     :raises SimpleBenchTypeError: If the branch name is not a string.
     """
     return validate_string(
-            value, "branch",
-            _VCSInfoErrorTag.INVALID_BRANCH_TYPE,
-            _VCSInfoErrorTag.INVALID_BRANCH_TYPE,  # can't trigger value error here
-            strip=True, allow_empty=False)
+        value,
+        'branch',
+        _VCSInfoErrorTag.INVALID_BRANCH_TYPE,
+        _VCSInfoErrorTag.INVALID_BRANCH_TYPE,  # can't trigger value error here
+        strip=True,
+        allow_empty=False,
+    )
 
 
 def repository_url(value: str) -> str:
@@ -113,10 +132,13 @@ def repository_url(value: str) -> str:
     :raises SimpleBenchTypeError: If the repository URL is not a string.
     """
     return validate_string(
-            value, "repository_url",
-            _VCSInfoErrorTag.INVALID_REPOSITORY_URL_TYPE,
-            _VCSInfoErrorTag.INVALID_REPOSITORY_URL_TYPE,  # can't trigger value error here
-            strip=True, allow_empty=True)
+        value,
+        'repository_url',
+        _VCSInfoErrorTag.INVALID_REPOSITORY_URL_TYPE,
+        _VCSInfoErrorTag.INVALID_REPOSITORY_URL_TYPE,  # can't trigger value error here
+        strip=True,
+        allow_empty=True,
+    )
 
 
 def is_dirty(value: bool) -> bool:
@@ -126,6 +148,4 @@ def is_dirty(value: bool) -> bool:
     :return: The validated is_dirty boolean value.
     :raises SimpleBenchTypeError: If the is_dirty value is not a boolean.
     """
-    return validate_bool(
-            value, "is_dirty",
-            _VCSInfoErrorTag.INVALID_IS_DIRTY_TYPE)
+    return validate_bool(value, 'is_dirty', _VCSInfoErrorTag.INVALID_IS_DIRTY_TYPE)

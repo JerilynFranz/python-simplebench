@@ -1,4 +1,5 @@
 """Exceptions for JSONReport classes."""
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -8,6 +9,7 @@ __all__ = []
 @enum_docstrings
 class _ReportErrorTag(ErrorTag):
     """Error tags for JSON report exceptions."""
+
     INVALID_RESULTS_TYPE = 'INVALID_RESULTS_TYPE'
     """The results is not of type Sequence[ResultsInfo]."""
     INVALID_RESULTS_VALUE = 'INVALID_RESULTS_VALUE'

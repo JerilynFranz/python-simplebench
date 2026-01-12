@@ -3,9 +3,7 @@
   "recommendations": [
     "ms-python.python",
     "ms-python.vscode-pylance",
-    "ms-python.pylint",
-    "ms-python.flake8",
     "ms-python.mypy-type-checker",
-    // "charliermarsh.ruff" // Or other linters/formatters
+    "charliermarsh.ruff" // Or other linters/formatters
   ]
 }

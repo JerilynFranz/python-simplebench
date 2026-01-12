@@ -1,4 +1,5 @@
 """JSONMachineInfo reporter exception Error Tags."""
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -8,6 +9,7 @@ __all__ = []
 @enum_docstrings
 class _MachineInfoErrorTag(ErrorTag):
     """Error tags for JSONMachineInfo exceptions."""
+
     INVALID_SYSTEM_TYPE = 'INVALID_SYSTEM_INFO_TYPE'
     """Attempted to set the system property to something other than a v1 SystemInfo"""
     INVALID_EXECUTION_ENVIRONMENT_TYPE = 'INVALID_EXECUTION_ENVIRONMENT_INFO_TYPE'

@@ -20,6 +20,7 @@ An instance can be created in two ways:
 The class also implements equality, hashing, and copy protocols to allow for
 comparison, use in hash-based collections, and efficient copying.
 """
+
 from collections.abc import Mapping
 from types import MappingProxyType
 from typing import Any, cast
@@ -58,26 +59,19 @@ class ValueBlock(BaseValueBlock):
     ID: str = SCHEMA.ID
     """ID of the value block schema."""
 
-    __slots__ = (
-        '_hash_id',
-        '_semantic_type',
-        '_timer',
-        '_unit',
-        '_scale',
-        '_value',
-        '_dict_cache',
-    )
+    __slots__ = ('_hash_id', '_semantic_type', '_timer', '_unit', '_scale', '_value', '_dict_cache')
     """Slots for immutable attributes and cached dictionary representation."""
 
     def __init__(
-            self,
-            *,
-            hash_id: str = '',
-            semantic_type: str,
-            timer: str | None = None,
-            unit: str,
-            scale: float,
-            value: float | int) -> None:
+        self,
+        *,
+        hash_id: str = '',
+        semantic_type: str,
+        timer: str | None = None,
+        unit: str,
+        scale: float,
+        value: float | int,
+    ) -> None:
         """Initialize JSONStatsSummary base class.
 
         :param str hash_id: The unique hash identifier for the value block.
@@ -102,7 +96,7 @@ class ValueBlock(BaseValueBlock):
         self._dict_cache: ImmutableValueBlockDict | None = None
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "ValueBlock":  # type: ignore[override]
+    def from_dict(cls, data: Mapping[str, Any]) -> 'ValueBlock':  # type: ignore[override]
         """Create a ValueBlock instance from a dictionary.
 
         The input dictionary must conform to the JSON schema for ValueBlock V1,
@@ -235,8 +229,6 @@ class ValueBlock(BaseValueBlock):
         }
         if self.timer is None:  # deletion instead of addition preserves ordering
             del params['timer']
-        formatted_params = ', '.join(
-            f"{key}={value!r}" for key, value in params.items()
-        )
+        formatted_params = ', '.join(f'{key}={value!r}' for key, value in params.items())
 
-        return f"ValueBlock({formatted_params})"
+        return f'ValueBlock({formatted_params})'

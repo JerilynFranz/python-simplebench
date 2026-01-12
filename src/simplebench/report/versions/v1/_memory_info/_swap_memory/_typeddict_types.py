@@ -12,13 +12,11 @@ version 1: :class:`~simplebench.report.versions.v1.MemoryInfoSchema`.
 
     These types ensure proper validation and serialization of MemoryInfo data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
-__all__ = [
-    'SwapMemoryObjectDict',
-    'ImmutableSwapMemoryObjectDict',
-]
+__all__ = ['SwapMemoryObjectDict', 'ImmutableSwapMemoryObjectDict']
 
 
 class _RequiredSwapMemoryObject(ReportElementTypedDict, total=True):
@@ -27,6 +25,7 @@ class _RequiredSwapMemoryObject(ReportElementTypedDict, total=True):
     :param Required[int] total: Total swap memory in bytes.
     :param Required[int] used: Used swap memory in bytes.
     """
+
     total: Required[int]
     used: Required[int]
     free: Required[int]
@@ -72,4 +71,5 @@ class ImmutableSwapMemoryObjectDict(_RequiredSwapMemoryObject, total=False):
     :param Required[int] swap_in: Swap memory sent to disk in bytes.
     :param Required[int] swap_out: Swap memory received from disk in bytes.
     """
+
     __immutable__: NotRequired[Never]

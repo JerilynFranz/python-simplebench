@@ -14,6 +14,7 @@ See Also:
     - :class:`ReadOnly`: Indicates that a key in a `TypedDict` is read-only
     - :class:`Never`: Indicates a key in a `TypedDict` that should never be present.
 """
+
 import sys
 
 if sys.version_info >= (3, 11):
@@ -27,9 +28,4 @@ if sys.version_info >= (3, 13):
 else:
     from typing_extensions import ReadOnly
 
-__all__ = [
-    'Never',
-    'ReadOnly',
-    'NotRequired',
-    'Required',
-]
+__all__ = ['Never', 'ReadOnly', 'NotRequired', 'Required']

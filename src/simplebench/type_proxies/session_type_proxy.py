@@ -4,6 +4,7 @@ It allows for deferred imports and avoids circular dependencies while still enab
 runtime type checks and static type checking.
 
 The `SessionTypeProxy` class acts as a stand-in for the actual `Session` type."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeGuard
@@ -29,7 +30,7 @@ class SessionTypeProxy(LazyTypeProxy['Session']):
 
     It is not intended to be instantiated directly; use the actual `Session` class
     instead if an actual `Session` instance is needed.
-"""
+    """
 
 
 # Explicitly register the proxy with its real type's information.

@@ -13,6 +13,7 @@ This makes the implementations of CPUInfo backwards compatible with future versi
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base CPUInfo representation at the time of the V1 schema release.
 """
+
 from abc import ABC
 
 from simplebench.report._base.report_element import ReportElement

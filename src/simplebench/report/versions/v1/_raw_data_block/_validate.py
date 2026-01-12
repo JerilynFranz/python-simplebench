@@ -1,4 +1,5 @@
 """Validators for the RawDataBlock class"""
+
 import re
 from collections.abc import Sequence
 from typing import Any
@@ -30,15 +31,22 @@ def hash_id(value: str) -> str:
     :raise SimpleBenchValueError: If the hash_id has an invalid value.
     """
     validate_string(
-        value, 'hash_id',
+        value,
+        'hash_id',
         _RawDataBlockErrorTag.INVALID_HASH_ID_TYPE,
         _RawDataBlockErrorTag.INVALID_HASH_ID_VALUE,  # impossible to trigger the value error here
-        strip=True, allow_blank=True, allow_empty=True)
+        strip=True,
+        allow_blank=True,
+        allow_empty=True,
+    )
 
     return validate_string_with_regex(
-        value, 'hash_id', _HASH_ID_REGEX,
+        value,
+        'hash_id',
+        _HASH_ID_REGEX,
         _RawDataBlockErrorTag.INVALID_HASH_ID_TYPE,  # impossible to trigger the type error here
-        _RawDataBlockErrorTag.INVALID_HASH_ID_VALUE,)
+        _RawDataBlockErrorTag.INVALID_HASH_ID_VALUE,
+    )
 
 
 def data(value: Values | Sequence[int | float]) -> Values:
@@ -65,9 +73,8 @@ def scale(value: float) -> float:
     :raise SimpleBenchValueError: If the value is not positive.
     """
     return validate_positive_float(
-            value, 'scale',
-            _RawDataBlockErrorTag.INVALID_SCALE_TYPE,
-            _RawDataBlockErrorTag.INVALID_SCALE_VALUE)
+        value, 'scale', _RawDataBlockErrorTag.INVALID_SCALE_TYPE, _RawDataBlockErrorTag.INVALID_SCALE_VALUE
+    )
 
 
 def semantic_type(value: Any) -> str:
@@ -81,9 +88,11 @@ def semantic_type(value: Any) -> str:
     :raise SimpleBenchValueError: If the semantic type string is invalid.
     """
     return validate_namespaced_identifier(
-            value, 'semantic_type',
-            _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
-            _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
+        value,
+        'semantic_type',
+        _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
+        _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE,
+    )
 
 
 def timer(value: Any) -> str | None:
@@ -97,10 +106,12 @@ def timer(value: Any) -> str | None:
         return None
 
     timer_name: str = validate_string(
-        value, 'timer',
+        value,
+        'timer',
         _RawDataBlockErrorTag.INVALID_TIMER_TYPE,
         _RawDataBlockErrorTag.INVALID_TIMER_VALUE,
-        allow_blank=False)
+        allow_blank=False,
+    )
 
     return timer_name
 
@@ -114,7 +125,9 @@ def unit(value: str) -> str:
     :raise SimpleBenchValueError: If the value is blank.
     """
     return validate_string(
-                value, 'unit',
-                _RawDataBlockErrorTag.INVALID_UNIT_TYPE,
-                _RawDataBlockErrorTag.INVALID_UNIT_VALUE,
-                allow_blank=False)
+        value,
+        'unit',
+        _RawDataBlockErrorTag.INVALID_UNIT_TYPE,
+        _RawDataBlockErrorTag.INVALID_UNIT_VALUE,
+        allow_blank=False,
+    )

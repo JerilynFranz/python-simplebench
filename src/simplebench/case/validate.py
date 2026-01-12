@@ -1,4 +1,5 @@
 """Validators for the simplebench.case package"""
+
 import inspect
 from copy import copy
 from typing import Any, Callable, Iterable, Sequence, get_type_hints
@@ -23,10 +24,14 @@ def benchmark_id(benchmark_id_value: str) -> str:
     :raises SimpleBenchValueError: If the benchmark ID is blank or empty.
     """
     return validate_string(
-            benchmark_id_value, "benchmark_id",
-            _CaseErrorTag.INVALID_BENCHMARK_ID_TYPE,
-            _CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
-            strip=True, allow_blank=False, allow_empty=False)
+        benchmark_id_value,
+        'benchmark_id',
+        _CaseErrorTag.INVALID_BENCHMARK_ID_TYPE,
+        _CaseErrorTag.INVALID_BENCHMARK_ID_VALUE,
+        strip=True,
+        allow_blank=False,
+        allow_empty=False,
+    )
 
 
 def group(group_value: str) -> str:
@@ -40,10 +45,14 @@ def group(group_value: str) -> str:
     :raises SimpleBenchValueError: If the group is blank or empty.
     """
     return validate_string(
-                group_value, "group",
-                _CaseErrorTag.INVALID_GROUP_TYPE,
-                _CaseErrorTag.INVALID_GROUP_VALUE,
-                allow_blank=False, allow_empty=False, strip=True)
+        group_value,
+        'group',
+        _CaseErrorTag.INVALID_GROUP_TYPE,
+        _CaseErrorTag.INVALID_GROUP_VALUE,
+        allow_blank=False,
+        allow_empty=False,
+        strip=True,
+    )
 
 
 def description(action_func: FunctionRunner, description_value: str | None = None) -> str:
@@ -58,10 +67,14 @@ def description(action_func: FunctionRunner, description_value: str | None = Non
     if description_value is None:
         description_value = action_func.__doc__ if action_func.__doc__ else '(no description)'
     return validate_string(
-                    description_value, "description",
-                    _CaseErrorTag.INVALID_DESCRIPTION_TYPE,
-                    _CaseErrorTag.INVALID_DESCRIPTION_VALUE,
-                    strip=True, allow_blank=False, allow_empty=False)
+        description_value,
+        'description',
+        _CaseErrorTag.INVALID_DESCRIPTION_TYPE,
+        _CaseErrorTag.INVALID_DESCRIPTION_VALUE,
+        strip=True,
+        allow_blank=False,
+        allow_empty=False,
+    )
 
 
 def min_time(min_time_value: float) -> float:
@@ -73,9 +86,8 @@ def min_time(min_time_value: float) -> float:
     :raises SimpleBenchValueError: If value is not positive.
     """
     return validate_positive_float(
-                min_time_value, "min_time",
-                _CaseErrorTag.INVALID_MIN_TIME_TYPE,
-                _CaseErrorTag.INVALID_MIN_TIME_VALUE)
+        min_time_value, 'min_time', _CaseErrorTag.INVALID_MIN_TIME_TYPE, _CaseErrorTag.INVALID_MIN_TIME_VALUE
+    )
 
 
 def max_time(max_time_value: float) -> float:
@@ -87,9 +99,8 @@ def max_time(max_time_value: float) -> float:
     :raises SimpleBenchValueError: If value is not positive.
     """
     return validate_positive_float(
-                max_time_value, "max_time",
-                _CaseErrorTag.INVALID_MAX_TIME_TYPE,
-                _CaseErrorTag.INVALID_MAX_TIME_VALUE)
+        max_time_value, 'max_time', _CaseErrorTag.INVALID_MAX_TIME_TYPE, _CaseErrorTag.INVALID_MAX_TIME_VALUE
+    )
 
 
 def options(options_value: Iterable[ReporterOptions] | None) -> list[ReporterOptions]:
@@ -104,15 +115,15 @@ def options(options_value: Iterable[ReporterOptions] | None) -> list[ReporterOpt
         return []
     if not isinstance(options_value, Iterable):
         raise SimpleBenchTypeError(
-            f'Invalid options: {options_value}. Must be an iterable.',
-            tag=_CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE)
+            f'Invalid options: {options_value}. Must be an iterable.', tag=_CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE
+        )
     options_list: list[ReporterOptions] = list(options_value)
     for option in options_list:
         if not isinstance(option, ReporterOptions):
             raise SimpleBenchTypeError(
                 f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
-                tag=_CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION
-                )
+                tag=_CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION,
+            )
     return options_list
 
 
@@ -127,9 +138,8 @@ def rounds(rounds_value: int | None) -> int | None:
     if rounds_value is None:
         return None
     return validate_positive_int(
-                        rounds_value, "rounds",
-                        _CaseErrorTag.INVALID_ROUNDS_TYPE,
-                        _CaseErrorTag.INVALID_ROUNDS_VALUE)
+        rounds_value, 'rounds', _CaseErrorTag.INVALID_ROUNDS_TYPE, _CaseErrorTag.INVALID_ROUNDS_VALUE
+    )
 
 
 def iterations(iterations_value: int) -> int:
@@ -141,9 +151,8 @@ def iterations(iterations_value: int) -> int:
     :raises SimpleBenchValueError: If iterations is not positive.
     """
     return validate_positive_int(
-                        iterations_value, "iterations",
-                        _CaseErrorTag.INVALID_ITERATIONS_TYPE,
-                        _CaseErrorTag.INVALID_ITERATIONS_VALUE)
+        iterations_value, 'iterations', _CaseErrorTag.INVALID_ITERATIONS_TYPE, _CaseErrorTag.INVALID_ITERATIONS_VALUE
+    )
 
 
 def timeout(timeout_value: float | None, max_time_value: float) -> float:
@@ -160,13 +169,13 @@ def timeout(timeout_value: float | None, max_time_value: float) -> float:
         return defaults.DEFAULT_TIMEOUT_GRACE_PERIOD
 
     timeout_value = validate_positive_float(
-                    timeout_value, "timeout",
-                    _CaseErrorTag.INVALID_TIMEOUT_TYPE,
-                    _CaseErrorTag.INVALID_TIMEOUT_VALUE)
+        timeout_value, 'timeout', _CaseErrorTag.INVALID_TIMEOUT_TYPE, _CaseErrorTag.INVALID_TIMEOUT_VALUE
+    )
     if timeout_value <= max_time_value:
         raise SimpleBenchValueError(
             f'Invalid timeout: {timeout_value}. Must be greater than max_time {max_time_value}.',
-            tag=_CaseErrorTag.INVALID_TIMEOUT_LESS_EQUAL_MAX_TIME)
+            tag=_CaseErrorTag.INVALID_TIMEOUT_LESS_EQUAL_MAX_TIME,
+        )
     return timeout_value
 
 
@@ -181,15 +190,15 @@ def timer(timer_func: Callable[[], int] | None = None) -> Callable[[], int] | No
         return None
     elif not callable(timer_func):
         raise SimpleBenchTypeError(
-            f'Invalid timer: {type(timer_func)}. Must be a callable.',
-            tag=_CaseErrorTag.INVALID_TIMER_NOT_CALLABLE)
+            f'Invalid timer: {type(timer_func)}. Must be a callable.', tag=_CaseErrorTag.INVALID_TIMER_NOT_CALLABLE
+        )
 
     test_value = timer_func()
     if not isinstance(test_value, int):
         raise SimpleBenchTypeError(
-            (f'Invalid timer: {type(timer_func)}. Timer callable must return an int, '
-                f'got {type(test_value)}.'),
-            tag=_CaseErrorTag.INVALID_TIMER_RETURN_TYPE)
+            (f'Invalid timer: {type(timer_func)}. Timer callable must return an int, got {type(test_value)}.'),
+            tag=_CaseErrorTag.INVALID_TIMER_RETURN_TYPE,
+        )
 
     return timer_func
 
@@ -203,8 +212,8 @@ def time_range(min_value: float, max_value: float) -> None:
     """
     if min_value > max_value:
         raise SimpleBenchValueError(
-            f'Invalid time range: min_value {min_value} > max_value {max_value}.',
-            tag=_CaseErrorTag.INVALID_TIME_RANGE)
+            f'Invalid time range: min_value {min_value} > max_value {max_value}.', tag=_CaseErrorTag.INVALID_TIME_RANGE
+        )
 
 
 def title(action_func: FunctionRunner, title_value: str | None = None) -> str:
@@ -218,10 +227,14 @@ def title(action_func: FunctionRunner, title_value: str | None = None) -> str:
     """
     title_value = action_func.__name__ if title_value is None else title_value  # type: ignore[attr-defined]
     return validate_string(
-                title_value, "title",
-                _CaseErrorTag.INVALID_TITLE_TYPE,
-                _CaseErrorTag.INVALID_TITLE_VALUE,
-                allow_blank=False, allow_empty=False, strip=True)
+        title_value,
+        'title',
+        _CaseErrorTag.INVALID_TITLE_TYPE,
+        _CaseErrorTag.INVALID_TITLE_VALUE,
+        allow_blank=False,
+        allow_empty=False,
+        strip=True,
+    )
 
 
 def runners(runner_types: Sequence[type[BenchmarkRunner]] | None) -> list[type[BenchmarkRunner]]:
@@ -239,7 +252,8 @@ def runners(runner_types: Sequence[type[BenchmarkRunner]] | None) -> list[type[B
         if not issubclass(runner, BenchmarkRunner):
             raise SimpleBenchTypeError(
                 f'Invalid runner: {runner}. Must be a subclass of BenchmarkRunner.',
-                tag=_CaseErrorTag.INVALID_RUNNER_NOT_SUBCLASS_OF_RUNNER)
+                tag=_CaseErrorTag.INVALID_RUNNER_NOT_SUBCLASS_OF_RUNNER,
+            )
         validated_runners.append(runner)
     return validated_runners
 
@@ -253,9 +267,11 @@ def warmup_iterations(warmup_iterations_value: int) -> int:
     :raises SimpleBenchValueError: If warmup_iterations is not positive.
     """
     return validate_positive_int(
-                        warmup_iterations_value, "warmup_iterations",
-                        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE,
-                        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE)
+        warmup_iterations_value,
+        'warmup_iterations',
+        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_TYPE,
+        _CaseErrorTag.INVALID_WARMUP_ITERATIONS_VALUE,
+    )
 
 
 def kwargs_variations(kwargs_variations_value: dict[str, list[Any]] | None) -> dict[str, list[Any]]:
@@ -281,38 +297,37 @@ def kwargs_variations(kwargs_variations_value: dict[str, list[Any]] | None) -> d
     if not isinstance(kwargs_variations_value, dict):
         raise SimpleBenchTypeError(
             f'Invalid kwargs_variations: {kwargs_variations_value}. Must be a dictionary.',
-            tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT
-            )
+            tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT,
+        )
     validated_dict = {}
     for key, kw_value in kwargs_variations_value.items():
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
                 f'Invalid kwargs_variations entry key: {key}. Keys must be of type str.',
-                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE
-                )
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_TYPE,
+            )
         if not key.isidentifier():
             raise SimpleBenchValueError(
                 f'Invalid kwargs_variations entry key: {key}. Keys must be valid Python identifiers.',
-                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER
-                )
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER,
+            )
         if not isinstance(kw_value, list):
             raise SimpleBenchTypeError(
                 f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values must be in a list.',
-                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST
-                )
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST,
+            )
         if not kw_value:
             raise SimpleBenchValueError(
-                (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. '
-                    'Values cannot be empty lists.'),
-                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST
-                )
+                (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values cannot be empty lists.'),
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST,
+            )
         validated_dict[key] = copy(kw_value)
     return validated_dict
 
 
 def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
-        action_func: FunctionRunner,
-        kwargs_variations_value: dict[str, Any]) -> FunctionRunner:
+    action_func: FunctionRunner, kwargs_variations_value: dict[str, Any]
+) -> FunctionRunner:
     """Validate that action has correct signature.
 
     An action function must accept one of the two following formats for its parameters:
@@ -336,9 +351,8 @@ def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
     """
     if not callable(action_func):
         raise SimpleBenchTypeError(
-            f'Invalid action: {action_func}. Must be a callable.',
-            tag=_CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
-            )
+            f'Invalid action: {action_func}. Must be a callable.', tag=_CaseErrorTag.INVALID_ACTION_NOT_CALLABLE
+        )
 
     # Resolve type hints to handle string annotations (from __future__ import annotations)
     try:
@@ -354,13 +368,13 @@ def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
     if bench_param is None:
         raise SimpleBenchTypeError(
             f'Invalid action: {action_func}. Must accept a "_bench" parameter.',
-            tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER
-            )
+            tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER,
+        )
     if bench_param.annotation is inspect.Parameter.empty:
         raise SimpleBenchTypeError(
             f'Invalid action: {action_func}. "_bench" parameter must be annotated with BenchmarkRunner.',
-            tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED
-            )
+            tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED,
+        )
 
     # Use the resolved type hint if available, otherwise use the annotation from signature
     actual_annotation = type_hints.get('_bench', bench_param.annotation)
@@ -368,8 +382,8 @@ def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
     if actual_annotation != BenchmarkRunner:
         raise SimpleBenchTypeError(
             f'Invalid action: {action_func}. "_bench" parameter must be of type BenchmarkRunner.',
-            tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE
-            )
+            tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE,
+        )
 
     # No arguments other than _bench
     if len(action_sig.parameters) == 1:
@@ -388,24 +402,26 @@ def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
             continue
         if param_name not in kwargs_variations_value:
             raise SimpleBenchTypeError(
-                (f'Invalid action: {action_func}. Parameter "{param_name}" '
-                    'not found in kwargs_variations.'),
-                tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS
-                )
+                (f'Invalid action: {action_func}. Parameter "{param_name}" not found in kwargs_variations.'),
+                tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS,
+            )
     for param_name in kwargs_variations_value:
         if param_name not in action_sig.parameters:
             raise SimpleBenchTypeError(
-                (f'Invalid action: {action_func}. kwargs_variations key "{param_name}" '
-                    'not found in action parameters.'),
-                tag=_CaseErrorTag.INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS
-                )
+                (
+                    f'Invalid action: {action_func}. kwargs_variations key "{param_name}" '
+                    'not found in action parameters.'
+                ),
+                tag=_CaseErrorTag.INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS,
+            )
 
     # All checks passed
     return action_func
 
 
-def variation_cols(variation_cols_value: dict[str, str] | None,
-                   kwargs_variations_value: dict[str, list[Any]]) -> dict[str, str]:
+def variation_cols(
+    variation_cols_value: dict[str, str] | None, kwargs_variations_value: dict[str, list[Any]]
+) -> dict[str, str]:
     """Validate the variation_cols dictionary.
 
     :param dict[str, str] var_cols: The variation_cols dictionary to validate or None.
@@ -423,25 +439,26 @@ def variation_cols(variation_cols_value: dict[str, str] | None,
     if not isinstance(variation_cols_value, dict):
         raise SimpleBenchTypeError(
             f'Invalid variation_cols: {variation_cols_value}. Must be a dictionary.',
-            tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT
-            )
+            tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT,
+        )
     validated_dict: dict[str, str] = {}
     for key, vc_value in variation_cols_value.items():
         if key not in kwargs_variations_value:
             raise SimpleBenchValueError(
                 f'Invalid variation_cols entry key: {key}. Key not found in kwargs_variations.',
-                tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS)
+                tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS,
+            )
         if not isinstance(vc_value, str):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols entry value for entry "{key}": "{vc_value}". Values must be of type str.',
-                tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING
-                )
+                tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_NOT_STRING,
+            )
         stripped_value = vc_value.strip()
         if stripped_value == '':
             raise SimpleBenchValueError(
                 f'Invalid variation_cols entry value: "{vc_value}". Values cannot be blank strings.',
-                tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK
-                )
+                tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK,
+            )
         validated_dict[key] = stripped_value
     return validated_dict
 
@@ -453,5 +470,8 @@ def vcs_info(vcs_info_value: VCSInfo | None) -> VCSInfo | None:
     :return VCSInfo | None: The validated vcs_info or `None` if not provided.
     :raises SimpleBenchTypeError: If vcs_info is not of type VCSInfo.
     """
-    return None if vcs_info_value is None else validate_type(
-            vcs_info_value, VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
+    return (
+        None
+        if vcs_info_value is None
+        else validate_type(vcs_info_value, VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
+    )

@@ -11,11 +11,7 @@ Public API
 - :class:`~.PytestOptions`: Options class for the Rich Table reporter.
 - :class:`~.PytestReporter`: The Rich Table reporter class.
 """
+
 from .reporter import PytestConfig, PytestField, PytestOptions, PytestReporter
 
-__all__ = [
-    'PytestConfig',
-    'PytestField',
-    'PytestOptions',
-    'PytestReporter',
-]
+__all__ = ['PytestConfig', 'PytestField', 'PytestOptions', 'PytestReporter']

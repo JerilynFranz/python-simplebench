@@ -1,4 +1,5 @@
 """Reporter Priority class for managing prioritized reporter options."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -36,10 +37,8 @@ class Prioritized:
         file_append (bool): The prioritized append mode flag for report files.
         options (ReporterOptions): The prioritized reporter options.
     """
-    def __init__(self, *,
-                 reporter: ReporterProtocol | Reporter,
-                 choice: Choice,
-                 case: Case) -> None:
+
+    def __init__(self, *, reporter: ReporterProtocol | Reporter, choice: Choice, case: Case) -> None:
         """Initialize the Prioritized class with choice and case.
 
         Args:
@@ -49,16 +48,19 @@ class Prioritized:
         """
         if not is_reporter(reporter) or not isinstance(reporter, ReporterProtocol):
             raise SimpleBenchTypeError(
-                f"Invalid reporter argument: expected Reporter instance, got {type(reporter).__name__}",
-                tag=_PrioritizedErrorTag.INIT_INVALID_REPORTER_ARG_TYPE)
+                f'Invalid reporter argument: expected Reporter instance, got {type(reporter).__name__}',
+                tag=_PrioritizedErrorTag.INIT_INVALID_REPORTER_ARG_TYPE,
+            )
         if not is_choice(choice):
             raise SimpleBenchTypeError(
-                f"Invalid choice argument: expected Choice instance, got {type(choice).__name__}",
-                tag=_PrioritizedErrorTag.INIT_INVALID_CHOICE_ARG_TYPE)
+                f'Invalid choice argument: expected Choice instance, got {type(choice).__name__}',
+                tag=_PrioritizedErrorTag.INIT_INVALID_CHOICE_ARG_TYPE,
+            )
         if not is_case(case):
             raise SimpleBenchTypeError(
-                f"Invalid case argument: expected Case instance, got {type(case).__name__}",
-                tag=_PrioritizedErrorTag.INIT_INVALID_CASE_ARG_TYPE)
+                f'Invalid case argument: expected Case instance, got {type(case).__name__}',
+                tag=_PrioritizedErrorTag.INIT_INVALID_CASE_ARG_TYPE,
+            )
         self._reporter: Reporter = reporter
         self._choice: Choice = choice
         self._case: Case = case

@@ -5,6 +5,7 @@ runtime type checks and static type checking.
 
 The ChoiceTypeProxy class acts as a stand-in for the actual Choice type.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, TypeGuard

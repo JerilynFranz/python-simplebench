@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using graphs."""
+
 from __future__ import annotations
 
 from io import BytesIO
@@ -103,12 +104,10 @@ class ScatterPlotReporter(MatPlotLibReporter):
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
-                tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
-        metric = validate_type(metric, Metric, 'metric',
-                               _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(
-                options, Options, 'options',
-                _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
+                tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE,
+            )
+        metric = validate_type(metric, Metric, 'metric', _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, Options, 'options', _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit = self.get_base_unit_for_metric(metric=metric)
         results: list[Results] = case.results
@@ -138,11 +137,11 @@ class ScatterPlotReporter(MatPlotLibReporter):
                 with plt.style.context(options.style):
                     g = sns.scatterplot(data=df, y=target_name, x=x_axis_legend)
                     g.figure.suptitle(case.title, fontsize='large', weight='bold')
-                    g.figure.subplots_adjust(top=.9)
+                    g.figure.subplots_adjust(top=0.9)
                     g.figure.set_dpi(options.dpi)  # dots per inch
                     g.figure.set_figheight(figure_height)  # type: ignore[reportAttributeAccessIssue,union-attr]
                     g.figure.set_figwidth(figure_width)  # type: ignore[reportAttributeAccessIssue,union-attr]
-                    g.tick_params("x", rotation=options.x_labels_rotation)
+                    g.tick_params('x', rotation=options.x_labels_rotation)
                     if options.y_starts_at_zero:
                         _, top = plt.ylim()
                         plt.ylim(bottom=0, top=top * 1.10)  # Add 10% headroom
@@ -169,12 +168,10 @@ class ScatterPlotReporter(MatPlotLibReporter):
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
-                tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE)
-        metric = validate_type(metric, Metric, 'metric',
-                                _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(
-                options, Options, 'options',
-                _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
+                tag=_ScatterPlotReporterErrorTag.RENDER_INVALID_CASE,
+            )
+        metric = validate_type(metric, Metric, 'metric', _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, Options, 'options', _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
         base_unit = self.get_base_unit_for_metric(metric=metric)
         results: list[Results] = case.results
@@ -186,15 +183,11 @@ class ScatterPlotReporter(MatPlotLibReporter):
         with BytesIO() as graphfile:
             with mpl.rc_context():
                 plot_data = []
-                x_axis_legend = '\n'.join([
-                    f"{case.variation_cols.get(k, k)}" for k in case.variation_cols.keys()])
+                x_axis_legend = '\n'.join([f'{case.variation_cols.get(k, k)}' for k in case.variation_cols.keys()])
                 for result in results:
                     target_stats = result.results_metric(metric)
-                    variation_label = '\n'.join([f"{v}" for v in result.variation_marks.values()])
-                    plot_data.append({
-                        x_axis_legend: variation_label,
-                        target_name: target_stats.mean * common_scale,
-                    })
+                    variation_label = '\n'.join([f'{v}' for v in result.variation_marks.values()])
+                    plot_data.append({x_axis_legend: variation_label, target_name: target_stats.mean * common_scale})
 
                 # See https://matplotlib.org/stable/users/explain/customizing.html#the-matplotlibrc-file
                 benchmarking_theme = options.theme
@@ -205,11 +198,11 @@ class ScatterPlotReporter(MatPlotLibReporter):
                 with plt.style.context(options.style):
                     g = sns.relplot(data=df, y=target_name, x=x_axis_legend)
                     g.figure.suptitle(case.title, fontsize='large', weight='bold')
-                    g.figure.subplots_adjust(top=.9)
+                    g.figure.subplots_adjust(top=0.9)
                     g.figure.set_dpi(options.dpi)  # dots per inch
                     g.figure.set_figheight(options.height / options.dpi)  # inches
                     g.figure.set_figwidth(options.width / options.dpi)  # inches
-                    g.tick_params("x", rotation=options.x_labels_rotation)
+                    g.tick_params('x', rotation=options.x_labels_rotation)
                     # format the labels with f-strings
                     for ax in g.axes.flat:
                         ax.yaxis.set_major_formatter('{x}' + f' {common_unit}')

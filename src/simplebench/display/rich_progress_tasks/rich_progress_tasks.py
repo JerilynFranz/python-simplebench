@@ -1,4 +1,5 @@
 """module for managing progress tasks using Rich Progress."""
+
 from __future__ import annotations
 
 from rich.console import Console
@@ -18,6 +19,7 @@ from ._error_tags import _RichProgressTasksErrorTag
 
 class RichProgressTasks:
     """Task Rich Progress management for benchmarking."""
+
     def __init__(self, verbosity: Verbosity, console: Console | None = None) -> None:
         """Initialize a new RichProgressTasks instance.
 
@@ -39,15 +41,11 @@ class RichProgressTasks:
         if not isinstance(console, Console):
             raise SimpleBenchTypeError(
                 f'Expected console arg to be a Console instance, got {type(console)}',
-                tag=_RichProgressTasksErrorTag.INIT_INVALID_CONSOLE_ARG)
+                tag=_RichProgressTasksErrorTag.INIT_INVALID_CONSOLE_ARG,
+            )
         self._console: Console = console
         """The Rich Console instance for outputting messages."""
-        self._progress = Progress(
-            console=self._console,
-            auto_refresh=True,
-            transient=True,
-            refresh_per_second=5
-        )
+        self._progress = Progress(console=self._console, auto_refresh=True, transient=True, refresh_per_second=5)
         """The Rich Progress instance for displaying progress bars."""
         self._console = self._progress.console
         """The Rich Console instance for outputting messages."""
@@ -56,12 +54,13 @@ class RichProgressTasks:
         if not isinstance(verbosity, Verbosity):
             raise SimpleBenchTypeError(
                 f'Expected verbosity arg to be a Verbosity enum, got {type(verbosity)}',
-                tag=_RichProgressTasksErrorTag.INIT_INVALID_VERBOSITY_ARG)
+                tag=_RichProgressTasksErrorTag.INIT_INVALID_VERBOSITY_ARG,
+            )
         self._verbosity: Verbosity = verbosity
         """The verbosity level for console output."""
 
         if self._verbosity >= Verbosity.DEBUG:
-            self._console.print(f"[DEBUG] Initialized RichProgressTasks with verbosity {self._verbosity.name}")
+            self._console.print(f'[DEBUG] Initialized RichProgressTasks with verbosity {self._verbosity.name}')
 
         self._is_running: bool = False
         """Indicates whether the Rich Progress display is running (has been started but not stopped)."""
@@ -87,14 +86,14 @@ class RichProgressTasks:
         self._progress.start()
         self._is_running = True
         if self._verbosity >= Verbosity.DEBUG:
-            self._console.print("[DEBUG] Started Rich Progress display")
+            self._console.print('[DEBUG] Started Rich Progress display')
 
     def stop(self) -> None:
         """Stop the Rich Progress display."""
         self._progress.stop()
         self._is_running = False
         if self._verbosity >= Verbosity.DEBUG:
-            self._console.print("[DEBUG] Stopped Rich Progress display")
+            self._console.print('[DEBUG] Stopped Rich Progress display')
 
     def clear(self) -> None:
         """Clear all tasks from the internal task management.
@@ -106,10 +105,10 @@ class RichProgressTasks:
             try:
                 task.terminate_and_remove()
             except SimpleBenchRuntimeError as e:
-                self._console.print(f"[ERROR] Failed to terminate task {name}: {e}")
+                self._console.print(f'[ERROR] Failed to terminate task {name}: {e}')
             del self._tasks[name]
         if self._verbosity >= Verbosity.DEBUG:
-            self._console.print("[DEBUG] Cleared all tasks from RichProgressTasks")
+            self._console.print('[DEBUG] Cleared all tasks from RichProgressTasks')
 
         task_ids = self._progress.task_ids
         for task_id in task_ids:
@@ -135,13 +134,9 @@ class RichProgressTasks:
         :rtype: RichTask
         """
         if not isinstance(name, str):
-            raise (SimpleBenchKeyError(
-                'Key not found',
-                tag=_RichProgressTasksErrorTag.GETITEM_INVALID_NAME_ARG))
+            raise (SimpleBenchKeyError('Key not found', tag=_RichProgressTasksErrorTag.GETITEM_INVALID_NAME_ARG))
         if name not in self._tasks:
-            raise SimpleBenchKeyError(
-                'Key not found',
-                tag=_RichProgressTasksErrorTag.GETITEM_NOT_FOUND)
+            raise SimpleBenchKeyError('Key not found', tag=_RichProgressTasksErrorTag.GETITEM_NOT_FOUND)
         return self._tasks[name]
 
     def __delitem__(self, name: str) -> None:
@@ -162,22 +157,17 @@ class RichProgressTasks:
         if not isinstance(name, str):
             raise SimpleBenchTypeError(
                 f'Expected name arg to be a str, got {type(name)}',
-                tag=_RichProgressTasksErrorTag.DELITEM_INVALID_NAME_ARG)
+                tag=_RichProgressTasksErrorTag.DELITEM_INVALID_NAME_ARG,
+            )
 
         if name in self._tasks:
             task: RichTask = self._tasks[name]
             task.terminate_and_remove()
             del self._tasks[name]
         else:
-            raise SimpleBenchKeyError(
-                'Key not found',
-                tag=_RichProgressTasksErrorTag.DELITEM_NOT_FOUND)
+            raise SimpleBenchKeyError('Key not found', tag=_RichProgressTasksErrorTag.DELITEM_NOT_FOUND)
 
-    def new_task(self,
-                 name: str,
-                 description: str,
-                 total: float = 0,
-                 completed: int = 0) -> RichTask:
+    def new_task(self, name: str, description: str, total: float = 0, completed: int = 0) -> RichTask:
         """Create a new RichTask.
 
         The new task is initialized with the given parameters,
@@ -197,12 +187,14 @@ class RichProgressTasks:
         :return: The created RichTask instance.
         :rtype: RichTask
         """
-        task: RichTask = RichTask(progress=self._progress,
-                                  name=name,
-                                  description=description,
-                                  completed=completed,
-                                  total=total,
-                                  verbosity=self._verbosity)
+        task: RichTask = RichTask(
+            progress=self._progress,
+            name=name,
+            description=description,
+            completed=completed,
+            total=total,
+            verbosity=self._verbosity,
+        )
         self._tasks[name] = task
         return task
 
@@ -236,14 +228,16 @@ class RichProgressTasks:
         """
         if name in self._tasks:
             raise SimpleBenchValueError(
-                f"Task with name '{name}' already exists.",
-                tag=_RichProgressTasksErrorTag.ADD_TASK_DUPLICATE_NAME)
+                f"Task with name '{name}' already exists.", tag=_RichProgressTasksErrorTag.ADD_TASK_DUPLICATE_NAME
+            )
 
-        task: RichTask = RichTask(progress=self._progress,
-                                  name=name,
-                                  description=description,
-                                  completed=0,
-                                  total=total,
-                                  verbosity=self._verbosity)
+        task: RichTask = RichTask(
+            progress=self._progress,
+            name=name,
+            description=description,
+            completed=0,
+            total=total,
+            verbosity=self._verbosity,
+        )
         self._tasks[name] = task
         return task

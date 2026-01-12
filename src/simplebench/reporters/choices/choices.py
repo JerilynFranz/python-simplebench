@@ -1,4 +1,5 @@
 """Choices for reporters."""
+
 # pylint: disable=useless-parent-delegation
 from __future__ import annotations
 
@@ -19,6 +20,7 @@ def deferred_choice_import() -> None:
     if _CHOICE_IMPORTED:
         return
     from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
+
     _CHOICE_IMPORTED = True
 
 
@@ -35,6 +37,7 @@ class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
     It is designed to be used in the context of reporters that require
     a collection of :class:`~simplebench.reporters.choice.Choice` instances.
     """
+
     def __init__(self, choices: Iterable[Choice] | Choices | None = None) -> None:
         """Construct a :class:`~.Choices` container.
 
@@ -46,9 +49,7 @@ class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
             :class:`~.Choices` | None
         """
         deferred_choice_import()
-        super().__init__(item_type=Choice,
-                         error_tag_enum=_ChoicesErrorTag,
-                         choices=choices)
+        super().__init__(item_type=Choice, error_tag_enum=_ChoicesErrorTag, choices=choices)
 
     def add(self, choice: Choice) -> None:
         """Add a :class:`~simplebench.reporters.choice.Choice` instance to the container.
@@ -98,13 +99,12 @@ class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
         :raises SimpleBenchTypeError: If the arg is not a string.
         """
         if not isinstance(arg, str):
-            raise SimpleBenchTypeError(
-                "arg must be a string",
-                tag=_ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
+            raise SimpleBenchTypeError('arg must be a string', tag=_ChoicesErrorTag.GET_CHOICE_FOR_ARG_INVALID_ARG_TYPE)
         return self._args_index.get(arg, None)
 
     def extend(  # type: ignore[reportIncompatibleMethodOverride, override]
-            self, choices: Iterable[Choice] | Choices) -> None:
+        self, choices: Iterable[Choice] | Choices
+    ) -> None:
         """Add :class:`~simplebench.reporters.choice.Choice` instances to the container.
         It does so by adding each :class:`~simplebench.reporters.choice.Choice` in the
         provided ``Iterable`` of :class:`~simplebench.reporters.choice.Choice` or by adding

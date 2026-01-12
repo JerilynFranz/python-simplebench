@@ -7,6 +7,7 @@ for the results property object in the following JSON Schema version:
 
 https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json
 """
+
 from abc import ABC
 
 from .report_element import ReportElement

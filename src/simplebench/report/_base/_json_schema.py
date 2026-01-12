@@ -1,4 +1,5 @@
 """Base for JSON Schema classes."""
+
 import json
 from abc import ABC, abstractmethod
 from functools import cache
@@ -21,7 +22,7 @@ class JSONSchema(ABC):
 
         :return: JSON schema dictionary.
         """
-        raise NotImplementedError("json_schema_dict must be implemented in subclasses.")
+        raise NotImplementedError('json_schema_dict must be implemented in subclasses.')
 
     @classmethod
     @cache
@@ -42,6 +43,7 @@ class JSONSchema(ABC):
             except Exception as exc:
                 raise SimpleBenchTypeError(
                     f'Error generating JSON output for JSON Reporter schema: {exc}',
-                    tag=_JSONSchemaErrorTag.SCHEMA_EXPORT_ERROR) from exc
+                    tag=_JSONSchemaErrorTag.SCHEMA_EXPORT_ERROR,
+                ) from exc
             schema_text = jsonfile.read()
         return schema_text

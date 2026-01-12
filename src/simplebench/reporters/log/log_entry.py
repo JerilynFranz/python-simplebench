@@ -30,7 +30,7 @@ def from_dict(data: dict) -> ReportLogEntry:
         version,
         ReportLogEntry,
         _ReportLogEntryErrorTag.INVALID_VERSION_TYPE,
-        _ReportLogEntryErrorTag.UNSUPPORTED_VERSION
+        _ReportLogEntryErrorTag.UNSUPPORTED_VERSION,
     )
 
     # Only perform JSON Schema validation if the jsonschema package is installed
@@ -39,7 +39,7 @@ def from_dict(data: dict) -> ReportLogEntry:
             version,
             ReportLogEntrySchema,
             _ReportLogEntrySchemaErrorTag.INVALID_VERSION_TYPE,
-            _ReportLogEntrySchemaErrorTag.UNSUPPORTED_VERSION
+            _ReportLogEntrySchemaErrorTag.UNSUPPORTED_VERSION,
         )
 
         try:
@@ -47,8 +47,8 @@ def from_dict(data: dict) -> ReportLogEntry:
             validate(instance=data, schema=schema)  # type: ignore[reportPossiblyUnboundVariable]
         except ValidationError as exc:  # type: ignore[reportPossiblyUnboundVariable]
             raise SimpleBenchValueError(
-                f"JSON report data failed validation for version {version}: {exc.message}",
-                tag=_ReportLogEntrySchemaErrorTag.JSON_SCHEMA_VALIDATION_ERROR
+                f'JSON report data failed validation for version {version}: {exc.message}',
+                tag=_ReportLogEntrySchemaErrorTag.JSON_SCHEMA_VALIDATION_ERROR,
             ) from exc
 
     return report_class.from_dict(data)

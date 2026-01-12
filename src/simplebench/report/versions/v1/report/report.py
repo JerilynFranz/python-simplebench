@@ -13,6 +13,7 @@ deserialization of report data.
 The version 1 report is the first stable version of the report format
 and serves as a foundation for future versions.
 """
+
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, Sequence
 
@@ -30,9 +31,11 @@ _deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
     from simplebench.report.versions.v1 import ResultsInfo
+
     _deferred_imports_done = True
 else:
     ResultsInfo = None  # pylint: disable=invalid-name
+
 
 def _deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
@@ -40,7 +43,9 @@ def _deferred_imports() -> None:
     if _deferred_imports_done:
         return
     from simplebench.report.versions.v1 import ResultsInfo  # pylint: disable=import-outside-toplevel
+
     _deferred_imports_done = True
+
 
 class Report(BaseReport):
     """Immutable class representing a version 1 report."""
@@ -57,16 +62,19 @@ class Report(BaseReport):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
-    def __init__(self, *,
-                 timestamp: str,
-                 group: str,
-                 title: str,
-                 description: str,
-                 variation_cols: VariationColsType,
-                 results: Sequence[ResultsInfo],
-                 machine: MachineInfo) -> None:
+    def __init__(
+        self,
+        *,
+        timestamp: str,
+        group: str,
+        title: str,
+        description: str,
+        variation_cols: VariationColsType,
+        results: Sequence[ResultsInfo],
+        machine: MachineInfo,
+    ) -> None:
         """Initialize a Report instance.
-        
+
         :param str timestamp: ISO 8601 formatted timestamp string.
         :param str group: Group of the benchmark.
         :param str title: Title of the benchmark.
@@ -112,10 +120,13 @@ class Report(BaseReport):
         def process_results(value: Any) -> list[ResultsInfo]:
             """Process the results-info objects in the input sequence"""
             validated_list = validate_sequence_of_type(
-                value, dict, 'results',
+                value,
+                dict,
+                'results',
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_NOT_A_SEQUENCE,
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT,
-                allow_empty=False)
+                allow_empty=False,
+            )
             return [ResultsInfo.from_dict(item) for item in validated_list]
 
         kwargs = cls.import_data(  # Hydrate instance arguments from dict
@@ -125,10 +136,8 @@ class Report(BaseReport):
             optional_fields={'version', 'type'},
             defaults={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={
-                'results': process_results,
-                'machine': MachineInfo.from_dict
-            })
+            process_as={'results': process_results, 'machine': MachineInfo.from_dict},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ReportDict:
@@ -145,11 +154,10 @@ class Report(BaseReport):
             self._to_dict_cache = self._to_dict_helper(ReportDict)
         return self._to_dict_cache
 
-
     @property
     def timestamp(self) -> str:
         """Get the timestamp property.
-        
+
         :return str: The ISO 8601 formatted timestamp string.
         """
         return self._timestamp
@@ -157,7 +165,7 @@ class Report(BaseReport):
     @property
     def group(self) -> str:
         """Get the group property.
-        
+
         :return str: The group string.
         """
         return self._group
@@ -165,7 +173,7 @@ class Report(BaseReport):
     @property
     def title(self) -> str:
         """Get the title property.
-        
+
         :return str: The title string.
         """
         return self._title
@@ -173,7 +181,7 @@ class Report(BaseReport):
     @property
     def description(self) -> str:
         """Get the description property.
-        
+
         :return str: The description string.
         """
         return self._description
@@ -181,7 +189,7 @@ class Report(BaseReport):
     @property
     def variation_cols(self) -> ImmutableVariationColsType:
         """Return the variation_cols property.
-        
+
         A copy of the variation_cols dictionary is returned to prevent
         external modification of the internal state.
 

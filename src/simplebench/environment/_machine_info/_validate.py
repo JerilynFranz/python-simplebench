@@ -1,4 +1,5 @@
 """Validation functions for MachineInfo data"""
+
 from simplebench.environment._cpu_info import CPUInfo
 from simplebench.environment._memory_info import MemoryInfo
 from simplebench.environment._python_info import PythonInfo
@@ -20,10 +21,13 @@ def node(value: str | None) -> str | None:
     if value is None:
         return None
     return validate_string(
-        value, "node",
+        value,
+        'node',
         _MachineInfoErrorTag.INVALID_NODE_PARAM,
         _MachineInfoErrorTag.INVALID_NODE_PARAM,
-        allow_empty=True, allow_blank=True, strip=True
+        allow_empty=True,
+        allow_blank=True,
+        strip=True,
     )
 
 
@@ -44,11 +48,15 @@ def cache_key(value: str | None) -> str | None:
         return None
 
     return validate_string(
-        value, "cache_key",
+        value,
+        'cache_key',
         _MachineInfoErrorTag.INVALID_CACHE_KEY_PARAM_TYPE,
         _MachineInfoErrorTag.INVALID_CACHE_KEY_PARAM_VALUE,
-        strip=False, allow_empty=True, alphanumeric_only=True,
-        message="cache_key must be a non-empty string containing only alphanumeric characters.")
+        strip=False,
+        allow_empty=True,
+        alphanumeric_only=True,
+        message='cache_key must be a non-empty string containing only alphanumeric characters.',
+    )
 
 
 def fresh(value: bool) -> bool:
@@ -60,10 +68,7 @@ def fresh(value: bool) -> bool:
     :return bool: The validated fresh value.
     :raises SimpleBenchTypeError: If the value is not a boolean.
     """
-    return validate_bool(
-        value, "fresh",
-        _MachineInfoErrorTag.INVALID_FRESH_PARAM_TYPE,
-    )
+    return validate_bool(value, 'fresh', _MachineInfoErrorTag.INVALID_FRESH_PARAM_TYPE)
 
 
 def cpu_info(value: CPUInfo) -> CPUInfo:
@@ -75,9 +80,7 @@ def cpu_info(value: CPUInfo) -> CPUInfo:
     :return CPUInfo: The validated CPUInfo instance.
     :raises SimpleBenchTypeError: If the value is not a CPUInfo instance.
     """
-    return validate_type(
-       value, CPUInfo, "cpu_info",
-       _MachineInfoErrorTag.INVALID_CPU_INFO_PARAM_TYPE)
+    return validate_type(value, CPUInfo, 'cpu_info', _MachineInfoErrorTag.INVALID_CPU_INFO_PARAM_TYPE)
 
 
 def memory_info(value: MemoryInfo) -> MemoryInfo:
@@ -89,9 +92,7 @@ def memory_info(value: MemoryInfo) -> MemoryInfo:
     :return MemoryInfo: The validated MemoryInfo instance.
     :raises SimpleBenchTypeError: If the value is not a MemoryInfo instance.
     """
-    return validate_type(
-        value, MemoryInfo, "memory_info",
-        _MachineInfoErrorTag.INVALID_MEMORY_INFO_PARAM_TYPE)
+    return validate_type(value, MemoryInfo, 'memory_info', _MachineInfoErrorTag.INVALID_MEMORY_INFO_PARAM_TYPE)
 
 
 def python_info(value: PythonInfo) -> PythonInfo:
@@ -103,9 +104,7 @@ def python_info(value: PythonInfo) -> PythonInfo:
     :return PythonInfo: The validated PythonInfo instance.
     :raises SimpleBenchTypeError: If the value is not a PythonInfo instance.
     """
-    return validate_type(
-        value, PythonInfo, "python_info",
-        _MachineInfoErrorTag.INVALID_PYTHON_INFO_PARAM_TYPE)
+    return validate_type(value, PythonInfo, 'python_info', _MachineInfoErrorTag.INVALID_PYTHON_INFO_PARAM_TYPE)
 
 
 def system_info(value: SystemInfo) -> SystemInfo:
@@ -117,6 +116,4 @@ def system_info(value: SystemInfo) -> SystemInfo:
     :return SystemInfo: The validated SystemInfo instance.
     :raises SimpleBenchTypeError: If the value is not a SystemInfo instance.
     """
-    return validate_type(
-       value, SystemInfo, "system_info",
-       _MachineInfoErrorTag.INVALID_SYSTEM_INFO_PARAM_TYPE)
+    return validate_type(value, SystemInfo, 'system_info', _MachineInfoErrorTag.INVALID_SYSTEM_INFO_PARAM_TYPE)

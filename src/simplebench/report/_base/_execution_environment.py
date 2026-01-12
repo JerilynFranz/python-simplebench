@@ -14,6 +14,7 @@ The implementations of EnvironmentInfo are backwards compatible with future vers
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base EnvironmentInfo representation at the time of the V1 schema release.
 """
+
 from abc import ABC
 
 from ._environment import Environment
@@ -23,8 +24,8 @@ __all__ = []
 
 
 class BaseExecutionEnvironment(ReportElement, ABC):
-    """Abstract class representing the execution_environment property for a machine-info object in a JSON report.
-    """
+    """Abstract class representing the execution_environment property for a machine-info object in a JSON report."""
+
     ALLOWED_ENVIRONMENTS: dict[str, type[Environment]] = {}
     """Dictionary mapping known execution environment types to their corresponding Environment subclasses.
 

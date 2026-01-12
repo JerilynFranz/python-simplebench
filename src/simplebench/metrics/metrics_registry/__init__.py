@@ -1,4 +1,5 @@
 """Metrics registry module."""
+
 from .metrics_registry import (
     clear_metrics,
     filtered_metrics,

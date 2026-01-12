@@ -1,4 +1,5 @@
 """Provides a generic deferred import mechanism for any type."""
+
 from __future__ import annotations
 
 import importlib
@@ -54,6 +55,7 @@ class _LazyTypeProxyMeta(type):
 
     :param str type_name: The name of the real type being proxied.
     """
+
     __real_type_name__: str
 
     def __instancecheck__(cls, instance: Any) -> bool:
@@ -100,6 +102,7 @@ class LazyTypeProxy(Generic[T], metaclass=_LazyTypeProxyMeta):
 
         class MyProxy(LazyTypeProxy['RealType']):
             pass
+
 
         register_lazy_proxy(MyProxy, 'RealType', 'path.to.module')
     """

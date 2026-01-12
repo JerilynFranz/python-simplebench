@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Decorators for enums."""
+
 import ast
 import inspect
 from enum import Enum
@@ -7,7 +8,7 @@ from functools import partial
 from operator import is_
 from typing import TypeVar
 
-E = TypeVar("E", bound=Enum)
+E = TypeVar('E', bound=Enum)
 
 
 # Decorator to attach docstrings to enum members
@@ -35,8 +36,9 @@ def enum_docstrings(enum: type[E]) -> type[E]:
       class SomeEnum(Enum):
           '''Docstring for the SomeEnum enum'''
 
-          foo_member = "foo_value"
+          foo_member = 'foo_value'
           '''Docstring for the foo_member enum member'''
+
 
       SomeEnum.foo_member.__doc__  # 'Docstring for the foo_member enum member'
 
@@ -62,9 +64,7 @@ def enum_docstrings(enum: type[E]) -> type[E]:
                     member = enum[name]
                     continue
 
-                case ast.Expr(
-                    value=ast.Constant(value=str(docstring))
-                ) if member and unassigned(member.__doc__):
+                case ast.Expr(value=ast.Constant(value=str(docstring))) if member and unassigned(member.__doc__):
                     # docstring immediately following a member assignment
                     member.__doc__ = docstring
 

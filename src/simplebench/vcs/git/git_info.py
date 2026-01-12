@@ -1,4 +1,5 @@
 """Version Control System record for Git."""
+
 import re
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -17,6 +18,7 @@ class GitInfo(VCSInfo):
         date (str): The date of the current commit in ISO format.
         dirty (bool): Whether there are uncommitted changes in the working directory.
     """
+
     def __init__(self, branch: str, commit_id: str, commit_datetime: str, dirty: bool) -> None:
         """Initialize GitInfo with branch, commit_id, commit_datetime, and dirty status.
 
@@ -26,11 +28,7 @@ class GitInfo(VCSInfo):
         :param dirty: Whether there are uncommitted changes in the working directory.
         """
         super().__init__(
-            vcs_type=VCSType.GIT,
-            branch=branch,
-            commit_id=commit_id,
-            commit_datetime=commit_datetime,
-            dirty=dirty,
+            vcs_type=VCSType.GIT, branch=branch, commit_id=commit_id, commit_datetime=commit_datetime, dirty=dirty
         )
 
     def validate_commit_id(self, commit_id: str) -> None:
@@ -42,10 +40,8 @@ class GitInfo(VCSInfo):
         """
         if not isinstance(commit_id, str):
             raise SimpleBenchTypeError(
-                f"commit_id must be a string, got {type(commit_id)}",
-                tag=_GitErrorTag.COMMIT_ID_INVALID_TYPE)
+                f'commit_id must be a string, got {type(commit_id)}', tag=_GitErrorTag.COMMIT_ID_INVALID_TYPE
+            )
 
         if not re.compile(r'^[0-9a-fA-F]{40}$').match(commit_id):
-            raise SimpleBenchValueError(
-                f"Invalid Git commit ID: {commit_id}",
-                tag=_GitErrorTag.COMMIT_ID_INVALID_VALUE)
+            raise SimpleBenchValueError(f'Invalid Git commit ID: {commit_id}', tag=_GitErrorTag.COMMIT_ID_INVALID_VALUE)

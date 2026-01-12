@@ -15,17 +15,14 @@ version 1: :class:`~simplebench.report.versions.v1.SystemInfoSchema`.
 
     These types ensure proper validation and serialization of SystemInfo data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
-__all__ = [
-    'SystemInfoData',
-    'SystemInfoDict',
-    'ImmutableSystemInfoData',
-    'ImmutableSystemInfoDict',
-]
+__all__ = ['SystemInfoData', 'SystemInfoDict', 'ImmutableSystemInfoData', 'ImmutableSystemInfoDict']
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
+
 
 class _RequiredSystemInfo(ReportElementTypedDict, total=True):
     """Required fields for V1 SystemInfo data used as INPUT.
@@ -38,10 +35,12 @@ class _RequiredSystemInfo(ReportElementTypedDict, total=True):
     :param Required[str] release: The system release string.
     :param Required[str] machine: The machine type string.
     """
+
     system: Required[str]
     system_version: Required[str]
     release: Required[str]
     machine: Required[str]
+
 
 class SystemInfoData(_RequiredSystemInfo, total=False):
     """Typed dictionary for V1 SystemInfo data used as INPUT.
@@ -61,6 +60,7 @@ class SystemInfoData(_RequiredSystemInfo, total=False):
     :param NotRequired[int] version: The version of the block's data structure.
     :param NotRequired[str] hash_id: The unique hash identifier for the system information.
     """
+
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
@@ -79,9 +79,12 @@ class ImmutableSystemInfoData(SystemInfoData, total=False):
     to indicate that instances of this type should be treated as immutable
     and should never be given an actual value.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class SystemInfoDict(_RequiredSystemInfo, total=True):
     """Typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).
@@ -101,9 +104,11 @@ class SystemInfoDict(_RequiredSystemInfo, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the system information.
     """
+
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
+
 
 class ImmutableSystemInfoDict(SystemInfoDict, total=True):
     """Immutable typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).
@@ -122,4 +127,5 @@ class ImmutableSystemInfoDict(SystemInfoDict, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the system information.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

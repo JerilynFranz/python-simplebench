@@ -9,6 +9,7 @@ This module defines four distinct dictionary types for handling ExecutionEnviron
 
     These types ensure proper validation and serialization of ExecutionEnvironment data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired
 
@@ -16,13 +17,14 @@ from simplebench.types import Never, NotRequired
 from .._python_info._typeddict_types import PythonInfoData, PythonInfoDict
 
 __all__ = [
-    "ExecutionEnvironmentData",
-    "ImmutableExecutionEnvironmentData",
-    "ExecutionEnvironmentDict",
-    "ImmutableExecutionEnvironmentDict",
+    'ExecutionEnvironmentData',
+    'ImmutableExecutionEnvironmentData',
+    'ExecutionEnvironmentDict',
+    'ImmutableExecutionEnvironmentDict',
 ]
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
+
 
 class ExecutionEnvironmentData(ReportElementTypedDict, total=False):
     """Typed dictionary for V1 ExecutionEnvironment data used as INPUT.
@@ -44,12 +46,13 @@ class ExecutionEnvironmentData(ReportElementTypedDict, total=False):
 
     :param NotRequired[PythonInfoData] python: Information about the Python interpreter.
     """
+
     python: NotRequired[PythonInfoData]
 
 
 class ImmutableExecutionEnvironmentData(ReportElementTypedDict, total=False):
     """Immutable typed dictionary for V1 ExecutionEnvironment data used as INPUT.
-    
+
     .. warning::
         This class does **NOT** inherit from :class:`ExecutionEnvironmentData` because
         of peculiarities of TypedDict inheritance and immutability signaling with extra_items.
@@ -81,10 +84,13 @@ class ImmutableExecutionEnvironmentData(ReportElementTypedDict, total=False):
 
     :param NotRequired[PythonInfoDict] python: Information about the Python interpreter.
     """
+
     __immutable__: NotRequired[Never]
     python: NotRequired[PythonInfoData]
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class ExecutionEnvironmentDict(ReportElementTypedDict, total=False):
     """Typed dictionary for the JSON representation of a V1 ExecutionEnvironment (OUTPUT).
@@ -109,6 +115,7 @@ class ExecutionEnvironmentDict(ReportElementTypedDict, total=False):
 
     :param NotRequired[PythonInfoDict] python: Information about the Python interpreter.
     """
+
     python: NotRequired[PythonInfoDict]
 
 
@@ -124,5 +131,6 @@ class ImmutableExecutionEnvironmentDict(ReportElementTypedDict, total=False):
 
     :param NotRequired[PythonInfoDict] python   : Information about the Python interpreter.
     """
+
     __immutable__: NotRequired[Never]
     python: NotRequired[PythonInfoDict]

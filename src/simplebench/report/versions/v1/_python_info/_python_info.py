@@ -10,6 +10,7 @@ As the foundational version, this class is considered immutable. Future versions
 will inherit from this class to extend its functionality, but this implementation
 will not be changed.
 """
+
 import threading
 from collections.abc import Mapping, Sequence
 from types import MappingProxyType
@@ -38,22 +39,25 @@ class PythonInfo(BasePythonInfo):
     ID: str = SCHEMA.ID
     """The JSON PythonInfo identifier property value for version 1 reports."""
 
-    def __init__(self, *,
-            hash_id: str,
-            python_version: str,
-            implementation: str,
-            implementation_version: str,
-            compiler: str,
-            revision: str,
-            buildno: str,
-            builddate: str,
-            command_line_flags: str,
-            environment_variables: Mapping[str, str],
-            gc_is_enabled: bool,
-            gc_thresholds: Sequence[int],
-            thread_switch_interval: float,
-            architecture_bits: str,
-            architecture_linkage: str) -> None:
+    def __init__(
+        self,
+        *,
+        hash_id: str,
+        python_version: str,
+        implementation: str,
+        implementation_version: str,
+        compiler: str,
+        revision: str,
+        buildno: str,
+        builddate: str,
+        command_line_flags: str,
+        environment_variables: Mapping[str, str],
+        gc_is_enabled: bool,
+        gc_thresholds: Sequence[int],
+        thread_switch_interval: float,
+        architecture_bits: str,
+        architecture_linkage: str,
+    ) -> None:
         """Initialize a PythonInfo instance.
 
         :param str hash_id: The unique hash identifier for this PythonInfo. If an
@@ -116,7 +120,8 @@ class PythonInfo(BasePythonInfo):
             skip_fields={'version', 'type'},
             optional_fields={'hash_id', 'version', 'type'},
             defaults={'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE})
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutablePythonInfoDict:

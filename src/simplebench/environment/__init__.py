@@ -1,4 +1,5 @@
 """Execution environment information utilities."""
+
 from ._cpu_info import CPUInfo
 from ._machine_info import MachineInfo, MachineInfoFactory
 from ._memory_info import MemoryInfo, SwapMemory, VirtualMemory

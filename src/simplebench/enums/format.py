@@ -1,4 +1,5 @@
 """Format enums for SimpleBench."""
+
 from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
@@ -16,6 +17,7 @@ class Format(str, Enum):
       - GRAPH: Graphical format.
       - CUSTOM: Custom format.
     """
+
     PLAIN_TEXT = 'plain text'
     """Plain text format"""
     RICH_TEXT = 'rich text'

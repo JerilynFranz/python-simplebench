@@ -1,4 +1,5 @@
 """Cache entry for validation results."""
+
 import threading
 import weakref
 from collections import OrderedDict
@@ -10,10 +11,11 @@ from ._cache_key import CacheKey
 
 class ObjectWrapper:
     """A wrapper to allow weak references to any object.
-    
+
     :property Any obj: The wrapped object.
     """
-    __slots__ = ("obj", "__weakref__")
+
+    __slots__ = ('obj', '__weakref__')
 
     def __init__(self, obj: Any):
         """Initialize the ObjectWrapper.
@@ -25,18 +27,21 @@ class ObjectWrapper:
 
 class CacheEntry:
     """Cache entry for validation results.
-    
+
     :param Hashable td_cls: The type associated with the cached object.
     :property object obj: The object having its validity cached.
     :property bool is_valid: Whether the object is valid.
     :property CacheKey cache_key: The cache key for the cached object.
     """
-    def __init__(self,
-                 td_cls: Hashable,
-                 obj: object,
-                 is_valid: bool,
-                 cache: OrderedDict[CacheKey, "CacheEntry"],
-                 lock: threading.RLock) -> None:
+
+    def __init__(
+        self,
+        td_cls: Hashable,
+        obj: object,
+        is_valid: bool,
+        cache: OrderedDict[CacheKey, 'CacheEntry'],
+        lock: threading.RLock,
+    ) -> None:
         """Initialize the CacheEntry.
 
         :param ImmutableCoreDataTypes value: The immutable core data type value.

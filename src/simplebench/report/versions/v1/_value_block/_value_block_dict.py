@@ -15,6 +15,7 @@ version 1: :class:`~simplebench.report.versions.v1.ValueBlockSchema`.
 
     These types ensure proper validation and serialization of ValueBlock data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
@@ -22,16 +23,18 @@ __all__ = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
+
 class _RequiredValueBlockData(ReportElementTypedDict, total=True):
     """Required fields for V1 ValueBlock data used as INPUT.
 
     The input type allows `value` to be either `int` or `float`.
-    
+
     :param Required[str] semantic_type: The semantic type of the value.
     :param Required[str] unit: The unit of the value.
     :param Required[float] scale: The scaling factor for the value.
     :param Required[float | int] value: The numeric value of the block.
     """
+
     semantic_type: Required[str]
     unit: Required[str]
     scale: Required[float]
@@ -53,11 +56,13 @@ class ValueBlockData(_RequiredValueBlockData, total=False):
     :param NotRequired[str] timer: The name of the timer associated with this value.
     :param NotRequired[str] cpu_timer: The name of the CPU timer associated with this value.
     """
+
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
     timer: NotRequired[str]
     cpu_timer: NotRequired[str]
+
 
 class ImmutableValueBlockData(ValueBlockData, total=False):
     """Immutable typed dictionary for V1 ValueBlock data used as INPUT.
@@ -65,9 +70,12 @@ class ImmutableValueBlockData(ValueBlockData, total=False):
     This type is identical to :class:`ValueBlockData` but is immutable
     (all fields are read-only) for type-checking purposes.
     """
+
     __immutable__: NotRequired[Never]  # Marker for immutability
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class _RequiredValueBlockDict(ReportElementTypedDict, total=True):
     """Required fields for V1 ValueBlock data used as OUTPUT.
@@ -85,6 +93,7 @@ class _RequiredValueBlockDict(ReportElementTypedDict, total=True):
     :param Required[float] value: The numeric value of the block (guaranteed to be float).
 
     """
+
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
@@ -111,6 +120,7 @@ class ValueBlockDict(_RequiredValueBlockDict, total=False):
     :param NotRequired[str] timer: The name of the timer associated with this value.
     :param NotRequired[str] cpu_timer: The name of the CPU timer associated with this value.
     """
+
     timer: NotRequired[str]
     cpu_timer: NotRequired[str]
 
@@ -127,4 +137,5 @@ class ImmutableValueBlockDict(ValueBlockDict, total=False):
     Because it inherits from `ValueBlockDict`, all fields are the same and it
     can be used interchangeably where immutability is not a concern.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

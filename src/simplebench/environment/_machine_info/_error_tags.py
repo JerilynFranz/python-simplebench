@@ -1,4 +1,5 @@
 """Error tags for machine info utilities."""
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -6,6 +7,7 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _MachineInfoErrorTag(ErrorTag):
     """Error tags for machine info utilities."""
+
     INVALID_EXECUTION_ENVIRONMENT_PARAM_TYPE = 'INVALID_EXECUTION_ENVIRONMENT_PARAM_TYPE'
     """The `execution_environment` parameter is not an ExecutionEnvironment instance."""
     INVALID_FRESH_PARAM_TYPE = 'INVALID_FRESH_PARAM_TYPE'

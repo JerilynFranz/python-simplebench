@@ -1,4 +1,5 @@
 """Schema for JSON ValueBlock v1 validation."""
+
 from copy import deepcopy
 from json import JSONEncoder
 
@@ -8,81 +9,71 @@ from simplebench.report._base import JSONSchema
 
 __all__ = []
 
+
 class ValueBlockSchema(JSONSchema):
     """Schema for the JSON ValueBlock output (V1)"""
 
     VERSION: int = 1
     """The JSON ValueBlock schema version number."""
 
-    TYPE: str = "SimpleBenchValueBlock::V1"
+    TYPE: str = 'SimpleBenchValueBlock::V1'
     """The JSON ValueBlock schema type property value for version 1 reports."""
 
-    ID: str = "https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/value-block.json"
+    ID: str = 'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/value-block.json'
     """The JSON ValueBlock schema $id value for version 1 reports."""
 
     _JSON_SCHEMA_DICT: dict[str, object] = {
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "$id": ID,
-            "title": "Value Block (V1)",
-            "description": "Block containing a single value measurement.",
-            "type": "object",
-            "properties": {
-                "version": {
-                    "title": "Schema Version",
-                    "description": f"Version of the schema. Must be '{VERSION}' for Value Block version 1.",
-                    "type": "integer",
-                    "const": VERSION
-                },
-                "type": {
-                    "title": "Block Type",
-                    "description": f"The type of the block. Must be '{TYPE}' for Value Block version 1.",
-                    "type": "string",
-                    "const": TYPE
-                },
-                "semantic_type": {
-                    "title": "Measurement Type",
-                    "description": "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
-                    "type": "string",
-                    "pattern": "^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$",
-                    "examples": [
-                        "simplebench_std::wallclock_time",
-                        "simplebench_std::cpu_time",
-                        "my_plugin::context_switches"
-                    ]
-                },
-                "timer": {
-                    "title": "Timer",
-                    "description": "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
-                    "type": "string"
-                },
-                "unit": {
-                    "title": "Measurement Unit",
-                    "description": "Unit of the measurement value",
-                    "type": "string",
-                    "minLength": 1
-                },
-                "scale": {
-                    "title": "Measurement Scale",
-                    "description": "Scale of the measurement value",
-                    "type": "number",
-                    "exclusiveMinimum": 0
-                },
-                "value": {
-                    "title": "Value",
-                    "description": "The single measurement value.",
-                    "type": "number"
-                }
+        '$schema': 'https://json-schema.org/draft/2020-12/schema',
+        '$id': ID,
+        'title': 'Value Block (V1)',
+        'description': 'Block containing a single value measurement.',
+        'type': 'object',
+        'properties': {
+            'version': {
+                'title': 'Schema Version',
+                'description': f"Version of the schema. Must be '{VERSION}' for Value Block version 1.",
+                'type': 'integer',
+                'const': VERSION,
             },
-            "required": [
-                "version",
-                "type",
-                "semantic_type",
-                "unit",
-                "scale",
-                "value"
-            ],
-            "additionalProperties": False
-        }
+            'type': {
+                'title': 'Block Type',
+                'description': f"The type of the block. Must be '{TYPE}' for Value Block version 1.",
+                'type': 'string',
+                'const': TYPE,
+            },
+            'semantic_type': {
+                'title': 'Measurement Type',
+                'description': "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
+                'type': 'string',
+                'pattern': '^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$',
+                'examples': [
+                    'simplebench_std::wallclock_time',
+                    'simplebench_std::cpu_time',
+                    'my_plugin::context_switches',
+                ],
+            },
+            'timer': {
+                'title': 'Timer',
+                'description': "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
+                'type': 'string',
+            },
+            'unit': {
+                'title': 'Measurement Unit',
+                'description': 'Unit of the measurement value',
+                'type': 'string',
+                'minLength': 1,
+            },
+            'scale': {
+                'title': 'Measurement Scale',
+                'description': 'Scale of the measurement value',
+                'type': 'number',
+                'exclusiveMinimum': 0,
+            },
+            'value': {'title': 'Value', 'description': 'The single measurement value.', 'type': 'number'},
+        },
+        'required': ['version', 'type', 'semantic_type', 'unit', 'scale', 'value'],
+        'additionalProperties': False,
+    }
     """The JSON schema as a dictionary."""
 
     _JSON_SCHEMA_TEXT: str = JSONEncoder(indent=2).encode(_JSON_SCHEMA_DICT)
@@ -90,8 +81,8 @@ class ValueBlockSchema(JSONSchema):
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption="JSON Schema for ValueBlock V1",
-        intro_text="The JSON schema is as follows:"
+        caption='JSON Schema for ValueBlock V1',
+        intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""
 

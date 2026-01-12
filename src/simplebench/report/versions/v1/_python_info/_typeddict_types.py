@@ -13,15 +13,11 @@ type-checking purposes.
 
 These types ensure proper validation and serialization of PythonInfo data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
-__all__ = [
-    'PythonInfoData',
-    'PythonInfoDict',
-    'ImmutablePythonInfoData',
-    'ImmutablePythonInfoDict',
-]
+__all__ = ['PythonInfoData', 'PythonInfoDict', 'ImmutablePythonInfoData', 'ImmutablePythonInfoDict']
 
 
 # A base for fields that are always required and have the same type.
@@ -34,7 +30,9 @@ class _PythonInfoCore(ReportElementTypedDict, total=True):
     release: Required[str]
     system: Required[str]
 
+
 # --- For data used as INPUT (e.g., to `from_dict`) ---
+
 
 class PythonInfoData(_PythonInfoCore, total=False):
     """Typed dictionary for V1 PythonInfo data used as INPUT.
@@ -53,9 +51,11 @@ class PythonInfoData(_PythonInfoCore, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
+
 
 class ImmutablePythonInfoData(PythonInfoData, total=False):
     """Immutable version of :class:`PythonInfoData` (INPUT).
@@ -80,9 +80,12 @@ class ImmutablePythonInfoData(PythonInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class PythonInfoDict(_PythonInfoCore, total=True):
     """Typed dictionary for the JSON representation of a V1 PythonInfo (OUTPUT).
@@ -100,9 +103,11 @@ class PythonInfoDict(_PythonInfoCore, total=True):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
+
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
+
 
 class ImmutablePythonInfoDict(PythonInfoDict, total=False):
     """Immutable version of :class:`PythonInfoDict` (OUTPUT).
@@ -127,4 +132,5 @@ class ImmutablePythonInfoDict(PythonInfoDict, total=False):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

@@ -16,6 +16,7 @@ Python-specific environment variables that are set.
 It also gathers information about the garbage collector settings
 using the :module:`gc` module.
 """
+
 import dataclasses
 import gc
 import os
@@ -81,6 +82,7 @@ class PythonInfo:
     in other parts of the application or reporting tools and makes it possible to
     serialize (such as by pickling) this information if needed.
     """
+
     python_version: str
     """The Python version string."""
     implementation: str
@@ -111,11 +113,23 @@ class PythonInfo:
     """A string containing the architecture linkage format."""
 
     __slots__ = (
-        'python_version', 'implementation', 'implementation_version', 'compiler', 'revision',
-        'buildno', 'builddate', 'command_line_flags', 'environment_variables',
-        'gc_is_enabled', 'gc_thresholds', 'thread_switch_interval',
-        'architecture_bits', 'architecture_linkage',
-        '_dict_cache', '_cached_proto')
+        'python_version',
+        'implementation',
+        'implementation_version',
+        'compiler',
+        'revision',
+        'buildno',
+        'builddate',
+        'command_line_flags',
+        'environment_variables',
+        'gc_is_enabled',
+        'gc_thresholds',
+        'thread_switch_interval',
+        'architecture_bits',
+        'architecture_linkage',
+        '_dict_cache',
+        '_cached_proto',
+    )
 
     def __init__(self) -> None:
         """Create a PythonInfo facade for the Python :module:`platform` functions.
@@ -184,7 +198,8 @@ class PythonInfo:
             if version_info is not None:
                 py_implementation_version = (
                     f'{version_info.major:d}.{version_info.minor:d}.{version_info.micro:d}'
-                    f'-{version_info.releaselevel}{version_info.serial:d}')
+                    f'-{version_info.releaselevel}{version_info.serial:d}'
+                )
             else:
                 py_implementation_version = 'unknown'
         return py_implementation_version
@@ -257,23 +272,56 @@ class PythonInfo:
         """
         # A comprehensive list of Python-specific environment variables.
         python_vars = (
-            'PYTHONHOME', 'PYTHONPATH', 'PYTHONSAFEPATH', 'PYTHONPLATLIBDIR',
-            'PYTHONSTARTUP', 'PYTHONOPTIMIZE', 'PYTHONBREAKPOINT', 'PYTHONDEBUG',
-            'PYTHONINSPECT', 'PYTHONUNBUFFERED', 'PYTHONVERBOSE', 'PYTHONCASEOK',
-            'PYTHONDONTWRITEBYTECODE', 'PYTHONPYCACHEPREFIX', 'PYTHONHASHSEED',
-            'PYTHONINTMAXSTRDIGITS', 'PYTHONIOENCODING', 'PYTHONNOUSERSITE',
-            'PYTHONUSERBASE', 'PYTHONEXECUTABLE', 'PYTHONWARNINGS',
-            'PYTHONFAULTHANDLER', 'PYTHONTRACEMALLOC', 'PYTHONPROFILEIMPORTTIME',
-            'PYTHONASYNCIODEBUG', 'PYTHONMALLOC', 'PYTHONMALLOCSTATS',
-            'PYTHONLEGACYWINDOWSFSENCODING', 'PYTHONLEGACYWINDOWSSTDIO',
-            'PYTHONCOERCECLOCALE', 'PYTHONDEVMODE', 'PYTHONUTF8',
-            'PYTHONWARNDEFAULTENCODING', 'PYTHONNODEBUGRANGES', 'PYTHONPERFSUPPORT',
-            'PYTHON_PERF_JIT_SUPPORT', 'PYTHON_DISABLE_REMOTE_DEBUG',
-            'PYTHON_CPU_COUNT', 'PYTHON_FROZEN_MODULES', 'PYTHON_COLORS',
-            'PYTHON_BASIC_REPL', 'PYTHON_HISTORY', 'PYTHON_GIL',
-            'PYTHON_THREAD_INHERIT_CONTEXT', 'PYTHON_CONTEXT_AWARE_WARNINGS',
-            'PYTHON_JIT', 'PYTHON_TLBC', 'PYTHONDUMPREFS', 'PYTHONDUMPREFSFILE',
-            'PYTHON_PRESITE'
+            'PYTHONHOME',
+            'PYTHONPATH',
+            'PYTHONSAFEPATH',
+            'PYTHONPLATLIBDIR',
+            'PYTHONSTARTUP',
+            'PYTHONOPTIMIZE',
+            'PYTHONBREAKPOINT',
+            'PYTHONDEBUG',
+            'PYTHONINSPECT',
+            'PYTHONUNBUFFERED',
+            'PYTHONVERBOSE',
+            'PYTHONCASEOK',
+            'PYTHONDONTWRITEBYTECODE',
+            'PYTHONPYCACHEPREFIX',
+            'PYTHONHASHSEED',
+            'PYTHONINTMAXSTRDIGITS',
+            'PYTHONIOENCODING',
+            'PYTHONNOUSERSITE',
+            'PYTHONUSERBASE',
+            'PYTHONEXECUTABLE',
+            'PYTHONWARNINGS',
+            'PYTHONFAULTHANDLER',
+            'PYTHONTRACEMALLOC',
+            'PYTHONPROFILEIMPORTTIME',
+            'PYTHONASYNCIODEBUG',
+            'PYTHONMALLOC',
+            'PYTHONMALLOCSTATS',
+            'PYTHONLEGACYWINDOWSFSENCODING',
+            'PYTHONLEGACYWINDOWSSTDIO',
+            'PYTHONCOERCECLOCALE',
+            'PYTHONDEVMODE',
+            'PYTHONUTF8',
+            'PYTHONWARNDEFAULTENCODING',
+            'PYTHONNODEBUGRANGES',
+            'PYTHONPERFSUPPORT',
+            'PYTHON_PERF_JIT_SUPPORT',
+            'PYTHON_DISABLE_REMOTE_DEBUG',
+            'PYTHON_CPU_COUNT',
+            'PYTHON_FROZEN_MODULES',
+            'PYTHON_COLORS',
+            'PYTHON_BASIC_REPL',
+            'PYTHON_HISTORY',
+            'PYTHON_GIL',
+            'PYTHON_THREAD_INHERIT_CONTEXT',
+            'PYTHON_CONTEXT_AWARE_WARNINGS',
+            'PYTHON_JIT',
+            'PYTHON_TLBC',
+            'PYTHONDUMPREFS',
+            'PYTHONDUMPREFSFILE',
+            'PYTHON_PRESITE',
         )
 
         env_data = {}

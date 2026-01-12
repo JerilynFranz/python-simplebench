@@ -8,6 +8,7 @@ cannot be changed. The class also provides a method to delete a metric from the
 Metrics object.
 
 """
+
 import re
 from collections.abc import MutableMapping
 from typing import Any, Iterable, Iterator
@@ -86,9 +87,7 @@ class Metrics(MutableMapping[str, Metric]):
         """
         return bool(isinstance(key, str) and self._VALID_KEY_REGEX.match(key))
 
-    def _validate_metrics_iterable(
-            self,
-            metrics: Iterable[Metric]) -> list[Metric]:
+    def _validate_metrics_iterable(self, metrics: Iterable[Metric]) -> list[Metric]:
         """Validate that the input is an Iterable of Metric objects.
 
         :param metrics: An Iterable of Metric objects.
@@ -96,17 +95,13 @@ class Metrics(MutableMapping[str, Metric]):
         :raises SimpleBenchTypeError: If the input is not an Iterable of Metric.
         """
         if not isinstance(metrics, Iterable):
-            raise SimpleBenchTypeError(
-                "Not an Iterable of Metric",
-                tag=_MetricsErrorTag.NOT_ITERABLE_ERROR)
+            raise SimpleBenchTypeError('Not an Iterable of Metric', tag=_MetricsErrorTag.NOT_ITERABLE_ERROR)
 
         # Convert to a list *once* to avoid exhausting the iterator.
         metrics_list = list(metrics)
 
         if not all(isinstance(metric, Metric) for metric in metrics_list):
-            raise SimpleBenchTypeError(
-                "Not an Iterable of Metric",
-                tag=_MetricsErrorTag.INVALID_METRICS_LIST_ITEM_TYPE)
+            raise SimpleBenchTypeError('Not an Iterable of Metric', tag=_MetricsErrorTag.INVALID_METRICS_LIST_ITEM_TYPE)
 
         return metrics_list
 
@@ -119,14 +114,13 @@ class Metrics(MutableMapping[str, Metric]):
         :raises SimpleBenchValueError: If the key does not match the regex pattern.
         """
         if not isinstance(key, str):
-            raise SimpleBenchTypeError(
-                "Key must be a string",
-                tag=_MetricsErrorTag.TYPE_ERROR)
+            raise SimpleBenchTypeError('Key must be a string', tag=_MetricsErrorTag.TYPE_ERROR)
         if not self._VALID_KEY_REGEX.match(key):
             raise SimpleBenchValueError(
-                "Key must start with an uppercase letter or underscore, "
-                "followed by uppercase letters, digits, or underscores",
-                tag=_MetricsErrorTag.INVALID_KEY_FORMAT)
+                'Key must start with an uppercase letter or underscore, '
+                'followed by uppercase letters, digits, or underscores',
+                tag=_MetricsErrorTag.INVALID_KEY_FORMAT,
+            )
         return key
 
     def __setattr__(self, name: str, value: Any) -> None:
@@ -180,13 +174,11 @@ class Metrics(MutableMapping[str, Metric]):
         """
         name = self._validate_key_name(name)
         if not isinstance(value, Metric):
-            raise SimpleBenchTypeError(
-                "value must be an instance of Metric",
-                tag=_MetricsErrorTag.TYPE_ERROR)
+            raise SimpleBenchTypeError('value must be an instance of Metric', tag=_MetricsErrorTag.TYPE_ERROR)
         if name != value.label:
             raise SimpleBenchValueError(
-                "Key must match the label of the Metric object",
-                tag=_MetricsErrorTag.MISMATCHED_KEY)
+                'Key must match the label of the Metric object', tag=_MetricsErrorTag.MISMATCHED_KEY
+            )
         if hasattr(self, name):
             # If the exact same object is already registered, it's a no-op.
             if getattr(self, name) is value:
@@ -194,8 +186,8 @@ class Metrics(MutableMapping[str, Metric]):
 
             # Otherwise, it's a different object trying to use the same key.
             raise SimpleBenchDuplicateKeyError(
-                f"Duplicate key '{name}' found in metrics",
-                tag=_MetricsErrorTag.DUPLICATE_KEY)
+                f"Duplicate key '{name}' found in metrics", tag=_MetricsErrorTag.DUPLICATE_KEY
+            )
 
         # The key is not yet present, so we can safely set it.
         # Use object.__setattr__ to bypass our custom __setattr__ method.

@@ -1,4 +1,5 @@
 """Base class for value block representation."""
+
 from abc import ABC
 
 from .report_element import ReportElement

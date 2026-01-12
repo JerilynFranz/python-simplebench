@@ -1,4 +1,5 @@
 """module for managing progress tasks using Rich Progress."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -13,12 +14,15 @@ if TYPE_CHECKING:
 class ProgressTracker:
     """Helper to manage benchmark progress updates."""
 
-    def __init__(self, *,
-                 session: Session | None = None,
-                 task_name: str,
-                 progress_max: int | float = 100,
-                 description: str = 'Benchmarking',
-                 color: Color = Color.GREEN) -> None:
+    def __init__(
+        self,
+        *,
+        session: Session | None = None,
+        task_name: str,
+        progress_max: int | float = 100,
+        description: str = 'Benchmarking',
+        color: Color = Color.GREEN,
+    ) -> None:
         """Initialize the ProgressTracker.
 
         :param session: The Session instance.
@@ -41,20 +45,20 @@ class ProgressTracker:
         self._is_running: bool = False
         self._description: str = description
 
-        if (self._session and self._session.show_progress
-                and self._session.verbosity > Verbosity.QUIET and self._session.tasks):
+        if (
+            self._session
+            and self._session.show_progress
+            and self._session.verbosity > Verbosity.QUIET
+            and self._session.tasks
+        ):
             self._task = self._session.tasks.get(task_name)
             if not self._task:
                 self._task = self._session.tasks.new_task(
-                    name=task_name,
-                    description=self.styled_description,
-                    completed=0,
-                    total=progress_max)
+                    name=task_name, description=self.styled_description, completed=0, total=progress_max
+                )
         if self._task:
             self._task.reset()
-            self._task.update(
-                completed=5,
-                description=self.styled_description)
+            self._task.update(completed=5, description=self.styled_description)
 
     @property
     def styled_description(self) -> str:
@@ -70,21 +74,16 @@ class ProgressTracker:
         """
         return self._is_running
 
-    def update(self,
-               completed: int | float,
-               description: str,
-               refresh: bool | None = None,
-               color: Color | None = None) -> None:
+    def update(
+        self, completed: int | float, description: str, refresh: bool | None = None, color: Color | None = None
+    ) -> None:
         """Update progress display."""
         if description:
             self._description = description
         if color is not None:
             self._color = color
         if self._task:
-            self._task.update(
-                completed=completed,
-                description=self.styled_description,
-                refresh=refresh)
+            self._task.update(completed=completed, description=self.styled_description, refresh=refresh)
 
     def start(self) -> None:
         """Start the progress tracking."""

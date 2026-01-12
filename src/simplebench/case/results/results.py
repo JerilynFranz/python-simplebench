@@ -1,4 +1,5 @@
 """Container for the results of a single benchmark test."""
+
 from __future__ import annotations
 
 from types import MappingProxyType
@@ -51,6 +52,7 @@ class Results:
         read-only property that returns a mapping proxy to prevent external mutation. (read only)
     :vartype extra_info: MappingProxyType[str, Any]
     """
+
     __slots__ = (
         '_group',
         '_title',
@@ -67,17 +69,19 @@ class Results:
         '_raw_cache',
     )
 
-    def __init__(self,  # pylint: disable=too-many-arguments, too-many-locals
-                 *,
-                 group: str,
-                 title: str,
-                 description: str,
-                 n: float,
-                 rounds: int,
-                 iterations: Mapping[Metric, Values],
-                 variation_cols: dict[str, str] | None = None,
-                 marks: dict[str, tuple[str, ...]] | None = None,
-                 extra_info: Optional[dict[str, Any]] = None) -> None:
+    def __init__(
+        self,  # pylint: disable=too-many-arguments, too-many-locals
+        *,
+        group: str,
+        title: str,
+        description: str,
+        n: float,
+        rounds: int,
+        iterations: Mapping[Metric, Values],
+        variation_cols: dict[str, str] | None = None,
+        marks: dict[str, tuple[str, ...]] | None = None,
+        extra_info: Optional[dict[str, Any]] = None,
+    ) -> None:
         """Initialize a Results object.
 
         :param str group: The reporting group to which the benchmark case belongs.
@@ -100,25 +104,23 @@ class Results:
         self._raw_cache: dict[Metric, Values] = {}
 
         self._group: str = validate_non_blank_string(
-            group, 'group',
-            _ResultsErrorTag.GROUP_INVALID_ARG_TYPE,
-            _ResultsErrorTag.GROUP_INVALID_ARG_VALUE)
+            group, 'group', _ResultsErrorTag.GROUP_INVALID_ARG_TYPE, _ResultsErrorTag.GROUP_INVALID_ARG_VALUE
+        )
         self._title: str = validate_non_blank_string(
-            title, 'title',
-            _ResultsErrorTag.TITLE_INVALID_ARG_TYPE,
-            _ResultsErrorTag.TITLE_INVALID_ARG_VALUE)
+            title, 'title', _ResultsErrorTag.TITLE_INVALID_ARG_TYPE, _ResultsErrorTag.TITLE_INVALID_ARG_VALUE
+        )
         self._description: str = validate_non_blank_string(
-            description, 'description',
+            description,
+            'description',
             _ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
-            _ResultsErrorTag.DESCRIPTION_INVALID_ARG_VALUE)
+            _ResultsErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
+        )
         self._n: float = validate_positive_float(
-            n, 'n',
-            _ResultsErrorTag.N_INVALID_ARG_TYPE,
-            _ResultsErrorTag.N_INVALID_ARG_VALUE)
+            n, 'n', _ResultsErrorTag.N_INVALID_ARG_TYPE, _ResultsErrorTag.N_INVALID_ARG_VALUE
+        )
         self._rounds: int = validate_positive_int(
-            rounds, 'rounds',
-            _ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE,
-            _ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)
+            rounds, 'rounds', _ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE, _ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE
+        )
         self._iterations: MappingProxyType[Metric, Values] = validate.iterations(iterations)
         self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(variation_cols)
         self._marks: MappingProxyType[str, tuple[str, ...]] = validate.marks(marks)
@@ -127,8 +129,7 @@ class Results:
 
     @property
     def group(self) -> str:
-        """The reporting group to which the benchmark case belongs.
-        """
+        """The reporting group to which the benchmark case belongs."""
         return self._group
 
     @property
@@ -192,9 +193,7 @@ class Results:
         """
         validate.belongs_to_metric_category(metric, MetricCategory.STATISTICAL)
         if metric not in self._stats_cache:
-            self._stats_cache[metric] = Stats(metric=metric,
-                                              rounds=self.rounds,
-                                              data=self.iterations[metric])
+            self._stats_cache[metric] = Stats(metric=metric, rounds=self.rounds, data=self.iterations[metric])
         return self._stats_cache[metric]
 
     def sum(self, metric: Metric) -> float:
@@ -259,7 +258,7 @@ class Results:
             timer=None,
             unit=metric.metric_type.unit,
             scale=metric.metric_type.scale,
-            value=total_sum
+            value=total_sum,
         )
 
     def raw_block(self, metric: Metric) -> RawDataBlock:
@@ -275,7 +274,7 @@ class Results:
             timer=None,
             unit=metric.metric_type.unit,
             scale=metric.metric_type.scale,
-            data=raw_data
+            data=raw_data,
         )
 
     def results_info(self, full_data: bool = False) -> ResultsInfo:
@@ -318,13 +317,15 @@ class Results:
 
     def _generate_repr(self) -> str:
         """Generate the string representation of the Results object."""
-        return (f'{self.__class__.__name__}('
-                f'group={self.group!r}, '
-                f'title={self.title!r}, '
-                f'description={self.description!r}, '
-                f'n={self.n!r}, '
-                f'variation_cols={self.variation_cols!r}, '
-                f'marks={self.marks!r}, '
-                f'iterations={self.iterations!r}, '
-                f'rounds={self.rounds!r}, '
-                f'extra_info={self.extra_info!r})')
+        return (
+            f'{self.__class__.__name__}('
+            f'group={self.group!r}, '
+            f'title={self.title!r}, '
+            f'description={self.description!r}, '
+            f'n={self.n!r}, '
+            f'variation_cols={self.variation_cols!r}, '
+            f'marks={self.marks!r}, '
+            f'iterations={self.iterations!r}, '
+            f'rounds={self.rounds!r}, '
+            f'extra_info={self.extra_info!r})'
+        )

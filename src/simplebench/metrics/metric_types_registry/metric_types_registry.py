@@ -15,6 +15,7 @@ and can be extended or modified using the provided functions.
 The registry itself is a global variable named `registry`
 and is an instance of :class:`simplebench.metric.MetricTypes`.
 """
+
 from typing import Iterable
 
 from simplebench.exceptions import SimpleBenchTypeError
@@ -43,9 +44,12 @@ def register_metric_types(metrics: MetricType | Iterable[MetricType] | MetricTyp
         return
 
     validated_metrics = validate_iterable_of_type(
-        metrics, MetricType, "metrics",
+        metrics,
+        MetricType,
+        'metrics',
         _MetricTypesRegistryErrorTag.NOT_ITERABLE_OF_METRIC_DEFINITIONS,
-        _MetricTypesRegistryErrorTag.NOT_ITERABLE_OF_METRIC_DEFINITIONS)
+        _MetricTypesRegistryErrorTag.NOT_ITERABLE_OF_METRIC_DEFINITIONS,
+    )
     metric_types_registry.extend(validated_metrics)
 
 
@@ -68,8 +72,9 @@ def unregister_metric_types(metric_types: str | Iterable[str] | MetricType | Met
             del metric_types_registry[metric_label]
     else:
         raise SimpleBenchTypeError(
-            "metric_types must be a string, MetricType, an iterable of strings, or a MetricTypes instance",
-            tag=_MetricTypesRegistryErrorTag.NOT_STRING_OR_ITERABLE_OF_STRINGS)
+            'metric_types must be a string, MetricType, an iterable of strings, or a MetricTypes instance',
+            tag=_MetricTypesRegistryErrorTag.NOT_STRING_OR_ITERABLE_OF_STRINGS,
+        )
 
 
 def reset_metric_types() -> None:

@@ -13,13 +13,11 @@ version 1: :class:`~simplebench.report.versions.v1.MemoryInfoSchema`.
 
     These types ensure proper validation and serialization of MemoryInfo data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
-__all__ = [
-    'VirtualMemoryObjectDict',
-    'ImmutableVirtualMemoryObjectDict',
-]
+__all__ = ['VirtualMemoryObjectDict', 'ImmutableVirtualMemoryObjectDict']
 
 
 class _RequiredVirtualMemoryObject(ReportElementTypedDict, total=True):
@@ -33,6 +31,7 @@ class _RequiredVirtualMemoryObject(ReportElementTypedDict, total=True):
     :param Required[int] used: Used virtual memory in bytes.
     :param Required[int] free: Free virtual memory in bytes.
     """
+
     total: Required[int]
     available: Required[int]
     percent: Required[float]
@@ -74,4 +73,5 @@ class ImmutableVirtualMemoryObjectDict(_RequiredVirtualMemoryObject, total=False
     :param Required[int] used: Used virtual memory in bytes.
     :param Required[int] free: Free virtual memory in bytes.
     """
+
     __immutable__: NotRequired[Never]

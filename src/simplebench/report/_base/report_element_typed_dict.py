@@ -1,4 +1,5 @@
 """Base type for all ReportElement TypedDict representations."""
+
 from typing import TypedDict
 
 __all__ = []

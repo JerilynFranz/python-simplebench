@@ -4,6 +4,7 @@ It provides methods to orchestrate the rendering of reports by case or by metric
 handling the dispatching of outputs to various targets such as filesystem, console,
 or callback functions.
 """
+
 from __future__ import annotations
 
 from argparse import Namespace
@@ -48,7 +49,8 @@ class _ReporterOrchestrationMixin:
     """
 
     def _validate_render_by_args(
-        self: ReporterProtocol, *,
+        self: ReporterProtocol,
+        *,
         renderer: ReportRenderer | None,
         log_metadata: Metadata,
         args: Namespace,
@@ -56,7 +58,7 @@ class _ReporterOrchestrationMixin:
         choice: Choice,
         path: Path | None = None,
         session: Session | None = None,
-        callback: ReporterCallback | None = None
+        callback: ReporterCallback | None = None,
     ) -> None:
         """Validate common arguments for render_by_case and render_by_metric methods.
 
@@ -83,63 +85,72 @@ class _ReporterOrchestrationMixin:
         """
         if renderer is not None and not callable(renderer):
             raise SimpleBenchTypeError(
-                "renderer must be a callable ReportRenderer or None",
-                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)
+                'renderer must be a callable ReportRenderer or None',
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE,
+            )
 
         validate_type(
-            log_metadata, Metadata, 'log_metadata',
-            _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_LOG_METADATA_ARG_TYPE)
+            log_metadata,
+            Metadata,
+            'log_metadata',
+            _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_LOG_METADATA_ARG_TYPE,
+        )
 
-        args = validate_type(
-            args, Namespace, 'args',
-            _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)
+        args = validate_type(args, Namespace, 'args', _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)
 
         if path is not None:
-            path = validate_type(
-                path, Path, 'path',
-                _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)
+            path = validate_type(path, Path, 'path', _ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)
 
         # is_* checks handle deferred import runtime type checking for Case, Choice, and Session
         if not is_case(case):
             raise SimpleBenchTypeError(
-                "Expected a Case instance for case argument",
-                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)
+                'Expected a Case instance for case argument',
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE,
+            )
 
         if not is_choice(choice):
             raise SimpleBenchTypeError(
-                "Expected a Choice instance for choice argument",
-                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)
+                'Expected a Choice instance for choice argument',
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE,
+            )
 
         if Target.FILESYSTEM in choice.targets:
             if not isinstance(path, Path):
                 raise SimpleBenchTypeError(
                     f'Path must be provided for FILESYSTEM target in {type(self)} when rendering by metric/case',
-                    tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_PATH_FOR_FILESYSTEM_TARGET)
+                    tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_PATH_FOR_FILESYSTEM_TARGET,
+                )
             if not isinstance(log_metadata.reports_log_path, Path):
                 raise SimpleBenchTypeError(
                     f'log_metadata.reports_log_path must be provided for FILESYSTEM target in {type(self)}'
                     'when rendering by metric/case',
-                    tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_REPORTS_LOG_PATH_FOR_FILESYSTEM_TARGET)
+                    tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_MISSING_REPORTS_LOG_PATH_FOR_FILESYSTEM_TARGET,
+                )
 
         if not is_session(session) and session is not None:
             raise SimpleBenchTypeError(
-                "session must be a Session instance if provided",
-                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)
+                'session must be a Session instance if provided',
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE,
+            )
 
         if callback is not None and not isinstance(callback, ReporterCallback):
             raise SimpleBenchTypeError(
-                "callback must be a callable ReporterCallback if provided",
-                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)
+                'callback must be a callable ReporterCallback if provided',
+                tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE,
+            )
 
-    def render_by_case(self: ReporterProtocol, *,
-                       renderer: ReportRenderer | None = None,
-                       log_metadata: Metadata,
-                       args: Namespace,
-                       case: Case,
-                       choice: Choice,
-                       path: Path | None = None,
-                       session: Session | None = None,
-                       callback: ReporterCallback | None = None) -> None:
+    def render_by_case(
+        self: ReporterProtocol,
+        *,
+        renderer: ReportRenderer | None = None,
+        log_metadata: Metadata,
+        args: Namespace,
+        case: Case,
+        choice: Choice,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None,
+    ) -> None:
         """Render the report for an entire case at once across all applicable metrics.
 
         This method is called by the subclass's run_report() method to run one report per case
@@ -218,13 +229,12 @@ class _ReporterOrchestrationMixin:
             choice=choice,
             path=path,
             session=session,
-            callback=callback)
+            callback=callback,
+        )
 
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         self.dispatch_to_targets(
-            output=actual_renderer(case=case,
-                                   metric=metric_types_registry.NULL,
-                                   options=prioritized.options),
+            output=actual_renderer(case=case, metric=metric_types_registry.NULL, options=prioritized.options),
             filename_base=case.title,
             log_metadata=log_metadata,
             args=args,
@@ -233,19 +243,21 @@ class _ReporterOrchestrationMixin:
             metric=metric_types_registry.NULL,
             path=path,
             session=session,
-            callback=callback)
+            callback=callback,
+        )
 
     def render_by_metric(
-            self: ReporterProtocol,
-            *,
-            renderer: ReportRenderer | None = None,
-            log_metadata: Metadata,
-            args: Namespace,
-            case: Case,
-            choice: Choice,
-            path: Path | None = None,
-            session: Session | None = None,
-            callback: ReporterCallback | None = None) -> None:
+        self: ReporterProtocol,
+        *,
+        renderer: ReportRenderer | None = None,
+        log_metadata: Metadata,
+        args: Namespace,
+        case: Case,
+        choice: Choice,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None,
+    ) -> None:
         """Render a report for each metric and dispatch to targets.
 
         This method is called by the subclass's run_report() method to run one report per metric
@@ -321,38 +333,40 @@ class _ReporterOrchestrationMixin:
             choice=choice,
             path=path,
             session=session,
-            callback=callback)
+            callback=callback,
+        )
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         log_metadata.case = case
         log_metadata.choice = choice
         for metric in choice.metrics:
-            output = actual_renderer(case=case,
-                                     metric=metric,
-                                     options=prioritized.options)
+            output = actual_renderer(case=case, metric=metric, options=prioritized.options)
             self.dispatch_to_targets(
                 output=output,
                 log_metadata=log_metadata,
-                filename_base=f"{case.title}-{metric.value}",
+                filename_base=f'{case.title}-{metric.value}',
                 args=args,
                 choice=choice,
                 case=case,
                 metric=metric,
                 path=path,
                 session=session,
-                callback=callback)
+                callback=callback,
+            )
 
     def dispatch_to_targets(  # pylint: disable=too-many-arguments,too-many-locals
-            self: ReporterProtocol, *,
-            output: str | bytes | Text | Table,
-            log_metadata: Metadata,
-            filename_base: str,
-            args: Namespace,
-            choice: Choice,
-            case: Case,
-            metric: Metric,
-            path: Path | None = None,
-            session: Session | None = None,
-            callback: ReporterCallback | None = None) -> None:
+        self: ReporterProtocol,
+        *,
+        output: str | bytes | Text | Table,
+        log_metadata: Metadata,
+        filename_base: str,
+        args: Namespace,
+        choice: Choice,
+        case: Case,
+        metric: Metric,
+        path: Path | None = None,
+        session: Session | None = None,
+        callback: ReporterCallback | None = None,
+    ) -> None:
         """Deliver the rendered output to the specified targets.
 
         This helper method takes the rendered output and dispatches it to the
@@ -376,64 +390,66 @@ class _ReporterOrchestrationMixin:
         :param callback: A callback function for additional processing of the report.
         :raises SimpleBenchValueError: If an unsupported target is specified in the choice.
         """
-        output = validate_type(output,
-                               (str, bytes, Text, Table),
-                               'output',
-                               _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE)
+        output = validate_type(
+            output, (str, bytes, Text, Table), 'output', _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE
+        )
         log_metadata = validate_type(
-            log_metadata, Metadata, 'log_metadata',
-            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_LOG_METADATA_ARG_TYPE)
+            log_metadata, Metadata, 'log_metadata', _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_LOG_METADATA_ARG_TYPE
+        )
         filename_base = validate_string(
-                            filename_base, 'filename_base',
-                            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE,
-                            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE,
-                            allow_empty=False,
-                            strip=True,
-                            alphanumeric_only=False,
-                            allow_blank=False)
-        args = validate_type(
-            args, Namespace, 'args',
-            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)
+            filename_base,
+            'filename_base',
+            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_TYPE,
+            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_FILENAME_BASE_ARG_VALUE,
+            allow_empty=False,
+            strip=True,
+            alphanumeric_only=False,
+            allow_blank=False,
+        )
+        args = validate_type(args, Namespace, 'args', _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_ARGS_ARG_TYPE)
         if not is_case(case):
             raise SimpleBenchTypeError(
-                "Expected a Case instance for case argument",
-                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE)
+                'Expected a Case instance for case argument',
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CASE_ARG_TYPE,
+            )
         log_metadata.case = case
         if not is_choice(choice):
             raise SimpleBenchTypeError(
-                "Expected a Choice instance for choice argument",
-                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE)
+                'Expected a Choice instance for choice argument',
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE,
+            )
         log_metadata.choice = choice
         if not is_session(session) and session is not None:
             raise SimpleBenchTypeError(
-                "session must be a Session instance if provided",
-                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE)
-        metric = validate_type(
-            metric, Metric, 'metric',
-            _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE)
+                'session must be a Session instance if provided',
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE,
+            )
+        metric = validate_type(metric, Metric, 'metric', _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE)
         if callback is not None and not isinstance(callback, ReporterCallback):
             raise SimpleBenchTypeError(
-                "callback must be a callable ReporterCallback if provided",
-                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE)
+                'callback must be a callable ReporterCallback if provided',
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_CALLBACK_ARG_TYPE,
+            )
         if path is not None:
-            path = validate_type(
-                path, Path, 'path',
-                _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)
+            path = validate_type(path, Path, 'path', _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_PATH_ARG_TYPE)
 
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         targets: set[Target] = self.select_targets_from_args(
-            args=args, choice=choice, default_targets=prioritized.default_targets)
+            args=args, choice=choice, default_targets=prioritized.default_targets
+        )
 
         if Target.FILESYSTEM in targets:
             if not isinstance(path, Path):
                 raise SimpleBenchTypeError(
                     f'Path must be a Path instance for FILESYSTEM target in {type(self)}, got {type(path)}',
-                    tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_PATH_TYPE)
+                    tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_PATH_TYPE,
+                )
             if not isinstance(log_metadata.reports_log_path, Path):
                 raise SimpleBenchTypeError(
                     f'log_metadata.reports_log_path must be a Path instance for FILESYSTEM target in {type(self)}, '
                     f'got {type(log_metadata.reports_log_path)}',
-                    tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_LOG_METADATA_REPORTS_LOG_PATH_TYPE)
+                    tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_FILESYSTEM_INVALID_LOG_METADATA_REPORTS_LOG_PATH_TYPE,
+                )
 
         output_as_text = output
         if isinstance(output, (Text, Table)):
@@ -452,7 +468,8 @@ class _ReporterOrchestrationMixin:
                         filename=filename,
                         output=output_as_text,
                         unique=prioritized.file_unique,
-                        append=prioritized.file_append)
+                        append=prioritized.file_append,
+                    )
 
                 case Target.CALLBACK:
                     self.target_callback(
@@ -460,7 +477,8 @@ class _ReporterOrchestrationMixin:
                         case=case,
                         metric=metric,
                         output_format=choice.output_format,
-                        output=output_as_text)
+                        output=output_as_text,
+                    )
 
                 case Target.CONSOLE:
                     self.target_console(session=session, output=output)
@@ -468,4 +486,5 @@ class _ReporterOrchestrationMixin:
                 case _:
                     raise SimpleBenchValueError(
                         f'Unsupported target for {type(self)}: {output_target}',
-                        tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)
+                        tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET,
+                    )

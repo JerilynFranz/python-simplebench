@@ -1,4 +1,5 @@
 """Reporter for benchmark results using Rich tables on the console."""
+
 from typing import Sequence
 
 from simplebench.reporters.reporter import ReporterOptions
@@ -64,29 +65,38 @@ class RichTableOptions(ReporterOptions):
     :raises ~simplebench.exceptions.SimpleBenchValueError: If ``virtual_width`` is not
         between 80 and 10000 characters when specified or if ``fields`` is an empty sequence.
     """
-    def __init__(self,
-                 virtual_width: int | None = None,
-                 fields: Sequence[RichTableField] | None = None,
-                 variation_cols_last: bool = False
-                 ) -> None:
+
+    def __init__(
+        self,
+        virtual_width: int | None = None,
+        fields: Sequence[RichTableField] | None = None,
+        variation_cols_last: bool = False,
+    ) -> None:
         """Initialize RichTableOptions instance."""
         if virtual_width is None:
             self._virtual_width = None
         else:
             self._virtual_width = validate_int_range(
-                virtual_width, 'virtual_width',
+                virtual_width,
+                'virtual_width',
                 _RichTableOptionsErrorTag.INVALID_VIRTUAL_WIDTH_TYPE,
                 _RichTableOptionsErrorTag.INVALID_VIRTUAL_WIDTH_VALUE,
-                min_value=80, max_value=10000)
-        self._fields: tuple[RichTableField, ...] = tuple(validate_sequence_of_type(
-            fields if fields is not None else _DEFAULT_RICH_TABLE_FIELDS,
-            RichTableField, 'fields',
-            _RichTableOptionsErrorTag.INVALID_DEFAULT_FIELDS_TYPE,
-            _RichTableOptionsErrorTag.INVALID_DEFAULT_FIELDS_VALUE,
-            allow_empty=False))
+                min_value=80,
+                max_value=10000,
+            )
+        self._fields: tuple[RichTableField, ...] = tuple(
+            validate_sequence_of_type(
+                fields if fields is not None else _DEFAULT_RICH_TABLE_FIELDS,
+                RichTableField,
+                'fields',
+                _RichTableOptionsErrorTag.INVALID_DEFAULT_FIELDS_TYPE,
+                _RichTableOptionsErrorTag.INVALID_DEFAULT_FIELDS_VALUE,
+                allow_empty=False,
+            )
+        )
         self._variation_cols_last = validate_bool(
-            variation_cols_last, 'variation_cols_last',
-            _RichTableOptionsErrorTag.INVALID_VARIATION_COLS_LAST_TYPE)
+            variation_cols_last, 'variation_cols_last', _RichTableOptionsErrorTag.INVALID_VARIATION_COLS_LAST_TYPE
+        )
 
     @property
     def virtual_width(self) -> int | None:

@@ -13,6 +13,7 @@ This makes the implementations of JSONMachineInfo backwards compatible with futu
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base MachineInfo representation at the time of the V1 schema release.
 """
+
 from typing import TYPE_CHECKING
 
 from simplebench.report._base import BaseMachineInfo, JSONSchema
@@ -40,14 +41,16 @@ class MachineInfo(BaseMachineInfo):
     SCHEMA: type[JSONSchema] = MachineInfoSchema
     """The JSON schema class for version 1 reports."""
 
-    def __init__(self,
-                 *,
-                 hash_id: str = '',
-                 node: str = '',
-                 cpu: 'CPUInfo',
-                 memory: 'MemoryInfo',
-                 system: 'SystemInfo',
-                 execution_environment: 'ExecutionEnvironment') -> None:
+    def __init__(
+        self,
+        *,
+        hash_id: str = '',
+        node: str = '',
+        cpu: 'CPUInfo',
+        memory: 'MemoryInfo',
+        system: 'SystemInfo',
+        execution_environment: 'ExecutionEnvironment',
+    ) -> None:
         """Initialize JSONMachineInfo.
 
         :param str hash_id: The unique hash identifier for the machine information.
@@ -101,8 +104,9 @@ class MachineInfo(BaseMachineInfo):
                 'execution_environment': ExecutionEnvironment.from_dict,
                 'cpu': CPUInfo.from_dict,
                 'memory': MemoryInfo.from_dict,
-                'system': SystemInfo.from_dict
-            })
+                'system': SystemInfo.from_dict,
+            },
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableMachineInfoDict:

@@ -14,6 +14,7 @@ version 1: :class:`~simplebench.report.versions.v1.RawDataBlockSchema`.
 
     These types ensure proper validation and serialization of RawDataBlock data
 """
+
 from collections.abc import Sequence
 
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
@@ -23,15 +24,17 @@ __all__ = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
+
 class _RequiredRawDataBlockData(ReportElementTypedDict, total=True):
     """Required fields for V1 RawDataBlock data used as INPUT.
 
     The input type allows `value` to be either `int` or `float`.
-    
+
     :param Required[str] semantic_type: The semantic type of the values.
     :param Required[str] unit: The unit for the values.
     :param Required[float] scale: The scaling factor for the values.
     """
+
     semantic_type: Required[str]
     unit: Required[str]
     scale: Required[float]
@@ -53,6 +56,7 @@ class RawDataBlockData(_RequiredRawDataBlockData, total=False):
     :param NotRequired[str] hash_id: The hash identifier for the block.
     :param NotRequired[str] timer: The name of the timer associated with this value.
     """
+
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
@@ -72,6 +76,7 @@ class _RequiredImmutableRawDataBlockData(ReportElementTypedDict, total=True):
     :param Required[float] scale: The scaling factor for the values.
     :param Required[tuple[float | int, ...] data: The numeric data values.
     """
+
     semantic_type: Required[str]
     unit: Required[str]
     scale: Required[float]
@@ -102,13 +107,16 @@ class ImmutableRawDataBlockData(_RequiredImmutableRawDataBlockData, total=False)
     :param NotRequired[str] hash_id: The hash identifier for the block.
     :param NotRequired[str] timer: The name of the timer associated with this value.
     """
+
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
     timer: NotRequired[str]
     __immutable__: NotRequired[Never]
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class _RequiredRawDataBlockDict(ReportElementTypedDict, total=True):
     """Required fields for V1 RawDataBlock data used as OUTPUT.
@@ -125,6 +133,7 @@ class _RequiredRawDataBlockDict(ReportElementTypedDict, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The hash identifier for the block.
     """
+
     semantic_type: Required[str]
     unit: Required[str]
     scale: Required[float]
@@ -151,6 +160,7 @@ class RawDataBlockDict(_RequiredRawDataBlockDict, total=False):
     :param Required[str] hash_id: The hash identifier for the block.
     :param NotRequired[str] timer: The name of the timer associated with this value.
     """
+
     timer: NotRequired[str]
 
 
@@ -162,7 +172,7 @@ class _RequiredImmutableRawDataBlockDict(ReportElementTypedDict, total=True):
     than the input type.
 
     All fields are immutable.
- 
+
     :param Required[str] semantic_type: The semantic type of the values.
     :param Required[str] unit: The unit for the values.
     :param Required[float] scale: The scaling factor for the values.
@@ -171,6 +181,7 @@ class _RequiredImmutableRawDataBlockDict(ReportElementTypedDict, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The hash identifier for the block.
     """
+
     semantic_type: Required[str]
     unit: Required[str]
     scale: Required[float]
@@ -204,5 +215,6 @@ class ImmutableRawDataBlockDict(_RequiredImmutableRawDataBlockData, total=False)
     :param Required[str] hash_id: The hash identifier for the block.
     :param NotRequired[str] timer: The name of the timer associated with this value.
     """
+
     timer: NotRequired[str]
     __immutable__: NotRequired[Never]

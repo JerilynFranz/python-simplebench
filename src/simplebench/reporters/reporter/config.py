@@ -1,4 +1,5 @@
 """Base reporter configuration class."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -41,6 +42,7 @@ class ReporterConfig:
         file_append (bool): If ``True``, append to the output file if it already exists.
         subdir (str): The subdirectory for saved files; ``''`` means the root results directory.
     """
+
     name: str
     """The unique name for the reporter (e.g., 'rich-table'). Cannot be empty or blank."""
 
@@ -107,77 +109,83 @@ class ReporterConfig:
         """Validate and normalize the configuration after initialization."""
         # 1. Perform all validations on the raw, incoming attribute values
         validate_string(
-            self.name, 'name',
+            self.name,
+            'name',
             type_error_tag=_ReporterConfigErrorTag.INVALID_NAME_TYPE,
             value_error_tag=_ReporterConfigErrorTag.INVALID_NAME_VALUE,
-            allow_empty=False, allow_blank=False
+            allow_empty=False,
+            allow_blank=False,
         )
         validate_string(
-            self.description, 'description',
+            self.description,
+            'description',
             type_error_tag=_ReporterConfigErrorTag.INVALID_DESCRIPTION_TYPE,
             value_error_tag=_ReporterConfigErrorTag.INVALID_DESCRIPTION_VALUE,
-            allow_empty=False, allow_blank=False
+            allow_empty=False,
+            allow_blank=False,
         )
         validate_iterable_of_type(
-            self.metrics, Metric, 'metrics',
+            self.metrics,
+            Metric,
+            'metrics',
             type_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_TYPE,
             value_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_VALUE,
-            allow_empty=True
+            allow_empty=True,
         )
         validate_iterable_of_type(
-            self.targets, Target, 'targets',
+            self.targets,
+            Target,
+            'targets',
             type_tag=_ReporterConfigErrorTag.INVALID_TARGETS_TYPE,
             value_tag=_ReporterConfigErrorTag.INVALID_TARGETS_VALUE,
-            allow_empty=False
+            allow_empty=False,
         )
 
         validate_iterable_of_type(
-            self.default_targets, Target, 'default_targets',
+            self.default_targets,
+            Target,
+            'default_targets',
             type_tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_TYPE,
-            value_tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE
+            value_tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE,
         )
         validate_iterable_of_type(
-            self.formats, Format, 'formats',
+            self.formats,
+            Format,
+            'formats',
             type_tag=_ReporterConfigErrorTag.INVALID_FORMATS_TYPE,
             value_tag=_ReporterConfigErrorTag.INVALID_FORMATS_VALUE,
-            allow_empty=False
+            allow_empty=False,
         )
-        validate_type(
-            self.choices, ChoicesConf, 'choices',
-            error_tag=_ReporterConfigErrorTag.INVALID_CHOICES_TYPE
-        )
+        validate_type(self.choices, ChoicesConf, 'choices', error_tag=_ReporterConfigErrorTag.INVALID_CHOICES_TYPE)
         validate_string(
-            self.file_suffix, 'file_suffix',
+            self.file_suffix,
+            'file_suffix',
             type_error_tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_TYPE,
             value_error_tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE,
-            allow_empty=False, allow_blank=False, alphanumeric_only=True
+            allow_empty=False,
+            allow_blank=False,
+            alphanumeric_only=True,
         )
         if len(self.file_suffix) > 10:
             raise SimpleBenchValueError(
-                "file_suffix must be 10 characters or less in length.",
-                tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE_TOO_LONG
+                'file_suffix must be 10 characters or less in length.',
+                tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE_TOO_LONG,
             )
-        validate_type(
-            self.file_unique, bool, 'file_unique',
-            error_tag=_ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE
-        )
-        validate_type(
-            self.file_append, bool, 'file_append',
-            error_tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_TYPE
-        )
+        validate_type(self.file_unique, bool, 'file_unique', error_tag=_ReporterConfigErrorTag.INVALID_FILE_UNIQUE_TYPE)
+        validate_type(self.file_append, bool, 'file_append', error_tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_TYPE)
         subdir = validate_dirpath(self.subdir, allow_empty=True)
 
         # Check for (False, False) case first for clarity
         if not self.file_append and not self.file_unique:
             raise SimpleBenchValueError(
-                "One of file_append or file_unique must be True.",
-                tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_ONE_MUST_BE_TRUE
+                'One of file_append or file_unique must be True.',
+                tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_ONE_MUST_BE_TRUE,
             )
         # If the first check passes, this check now correctly isolates the (True, True) case
         if self.file_append and self.file_unique:
             raise SimpleBenchValueError(
-                "file_append and file_unique cannot both be True.",
-                tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_COMBINATION
+                'file_append and file_unique cannot both be True.',
+                tag=_ReporterConfigErrorTag.INVALID_FILE_APPEND_FILE_UNIQUE_COMBINATION,
             )
 
         # After validation, convert iterables to frozenset for immutability
@@ -192,6 +200,5 @@ class ReporterConfig:
         # 3. Perform final cross-field validations on the normalized values
         if not self.default_targets.issubset(self.targets):
             raise SimpleBenchValueError(
-                "default_targets must be a subset of targets",
-                tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE
+                'default_targets must be a subset of targets', tag=_ReporterConfigErrorTag.INVALID_DEFAULT_TARGETS_VALUE
             )

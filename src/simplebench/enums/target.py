@@ -20,6 +20,7 @@ class Target(str, Enum):
       - CUSTOM: Output to a custom target.
       - NULL: No output.
     """
+
     CONSOLE = 'console'
     """Output to console."""
     FILESYSTEM = 'filesystem'

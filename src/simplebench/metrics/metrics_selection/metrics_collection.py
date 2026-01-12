@@ -24,6 +24,7 @@ class MetricsCollection(MetricsSelection):
     :raises SimpleBenchTypeError: If the provided metrics are not an Iterable[Metrics] or a Metrics instance.
     :raises SimpleBenchValueError: If the provided metrics are an empty Iterable.
     """
+
     def __init__(self, *args: Metric, metrics: Iterable[Metric] | Metrics | Metric | None = None):
         """Constructor for MetricsCollection.
 
@@ -41,7 +42,8 @@ class MetricsCollection(MetricsSelection):
         if args and metrics:
             raise SimpleBenchTypeError(
                 "Cannot provide both positional arguments and the 'metrics' keyword argument.",
-                tag=_MetricSelectionErrorTag.METRICS_ARGS_AND_METRICS)
+                tag=_MetricSelectionErrorTag.METRICS_ARGS_AND_METRICS,
+            )
 
         source = args or metrics
         if source is None:
@@ -63,8 +65,7 @@ class MetricsCollection(MetricsSelection):
         else:
             # This case handles if a non-iterable or string is passed to `metrics`
             raise SimpleBenchTypeError(
-                "Input must be an iterable of Metric instances.",
-                tag=_MetricSelectionErrorTag.METRICS_NOT_ITERABLE
+                'Input must be an iterable of Metric instances.', tag=_MetricSelectionErrorTag.METRICS_NOT_ITERABLE
             )
 
         self._metrics: Metrics = self._validate_metrics(all_metrics)
@@ -78,22 +79,21 @@ class MetricsCollection(MetricsSelection):
         """
         if isinstance(metrics, (str, bytes)):
             raise SimpleBenchTypeError(
-                "metrics must be an Iterable[Metric] or a Metrics instance",
-                tag=_MetricSelectionErrorTag.METRICS_STRING_OR_BYTES)
+                'metrics must be an Iterable[Metric] or a Metrics instance',
+                tag=_MetricSelectionErrorTag.METRICS_STRING_OR_BYTES,
+            )
         if not metrics:
-            raise SimpleBenchValueError(
-                "metrics cannot be empty",
-                tag=_MetricSelectionErrorTag.METRICS_EMPTY)
+            raise SimpleBenchValueError('metrics cannot be empty', tag=_MetricSelectionErrorTag.METRICS_EMPTY)
         metrics_set = set(metrics)
         for metric in metrics_set:
             if not isinstance(metric, Metric):
                 raise SimpleBenchTypeError(
-                    "Some metrics are not of type Metric",
-                    tag=_MetricSelectionErrorTag.METRICS_NOT_METRIC)
+                    'Some metrics are not of type Metric', tag=_MetricSelectionErrorTag.METRICS_NOT_METRIC
+                )
             if metric not in metrics_registry:
                 raise SimpleBenchValueError(
-                    "metrics must be registered with the metrics registry",
-                    tag=_MetricSelectionErrorTag.NOT_REGISTERED)
+                    'metrics must be registered with the metrics registry', tag=_MetricSelectionErrorTag.NOT_REGISTERED
+                )
         return Metrics(metrics_set)
 
     @property

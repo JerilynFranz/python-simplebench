@@ -4,6 +4,8 @@ from simplebench.validators import validate_string
 
 from ._error_tags import _CPUInfoErrorTag
 
+__all__ = []
+
 
 def cache_key(value: str | None) -> str | None:
     """Validate the cache_key parameter.
@@ -18,8 +20,12 @@ def cache_key(value: str | None) -> str | None:
     if value is None:
         return None
     return validate_string(
-        value, "cache_key",
+        value,
+        'cache_key',
         _CPUInfoErrorTag.INVALID_CACHE_KEY_PARAM_TYPE,
         _CPUInfoErrorTag.INVALID_CACHE_KEY_PARAM_VALUE,
-        strip=False, allow_empty=False, alphanumeric_only=True,
-        message="cache_key must be a non-empty string containing only alphanumeric characters.")
+        strip=False,
+        allow_empty=False,
+        alphanumeric_only=True,
+        message='cache_key must be a non-empty string containing only alphanumeric characters.',
+    )

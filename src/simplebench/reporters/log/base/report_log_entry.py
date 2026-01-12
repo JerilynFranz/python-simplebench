@@ -1,4 +1,5 @@
 """Data structures for logging."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -30,7 +31,7 @@ class ReportLogEntry(ABC):
     :ivar choice: The Choice instance specifying the report configuration.
     """
 
-    _JSON_SCHEMA_URI: str = "https://simplebench.dev/schemas/report_log_entry.json"
+    _JSON_SCHEMA_URI: str = 'https://simplebench.dev/schemas/report_log_entry.json'
     """The JSON Schema URI for ReportLogEntry."""
 
     VERSION: int = 0
@@ -38,15 +39,15 @@ class ReportLogEntry(ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> "ReportLogEntry":
+    def from_dict(cls, data: dict) -> 'ReportLogEntry':
         """Create a JSONReport instance from a dictionary.
 
         :param data: Dictionary containing the JSON report data.
         :return: JSONReport instance.
         """
         raise SimpleBenchNotImplementedError(
-            "from_dict must be implemented in subclasses.",
-            tag=_ReportLogEntryErrorTag.MISSING_FROM_DICT_IMPLEMENTATION)
+            'from_dict must be implemented in subclasses.', tag=_ReportLogEntryErrorTag.MISSING_FROM_DICT_IMPLEMENTATION
+        )
 
     @classmethod
     def validate_schema_uri(cls, value: Any) -> str:
@@ -59,12 +60,13 @@ class ReportLogEntry(ABC):
         """
         if not isinstance(value, str):
             raise SimpleBenchValueError(
-                f"$schema must be a string, got {type(value)}",
-                tag=_ReportLogEntryErrorTag.INVALID_SCHEMA_URI_TYPE)
+                f'$schema must be a string, got {type(value)}', tag=_ReportLogEntryErrorTag.INVALID_SCHEMA_URI_TYPE
+            )
         if value != cls._JSON_SCHEMA_URI:
             raise SimpleBenchValueError(
-                f"Incorrect JSONSchema $schema for JSONReport: {value} (expected {cls._JSON_SCHEMA_URI})",
-                tag=_ReportLogEntryErrorTag.INVALID_SCHEMA_URI_VALUE)
+                f'Incorrect JSONSchema $schema for JSONReport: {value} (expected {cls._JSON_SCHEMA_URI})',
+                tag=_ReportLogEntryErrorTag.INVALID_SCHEMA_URI_VALUE,
+            )
         return value
 
     @classmethod
@@ -78,12 +80,13 @@ class ReportLogEntry(ABC):
         """
         if not isinstance(value, int):
             raise SimpleBenchValueError(
-                f"version must be an integer, got {type(value)}",
-                tag=_ReportLogEntryErrorTag.INVALID_VERSION_TYPE)
+                f'version must be an integer, got {type(value)}', tag=_ReportLogEntryErrorTag.INVALID_VERSION_TYPE
+            )
         if value != cls.VERSION:
             raise SimpleBenchValueError(
-                f"Incorrect version for JSONReport: {value} (expected {cls.VERSION})",
-                tag=_ReportLogEntryErrorTag.INVALID_VERSION_VALUE)
+                f'Incorrect version for JSONReport: {value} (expected {cls.VERSION})',
+                tag=_ReportLogEntryErrorTag.INVALID_VERSION_VALUE,
+            )
 
         return value
 
@@ -99,12 +102,13 @@ class ReportLogEntry(ABC):
         """
         if not isinstance(found, str):
             raise SimpleBenchValueError(
-                f"type must be a string, got {type(found)}",
-                tag=_ReportLogEntryErrorTag.INVALID_TYPE_TYPE)
+                f'type must be a string, got {type(found)}', tag=_ReportLogEntryErrorTag.INVALID_TYPE_TYPE
+            )
         if found != expected:
             raise SimpleBenchValueError(
                 f"Incorrect type for JSONReport: {found} (expected '{expected}')",
-                tag=_ReportLogEntryErrorTag.INVALID_TYPE_VALUE)
+                tag=_ReportLogEntryErrorTag.INVALID_TYPE_VALUE,
+            )
 
         return found
 
@@ -209,8 +213,8 @@ class ReportLogEntry(ABC):
         self._reports_log_path: Path | None = None
         if value is not None:
             self._reports_log_path = validate_type(
-                value, Path, 'reports_log_path',
-                _ReportLogEntryErrorTag.INVALID_REPORTS_LOG_PATH_ARG_TYPE)
+                value, Path, 'reports_log_path', _ReportLogEntryErrorTag.INVALID_REPORTS_LOG_PATH_ARG_TYPE
+            )
 
     @property
     def case(self) -> Case:
@@ -228,7 +232,8 @@ class ReportLogEntry(ABC):
         if not is_case(value):
             raise SimpleBenchTypeError(
                 f"Expected a Case instance for 'case', got: {type(value)}",
-                tag=_ReportLogEntryErrorTag.INVALID_CASE_ARG_TYPE)
+                tag=_ReportLogEntryErrorTag.INVALID_CASE_ARG_TYPE,
+            )
         self._case: Case = value
 
     @property
@@ -247,7 +252,8 @@ class ReportLogEntry(ABC):
         if not is_choice(value):
             raise SimpleBenchTypeError(
                 f"Expected a Choice instance for 'choice', got: {type(value)}",
-                tag=_ReportLogEntryErrorTag.INVALID_CHOICE_ARG_TYPE)
+                tag=_ReportLogEntryErrorTag.INVALID_CHOICE_ARG_TYPE,
+            )
         self._choice: Choice = value
 
     def save_to_log(self) -> None:
@@ -255,7 +261,8 @@ class ReportLogEntry(ABC):
         if self.reports_log_path is None:
             raise SimpleBenchValueError(
                 "Cannot save to log: 'reports_log_path' is not set.",
-                tag=_ReportLogEntryErrorTag.REPORTS_LOG_PATH_NOT_SET)
+                tag=_ReportLogEntryErrorTag.REPORTS_LOG_PATH_NOT_SET,
+            )
         json_log_entry = self.to_json()
         reports_log_path = self.reports_log_path
         if not reports_log_path.parent.exists():
@@ -272,20 +279,20 @@ class ReportLogEntry(ABC):
         vcs_info = self.case.vcs_info.to_dict() if isinstance(self.case.vcs_info, VCSInfo) else None
 
         output = {
-            "version": 1,
-            "timestamp": self.timestamp,
-            "benchmark_id": self.case.benchmark_id,
-            "benchmark_group": self.case.group,
-            "reporter_type": self.choice.reporter.__class__.__name__,
-            "reporter_name": self.choice.reporter.name,
-            "reporter_schema_version": self.choice.reporter.schema_version,
-            "output_format": self.choice.output_format.name,
-            "benchmark_title": self.case.title,
-            "vcs": vcs_info,
-            "machine_info": MachineInfo()
+            'version': 1,
+            'timestamp': self.timestamp,
+            'benchmark_id': self.case.benchmark_id,
+            'benchmark_group': self.case.group,
+            'reporter_type': self.choice.reporter.__class__.__name__,
+            'reporter_name': self.choice.reporter.name,
+            'reporter_schema_version': self.choice.reporter.schema_version,
+            'output_format': self.choice.output_format.name,
+            'benchmark_title': self.case.title,
+            'vcs': vcs_info,
+            'machine_info': MachineInfo(),
         }
         if self.uri is not None:
-            output["uri"] = self.uri
+            output['uri'] = self.uri
         return output
 
     def to_json(self) -> str:

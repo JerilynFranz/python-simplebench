@@ -1,4 +1,5 @@
 """Verbosity level enums for SimpleBench."""
+
 from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
@@ -14,6 +15,7 @@ class Verbosity(int, Enum):
       - VERBOSE: All messages are shown and status displays during runs.
       - DEBUG: All messages are shown, including debug messages and status displays during runs.
     """
+
     QUIET = 0
     """Only requested output, errors, warnings and critical messages are shown.
     Status displays are not shown during runs.

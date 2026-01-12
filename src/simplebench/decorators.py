@@ -1,4 +1,5 @@
 """A collection of decorators for simplebench."""
+
 from functools import wraps
 
 from .exceptions import SimpleBenchAttributeError
@@ -25,14 +26,16 @@ def immutable(setter_method):
     :return: The wrapped setter method with immutability enforcement.
     :raise SimpleBenchAttributeError: If the property is set more than once.
     """
-    private_name = f"_{setter_method.__name__}"
+    private_name = f'_{setter_method.__name__}'
 
     @wraps(setter_method)
     def wrapper(self, value):
         if hasattr(self, private_name):
             raise SimpleBenchAttributeError(
-                f"property {setter_method.__name__} is immutable once set",
+                f'property {setter_method.__name__} is immutable once set',
                 tag=_StatsBlockErrorTag.IMMUTABLE_VIOLATION,
-                name=setter_method.__name__)
+                name=setter_method.__name__,
+            )
         return setter_method(self, value)
+
     return wrapper

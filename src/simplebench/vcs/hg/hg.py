@@ -1,4 +1,5 @@
 """Hg (Mercurial) Version Control System utilities."""
+
 from __future__ import annotations
 
 import re
@@ -39,9 +40,7 @@ class Hg:
         If cwd is provided, sets the initial hg working directory.
         """
         if cwd is not None:
-            self.hg_cwd = validate_type(
-                cwd, Path, "cwd",
-                _HgErrorTag.INVALID_HG_CWD_ARG_TYPE)
+            self.hg_cwd = validate_type(cwd, Path, 'cwd', _HgErrorTag.INVALID_HG_CWD_ARG_TYPE)
         else:
             self.hg_cwd = None
 
@@ -71,40 +70,33 @@ class Hg:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the hg command is not found.
         """
         cmd = validate_sequence_of_str(
-            cmd, "cmd",
+            cmd,
+            'cmd',
             _HgErrorTag.INVALID_CMD_ARG_TYPE,
             _HgErrorTag.INVALID_CMD_ARG_ELEMENT_VALUE,
-            allow_empty=False, allow_blank=False)
+            allow_empty=False,
+            allow_blank=False,
+        )
 
         if cwd is not None:
-            cwd = validate_type(
-                cwd, Path, "cwd",
-                _HgErrorTag.INVALID_HG_CWD_ARG_TYPE)
+            cwd = validate_type(cwd, Path, 'cwd', _HgErrorTag.INVALID_HG_CWD_ARG_TYPE)
 
         working_cwd = cwd or self.hg_cwd or Path.cwd()
         try:
-            result = subprocess.run(
-                ["hg"] + cmd,
-                cwd=str(working_cwd),
-                capture_output=True,
-                text=True,
-                check=True
-            )
+            result = subprocess.run(['hg'] + cmd, cwd=str(working_cwd), capture_output=True, text=True, check=True)
         except FileNotFoundError as exc:
             raise SimpleBenchSubprocessExecutableNotFoundError(
-                "The 'hg' command line tool was not found.",
-                tag=_HgErrorTag.HG_NOT_AVAILABLE
+                "The 'hg' command line tool was not found.", tag=_HgErrorTag.HG_NOT_AVAILABLE
             ) from exc
         except subprocess.CalledProcessError as exc:
             if exc.returncode == HgExitCode.REPO_NOT_FOUND:
                 raise SimpleBenchNotARepositoryError(
-                    "The specified directory is not a Mercurial (hg) repository.",
-                    tag=_HgErrorTag.HG_NOT_A_REPOSITORY
+                    'The specified directory is not a Mercurial (hg) repository.', tag=_HgErrorTag.HG_NOT_A_REPOSITORY
                 ) from exc
             else:
                 raise SimpleBenchRepositoryActionFailedError(
-                    f"The hg command failed with exit code {exc.returncode}: {exc.stderr.strip()}",
-                    tag=_HgErrorTag.HG_COMMAND_FAILED
+                    f'The hg command failed with exit code {exc.returncode}: {exc.stderr.strip()}',
+                    tag=_HgErrorTag.HG_COMMAND_FAILED,
                 ) from exc
         return result.stdout.strip()
 
@@ -126,8 +118,8 @@ class Hg:
         """
         if value is not None and not isinstance(value, Path):
             raise SimpleBenchTypeError(
-                f"Expected a Path or None for 'hg_cwd', got: {type(value)}",
-                tag=_HgErrorTag.INVALID_HG_CWD_ARG_TYPE)
+                f"Expected a Path or None for 'hg_cwd', got: {type(value)}", tag=_HgErrorTag.INVALID_HG_CWD_ARG_TYPE
+            )
         self._hg_cwd = value
 
     @property
@@ -140,7 +132,7 @@ class Hg:
         """
         global _HG_VERSION_CACHE  # pylint: disable=global-statement
         if _HG_VERSION_CACHE is None:
-            _HG_VERSION_CACHE = self.run(["version", "--template", "{ver})"])
+            _HG_VERSION_CACHE = self.run(['version', '--template', '{ver})'])
         return _HG_VERSION_CACHE
 
     @property
@@ -154,7 +146,7 @@ class Hg:
         global _HG_IS_AVAILABLE_CACHE  # pylint: disable=global-statement
         if _HG_IS_AVAILABLE_CACHE is None:
             try:
-                hg_version = self.run(cmd=["version"])
+                hg_version = self.run(cmd=['version'])
                 hg_regex = re.compile(r'Mercurial\s+Distributed\s+SCM', re.IGNORECASE)
                 match = hg_regex.search(hg_version)
                 _HG_IS_AVAILABLE_CACHE = bool(match)
@@ -179,8 +171,7 @@ class Hg:
         """
         if not self.is_available:
             raise SimpleBenchSubprocessExecutableNotFoundError(
-                "The 'hg' command line tool is not available.",
-                tag=_HgErrorTag.HG_NOT_AVAILABLE
+                "The 'hg' command line tool is not available.", tag=_HgErrorTag.HG_NOT_AVAILABLE
             )
 
     def is_repo(self, cwd: Path | None = None) -> bool:
@@ -192,7 +183,7 @@ class Hg:
         :raises FileNotFoundError: If the hg command is not found.
         """
         try:
-            root_path = self.run(cmd=["root"], cwd=cwd)
+            root_path = self.run(cmd=['root'], cwd=cwd)
             return root_path is not None
         except SimpleBenchNotARepositoryError:
             return False
@@ -217,8 +208,7 @@ class Hg:
         """
         if not self.is_repo(cwd=cwd):
             raise SimpleBenchNotARepositoryError(
-                "The current directory is not inside a Mercurial (hg) repository.",
-                tag=_HgErrorTag.HG_NOT_A_REPOSITORY
+                'The current directory is not inside a Mercurial (hg) repository.', tag=_HgErrorTag.HG_NOT_A_REPOSITORY
             )
 
     def root(self, cwd: Path | None = None) -> Path:
@@ -231,7 +221,7 @@ class Hg:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the hg command is not found.
         """
         self.validate_is_repo(cwd=cwd)
-        return Path(self.run(cmd=["root"], cwd=cwd))
+        return Path(self.run(cmd=['root'], cwd=cwd))
 
     def is_dirty(self, cwd: Path | None = None) -> bool:
         """Check if the hg repository has uncommitted changes.
@@ -258,7 +248,7 @@ class Hg:
         :raises SimpleBenchSubprocessExecutableNotFoundError: If the hg command is not found.
         """
         self.validate_is_repo(cwd=cwd)
-        return self.run(cmd=["status"], cwd=cwd)
+        return self.run(cmd=['status'], cwd=cwd)
 
     def head(self, cwd: Path | None = None) -> HgInfo:
         """Fetch hg repository information for the current HEAD.
@@ -272,32 +262,25 @@ class Hg:
         """
         self.validate_is_repo(cwd=cwd)
         head_data = self.run(
-            cmd=[
-                "id", "--rev", ".",
-                "--template", "branch: {branch}\ndate: {date}\nchangeset: {node}\n"],
-            cwd=cwd)
+            cmd=['id', '--rev', '.', '--template', 'branch: {branch}\ndate: {date}\nchangeset: {node}\n'], cwd=cwd
+        )
 
-        branch_name: str = ""
-        changeset_id: str = ""
+        branch_name: str = ''
+        changeset_id: str = ''
         epoch_date: float = 0.0
         for line in head_data.splitlines():
             if not line:
                 continue
-            key, value = line.split(": ", 1)
+            key, value = line.split(': ', 1)
             match key:
-                case "branch":
+                case 'branch':
                     branch_name = value.strip()
-                case "changeset":
+                case 'changeset':
                     changeset_id = value.strip()
-                case "date":
+                case 'date':
                     epoch_date: float = float(value.strip())
                 case _:
                     continue
         date: str = timestamp_to_iso8601(epoch_date)
         dirty: bool = self.is_dirty(cwd=cwd)
-        return HgInfo(
-            branch=branch_name,
-            commit_id=changeset_id,
-            commit_datetime=date,
-            dirty=dirty
-        )
+        return HgInfo(branch=branch_name, commit_id=changeset_id, commit_datetime=date, dirty=dirty)

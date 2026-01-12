@@ -1,4 +1,5 @@
 """Reads JSON reporter output files."""
+
 import json
 from pathlib import Path
 from typing import Any
@@ -21,7 +22,8 @@ class JSONReportReader:
         if not isinstance(filepath, Path):
             raise SimpleBenchTypeError(
                 f'filepath must be a Path object, got {type(filepath)}',
-                tag=_JSONReaderErrorTag.INVALID_FILEPATH_PROPERTY_TYPE)
+                tag=_JSONReaderErrorTag.INVALID_FILEPATH_PROPERTY_TYPE,
+            )
         self.filepath = filepath
         self._dictionary: dict[str, Any]
         self._report: JSONReport
@@ -36,7 +38,8 @@ class JSONReportReader:
         if not isinstance(value, Path):
             raise SimpleBenchTypeError(
                 f'filepath must be a Path object, got {type(value)}',
-                tag=_JSONReaderErrorTag.INVALID_FILEPATH_PROPERTY_TYPE)
+                tag=_JSONReaderErrorTag.INVALID_FILEPATH_PROPERTY_TYPE,
+            )
         self._filepath = value
 
     @property
@@ -63,22 +66,18 @@ class JSONReportReader:
         """
         filepath = self.filepath
         if not filepath.exists():
-            raise SimpleBenchFileNotFoundError(
-                f'File not found: {filepath}',
-                tag=_JSONReaderErrorTag.FILE_NOT_FOUND)
+            raise SimpleBenchFileNotFoundError(f'File not found: {filepath}', tag=_JSONReaderErrorTag.FILE_NOT_FOUND)
         if not filepath.is_file():
-            raise SimpleBenchNotAFileError(
-                f'Path is not a file: {filepath}',
-                tag=_JSONReaderErrorTag.NOT_A_FILE)
+            raise SimpleBenchNotAFileError(f'Path is not a file: {filepath}', tag=_JSONReaderErrorTag.NOT_A_FILE)
 
         output: dict[str, Any] = {}
         try:
-            with filepath.open("r", encoding="utf-8") as file:
+            with filepath.open('r', encoding='utf-8') as file:
                 output = json.load(file)
         except json.JSONDecodeError as exc:
             raise SimpleBenchJSONDecodeError(
-                f'Error decoding JSON from file {filepath}: {exc}',
-                tag=_JSONReaderErrorTag.JSON_DECODE_ERROR) from exc
+                f'Error decoding JSON from file {filepath}: {exc}', tag=_JSONReaderErrorTag.JSON_DECODE_ERROR
+            ) from exc
 
         return output
 
@@ -92,6 +91,6 @@ class JSONReportReader:
             report = JSONReport.from_dict(dictionary)
         except SimpleBenchValueError as exc:
             raise SimpleBenchValueError(
-                f'Error creating JSONReport from dictionary: {exc}',
-                tag=_JSONReaderErrorTag.SCHEMA_VALIDATION_ERROR) from exc
+                f'Error creating JSONReport from dictionary: {exc}', tag=_JSONReaderErrorTag.SCHEMA_VALIDATION_ERROR
+            ) from exc
         return report

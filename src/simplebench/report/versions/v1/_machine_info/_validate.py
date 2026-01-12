@@ -1,4 +1,5 @@
 """Validation functions for MachineInfo version 1."""
+
 import re
 
 from simplebench.report._error_tags import _MachineInfoErrorTag
@@ -12,6 +13,7 @@ from .._execution_environment import ExecutionEnvironment
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""
 
+
 def hash_id(value: str) -> str:
     """Validate hash_id property.
 
@@ -23,19 +25,25 @@ def hash_id(value: str) -> str:
     :raises SimpleBenchValueError: If value is not a 64-character hexadecimal string
     """
     hash_string = validate_string(
-        value, "hash_id",
+        value,
+        'hash_id',
         _MachineInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
         _MachineInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
-        allow_empty=True, strip=True)
+        allow_empty=True,
+        strip=True,
+    )
     if hash_string == '':
         return ''
 
     return validate_string_with_regex(
-        hash_string, "hash_id", _HASH_RE,
+        hash_string,
+        'hash_id',
+        _HASH_RE,
         _MachineInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
         _MachineInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
-        message="{name} must be 64-character hexadecimal string. Found: {value}"
+        message='{name} must be 64-character hexadecimal string. Found: {value}',
     )
+
 
 def node(value: str) -> str:
     """Validate node property.
@@ -45,10 +53,14 @@ def node(value: str) -> str:
     :raises SimpleBenchTypeError: If value is not a string.
     """
     return validate_string(
-        value, "node",
+        value,
+        'node',
         _MachineInfoErrorTag.INVALID_NODE_PROPERTY_TYPE,
         _MachineInfoErrorTag.EMPTY_NODE_PROPERTY_VALUE,
-        allow_empty=True, strip=True)
+        allow_empty=True,
+        strip=True,
+    )
+
 
 def cpu(value: CPUInfo) -> CPUInfo:
     """Validate a CPUInfo instance.
@@ -57,10 +69,8 @@ def cpu(value: CPUInfo) -> CPUInfo:
     :return: The validated CPUInfo instance.
     :raises SimpleBenchTypeError: If value is not of type CPUInfo.
     """
-    return validate_type(
-        value, CPUInfo, 'cpu_info',
-        _MachineInfoErrorTag.INVALID_CPU_TYPE
-    )
+    return validate_type(value, CPUInfo, 'cpu_info', _MachineInfoErrorTag.INVALID_CPU_TYPE)
+
 
 def memory(value: MemoryInfo) -> MemoryInfo:
     """Validate a MemoryInfo instance.
@@ -69,10 +79,8 @@ def memory(value: MemoryInfo) -> MemoryInfo:
     :return: The validated MemoryInfo instance.
     :raises SimpleBenchTypeError: If value is not of type MemoryInfo.
     """
-    return validate_type(
-        value, MemoryInfo, 'memory_info',
-        _MachineInfoErrorTag.INVALID_MEMORY_TYPE
-    )
+    return validate_type(value, MemoryInfo, 'memory_info', _MachineInfoErrorTag.INVALID_MEMORY_TYPE)
+
 
 def system(value: SystemInfo) -> SystemInfo:
     """Validate a SystemInfo instance.
@@ -81,10 +89,8 @@ def system(value: SystemInfo) -> SystemInfo:
     :return: The validated SystemInfo instance.
     :raises SimpleBenchTypeError: If value is not of type SystemInfo.
     """
-    return validate_type(
-        value, SystemInfo, 'system',
-        _MachineInfoErrorTag.INVALID_SYSTEM_TYPE
-    )
+    return validate_type(value, SystemInfo, 'system', _MachineInfoErrorTag.INVALID_SYSTEM_TYPE)
+
 
 def execution_environment(value: ExecutionEnvironment) -> ExecutionEnvironment:
     """Validate an ExecutionEnvironment instance.
@@ -94,6 +100,5 @@ def execution_environment(value: ExecutionEnvironment) -> ExecutionEnvironment:
     :raises SimpleBenchTypeError: If value is not of type ExecutionEnvironment.
     """
     return validate_type(
-        value, ExecutionEnvironment, 'execution_environment',
-        _MachineInfoErrorTag.INVALID_EXECUTION_ENVIRONMENT_TYPE
+        value, ExecutionEnvironment, 'execution_environment', _MachineInfoErrorTag.INVALID_EXECUTION_ENVIRONMENT_TYPE
     )

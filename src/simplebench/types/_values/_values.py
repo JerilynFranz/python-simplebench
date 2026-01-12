@@ -11,13 +11,15 @@ Example usage:
 .. code-block:: python3
 
     from simplebench.types import Values
+
     vals = Values([1, 2.5, 3])
 
     if not isinstance(vals, Values):
-        raise TypeError("Expected a Values instance")
+        raise TypeError('Expected a Values instance')
 
     # The vals object is guaranteed to be a tuple containing only float numbers.
 """
+
 from typing import Iterable
 
 from typechecked import Immutable
@@ -43,10 +45,11 @@ class Values(tuple, Immutable):
     .. code-block:: python3
 
         from simplebench.types import Values
+
         vals = Values([1, 2.5, 3])
 
         if not isinstance(vals, Values):
-            raise TypeError("Expected a Values instance")
+            raise TypeError('Expected a Values instance')
 
         # The vals object is guaranteed to be a tuple containing only float numbers.
 
@@ -66,10 +69,11 @@ class Values(tuple, Immutable):
         .. code-block:: python3
 
             from simplebench.types import Values
+
             vals = Values([1, 2.5, 3])
 
             if not isinstance(vals, Values):
-                raise TypeError("Expected a Values instance")
+                raise TypeError('Expected a Values instance')
 
             # The vals object is guaranteed to be a tuple containing only float numbers.
 
@@ -78,19 +82,18 @@ class Values(tuple, Immutable):
         """
         if not isinstance(iterable, Iterable):
             raise SimpleBenchTypeError(
-                f"Invalid type for iterable: {type(iterable)}. Must be an Iterable of int or float.",
-                tag=_ValuesErrorTag.INVALID_VALUES_TYPE
-                )
+                f'Invalid type for iterable: {type(iterable)}. Must be an Iterable of int or float.',
+                tag=_ValuesErrorTag.INVALID_VALUES_TYPE,
+            )
         raw_iterable = list(iterable)
         if not all(isinstance(item, (int, float)) for item in raw_iterable):
             raise SimpleBenchTypeError(
-                "All items in the iterable must be int or float",
-                tag=_ValuesErrorTag.INVALID_VALUES_CONTENT_TYPE
-                )
+                'All items in the iterable must be int or float', tag=_ValuesErrorTag.INVALID_VALUES_CONTENT_TYPE
+            )
 
         float_iterable = (float(item) for item in raw_iterable)
         return super().__new__(cls, float_iterable)
 
     def __repr__(self) -> str:
         """Return a string representation of the Values object."""
-        return f"Values({super().__repr__()})"
+        return f'Values({super().__repr__()})'

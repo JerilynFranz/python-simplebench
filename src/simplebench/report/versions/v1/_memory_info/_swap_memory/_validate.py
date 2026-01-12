@@ -1,4 +1,5 @@
 """Validation functions for SwapMemoryObject properties."""
+
 from simplebench.report._error_tags import _SwapMemoryErrorTag
 from simplebench.validators import validate_float_range, validate_non_negative_int
 
@@ -12,9 +13,9 @@ def total(value: int) -> int:
     :raises SimpleBenchValueError: If the value is negative.
     """
     return validate_non_negative_int(
-        value, "total",
-        _SwapMemoryErrorTag.INVALID_TOTAL_TYPE,
-        _SwapMemoryErrorTag.INVALID_TOTAL_VALUE)
+        value, 'total', _SwapMemoryErrorTag.INVALID_TOTAL_TYPE, _SwapMemoryErrorTag.INVALID_TOTAL_VALUE
+    )
+
 
 def used(value: int) -> int:
     """Validate the used swap memory in bytes.
@@ -25,9 +26,9 @@ def used(value: int) -> int:
     :raises SimpleBenchValueError: If the value is negative.
     """
     return validate_non_negative_int(
-        value, "used",
-        _SwapMemoryErrorTag.INVALID_USED_TYPE,
-        _SwapMemoryErrorTag.INVALID_USED_VALUE)
+        value, 'used', _SwapMemoryErrorTag.INVALID_USED_TYPE, _SwapMemoryErrorTag.INVALID_USED_VALUE
+    )
+
 
 def free(value: int) -> int:
     """Validate the free swap memory in bytes.
@@ -37,9 +38,9 @@ def free(value: int) -> int:
     :raises ValueError: If the value is negative.
     """
     return validate_non_negative_int(
-        value, "free",
-        _SwapMemoryErrorTag.INVALID_FREE_TYPE,
-        _SwapMemoryErrorTag.INVALID_FREE_VALUE)
+        value, 'free', _SwapMemoryErrorTag.INVALID_FREE_TYPE, _SwapMemoryErrorTag.INVALID_FREE_VALUE
+    )
+
 
 def percent(value: float) -> float:
     """Validate the percentage of swap memory used.
@@ -49,10 +50,14 @@ def percent(value: float) -> float:
     :raises ValueError: If the value is not between 0 and 100.
     """
     return validate_float_range(
-        value, "percent",
+        value,
+        'percent',
         _SwapMemoryErrorTag.INVALID_SWAP_PERCENT_TYPE,
         _SwapMemoryErrorTag.INVALID_SWAP_PERCENT_OUT_OF_RANGE,
-        min_value=0.0, max_value=100.0)
+        min_value=0.0,
+        max_value=100.0,
+    )
+
 
 def swap_in(value: int) -> int:
     """Validate the swap memory sent to disk in bytes.
@@ -62,9 +67,9 @@ def swap_in(value: int) -> int:
     :raises ValueError: If the value is negative.
     """
     return validate_non_negative_int(
-        value, "swap_in",
-        _SwapMemoryErrorTag.INVALID_SWAP_IN_TYPE,
-        _SwapMemoryErrorTag.INVALID_SWAP_IN_VALUE)
+        value, 'swap_in', _SwapMemoryErrorTag.INVALID_SWAP_IN_TYPE, _SwapMemoryErrorTag.INVALID_SWAP_IN_VALUE
+    )
+
 
 def swap_out(value: int) -> int:
     """Validate the swap memory received from disk in bytes.
@@ -74,6 +79,5 @@ def swap_out(value: int) -> int:
     :raises ValueError: If the value is negative.
     """
     return validate_non_negative_int(
-        value, "swap_out",
-        _SwapMemoryErrorTag.INVALID_SWAP_OUT_TYPE,
-        _SwapMemoryErrorTag.INVALID_SWAP_OUT_VALUE)
+        value, 'swap_out', _SwapMemoryErrorTag.INVALID_SWAP_OUT_TYPE, _SwapMemoryErrorTag.INVALID_SWAP_OUT_VALUE
+    )

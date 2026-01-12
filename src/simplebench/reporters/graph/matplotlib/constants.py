@@ -1,4 +1,5 @@
 """Constants for the :mod:`~simplebench.reporters.graph.matplotlib` graph reporters."""
+
 from typing import Final
 
 from ..enums import ImageType

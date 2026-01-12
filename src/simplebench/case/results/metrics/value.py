@@ -12,6 +12,7 @@ class Value(NamedTuple):
         metric (`Metric`): The metric being measured. (position 0)
         value (`float`): The value of the metric measurement (position 1).
     """
+
     metric: Metric
     """The metric being measured. (position 0)"""
 

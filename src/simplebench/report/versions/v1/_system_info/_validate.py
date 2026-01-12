@@ -1,4 +1,5 @@
 """Validation functions for SystemInfo version 1."""
+
 import re
 
 from simplebench.report._error_tags import _SystemInfoErrorTag
@@ -6,6 +7,7 @@ from simplebench.validators import validate_string, validate_string_with_regex
 
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""
+
 
 def hash_id(value: str) -> str:
     """Validate hash_id property.
@@ -18,19 +20,25 @@ def hash_id(value: str) -> str:
     :raises SimpleBenchValueError: If value is not a 64-character hexadecimal string
     """
     hash_string = validate_string(
-        value, "hash_id",
+        value,
+        'hash_id',
         _SystemInfoErrorTag.INVALID_HASH_ID_TYPE,
         _SystemInfoErrorTag.INVALID_HASH_ID_VALUE,
-        allow_empty=True, strip=True)
+        allow_empty=True,
+        strip=True,
+    )
     if hash_string == '':
         return ''
 
     return validate_string_with_regex(
-        hash_string, "hash_id", _HASH_RE,
+        hash_string,
+        'hash_id',
+        _HASH_RE,
         _SystemInfoErrorTag.INVALID_HASH_ID_TYPE,
         _SystemInfoErrorTag.INVALID_HASH_ID_VALUE,
-        message="{name} must be 64-character hexadecimal string. Found: {value}"
+        message='{name} must be 64-character hexadecimal string. Found: {value}',
     )
+
 
 def system(value: str) -> str:
     """Validate system property.
@@ -41,11 +49,14 @@ def system(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "system",
+        value,
+        'system',
         _SystemInfoErrorTag.INVALID_SYSTEM_TYPE,
         _SystemInfoErrorTag.EMPTY_SYSTEM_VALUE,
-        allow_empty=False, strip=True
+        allow_empty=False,
+        strip=True,
     )
+
 
 def system_version(value: str) -> str:
     """Validate system_version property.
@@ -56,11 +67,14 @@ def system_version(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "system_version",
+        value,
+        'system_version',
         _SystemInfoErrorTag.INVALID_SYSTEM_VERSION_TYPE,
         _SystemInfoErrorTag.EMPTY_SYSTEM_VERSION_VALUE,
-        allow_empty=False, strip=True
+        allow_empty=False,
+        strip=True,
     )
+
 
 def release(value: str) -> str:
     """Validate release property.
@@ -71,11 +85,14 @@ def release(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "release",
+        value,
+        'release',
         _SystemInfoErrorTag.INVALID_RELEASE_TYPE,
         _SystemInfoErrorTag.EMPTY_RELEASE_VALUE,
-        allow_empty=False, strip=True
+        allow_empty=False,
+        strip=True,
     )
+
 
 def machine(value: str) -> str:
     """Validate machine property.
@@ -86,8 +103,10 @@ def machine(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "machine",
+        value,
+        'machine',
         _SystemInfoErrorTag.INVALID_MACHINE_TYPE,
         _SystemInfoErrorTag.EMPTY_MACHINE_VALUE,
-        allow_empty=False, strip=True
+        allow_empty=False,
+        strip=True,
     )

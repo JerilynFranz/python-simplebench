@@ -1,4 +1,5 @@
 """Validators for the Results class."""
+
 from collections.abc import Mapping
 from copy import copy, deepcopy
 from types import MappingProxyType
@@ -19,9 +20,7 @@ def metric(value: Metric) -> Metric:
     :returns Metric: The validated metric.
     :raises SimpleBenchTypeError: If the metric is not of type Metric.
     """
-    validate_type(
-        value, Metric, 'metric',
-        _ResultsErrorTag.INVALID_METRIC_ARG_TYPE)
+    validate_type(value, Metric, 'metric', _ResultsErrorTag.INVALID_METRIC_ARG_TYPE)
     return value
 
 
@@ -36,13 +35,11 @@ def belongs_to_metric_category(value: Metric, metric_category: MetricCategory) -
     :raises SimpleBenchValueError: If the metric does not belong to the specified metric_category.
     """
     metric(value)
-    validate_type(
-        metric_category, MetricCategory, 'metric_category',
-        _ResultsErrorTag.INVALID_METRIC_CATEGORY_ARG_TYPE)
+    validate_type(metric_category, MetricCategory, 'metric_category', _ResultsErrorTag.INVALID_METRIC_CATEGORY_ARG_TYPE)
     if not value.metric_type.category == metric_category:
         raise SimpleBenchValueError(
             f'Invalid metric: {value}. Must be a Metric with {metric_category.name} category.',
-            tag=_ResultsErrorTag.INVALID_METRIC_TYPE_CATEGORY_ARG_VALUE
+            tag=_ResultsErrorTag.INVALID_METRIC_TYPE_CATEGORY_ARG_VALUE,
         )
     return value
 
@@ -61,24 +58,24 @@ def variation_cols(value: dict[str, str] | None) -> MappingProxyType[str, str]:
     if not isinstance(value, dict):
         raise SimpleBenchTypeError(
             f'Invalid variation_cols: {value}. Must be a dictionary.',
-            tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_TYPE
-            )
+            tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_TYPE,
+        )
 
     for key, val in value.items():
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols key type: {type(key)}. Must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_TYPE
+                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_TYPE,
             )
         if key == '':
             raise SimpleBenchValueError(
                 'Invalid variation_cols key value: empty string. Keys must be non-empty strings.',
-                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_VALUE
+                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_VALUE,
             )
         if not isinstance(val, str):
             raise SimpleBenchTypeError(
                 f'Invalid variation_cols value type: {type(val)}. Must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE
+                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE,
             )
     # shallow copy to prevent external mutation
     return MappingProxyType(copy(value))
@@ -95,12 +92,12 @@ def iterations(iterations_value: Mapping[Metric, Values]) -> MappingProxyType[Me
     if not isinstance(iterations_value, Mapping):
         raise SimpleBenchTypeError(
             f'Invalid iterations type: {type(iterations_value)}. Must be of type Mapping[Metric, Values].',
-            tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE
+            tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE,
         )
     if not all(isinstance(key, Metric) and isinstance(value, Values) for key, value in iterations_value.items()):
         raise SimpleBenchTypeError(
             'Invalid iterations mapping. All keys must be of type Metric and all values must be of type Values.',
-            tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE
+            tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE,
         )
     return MappingProxyType(iterations_value)
 
@@ -120,8 +117,7 @@ def marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tup
         return MappingProxyType({})
     if not isinstance(value, dict):
         raise SimpleBenchTypeError(
-            f'Invalid marks: {value}. Must be a dictionary.',
-            tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE
+            f'Invalid marks: {value}. Must be a dictionary.', tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE
         )
 
     return_value: dict[str, tuple[str, ...]] = {}
@@ -129,23 +125,23 @@ def marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tup
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
                 f'Invalid marks key type: {type(key)}. Must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_TYPE
+                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_TYPE,
             )
         stripped_key = key.strip()
         if stripped_key == '':
             raise SimpleBenchValueError(
                 'Invalid marks key value: blank string. Keys must be non-blank strings.',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE
+                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE,
             )
         if not isinstance(marks_value, tuple):
             raise SimpleBenchTypeError(
                 f'Invalid marks value type: {type(marks_value)}. Must be of type tuple[str, ...].',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_TYPE
+                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_TYPE,
             )
         if not all(isinstance(item, str) for item in marks_value):
             raise SimpleBenchTypeError(
                 'Invalid marks value item type. All items in the tuple must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE
+                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE,
             )
         return_value[key] = marks_value
     return MappingProxyType(return_value)
@@ -167,7 +163,7 @@ def extra_info(value: dict[str, Any] | None) -> MappingProxyType[str, Any]:
     if not isinstance(value, dict):
         raise SimpleBenchTypeError(
             f'Invalid extra_info type: {type(value)}. Must be of type dict[str, Any].',
-            tag=_ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE
+            tag=_ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE,
         )
 
     # Perform deep copy to prevent external mutation

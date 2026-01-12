@@ -13,6 +13,7 @@ version 1: :class:`~simplebench.report.versions.v1.MachineInfoSchema`.
 
     These types ensure proper validation and serialization of MachineInfo data\
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
@@ -39,14 +40,10 @@ from .._execution_environment._typeddict_types import (
 # Imports are directly from the specific sub-modules to avoid accidentally creating circular dependencies
 
 
-__all__ = [
-    "MachineInfoData",
-    "ImmutableMachineInfoData",
-    "MachineInfoDict",
-    "ImmutableMachineInfoDict",
-]
+__all__ = ['MachineInfoData', 'ImmutableMachineInfoData', 'MachineInfoDict', 'ImmutableMachineInfoDict']
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
+
 
 class _RequiredMachineInfoData(ReportElementTypedDict, total=True):
     """Required fields for V1 MachineInfo data used as INPUT.
@@ -57,6 +54,7 @@ class _RequiredMachineInfoData(ReportElementTypedDict, total=True):
     :param Required[SystemInfoData] system: The system name.
     :param Required[ExecutionEnvironmentData] execution_environment: The execution environment information.
     """
+
     node: Required[str]
     cpu: Required[CPUInfoData]
     memory: Required[MemoryInfoData]
@@ -85,6 +83,7 @@ class MachineInfoData(_RequiredMachineInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
@@ -99,6 +98,7 @@ class _RequiredImmutableMachineInfoData(ReportElementTypedDict, total=True):
     :param Required[ImmutableSystemInfoData] system: The system name.
     :param Required[ImmutableExecutionEnvironmentData] execution_environment: The execution environment information.
     """
+
     node: Required[str]
     cpu: Required[ImmutableCPUInfoData]
     memory: Required[ImmutableMemoryInfoData]
@@ -118,9 +118,12 @@ class ImmutableMachineInfoData(_RequiredImmutableMachineInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class MachineInfoDict(ReportElementTypedDict, total=True):
     """Required fields for V1 MachineInfo data used as OUTPUT
@@ -138,6 +141,7 @@ class MachineInfoDict(ReportElementTypedDict, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the machine information.
     """
+
     node: Required[str]
     cpu: Required[CPUInfoDict]
     memory: Required[MemoryInfoDict]
@@ -172,6 +176,7 @@ class _RequiredImmutableMachineInfoDict(ReportElementTypedDict, total=True):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the machine information.
     """
+
     node: Required[str]
     cpu: Required[ImmutableCPUInfoDict]
     memory: Required[ImmutableMemoryInfoDict]
@@ -180,6 +185,7 @@ class _RequiredImmutableMachineInfoDict(ReportElementTypedDict, total=True):
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
+
 
 class ImmutableMachineInfoDict(_RequiredImmutableMachineInfoDict, total=False):
     """Immutable typed dictionary for V1 MachineInfo data used as OUTPUT.
@@ -193,4 +199,5 @@ class ImmutableMachineInfoDict(_RequiredImmutableMachineInfoDict, total=False):
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the machine information.
     """
+
     __immutable__: NotRequired[Never]

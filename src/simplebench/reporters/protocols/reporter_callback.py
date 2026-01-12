@@ -1,4 +1,5 @@
-""""Protocols for reporters stuff."""
+""" "Protocols for reporters stuff."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
@@ -22,6 +23,7 @@ class ReporterCallback(Protocol):
 
         def method_name(self, *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
     """
+
     def __call__(self, *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
         """A callback function to handle benchmark results from a Reporter.
 
@@ -38,29 +40,25 @@ class ReporterCallback(Protocol):
 
         .. code-block:: python
 
-            def my_callback(*,
-                            case: Case,
-                            metric: Metric,
-                            output_format: Format,
-                            output: Any) -> None:
+            def my_callback(*, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
                 # Handle the output based on its type and format
                 match output_format:
                     case Format.TEXT:
-                        print(f"String output: {output}")
+                        print(f'String output: {output}')
                     case Format.RICH_TEXT:
                         if isinstance(output, dict):
-                            print(f"Dictionary output: {output}")
+                            print(f'Dictionary output: {output}')
                         elif isinstance(output, bytes):
-                            print(f"Bytes output: {output}")
+                            print(f'Bytes output: {output}')
                     case Format.GRAPH:
                         if isinstance(output, bytes):
-                            print(f"Binary output: {output}")
+                            print(f'Binary output: {output}')
                         elif isinstance(output, dict):
-                            print(f"Graph data: {output}")
+                            print(f'Graph data: {output}')
                         elif isinstance(output, str):
-                            print(f"Graph path: {output}")
+                            print(f'Graph path: {output}')
                     case _:
-                        print(f"Unknown output type: {type(output)}")
+                        print(f'Unknown output type: {type(output)}')
 
         :param case: The :class:`~simplebench.case.Case` instance.
         :param metric: The metric of the report (e.g.,

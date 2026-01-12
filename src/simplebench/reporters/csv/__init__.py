@@ -12,11 +12,7 @@ Public API
 - :class:`~.CSVConfig`: Configuration class for the CSV reporter.
 
 """
+
 from .reporter import CSVConfig, CSVField, CSVOptions, CSVReporter
 
-__all__ = [
-    'CSVConfig',
-    'CSVField',
-    'CSVOptions',
-    'CSVReporter',
-]
+__all__ = ['CSVConfig', 'CSVField', 'CSVOptions', 'CSVReporter']

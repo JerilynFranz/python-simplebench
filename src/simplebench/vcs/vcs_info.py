@@ -1,4 +1,5 @@
 """Hg (Mercurial) Info record."""
+
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass
 
@@ -32,6 +33,7 @@ class VCSInfo(ABC):
         commit_datetime (str): The datetime of the current HEAD commit in ISO8601 format.
         dirty (bool): Whether there are uncommitted changes in the working directory.
     """
+
     vcs_type: VCSType
     branch: str
     commit_id: str
@@ -42,26 +44,29 @@ class VCSInfo(ABC):
         """Post-initialization hook for additional validation or processing."""
         if not isinstance(self.vcs_type, VCSType):
             raise SimpleBenchTypeError(
-                f"vcs_type must be an instance of VCSType, got {type(self.vcs_type)}",
-                tag=_VCSInfoErrorTag.VCS_TYPE_INVALID_TYPE)
+                f'vcs_type must be an instance of VCSType, got {type(self.vcs_type)}',
+                tag=_VCSInfoErrorTag.VCS_TYPE_INVALID_TYPE,
+            )
         if self.vcs_type not in _SUPPORTED_VCS_TYPES:
             raise SimpleBenchValueError(
-                f"Unsupported VCS type: {self.vcs_type}",
-                tag=_VCSInfoErrorTag.VCS_TYPE_INVALID_VALUE)
+                f'Unsupported VCS type: {self.vcs_type}', tag=_VCSInfoErrorTag.VCS_TYPE_INVALID_VALUE
+            )
         if not isinstance(self.branch, str):
             raise SimpleBenchTypeError(
-                f"branch must be a string, got {type(self.branch)}",
-                tag=_VCSInfoErrorTag.BRANCH_INVALID_TYPE)
+                f'branch must be a string, got {type(self.branch)}', tag=_VCSInfoErrorTag.BRANCH_INVALID_TYPE
+            )
         self.validate_commit_id(self.commit_id)
         validate_iso8601_datetime(
-            self.commit_datetime, 'commit_datetime',
+            self.commit_datetime,
+            'commit_datetime',
             type_tag=_VCSInfoErrorTag.COMMIT_DATETIME_INVALID_TYPE,
-            value_tag=_VCSInfoErrorTag.COMMIT_DATETIME_INVALID_VALUE)
+            value_tag=_VCSInfoErrorTag.COMMIT_DATETIME_INVALID_VALUE,
+        )
 
         if not isinstance(self.dirty, bool):
             raise SimpleBenchTypeError(
-                f"dirty must be a boolean, got {type(self.dirty)}",
-                tag=_VCSInfoErrorTag.DIRTY_INVALID_TYPE)
+                f'dirty must be a boolean, got {type(self.dirty)}', tag=_VCSInfoErrorTag.DIRTY_INVALID_TYPE
+            )
 
     def to_dict(self) -> dict[str, str | bool]:
         """Convert to dictionary for JSON serialization.
@@ -79,5 +84,5 @@ class VCSInfo(ABC):
         :raises SimpleBenchValueError: If commit_id does not match expected format.
         """
         raise SimpleBenchNotImplementedError(
-            "Subclasses must implement validate_commit_id method.",
-            tag=_VCSInfoErrorTag.NOT_IMPLEMENTED)
+            'Subclasses must implement validate_commit_id method.', tag=_VCSInfoErrorTag.NOT_IMPLEMENTED
+        )

@@ -10,6 +10,7 @@ about a TypedDict key's required/optional/readonly status and its contained type
 :property object value_type: The value type argument contained in Required/NotRequired/ReadOnly,
     or the original value type.
 """
+
 import logging
 from typing import get_args, get_origin
 
@@ -33,6 +34,7 @@ class TypedDictKeyInfo:
     :property str key: The TypedDict key name.
     :property object value_type: The value type argument contained in Required/NotRequired, or the original value type.
     """
+
     def __init__(self, key: str, td_cls: type) -> None:
         """Initialize the TypedDictKeyInfo.
 
@@ -69,12 +71,18 @@ class TypedDictKeyInfo:
             raise SimpleBenchRuntimeError(
                 f"TypedDict key '{key}' in class {td_cls.__name__} has unprocessed "
                 f"'{origin}' wrapper. Failed to 'unwrap' type.",
-                tag=_TypedDictKeyInfoErrorTag.NESTED_REQUIRED_NOTREQUIRED_READONLY)
+                tag=_TypedDictKeyInfoErrorTag.NESTED_REQUIRED_NOTREQUIRED_READONLY,
+            )
         self._value_type: object = current_type
 
         log.debug(
             "TypedDictKeyInfo: Key '%s' in TypedDict '%s' - is_required: %s, is_readonly: %s, value_type: %s",
-            key, td_cls.__name__, self._is_required, self._is_readonly, current_type)
+            key,
+            td_cls.__name__,
+            self._is_required,
+            self._is_readonly,
+            current_type,
+        )
 
     @property
     def is_required(self) -> bool:

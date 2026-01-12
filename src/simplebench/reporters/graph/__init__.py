@@ -9,13 +9,10 @@ Public API
 - GraphOptions: Base class for graph reporter options.
 - SUPPORTED_IMAGE_TYPES: Set of supported image types.
 """
+
 from .enums import ImageType
 from .options import GraphOptions
 
 SUPPORTED_IMAGE_TYPES: set[ImageType] = {ImageType.SVG, ImageType.PNG}
 
-__all__ = [
-    "ImageType",
-    "GraphOptions",
-    "SUPPORTED_IMAGE_TYPES",
-]
+__all__ = ['ImageType', 'GraphOptions', 'SUPPORTED_IMAGE_TYPES']

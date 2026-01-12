@@ -1,4 +1,5 @@
 """System memory information utility functions."""
+
 from functools import cache
 from types import MappingProxyType
 from typing import NamedTuple, cast
@@ -8,16 +9,13 @@ from simplebench.report.versions.v1 import ImmutableMemoryInfoData
 _PSUTIL_AVAILABLE: bool = False  # pylint: disable=invalid-name
 try:
     import psutil
+
     _PSUTIL_AVAILABLE = True  # pylint: disable=invalid-name
 except ImportError:
     pass
 
 
-__all__ = [
-    "MemoryInfo",
-    "SwapMemory",
-    "VirtualMemory",
-]
+__all__ = ['MemoryInfo', 'SwapMemory', 'VirtualMemory']
 
 
 class SwapMemory(NamedTuple):
@@ -30,6 +28,7 @@ class SwapMemory(NamedTuple):
     :param swap_in: Swap memory sent to disk in bytes.
     :param swap_out: Swap memory received from disk in bytes.
     """
+
     total: int
     """Total swap memory in bytes."""
     used: int
@@ -53,6 +52,7 @@ class VirtualMemory(NamedTuple):
     :param used: Used virtual memory in bytes.
     :param free: Free virtual memory in bytes.
     """
+
     total: int
     """Total virtual memory in bytes."""
     available: int
@@ -75,12 +75,7 @@ def _uncached_swap_memory() -> SwapMemory:
 
     smem = psutil.swap_memory()  # type: ignore[reportPossiblyUnboundVariable]
     return SwapMemory(
-        total=smem.total,
-        used=smem.used,
-        free=smem.free,
-        percent=smem.percent,
-        swap_in=smem.sin,
-        swap_out=smem.sout,
+        total=smem.total, used=smem.used, free=smem.free, percent=smem.percent, swap_in=smem.sin, swap_out=smem.sout
     )
 
 
@@ -107,12 +102,9 @@ def _uncached_virtual_memory() -> VirtualMemory:
         return VirtualMemory(0, 0, 0.0, 0, 0)
     vmem = psutil.virtual_memory()  # type: ignore[reportPossiblyUnboundVariable]
     return VirtualMemory(
-        total=vmem.total,
-        available=vmem.available,
-        percent=vmem.percent,
-        used=vmem.used,
-        free=vmem.free,
+        total=vmem.total, available=vmem.available, percent=vmem.percent, used=vmem.used, free=vmem.free
     )
+
 
 @cache
 def _get_virtual_memory(cache_key: str | None = None) -> VirtualMemory:  #  pylint: disable=unused-argument
@@ -139,6 +131,7 @@ class MemoryInfo:
         pip install simplebench[memory]
 
     """
+
     __slots__ = ('_vmem', '_smem', '_dict_cache')
 
     def __init__(self, cache_key: str | None = None) -> None:
@@ -158,7 +151,7 @@ class MemoryInfo:
             self._vmem = _get_virtual_memory(cache_key)
             self._smem = _get_swap_memory(cache_key)
         else:
-            raise TypeError("cache_key must be a string or None")
+            raise TypeError('cache_key must be a string or None')
         self._dict_cache: ImmutableMemoryInfoData | None = None
 
     @property
@@ -185,23 +178,30 @@ class MemoryInfo:
         :return ImmutableMemoryInfoData: A dictionary representation of the MemoryInfo.
         """
         if self._dict_cache is None:
-            self._dict_cache = cast(ImmutableMemoryInfoData,
-                MappingProxyType({
-                    "virtual_memory": MappingProxyType({
-                        "total": self.virtual_memory.total,
-                        "available": self.virtual_memory.available,
-                        "percent": self.virtual_memory.percent,
-                        "used": self.virtual_memory.used,
-                        "free": self.virtual_memory.free,
-                    }),
-                    "swap_memory": MappingProxyType({
-                        "total": self.swap_memory.total,
-                        "used": self.swap_memory.used,
-                        "free": self.swap_memory.free,
-                        "percent": self.swap_memory.percent,
-                        "swap_in": self.swap_memory.swap_in,
-                        "swap_out": self.swap_memory.swap_out,
-                    }),
-                })
+            self._dict_cache = cast(
+                ImmutableMemoryInfoData,
+                MappingProxyType(
+                    {
+                        'virtual_memory': MappingProxyType(
+                            {
+                                'total': self.virtual_memory.total,
+                                'available': self.virtual_memory.available,
+                                'percent': self.virtual_memory.percent,
+                                'used': self.virtual_memory.used,
+                                'free': self.virtual_memory.free,
+                            }
+                        ),
+                        'swap_memory': MappingProxyType(
+                            {
+                                'total': self.swap_memory.total,
+                                'used': self.swap_memory.used,
+                                'free': self.swap_memory.free,
+                                'percent': self.swap_memory.percent,
+                                'swap_in': self.swap_memory.swap_in,
+                                'swap_out': self.swap_memory.swap_out,
+                            }
+                        ),
+                    }
+                ),
             )
         return self._dict_cache

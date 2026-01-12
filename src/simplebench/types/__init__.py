@@ -1,4 +1,5 @@
 """Types used by SimpleBench."""
+
 from ._values import Values
 from .core import (
     CORE_DATA_PRIMITIVE_TYPES_TUPLE,
@@ -16,23 +17,23 @@ from .typeddict import Never, NotRequired, ReadOnly, Required
 from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
 
 __all__ = [
-    "NotRequired",
-    "ReadOnly",
-    "Required",
-    "Never",
-    "CoreDataTypes",
-    "CoreDataMappingType",
-    "CORE_DATA_PRIMITIVE_TYPES_TUPLE",
-    "CoreDataSequenceType",
-    "CoreDataSetType",
-    "ImmutableCoreDataMappingType",
-    "ImmutableCoreDataSequenceType",
-    "ImmutableCoreDataSetType",
-    "ImmutableCoreDataTypes",
-    "Values",
-    "VariationColsType",
-    "ImmutableVariationColsType",
-    "VariationMarksType",
-    "ImmutableVariationMarksType",
-    "IMMUTABLE_CORE_DATA_TYPES_TUPLE"
+    'NotRequired',
+    'ReadOnly',
+    'Required',
+    'Never',
+    'CoreDataTypes',
+    'CoreDataMappingType',
+    'CORE_DATA_PRIMITIVE_TYPES_TUPLE',
+    'CoreDataSequenceType',
+    'CoreDataSetType',
+    'ImmutableCoreDataMappingType',
+    'ImmutableCoreDataSequenceType',
+    'ImmutableCoreDataSetType',
+    'ImmutableCoreDataTypes',
+    'Values',
+    'VariationColsType',
+    'ImmutableVariationColsType',
+    'VariationMarksType',
+    'ImmutableVariationMarksType',
+    'IMMUTABLE_CORE_DATA_TYPES_TUPLE',
 ]

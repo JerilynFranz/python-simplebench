@@ -1,4 +1,5 @@
 """String validators for SimpleBench."""
+
 import re
 from typing import Any
 
@@ -8,15 +9,17 @@ from ._error_tags import _ValidatorsErrorTag
 
 
 def validate_string(  # noqa: C901
-        value: Any,
-        name: str,
-        type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag, *,
-        strip: bool = False,
-        allow_empty: bool = True,
-        allow_blank: bool = True,
-        alphanumeric_only: bool = False,
-        message: str = '') -> str:
+    value: Any,
+    name: str,
+    type_error_tag: ErrorTag,
+    value_error_tag: ErrorTag,
+    *,
+    strip: bool = False,
+    allow_empty: bool = True,
+    allow_blank: bool = True,
+    alphanumeric_only: bool = False,
+    message: str = '',
+) -> str:
     """Validate and normalize a string field.
 
     (validation primitive - does not depend on other validators)
@@ -74,34 +77,29 @@ def validate_string(  # noqa: C901
     """
     if not isinstance(strip, bool):
         raise SimpleBenchTypeError(
-            f'Invalid strip type: {type(strip)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_STRIP_ARG_TYPE
+            f'Invalid strip type: {type(strip)}. Must be a bool.', tag=_ValidatorsErrorTag.INVALID_STRIP_ARG_TYPE
         )
     if not isinstance(allow_empty, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_ALLOW_EMPTY_ARG_TYPE
+            tag=_ValidatorsErrorTag.INVALID_ALLOW_EMPTY_ARG_TYPE,
         )
     if not isinstance(allow_blank, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_blank type: {type(allow_blank)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_ALLOW_BLANK_ARG_TYPE
+            tag=_ValidatorsErrorTag.INVALID_ALLOW_BLANK_ARG_TYPE,
         )
     if not isinstance(alphanumeric_only, bool):
         raise SimpleBenchTypeError(
             f'Invalid alphanumeric_only type: {type(alphanumeric_only)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE
+            tag=_ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE,
         )
     if not isinstance(value, str):
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(value)}. Must be a str.',
-            tag=type_error_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a str.', tag=type_error_tag)
 
     if not isinstance(message, str):
         raise SimpleBenchTypeError(
-            f'Invalid message type: {type(message)}. Must be a str.',
-            tag=_ValidatorsErrorTag.INVALID_MESSAGE_ARG_TYPE
+            f'Invalid message type: {type(message)}. Must be a str.', tag=_ValidatorsErrorTag.INVALID_MESSAGE_ARG_TYPE
         )
 
     formatted_message = message.format(name=name, value=value)
@@ -113,32 +111,32 @@ def validate_string(  # noqa: C901
         if allow_empty:
             return value
         raise SimpleBenchValueError(
-            formatted_message or f'Invalid {name}: cannot be empty string.',
-            tag=value_error_tag)
+            formatted_message or f'Invalid {name}: cannot be empty string.', tag=value_error_tag
+        )
 
     if value.strip() == '':  # Blank string (only whitespace)
         if allow_blank and not alphanumeric_only:
             return value
         raise SimpleBenchValueError(
             formatted_message or f'Invalid {name}: cannot be blank string (consist only of whitespace).',
-            tag=value_error_tag)
+            tag=value_error_tag,
+        )
 
     if alphanumeric_only:
         if value.isalnum():
             return value
         raise SimpleBenchValueError(
-            (formatted_message or
-             f'Invalid {name}: must consist only of alphanumeric characters [A-Za-z0-9]: "{value}".'),
-            tag=value_error_tag)
+            (
+                formatted_message
+                or f'Invalid {name}: must consist only of alphanumeric characters [A-Za-z0-9]: "{value}".'
+            ),
+            tag=value_error_tag,
+        )
 
     return value
 
 
-def validate_non_blank_string(
-        value: Any,
-        name: str,
-        type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag) -> str:
+def validate_non_blank_string(value: Any, name: str, type_error_tag: ErrorTag, value_error_tag: ErrorTag) -> str:
     """Validate and normalize a non-blank string field.
 
     (validation primitive - does not depend on other validators)
@@ -158,25 +156,16 @@ def validate_non_blank_string(
     :raises SimpleBenchValueError: If the string is blank or only whitespace.
     """
     if not isinstance(value, str):
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(value)}. Must be a string.',
-            tag=type_error_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a string.', tag=type_error_tag)
     stripped_value = value.strip()
     if not stripped_value:
-        raise SimpleBenchValueError(
-            f'Invalid {name}: cannot be blank or whitespace.',
-            tag=value_error_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {name}: cannot be blank or whitespace.', tag=value_error_tag)
     return stripped_value
 
 
 def validate_non_blank_string_or_is_none(
-        value: Any,
-        name: str,
-        type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag,
-        allow_none: bool = True) -> str | None:
+    value: Any, name: str, type_error_tag: ErrorTag, value_error_tag: ErrorTag, allow_none: bool = True
+) -> str | None:
     """Validate and normalize a non-blank string field.
 
         (validation primitive - does not depend on other validators)
@@ -201,31 +190,24 @@ def validate_non_blank_string_or_is_none(
     if value is None:
         if allow_none:
             return None
-        raise SimpleBenchTypeError(
-            f'Invalid {name}: cannot be None.',
-            tag=value_error_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name}: cannot be None.', tag=value_error_tag)
     if not isinstance(value, str):
-        raise SimpleBenchTypeError(
-            f'Invalid {name} type: {type(value)}. Must be a string.',
-            tag=type_error_tag
-        )
+        raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a string.', tag=type_error_tag)
     stripped_value = value.strip()
     if not stripped_value:
-        raise SimpleBenchValueError(
-            f'Invalid {name}: cannot be blank or whitespace.',
-            tag=value_error_tag
-        )
+        raise SimpleBenchValueError(f'Invalid {name}: cannot be blank or whitespace.', tag=value_error_tag)
     return stripped_value
 
+
 def validate_string_with_regex(
-        value: str,
-        name: str,
-        pattern: re.Pattern,
-        type_error_tag: ErrorTag,
-        value_error_tag: ErrorTag,
-        *,
-        message: str = '') -> str:
+    value: str,
+    name: str,
+    pattern: re.Pattern,
+    type_error_tag: ErrorTag,
+    value_error_tag: ErrorTag,
+    *,
+    message: str = '',
+) -> str:
     """Validate that a string matches a specified regex pattern.
 
             (validation primitive - does not depend on other validators)
@@ -245,15 +227,11 @@ def validate_string_with_regex(
     func_name = 'validate_string_against_regex'
     if not isinstance(name, str):
         raise SimpleBenchTypeError(
-            f"Invalid call to {func_name}: ``name`` parameter must be a string.",
-            tag=type_error_tag
+            f'Invalid call to {func_name}: ``name`` parameter must be a string.', tag=type_error_tag
         )
 
     if not isinstance(value, str):
-        raise SimpleBenchTypeError(
-            f"{name} must be a string.",
-            tag=type_error_tag
-        )
+        raise SimpleBenchTypeError(f'{name} must be a string.', tag=type_error_tag)
 
     compiled_pattern: re.Pattern
     if isinstance(pattern, str):
@@ -261,35 +239,32 @@ def validate_string_with_regex(
             compiled_pattern = re.compile(pattern)
         except re.error as e:
             raise SimpleBenchValueError(
-                f"Invalid call to {func_name}: ``pattern`` string {{ {pattern} }} could not "
-                f"be compiled to a regex pattern.",
-                tag=type_error_tag) from e
+                f'Invalid call to {func_name}: ``pattern`` string {{ {pattern} }} could not '
+                f'be compiled to a regex pattern.',
+                tag=type_error_tag,
+            ) from e
     elif isinstance(pattern, re.Pattern):
         compiled_pattern = pattern
 
     else:
         raise SimpleBenchTypeError(
-            f"Invalid call to {func_name}: ``pattern`` parameter must be a "
-            f"re.Pattern instance or a string not type {type(pattern)}.",
-            tag=type_error_tag
+            f'Invalid call to {func_name}: ``pattern`` parameter must be a '
+            f're.Pattern instance or a string not type {type(pattern)}.',
+            tag=type_error_tag,
         )
 
     if not isinstance(message, str):
         raise SimpleBenchTypeError(
-            f"Invalid call to {func_name}: ``message`` parameter must be a string.",
-            tag=type_error_tag
+            f'Invalid call to {func_name}: ``message`` parameter must be a string.', tag=type_error_tag
         )
 
     formatted_message: str
     if message:
         formatted_message = message.format(name=name, value=value)
     else:
-        formatted_message = "{name} is invalid. {{ {value} }} does not match required pattern."
+        formatted_message = '{name} is invalid. {{ {value} }} does not match required pattern.'
 
     if not compiled_pattern.match(value):
-        raise SimpleBenchValueError(
-            formatted_message,
-            tag=value_error_tag
-        )
+        raise SimpleBenchValueError(formatted_message, tag=value_error_tag)
 
     return value

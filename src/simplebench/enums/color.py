@@ -2,6 +2,7 @@
 
 Colors are primarily used for console output formatting.
 """
+
 from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
@@ -21,6 +22,7 @@ class Color(str, Enum):
       - CYAN: Cyan color.
       - WHITE: White color.
     """
+
     BLACK = 'black'
     """Black color."""
     RED = 'red'

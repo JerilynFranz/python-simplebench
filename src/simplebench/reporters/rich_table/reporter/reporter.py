@@ -1,4 +1,5 @@
 """Reporter for benchmark results using Rich tables on the console."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
@@ -54,6 +55,7 @@ class RichTableReporter(Reporter):
         :class:`~simplebench.enums.Format` objects for the reporter.
     :vartype choices: ~simplebench.reporters.choices.Choices
     """
+
     _OPTIONS_TYPE: ClassVar[type[RichTableOptions]] = RichTableOptions  # pylint: disable=line-too-long # type: ignore[reportIncompatibleVariableOveride]  # noqa: E501
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
 
@@ -86,7 +88,8 @@ class RichTableReporter(Reporter):
         super().__init__(config)
 
     def render(  # pylint: disable=too-many-locals,too-many-statements  # noqa: C901
-            self, *, case: Case, metric: Metric, options: ReporterOptions) -> Table:
+        self, *, case: Case, metric: Metric, options: ReporterOptions
+    ) -> Table:
         """Prints the benchmark results in a rich table format if available.
 
         It creates a :class:`~rich.table.Table` instance containing the benchmark results
@@ -109,42 +112,43 @@ class RichTableReporter(Reporter):
         if not is_case(case):
             raise SimpleBenchTypeError(
                 f"'case' argument must be a Case instance, got {type(case)}",
-                tag=_RichTableReporterErrorTag.RENDER_INVALID_CASE)
-        metric = validate_type(metric, Metric, 'metric',
-                               _RichTableReporterErrorTag.RENDER_INVALID_SECTION)
-        options = validate_type(options, Options, 'options',
-                                _RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
+                tag=_RichTableReporterErrorTag.RENDER_INVALID_CASE,
+            )
+        metric = validate_type(metric, Metric, 'metric', _RichTableReporterErrorTag.RENDER_INVALID_SECTION)
+        options = validate_type(options, Options, 'options', _RichTableReporterErrorTag.RENDER_INVALID_OPTIONS)
         included_fields = options.fields
 
         base_unit: str = self.get_base_unit_for_metric(metric=metric)
         results: list[Results] = case.results
 
         mean_unit, mean_scale = si_scale_for_smallest(
-            numbers=[result.results_metric(metric).mean for result in results],
-            base_unit=base_unit)
+            numbers=[result.results_metric(metric).mean for result in results], base_unit=base_unit
+        )
         median_unit, median_scale = si_scale_for_smallest(
-            numbers=[result.results_metric(metric).median for result in results],
-            base_unit=base_unit)
+            numbers=[result.results_metric(metric).median for result in results], base_unit=base_unit
+        )
         min_unit, min_scale = si_scale_for_smallest(
-            numbers=[result.results_metric(metric).minimum for result in results],
-            base_unit=base_unit)
+            numbers=[result.results_metric(metric).minimum for result in results], base_unit=base_unit
+        )
         max_unit, max_scale = si_scale_for_smallest(
-            numbers=[result.results_metric(metric).maximum for result in results],
-            base_unit=base_unit)
+            numbers=[result.results_metric(metric).maximum for result in results], base_unit=base_unit
+        )
         p5_unit, p5_scale = si_scale_for_smallest(
-            numbers=[result.results_metric(metric).percentiles[5] for result in results],
-            base_unit=base_unit)
+            numbers=[result.results_metric(metric).percentiles[5] for result in results], base_unit=base_unit
+        )
         p95_unit, p95_scale = si_scale_for_smallest(
-            numbers=[result.results_metric(metric).percentiles[95] for result in results],
-            base_unit=base_unit)
+            numbers=[result.results_metric(metric).percentiles[95] for result in results], base_unit=base_unit
+        )
         stddev_unit, stddev_scale = si_scale_for_smallest(
-            numbers=[result.results_metric(metric).standard_deviation for result in results],
-            base_unit=base_unit)
+            numbers=[result.results_metric(metric).standard_deviation for result in results], base_unit=base_unit
+        )
 
-        table = Table(title=(case.title + f'\n{metric.value}\n\n' + case.description),
-                      show_header=True,
-                      title_style='bold green1',
-                      header_style='bold magenta')
+        table = Table(
+            title=(case.title + f'\n{metric.value}\n\n' + case.description),
+            show_header=True,
+            title_style='bold green1',
+            header_style='bold magenta',
+        )
 
         if not options.variation_cols_last:
             for value in case.variation_cols.values():

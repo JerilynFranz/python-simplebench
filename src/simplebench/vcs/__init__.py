@@ -1,4 +1,5 @@
 """VCS information collection module."""
+
 from pathlib import Path
 
 from .git import Git, GitInfo
@@ -7,15 +8,7 @@ from .utils import resolve_vcs_path
 from .vcs_info import VCSInfo
 from .vcs_type import VCSType
 
-__all__ = [
-    "resolve_vcs_path",
-    "GitInfo",
-    "Hg",
-    "HgInfo",
-    "Git",
-    "VCSInfo",
-    "VCSType",
-]
+__all__ = ['resolve_vcs_path', 'GitInfo', 'Hg', 'HgInfo', 'Git', 'VCSInfo', 'VCSType']
 
 
 def get_vcs_info(cwd: str | None = None) -> VCSInfo | None:

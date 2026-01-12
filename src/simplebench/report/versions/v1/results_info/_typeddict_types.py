@@ -11,6 +11,7 @@ version 1: :class:`~simplebench.report.versions.v1.results_info.results_info_sch
 
     These types ensure proper validation and serialization of ResultsInfo data
 """
+
 import sys
 
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
@@ -30,6 +31,7 @@ else:
 
 # -- Common base for both INPUT and OUTPUT --
 
+
 class _ResultsInfoBase(ReportElementTypedDict, total=True):
     """Base fields for V1 ResultsInfo data.
 
@@ -39,19 +41,22 @@ class _ResultsInfoBase(ReportElementTypedDict, total=True):
     :param Required[float] n: The n-complexity value.
     :param Required[MetricsObjectDict] metrics: The metrics object data.
     """
+
     group: Required[str]
     title: Required[str]
     description: Required[str]
     n: Required[float]
     metrics: Required[MetricsObjectDict]
 
+
 # --- For data used as INPUT (e.g., to `from_dict`) ---
+
 
 class ResultsInfoData(_ResultsInfoBase, total=False):
     """Typed dictionary for V1 ResultsInfo data used as INPUT.
 
     All fields except `type`, `version`, and `hash_id` are required (`total=False`).
-        
+
     :param Required[str] group: The group for the results.
     :param Required[str] title: The title of the results.
     :param Required[str] description: The description of the results.
@@ -62,15 +67,18 @@ class ResultsInfoData(_ResultsInfoBase, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     :param Required[CoreDataMappingType] extra_info: Additional information.
-    
+
     """
+
     variation_marks: Required[VariationMarksType]
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
     extra_info: Required[CoreDataMappingType]
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class ResultsInfoDict(_ResultsInfoBase, total=True):
     """Typed dictionary for the JSON representation of a V1 ResultsInfo (OUTPUT).
@@ -90,10 +98,10 @@ class ResultsInfoDict(_ResultsInfoBase, total=True):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     :param Required[ImmutableCoreDataMappingType] extra_info: Additional information.
-"""
+    """
+
     variation_marks: Required[ImmutableVariationMarksType]
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
     extra_info: Required[ImmutableCoreDataMappingType]
-

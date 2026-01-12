@@ -1,4 +1,5 @@
 """Validation functions for MachineInfo version 1."""
+
 import re
 from collections.abc import Mapping, Sequence
 from types import MappingProxyType
@@ -22,18 +23,23 @@ def hash_id(value: str) -> str:
     :raises SimpleBenchValueError: If value is not a 64-character hexadecimal string
     """
     hash_string = validate_string(
-        value, "hash_id",
+        value,
+        'hash_id',
         _PythonInfoErrorTag.INVALID_HASH_ID_TYPE,
         _PythonInfoErrorTag.INVALID_HASH_ID_VALUE,
-        allow_empty=True, strip=True)
+        allow_empty=True,
+        strip=True,
+    )
     if hash_string == '':
         return ''
 
     return validate_string_with_regex(
-        hash_string, "hash_id", _HASH_RE,
+        hash_string,
+        'hash_id',
+        _HASH_RE,
         _PythonInfoErrorTag.INVALID_HASH_ID_TYPE,
         _PythonInfoErrorTag.INVALID_HASH_ID_VALUE,
-        message="{name} must be 64-character hexadecimal string. Found: {value}"
+        message='{name} must be 64-character hexadecimal string. Found: {value}',
     )
 
 
@@ -48,10 +54,12 @@ def compiler(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "compiler",
+        value,
+        'compiler',
         _PythonInfoErrorTag.INVALID_COMPILER_TYPE,
         _PythonInfoErrorTag.EMPTY_COMPILER_VALUE,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )
 
 
@@ -66,10 +74,12 @@ def implementation(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "implementation",
+        value,
+        'implementation',
         _PythonInfoErrorTag.INVALID_IMPLEMENTATION_TYPE,
         _PythonInfoErrorTag.EMPTY_IMPLEMENTATION_VALUE,
-        allow_empty=False, strip=True
+        allow_empty=False,
+        strip=True,
     )
 
 
@@ -84,10 +94,12 @@ def implementation_version(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "implementation_version",
+        value,
+        'implementation_version',
         _PythonInfoErrorTag.INVALID_IMPLEMENTATION_VERSION_TYPE,
         _PythonInfoErrorTag.EMPTY_IMPLEMENTATION_VERSION_VALUE,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )
 
 
@@ -102,10 +114,12 @@ def python_version(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "python_version",
+        value,
+        'python_version',
         _PythonInfoErrorTag.INVALID_PYTHON_VERSION_TYPE,
         _PythonInfoErrorTag.EMPTY_PYTHON_VERSION_VALUE,
-        allow_empty=False, strip=True
+        allow_empty=False,
+        strip=True,
     )
 
 
@@ -120,10 +134,12 @@ def buildno(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "buildno",
+        value,
+        'buildno',
         _PythonInfoErrorTag.INVALID_BUILDNO_TYPE,
         _PythonInfoErrorTag.EMPTY_BUILDNO_VALUE,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )
 
 
@@ -138,10 +154,12 @@ def builddate(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "build",
+        value,
+        'build',
         _PythonInfoErrorTag.INVALID_BUILD_TYPE,
         _PythonInfoErrorTag.EMPTY_BUILD_VALUE,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )
 
 
@@ -155,10 +173,12 @@ def revision(value: str) -> str:
     :raises SimpleBenchTypeError: If value is not a string.
     """
     return validate_string(
-        value, "revision",
+        value,
+        'revision',
         _PythonInfoErrorTag.INVALID_REVISION,
         _PythonInfoErrorTag.INVALID_REVISION,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )
 
 
@@ -172,10 +192,12 @@ def command_line_flags(value: str) -> str:
     :raises SimpleBenchTypeError: If value is not a string.
     """
     return validate_string(
-        value, "command_line_flags",
+        value,
+        'command_line_flags',
         _PythonInfoErrorTag.INVALID_COMMAND_LINE_FLAGS,
         _PythonInfoErrorTag.INVALID_COMMAND_LINE_FLAGS,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )
 
 
@@ -190,15 +212,15 @@ def environment_variables(value: Mapping[str, str]) -> MappingProxyType[str, str
     """
     if not isinstance(value, Mapping):
         raise SimpleBenchTypeError(
-            "environment_variables must be a mapping of strings to strings. "
-            f"Found: {type(value).__name__}",
-            tag=_PythonInfoErrorTag.INVALID_ENVIRONMENT_VARIABLES_TYPE)
+            f'environment_variables must be a mapping of strings to strings. Found: {type(value).__name__}',
+            tag=_PythonInfoErrorTag.INVALID_ENVIRONMENT_VARIABLES_TYPE,
+        )
 
     if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
         raise SimpleBenchTypeError(
-            "environment_variables must be a mapping of strings to strings. "
-            f"Found: {type(value).__name__}",
-            tag=_PythonInfoErrorTag.INVALID_ENVIRONMENT_VARIABLES_ITEM_TYPE)
+            f'environment_variables must be a mapping of strings to strings. Found: {type(value).__name__}',
+            tag=_PythonInfoErrorTag.INVALID_ENVIRONMENT_VARIABLES_ITEM_TYPE,
+        )
 
     if isinstance(value, MappingProxyType):
         return value
@@ -213,10 +235,7 @@ def gc_is_enabled(value: bool) -> bool:
     :return bool: The validated gc_is_enabled value.
     :raises SimpleBenchTypeError: If value is not a boolean.
     """
-    return validate_bool(
-        value, "gc_is_enabled",
-        _PythonInfoErrorTag.INVALID_GC_IS_ENABLED_TYPE
-    )
+    return validate_bool(value, 'gc_is_enabled', _PythonInfoErrorTag.INVALID_GC_IS_ENABLED_TYPE)
 
 
 def gc_thresholds(value: Sequence[int]) -> tuple[int, int, int]:
@@ -231,19 +250,20 @@ def gc_thresholds(value: Sequence[int]) -> tuple[int, int, int]:
     """
     if not isinstance(value, Sequence):
         raise SimpleBenchTypeError(
-            "gc_thresholds must be a sequence of three integers. "
-            f"Found: {type(value).__name__}",
-            tag=_PythonInfoErrorTag.INVALID_GC_THRESHOLDS_TYPE)
+            f'gc_thresholds must be a sequence of three integers. Found: {type(value).__name__}',
+            tag=_PythonInfoErrorTag.INVALID_GC_THRESHOLDS_TYPE,
+        )
     if len(value) != 3:
         raise SimpleBenchValueError(
-            "gc_thresholds must be a sequence of three integers. found {len(value)} items.", 
-            tag=_PythonInfoErrorTag.INVALID_NUMBER_OF_GC_THRESHOLDS)
+            'gc_thresholds must be a sequence of three integers. found {len(value)} items.',
+            tag=_PythonInfoErrorTag.INVALID_NUMBER_OF_GC_THRESHOLDS,
+        )
 
     if not all(isinstance(i, int) for i in value):
         raise SimpleBenchTypeError(
-            "gc_thresholds must be a tuple of three integers. "
-            f"Found: {type(value).__name__}",
-            tag=_PythonInfoErrorTag.INVALID_GC_THRESHOLD_ITEM_TYPE)
+            f'gc_thresholds must be a tuple of three integers. Found: {type(value).__name__}',
+            tag=_PythonInfoErrorTag.INVALID_GC_THRESHOLD_ITEM_TYPE,
+        )
 
     validated_value: tuple[int, int, int] = tuple(value)  # type: ignore[reportAssignmentType]
     return validated_value
@@ -260,11 +280,12 @@ def thread_switch_interval(value: float | int) -> float:
     """
     if not isinstance(value, (float, int)):
         raise SimpleBenchTypeError(
-            "thread_switch_interval must be a float or an int. "
-            f"Found: {type(value).__name__}",
-            tag=_PythonInfoErrorTag.INVALID_THREAD_SWITCH_INTERVAL_TYPE)
+            f'thread_switch_interval must be a float or an int. Found: {type(value).__name__}',
+            tag=_PythonInfoErrorTag.INVALID_THREAD_SWITCH_INTERVAL_TYPE,
+        )
 
     return float(value)
+
 
 def architecture_bits(value: str) -> str:
     """Validate architecture_bits property.
@@ -277,11 +298,14 @@ def architecture_bits(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "architecture_bits",
+        value,
+        'architecture_bits',
         _PythonInfoErrorTag.INVALID_ARCHITECTURE_BITS,
         _PythonInfoErrorTag.INVALID_ARCHITECTURE_BITS,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )
+
 
 def architecture_linkage(value: str) -> str:
     """Validate architecture_linkage property.
@@ -294,8 +318,10 @@ def architecture_linkage(value: str) -> str:
     :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
-        value, "architecture_linkage",
+        value,
+        'architecture_linkage',
         _PythonInfoErrorTag.INVALID_ARCHITECTURE_LINKAGE,
         _PythonInfoErrorTag.INVALID_ARCHITECTURE_LINKAGE,
-        allow_empty=True, strip=True
+        allow_empty=True,
+        strip=True,
     )

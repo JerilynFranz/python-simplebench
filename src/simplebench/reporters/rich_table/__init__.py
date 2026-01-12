@@ -11,11 +11,7 @@ Public API
 - :class:`~.RichTableOptions`: Options class for the Rich Table reporter.
 - :class:`~.RichTableReporter`: The Rich Table reporter class.
 """
+
 from .reporter import RichTableConfig, RichTableField, RichTableOptions, RichTableReporter
 
-__all__ = [
-    'RichTableConfig',
-    'RichTableField',
-    'RichTableOptions',
-    'RichTableReporter',
-]
+__all__ = ['RichTableConfig', 'RichTableField', 'RichTableOptions', 'RichTableReporter']

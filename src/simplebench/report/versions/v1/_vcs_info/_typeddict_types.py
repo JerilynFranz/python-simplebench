@@ -15,6 +15,7 @@ type-checking purposes.
 
 These types ensure proper validation and serialization of VCSInfo data
 """
+
 from simplebench.report._base.report_element_typed_dict import ReportElementTypedDict
 from simplebench.types import Never, NotRequired, Required
 
@@ -31,8 +32,9 @@ class _VCSInfoCore(ReportElementTypedDict, total=True):
     :param Required[str] branch: The current branch name.
     :param Required[str] repository_url: The URL of the primary remote repository or empty string.
     :param Required[bool] is_dirty: Whether there are uncommitted changes.
-    :param Required[str] commit_datetime: The datetime of the commit in ISO 8601 format.    
+    :param Required[str] commit_datetime: The datetime of the commit in ISO 8601 format.
     """
+
     vcs: Required[str]
     commit_id: Required[str]
     commit_datetime: Required[str]
@@ -40,7 +42,9 @@ class _VCSInfoCore(ReportElementTypedDict, total=True):
     repository_url: Required[str]
     is_dirty: Required[bool]
 
+
 # --- For data used as INPUT (e.g., to `from_dict`) ---
+
 
 class VCSInfoData(_VCSInfoCore, total=False):
     """Typed dictionary for V1 VCSInfo data used as INPUT.
@@ -58,9 +62,11 @@ class VCSInfoData(_VCSInfoCore, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
+
 
 class ImmutableVCSInfoData(VCSInfoData, total=False):
     """Immutable version of :class:`VCSInfoData` (INPUT).
@@ -84,9 +90,12 @@ class ImmutableVCSInfoData(VCSInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
+
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
+
 
 class VCSInfoDict(_VCSInfoCore, total=True):
     """Typed dictionary for the JSON representation of a V1 VCSInfo (OUTPUT).
@@ -103,9 +112,11 @@ class VCSInfoDict(_VCSInfoCore, total=True):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
+
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
+
 
 class ImmutableVCSInfoDict(VCSInfoDict, total=False):
     """Immutable version of :class:`VCSInfoDict` (OUTPUT).
@@ -129,4 +140,5 @@ class ImmutableVCSInfoDict(VCSInfoDict, total=False):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
+
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

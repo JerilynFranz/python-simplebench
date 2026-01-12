@@ -1,4 +1,5 @@
 """V1 ExecutionEnvironment implementation."""
+
 from collections.abc import Mapping
 from types import MappingProxyType
 from typing import cast
@@ -33,8 +34,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
         :raises SimpleBenchTypeError: If a passed environment is of an incorrect type.
         """
         self._hash_id: str = ''
-        self._environments: MappingProxyType[
-            str, Environment] = _validate.environments(dict(kwargs))
+        self._environments: MappingProxyType[str, Environment] = _validate.environments(dict(kwargs))
 
     @classmethod
     def from_dict(cls, data: Mapping[str, CoreDataMappingType]) -> 'ExecutionEnvironment':
@@ -56,9 +56,9 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
                 imported_environments[env_name] = imported_instance
             else:
                 imported_environments[env_name] = validate_core_data_mapping(
-                    env_value, f"Environment '{env_name}'", max_depth=5)
+                    env_value, f"Environment '{env_name}'", max_depth=5
+                )
         return cls(**imported_environments)
-
 
     def to_dict(self) -> ExecutionEnvironmentDict:
         """Convert the ExecutionEnvironment to a dictionary.
@@ -91,7 +91,8 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
                 return python_env
             raise SimpleBenchTypeError(
                 "The 'python' environment is not of type PythonInfo",
-                tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_TYPE)
+                tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_TYPE,
+            )
         return None
 
     def __getitem__(self, key: str) -> Environment:
@@ -107,7 +108,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
         return key in self._environments
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({dict(self._environments)!r})"
+        return f'{self.__class__.__name__}({dict(self._environments)!r})'
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ExecutionEnvironment):

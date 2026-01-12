@@ -5,6 +5,7 @@ and adds a mandatory tag attribute. The tag is intended to provide additional co
 for the exception. The tag is be to be an instance of Enum to ensure a controlled set of possible tags.
 This ensures that the tag is always valid and can be used to categorize exceptions in a consistent
 and meaningful way."""
+
 from enum import Enum
 from typing import Any, Generic, TypeVar
 
@@ -44,6 +45,7 @@ class TaggedException(Exception, Generic[E]):
     Attributes:
         tag_code: Enum
     """
+
     def __init__(self, *args: Any, tag: Enum, **kwargs: Any) -> None:
         """
         Initializes the exception with a mandatory tag.

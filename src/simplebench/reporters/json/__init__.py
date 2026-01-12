@@ -10,10 +10,7 @@ Public API
 - :class:`~.JSONOptions`: Options class for the JSON reporter.
 - :class:`~.JSONReporter`: The JSON reporter class.
 """
+
 from .reporter import JSONConfig, JSONOptions, JSONReporter
 
-__all__ = [
-    'JSONReporter',
-    'JSONConfig',
-    'JSONOptions',
-]
+__all__ = ['JSONReporter', 'JSONConfig', 'JSONOptions']

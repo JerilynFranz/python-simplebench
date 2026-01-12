@@ -2,6 +2,7 @@
 A pytest plugin to provide a similar interface to `pytest-benchmark`
 powered by the simplebench framework.
 """
+
 from __future__ import annotations
 
 import logging
@@ -38,19 +39,14 @@ def pytest_addoption(parser: Parser) -> None:
 
     :param parser: The pytest command-line parser.
     """
-    group = parser.getgroup("simplebench", "simplebench: benchmark framework")
-    group.addoption(
-        "--sb-enable",
-        action="store_true",
-        default=False,
-        help="Enable simplebench benchmarking."
-    )
+    group = parser.getgroup('simplebench', 'simplebench: benchmark framework')
+    group.addoption('--sb-enable', action='store_true', default=False, help='Enable simplebench benchmarking.')
 
     group.addoption(
-        "--sb-save",
-        action="store_true",
+        '--sb-save',
+        action='store_true',
         default=False,
-        help="Save benchmark results to the default output location .benchmarks."
+        help='Save benchmark results to the default output location .benchmarks.',
     )
 
     # group.addoption(
@@ -68,11 +64,11 @@ def pytest_configure(config: Config) -> None:
 
     :param config: The pytest Config object.
     """
-    log.debug("pytest_configure hook called.")
-    config.addinivalue_line("markers", "benchmark: mark a test for simplebench benchmarking.")
+    log.debug('pytest_configure hook called.')
+    config.addinivalue_line('markers', 'benchmark: mark a test for simplebench benchmarking.')
 
-    if not config.getoption("--sb-enable"):
-        log.debug("simplebench not enabled, skipping configuration.")
+    if not config.getoption('--sb-enable'):
+        log.debug('simplebench not enabled, skipping configuration.')
         return
 
     # Create a simplebench Session instance and configure it to use the PytestReporter.
@@ -86,19 +82,20 @@ def pytest_configure(config: Config) -> None:
     reporter_manager.register(json_reporter)
 
     args = ['--pytest']
-    if config.getoption("--sb-save"):
+    if config.getoption('--sb-save'):
         args.extend(['--json', 'filesystem'])
-        log.debug("simplebench save option enabled.")
+        log.debug('simplebench save option enabled.')
     sb_session.parse_args(args)
     sb_session.output_path = Path('.benchmarks')  # Ensure output path is set
 
     config._simplebench_session: Session = sb_session  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
     config._simplebench_pytest_reporter: PytestReporter = pytest_reporter  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
-    log.debug("simplebench configured with session %r and reporter %r", sb_session, pytest_reporter)
+    log.debug('simplebench configured with session %r and reporter %r', sb_session, pytest_reporter)
 
 
 # Phase 2: The Fixture (Test Case Collection)
 # -------------------------------------------
+
 
 class BenchmarkRegistrar:
     """
@@ -220,31 +217,33 @@ class BenchmarkRegistrar:
     :raises SimpleBenchTypeError: If any parameter is of incorrect type.
     :raises SimpleBenchValueError: If any parameter has an invalid value.
     """
+
     def __init__(self, sb_session: Session, pytest_node: Item):
         self._session = sb_session
         self._pytest_node = pytest_node
 
     def __call__(
-            self,
-            action: Callable[..., Any],
-            *,
-            benchmark_id: Optional[str] = None,
-            vcs_info: Optional[VCSInfo] = None,
-            group: str = 'default',
-            title: Optional[str] = None,
-            description: Optional[str] = None,
-            iterations: int = defaults.DEFAULT_ITERATIONS,
-            warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
-            rounds: int | None = None,
-            timer: Callable[[], int] | None = None,
-            min_time: float = defaults.DEFAULT_MIN_TIME,
-            max_time: float = defaults.DEFAULT_MAX_TIME,
-            timeout: float | int | None = None,
-            variation_cols: Optional[dict[str, str]] = None,
-            kwargs_variations: Optional[dict[str, list[Any]]] = None,
-            runners: Optional[list[type[BenchmarkRunner]]] = None,
-            callback: Optional[ReporterCallback] = None,
-            options: Optional[Iterable[ReporterOptions]] = None) -> None:
+        self,
+        action: Callable[..., Any],
+        *,
+        benchmark_id: Optional[str] = None,
+        vcs_info: Optional[VCSInfo] = None,
+        group: str = 'default',
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        iterations: int = defaults.DEFAULT_ITERATIONS,
+        warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
+        rounds: int | None = None,
+        timer: Callable[[], int] | None = None,
+        min_time: float = defaults.DEFAULT_MIN_TIME,
+        max_time: float = defaults.DEFAULT_MAX_TIME,
+        timeout: float | int | None = None,
+        variation_cols: Optional[dict[str, str]] = None,
+        kwargs_variations: Optional[dict[str, list[Any]]] = None,
+        runners: Optional[list[type[BenchmarkRunner]]] = None,
+        callback: Optional[ReporterCallback] = None,
+        options: Optional[Iterable[ReporterOptions]] = None,
+    ) -> None:
         """
         This is called by the user (`benchmark(...)`). Its signature mirrors the
         `simplebench.Case` constructor to provide IDE autocompletion and static
@@ -261,7 +260,7 @@ class BenchmarkRegistrar:
             return _bench.run(action=action, n=1, kwargs=kwargs)
 
         if description is None:
-            description = action.__doc__ or "(no description)"
+            description = action.__doc__ or '(no description)'
 
         # Create a simplebench Case, passing the explicit arguments from the signature.
         case = Case(
@@ -282,7 +281,7 @@ class BenchmarkRegistrar:
             kwargs_variations=kwargs_variations,
             runners=runners,
             callback=callback,
-            options=options
+            options=options,
         )
 
         # Register the case with the session
@@ -300,14 +299,14 @@ def benchmark(request: pytest.FixtureRequest) -> BenchmarkRegistrar:
     :param request: The pytest FixtureRequest object.
     :return: A BenchmarkRegistrar instance to register benchmark cases.
     """
-    if not request.config.getoption("--sb-enable"):
-        pytest.skip("SimpleBench is not enabled. Use --sb-enable to run benchmarks.")
+    if not request.config.getoption('--sb-enable'):
+        pytest.skip('SimpleBench is not enabled. Use --sb-enable to run benchmarks.')
 
     # Retrieve the session object we created in pytest_configure
-    sb_session = getattr(request.config, "_simplebench_session", None)
+    sb_session = getattr(request.config, '_simplebench_session', None)
     if sb_session is None:
         # This should not happen if --sb-enable is used, but it's a good safeguard.
-        pytest.fail("SimpleBench session not initialized.", pytrace=False)
+        pytest.fail('SimpleBench session not initialized.', pytrace=False)
 
     # Provide the registrar object to the test function.
     # The user's call will be forwarded to BenchmarkRegistrar.__call__
@@ -317,6 +316,7 @@ def benchmark(request: pytest.FixtureRequest) -> BenchmarkRegistrar:
 # Phase 3: Execution and Reporting
 # --------------------------------
 
+
 def pytest_sessionfinish(session: pytest.Session) -> None:
     """
     Called after the whole test session finishes.
@@ -324,14 +324,14 @@ def pytest_sessionfinish(session: pytest.Session) -> None:
 
     :param session: The pytest Session object.
     """
-    log.debug("pytest_sessionfinish hook called.")
-    sb_session: Session = getattr(session.config, "_simplebench_session", None)  # type: ignore[reportAssigmentType]
+    log.debug('pytest_sessionfinish hook called.')
+    sb_session: Session = getattr(session.config, '_simplebench_session', None)  # type: ignore[reportAssigmentType]
 
     if not sb_session or not sb_session.cases:
-        log.debug("No simplebench cases found, skipping run.")
+        log.debug('No simplebench cases found, skipping run.')
         return
 
-    log.info("Calling sb_session.run() for %d cases", len(sb_session.cases))
+    log.info('Calling sb_session.run() for %d cases', len(sb_session.cases))
     sb_session.run()
     sb_session.report()
 
@@ -343,16 +343,16 @@ def pytest_terminal_summary(terminalreporter: Any, config: Config) -> None:
     :param terminalreporter: The pytest terminal reporter object.
     :param config: The pytest Config object.
     """
-    log.debug("pytest_terminal_summary hook called.")
-    pytest_reporter: PytestReporter = getattr(config, "_simplebench_pytest_reporter", None)  # pylint: disable=line-too-long  # type: ignore[reportAssignmentType]  # noqa: E501
+    log.debug('pytest_terminal_summary hook called.')
+    pytest_reporter: PytestReporter = getattr(config, '_simplebench_pytest_reporter', None)  # pylint: disable=line-too-long  # type: ignore[reportAssignmentType]  # noqa: E501
     if not pytest_reporter or not pytest_reporter.rendered_tables:
-        log.debug("No rendered tables found in PytestReporter, skipping summary.")
+        log.debug('No rendered tables found in PytestReporter, skipping summary.')
         return
 
-    log.info("Found %d rendered tables to print in summary.", len(pytest_reporter.rendered_tables))
+    log.info('Found %d rendered tables to print in summary.', len(pytest_reporter.rendered_tables))
     # Get the real terminal writer from pytest
     writer = terminalreporter._tw  # pylint: disable=protected-access
-    writer.sep("=", "simplebench results", blue=True)
+    writer.sep('=', 'simplebench results', blue=True)
 
     # Use a Rich Console to print the captured tables to pytest's writer
     console = Console(file=writer, force_terminal=True)

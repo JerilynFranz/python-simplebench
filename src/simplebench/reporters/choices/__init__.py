@@ -1,11 +1,8 @@
 """simplebench.reporters.choices package."""
+
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.choices._error_tags import _ChoicesErrorTag
 
-__all__ = [
-    "Choices",
-    "_ChoicesErrorTag",
-    "ChoicesConf",
-]
+__all__ = ['Choices', '_ChoicesErrorTag', 'ChoicesConf']
 """'*' Exported names for simplebench.reporters.choices package."""

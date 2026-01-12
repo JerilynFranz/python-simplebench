@@ -4,6 +4,7 @@ This module defines the :class:`~.CSVOptions` class, which is a subclass of
 :class:`~simplebench.reporters.reporter.options.ReporterOptions` and is used
 to hold options specific to the CSV reporter.
 """
+
 from typing import Sequence
 
 from simplebench.reporters.reporter import ReporterOptions
@@ -60,20 +61,22 @@ class CSVOptions(ReporterOptions):
         Defaults to ``False`` - which places the variation columns at the start of the rows.
     :raises ~simplebench.exceptions.SimpleBenchTypeError: Any parameter is of an invalid type.
     :raises ~simplebench.exceptions.SimpleBenchValueError: If ``fields`` is an empty sequence."""
-    def __init__(self,
-                 fields: Sequence[CSVField] | None = None,
-                 variation_cols_last: bool = False
-                 ) -> None:
+
+    def __init__(self, fields: Sequence[CSVField] | None = None, variation_cols_last: bool = False) -> None:
         """Initialize CSVOptions instance."""
-        self._fields: tuple[CSVField, ...] = tuple(validate_sequence_of_type(
-            fields if fields is not None else _DEFAULT_RICH_TABLE_FIELDS,
-            CSVField, 'fields',
-            _CSVOptionsErrorTag.INVALID_DEFAULT_FIELDS_TYPE,
-            _CSVOptionsErrorTag.INVALID_DEFAULT_FIELDS_VALUE,
-            allow_empty=False))
+        self._fields: tuple[CSVField, ...] = tuple(
+            validate_sequence_of_type(
+                fields if fields is not None else _DEFAULT_RICH_TABLE_FIELDS,
+                CSVField,
+                'fields',
+                _CSVOptionsErrorTag.INVALID_DEFAULT_FIELDS_TYPE,
+                _CSVOptionsErrorTag.INVALID_DEFAULT_FIELDS_VALUE,
+                allow_empty=False,
+            )
+        )
         self._variation_cols_last = validate_bool(
-            variation_cols_last, 'variation_cols_last',
-            _CSVOptionsErrorTag.INVALID_VARIATION_COLS_LAST_TYPE)
+            variation_cols_last, 'variation_cols_last', _CSVOptionsErrorTag.INVALID_VARIATION_COLS_LAST_TYPE
+        )
 
     @property
     def fields(self) -> tuple[CSVField, ...]:

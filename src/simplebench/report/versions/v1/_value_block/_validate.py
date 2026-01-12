@@ -7,6 +7,7 @@ Each function checks the type and value constraints for a specific field,
 returns the validated and correctly typed value, and raises appropriate
 exceptions if the validation fails.
 """
+
 import re
 
 from simplebench.report._error_tags import _ValueBlockErrorTag
@@ -34,15 +35,21 @@ def hash_id(val: str) -> str:
     :raises SimpleBenchTypeError: If the hash_id value is not a string.
     """
     val = validate_string(
-            val, "hash_id",
-            _ValueBlockErrorTag.INVALID_HASH_ID_TYPE,
-            _ValueBlockErrorTag.INVALID_HASH_ID_VALUE,
-            allow_empty=True, strip=True)
+        val,
+        'hash_id',
+        _ValueBlockErrorTag.INVALID_HASH_ID_TYPE,
+        _ValueBlockErrorTag.INVALID_HASH_ID_VALUE,
+        allow_empty=True,
+        strip=True,
+    )
 
     return validate_string_with_regex(
-            val, "hash_id", _HASH_ID_REGEX,
-            _ValueBlockErrorTag.INVALID_HASH_ID_STRUCTURE,  # can't trigger type error here
-            _ValueBlockErrorTag.INVALID_HASH_ID_STRUCTURE)
+        val,
+        'hash_id',
+        _HASH_ID_REGEX,
+        _ValueBlockErrorTag.INVALID_HASH_ID_STRUCTURE,  # can't trigger type error here
+        _ValueBlockErrorTag.INVALID_HASH_ID_STRUCTURE,
+    )
 
 
 def semantic_type(val: str) -> str:
@@ -56,9 +63,11 @@ def semantic_type(val: str) -> str:
     :raises SimpleBenchValueError: If the semantic type string is invalid.
     """
     return validate_namespaced_identifier(
-            val, 'semantic_type',
-            _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
-            _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE)
+        val,
+        'semantic_type',
+        _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
+        _ValueBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE,
+    )
 
 
 def timer(val: str | None) -> str | None:
@@ -73,10 +82,13 @@ def timer(val: str | None) -> str | None:
         return None
 
     timer_name: str = validate_string(
-        val, 'timer',
+        val,
+        'timer',
         _ValueBlockErrorTag.INVALID_TIMER_TYPE,
         _ValueBlockErrorTag.INVALID_TIMER_VALUE,
-        allow_blank=False, strip=True)
+        allow_blank=False,
+        strip=True,
+    )
 
     return timer_name
 
@@ -90,10 +102,13 @@ def unit(val: str) -> str:
     :raises SimpleBenchValueError: If the unit string is invalid.
     """
     return validate_string(
-            val, 'unit',
-            _ValueBlockErrorTag.INVALID_UNIT_TYPE,
-            _ValueBlockErrorTag.INVALID_UNIT_VALUE,
-            allow_blank=False, strip=True)
+        val,
+        'unit',
+        _ValueBlockErrorTag.INVALID_UNIT_TYPE,
+        _ValueBlockErrorTag.INVALID_UNIT_VALUE,
+        allow_blank=False,
+        strip=True,
+    )
 
 
 def scale(val: float) -> float:
@@ -107,9 +122,8 @@ def scale(val: float) -> float:
     :raises SimpleBenchValueError: If the scale factor is not a positive number.
     """
     return validate_positive_float(
-            val, 'scale',
-            _ValueBlockErrorTag.INVALID_SCALE_TYPE,
-            _ValueBlockErrorTag.INVALID_SCALE_VALUE)
+        val, 'scale', _ValueBlockErrorTag.INVALID_SCALE_TYPE, _ValueBlockErrorTag.INVALID_SCALE_VALUE
+    )
 
 
 def value(val: float | int) -> float:
@@ -121,6 +135,4 @@ def value(val: float | int) -> float:
     :return float: The validated value.
     :raise SimpleBenchTypeError: If the value is not a float or int.
     """
-    return validate_float(
-            val, 'value',
-            _ValueBlockErrorTag.INVALID_VALUE_TYPE)
+    return validate_float(val, 'value', _ValueBlockErrorTag.INVALID_VALUE_TYPE)

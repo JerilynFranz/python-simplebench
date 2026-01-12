@@ -1,4 +1,5 @@
 """VCS Types enumeration."""
+
 from enum import Enum
 
 from simplebench.doc_utils import enum_docstrings
@@ -8,15 +9,15 @@ from simplebench.doc_utils import enum_docstrings
 class VCSType(str, Enum):
     """Enumeration of supported Version Control System types."""
 
-    GIT = "git"
+    GIT = 'git'
     """Git Version Control System."""
-    HG = "hg"
+    HG = 'hg'
     """Mercurial (Hg) Version Control System."""
-    SVN = "svn"
+    SVN = 'svn'
     """Subversion (SVN) Version Control System."""
-    PERFORCE = "perforce"
+    PERFORCE = 'perforce'
     """Perforce Version Control System."""
-    TFVC = "tfvc"
+    TFVC = 'tfvc'
     """Team Foundation Version Control (TFVC) System."""
-    NONE = "none"
+    NONE = 'none'
     """No Version Control System detected."""

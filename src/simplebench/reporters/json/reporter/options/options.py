@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Reporter for benchmark results using JSON files."""
+
 from simplebench.reporters.reporter import ReporterOptions
 
 
@@ -14,8 +15,8 @@ class JSONOptions(ReporterOptions):
     :ivar full_data: Whether to include full data in the JSON output.
     :vartype full_data: bool
     """
-    def __init__(self, *,
-                 full_data: bool = False) -> None:
+
+    def __init__(self, *, full_data: bool = False) -> None:
         """Initialize JSONChoiceOptions with default targets and subdirectory.
 
         :param full_data: Whether to include full data in the JSON output.

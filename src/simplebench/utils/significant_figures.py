@@ -1,4 +1,5 @@
 """Utility functions for significant figures handling."""
+
 import math
 
 from simplebench.defaults import DEFAULT_SIGNIFICANT_FIGURES
@@ -28,17 +29,13 @@ def sigfigs(number: float, figures: int = DEFAULT_SIGNIFICANT_FIGURES) -> float:
     :rtype: float
     """
     if not isinstance(number, float):
-        raise SimpleBenchTypeError(
-            "number arg must be a float",
-            tag=_UtilsErrorTag.SIGFIGS_INVALID_NUMBER_ARG_TYPE)
+        raise SimpleBenchTypeError('number arg must be a float', tag=_UtilsErrorTag.SIGFIGS_INVALID_NUMBER_ARG_TYPE)
     if not isinstance(figures, int):
-        raise SimpleBenchTypeError(
-            "figures arg must be an int",
-            tag=_UtilsErrorTag.SIGFIGS_INVALID_FIGURES_ARG_TYPE)
+        raise SimpleBenchTypeError('figures arg must be an int', tag=_UtilsErrorTag.SIGFIGS_INVALID_FIGURES_ARG_TYPE)
     if figures < 1:
         raise SimpleBenchValueError(
-            "figures arg must be at least 1",
-            tag=_UtilsErrorTag.SIGFIGS_INVALID_FIGURES_ARG_VALUE)
+            'figures arg must be at least 1', tag=_UtilsErrorTag.SIGFIGS_INVALID_FIGURES_ARG_VALUE
+        )
 
     if number == 0.0:
         return 0.0

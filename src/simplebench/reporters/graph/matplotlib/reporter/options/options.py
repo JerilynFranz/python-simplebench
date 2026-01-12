@@ -3,10 +3,12 @@
 These options are used to configure the behavior of a MatPlotLib reporter
 when generating graph reports for benchmark test cases.
 """
+
 from typing import ClassVar
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.graph.enums.image_type import ImageType
+
 # simplebench.reporters.graph imports
 from simplebench.reporters.graph.options import GraphOptions
 from simplebench.validators import validate_bool, validate_float, validate_int_range, validate_type
@@ -14,6 +16,7 @@ from simplebench.validators import validate_bool, validate_float, validate_int_r
 # simplebench.reporters.graph.matplotlib imports
 from ...enums.style import Style
 from ...theme import DefaultTheme, Theme
+
 # simplebench.reporters.graph.matplotlib.options imports
 from ._error_tags import _MatPlotLibOptionsErrorTag
 
@@ -82,6 +85,7 @@ class MatPlotLibOptions(GraphOptions):
     :ivar image_type: The output image format for the graph files.
     :vartype image_type: :class:`~simplebench.reporters.graph.enums.image_type.ImageType`
     """
+
     _HARDCODED_DEFAULT_WIDTH: ClassVar[int] = 1500
     """:meta private:"""
     _HARDCODED_DEFAULT_HEIGHT: ClassVar[int] = 750
@@ -198,6 +202,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_WIDTH: int | None = None
     """:meta private:"""
+
     @classmethod
     def set_default_width(cls, width: int | None) -> None:
         """Set the default width in pixels for all MatPlotLib graphs.
@@ -209,11 +214,18 @@ class MatPlotLibOptions(GraphOptions):
         :raises SimpleBenchTypeError: If the width is not an integer or ``None``.
         :raises SimpleBenchValueError: If the width is not within the valid range.
         """
-        cls._DEFAULT_WIDTH = validate_int_range(
-            width, 'MatPlotLibOptions.width',
-            _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_WIDTH_ARG_TYPE,
-            _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_WIDTH_ARG_VALUE,
-            min_value=500, max_value=4000) if width is not None else None
+        cls._DEFAULT_WIDTH = (
+            validate_int_range(
+                width,
+                'MatPlotLibOptions.width',
+                _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_WIDTH_ARG_TYPE,
+                _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_WIDTH_ARG_VALUE,
+                min_value=500,
+                max_value=4000,
+            )
+            if width is not None
+            else None
+        )
 
     @classmethod
     def get_default_width(cls) -> int:
@@ -231,6 +243,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_HEIGHT: int | None = None
     """:meta private:"""
+
     @classmethod
     def set_default_height(cls, height: int | None) -> None:
         """Set the default height in pixels for all MatPlotLib graphs.
@@ -244,11 +257,18 @@ class MatPlotLibOptions(GraphOptions):
         :raises SimpleBenchTypeError: If the height is not an integer or ``None``.
         :raises SimpleBenchValueError: If the height is not within the valid range.
         """
-        cls._DEFAULT_HEIGHT = validate_int_range(
-            height, 'height',
-            _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_HEIGHT_ARG_TYPE,
-            _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_HEIGHT_ARG_VALUE,
-            min_value=500, max_value=4000) if height is not None else None
+        cls._DEFAULT_HEIGHT = (
+            validate_int_range(
+                height,
+                'height',
+                _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_HEIGHT_ARG_TYPE,
+                _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_HEIGHT_ARG_VALUE,
+                min_value=500,
+                max_value=4000,
+            )
+            if height is not None
+            else None
+        )
 
     @classmethod
     def get_default_height(cls) -> int:
@@ -266,6 +286,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_DPI: int | None = None
     """:meta private:"""
+
     @classmethod
     def set_default_dpi(cls, dpi: int | None) -> None:
         """Set the default DPI for all MatPlotLib graphs.
@@ -279,11 +300,18 @@ class MatPlotLibOptions(GraphOptions):
         :raises SimpleBenchTypeError: If the dpi is not an integer or ``None``.
         :raises SimpleBenchValueError: If the dpi is not within the valid range.
         """
-        cls._DEFAULT_DPI = validate_int_range(
-            dpi, 'dpi',
-            _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_DPI_ARG_TYPE,
-            _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_DPI_ARG_VALUE,
-            min_value=50, max_value=400) if dpi is not None else None
+        cls._DEFAULT_DPI = (
+            validate_int_range(
+                dpi,
+                'dpi',
+                _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_DPI_ARG_TYPE,
+                _MatPlotLibOptionsErrorTag.INVALID_DEFAULT_DPI_ARG_VALUE,
+                min_value=50,
+                max_value=400,
+            )
+            if dpi is not None
+            else None
+        )
 
     @classmethod
     def get_default_dpi(cls) -> int:
@@ -301,6 +329,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_Y_STARTS_AT_ZERO: bool | None = None
     """:meta private:"""
+
     @classmethod
     def set_default_y_starts_at_zero(cls, y_starts_at_zero: bool | None) -> None:
         """Set the default value for whether Y-axis starts at zero for all MatPlotLib graphs
@@ -314,7 +343,8 @@ class MatPlotLibOptions(GraphOptions):
         if y_starts_at_zero is not None and not isinstance(y_starts_at_zero, bool):
             raise SimpleBenchTypeError(
                 'default_y_starts_at_zero must be a bool or None.',
-                tag=_MatPlotLibOptionsErrorTag.INVALID_Y_STARTS_AT_ZERO_ARG_TYPE)
+                tag=_MatPlotLibOptionsErrorTag.INVALID_Y_STARTS_AT_ZERO_ARG_TYPE,
+            )
         cls._DEFAULT_Y_STARTS_AT_ZERO = y_starts_at_zero
 
     @classmethod
@@ -332,6 +362,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_X_LABELS_ROTATION: float | None = None
     """:meta private:"""
+
     @classmethod
     def set_default_x_labels_rotation(cls, x_labels_rotation: float | None) -> None:
         """Set the default rotation angle in degrees for X-axis labels for all MatPlotLib graphs.
@@ -345,7 +376,8 @@ class MatPlotLibOptions(GraphOptions):
         if x_labels_rotation is not None and not isinstance(x_labels_rotation, (int, float)):
             raise SimpleBenchTypeError(
                 'MatPlotLibOptions.default_x_labels_rotation must be a float or None.',
-                tag=_MatPlotLibOptionsErrorTag.INVALID_DEFAULT_X_LABELS_ROTATION_ARG_TYPE)
+                tag=_MatPlotLibOptionsErrorTag.INVALID_DEFAULT_X_LABELS_ROTATION_ARG_TYPE,
+            )
         MatPlotLibOptions._DEFAULT_X_LABELS_ROTATION = x_labels_rotation
 
     @classmethod
@@ -363,6 +395,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_STYLE: Style | None = None
     """:meta private:"""
+
     @classmethod
     def set_default_style(cls, style: Style | None = None) -> None:
         """Set the default style/theme for all MatPlotLib graphs.
@@ -379,7 +412,8 @@ class MatPlotLibOptions(GraphOptions):
         if style is not None and not isinstance(style, Style):
             raise SimpleBenchTypeError(
                 'MatPlotLibOptions.default_style must be a Style value or None.',
-                tag=_MatPlotLibOptionsErrorTag.INVALID_DEFAULT_STYLE_ARG_TYPE)
+                tag=_MatPlotLibOptionsErrorTag.INVALID_DEFAULT_STYLE_ARG_TYPE,
+            )
         cls._DEFAULT_STYLE = style
 
     @classmethod
@@ -398,6 +432,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_THEME: Theme | None = None
     """:meta private:"""
+
     @classmethod
     def set_default_theme(cls, theme: Theme | None = None) -> None:
         """Set the default theme for all MatPlotLib graphs.
@@ -416,7 +451,8 @@ class MatPlotLibOptions(GraphOptions):
         if theme is not None and not isinstance(theme, Theme):
             raise SimpleBenchTypeError(
                 'MatPlotLibOptions.default_theme must be a Theme instance or None.',
-                tag=_MatPlotLibOptionsErrorTag.INVALID_DEFAULT_THEME_ARG_TYPE)
+                tag=_MatPlotLibOptionsErrorTag.INVALID_DEFAULT_THEME_ARG_TYPE,
+            )
         cls._DEFAULT_THEME = theme
 
     @classmethod
@@ -434,6 +470,7 @@ class MatPlotLibOptions(GraphOptions):
 
     _DEFAULT_IMAGE_TYPE: ImageType | None = None
     """:meta private:"""
+
     @staticmethod
     def set_default_image_type(image_type: ImageType | None) -> None:
         """Set the default image type for all MatPlotLib graphs.
@@ -463,16 +500,17 @@ class MatPlotLibOptions(GraphOptions):
             return ImageType.SVG
         return MatPlotLibOptions._DEFAULT_IMAGE_TYPE
 
-    def __init__(self,
-                 width: int | None = None,
-                 height: int | None = None,
-                 dpi: int | None = None,
-                 y_starts_at_zero: bool | None = None,
-                 x_labels_rotation: float | None = None,
-                 style: Style | None = None,
-                 theme: Theme | None = None,
-                 image_type: ImageType | None = None,
-                 ) -> None:
+    def __init__(
+        self,
+        width: int | None = None,
+        height: int | None = None,
+        dpi: int | None = None,
+        y_starts_at_zero: bool | None = None,
+        x_labels_rotation: float | None = None,
+        style: Style | None = None,
+        theme: Theme | None = None,
+        image_type: ImageType | None = None,
+    ) -> None:
         """Create a :class:`~.MatPlotLibOptions` instance.
 
         To ensure accuracy in graph rendering, the default width, height, and DPI should be set with
@@ -518,50 +556,77 @@ class MatPlotLibOptions(GraphOptions):
         self._width: int | None = None
         if width is not None:
             self._width = validate_int_range(
-                    width, 'width',
-                    _MatPlotLibOptionsErrorTag.INVALID_WIDTH_ARG_TYPE,
-                    _MatPlotLibOptionsErrorTag.INVALID_WIDTH_ARG_VALUE,
-                    min_value=500, max_value=4000)
+                width,
+                'width',
+                _MatPlotLibOptionsErrorTag.INVALID_WIDTH_ARG_TYPE,
+                _MatPlotLibOptionsErrorTag.INVALID_WIDTH_ARG_VALUE,
+                min_value=500,
+                max_value=4000,
+            )
 
         self._height: int | None = None
         if height is not None:
             self._height = validate_int_range(
-                    height, 'height',
-                    _MatPlotLibOptionsErrorTag.INVALID_HEIGHT_ARG_TYPE,
-                    _MatPlotLibOptionsErrorTag.INVALID_HEIGHT_ARG_VALUE,
-                    min_value=500, max_value=4000)
+                height,
+                'height',
+                _MatPlotLibOptionsErrorTag.INVALID_HEIGHT_ARG_TYPE,
+                _MatPlotLibOptionsErrorTag.INVALID_HEIGHT_ARG_VALUE,
+                min_value=500,
+                max_value=4000,
+            )
 
-        self._dpi: int | None = None if dpi is None else validate_int_range(
-                    dpi, 'dpi',
-                    _MatPlotLibOptionsErrorTag.INVALID_DPI_ARG_TYPE,
-                    _MatPlotLibOptionsErrorTag.INVALID_DPI_ARG_VALUE,
-                    min_value=50, max_value=400)
+        self._dpi: int | None = (
+            None
+            if dpi is None
+            else validate_int_range(
+                dpi,
+                'dpi',
+                _MatPlotLibOptionsErrorTag.INVALID_DPI_ARG_TYPE,
+                _MatPlotLibOptionsErrorTag.INVALID_DPI_ARG_VALUE,
+                min_value=50,
+                max_value=400,
+            )
+        )
         """:meta private:"""
 
         self._y_starts_at_zero: bool | None = validate_bool(
-            y_starts_at_zero, 'y_starts_at_zero',
+            y_starts_at_zero,
+            'y_starts_at_zero',
             _MatPlotLibOptionsErrorTag.INVALID_Y_STARTS_AT_ZERO_ARG_TYPE,
-            allow_none=True)
+            allow_none=True,
+        )
         """:meta private:"""
 
-        self._x_labels_rotation: float | None = None if x_labels_rotation is None else validate_float(
-            x_labels_rotation, 'x_labels_rotation',
-            _MatPlotLibOptionsErrorTag.INVALID_X_LABELS_ROTATION_ARG_TYPE)
+        self._x_labels_rotation: float | None = (
+            None
+            if x_labels_rotation is None
+            else validate_float(
+                x_labels_rotation, 'x_labels_rotation', _MatPlotLibOptionsErrorTag.INVALID_X_LABELS_ROTATION_ARG_TYPE
+            )
+        )
         """:meta private:"""
 
-        self._style: Style | None = None if style is None else validate_type(
-            style, Style, 'style',
-            _MatPlotLibOptionsErrorTag.INVALID_STYLE_ARG_TYPE)
+        self._style: Style | None = (
+            None
+            if style is None
+            else validate_type(style, Style, 'style', _MatPlotLibOptionsErrorTag.INVALID_STYLE_ARG_TYPE)
+        )
         """:meta private:"""
 
-        self._theme: Theme | None = None if theme is None else validate_type(
-            theme, Theme, 'theme',
-            _MatPlotLibOptionsErrorTag.INVALID_THEME_ARG_TYPE)
+        self._theme: Theme | None = (
+            None
+            if theme is None
+            else validate_type(theme, Theme, 'theme', _MatPlotLibOptionsErrorTag.INVALID_THEME_ARG_TYPE)
+        )
         """:meta private:"""
 
-        self._image_type: ImageType | None = None if image_type is None else validate_type(
-            image_type, ImageType, 'image_type',
-            _MatPlotLibOptionsErrorTag.INVALID_IMAGE_TYPE_ARG_TYPE)
+        self._image_type: ImageType | None = (
+            None
+            if image_type is None
+            else validate_type(
+                image_type, ImageType, 'image_type', _MatPlotLibOptionsErrorTag.INVALID_IMAGE_TYPE_ARG_TYPE
+            )
+        )
         """:meta private:"""
 
     @property

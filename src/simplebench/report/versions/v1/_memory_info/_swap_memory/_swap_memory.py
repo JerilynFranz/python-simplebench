@@ -8,6 +8,7 @@ for the swap_memory object in the following JSON Schema:
 https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/memory-info.json
 
 """
+
 from simplebench.report._base import BaseSwapMemoryObject
 
 from . import _validate
@@ -16,14 +17,10 @@ from ._typeddict_types import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDic
 
 class SwapMemoryObject(BaseSwapMemoryObject):
     """Class representing swap memory information in a memory-info object."""
+
     __slots__ = ('_total', '_used', '_free', '_percent', '_swap_in', '_swap_out', '_hash_id')
-    def __init__(self, *,
-                 total: int,
-                 used: int,
-                 free: int,
-                 percent: float,
-                 swap_in: int,
-                 swap_out: int) -> None:
+
+    def __init__(self, *, total: int, used: int, free: int, percent: float, swap_in: int, swap_out: int) -> None:
         """Initialize MemoryInfo.
 
         :param total: Total swap memory in bytes.
@@ -55,10 +52,7 @@ class SwapMemoryObject(BaseSwapMemoryObject):
         :return SwapMemoryObject: A SwapMemoryObject instance.
         """
         allowed_keys = cls.init_params()
-        kwargs = cls.import_data(
-            data=data,
-            allowed_fields=allowed_keys,
-            process_as={})
+        kwargs = cls.import_data(data=data, allowed_fields=allowed_keys, process_as={})
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableSwapMemoryObjectDict:

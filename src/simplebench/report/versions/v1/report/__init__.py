@@ -3,7 +3,4 @@
 from .report import Report
 from .report_schema import ReportSchema
 
-__all__ = [
-    "Report",
-    "ReportSchema",
-]
+__all__ = ['Report', 'ReportSchema']

@@ -1,4 +1,5 @@
 """Validation functions for V1 report version."""
+
 from __future__ import annotations
 
 from types import MappingProxyType
@@ -21,10 +22,12 @@ _deferred_imports_done: bool = False
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.report.versions.v1 import MachineInfo, ResultsInfo
+
     _deferred_imports_done = True
 else:
     MachineInfo = None  # pylint: disable=invalid-name
     ResultsInfo = None  # pylint: disable=invalid-name
+
 
 def _deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
@@ -32,7 +35,9 @@ def _deferred_imports() -> None:
     if _deferred_imports_done:
         return
     from simplebench.report.versions.v1 import MachineInfo, ResultsInfo  # pylint: disable=import-outside-toplevel
+
     _deferred_imports_done = True
+
 
 def timestamp(value: str) -> str:
     """Validate a timestamp string in ISO 8601 format.
@@ -43,9 +48,12 @@ def timestamp(value: str) -> str:
     :raises SimpleBenchValueError: If the timestamp is not a valid ISO 8601 string.
     """
     return validate_iso8601_datetime(
-            value, 'timestamp',
-            _ReportErrorTag.INVALID_TIMESTAMP_PROPERTY_TYPE,
-            _ReportErrorTag.INVALID_TIMESTAMP_PROPERTY_VALUE)
+        value,
+        'timestamp',
+        _ReportErrorTag.INVALID_TIMESTAMP_PROPERTY_TYPE,
+        _ReportErrorTag.INVALID_TIMESTAMP_PROPERTY_VALUE,
+    )
+
 
 def group(value: str) -> str:
     """Validate a group string.
@@ -56,10 +64,13 @@ def group(value: str) -> str:
     :raises SimpleBenchValueError: If the group is an empty string.
     """
     return validate_string(
-            value, "group",
-            _ReportErrorTag.INVALID_GROUP_PROPERTY_TYPE,
-            _ReportErrorTag.EMPTY_GROUP_PROPERTY_VALUE,
-            allow_empty=False)
+        value,
+        'group',
+        _ReportErrorTag.INVALID_GROUP_PROPERTY_TYPE,
+        _ReportErrorTag.EMPTY_GROUP_PROPERTY_VALUE,
+        allow_empty=False,
+    )
+
 
 def title(value: str) -> str:
     """Validate a title string.
@@ -70,10 +81,13 @@ def title(value: str) -> str:
     :raises SimpleBenchValueError: If the title is an empty string.
     """
     return validate_string(
-            value, "title",
-            _ReportErrorTag.INVALID_TITLE_PROPERTY_TYPE,
-            _ReportErrorTag.EMPTY_TITLE_PROPERTY_VALUE,
-            allow_empty=False)
+        value,
+        'title',
+        _ReportErrorTag.INVALID_TITLE_PROPERTY_TYPE,
+        _ReportErrorTag.EMPTY_TITLE_PROPERTY_VALUE,
+        allow_empty=False,
+    )
+
 
 def description(value: str) -> str:
     """Validate a description string.
@@ -84,10 +98,13 @@ def description(value: str) -> str:
     :raises SimpleBenchValueError: If the description is an empty string.
     """
     return validate_string(
-            value, "description",
-            _ReportErrorTag.INVALID_DESCRIPTION_PROPERTY_TYPE,
-            _ReportErrorTag.EMPTY_DESCRIPTION_PROPERTY_VALUE,
-            allow_empty=False)
+        value,
+        'description',
+        _ReportErrorTag.INVALID_DESCRIPTION_PROPERTY_TYPE,
+        _ReportErrorTag.EMPTY_DESCRIPTION_PROPERTY_VALUE,
+        allow_empty=False,
+    )
+
 
 def variation_cols(value: VariationColsType) -> ImmutableVariationColsType:
     """Validate a variation_cols dictionary.
@@ -99,22 +116,27 @@ def variation_cols(value: VariationColsType) -> ImmutableVariationColsType:
     """
     if not isinstance(value, dict):
         raise SimpleBenchValueError(
-            "variation_cols must be a dictionary",
-            tag=_ReportErrorTag.INVALID_VARIATION_COLS_PROPERTY_TYPE)
+            'variation_cols must be a dictionary', tag=_ReportErrorTag.INVALID_VARIATION_COLS_PROPERTY_TYPE
+        )
 
     validate_sequence_of_str(
-        value.keys(), "variation_cols keys",
+        value.keys(),
+        'variation_cols keys',
         _ReportErrorTag.INVALID_VARIATION_COLS_KEYS_TYPE,
         _ReportErrorTag.INVALID_VARIATION_COLS_KEYS_VALUE,
-        allow_empty=False)
+        allow_empty=False,
+    )
 
     validate_sequence_of_str(
-        value.values(), "variation_cols values",
+        value.values(),
+        'variation_cols values',
         _ReportErrorTag.INVALID_VARIATION_COLS_VALUES_TYPE,
         _ReportErrorTag.INVALID_VARIATION_COLS_VALUES_VALUE,
-        allow_empty=False)
+        allow_empty=False,
+    )
 
     return MappingProxyType(value)
+
 
 def results(value: Sequence[ResultsInfo]) -> tuple[ResultsInfo, ...]:
     """Validate a Sequence of ResultsInfo instances.
@@ -124,11 +146,12 @@ def results(value: Sequence[ResultsInfo]) -> tuple[ResultsInfo, ...]:
     :raises SimpleBenchTypeError: If results is not a Sequence of ResultsInfo.
     """
     _deferred_imports()
-    return tuple(validate_sequence_of_type(
-        value, ResultsInfo, 'results',
-        _ReportErrorTag.INVALID_RESULTS_TYPE,
-        _ReportErrorTag.INVALID_RESULTS_VALUE,
-    ))
+    return tuple(
+        validate_sequence_of_type(
+            value, ResultsInfo, 'results', _ReportErrorTag.INVALID_RESULTS_TYPE, _ReportErrorTag.INVALID_RESULTS_VALUE
+        )
+    )
+
 
 def machine(value: MachineInfo) -> MachineInfo:
     """Validate that the value is a MachineInfo instance.
@@ -138,10 +161,13 @@ def machine(value: MachineInfo) -> MachineInfo:
     """
     _deferred_imports()
     return validate_type(
-        value, MachineInfo, "machine",
+        value,
+        MachineInfo,
+        'machine',
         _ReportErrorTag.INVALID_MACHINE_PROPERTY_TYPE,
-        message="{name} must be a MachineInfo instance",
+        message='{name} must be a MachineInfo instance',
     )
+
 
 def case(value: Case) -> None:
     """Validate that the given object is a Case instance.
@@ -151,7 +177,7 @@ def case(value: Case) -> None:
     """
     if not is_case(value):
         raise SimpleBenchValueError(
-            f"The provided object is a {type(value).__name__}, expected a Case instance.",
+            f'The provided object is a {type(value).__name__}, expected a Case instance.',
             tag=_ReportErrorTag.INVALID_CASE,
         )
 
@@ -164,6 +190,5 @@ def case_has_been_run(value: Case) -> None:
     """
     if not value.has_run:
         raise SimpleBenchValueError(
-            "The provided Case instance has not been run yet.",
-            tag=_ReportErrorTag.CASE_HAS_NOT_BEEN_RUN,
+            'The provided Case instance has not been run yet.', tag=_ReportErrorTag.CASE_HAS_NOT_BEEN_RUN
         )

@@ -1,4 +1,5 @@
 """Base benchmark statistics class."""
+
 from __future__ import annotations
 
 import statistics
@@ -18,7 +19,7 @@ StatsBlock: TypeAlias = v1.StatsBlock
 
 
 class Stats:
-    '''Generic container for statistics on a benchmark.
+    """Generic container for statistics on a benchmark.
 
     :ivar Metric metric: The metric definition for the benchmark. (read only)
     :ivar int iterations: The total number of iterations represented by the data points. (read only)
@@ -33,15 +34,24 @@ class Stats:
         deviation of the data. (read only)
     :ivar tuple[float, ...] percentiles: Percentiles of the data. (read only)
 
-    '''
-    __slots__ = ('_metric', '_rounds', '_data', '_percentiles', '_mean', '_median',
-                 '_minimum', '_maximum', '_standard_deviation', '_relative_standard_deviation',
-                 '_stats_block', '_stats_block_full_data')
+    """
 
-    def __init__(self, *,
-                 metric: Metric,
-                 data: Values,
-                 rounds: int) -> None:
+    __slots__ = (
+        '_metric',
+        '_rounds',
+        '_data',
+        '_percentiles',
+        '_mean',
+        '_median',
+        '_minimum',
+        '_maximum',
+        '_standard_deviation',
+        '_relative_standard_deviation',
+        '_stats_block',
+        '_stats_block_full_data',
+    )
+
+    def __init__(self, *, metric: Metric, data: Values, rounds: int) -> None:
         """Initialize the Stats object.
 
         :param Metric metric: The metric definition for the benchmark.
@@ -52,12 +62,9 @@ class Stats:
         """
         self._metric: Metric = self._validate_metric(metric)
         self._rounds: int = validate_positive_int(
-                                rounds, 'rounds',
-                                _StatsErrorTag.INVALID_ROUNDS_ARG_TYPE,
-                                _StatsErrorTag.INVALID_ROUNDS_ARG_VALUE)
-        self._data: Values = validate_type(
-                                data, Values, 'data',
-                                _StatsErrorTag.INVALID_DATA_ARG_TYPE)
+            rounds, 'rounds', _StatsErrorTag.INVALID_ROUNDS_ARG_TYPE, _StatsErrorTag.INVALID_ROUNDS_ARG_VALUE
+        )
+        self._data: Values = validate_type(data, Values, 'data', _StatsErrorTag.INVALID_DATA_ARG_TYPE)
         self._percentiles: Values | None = None
         self._mean: float | None = None
         self._median: float | None = None
@@ -70,27 +77,27 @@ class Stats:
 
     @property
     def metric(self) -> Metric:
-        '''The metric of the benchmark.'''
+        """The metric of the benchmark."""
         return self._metric
 
     @property
     def name(self) -> str:
-        '''The name of the metric.'''
+        """The name of the metric."""
         return self.metric.title
 
     @property
     def unit(self) -> str:
-        '''The unit of the data.'''
+        """The unit of the data."""
         return self.metric.metric_type.unit
 
     @property
     def scale(self) -> float:
-        '''The scale of the data.'''
+        """The scale of the data."""
         return self.metric.metric_type.scale
 
     @property
     def rounds(self) -> int:
-        '''The number of rounds each data point represents.
+        """The number of rounds each data point represents.
 
         Each iteration represents a single measurement, which may represent multiple rounds.
         Multiple rounds are often used to reduce the impact of noise or timer precision and
@@ -101,53 +108,53 @@ class Stats:
 
         The number of rounds is typically set to a value that balances the trade-off between
         the number of measurements and the time required to perform the measurements.
-        '''
+        """
         return self._rounds
 
     @property
     def iterations(self) -> int:
-        '''The total number of iterations represented by the data points.
+        """The total number of iterations represented by the data points.
 
         Each iteration represents a single measurement, which may represent multiple rounds.
-        '''
+        """
         return len(self.data)
 
     @property
     def data(self) -> Values:
-        '''The data points.'''
+        """The data points."""
         return self._data
 
     @property
     def mean(self) -> float:
-        '''The mean of the data.'''
+        """The mean of the data."""
         if self._mean is None:
             self._mean = statistics.mean(self.data) if self.data else 0.0
         return self._mean
 
     @property
     def median(self) -> float:
-        '''The median of the data.'''
+        """The median of the data."""
         if self._median is None:
             self._median = statistics.median(self.data) if self.data else 0.0
         return self._median
 
     @property
     def minimum(self) -> float:
-        '''The minimum of the data.'''
+        """The minimum of the data."""
         if self._minimum is None:
             self._minimum = float(min(self.data)) if self.data else 0.0
         return self._minimum
 
     @property
     def maximum(self) -> float:
-        '''The maximum of the data.'''
+        """The maximum of the data."""
         if self._maximum is None:
             self._maximum = float(max(self.data)) if self.data else 0.0
         return self._maximum
 
     @property
     def standard_deviation(self) -> float:
-        '''The estimated population standard deviation of the data.
+        """The estimated population standard deviation of the data.
 
         This is computed using the sample standard deviation formula (Bessel's correction)
         adjusted by the square root of the number of rounds to estimate the population
@@ -155,28 +162,28 @@ class Stats:
 
         This provides a better estimate of the true standard deviation of the underlying
         population when each data point represents multiple rounds of measurement.
-        '''
+        """
         if self._standard_deviation is None:
             self._standard_deviation = statistics.stdev(self.data) * sqrt(self.rounds) if len(self.data) > 1 else 0.0
         return self._standard_deviation
 
     @property
     def relative_standard_deviation(self) -> float:
-        '''The relative standard deviation of the data.
+        """The relative standard deviation of the data.
 
         This is expressed as the absolute value of the standard deviation as a
         percentage of the mean.
-        '''
+        """
         if self._relative_standard_deviation is None:
             self._relative_standard_deviation = abs(self.standard_deviation / self.mean * 100) if self.mean else 0.0
         return self._relative_standard_deviation
 
     @property
     def percentiles(self) -> Values:
-        '''Percentiles of the data.
+        """Percentiles of the data.
 
         Returns the 0th through 100th percentiles of the data as an immutable tuple.
-        '''
+        """
         if self._percentiles is None:
             self._percentiles = self._calculate_percentiles()
         return self._percentiles
@@ -214,9 +221,7 @@ class Stats:
         :param bool full_data: If True, include the raw data points in the StatsBlock measurement field.
         :return: A StatsBlock object representing the statistics.
         """
-        validate_bool(
-            full_data, 'full_data',
-            _StatsErrorTag.INVALID_FULL_DATA_ARG_TYPE)
+        validate_bool(full_data, 'full_data', _StatsErrorTag.INVALID_FULL_DATA_ARG_TYPE)
         if full_data:
             if self._stats_block_full_data is not None:
                 return self._stats_block_full_data
@@ -242,7 +247,7 @@ class Stats:
             standard_deviation=self.standard_deviation * self.scale,
             relative_standard_deviation=self.relative_standard_deviation,
             percentiles=Values(pct * self.scale for pct in self.percentiles),
-            measurements=measurements
+            measurements=measurements,
         )
         if full_data:
             self._stats_block_full_data = stats_block
@@ -276,9 +281,7 @@ class Stats:
         if self_base_unit != other_base_unit:
             return False
 
-        scale_by: float = si_scale_to_unit(base_unit=self_base_unit,
-                                           current_unit=other.unit,
-                                           target_unit=self.unit)
+        scale_by: float = si_scale_to_unit(base_unit=self_base_unit, current_unit=other.unit, target_unit=self.unit)
         relative_scale: float = self.scale / other.scale
 
         if self.rounds != other.rounds:
@@ -287,12 +290,14 @@ class Stats:
         if not isclose(scale_by, relative_scale):
             return False
 
-        if not (isclose(self.mean, other.mean / relative_scale) and
-                isclose(self.median,  other.median / relative_scale) and
-                isclose(self.minimum, other.minimum / relative_scale) and
-                isclose(self.maximum, other.maximum / relative_scale) and
-                isclose(self.standard_deviation, other.standard_deviation / relative_scale) and
-                isclose(self.relative_standard_deviation, other.relative_standard_deviation)):
+        if not (
+            isclose(self.mean, other.mean / relative_scale)
+            and isclose(self.median, other.median / relative_scale)
+            and isclose(self.minimum, other.minimum / relative_scale)
+            and isclose(self.maximum, other.maximum / relative_scale)
+            and isclose(self.standard_deviation, other.standard_deviation / relative_scale)
+            and isclose(self.relative_standard_deviation, other.relative_standard_deviation)
+        ):
             return False
 
         if len(self.percentiles) != len(other.percentiles):
@@ -305,16 +310,15 @@ class Stats:
         return si_unit_base(self.unit) == si_unit_base(other.unit)
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}(metric='{self.metric}', rounds={self.rounds}, "
-                f"data={self.data!r})")
+        return f"{self.__class__.__name__}(metric='{self.metric}', rounds={self.rounds}, data={self.data!r})"
 
     def _validate_metric(self, metric: Metric) -> Metric:
         if not isinstance(metric, Metric):
             raise SimpleBenchTypeError(
-                'The metric argument must be a Metric object.',
-                tag=_StatsErrorTag.INVALID_METRIC_ARG_TYPE)
+                'The metric argument must be a Metric object.', tag=_StatsErrorTag.INVALID_METRIC_ARG_TYPE
+            )
         if metric not in metrics_registry:
             raise SimpleBenchValueError(
-                'The metric argument is not a registered metric definition.',
-                tag=_StatsErrorTag.UNREGISTERED_METRIC)
+                'The metric argument is not a registered metric definition.', tag=_StatsErrorTag.UNREGISTERED_METRIC
+            )
         return metric

@@ -1,4 +1,5 @@
 """Documentation utilities."""
+
 import re
 from typing import Any, Callable, TypeVar, overload
 
@@ -22,9 +23,7 @@ special characters commonly used in RST documentation.
 # Overload 1: Called as @format_docstring(key='value')
 # It receives no positional object and returns a decorator.
 @overload
-def format_docstring(
-    cls_or_func: None = None, /, **kwargs
-) -> Callable[[T], T]: ...
+def format_docstring(cls_or_func: None = None, /, **kwargs) -> Callable[[T], T]: ...
 
 
 # Overload 2: Called as @format_docstring
@@ -33,9 +32,7 @@ def format_docstring(
 def format_docstring(cls_or_func: T, /) -> T: ...
 
 
-def format_docstring(
-    cls_or_func: T | None = None, /, **kwargs
-) -> T | Callable[[T], T]:
+def format_docstring(cls_or_func: T | None = None, /, **kwargs) -> T | Callable[[T], T]:
     """A decorator to format the docstring of a class or function.
 
     Can be used with or without arguments on both classes and functions.
@@ -65,12 +62,14 @@ def format_docstring(
 
     .. code-block:: python
 
-        @format_docstring(version="1.2.3")
+        @format_docstring(version='1.2.3')
         class MyClass:
             '''My class, version {version}'''
+
             pass
 
-        @format_docstring(author="Me")
+
+        @format_docstring(author='Me')
         def my_function():
             '''A function by {author}'''
             pass
@@ -82,13 +81,12 @@ def format_docstring(
         returns a decorator function that is then applied to the target object.
     :rtype: T | Callable[[T], T]
     """
+
     # This is the actual decorator that will be applied to the class or function.
     # It uses the 'kwargs' from the outer scope.
     def decorator(inner_obj: T) -> T:
         if inner_obj.__doc__ is not None and kwargs:
-            inner_obj.__doc__ = _replace_docstring_placeholders(
-                                    docstring=inner_obj.__doc__,
-                                    kwargs=kwargs)
+            inner_obj.__doc__ = _replace_docstring_placeholders(docstring=inner_obj.__doc__, kwargs=kwargs)
         return inner_obj
 
     # Case 1: Called with arguments, e.g., @format_docstring(foo='bar')

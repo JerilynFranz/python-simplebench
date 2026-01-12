@@ -14,14 +14,14 @@ from .core import (
 )
 
 __all__ = [
-    "CoreDataTypes",
-    "CoreDataMappingType",
-    "CORE_DATA_PRIMITIVE_TYPES_TUPLE",
-    "CoreDataSequenceType",
-    "CoreDataSetType",
-    "ImmutableCoreDataMappingType",
-    "ImmutableCoreDataSequenceType",
-    "ImmutableCoreDataSetType",
-    "ImmutableCoreDataTypes",
-    "IMMUTABLE_CORE_DATA_TYPES_TUPLE"
+    'CoreDataTypes',
+    'CoreDataMappingType',
+    'CORE_DATA_PRIMITIVE_TYPES_TUPLE',
+    'CoreDataSequenceType',
+    'CoreDataSetType',
+    'ImmutableCoreDataMappingType',
+    'ImmutableCoreDataSequenceType',
+    'ImmutableCoreDataSetType',
+    'ImmutableCoreDataTypes',
+    'IMMUTABLE_CORE_DATA_TYPES_TUPLE',
 ]

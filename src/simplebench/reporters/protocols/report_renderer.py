@@ -1,4 +1,5 @@
-""""Protocols for reporters stuff."""
+""" "Protocols for reporters stuff."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
@@ -29,6 +30,7 @@ class ReportRenderer(Protocol):
     Subsets of ``str | bytes | Text | Table`` for the return type are allowed for specific
     reporters.
     """
+
     def __call__(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
         """Renders the benchmark results for one metric and returns the result.
 

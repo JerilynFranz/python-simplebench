@@ -1,4 +1,5 @@
 """Session management for SimpleBench."""
+
 from __future__ import annotations
 
 import logging
@@ -34,7 +35,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter
 
 
-class Session():
+class Session:
     """Container for session related information while running benchmarks.
 
     The session is responsible for managing benchmark cases, command line
@@ -43,18 +44,21 @@ class Session():
     This makes it the primary orchestrator for running benchmarks and generating
     reports.
     """
+
     @format_docstring(DEFAULT_TIMER=defaults.DEFAULT_TIMER.__name__)
-    def __init__(self,
-                 *,
-                 cases: Optional[Sequence[Case]] = None,
-                 verbosity: Verbosity = Verbosity.NORMAL,
-                 default_runners: Sequence[type[SimpleRunner]] | None = None,
-                 args_parser: Optional[ArgumentParser] = None,
-                 show_progress: bool = False,
-                 output_path: Optional[Path] = None,
-                 console: Optional[Console] = None,
-                 timer: Callable[[], int] | None = None,
-                 cpu_timer: Callable[[], int] | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        cases: Optional[Sequence[Case]] = None,
+        verbosity: Verbosity = Verbosity.NORMAL,
+        default_runners: Sequence[type[SimpleRunner]] | None = None,
+        args_parser: Optional[ArgumentParser] = None,
+        show_progress: bool = False,
+        output_path: Optional[Path] = None,
+        console: Optional[Console] = None,
+        timer: Callable[[], int] | None = None,
+        cpu_timer: Callable[[], int] | None = None,
+    ) -> None:
         """Container and orchestrator for session related information while running benchmarks.
 
         :param cases: A Sequence of benchmark cases for the session.
@@ -77,7 +81,7 @@ class Session():
             will be used. Defaults to None.
         :raises SimpleBenchTypeError: If the arguments are of the wrong type.
         """  # params here are for IDEs
-        log.debug("Initializing Session instance")
+        log.debug('Initializing Session instance')
 
         # public read/write properties with private backing fields
         self.default_runners = default_runners
@@ -137,7 +141,7 @@ class Session():
         :type args: Sequence[str], optional
         :raises SimpleBenchTypeError: If the ``args_parser`` is not set.
         """
-        log.debug("Session.parse_args called with: %s", args)
+        log.debug('Session.parse_args called with: %s', args)
         if self._args_parsed:
             return
 
@@ -146,12 +150,14 @@ class Session():
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: "
                     f"type of passed 'args' was {type(args).__name__}",
-                    tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)
+                    tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE,
+                )
             args = tuple(args)
             if not all(isinstance(arg, str) for arg in args):
                 raise SimpleBenchTypeError(
                     "'args' argument must either be None or a list of str: A non-str item was found in the passed list",
-                    tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)
+                    tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE,
+                )
 
         self.add_reporter_flags()
         self._args = self._args_parser.parse_args(args=args)
@@ -187,7 +193,7 @@ class Session():
 
         :raises SimpleBenchArgumentError: If there is a conflict or other error in reporter flag names.
         """
-        log.debug("Adding reporter flags to Session ArgumentParser")
+        log.debug('Adding reporter flags to Session ArgumentParser')
         if self._reporter_flags_added:
             return
         try:
@@ -199,7 +205,7 @@ class Session():
             raise SimpleBenchArgumentError(
                 argument_name=arg_err.argument_name,
                 message=f'Error adding reporter flags to ArgumentParser: {arg_err.message}',
-                tag=_SessionErrorTag.ARGUMENT_ERROR_ADDING_FLAGS
+                tag=_SessionErrorTag.ARGUMENT_ERROR_ADDING_FLAGS,
             ) from arg_err
 
     def run(self) -> None:
@@ -217,7 +223,7 @@ class Session():
         :raises SimpleBenchTimeoutError: If a benchmark case times out during execution.
         :raises SimpleBenchBenchmarkError: If an error occurs during the execution of a benchmark.
         """
-        log.info("Session.run() started for %d cases.", len(self.cases))
+        log.info('Session.run() started for %d cases.', len(self.cases))
         if not self._args_parsed:
             self.parse_args()
         if self._verbosity > Verbosity.NORMAL:
@@ -228,7 +234,7 @@ class Session():
             task_name='Session:cases',
             progress_max=len(self.cases),
             description='Running benchmark cases',
-            color=Color.WHITE
+            color=Color.WHITE,
         )
 
         if self.show_progress and self.verbosity > Verbosity.QUIET and self.tasks:
@@ -237,22 +243,23 @@ class Session():
         case_counter: int = 0
         progress_tracker.reset()
         progress_tracker.update(
-            completed=0,
-            description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})')
+            completed=0, description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})'
+        )
         progress_tracker.start()
 
         for case in self.cases:
             progress_tracker.update(
                 description=f'Running benchmark cases (case {case_counter + 1:2d}/{len(self.cases)})',
                 completed=case_counter,
-                refresh=True)
+                refresh=True,
+            )
             case_counter += 1
             case.run(session=self)
         progress_tracker.stop()
         self.tasks.stop()
         self.tasks.clear()
         self._run_called = True
-        log.info("Session.run() finished.")
+        log.info('Session.run() finished.')
 
     def report_keys(self) -> list[str]:
         """Get a list of report keys for all reports to be generated in this session.
@@ -295,10 +302,10 @@ class Session():
         # that we only consider valid args that are associated with a Choice.
         if not self._run_called:
             self.run()
-        log.info("Session.report() started for %d cases.", len(self.cases))
+        log.info('Session.report() started for %d cases.', len(self.cases))
 
         if self.verbosity > Verbosity.NORMAL:
-            self._console.print(f"Generating reports for {len(self.cases)} case(s)...")
+            self._console.print(f'Generating reports for {len(self.cases)} case(s)...')
         timestamp = self.timestamp
         epoch_timestamp = self.epoch_timestamp
         processed_choices: set[str] = set()
@@ -311,7 +318,7 @@ class Session():
             task_name='Session:reports',
             progress_max=n_reports,
             description='Running reports',
-            color=Color.WHITE
+            color=Color.WHITE,
         )
 
         cases_progress_tracker = ProgressTracker(
@@ -319,7 +326,8 @@ class Session():
             task_name='Session:cases',
             progress_max=len(self.cases),
             description='Generating reports for cases',
-            color=Color.CYAN)
+            color=Color.CYAN,
+        )
 
         reports_progress_tracker.start()
         report_counter: int = 0
@@ -331,8 +339,7 @@ class Session():
             choice: Choice | None = self._choices.get_choice_for_arg(key)
             if not isinstance(choice, Choice):
                 raise SimpleBenchTypeError(
-                    "choice must be a Choice instance",
-                    tag=_SessionErrorTag.REPORT_INVALID_CHOICE_RETRIEVED
+                    'choice must be a Choice instance', tag=_SessionErrorTag.REPORT_INVALID_CHOICE_RETRIEVED
                 )
             # If we have already processed this Choice (there can be multiple
             # possible valid triggering args defined for a single Choice), then skip it.
@@ -343,36 +350,37 @@ class Session():
             reports_progress_tracker.update(
                 description=f'Running report {choice.name} ({report_counter:2d}/{n_reports})',
                 completed=report_counter - 1,
-                refresh=True)
+                refresh=True,
+            )
 
             cases_progress_tracker.reset()
             for case_counter, case in enumerate(self.cases, start=1):
                 cases_progress_tracker.update(
                     description=(
-                        f'Generating reports for case {case.title} (case {case_counter:2d}/{len(self.cases)})'),
+                        f'Generating reports for case {case.title} (case {case_counter:2d}/{len(self.cases)})'
+                    ),
                     completed=case_counter - 1,
-                    refresh=True)
+                    refresh=True,
+                )
 
                 callback: Optional[ReporterCallback] = case.callback
                 reporter: Reporter = choice.reporter
                 output_path: Path | None = self._output_path
-                report_log_path: Path | None = output_path / "_reports_log" if output_path is not None else None
+                report_log_path: Path | None = output_path / '_reports_log' if output_path is not None else None
                 if Target.FILESYSTEM in choice.targets:
                     if output_path is None:
                         flag: str = '--' + key.replace('_', '-')
                         raise SimpleBenchTypeError(
                             f'output_path must be set to generate Choice {choice.name} / {flag} report',
-                            tag=_SessionErrorTag.REPORT_OUTPUT_PATH_NOT_SET
+                            tag=_SessionErrorTag.REPORT_OUTPUT_PATH_NOT_SET,
                         )
                     group_path = sanitize_filename(case.group)
                     output_path = output_path / timestamp / group_path
                     if self.verbosity >= Verbosity.DEBUG:
-                        self._console.print(f"[DEBUG] Output path for report: {output_path}")
+                        self._console.print(f'[DEBUG] Output path for report: {output_path}')
                 log_metadata = Metadata(
-                    timestamp=epoch_timestamp,
-                    case=case,
-                    choice=choice,
-                    reports_log_path=report_log_path)
+                    timestamp=epoch_timestamp, case=case, choice=choice, reports_log_path=report_log_path
+                )
                 if self.args:  # mypy guard
                     reporter.report(
                         log_metadata=log_metadata,
@@ -381,13 +389,14 @@ class Session():
                         choice=choice,
                         path=output_path,
                         session=self,
-                        callback=callback)
+                        callback=callback,
+                    )
             cases_progress_tracker.stop()
         reports_progress_tracker.stop()
 
         self.tasks.stop()
         self.tasks.clear()
-        log.info("Session.report() finished.")
+        log.info('Session.report() finished.')
 
     @property
     def timer(self) -> Callable[[], int] | None:
@@ -460,7 +469,7 @@ class Session():
             raise SimpleBenchTypeError(
                 'default_runners must be a Sequence of BenchmarkRunner subclasses '
                 f'or None - cannot be a {type(runners)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG,
             )
 
         validated_runners: list[type[BenchmarkRunner]] = []
@@ -469,7 +478,7 @@ class Session():
                 raise SimpleBenchTypeError(
                     'default_runners must be a sequence of subclasses of BenchmarkRunner or '
                     f'None - cannot be a {type(runner)}',
-                    tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
+                    tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG,
                 )
         self._default_runners = validated_runners
 
@@ -488,7 +497,7 @@ class Session():
         if not isinstance(value, ArgumentParser):
             raise SimpleBenchTypeError(
                 f'args_parser must be an ArgumentParser instance - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_ARGSPARSER_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_ARGSPARSER_ARG,
             )
         self._args_parser = value
 
@@ -508,7 +517,7 @@ class Session():
         if not isinstance(value, Namespace):
             raise SimpleBenchTypeError(
                 f'args must be a Namespace instance - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_ARGS_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_ARGS_ARG,
             )
         self._args = value
 
@@ -533,7 +542,7 @@ class Session():
         if not isinstance(value, bool):
             raise SimpleBenchTypeError(
                 f'progress must be a bool - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_PROGRESS_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_PROGRESS_ARG,
             )
         self._show_progress = value
 
@@ -558,7 +567,7 @@ class Session():
         if not isinstance(value, Verbosity):
             raise SimpleBenchTypeError(
                 f'verbosity must be a Verbosity instance - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_VERBOSITY_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_VERBOSITY_ARG,
             )
         self._verbosity = value
 
@@ -580,15 +589,12 @@ class Session():
         if not isinstance(value, Sequence):
             raise SimpleBenchTypeError(
                 f'value must be a Sequence of Case - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG,
             )
         for case in value:
             if not isinstance(case, Case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
-                raise SimpleBenchTypeError(
-                    error_text,
-                    tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
-                )
+                raise SimpleBenchTypeError(error_text, tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE)
         self._cases = tuple(value)
 
     def add_case(self, case: Case) -> None:
@@ -600,7 +606,7 @@ class Session():
         if not isinstance(case, Case):
             raise SimpleBenchTypeError(
                 f'case must be a Case instance - cannot be a {type(case)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG,
             )
         self._cases = tuple(list(self._cases) + [case])
 
@@ -614,15 +620,12 @@ class Session():
         if not isinstance(cases, Sequence):
             raise SimpleBenchTypeError(
                 f'cases must be a Sequence of Case - cannot be a {type(cases)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG,
             )
         for case in cases:
             if not isinstance(case, Case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
-                raise SimpleBenchTypeError(
-                    error_text,
-                    tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
-                )
+                raise SimpleBenchTypeError(error_text, tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE)
         self._cases = tuple(list(self._cases) + list(cases))
 
     @property
@@ -640,7 +643,7 @@ class Session():
         if value is not None and not isinstance(value, Path):
             raise SimpleBenchTypeError(
                 f'output_path must be a Path instance - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_OUTPUT_PATH_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_OUTPUT_PATH_ARG,
             )
         self._output_path = value
 
@@ -659,7 +662,7 @@ class Session():
         if not isinstance(value, Console):
             raise SimpleBenchTypeError(
                 f'console must be a Console instance - cannot be a {type(value)}',
-                tag=_SessionErrorTag.PROPERTY_INVALID_CONSOLE_ARG
+                tag=_SessionErrorTag.PROPERTY_INVALID_CONSOLE_ARG,
             )
         self._console = value
 

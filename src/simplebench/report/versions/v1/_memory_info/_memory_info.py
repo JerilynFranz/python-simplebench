@@ -13,6 +13,7 @@ This makes the implementations of JSONMemoryInfo backwards compatible with futur
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base MemoryInfo representation at the time of the V1 schema release.
 """
+
 from typing import cast
 
 from simplebench.report._base import BaseMemoryInfo, JSONSchema
@@ -39,11 +40,9 @@ class MemoryInfo(BaseMemoryInfo):
     SCHEMA: type[JSONSchema] = MemoryInfoSchema
     """The JSON schema class for version 1 reports."""
 
-    def __init__(self,
-                 *,
-                 hash_id: str = '',
-                 swap_memory: SwapMemoryObject,
-                 virtual_memory: VirtualMemoryObject) -> None:
+    def __init__(
+        self, *, hash_id: str = '', swap_memory: SwapMemoryObject, virtual_memory: VirtualMemoryObject
+    ) -> None:
         """Initialize MemoryInfo.
 
         :param str hash_id: The unique hash identifier for the machine information.
@@ -79,7 +78,8 @@ class MemoryInfo(BaseMemoryInfo):
             optional_fields={'hash_id', 'version', 'type'},
             defaults={'hash_id': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={})
+            process_as={},
+        )
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableMemoryInfoDict:

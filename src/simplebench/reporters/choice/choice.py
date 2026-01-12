@@ -1,4 +1,5 @@
 """``Choice()`` for reporters."""
+
 from __future__ import annotations
 
 from collections.abc import Hashable
@@ -24,6 +25,7 @@ def deferred_reporter_import() -> None:
     if _REPORTER_IMPORTED:
         return
     from simplebench.reporters.reporter.reporter import Reporter  # pylint: disable=import-outside-toplevel
+
     _REPORTER_IMPORTED = True
 
 
@@ -115,14 +117,10 @@ class Choice(Hashable, ChoiceProtocol):
     :param extra: Any additional metadata associated with the choice.
     :type extra: Any | None
     """
-    __slots__ = (
-        '_reporter',
-        '_choice_conf'
-    )
 
-    def __init__(self, *,
-                 reporter: Reporter,
-                 choice_conf: ChoiceConf) -> None:
+    __slots__ = ('_reporter', '_choice_conf')
+
+    def __init__(self, *, reporter: Reporter, choice_conf: ChoiceConf) -> None:
         """Construct a :class:`~.Choice` instance from a
         :class:`~simplebench.reporters.reporter.Reporter` and a :class:`~.ChoiceConf` instance.
 
@@ -144,14 +142,17 @@ class Choice(Hashable, ChoiceProtocol):
         # We use type: ignore because we know at runtime we will only ever receive
         # concrete subclasses of Reporter, not the abstract Reporter itself.
         self._reporter: Reporter = validate_type(
-            reporter, Reporter, "reporter",  # type: ignore[type-abstract]
-            error_tag=_ChoiceErrorTag.REPORTER_INVALID_ARG_TYPE)
+            reporter,
+            Reporter,
+            'reporter',  # type: ignore[type-abstract]
+            error_tag=_ChoiceErrorTag.REPORTER_INVALID_ARG_TYPE,
+        )
         """The Reporter subclass instance associated with the choice
         (private backing field for attribute)"""
 
         self._choice_conf: ChoiceConf = validate_type(
-            choice_conf, ChoiceConf, "choice_conf",
-            error_tag=_ChoiceErrorTag.CHOICE_CONF_INVALID_ARG_TYPE)
+            choice_conf, ChoiceConf, 'choice_conf', error_tag=_ChoiceErrorTag.CHOICE_CONF_INVALID_ARG_TYPE
+        )
         """The ChoiceConf instance used to create the choice
         (private backing field for attribute)"""
 
@@ -302,23 +303,25 @@ class Choice(Hashable, ChoiceProtocol):
         :return: The computed hash value.
         :rtype: int
         """
-        return hash((
-            self.flags,
-            self.flag_type,
-            self.name,
-            self.description,
-            self.metrics,
-            self.targets,
-            self.default_targets,
-            self.subdir,
-            self.file_suffix,
-            self.file_unique,
-            self.file_append,
-            self.output_format,
-            self.options,
-            self.extra,
-            id(self.reporter)
-        ))
+        return hash(
+            (
+                self.flags,
+                self.flag_type,
+                self.name,
+                self.description,
+                self.metrics,
+                self.targets,
+                self.default_targets,
+                self.subdir,
+                self.file_suffix,
+                self.file_unique,
+                self.file_append,
+                self.output_format,
+                self.options,
+                self.extra,
+                id(self.reporter),
+            )
+        )
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two :class:`~.ChoiceConf` instances.
@@ -331,18 +334,20 @@ class Choice(Hashable, ChoiceProtocol):
         if not isinstance(other, Choice):
             return False
 
-        return (self.flags == other.flags and
-                self.flag_type == other.flag_type and
-                self.name == other.name and
-                self.description == other.description and
-                self.metrics == other.metrics and
-                self.targets == other.targets and
-                self.default_targets == other.default_targets and
-                self.subdir == other.subdir and
-                self.file_suffix == other.file_suffix and
-                self.file_unique == other.file_unique and
-                self.file_append == other.file_append and
-                self.output_format == other.output_format and
-                self.options == other.options and
-                self.extra == other.extra and
-                id(self.reporter) == id(other.reporter))
+        return (
+            self.flags == other.flags
+            and self.flag_type == other.flag_type
+            and self.name == other.name
+            and self.description == other.description
+            and self.metrics == other.metrics
+            and self.targets == other.targets
+            and self.default_targets == other.default_targets
+            and self.subdir == other.subdir
+            and self.file_suffix == other.file_suffix
+            and self.file_unique == other.file_unique
+            and self.file_append == other.file_append
+            and self.output_format == other.output_format
+            and self.options == other.options
+            and self.extra == other.extra
+            and id(self.reporter) == id(other.reporter)
+        )

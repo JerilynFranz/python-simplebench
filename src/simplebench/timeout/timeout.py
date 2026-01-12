@@ -1,6 +1,7 @@
 """
 Run a callable with a timeout, ensuring safe termination.
 """
+
 import threading
 from typing import Any, Callable, Generic, ParamSpec, TypeVar, cast
 
@@ -9,11 +10,11 @@ from .enums import TimeoutState
 from ._error_tags import _TimeoutErrorTag
 
 # Define a TypeVar for the class instance. This is not used by run.
-_T = TypeVar("_T")
+_T = TypeVar('_T')
 # Define a ParamSpec for the arguments of the callable passed to run.
-_P = ParamSpec("_P")
+_P = ParamSpec('_P')
 # Define a TypeVar specifically for the return type of the run method.
-_RT = TypeVar("_RT")
+_RT = TypeVar('_RT')
 
 
 class Timeout(Generic[_T]):
@@ -38,16 +39,18 @@ class Timeout(Generic[_T]):
 
         def my_long_running_task():
             time.sleep(10)
-            return "done"
+            return 'done'
+
 
         timeout = Timeout(5.0)
         try:
             result = timeout.run(my_long_running_task)
-            print(f"Task finished with result: {result}")
+            print(f'Task finished with result: {result}')
         except SimpleBenchTimeoutError as e:
-            print(f"Task {e.func_name} timed out. Final state: {timeout.state}")
+            print(f'Task {e.func_name} timed out. Final state: {timeout.state}')
             sys.exit(1)
     """
+
     def __init__(self, timeout_interval: float | int):
         """Creates a Timeout instance.
 
@@ -87,32 +90,30 @@ class Timeout(Generic[_T]):
     @property
     def timeout_interval(self) -> float:
         """Get the timeout interval in seconds."""
-        return getattr(self, "_private_timeout_interval")
+        return getattr(self, '_private_timeout_interval')
 
     def _set_timeout_interval(self, value: float | int):
         """Set the timeout interval in seconds."""
         if not isinstance(value, (float, int)):
             raise SimpleBenchTypeError(
-                "timeout_interval must be a float or int",
-                tag=_TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE)
+                'timeout_interval must be a float or int', tag=_TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_TYPE
+            )
         if value <= 0:
             raise SimpleBenchValueError(
-                "timeout_interval must be greater than zero",
-                tag=_TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE)
-        setattr(self, "_private_timeout_interval", float(value))
+                'timeout_interval must be greater than zero', tag=_TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE
+            )
+        setattr(self, '_private_timeout_interval', float(value))
 
     @property
     def state(self) -> TimeoutState:
         """Get the final state of the timeout execution."""
-        return getattr(self, "_private_state")
+        return getattr(self, '_private_state')
 
     def _set_state(self, value: TimeoutState):
         """Set the current state of the timeout context manager."""
         if not isinstance(value, TimeoutState):
-            raise SimpleBenchTypeError(
-                "state must be a TimeoutState",
-                tag=_TimeoutErrorTag.INVALID_STATE_TYPE)
-        setattr(self, "_private_state", value)
+            raise SimpleBenchTypeError('state must be a TimeoutState', tag=_TimeoutErrorTag.INVALID_STATE_TYPE)
+        setattr(self, '_private_state', value)
 
     def _target_wrapper(self, func: Callable[..., Any], *args: Any, **kwargs: Any):
         """
@@ -139,18 +140,18 @@ class Timeout(Generic[_T]):
         self._result = None
         self._exception = None
 
-        func_name = getattr(_calling_func, "__qualname__",
-                            getattr(_calling_func, "__name__", repr(_calling_func)))
+        func_name = getattr(_calling_func, '__qualname__', getattr(_calling_func, '__name__', repr(_calling_func)))
         if not callable(_calling_func):
             raise SimpleBenchTypeError(
                 f"The provided _calling_func '{func_name}' is not callable",
-                tag=_TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT)
+                tag=_TimeoutErrorTag.NON_CALLABLE_FUNCTION_ARGUMENT,
+            )
         self._worker_thread = threading.Thread(
             target=self._target_wrapper,
             args=(_calling_func,) + args,
             kwargs=kwargs,
-            name=f"TimeoutWorker-{func_name}",
-            daemon=True  # Crucial: Allows the main thread to exit even if this thread is blocked.
+            name=f'TimeoutWorker-{func_name}',
+            daemon=True,  # Crucial: Allows the main thread to exit even if this thread is blocked.
         )
 
         self._set_state(TimeoutState.RUNNING)
@@ -163,8 +164,8 @@ class Timeout(Generic[_T]):
             raise SimpleBenchTimeoutError(
                 f"Execution of '{func_name}' timed out after {self.timeout_interval} seconds",
                 tag=_TimeoutErrorTag.TIMED_OUT,
-                func_name=func_name
-                )
+                func_name=func_name,
+            )
 
         # If we get here, the thread has finished.
         if self._exception:

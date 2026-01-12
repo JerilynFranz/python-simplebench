@@ -76,5 +76,7 @@
     "venv"
   ],
   "pylint.importStrategy": "fromEnvironment",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "charliermarsh.ruff",
 }
 

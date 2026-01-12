@@ -1,4 +1,5 @@
 """Validation functions for type hints and instances against those type hints."""
+
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypedDict, TypeGuard, TypeVar, cast, get_args, get_origin, get_type_hints
 
@@ -12,12 +13,10 @@ from simplebench.validators.core_data_types import is_core_data_primitive, is_co
 
 from ._error_tags import _TypedDictErrorTag
 
-_CACHE = ValidationCache(
-    min_cache_size=100,
-    max_cache_size=16384,
-)
+_CACHE = ValidationCache(min_cache_size=100, max_cache_size=16384)
 
-T = TypeVar("T", bound=TypedDict)  # type: ignore[invalidTypeForm]
+T = TypeVar('T', bound=TypedDict)  # type: ignore[invalidTypeForm]
+
 
 def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
     """Validate a mapping against the TypedDict.
@@ -47,18 +46,18 @@ def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
         valid = isinstance_of_typehint(data, td_cls)
     except SimpleBenchTypeError as exc:
         raise SimpleBenchTypeError(
-            f"Data does not conform to TypedDict {td_cls.__name__}: {exc}",
-            tag=_TypedDictErrorTag.NOT_A_TYPED_DICT) from exc
+            f'Data does not conform to TypedDict {td_cls.__name__}: {exc}', tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
+        ) from exc
 
     if not valid:
         raise SimpleBenchTypeError(
-            f"Data does not conform to TypedDict {td_cls.__name__}",
-            tag=_TypedDictErrorTag.NOT_A_TYPED_DICT)
+            f'Data does not conform to TypedDict {td_cls.__name__}', tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
+        )
 
     return cast(T, data)
 
-def is_typed_dict_mimic(data: Mapping[str, Any],
-                        td_cls: type[T]) -> TypeGuard[T]:
+
+def is_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> TypeGuard[T]:
     """TypeGuard function. Check if a mapping conforms to a TypedDict subclass.
 
     It acts as a structural isinstance() check for mappings against the TypedDict subclass.
@@ -91,7 +90,7 @@ def is_typed_dict_mimic(data: Mapping[str, Any],
     structures are cached positively (with validity of `True`) to ensure safety.
 
     Cyclic references are detected and raise an error to prevent infinite recursion.
-    
+
     :param Mapping[str, Any] data: The dictionary to check.
     :param type[TypedDict] td_cls: The TypedDict subclass type to check against.
     :return bool: True if the dictionary conforms to the TypedDict subclass, False otherwise.
@@ -102,12 +101,13 @@ def is_typed_dict_mimic(data: Mapping[str, Any],
     except SimpleBenchTypeError:
         return False
 
+
 def _validate_and_check_immutability_of_mimic(
-        data: Mapping[str, Any],
-        td_cls: type[TypedDict],  # type: ignore[invalidTypeForm]
-        parents: set[int]| None = None,
-        raise_on_error: bool = True
-        ) -> tuple[bool, bool]:
+    data: Mapping[str, Any],
+    td_cls: type[TypedDict],  # type: ignore[invalidTypeForm]
+    parents: set[int] | None = None,
+    raise_on_error: bool = True,
+) -> tuple[bool, bool]:
     """Validate a mapping against a TypedDict subclass
     and check if it consists only of fully immutable core data types.
 
@@ -124,7 +124,7 @@ def _validate_and_check_immutability_of_mimic(
     :return tuple[bool, bool]: A tuple where the first element indicates if the dictionary
         conforms to the TypedDict subclass, and the second element indicates if the
         data consists only of fully immutable core data types.
-    :raise SimpleBenchTypeError: If there is a validation error and raise_on_error is True. 
+    :raise SimpleBenchTypeError: If there is a validation error and raise_on_error is True.
     """
     cached_state: bool | None = _CACHE.valid_in_cache(td_cls, data)
     if cached_state is not None:
@@ -135,13 +135,15 @@ def _validate_and_check_immutability_of_mimic(
     parents = parents or set()
     if id(data) in parents:
         raise SimpleBenchTypeError(
-            "Cyclic reference detected in data structure during TypedDict validation",
-            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED)
+            'Cyclic reference detected in data structure during TypedDict validation',
+            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
+        )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
-            "Maximum core data depth exceeded during TypedDict validation",
-            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+            'Maximum core data depth exceeded during TypedDict validation',
+            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+        )
     if not _validate_typed_dict_subclass(td_cls, raise_on_error):
         return (False, False)
     if not _validate_is_mapping_of_string_to_any(data, raise_on_error):
@@ -164,9 +166,10 @@ def _validate_and_check_immutability_of_mimic(
                 if raise_on_error:
                     raise SimpleBenchTypeError(
                         f"Value for key '{key}' has invalid type {type(value)}, "
-                        f"expected core data primitive type {expected_type_hint}",
-                        tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE)
-                return (False, False) # Value type mismatch and we don't know immutability
+                        f'expected core data primitive type {expected_type_hint}',
+                        tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE,
+                    )
+                return (False, False)  # Value type mismatch and we don't know immutability
             continue
 
         # Validate nested TypedDict or generic container types
@@ -176,9 +179,9 @@ def _validate_and_check_immutability_of_mimic(
         if not is_valid:
             if raise_on_error:
                 raise SimpleBenchTypeError(
-                    f"Value for key '{key}' has invalid type {type(value)}, "
-                    f"expected type {expected_type_hint}",
-                    tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE)
+                    f"Value for key '{key}' has invalid type {type(value)}, expected type {expected_type_hint}",
+                    tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE,
+                )
             return (False, False)  # Value type mismatch and we cannot determine immutability
         if not is_immutable:
             immutable_children = False
@@ -187,8 +190,8 @@ def _validate_and_check_immutability_of_mimic(
         _CACHE.add_cache_entry(td_cls, data, True)
     return (True, immutable_children)  # All keys validated successfully, propagate immutability status
 
-def _validate_typed_dict_subclass(
-        td_cls: type[TypedDict], raise_on_error: bool = True) -> bool:  # type: ignore[invalidTypeForm]
+
+def _validate_typed_dict_subclass(td_cls: type[TypedDict], raise_on_error: bool = True) -> bool:  # type: ignore[invalidTypeForm]
     """Validate a TypedDict subclass schema.
 
     This is not a runtime instance validation, but a static schema validation.
@@ -213,8 +216,9 @@ def _validate_typed_dict_subclass(
         annotations = get_type_hints(td_cls)
     except Exception as exc:  # always raise because this is a code misconfiguration
         raise SimpleBenchTypeError(
-            f"Failed to resolve type hints for {td_cls.__name__}: {exc}",
-            tag=_TypedDictErrorTag.UNABLE_TO_RESOLVE_TYPE_HINT) from exc
+            f'Failed to resolve type hints for {td_cls.__name__}: {exc}',
+            tag=_TypedDictErrorTag.UNABLE_TO_RESOLVE_TYPE_HINT,
+        ) from exc
     required: set[str] = getattr(td_cls, '__required_keys__', set(annotations))
     optional: set[str] = getattr(td_cls, '__optional_keys__', set())
     annotation_set = set(annotations.keys())
@@ -225,19 +229,20 @@ def _validate_typed_dict_subclass(
         output = []
         if extra_in_annotations:
             output.append(
-                f"Keys {extra_in_annotations} are in annotations but not marked as required/optional "
-                f"for class {td_cls.__name__}")
+                f'Keys {extra_in_annotations} are in annotations but not marked as required/optional '
+                f'for class {td_cls.__name__}'
+            )
         if missing_from_annotations:
             output.append(
-                f"Keys {missing_from_annotations} are marked as required/optional but "
-                f"missing from annotations for class {td_cls.__name__}")
-        message = "; ".join(output)
+                f'Keys {missing_from_annotations} are marked as required/optional but '
+                f'missing from annotations for class {td_cls.__name__}'
+            )
+        message = '; '.join(output)
         if raise_on_error:
-            raise SimpleBenchTypeError(
-                message,
-                tag=_TypedDictErrorTag.MISCONFIGURED_TYPED_DICT)
+            raise SimpleBenchTypeError(message, tag=_TypedDictErrorTag.MISCONFIGURED_TYPED_DICT)
         return False
     return True
+
 
 def _validate_is_mapping_of_string_to_any(data: Mapping[str, Any], raise_on_error: bool = True) -> bool:
     """Validate that data is a Mapping[str, Any].
@@ -250,23 +255,26 @@ def _validate_is_mapping_of_string_to_any(data: Mapping[str, Any], raise_on_erro
     if not isinstance(data, Mapping):
         if raise_on_error:
             raise SimpleBenchTypeError(
-                f"Data must be a Mapping, got {type(data)}",
-                tag=_TypedDictErrorTag.NOT_A_MAPPING)
+                f'Data must be a Mapping, got {type(data)}', tag=_TypedDictErrorTag.NOT_A_MAPPING
+            )
         return False
 
     for key in data.keys():
         if not isinstance(key, str):
             if raise_on_error:
                 raise SimpleBenchTypeError(
-                    f"All keys in data must be strings, found key of type {type(key)}",
-                    tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING)
+                    f'All keys in data must be strings, found key of type {type(key)}',
+                    tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING,
+                )
             return False
     return True
 
+
 def _validate_has_required_and_no_extra_keys(
-        data: Mapping[str, Any],
-        td_cls: type[TypedDict],  # type: ignore[invalidTypeForm]
-        raise_on_error: bool = True) -> bool:
+    data: Mapping[str, Any],
+    td_cls: type[TypedDict],  # type: ignore[invalidTypeForm]
+    raise_on_error: bool = True,
+) -> bool:
     """Validate that data has all required keys and no extra keys.
 
     :param Mapping[str, Any] data: The data to validate.
@@ -282,18 +290,17 @@ def _validate_has_required_and_no_extra_keys(
     if missing:
         if raise_on_error:
             raise SimpleBenchTypeError(
-                f"Missing required keys: {missing}",
-                tag=_TypedDictErrorTag.MISSING_REQUIRED_KEYS)
+                f'Missing required keys: {missing}', tag=_TypedDictErrorTag.MISSING_REQUIRED_KEYS
+            )
         return False
 
     extra = data.keys() - annotations.keys()
     if extra:
         if raise_on_error:
-            raise SimpleBenchTypeError(
-                f"Extra keys not allowed: {extra}",
-            tag=_TypedDictErrorTag.EXTRA_KEYS_PRESENT)
+            raise SimpleBenchTypeError(f'Extra keys not allowed: {extra}', tag=_TypedDictErrorTag.EXTRA_KEYS_PRESENT)
         return False
     return True
+
 
 def _validate_field_value(value, expected_type, parents: set[int], raise_on_error: bool = True) -> tuple[bool, bool]:
     """Validate a single field value against its expected type.
@@ -326,15 +333,17 @@ def _validate_field_value(value, expected_type, parents: set[int], raise_on_erro
     if id(value) in parents:
         if raise_on_error:
             raise SimpleBenchTypeError(
-                "Cyclic reference detected in data structure during TypedDict validation",
-                tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED)
+                'Cyclic reference detected in data structure during TypedDict validation',
+                tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
+            )
         return (False, False)
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         if raise_on_error:
             raise SimpleBenchTypeError(
-                "Maximum core data depth exceeded during TypedDict validation",
-                tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+                'Maximum core data depth exceeded during TypedDict validation',
+                tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+            )
         return (False, False)
 
     origin = get_origin(expected_type)
@@ -346,8 +355,9 @@ def _validate_field_value(value, expected_type, parents: set[int], raise_on_erro
             if not is_core_data_primitive(value):
                 if raise_on_error:
                     raise SimpleBenchTypeError(
-                        f"Value has invalid type {type(value)}, expected core data primitive type {expected_type}",
-                        tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE)
+                        f'Value has invalid type {type(value)}, expected core data primitive type {expected_type}',
+                        tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE,
+                    )
                 return (False, False)
             return (True, True)
         if isinstance(expected_type, type):
@@ -355,12 +365,12 @@ def _validate_field_value(value, expected_type, parents: set[int], raise_on_erro
                 return (True, True)
             elif raise_on_error:
                 raise SimpleBenchTypeError(
-                    f"Value has invalid type {type(value)}, expected type {expected_type}",
-                    tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE)
+                    f'Value has invalid type {type(value)}, expected type {expected_type}',
+                    tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE,
+                )
             return (False, False)
         if expected_type is Any:
             return (True, False)
-
 
     # Handle Sequences (excluding str/bytes)
     if origin in (list, tuple, Sequence):
@@ -400,10 +410,7 @@ def _validate_field_value(value, expected_type, parents: set[int], raise_on_erro
     return (True, True)  # If expected_type is Any or not a type
 
 
-def _validate_sequence_field(origin: Any,
-                             args: tuple[Any, ...],
-                             value: Any,
-                             parents: set[int]) -> tuple[bool, bool]:
+def _validate_sequence_field(origin: Any, args: tuple[Any, ...], value: Any, parents: set[int]) -> tuple[bool, bool]:
     """Validate a sequence field value against its expected type.
 
     This is called by _validate_field_value to handle sequence types specifically
@@ -418,13 +425,15 @@ def _validate_sequence_field(origin: Any,
     """
     if id(value) in parents:
         raise SimpleBenchTypeError(
-            "Cyclic reference detected in data structure during TypedDict validation",
-            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED)
+            'Cyclic reference detected in data structure during TypedDict validation',
+            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
+        )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
-            "Maximum core data depth exceeded during TypedDict validation",
-            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+            'Maximum core data depth exceeded during TypedDict validation',
+            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+        )
 
     # Handle Sequences (str/bytes are excluded earlier)
     if not isinstance(value, Sequence):
@@ -472,10 +481,8 @@ def _validate_sequence_field(origin: Any,
             immutable = False
     return (True, immutable)
 
-def _validate_set_field(
-            args: tuple[Any, ...],
-            value: Any,
-            parents: set[int]) -> tuple[bool, bool]:
+
+def _validate_set_field(args: tuple[Any, ...], value: Any, parents: set[int]) -> tuple[bool, bool]:
     """Validate a set field value against its expected type.
     This is called by _validate_field_value to handle set types specifically.
 
@@ -486,18 +493,20 @@ def _validate_set_field(
     """
     if id(value) in parents:
         raise SimpleBenchTypeError(
-            "Cyclic reference detected in data structure during TypedDict validation",
-            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED)
+            'Cyclic reference detected in data structure during TypedDict validation',
+            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
+        )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
-            "Maximum core data depth exceeded during TypedDict validation",
-            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+            'Maximum core data depth exceeded during TypedDict validation',
+            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+        )
 
     if not isinstance(value, Set):
         raise SimpleBenchTypeError(
-            f"Expected a Set type for value, got {type(value)}",
-            tag=_TypedDictErrorTag.NOT_A_SET)
+            f'Expected a Set type for value, got {type(value)}', tag=_TypedDictErrorTag.NOT_A_SET
+        )
     elem_type = args[0] if args else object
     immutable = True
     for v in value:
@@ -510,10 +519,8 @@ def _validate_set_field(
             immutable = False
     return (True, immutable)
 
-def _validate_mapping_field(
-            args: tuple[Any, ...],
-            value: Any,
-            parents: set[int]) -> tuple[bool, bool]:
+
+def _validate_mapping_field(args: tuple[Any, ...], value: Any, parents: set[int]) -> tuple[bool, bool]:
     """Validate a mapping field value against its expected type.
     This is called by _validate_field_value to handle mapping types specifically.
 
@@ -524,18 +531,20 @@ def _validate_mapping_field(
     """
     if id(value) in parents:
         raise SimpleBenchTypeError(
-            "Cyclic reference detected in data structure during TypedDict validation",
-            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED)
+            'Cyclic reference detected in data structure during TypedDict validation',
+            tag=_TypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
+        )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
-            "Maximum core data depth exceeded during TypedDict validation",
-            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED)
+            'Maximum core data depth exceeded during TypedDict validation',
+            tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+        )
 
     if not isinstance(value, Mapping):
         raise SimpleBenchTypeError(
-            f"Expected a Mapping type for value, got {type(value)}",
-            tag=_TypedDictErrorTag.NOT_A_MAPPING)
+            f'Expected a Mapping type for value, got {type(value)}', tag=_TypedDictErrorTag.NOT_A_MAPPING
+        )
     key_type, val_type = Any, Any
     match len(args):
         case 0:
@@ -546,20 +555,22 @@ def _validate_mapping_field(
             key_type, val_type = args
         case _:
             raise SimpleBenchTypeError(
-                "Mapping type must have zero, one, or two type arguments",
-                tag=_TypedDictErrorTag.INVALID_MAPPING_TYPE_ARGS)
+                'Mapping type must have zero, one, or two type arguments',
+                tag=_TypedDictErrorTag.INVALID_MAPPING_TYPE_ARGS,
+            )
     if not _is_string_key_type(key_type):
         raise SimpleBenchTypeError(
-            "Mapping key type must be str, Literal of str, or Annotated[str, ...] "
-            "for TypedDict validation",
-            tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING)
+            'Mapping key type must be str, Literal of str, or Annotated[str, ...] for TypedDict validation',
+            tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING,
+        )
     immutable = True
     parents.add(id(value))
     for k, v in value.items():
         if not isinstance(k, str):
             raise SimpleBenchTypeError(
-                f"Mapping key must be str for TypedDict validation, got {type(k)}",
-                tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING)
+                f'Mapping key must be str for TypedDict validation, got {type(k)}',
+                tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING,
+            )
         valid, v_immutable = _validate_field_value(v, val_type, parents)
         if not valid:
             return (False, False)
@@ -567,6 +578,7 @@ def _validate_mapping_field(
             immutable = False
     parents.remove(id(value))
     return (True, immutable)
+
 
 def _is_string_key_type(key_type: Any) -> bool:
     """Check if a type is a valid string key type for Mappings.
