@@ -286,7 +286,7 @@
 
 
 <div class="viewcode-block" id="register_metrics">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metrics_registry.html#simplebench.metrics.register_metrics">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.register_metrics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="n">Metric</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">|</span> <span class="n">Metric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register one or more new metrics in the registry.</span>
 
@@ -315,7 +315,7 @@
 
 
 <div class="viewcode-block" id="unregister_metrics">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metrics_registry.html#simplebench.metrics.unregister_metrics">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.unregister_metrics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unregister_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">Metric</span> <span class="o">|</span> <span class="n">Metrics</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Unregister one or more metrics from the registry.</span>
 
@@ -342,7 +342,7 @@
 
 
 <div class="viewcode-block" id="reset_metrics">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metrics_registry.html#simplebench.metrics.reset_metrics">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.reset_metrics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">reset_metrics</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear all metrics and restore the default meta-metrics and standard metrics.&quot;&quot;&quot;</span>
     <span class="n">metrics_registry</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -351,7 +351,7 @@
 
 
 <div class="viewcode-block" id="clear_metrics">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metrics_registry.html#simplebench.metrics.clear_metrics">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.clear_metrics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">clear_metrics</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear all registered metrics from the registry.&quot;&quot;&quot;</span>
     <span class="n">metrics_registry</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
@@ -366,7 +366,7 @@
 
 
 <div class="viewcode-block" id="filtered_metrics">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metrics_registry.html#simplebench.metrics.filtered_metrics">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.filtered_metrics">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">filtered_metrics</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">metric_types</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MetricType</span><span class="p">]</span> <span class="o">|</span> <span class="n">MetricTypes</span> <span class="o">|</span> <span class="n">MetricType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

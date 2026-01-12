@@ -262,88 +262,6 @@
 <section id="module-simplebench.metrics.metrics_registry">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.metrics.metrics_registry" title="Link to this heading">🔗</a></h2>
 <p>Metrics registry module.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_registry.clear_metrics">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_registry.</span></span><span class="sig-name descname"><span class="pre">clear_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_registry/metrics_registry.html#clear_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_registry.clear_metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Clear all registered metrics from the registry.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_registry.filtered_metrics">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_registry.</span></span><span class="sig-name descname"><span class="pre">filtered_metrics</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metric_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metrics.metric_type.html#simplebench.metrics.metric_type.MetricType" title="simplebench.metrics.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metric_types.html#simplebench.metrics.metric_types.MetricTypes" title="simplebench.metrics.metric_types.metric_types.MetricTypes"><span class="pre">MetricTypes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metric_type.html#simplebench.metrics.metric_type.MetricType" title="simplebench.metrics.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metric_categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.MetricCategory" title="simplebench.metrics.metric_category.MetricCategory"><span class="pre">MetricCategory</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.html#simplebench.metrics.MetricCategory" title="simplebench.metrics.metric_category.MetricCategory"><span class="pre">MetricCategory</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="simplebench.metrics.metrics.html#simplebench.metrics.metrics.Metrics" title="simplebench.metrics.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_registry/metrics_registry.html#filtered_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_registry.filtered_metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Create a Metrics object by filtering the metrics registry based on metric types and/or metric categories.</p>
-<p>If given both metric_types and metric_categories, the resulting Metrics object
-will include only metrics that match both criteria.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_types</strong> – A single MetricType, an iterable of MetricType, or a MetricTypes object to filter the metrics.</p></li>
-<li><p><strong>metric_categories</strong> – A single MetricCategory or an iterable of MetricCategory to filter the metrics.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new Metrics object containing the filtered metrics.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_registry.register_metrics">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_registry.</span></span><span class="sig-name descname"><span class="pre">register_metrics</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a><span class="p"><span class="pre">]</span></span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_registry/metrics_registry.html#register_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_registry.register_metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Register one or more new metrics in the registry.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metrics</strong> – A single metric or an iterable of metrics to register.
-or a <code class="xref py py-class docutils literal notranslate"><span class="pre">Metrics</span></code> instance to register all its metrics.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If <cite>metrics</cite> is not a Metric or an iterable of Metrics
-or a <code class="xref py py-class docutils literal notranslate"><span class="pre">Metrics</span></code> instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_registry.reset_metrics">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_registry.</span></span><span class="sig-name descname"><span class="pre">reset_metrics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_registry/metrics_registry.html#reset_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_registry.reset_metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Clear all metrics and restore the default meta-metrics and standard metrics.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_registry.unregister_metrics">
-<span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_registry.</span></span><span class="sig-name descname"><span class="pre">unregister_metrics</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metrics.html#simplebench.metrics.metrics.Metrics" title="simplebench.metrics.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_registry/metrics_registry.html#unregister_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_registry.unregister_metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Unregister one or more metrics from the registry.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metrics</strong> – A single metric label, a Metric, an iterable of metric labels,
-or a Metrics instance (to unregister all its metric labels).</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If <cite>metrics</cite> is not one of the supported types.</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 </section>
 
@@ -385,14 +303,7 @@ or a Metrics instance (to unregister all its metric labels).</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.metrics.metrics_registry package</a><ul>
-<li><a class="reference internal" href="#module-simplebench.metrics.metrics_registry">Module contents</a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_registry.clear_metrics"><code class="docutils literal notranslate"><span class="pre">clear_metrics()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_registry.filtered_metrics"><code class="docutils literal notranslate"><span class="pre">filtered_metrics()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_registry.register_metrics"><code class="docutils literal notranslate"><span class="pre">register_metrics()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_registry.reset_metrics"><code class="docutils literal notranslate"><span class="pre">reset_metrics()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_registry.unregister_metrics"><code class="docutils literal notranslate"><span class="pre">unregister_metrics()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-simplebench.metrics.metrics_registry">Module contents</a></li>
 </ul>
 </li>
 </ul>

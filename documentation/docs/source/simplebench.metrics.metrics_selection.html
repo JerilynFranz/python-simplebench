@@ -277,114 +277,6 @@
 <section id="module-simplebench.metrics.metrics_selection">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.metrics.metrics_selection" title="Link to this heading">🔗</a></h2>
 <p>Metrics selection module.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsCollection">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_selection.</span></span><span class="sig-name descname"><span class="pre">MetricsCollection</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metrics.html#simplebench.metrics.metrics.Metrics" title="simplebench.metrics.metrics.metrics.Metrics"><span class="pre">Metrics</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metric.html#simplebench.metrics.metric.Metric" title="simplebench.metrics.metric.metric.Metric"><span class="pre">Metric</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_selection/metrics_collection.html#MetricsCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsCollection" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelection" title="simplebench.metrics.metrics_selection.metrics_selection.MetricsSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetricsSelection</span></code></a></p>
-<p>Represents a resolved, immutable set of metrics selected from the registered metrics</p>
-<p>This class is used to represent a resolved set of metrics that have been
-selected from a given universe. The set of metrics is immutable, meaning that
-once the set of metrics is created, it cannot be modified.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metrics</strong> – A set of metrics to be selected from the given universe.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided metrics are not an Iterable[Metrics] or a Metrics instance.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the provided metrics are an empty Iterable.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Constructor for MetricsCollection.</p>
-<p>Only one of the two ways to provide metrics should be used: either positional arguments
-or the <cite>metrics</cite> keyword argument.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> – Positional arguments representing Metric instances.</p></li>
-<li><p><strong>metrics</strong> – A keyword argument that can be an Iterable of Metric instances,
-a Metrics instance, or a single Metric instance.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the provided metrics are not an Iterable[Metrics] or a Metrics instance.</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchValueError" title="simplebench.exceptions.SimpleBenchValueError"><strong>SimpleBenchValueError</strong></a> – If the provided metrics are an empty Iterable.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsCollection.metrics">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metrics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metrics.html#simplebench.metrics.metrics.Metrics" title="simplebench.metrics.metrics.metrics.Metrics"><span class="pre">Metrics</span></a></em><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsCollection.metrics" title="Link to this definition">🔗</a></dt>
-<dd><p>Returns the set of metrics selected from the given universe.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsSelection">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_selection.</span></span><span class="sig-name descname"><span class="pre">MetricsSelection</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">selector_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelectionType" title="simplebench.metrics.metrics_selection.metrics_selection_type.MetricsSelectionType"><span class="pre">MetricsSelectionType</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_selection/metrics_selection.html#MetricsSelection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsSelection" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Represents a set of metrics that can be selected from a given universe.</p>
-<p>This class is a base class for different types of metric selections.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsSelection.selector_type">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">selector_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelectionType" title="simplebench.metrics.metrics_selection.metrics_selection_type.MetricsSelectionType"><span class="pre">MetricsSelectionType</span></a></em><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsSelection.selector_type" title="Link to this definition">🔗</a></dt>
-<dd><p>Returns the type of the metric selection.</p>
-<p>Possible values are:
-- MetricsSelectionType.COLLECTION: Represents a collection of metrics.
-- MetricsSelectionType.UNSPECIFIED: Represents an unspecified metric selection type.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The type of the metric selection.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsSelectionType">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_selection.</span></span><span class="sig-name descname"><span class="pre">MetricsSelectionType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_selection/metrics_selection_type.html#MetricsSelectionType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsSelectionType" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
-<p>Represents the metric selection type</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsSelectionType.COLLECTION">
-<span class="sig-name descname"><span class="pre">COLLECTION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'collection'</span></em><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsSelectionType.COLLECTION" title="Link to this definition">🔗</a></dt>
-<dd><p>Represents a collection of metrics.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsSelectionType.UNSPECIFIED">
-<span class="sig-name descname"><span class="pre">UNSPECIFIED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'unspecified'</span></em><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsSelectionType.UNSPECIFIED" title="Link to this definition">🔗</a></dt>
-<dd><p>Represents an unspecified metric selection type.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.metrics.metrics_selection.MetricsUnspecified">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metrics_selection.</span></span><span class="sig-name descname"><span class="pre">MetricsUnspecified</span></span><a class="reference internal" href="../_modules/simplebench/metrics/metrics_selection/metrics_unspecified.html#MetricsUnspecified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metrics_selection.MetricsUnspecified" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelection" title="simplebench.metrics.metrics_selection.metrics_selection.MetricsSelection"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetricsSelection</span></code></a></p>
-<p>Represents an unresolved set of metrics.</p>
-<p>A reporter that uses this class will be responsible for resolving the set
-of metrics itself before reporting.</p>
-</dd></dl>
-
 </section>
 </section>
 
@@ -430,23 +322,7 @@ of metrics itself before reporting.</p>
 <li><a class="reference internal" href="#module-simplebench.metrics.metrics_selection.metrics_collection">simplebench.metrics.metrics_selection.metrics_collection module</a></li>
 <li><a class="reference internal" href="#module-simplebench.metrics.metrics_selection.metrics_selection_type">simplebench.metrics.metrics_selection.metrics_selection_type module</a></li>
 <li><a class="reference internal" href="#module-simplebench.metrics.metrics_selection.metrics_unspecified">simplebench.metrics.metrics_selection.metrics_unspecified module</a></li>
-<li><a class="reference internal" href="#module-simplebench.metrics.metrics_selection">Module contents</a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsCollection"><code class="docutils literal notranslate"><span class="pre">MetricsCollection</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsCollection.metrics"><code class="docutils literal notranslate"><span class="pre">MetricsCollection.metrics</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelection"><code class="docutils literal notranslate"><span class="pre">MetricsSelection</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelection.selector_type"><code class="docutils literal notranslate"><span class="pre">MetricsSelection.selector_type</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelectionType"><code class="docutils literal notranslate"><span class="pre">MetricsSelectionType</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelectionType.COLLECTION"><code class="docutils literal notranslate"><span class="pre">MetricsSelectionType.COLLECTION</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsSelectionType.UNSPECIFIED"><code class="docutils literal notranslate"><span class="pre">MetricsSelectionType.UNSPECIFIED</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#simplebench.metrics.metrics_selection.MetricsUnspecified"><code class="docutils literal notranslate"><span class="pre">MetricsUnspecified</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-simplebench.metrics.metrics_selection">Module contents</a></li>
 </ul>
 </li>
 </ul>

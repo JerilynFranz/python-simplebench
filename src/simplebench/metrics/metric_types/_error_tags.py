@@ -3,6 +3,8 @@
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
+__all__ = []
+
 
 @enum_docstrings
 class _MetricTypesErrorTag(ErrorTag):

@@ -262,80 +262,6 @@
 <section id="module-simplebench.metrics.metric_type">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.metrics.metric_type" title="Link to this heading">🔗</a></h2>
 <p>Metric definition package</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_type.MetricType">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metric_type.</span></span><span class="sig-name descname"><span class="pre">MetricType</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">semantic_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/metrics/metric_type/metric_type.html#MetricType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metric_type.MetricType" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Definition for a metric</p>
-<p>This class defines a metric with a name, semantic type, label, description, unit, and scale.</p>
-<p>Metrics are used to measure and report the performance of a system or application. They are used to track and report
-various performance metrics, such as the number of operations per second, the number of bytes transferred, or
-the time taken to complete a task.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>semantic_type</strong> – The semantic type of the metric, e.g. ‘simplebench_std::operations_per_second’</p></li>
-<li><p><strong>label</strong> – The label of the metric, e.g. ‘OPS_PER_SEC’</p></li>
-<li><p><strong>description</strong> – The description of the metric, e.g. ‘Operations per second’</p></li>
-<li><p><strong>unit</strong> – The unit of the metric, e.g. ‘ops/s’</p></li>
-<li><p><strong>scale</strong> – The scale of the metric, e.g. 1.0. Accepts an int and converts it to a float.</p></li>
-<li><p><strong>category</strong> – The type of the metric
-- <cite>MetricCategory.CUMULATIVE</cite>
-- <cite>MetricCategory.STATISTICAL</cite>
-- <cite>MetricCategory.RAW</cite></p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_type.MetricType.category">
-<span class="sig-name descname"><span class="pre">category</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#simplebench.metrics.metric_type.MetricType.category" title="Link to this definition">🔗</a></dt>
-<dd><p>The type of the metric, e.g. <cite>MetricCategory.CUMULATIVE</cite>, <cite>MetricCategory.STATISTICAL</cite> or <cite>MetricCategory.RAW</cite></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_type.MetricType.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.metrics.metric_type.MetricType.description" title="Link to this definition">🔗</a></dt>
-<dd><p>The description of the metric, e.g. ‘Operations per second’</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_type.MetricType.label">
-<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.metrics.metric_type.MetricType.label" title="Link to this definition">🔗</a></dt>
-<dd><p>The label of the metric, e.g. ‘OPS_PER_SEC’</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_type.MetricType.scale">
-<span class="sig-name descname"><span class="pre">scale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></em><a class="headerlink" href="#simplebench.metrics.metric_type.MetricType.scale" title="Link to this definition">🔗</a></dt>
-<dd><p>The scale of the metric, e.g. 1.0</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_type.MetricType.semantic_type">
-<span class="sig-name descname"><span class="pre">semantic_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.metrics.metric_type.MetricType.semantic_type" title="Link to this definition">🔗</a></dt>
-<dd><p>The semantic type of the metric, e.g. ‘simplebench_std::operations_per_second’</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_type.MetricType.unit">
-<span class="sig-name descname"><span class="pre">unit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#simplebench.metrics.metric_type.MetricType.unit" title="Link to this definition">🔗</a></dt>
-<dd><p>The unit of the metric, e.g. ‘ops/s’</p>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -377,18 +303,7 @@ the time taken to complete a task.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.metrics.metric_type package</a><ul>
-<li><a class="reference internal" href="#module-simplebench.metrics.metric_type">Module contents</a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metric_type.MetricType"><code class="docutils literal notranslate"><span class="pre">MetricType</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metric_type.MetricType.category"><code class="docutils literal notranslate"><span class="pre">MetricType.category</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metric_type.MetricType.description"><code class="docutils literal notranslate"><span class="pre">MetricType.description</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metric_type.MetricType.label"><code class="docutils literal notranslate"><span class="pre">MetricType.label</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metric_type.MetricType.scale"><code class="docutils literal notranslate"><span class="pre">MetricType.scale</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metric_type.MetricType.semantic_type"><code class="docutils literal notranslate"><span class="pre">MetricType.semantic_type</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metric_type.MetricType.unit"><code class="docutils literal notranslate"><span class="pre">MetricType.unit</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-simplebench.metrics.metric_type">Module contents</a></li>
 </ul>
 </li>
 </ul>

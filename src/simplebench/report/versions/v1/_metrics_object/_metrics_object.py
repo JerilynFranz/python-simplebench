@@ -45,6 +45,8 @@ MetricItemsDict: TypeAlias = MappingProxyType[str, MetricItem]
 METRIC_ITEM_TYPES: tuple[type, ...] = (StatsBlock, ValueBlock, RawDataBlock)
 """Tuple of the possible types of metric items in the metrics dictionary."""
 
+__all__ = []
+
 
 class MetricsObject(Mapping, Immutable):
     """Immutable base class representing the 'metrics' object in a report ResultsInfo object.

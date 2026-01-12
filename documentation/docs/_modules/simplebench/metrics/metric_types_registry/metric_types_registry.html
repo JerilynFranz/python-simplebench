@@ -283,7 +283,7 @@
 
 
 <div class="viewcode-block" id="register_metric_types">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metric_types_registry.html#simplebench.metrics.register_metric_types">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.register_metric_types">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_metric_types</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="n">MetricType</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MetricType</span><span class="p">]</span> <span class="o">|</span> <span class="n">MetricTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register one or more new metric types in the registry.</span>
 
@@ -312,7 +312,7 @@
 
 
 <div class="viewcode-block" id="unregister_metric_types">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metric_types_registry.html#simplebench.metrics.unregister_metric_types">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.unregister_metric_types">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">unregister_metric_types</span><span class="p">(</span><span class="n">metric_types</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="n">MetricType</span> <span class="o">|</span> <span class="n">MetricTypes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Unregister one or more metric types from the registry.</span>
 
@@ -339,7 +339,7 @@
 
 
 <div class="viewcode-block" id="reset_metric_types">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metric_types_registry.html#simplebench.metrics.reset_metric_types">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.reset_metric_types">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">reset_metric_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear all metric types and restore the default meta-metric types and standard metric types.&quot;&quot;&quot;</span>
     <span class="n">metric_types_registry</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -348,7 +348,7 @@
 
 
 <div class="viewcode-block" id="clear_metric_types">
-<a class="viewcode-back" href="../../../../source/simplebench.metrics.metric_types_registry.html#simplebench.metrics.clear_metric_types">[docs]</a>
+<a class="viewcode-back" href="../../../../source/simplebench.metrics.html#simplebench.metrics.clear_metric_types">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">clear_metric_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear all registered metrics from the registry.&quot;&quot;&quot;</span>
     <span class="n">metric_types_registry</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>

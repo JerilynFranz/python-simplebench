@@ -262,80 +262,6 @@
 <section id="module-simplebench.metrics.metric_types">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simplebench.metrics.metric_types" title="Link to this heading">🔗</a></h2>
 <p>Metrics module.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_types.MetricTypes">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">simplebench.metrics.metric_types.</span></span><span class="sig-name descname"><span class="pre">MetricTypes</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metric_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metrics.metric_type.html#simplebench.metrics.metric_type.MetricType" title="simplebench.metrics.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.metrics.metric_types.MetricTypes" title="simplebench.metrics.metric_types.metric_types.MetricTypes"><span class="pre">MetricTypes</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="simplebench.metrics.metric_type.html#simplebench.metrics.metric_type.MetricType" title="simplebench.metrics.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span><a class="reference internal" href="../_modules/simplebench/metrics/metric_types/metric_types.html#MetricTypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metric_types.MetricTypes" title="Link to this definition">🔗</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.MutableMapping" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MutableMapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="simplebench.metrics.metric_type.html#simplebench.metrics.metric_type.MetricType" title="simplebench.metrics.metric_type.metric_type.MetricType"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetricType</span></code></a>]</p>
-<p>A namespace class for metric types that behaves like a read-only dictionary.
-This class can be used to store and manage metric types in a structured way.
-Each metric type is stored as an attribute of the MetricTypes object.</p>
-<p>The class ensures that all keys are valid Python identifiers and that all
-values are instances of MetricType. Once a metric type is added, it cannot
-be changed.</p>
-<p>The class also provides a method to delete a metric type from the MetricTypes object.
-The key must exist in the MetricTypes object and contain a MetricType object.</p>
-<p>Initialize the MetricTypes object with an optional list of metric types.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metric_types</strong> – A MetricType, an Iterable of MetricType objects, or a MetricTypes instance
-to initialize the MetricTypes object.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the input is not a MetricType, an Iterable of MetricType,
-or a MetricTypes instance.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_types.MetricTypes.add">
-<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metric_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="simplebench.metrics.metric_type.html#simplebench.metrics.metric_type.MetricType" title="simplebench.metrics.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metrics/metric_types/metric_types.html#MetricTypes.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metric_types.MetricTypes.add" title="Link to this definition">🔗</a></dt>
-<dd><p>Add a single MetricType to the MetricTypes object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metric_type</strong> – A MetricType object to add.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchDuplicateKeyError" title="simplebench.exceptions.SimpleBenchDuplicateKeyError"><strong>SimpleBenchDuplicateKeyError</strong></a> – If a duplicate key is found.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="simplebench.metrics.metric_types.MetricTypes.extend">
-<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span>
-
-<dl>
-<dd><em class="sig-param"><span class="n"><span class="pre">metric_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="simplebench.metrics.metric_type.html#simplebench.metrics.metric_type.MetricType" title="simplebench.metrics.metric_type.metric_type.MetricType"><span class="pre">MetricType</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#simplebench.metrics.metric_types.MetricTypes" title="simplebench.metrics.metric_types.metric_types.MetricTypes"><span class="pre">MetricTypes</span></a></span></em>,</dd>
-</dl>
-
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/simplebench/metrics/metric_types/metric_types.html#MetricTypes.extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#simplebench.metrics.metric_types.MetricTypes.extend" title="Link to this definition">🔗</a></dt>
-<dd><p>Add multiple metric types to the MetricTypes object.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metric_types</strong> – An Iterable of MetricType objects or another MetricTypes object.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchTypeError" title="simplebench.exceptions.SimpleBenchTypeError"><strong>SimpleBenchTypeError</strong></a> – If the input is not an Iterable of MetricType</p></li>
-<li><p><a class="reference internal" href="simplebench.exceptions.html#simplebench.exceptions.SimpleBenchDuplicateKeyError" title="simplebench.exceptions.SimpleBenchDuplicateKeyError"><strong>SimpleBenchDuplicateKeyError</strong></a> – If a duplicate key is found.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -377,14 +303,7 @@ or a MetricTypes instance.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">simplebench.metrics.metric_types package</a><ul>
-<li><a class="reference internal" href="#module-simplebench.metrics.metric_types">Module contents</a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metric_types.MetricTypes"><code class="docutils literal notranslate"><span class="pre">MetricTypes</span></code></a><ul>
-<li><a class="reference internal" href="#simplebench.metrics.metric_types.MetricTypes.add"><code class="docutils literal notranslate"><span class="pre">MetricTypes.add()</span></code></a></li>
-<li><a class="reference internal" href="#simplebench.metrics.metric_types.MetricTypes.extend"><code class="docutils literal notranslate"><span class="pre">MetricTypes.extend()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-simplebench.metrics.metric_types">Module contents</a></li>
 </ul>
 </li>
 </ul>
