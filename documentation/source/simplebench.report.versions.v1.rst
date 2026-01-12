@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   simplebench.report.versions.v1.metrics_object
    simplebench.report.versions.v1.report
    simplebench.report.versions.v1.results_info
 

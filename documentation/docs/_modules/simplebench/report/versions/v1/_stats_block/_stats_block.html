@@ -1005,7 +1005,7 @@
         <span class="c1"># The first element of the state tuple is for __dict__, which is None for this class.</span>
         <span class="c1"># The second element is a tuple of values for the __slots__.</span>
         <span class="n">slot_values</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">slot</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">,</span> <span class="n">slot_values</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">slot</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">,</span> <span class="n">slot_values</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="c1"># Use object.__setattr__ to bypass our immutable setters.</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slot</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 

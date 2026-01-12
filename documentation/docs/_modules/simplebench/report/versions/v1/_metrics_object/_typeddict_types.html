@@ -6,7 +6,7 @@
         <link rel="prefetch" href="../../../../../../_static/simplebench-logo.svg" as="image">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>simplebench.report.versions.v1._system_info._typeddict_types - simplebench 0.9.0-alpha documentation</title>
+        <title>simplebench.report.versions.v1._metrics_object._typeddict_types - simplebench 0.9.0-alpha documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=c309799c" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/styles/furo.css?v=d998a142" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
@@ -250,149 +250,133 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for simplebench.report.versions.v1._system_info._typeddict_types</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Typed dictionaries for the V1 SystemInfo data structure.</span>
+          <h1>Source code for simplebench.report.versions.v1._metrics_object._typeddict_types</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Typed dictionaries for the V1 MetricsObject data structure.</span>
 
-<span class="sd">This module defines four distinct dictionary types for handling SystemInfo data,</span>
-<span class="sd">both modeled on the JSON schema for version 1 SystemInfo in</span>
-<span class="sd">version 1: :class:`~simplebench.report.versions.v1.SystemInfoSchema`.</span>
+<span class="sd">This module defines four distinct dictionary types for handling MetricsObject data,</span>
+<span class="sd">all modeled on the JSON schema for a MetricsObject as defined in the</span>
+<span class="sd">version 1: :class:`~simplebench.report.versions.v1.ResultsInfoSchema`.</span>
 
-<span class="sd">    - `SystemInfoData`: For use as INPUT (e.g., to `from_dict`). It is more</span>
+<span class="sd">    - `MetricsObjectData`: For use as INPUT (e.g., to `from_dict`). It is more</span>
 <span class="sd">    lenient, making `type`, `version`, and `hash_id` optional.</span>
-<span class="sd">    - `ImmutableSystemInfoData`: An immutable variant of `SystemInfoData` for use</span>
-<span class="sd">    as INPUT. It serves as a marker for type-checking to indicate immutability.</span>
-<span class="sd">    - `SystemInfoDict`: For use as OUTPUT (e.g., from `to_dict`). It is</span>
+<span class="sd">    - `ImmutableMetricsObjectData`: An immutable version of `MetricsObjectData`.</span>
+<span class="sd">    - `MetricsObjectDict`: For use as OUTPUT (e.g., from `to_dict`). It is</span>
 <span class="sd">    stricter, guaranteeing that `type`, `version`, and `hash_id` are present.</span>
-<span class="sd">    - `ImmutableSystemInfoDict`: An immutable variant of `SystemInfoDict` for use</span>
-<span class="sd">    as OUTPUT. It serves as a marker for type-checking to indicate immutability.</span>
+<span class="sd">    - `ImmutableMetricsObjectDict`: An immutable version of `MetricsObjectDict`.</span>
 
-<span class="sd">    These types ensure proper validation and serialization of SystemInfo data</span>
+<span class="sd">    These types ensure proper validation and serialization of MetricsObject data</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._base._report_element_typed_dict</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportElementTypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportElementTypedDict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Never</span><span class="p">,</span> <span class="n">NotRequired</span><span class="p">,</span> <span class="n">Required</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SystemInfoData&#39;</span><span class="p">,</span> <span class="s1">&#39;SystemInfoDict&#39;</span><span class="p">,</span> <span class="s1">&#39;ImmutableSystemInfoData&#39;</span><span class="p">,</span> <span class="s1">&#39;ImmutableSystemInfoDict&#39;</span><span class="p">]</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._raw_data_block</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImmutableRawDataBlockData</span><span class="p">,</span> <span class="n">ImmutableRawDataBlockDict</span><span class="p">,</span> <span class="n">RawDataBlockData</span><span class="p">,</span> <span class="n">RawDataBlockDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._stats_block</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImmutableStatsBlockData</span><span class="p">,</span> <span class="n">ImmutableStatsBlockDict</span><span class="p">,</span> <span class="n">StatsBlockData</span><span class="p">,</span> <span class="n">StatsBlockDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.._value_block</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImmutableValueBlockData</span><span class="p">,</span> <span class="n">ImmutableValueBlockDict</span><span class="p">,</span> <span class="n">ValueBlockData</span><span class="p">,</span> <span class="n">ValueBlockDict</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># --- Type aliases for metric item types ---</span>
+
+<span class="n">ImmutableMetricDataTypes</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ImmutableValueBlockData</span> <span class="o">|</span> <span class="n">ImmutableStatsBlockData</span> <span class="o">|</span> <span class="n">ImmutableRawDataBlockData</span>
+<span class="sd">&quot;&quot;&quot;Type alias for the possible types of INPUT metric items in the immutable metrics data dictionary.&quot;&quot;&quot;</span>
+
+<span class="n">MetricDataTypes</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ValueBlockData</span> <span class="o">|</span> <span class="n">StatsBlockData</span> <span class="o">|</span> <span class="n">RawDataBlockData</span> <span class="o">|</span> <span class="n">ImmutableMetricDataTypes</span>
+<span class="sd">&quot;&quot;&quot;Type alias for the possible types of INPUT metric items in the metrics data dictionary.&quot;&quot;&quot;</span>
+
+<span class="n">ImmutableMetricDictTypes</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ImmutableValueBlockDict</span> <span class="o">|</span> <span class="n">ImmutableStatsBlockDict</span> <span class="o">|</span> <span class="n">ImmutableRawDataBlockDict</span>
+<span class="sd">&quot;&quot;&quot;Type alias for the possible types of OUTPUT metric items in the immutable metrics dictionary.&quot;&quot;&quot;</span>
+
+<span class="n">MetricDictTypes</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">ValueBlockDict</span> <span class="o">|</span> <span class="n">StatsBlockDict</span> <span class="o">|</span> <span class="n">RawDataBlockDict</span> <span class="o">|</span> <span class="n">ImmutableMetricDictTypes</span>
+<span class="sd">&quot;&quot;&quot;Type alias for the possible types of OUTPUT metric items in the metrics dictionary.&quot;&quot;&quot;</span>
 
 <span class="c1"># --- For data used as INPUT (e.g., to `from_dict`) ---</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">_RequiredSystemInfo</span><span class="p">(</span><span class="n">ReportElementTypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Required fields for V1 SystemInfo data used as INPUT.</span>
+<div class="viewcode-block" id="MetricsObjectData">
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.MetricsObjectData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MetricsObjectData</span><span class="p">(</span><span class="n">ReportElementTypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for V1 MetricsObject data used as INPUT.</span>
 
-<span class="sd">    All fields are required (`total=True`), except for those made optional</span>
-<span class="sd">    in the main `SystemInfoData` definition.</span>
-
-<span class="sd">    :param Required[str] system: The system OS identifier string.</span>
-<span class="sd">    :param Required[str] system_version: The system version string.</span>
-<span class="sd">    :param Required[str] release: The system release string.</span>
-<span class="sd">    :param Required[str] machine: The machine type string.</span>
+<span class="sd">    :param Required[Mapping[str, MetricDataTypes]] metrics: The metrics object data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">system</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">system_version</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">release</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">machine</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MetricDataTypes</span><span class="p">]]</span></div>
 
 
-<div class="viewcode-block" id="SystemInfoData">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.SystemInfoData">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SystemInfoData</span><span class="p">(</span><span class="n">_RequiredSystemInfo</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for V1 SystemInfo data used as INPUT.</span>
 
-<span class="sd">    All fields except `type`, `version`, and `hash_id` are required (`total=False`).</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_RequiredImmutableMetricsObjectData</span><span class="p">(</span><span class="n">ReportElementTypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for immutable V1 MetricsObject data used as INPUT.</span>
 
-<span class="sd">    .. note::</span>
-<span class="sd">        No additional fields are allowed beyond those defined here but</span>
-<span class="sd">        `closed=True` is not being enforced due to Python version limitations</span>
-<span class="sd">        before Python 3.12.</span>
+<span class="sd">    This class makes all fields and immutable to ensure immutability.</span>
 
-<span class="sd">    :param Required[str] system: The system OS identifier string.</span>
-<span class="sd">    :param Required[str] system_version: The system version string.</span>
-<span class="sd">    :param Required[str] release: The system release string.</span>
-<span class="sd">    :param Required[str] machine: The machine type string.</span>
-<span class="sd">    :param NotRequired[str] type: The type identifier for the block.</span>
-<span class="sd">    :param NotRequired[int] version: The version of the block&#39;s data structure.</span>
-<span class="sd">    :param NotRequired[str] hash_id: The unique hash identifier for the system information.</span>
+
+<span class="sd">    :param Required[Mapping[str, ImmutableMetricDataTypes]] metrics: The metrics object data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span><span class="p">:</span> <span class="n">NotRequired</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">version</span><span class="p">:</span> <span class="n">NotRequired</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">hash_id</span><span class="p">:</span> <span class="n">NotRequired</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ImmutableMetricDataTypes</span><span class="p">]]</span>
 
 
+<div class="viewcode-block" id="ImmutableMetricsObjectData">
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ImmutableMetricsObjectData">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImmutableMetricsObjectData</span><span class="p">(</span><span class="n">_RequiredImmutableMetricsObjectData</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for immutable V1 MetricsObject data used as INPUT.</span>
 
-<div class="viewcode-block" id="ImmutableSystemInfoData">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ImmutableSystemInfoData">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ImmutableSystemInfoData</span><span class="p">(</span><span class="n">SystemInfoData</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Immutable version of :class:`SystemInfoData` (INPUT).</span>
+<span class="sd">    The `__immutable__` field is used to signal that this dictionary is immutable</span>
+<span class="sd">    to type checking tools. It is a class-level marker and should never be set in instances.</span>
 
-<span class="sd">    This marks the dictionary as immutable for type-checking purposes. During runtime,</span>
-<span class="sd">    it should be constructed so as to enforce immutability.</span>
-
-<span class="sd">    Because it inherits from :class:`SystemInfoData`, all fields are the same and it</span>
-<span class="sd">    does not add or remove any fields.</span>
-
-<span class="sd">    The `__immutable__` attribute serves as a class marker for type-checking</span>
-<span class="sd">    to indicate that instances of this type should be treated as immutable</span>
-<span class="sd">    and should never be given an actual value.</span>
+<span class="sd">    :param Required[MappingProxyType[str, ImmutableMetricDataTypes]] metrics: The metrics object data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">__immutable__</span><span class="p">:</span> <span class="n">NotRequired</span><span class="p">[</span><span class="n">Never</span><span class="p">]</span>  <span class="c1"># Marker to indicate immutability</span></div>
+    <span class="n">__immutable__</span><span class="p">:</span> <span class="n">NotRequired</span><span class="p">[</span><span class="n">Never</span><span class="p">]</span></div>
 
 
 
 <span class="c1"># --- For data used as OUTPUT (e.g., from `to_dict`) ---</span>
 
 
-<div class="viewcode-block" id="SystemInfoDict">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.SystemInfoDict">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SystemInfoDict</span><span class="p">(</span><span class="n">_RequiredSystemInfo</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).</span>
+<div class="viewcode-block" id="MetricsObjectDict">
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.MetricsObjectDict">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MetricsObjectDict</span><span class="p">(</span><span class="n">ReportElementTypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for the JSON representation of a V1 MetricsObject (OUTPUT).</span>
 
-<span class="sd">    This type is strict, requiring `type`, `version`, `node`, and `hash_id` to be</span>
-<span class="sd">    present to strictly conform with the JSON schema and for output serialization.</span>
-
-<span class="sd">    The type asserts to type checkers that all required fields are present and</span>
-<span class="sd">    that all fields are of the correct immutable types, but cannot enforce</span>
-<span class="sd">    immutability of the instance itself (Python limitation).</span>
-
-<span class="sd">    :param Required[str] system: The system OS identifier string.</span>
-<span class="sd">    :param Required[str] system_version: The system version string.</span>
-<span class="sd">    :param Required[str] release: The system release string.</span>
-<span class="sd">    :param Required[str] machine: The machine type string.</span>
-<span class="sd">    :param Required[str] type: The type identifier for the block.</span>
-<span class="sd">    :param Required[int] version: The version of the block&#39;s data structure.</span>
-<span class="sd">    :param Required[str] hash_id: The unique hash identifier for the system information.</span>
+<span class="sd">    :param Required[Mapping[str, MetricDictTypes]] metrics: The metrics object data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">type</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">version</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">hash_id</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MetricDictTypes</span><span class="p">]]</span></div>
 
 
 
-<div class="viewcode-block" id="ImmutableSystemInfoDict">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ImmutableSystemInfoDict">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ImmutableSystemInfoDict</span><span class="p">(</span><span class="n">SystemInfoDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Immutable typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_RequiredImmutableMetricsObjectDict</span><span class="p">(</span><span class="n">ReportElementTypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for the immutable JSON representation of a V1 MetricsObject (OUTPUT).</span>
 
-<span class="sd">    This marks the dictionary as immutable for type-checking purposes. During runtime,</span>
-<span class="sd">    it should be constructed so as to enforce immutability.</span>
+<span class="sd">    This class makes all fields and immutable to ensure immutability.</span>
 
-<span class="sd">    Because it inherits from `SystemInfoDict`, all fields are the same and it</span>
-<span class="sd">    can be used interchangeably where immutability is not a concern.</span>
+<span class="sd">    The `__immutable__` field is used to signal that this dictionary is immutable</span>
+<span class="sd">    to type checking tools. It is a class-level marker and should never be set in instances.</span>
 
-<span class="sd">    :param Required[str] system: The system OS identifier string.</span>
-<span class="sd">    :param Required[str] system_version: The system version string.</span>
-<span class="sd">    :param Required[str] release: The system release string.</span>
-<span class="sd">    :param Required[str] machine: The machine type string.</span>
-<span class="sd">    :param Required[str] type: The type identifier for the block.</span>
-<span class="sd">    :param Required[int] version: The version of the block&#39;s data structure.</span>
-<span class="sd">    :param Required[str] hash_id: The unique hash identifier for the system information.</span>
+<span class="sd">    :param Required[MappingProxyType[str, ImmutableMetricDictTypes]] metrics: The metrics object data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">__immutable__</span><span class="p">:</span> <span class="n">NotRequired</span><span class="p">[</span><span class="n">Never</span><span class="p">]</span>  <span class="c1"># Marker to indicate immutability</span></div>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Required</span><span class="p">[</span><span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ImmutableMetricDictTypes</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="ImmutableMetricsObjectDict">
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ImmutableMetricsObjectDict">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImmutableMetricsObjectDict</span><span class="p">(</span><span class="n">_RequiredImmutableMetricsObjectDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Typed dictionary for the immutable JSON representation of a V1 MetricsObject (OUTPUT).</span>
+
+<span class="sd">    The `__immutable__` field is used to signal that this dictionary is immutable</span>
+<span class="sd">    to type checking tools. It is a class-level marker and should never be set in instances.</span>
+
+<span class="sd">    :param Required[MappingProxyType[str, ImmutableMetricDictTypes]] metrics: The metrics object data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__immutable__</span><span class="p">:</span> <span class="n">NotRequired</span><span class="p">[</span><span class="n">Never</span><span class="p">]</span></div>
 
 </pre></div>
         </article>

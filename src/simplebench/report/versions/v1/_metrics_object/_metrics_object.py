@@ -49,11 +49,11 @@ METRIC_ITEM_TYPES: tuple[type, ...] = (StatsBlock, ValueBlock, RawDataBlock)
 class MetricsObject(Mapping, Immutable):
     """Immutable base class representing the 'metrics' object in a report ResultsInfo object.
 
-    This is a dictionary (a UserDict) where the keys are metric names (strings) and the values
+    This is a dictionary where the keys are metric names (strings) and the values
     are MetricItem objects (a StatsBlock, a ValueBlock, or a RawDataBlock).
 
     It is not a standalone JSON schema object, but rather a subcomponent
-    of the results-info JSON schema object.
+    of the results-info JSON schema object that represents the 'metrics' property.
 
     See :class:`~simplebench.report.versions.v1.ResultsInfo` for more details.
 
