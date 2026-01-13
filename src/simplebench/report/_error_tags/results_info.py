@@ -10,6 +10,10 @@ __all__ = []
 class _ResultsInfoErrorTag(ErrorTag):
     """Error tags for JSONResults v1 exceptions."""
 
+    INVALID_HASH_ID_TYPE = 'INVALID_HASH_ID_TYPE'
+    """The hash_id is not of type str."""
+    INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'
+    """The hash_id is not a valid 64-character hexadecimal string."""
     INVALID_VARIATION_MARKS_TYPE = 'INVALID_VARIATION_MARKS_TYPE'
     """The variation_marks is not of type dict."""
     INVALID_VARIATION_MARKS_CONTENT = 'INVALID_VARIATION_MARKS_CONTENT'

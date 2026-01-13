@@ -17,34 +17,18 @@ and serves as a foundation for future versions.
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, Sequence
 
-from simplebench.report.base import BaseReport, JSONSchema
 from simplebench.report._error_tags import _ReportErrorTag
+from simplebench.report.base import BaseReport, JSONSchema
 from simplebench.report.versions.v1 import MachineInfo
 from simplebench.types import ImmutableVariationColsType, VariationColsType
 from simplebench.validators import validate_sequence_of_type
 
-from . import validate
+from . import _validate
 from .report_schema import ReportSchema
-from ._typeddict_types import ReportDict
-
-_deferred_imports_done: bool = False
+from .typeddict_types import ImmutableReportDict, ReportData
 
 if TYPE_CHECKING:
-    from simplebench.report.versions.v1 import ResultsInfo
-
-    _deferred_imports_done = True
-else:
-    ResultsInfo = None  # pylint: disable=invalid-name
-
-
-def _deferred_imports() -> None:
-    """Perform deferred imports to avoid circular dependencies."""
-    global ResultsInfo, _deferred_imports_done  # pylint: disable=global-statement
-    if _deferred_imports_done:
-        return
-    from simplebench.report.versions.v1 import ResultsInfo  # pylint: disable=import-outside-toplevel
-
-    _deferred_imports_done = True
+    from .. import ResultsInfo
 
 
 class Report(BaseReport):
@@ -62,19 +46,51 @@ class Report(BaseReport):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
+    _init_params_cache: dict[str, Any] = {}
+    """Cache for the constructor parameters of the ResultsInfo class."""
+
+    @classmethod
+    def _data_params(cls) -> dict[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        :return dict[str, Any]: A dictionary of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(ReportData)
+            params.pop('type', None)
+            params.pop('version', None)
+            cls._init_params_cache = params
+        return cls._init_params_cache
+
+    __slots__ = (
+        '_timestamp',
+        '_group',
+        '_title',
+        '_description',
+        '_variation_cols',
+        '_results',
+        '_machine',
+        '_hash_id',
+        '_to_dict_cache',
+    )
+
     def __init__(
         self,
         *,
+        hash_id: str = '',
         timestamp: str,
         group: str,
         title: str,
         description: str,
         variation_cols: VariationColsType,
-        results: Sequence[ResultsInfo],
+        results: 'Sequence[ResultsInfo]',
         machine: MachineInfo,
     ) -> None:
         """Initialize a Report instance.
 
+        :param str hash_id: The unique hash identifier for the report.
         :param str timestamp: ISO 8601 formatted timestamp string.
         :param str group: Group of the benchmark.
         :param str title: Title of the benchmark.
@@ -85,19 +101,22 @@ class Report(BaseReport):
         :raises SimpleBenchTypeError: If any parameter is of incorrect type.
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
-        self._timestamp: str = validate.timestamp(timestamp)
-        self._group: str = validate.group(group)
-        self._title: str = validate.title(title)
-        self._description: str = validate.description(description)
-        self._variation_cols: ImmutableVariationColsType = validate.variation_cols(variation_cols)
-        self._results: tuple[ResultsInfo, ...] = validate.results(results)
-        self._machine: MachineInfo = validate.machine(machine)
-        self._to_dict_cache: ReportDict | None = None
+        self._timestamp: str = _validate.timestamp(timestamp)
+        self._group: str = _validate.group(group)
+        self._title: str = _validate.title(title)
+        self._description: str = _validate.description(description)
+        self._variation_cols: ImmutableVariationColsType = _validate.variation_cols(variation_cols)
+        self._results: 'tuple[ResultsInfo, ...]' = _validate.results(results)
+        self._machine: MachineInfo = _validate.machine(machine)
+        self._hash_id = _validate.hash_id(hash_id)
+        if not self._hash_id:
+            self._hash_id = self._hash_id_helper(ReportData)
+        self._to_dict_cache: ImmutableReportDict | None = None
         """Private backing attribute for cached immutable dictionary representation of the Report instance.
-        
+
         It is initialized to None and populated on the first call to to_dict().
-        It is used to improve performance by avoiding redundant conversions 
-        and it is type cast to :class:`ReportDict` for
+        It is used to improve performance by avoiding redundant conversions
+        and it is type cast to :class:`ImmutableReportDict` for
         static type checking.
         """
 
@@ -112,10 +131,9 @@ class Report(BaseReport):
         :raises SimpleBenchValueError: If any field has an invalid value.
         :raises SimpleBenchTypeError: If any field is of an incorrect type.
         """
-        _deferred_imports()
+        from simplebench.report.versions.v1 import ResultsInfo
 
-        allowed_keys = cls.init_params()
-        allowed_keys.update({'version': int, 'type': str})
+        allowed_keys = cls._data_params()
 
         def process_results(value: Any) -> list[ResultsInfo]:
             """Process the results-info objects in the input sequence"""
@@ -140,18 +158,18 @@ class Report(BaseReport):
         )
         return cls(**kwargs)
 
-    def to_dict(self) -> ReportDict:
+    def to_dict(self) -> ImmutableReportDict:
         """Convert the JSONReport instance to a dictionary.
 
         The output dictionary conforms to the version 1 report schema
         and is suitable for serialization to JSON. It is immutable and cached
-        for efficiency and is type cast to :class:`ReportDict` for
+        for efficiency and is type cast to :class:`ImmutableReportDict` for
         static type checking.
 
-        :return ReportDict: Immutable dictionary containing the JSON report data.
+        :return ImmutableReportDict: Immutable dictionary containing the JSON report data.
         """
         if self._to_dict_cache is None:
-            self._to_dict_cache = self._to_dict_helper(ReportDict)
+            self._to_dict_cache = self._to_dict_helper(ImmutableReportDict)
         return self._to_dict_cache
 
     @property
@@ -198,7 +216,7 @@ class Report(BaseReport):
         return self._variation_cols
 
     @property
-    def results(self) -> tuple[ResultsInfo, ...]:
+    def results(self) -> 'tuple[ResultsInfo, ...]':
         """Get the results property.
 
         The results property is a tuple of ResultsInfo instances.

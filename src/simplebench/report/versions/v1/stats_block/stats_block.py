@@ -37,6 +37,7 @@ import statistics
 from collections.abc import Mapping, Sequence
 from copy import copy
 from math import sqrt
+from types import MappingProxyType
 from typing import Any, overload
 
 from simplebench.exceptions import SimpleBenchValueError
@@ -92,23 +93,22 @@ class StatsBlock(BaseStatsBlock):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
-    _init_params_cache: dict[str, Any] = {}
-    """Cache for the constructor parameters of the StatsBlock class."""
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the ResultsInfo class."""
 
     @classmethod
-    def _stats_block_params(cls) -> dict[str, Any]:
-        """Get the constructor parameters for the StatsBlock class.
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
 
         The parameters are cached after the first call for performance.
 
-        :return dict[str, Any]: A dictionary of constructor parameter names and types.
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
         """
         if not cls._init_params_cache:
             params = cls.init_params(StatsBlockData)
-            params.pop('type', None)
-            params.pop('version', None)
-            cls._init_params_cache = params
-
+            cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
     _DERIVABLE_PROPERTIES = (
@@ -339,8 +339,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchTypeError: If any parameter in the dictionary is of an invalid type.
         :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.
         """
-        allowed_keys = cls._stats_block_params()
-
+        allowed_keys = cls._data_params()
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
@@ -693,7 +692,9 @@ class StatsBlock(BaseStatsBlock):
         :return str: The string representation of the StatsBlock.
         """
         # Get the init parameters excluding 'type' and 'version'
-        init_params = self._stats_block_params()
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
 
         # Build the key-value argument string. Accessing the properties via getattr
         # will trigger their lazy calculation if they haven't been computed yet.
@@ -717,7 +718,11 @@ class StatsBlock(BaseStatsBlock):
         """
         # Sweep all slot attributes to force calculation of any lazy properties.
         # and collect any public attribute values for pickling.
-        public_attrs = self._stats_block_params()
+        # 'version' and 'type' are excluded as they are class constants not
+        # instance attributes and can be inferred.
+        public_attrs = dict(self._data_params())
+        public_attrs.pop('type', None)
+        public_attrs.pop('version', None)
         slot_values: list[Any] = []
         for slot in self.__slots__:
             attr_name = slot.lstrip('_')

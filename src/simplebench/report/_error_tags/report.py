@@ -10,6 +10,10 @@ __all__ = []
 class _ReportErrorTag(ErrorTag):
     """Error tags for JSON report exceptions."""
 
+    INVALID_HASH_ID_TYPE = 'INVALID_HASH_ID_TYPE'
+    """The hash_id is not of type str."""
+    INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'
+    """The hash_id is not a valid 64-character hexadecimal string."""
     INVALID_RESULTS_TYPE = 'INVALID_RESULTS_TYPE'
     """The results is not of type Sequence[ResultsInfo]."""
     INVALID_RESULTS_VALUE = 'INVALID_RESULTS_VALUE'

@@ -2,6 +2,7 @@
 
 from collections.abc import Mapping, Sequence
 from copy import copy
+from types import MappingProxyType
 from typing import Any
 
 from simplebench.report.base import BaseRawDataBlock, JSONSchema
@@ -35,22 +36,22 @@ class RawDataBlock(BaseRawDataBlock):
     ID: str = SCHEMA.ID
     """ID of the raw data block schema."""
 
-    _init_params_cache: dict[str, Any] = {}
-    """Cache for the constructor parameters of the RawDataBlock class."""
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the ResultsInfo class."""
 
     @classmethod
-    def _data_params(cls) -> dict[str, Any]:
-        """Get the constructor parameters for the RawDataBlock class.
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
         The parameters are cached after the first call for performance.
 
-        :return dict[str, Any]: A dictionary of constructor parameter names and types.
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
         """
         if not cls._init_params_cache:
             params = cls.init_params(RawDataBlockData)
-            params.pop('type', None)
-            params.pop('version', None)
-            cls._init_params_cache = params
-
+            cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
     __slots__ = ('_hash_id', '_semantic_type', '_timer', '_unit', '_scale', '_data', '_to_dict_cache')
@@ -97,8 +98,6 @@ class RawDataBlock(BaseRawDataBlock):
         :return RawDataBlock: A RawDataBlock instance.
         """
         init_params = cls._data_params()
-        init_params['type'] = str
-        init_params['version'] = int
         kwargs = cls.import_data(
             data=data,
             allowed_fields=init_params,
@@ -176,13 +175,15 @@ class RawDataBlock(BaseRawDataBlock):
 
         :return str: String representation of the RawDataBlock instance.
         """
-        return (
-            f'RawDataBlock(hash_id={self.hash_id!r}, '
-            f'semantic_type={self.semantic_type!r}, '
-            f'timer={self.timer!r}, '
-            f'unit={self.unit!r}, scale={self.scale!r}, '
-            f'data={self.data!r})'
-        )
+        # Get the init parameters excluding 'type' and 'version'
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two RawDataBlock instances.
@@ -222,7 +223,11 @@ class RawDataBlock(BaseRawDataBlock):
         # recalculated on demand after unpickling. This keeps the pickled
         # representation minimal and about 50% smaller. Which is significant
         # for large datasets.
-        public_attrs = self._data_params()
+        # 'version' and 'type' are excluded as they are class constants not
+        # instance attributes and can be inferred.
+        public_attrs = dict(self._data_params())
+        public_attrs.pop('type', None)
+        public_attrs.pop('version', None)
         slot_values: list[Any] = []
         for slot in self.__slots__:
             attr_name = slot.lstrip('_')

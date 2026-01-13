@@ -5,6 +5,7 @@ The V1 Results object represents the results metric of a version 1 JSON report.
 """
 
 from copy import copy
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Any
 
 from simplebench.report.base import BaseResultsInfo
@@ -15,7 +16,7 @@ from simplebench.types import (
     VariationMarksType,
 )
 
-from . import validate
+from . import _validate
 from .results_info_schema import ResultsInfoSchema
 from .typeddict_types import ImmutableResultsInfoDict, ResultsInfoData
 
@@ -44,22 +45,22 @@ class ResultsInfo(BaseResultsInfo):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
-    _init_params_cache: dict[str, Any] = {}
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
     """Cache for the constructor parameters of the ResultsInfo class."""
 
     @classmethod
-    def _data_params(cls) -> dict[str, Any]:
+    def _data_params(cls) -> MappingProxyType[str, Any]:
         """Get the constructor parameters for the schema data class.
 
         The parameters are cached after the first call for performance.
 
-        :return dict[str, Any]: A dictionary of constructor parameter names and types.
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
         """
         if not cls._init_params_cache:
             params = cls.init_params(ResultsInfoData)
-            params.pop('type', None)
-            params.pop('version', None)
-            cls._init_params_cache = params
+            cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
     __slots__ = (
@@ -77,6 +78,7 @@ class ResultsInfo(BaseResultsInfo):
     def __init__(
         self,
         *,
+        hash_id: str = '',
         group: str,
         title: str,
         description: str,
@@ -90,6 +92,7 @@ class ResultsInfo(BaseResultsInfo):
         The input parameters are validated, converted to immutable types as needed,
         and stored as private attributes that are accessible via read-only properties.
 
+        :param str hash_id: The unique hash identifier for the results.
         :param str group: The group name of the results.
         :param str title: The title of the results.
         :param str description: The description of the results.
@@ -99,15 +102,17 @@ class ResultsInfo(BaseResultsInfo):
         :param MetricsObject metrics: The list of metrics.
         :param CoreDataMappingType extra_info: Additional information.
         """
-        self._group: str = validate.group(group)
-        self._title: str = validate.title(title)
-        self._description: str = validate.description(description)
-        self._n: float = validate.n(n)
-        self._variation_marks: ImmutableVariationMarksType = validate.variation_marks(variation_marks)
-        self._metrics: MetricsObject = validate.metrics(metrics)
-        self._extra_info: ImmutableCoreDataMappingType = validate.extra_info(extra_info)
+        self._group: str = _validate.group(group)
+        self._title: str = _validate.title(title)
+        self._description: str = _validate.description(description)
+        self._n: float = _validate.n(n)
+        self._variation_marks: ImmutableVariationMarksType = _validate.variation_marks(variation_marks)
+        self._metrics: MetricsObject = _validate.metrics(metrics)
+        self._extra_info: ImmutableCoreDataMappingType = _validate.extra_info(extra_info)
+        self._hash_id: str = _validate.hash_id(hash_id)
+        if not self._hash_id:
+            self._hash_id: str = self._hash_id_helper(ResultsInfoData)
         self._to_dict_cache: ImmutableResultsInfoDict | None = None
-        self._hash_id: str = self._hash_id_helper(ResultsInfoData)
 
     @classmethod
     def from_dict(cls, data: Any) -> 'ResultsInfo':
@@ -246,7 +251,9 @@ class ResultsInfo(BaseResultsInfo):
         :return str: The string representation of the ResultsInfo.
         """
         # Get the init parameters excluding 'type' and 'version'
-        init_params = self._data_params()
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
 
         # Build the key-value argument string. Accessing the properties via getattr
         # will trigger their lazy calculation if they haven't been computed yet.
@@ -274,7 +281,13 @@ class ResultsInfo(BaseResultsInfo):
         # skips any non-public attributes that can be recalculated later.
         # By skipping non-public attributes, we reduce the pickled size by
         # about 50% for typical ResultsInfo instances.
-        public_attrs = self._data_params()
+
+        # Build a list of public attribute values based on the data params.
+        # 'type' and 'version' are excluded since they are class-level constants
+        # not stored as instance attributes.
+        public_attrs = dict(self._data_params())
+        public_attrs.pop('type', None)
+        public_attrs.pop('version', None)
         slot_values: list[Any] = []
         for slot in self.__slots__:
             attr_name = slot.lstrip('_')
@@ -319,4 +332,5 @@ class ResultsInfo(BaseResultsInfo):
         :return ResultsInfo: A new, shallow-copied instance of the ResultsInfo.
         """
         # because the ResultsInfo is immutable, we can return a copy of self
+        # instead of performing a full deep copy.
         return copy(self)

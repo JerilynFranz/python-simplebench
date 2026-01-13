@@ -1,11 +1,13 @@
 """Schema for JSON reporter v1 validation."""
+# ruff: noqa: E501
 
-# pylint: disable=line-too-long
 from copy import deepcopy
 from json import JSONEncoder
 
 from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report.base import JSONSchema
+
+__all__ = []
 
 
 class ReportSchema(JSONSchema):
@@ -29,6 +31,12 @@ class ReportSchema(JSONSchema):
         'properties': {
             'version': {'description': 'The version of the JSON report schema', 'type': 'integer', 'const': VERSION},
             'type': {'title': 'Type', 'description': 'Type of the benchmark report', 'type': 'string', 'const': TYPE},
+            'hash_id': {
+                'title': 'Hash ID',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the report data.',
+                'type': 'string',
+                'pattern': '^[a-f0-9]{64}$',
+            },
             'timestamp': {
                 'title': 'Timestamp',
                 'description': 'Timestamp of the benchmark report in ISO 8601 format (UTC)',
@@ -54,7 +62,18 @@ class ReportSchema(JSONSchema):
             },
             'machine': {'$ref': 'machine-info.json'},
         },
-        'required': ['version', 'type', 'group', 'title', 'description', 'variation_cols', 'results', 'machine'],
+        'required': [
+            'version',
+            'type',
+            'hash_id',
+            'timestamp',
+            'group',
+            'title',
+            'description',
+            'variation_cols',
+            'results',
+            'machine',
+        ],
         'additionalProperties': False,
     }
 

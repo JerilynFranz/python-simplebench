@@ -1,7 +1,6 @@
 """Validation functions for V1 report version."""
 
-from __future__ import annotations
-
+import re
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Sequence
 
@@ -16,27 +15,47 @@ from simplebench.validators import (
     validate_string,
     validate_type,
 )
-
-_deferred_imports_done: bool = False
+from simplebench.validators.strings import validate_string_with_regex
 
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.report.versions.v1 import MachineInfo, ResultsInfo
 
-    _deferred_imports_done = True
-else:
-    MachineInfo = None  # pylint: disable=invalid-name
-    ResultsInfo = None  # pylint: disable=invalid-name
+__all__ = []
+
+_HASH_RE: re.Pattern[str] = re.compile(r'^[a-f0-9]{64}$')
+"""Regular expression pattern for validating 64-character hexadecimal strings."""
 
 
-def _deferred_imports() -> None:
-    """Perform deferred imports to avoid circular dependencies."""
-    global ResultsInfo, MachineInfo, _deferred_imports_done  # pylint: disable=global-statement
-    if _deferred_imports_done:
-        return
-    from simplebench.report.versions.v1 import MachineInfo, ResultsInfo  # pylint: disable=import-outside-toplevel
+def hash_id(value: str) -> str:
+    """Validate hash_id property.
 
-    _deferred_imports_done = True
+    It is validated to be a 64-character hexadecimal string or an empty string.
+
+    :param str value: The hash_id string to validate.
+    :return str: The validated hash_id string.
+    :raises SimpleBenchTypeError: If value is not a string.
+    :raises SimpleBenchValueError: If value is not a 64-character hexadecimal string
+    """
+    hash_string = validate_string(
+        value,
+        'hash_id',
+        _ReportErrorTag.INVALID_HASH_ID_TYPE,
+        _ReportErrorTag.INVALID_HASH_ID_VALUE,  # impossible to raise value error here
+        allow_empty=True,
+        strip=True,
+    )
+    if hash_string == '':
+        return ''
+
+    return validate_string_with_regex(
+        hash_string,
+        'hash_id',
+        _HASH_RE,
+        _ReportErrorTag.INVALID_HASH_ID_TYPE,  # impossible to raise type error this here
+        _ReportErrorTag.INVALID_HASH_ID_VALUE,
+        message='{name} must be 64-character hexadecimal string. Found: {value}',
+    )
 
 
 def timestamp(value: str) -> str:
@@ -138,14 +157,20 @@ def variation_cols(value: VariationColsType) -> ImmutableVariationColsType:
     return MappingProxyType(value)
 
 
-def results(value: Sequence[ResultsInfo]) -> tuple[ResultsInfo, ...]:
+def results(value: 'Sequence[ResultsInfo]') -> 'tuple[ResultsInfo, ...]':
     """Validate a Sequence of ResultsInfo instances.
 
     :param Sequence[ResultsInfo] value: Sequence of ResultsInfo to validate.
     :return tuple[ResultsInfo, ...]: A validated tuple of ResultsInfo instances.
     :raises SimpleBenchTypeError: If results is not a Sequence of ResultsInfo.
     """
-    _deferred_imports()
+    from simplebench.report.versions.v1 import ResultsInfo
+
+    # Short-circuit if already a tuple of ResultsInfo
+    # Less memory allocation and faster than creating a new list and then converting it to tuple
+    if isinstance(value, tuple) and all(isinstance(item, ResultsInfo) for item in value):
+        return value  # type: ignore[return-value]
+
     return tuple(
         validate_sequence_of_type(
             value, ResultsInfo, 'results', _ReportErrorTag.INVALID_RESULTS_TYPE, _ReportErrorTag.INVALID_RESULTS_VALUE
@@ -153,13 +178,14 @@ def results(value: Sequence[ResultsInfo]) -> tuple[ResultsInfo, ...]:
     )
 
 
-def machine(value: MachineInfo) -> MachineInfo:
+def machine(value: 'MachineInfo') -> 'MachineInfo':
     """Validate that the value is a MachineInfo instance.
 
     :param MachineInfo value: The object to validate.
     :raises SimpleBenchValueError: If the object is not a MachineInfo instance.
     """
-    _deferred_imports()
+    from simplebench.report.versions.v1 import MachineInfo
+
     return validate_type(
         value,
         MachineInfo,
@@ -169,7 +195,7 @@ def machine(value: MachineInfo) -> MachineInfo:
     )
 
 
-def case(value: Case) -> None:
+def case(value: 'Case') -> None:
     """Validate that the given object is a Case instance.
 
     :param value: The object to validate.
@@ -182,7 +208,7 @@ def case(value: Case) -> None:
         )
 
 
-def case_has_been_run(value: Case) -> None:
+def case_has_been_run(value: 'Case') -> None:
     """Validate that the given Case instance has been run.
 
     :param value: The Case instance to validate.

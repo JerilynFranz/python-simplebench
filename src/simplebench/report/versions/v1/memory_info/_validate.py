@@ -8,7 +8,7 @@ from simplebench.validators import validate_string, validate_string_with_regex, 
 from .swap_memory import SwapMemoryObject
 from .virtual_memory import VirtualMemoryObject
 
-_HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
+_HASH_RE: re.Pattern[str] = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""
 
 __all__ = []
@@ -22,7 +22,7 @@ def hash_id(value: str) -> str:
     :param str value: The hash_id string to validate.
     :return str: The validated hash_id string.
     :raises SimpleBenchTypeError: If value is not a string.
-    :raises SimpleBenchValueError: If value is not a 64-character hexadecimal string
+    :raises SimpleBenchValueError: If value is not either empty or a 64-character hexadecimal string
     """
     hash_string = validate_string(
         value,
