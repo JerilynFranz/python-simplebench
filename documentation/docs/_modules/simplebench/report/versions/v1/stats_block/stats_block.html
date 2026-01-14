@@ -290,6 +290,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">sqrt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">overload</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleBenchValueError</span>
@@ -347,23 +348,22 @@
     <span class="n">ID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SCHEMA</span><span class="o">.</span><span class="n">ID</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON report ID property value for version 1 reports.&quot;&quot;&quot;</span>
 
-    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cache for the constructor parameters of the StatsBlock class.&quot;&quot;&quot;</span>
+    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">({})</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cache for the constructor parameters of the ResultsInfo class.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_stats_block_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the constructor parameters for the StatsBlock class.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the constructor parameters for the schema data class.</span>
 
 <span class="sd">        The parameters are cached after the first call for performance.</span>
 
-<span class="sd">        :return dict[str, Any]: A dictionary of constructor parameter names and types.</span>
+<span class="sd">        It is returned as a read-only mapping and includes &#39;type&#39; and &#39;version&#39;.</span>
+
+<span class="sd">        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">(</span><span class="n">StatsBlockData</span><span class="p">)</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span> <span class="o">=</span> <span class="n">params</span>
-
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span>
 
     <span class="n">_DERIVABLE_PROPERTIES</span> <span class="o">=</span> <span class="p">(</span>
@@ -596,8 +596,7 @@
 <span class="sd">        :raise SimpleBenchTypeError: If any parameter in the dictionary is of an invalid type.</span>
 <span class="sd">        :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_stats_block_params</span><span class="p">()</span>
-
+        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_data_params</span><span class="p">()</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">import_data</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
             <span class="n">allowed_fields</span><span class="o">=</span><span class="n">allowed_keys</span><span class="p">,</span>
@@ -954,7 +953,9 @@
 <span class="sd">        :return str: The string representation of the StatsBlock.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the init parameters excluding &#39;type&#39; and &#39;version&#39;</span>
-        <span class="n">init_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_block_params</span><span class="p">()</span>
+        <span class="n">init_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">())</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># Build the key-value argument string. Accessing the properties via getattr</span>
         <span class="c1"># will trigger their lazy calculation if they haven&#39;t been computed yet.</span>
@@ -978,7 +979,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Sweep all slot attributes to force calculation of any lazy properties.</span>
         <span class="c1"># and collect any public attribute values for pickling.</span>
-        <span class="n">public_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_block_params</span><span class="p">()</span>
+        <span class="c1"># &#39;version&#39; and &#39;type&#39; are excluded as they are class constants not</span>
+        <span class="c1"># instance attributes and can be inferred.</span>
+        <span class="n">public_attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">())</span>
+        <span class="n">public_attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">public_attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">slot_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
             <span class="n">attr_name</span> <span class="o">=</span> <span class="n">slot</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>

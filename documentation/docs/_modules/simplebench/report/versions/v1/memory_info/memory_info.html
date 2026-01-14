@@ -267,7 +267,8 @@
 <span class="sd">of the base MemoryInfo representation at the time of the V1 schema release.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseMemoryInfo</span><span class="p">,</span> <span class="n">JSONSchema</span>
 
@@ -297,14 +298,37 @@
     <span class="n">SCHEMA</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">JSONSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">MemoryInfoSchema</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON schema class for version 1 reports.&quot;&quot;&quot;</span>
 
+    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">({})</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cache for the constructor parameters of the ResultsInfo class.&quot;&quot;&quot;</span>
+
+    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">({})</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cache for the constructor parameters of the MemoryInfo class.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the constructor parameters for the schema data class.</span>
+
+<span class="sd">        The parameters are cached after the first call for performance.</span>
+
+<span class="sd">        It is returned as a read-only mapping and includes &#39;type&#39; and &#39;version&#39;.</span>
+
+<span class="sd">        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">(</span><span class="n">MemoryInfoData</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_hash_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_swap_memory&#39;</span><span class="p">,</span> <span class="s1">&#39;_virtual_memory&#39;</span><span class="p">,</span> <span class="s1">&#39;_dict_cache&#39;</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">swap_memory</span><span class="p">:</span> <span class="n">SwapMemoryObject</span><span class="p">,</span> <span class="n">virtual_memory</span><span class="p">:</span> <span class="n">VirtualMemoryObject</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize MemoryInfo.</span>
 
-<span class="sd">        :param str hash_id: The unique hash identifier for the machine information.</span>
-<span class="sd">        :param int total_physical: Total physical memory in bytes.</span>
-<span class="sd">        :param int total_swap: Total configured swap memory in bytes.</span>
+<span class="sd">        :param str hash_id: The unique hash identifier for the MemoryInfo instance.</span>
+<span class="sd">        :param SwapMemoryObject swap_memory: The swap memory information.</span>
+<span class="sd">        :param VirtualMemoryObject virtual_memory: The virtual memory information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">hash_id</span><span class="p">(</span><span class="n">hash_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_swap_memory</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">swap_memory</span><span class="p">(</span><span class="n">swap_memory</span><span class="p">)</span>
@@ -326,10 +350,7 @@
 <span class="sd">        :param data: The dictionary containing the MemoryInfo data.</span>
 <span class="sd">        :return MemoryInfo: A MemoryInfo instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">()</span>
-        <span class="n">allowed_keys</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span>
-        <span class="n">allowed_keys</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
-
+        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_data_params</span><span class="p">()</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">import_data</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
             <span class="n">allowed_fields</span><span class="o">=</span><span class="n">allowed_keys</span><span class="p">,</span>
@@ -349,7 +370,7 @@
 
 <span class="sd">        :return MemoryInfoDict: A dictionary representation of the MemoryInfo.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">ImmutableMemoryInfoDict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict_cache</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict_cache</span></div>
 
 
     <span class="nd">@property</span>
@@ -374,7 +395,37 @@
 
 <span class="sd">        :return VirtualMemoryObject: The virtual memory information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual_memory</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_virtual_memory</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the string representation of the MemoryInfo instance.</span>
+
+<span class="sd">        :return: The string representation of the MemoryInfo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the init parameters excluding &#39;type&#39; and &#39;version&#39;</span>
+        <span class="n">init_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">())</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">calling_args</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="si">!r}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">init_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">calling_args</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the hash of the MemoryInfo instance.</span>
+
+<span class="sd">        :return: The hash value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check equality between two MemoryInfo instances.</span>
+
+<span class="sd">        :param other: The other object to compare.</span>
+<span class="sd">        :return: True if equal, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">MemoryInfo</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash_id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">hash_id</span></div>
 
 </pre></div>
         </article>

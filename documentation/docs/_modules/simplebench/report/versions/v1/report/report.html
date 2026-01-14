@@ -270,38 +270,22 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseReport</span><span class="p">,</span> <span class="n">JSONSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report._error_tags</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ReportErrorTag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseReport</span><span class="p">,</span> <span class="n">JSONSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions.v1</span><span class="w"> </span><span class="kn">import</span> <span class="n">MachineInfo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImmutableVariationColsType</span><span class="p">,</span> <span class="n">VariationColsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_sequence_of_type</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_validate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.report_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportSchema</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">._typeddict_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportDict</span>
-
-<span class="n">_deferred_imports_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.typeddict_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImmutableReportDict</span><span class="p">,</span> <span class="n">ReportData</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions.v1</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span>
-
-    <span class="n">_deferred_imports_done</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">ResultsInfo</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># pylint: disable=invalid-name</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">_deferred_imports</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform deferred imports to avoid circular dependencies.&quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">ResultsInfo</span><span class="p">,</span> <span class="n">_deferred_imports_done</span>  <span class="c1"># pylint: disable=global-statement</span>
-    <span class="k">if</span> <span class="n">_deferred_imports_done</span><span class="p">:</span>
-        <span class="k">return</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions.v1</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
-
-    <span class="n">_deferred_imports_done</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span>
 
 
 <div class="viewcode-block" id="Report">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.report.html#simplebench.report.versions.v1.Report">[docs]</a>
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.Report">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Report</span><span class="p">(</span><span class="n">BaseReport</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Immutable class representing a version 1 report.&quot;&quot;&quot;</span>
 
@@ -317,19 +301,51 @@
     <span class="n">ID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SCHEMA</span><span class="o">.</span><span class="n">ID</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON report ID property value for version 1 reports.&quot;&quot;&quot;</span>
 
+    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cache for the constructor parameters of the ResultsInfo class.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the constructor parameters for the schema data class.</span>
+
+<span class="sd">        The parameters are cached after the first call for performance.</span>
+
+<span class="sd">        :return dict[str, Any]: A dictionary of constructor parameter names and types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">(</span><span class="n">ReportData</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;_timestamp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_group&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_title&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_description&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_variation_cols&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_results&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_machine&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_hash_id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_to_dict_cache&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
+        <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
         <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">variation_cols</span><span class="p">:</span> <span class="n">VariationColsType</span><span class="p">,</span>
-        <span class="n">results</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ResultsInfo</span><span class="p">],</span>
+        <span class="n">results</span><span class="p">:</span> <span class="s1">&#39;Sequence[ResultsInfo]&#39;</span><span class="p">,</span>
         <span class="n">machine</span><span class="p">:</span> <span class="n">MachineInfo</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Report instance.</span>
 
+<span class="sd">        :param str hash_id: The unique hash identifier for the report.</span>
 <span class="sd">        :param str timestamp: ISO 8601 formatted timestamp string.</span>
 <span class="sd">        :param str group: Group of the benchmark.</span>
 <span class="sd">        :param str title: Title of the benchmark.</span>
@@ -340,24 +356,27 @@
 <span class="sd">        :raises SimpleBenchTypeError: If any parameter is of incorrect type.</span>
 <span class="sd">        :raises SimpleBenchValueError: If any parameter has an invalid value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">:</span> <span class="n">ImmutableVariationColsType</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ResultsInfo</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="p">:</span> <span class="n">MachineInfo</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">machine</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span><span class="p">:</span> <span class="n">ReportDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span><span class="p">:</span> <span class="n">ImmutableVariationColsType</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">variation_cols</span><span class="p">(</span><span class="n">variation_cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span><span class="p">:</span> <span class="s1">&#39;tuple[ResultsInfo, ...]&#39;</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_machine</span><span class="p">:</span> <span class="n">MachineInfo</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">machine</span><span class="p">(</span><span class="n">machine</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">hash_id</span><span class="p">(</span><span class="n">hash_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id_helper</span><span class="p">(</span><span class="n">ReportData</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span><span class="p">:</span> <span class="n">ImmutableReportDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Private backing attribute for cached immutable dictionary representation of the Report instance.</span>
-<span class="sd">        </span>
+
 <span class="sd">        It is initialized to None and populated on the first call to to_dict().</span>
-<span class="sd">        It is used to improve performance by avoiding redundant conversions </span>
-<span class="sd">        and it is type cast to :class:`ReportDict` for</span>
+<span class="sd">        It is used to improve performance by avoiding redundant conversions</span>
+<span class="sd">        and it is type cast to :class:`ImmutableReportDict` for</span>
 <span class="sd">        static type checking.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Report.from_dict">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.report.html#simplebench.report.versions.v1.Report.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.Report.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;Report&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Report instance from a dictionary.</span>
@@ -369,10 +388,9 @@
 <span class="sd">        :raises SimpleBenchValueError: If any field has an invalid value.</span>
 <span class="sd">        :raises SimpleBenchTypeError: If any field is of an incorrect type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_deferred_imports</span><span class="p">()</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.versions.v1</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfo</span>
 
-        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">()</span>
-        <span class="n">allowed_keys</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_data_params</span><span class="p">()</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">process_results</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ResultsInfo</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Process the results-info objects in the input sequence&quot;&quot;&quot;</span>
@@ -399,19 +417,19 @@
 
 
 <div class="viewcode-block" id="Report.to_dict">
-<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.report.html#simplebench.report.versions.v1.Report.to_dict">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ReportDict</span><span class="p">:</span>
+<a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.Report.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImmutableReportDict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the JSONReport instance to a dictionary.</span>
 
 <span class="sd">        The output dictionary conforms to the version 1 report schema</span>
 <span class="sd">        and is suitable for serialization to JSON. It is immutable and cached</span>
-<span class="sd">        for efficiency and is type cast to :class:`ReportDict` for</span>
+<span class="sd">        for efficiency and is type cast to :class:`ImmutableReportDict` for</span>
 <span class="sd">        static type checking.</span>
 
-<span class="sd">        :return ReportDict: Immutable dictionary containing the JSON report data.</span>
+<span class="sd">        :return ImmutableReportDict: Immutable dictionary containing the JSON report data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_helper</span><span class="p">(</span><span class="n">ReportDict</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_helper</span><span class="p">(</span><span class="n">ImmutableReportDict</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span></div>
 
 
@@ -459,7 +477,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_variation_cols</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ResultsInfo</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;tuple[ResultsInfo, ...]&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the results property.</span>
 
 <span class="sd">        The results property is a tuple of ResultsInfo instances.</span>

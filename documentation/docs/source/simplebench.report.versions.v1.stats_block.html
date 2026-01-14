@@ -270,15 +270,27 @@ all modeled on the JSON schema for version 1 StatsBlocks in
 version 1: <a class="reference internal" href="simplebench.report.versions.v1.html#simplebench.report.versions.v1.StatsBlockSchema" title="simplebench.report.versions.v1.StatsBlockSchema"><code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockSchema</span></code></a>.</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockData</span></code>: For use as INPUT (e.g., to <cite>from_dict</cite>). It is more</p></li>
+<li><dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockData</span></code>: For use as INPUT (e.g., to <cite>from_dict</cite>). It is more</dt><dd><p>lenient, accepting <cite>int</cite> or <cite>float</cite> for the <cite>value</cite> field and making <cite>type</cite> and <cite>version</cite> optional.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">ImmutableStatsBlockData</span></code>: An immutable variation of <code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockData</span></code> for</dt><dd><p>type-checking purposes.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockDict</span></code>: For use as OUTPUT (e.g., from <cite>to_dict</cite>). It is</dt><dd><p>stricter, guaranteeing that <cite>value</cite> is a <cite>float</cite> and that <cite>type</cite> and <cite>version</cite> are present.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">ImmutableStatsBlockDict</span></code>: An immutable variation of <code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockDict</span></code> for</dt><dd><p>type-checking purposes.</p>
+</dd>
+</dl>
+</li>
 </ul>
-<p>lenient, accepting <cite>int</cite> or <cite>float</cite> for the <cite>value</cite> field and making <cite>type</cite> and <cite>version</cite> optional.
-- <code class="xref py py-class docutils literal notranslate"><span class="pre">ImmutableStatsBlockData</span></code>: An immutable variation of <code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockData</span></code> for
-type-checking purposes.
-- <code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockDict</span></code>: For use as OUTPUT (e.g., from <cite>to_dict</cite>). It is
-stricter, guaranteeing that <cite>value</cite> is a <cite>float</cite> and that <cite>type</cite> and <cite>version</cite> are present.
-- <code class="xref py py-class docutils literal notranslate"><span class="pre">ImmutableStatsBlockDict</span></code>: An immutable variation of <code class="xref py py-class docutils literal notranslate"><span class="pre">StatsBlockDict</span></code> for
-type-checking purposes.</p>
 <p>These types ensure proper validation and serialization of StatsBlock data</p>
 </div></blockquote>
 </section>

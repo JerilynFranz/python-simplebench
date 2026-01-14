@@ -1,17 +1,22 @@
 """Validate execution environment data for version 1."""
 
+import re
 from collections.abc import Mapping
 from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.report.base import Environment
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
+from simplebench.report.base import Environment
 from simplebench.validators import validate_core_data_mapping, validate_type
 
 from ..generic_environment import GenericEnvironment
 from .known_environments import KNOWN_ENVIRONMENTS
 
 __all__ = []
+
+
+_ENV_NAME_REGEX: re.Pattern[str] = re.compile(r'^[a-zA-Z](?:[a-zA-Z0-9_-]*[a-zA-Z0-9])?$')
+"""Regular expression for validating environment names."""
 
 
 def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environment]:
@@ -37,6 +42,16 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
     validated_envs: dict[str, Environment] = {}
     n_environments: int = 0
     for env_name, env_value in value.items():
+        if not isinstance(env_name, str):
+            raise SimpleBenchTypeError(
+                f'Environment name {env_name!r} is not a string',
+                tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_NAME_TYPE,
+            )
+        if not _ENV_NAME_REGEX.match(env_name):
+            raise SimpleBenchValueError(
+                f"Environment name '{env_name}' is invalid; must match regex {_ENV_NAME_REGEX.pattern!r}",
+                tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_NAME_VALUE,
+            )
         if env_name in KNOWN_ENVIRONMENTS:
             if not isinstance(env_value, Environment):  # Verify known envs are Environment instances
                 raise SimpleBenchTypeError(

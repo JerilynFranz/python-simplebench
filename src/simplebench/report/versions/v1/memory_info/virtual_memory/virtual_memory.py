@@ -9,7 +9,10 @@ https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v
 
 """
 
-from simplebench.report.base import BaseSwapMemoryObject
+from types import MappingProxyType
+from typing import Any
+
+from simplebench.report.base import BaseVirtualMemoryObject
 
 from . import _validate
 from .typeddict_types import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
@@ -17,8 +20,26 @@ from .typeddict_types import ImmutableVirtualMemoryObjectDict, VirtualMemoryObje
 __all__ = []
 
 
-class VirtualMemoryObject(BaseSwapMemoryObject):
+class VirtualMemoryObject(BaseVirtualMemoryObject):
     """Class representing virtual memory information in a memory-info object."""
+
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the VirtualMemoryObject class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(VirtualMemoryObjectDict)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
 
     __slots__ = ('_total', '_available', '_percent', '_used', '_free', '_hash_id', '_dict_cache')
 
@@ -107,3 +128,33 @@ class VirtualMemoryObject(BaseSwapMemoryObject):
         :return: The free swap memory in bytes.
         """
         return self._free
+
+    def __repr__(self) -> str:
+        """Get the string representation of the VirtualMemoryObject instance.
+
+        :return: The string representation of the VirtualMemoryObject.
+        """
+        # Get the init parameters excluding 'type' and 'version'
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
+    def __hash__(self) -> int:
+        """Get the hash of the VirtualMemoryObject instance.
+
+        :return: The hash value.
+        """
+        return hash(self.hash_id)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two VirtualMemoryObject instances.
+
+        :param other: The other object to compare.
+        :return: True if equal, False otherwise.
+        """
+        if not isinstance(other, VirtualMemoryObject):
+            return NotImplemented
+        return self.hash_id == other.hash_id

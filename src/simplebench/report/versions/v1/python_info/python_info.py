@@ -14,6 +14,7 @@ will not be changed.
 import threading
 from collections.abc import Mapping, Sequence
 from types import MappingProxyType
+from typing import Any
 
 from simplebench.report.base import BasePythonInfo, JSONSchema
 
@@ -40,6 +41,24 @@ class PythonInfo(BasePythonInfo):
 
     ID: str = SCHEMA.ID
     """The JSON PythonInfo identifier property value for version 1 reports."""
+
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the ResultsInfo class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(PythonInfoData)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
 
     def __init__(
         self,
@@ -113,9 +132,7 @@ class PythonInfo(BasePythonInfo):
         :param data: The dictionary containing PythonInfo information.
         :return: A PythonInfo instance.
         """
-        allowed_keys = cls.init_params()
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
+        allowed_keys = cls._data_params()
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
@@ -280,3 +297,35 @@ class PythonInfo(BasePythonInfo):
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(ImmutablePythonInfoDict)
         return self._hash_id
+
+    def __repr__(self) -> str:
+        """Get the string representation of the PythonInfo instance.
+
+        :return: The string representation of the PythonInfo.
+        """
+        # Get the init parameters excluding 'type' and 'version'
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
+    def __hash__(self) -> int:
+        """Get the hash of the PythonInfo instance.
+
+        :return: The hash value.
+        """
+        return hash(self.hash_id)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two PythonInfo instances.
+
+        :param other: The other object to compare.
+        :return: True if equal, False otherwise.
+        """
+        if not isinstance(other, PythonInfo):
+            return NotImplemented
+        return self.hash_id == other.hash_id

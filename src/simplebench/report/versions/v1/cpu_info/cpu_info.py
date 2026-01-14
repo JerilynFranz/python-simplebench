@@ -15,15 +15,19 @@ will not be changed.
 
 import hashlib
 import json
+from copy import copy
 from types import MappingProxyType
-from typing import cast
+from typing import TYPE_CHECKING, Any, cast
 
 from simplebench.report.base import BaseCPUInfo, JSONSchema
-from simplebench.types import CoreDataMappingType, ImmutableCoreDataMappingType
+from simplebench.types import ImmutableCoreDataMappingType
 
 from . import _validate
 from .cpu_info_schema import CPUInfoSchema
 from .typeddict_types import CPUInfoData, ImmutableCPUInfoData, ImmutableCPUInfoDict
+
+if TYPE_CHECKING:
+    from simplebench.environment import CPUInfo as EnvCPUInfo
 
 
 class CPUInfo(BaseCPUInfo):
@@ -38,14 +42,33 @@ class CPUInfo(BaseCPUInfo):
     SCHEMA: type[JSONSchema] = CPUInfoSchema
     """The JSON schema class for version 1 reports."""
 
-    def __init__(self, *, hash_id: str | None = None, data: CoreDataMappingType) -> None:
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the CPUInfo class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(CPUInfoData)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
+
+    __slots__ = ('_data', '_hash_id', '_to_dict_cache')
+
+    def __init__(self, *, hash_id: str = '', data: 'EnvCPUInfo') -> None:
         """Initialize CPUInfo.
 
-        :param str | None hash_id: The unique hash identifier for the CPU information.
+        :param str hash_id: The unique hash identifier for the CPU information.
             If not provided it will be computed automatically.
 
-            The hash_id must be a 64 character hexadecimal string, an
-            empty string, or None.
+            The hash_id must be a 64 character hexadecimal string or an empty string.
 
             The semantics of hash_id are NOT to provide integrity verification of the data,
             but rather to provide a globally unique identifier for the specific CPU information
@@ -67,17 +90,13 @@ class CPUInfo(BaseCPUInfo):
             hash_id values are NOT validated against the data content on initialization
             because it is only an opaque identifier, not a data validation mechanism.
 
-        :param CoreDataMappingType data: The raw CPU information data collected from the system
-            using the :package:`cpuinfo` library. It must either be a dictionary or
-            an instance of `simplebench.environment.CPUInfo`.
-
-            The dictionary must conform to the following rules:
-            - It can have arbitrary keys and values but must be a tree composed of
-              dictionaries, lists, strings, numbers, booleans, and nulls.
-            - All keys in dictionaries must be non-blank, non-empty strings.
+        :param environment.CPUInfo data: The CPU information data collected from the system
+            It must be an instance of `simplebench.environment.CPUInfo`.
+        :raises SimpleBenchTypeError: If any of the parameters are of incorrect type.
+        :raises SimpleBenchValueError: If any of the parameters have invalid values.
         """
         self._data: ImmutableCPUInfoData = _validate.data(data)
-        self._hash_id: str | None = _validate.hash_id(hash_id, allow_none=True)
+        self._hash_id: str = _validate.hash_id(hash_id)
         self._to_dict_cache: ImmutableCPUInfoDict | None = None
 
     @property
@@ -89,7 +108,7 @@ class CPUInfo(BaseCPUInfo):
         of dictionaries and lists. So we serialize the data to a sorted JSON string
         and compute the SHA256 hash of that string.
 
-        :return str | None: The hash_id string or None if not set.
+        :return str: The hash_id string.
         """
         if self._hash_id is None:
             serialized = json.dumps(self.data, sort_keys=True, separators=(',', ':'))
@@ -120,10 +139,7 @@ class CPUInfo(BaseCPUInfo):
         :param CPUInfoDict data: The dictionary containing CPU information.
         :return CPUInfo: A CPUInfo instance.
         """
-        allowed_keys = cls.init_params()
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
-
+        allowed_keys = cls._data_params()
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
@@ -156,3 +172,126 @@ class CPUInfo(BaseCPUInfo):
                 ),
             )
         return self._to_dict_cache
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two CPUInfo instances.
+
+        .. note::
+            Triggers the lazy eval properties to be evaluated if they have not been already.
+            This ensures that comparisons are made based on the actual values of the properties.
+
+            This can be expensive the first time it is called if many properties
+            need to be calculated from many measurements.
+
+            This is unavoidable since equality must reflect the actual state of the object.
+
+        :param other: The other CPUInfo instance to compare with.
+        :return bool: True if the two CPUInfo instances are equal, False otherwise.
+        """
+        if not isinstance(other, CPUInfo):
+            return NotImplemented
+
+        return hash(self) == hash(other)
+
+    def __hash__(self) -> int:
+        """Compute the hash of the CPUInfo instance.
+
+        The hash is computed from the hash_id.
+
+        .. note::
+            Triggers the lazy eval properties to be evaluated if they have not been already.
+            This ensures that the hash is based on the actual values of the properties.
+
+            This can be expensive the first time it is called if many properties
+            need to be calculated from many measurements. This is unavoidable
+            since the hash must reflect the actual state of the object.
+
+        :return int: The hash value of the CPUInfo instance.
+        """
+        return hash(self.hash_id)
+
+    def __repr__(self) -> str:
+        """Get the string representation of the CPUInfo instance.
+
+        :return: The string representation of the CPUInfo.
+        """
+        # Get the init parameters excluding 'type' and 'version'
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
+    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
+        """Prepare the object's state for pickling, prioritizing size.
+
+        This method ensures that the pickled representation of the RawDataBlock
+        is compact. It achieves this by forcing the calculation of any lazy-evaluated
+        statistical properties and then excluding any attributes that are not part of the
+        public interface of the RawDataBlock from the pickled state. Those excluded attributes
+        can be recalculated upon unpickling on demand and do not need to be stored.
+
+        This prioritizes a smaller pickled size and fast subsequent unpickling over
+        preserving the lazy-evaluation state across serialization.
+
+        :return: A state tuple for pickling.
+        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # Sweep all slot attributes to force calculation of any lazy properties.
+        # and collect any public attribute values for pickling. The non-public
+        # attributes will be excluded from the pickled state and can be
+        # recalculated on demand after unpickling. This keeps the pickled
+        # representation minimal and about 50% smaller. Which is significant
+        # for large datasets.
+        # 'version' and 'type' are excluded as they are class constants not
+        # instance attributes and can be inferred.
+        public_attrs = dict(self._data_params())
+        public_attrs.pop('type', None)
+        public_attrs.pop('version', None)
+        slot_values: list[Any] = []
+        for slot in self.__slots__:
+            attr_name = slot.lstrip('_')
+            if attr_name in public_attrs:
+                slot_values.append(getattr(self, attr_name))
+            else:
+                slot_values.append(None)
+
+        # Build the state tuple for a __slots__ class. The first element is for
+        # __dict__ (None in our case) and the second is a tuple of the slotted values.
+        state = tuple(slot_values)
+        return (None, state)
+
+    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
+        """Restore the object's state from a pickled representation.
+
+        This method is the counterpart to `__getstate__`. It takes the state
+        tuple and repopulates the instance's `__slots__`.
+
+        .. note::
+            This method bypasses `__init__`, which is standard for unpickling.
+
+        :param state: The state tuple from unpickling.
+        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # The first element of the state tuple is for __dict__, which is None for this class.
+        # The second element is a tuple of values for the __slots__.
+        slot_values = state[1]
+        for slot, value in zip(self.__slots__, slot_values, strict=True):
+            # Use object.__setattr__ to bypass our immutable setters.
+            object.__setattr__(self, slot, value)
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'CPUInfo':
+        """Return a shallow copy of the instance as an optimized deep copy.
+
+        Since the CPUInfo instance is immutable and composed of immutable components,
+        a shallow copy is functionally identical to a deep copy. This method overrides
+        the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.
+
+        :param memo: The memoization dictionary used by `copy.deepcopy`.
+                     It is not used in this optimized implementation.
+        :return CPUInfo: A new, shallow-copied instance of the CPUInfo.
+        """
+        # because the CPUInfo is immutable, we can return a copy of self
+        # instead of performing a full deep copy.
+        return copy(self)

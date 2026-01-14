@@ -268,15 +268,19 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCPUInfo</span><span class="p">,</span> <span class="n">JSONSchema</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoreDataMappingType</span><span class="p">,</span> <span class="n">ImmutableCoreDataMappingType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImmutableCoreDataMappingType</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_validate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.cpu_info_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">CPUInfoSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.typeddict_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">CPUInfoData</span><span class="p">,</span> <span class="n">ImmutableCPUInfoData</span><span class="p">,</span> <span class="n">ImmutableCPUInfoDict</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">CPUInfo</span> <span class="k">as</span> <span class="n">EnvCPUInfo</span>
 
 
 <div class="viewcode-block" id="CPUInfo">
@@ -293,14 +297,33 @@
     <span class="n">SCHEMA</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">JSONSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">CPUInfoSchema</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON schema class for version 1 reports.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">CoreDataMappingType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">({})</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cache for the constructor parameters of the CPUInfo class.&quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the constructor parameters for the schema data class.</span>
+
+<span class="sd">        The parameters are cached after the first call for performance.</span>
+
+<span class="sd">        It is returned as a read-only mapping and includes &#39;type&#39; and &#39;version&#39;.</span>
+
+<span class="sd">        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">(</span><span class="n">CPUInfoData</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_data&#39;</span><span class="p">,</span> <span class="s1">&#39;_hash_id&#39;</span><span class="p">,</span> <span class="s1">&#39;_to_dict_cache&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="s1">&#39;EnvCPUInfo&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize CPUInfo.</span>
 
-<span class="sd">        :param str | None hash_id: The unique hash identifier for the CPU information.</span>
+<span class="sd">        :param str hash_id: The unique hash identifier for the CPU information.</span>
 <span class="sd">            If not provided it will be computed automatically.</span>
 
-<span class="sd">            The hash_id must be a 64 character hexadecimal string, an</span>
-<span class="sd">            empty string, or None.</span>
+<span class="sd">            The hash_id must be a 64 character hexadecimal string or an empty string.</span>
 
 <span class="sd">            The semantics of hash_id are NOT to provide integrity verification of the data,</span>
 <span class="sd">            but rather to provide a globally unique identifier for the specific CPU information</span>
@@ -322,17 +345,13 @@
 <span class="sd">            hash_id values are NOT validated against the data content on initialization</span>
 <span class="sd">            because it is only an opaque identifier, not a data validation mechanism.</span>
 
-<span class="sd">        :param CoreDataMappingType data: The raw CPU information data collected from the system</span>
-<span class="sd">            using the :package:`cpuinfo` library. It must either be a dictionary or</span>
-<span class="sd">            an instance of `simplebench.environment.CPUInfo`.</span>
-
-<span class="sd">            The dictionary must conform to the following rules:</span>
-<span class="sd">            - It can have arbitrary keys and values but must be a tree composed of</span>
-<span class="sd">              dictionaries, lists, strings, numbers, booleans, and nulls.</span>
-<span class="sd">            - All keys in dictionaries must be non-blank, non-empty strings.</span>
+<span class="sd">        :param environment.CPUInfo data: The CPU information data collected from the system</span>
+<span class="sd">            It must be an instance of `simplebench.environment.CPUInfo`.</span>
+<span class="sd">        :raises SimpleBenchTypeError: If any of the parameters are of incorrect type.</span>
+<span class="sd">        :raises SimpleBenchValueError: If any of the parameters have invalid values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span> <span class="n">ImmutableCPUInfoData</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">hash_id</span><span class="p">(</span><span class="n">hash_id</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">hash_id</span><span class="p">(</span><span class="n">hash_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span><span class="p">:</span> <span class="n">ImmutableCPUInfoDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -344,7 +363,7 @@
 <span class="sd">        of dictionaries and lists. So we serialize the data to a sorted JSON string</span>
 <span class="sd">        and compute the SHA256 hash of that string.</span>
 
-<span class="sd">        :return str | None: The hash_id string or None if not set.</span>
+<span class="sd">        :return str: The hash_id string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">serialized</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">))</span>
@@ -377,10 +396,7 @@
 <span class="sd">        :param CPUInfoDict data: The dictionary containing CPU information.</span>
 <span class="sd">        :return CPUInfo: A CPUInfo instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">()</span>
-        <span class="n">allowed_keys</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span>
-        <span class="n">allowed_keys</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span>
-
+        <span class="n">allowed_keys</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_data_params</span><span class="p">()</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">import_data</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
             <span class="n">allowed_fields</span><span class="o">=</span><span class="n">allowed_keys</span><span class="p">,</span>
@@ -416,7 +432,130 @@
                 <span class="p">),</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span></div>
-</div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check equality between two CPUInfo instances.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Triggers the lazy eval properties to be evaluated if they have not been already.</span>
+<span class="sd">            This ensures that comparisons are made based on the actual values of the properties.</span>
+
+<span class="sd">            This can be expensive the first time it is called if many properties</span>
+<span class="sd">            need to be calculated from many measurements.</span>
+
+<span class="sd">            This is unavoidable since equality must reflect the actual state of the object.</span>
+
+<span class="sd">        :param other: The other CPUInfo instance to compare with.</span>
+<span class="sd">        :return bool: True if the two CPUInfo instances are equal, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">CPUInfo</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">hash</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the hash of the CPUInfo instance.</span>
+
+<span class="sd">        The hash is computed from the hash_id.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Triggers the lazy eval properties to be evaluated if they have not been already.</span>
+<span class="sd">            This ensures that the hash is based on the actual values of the properties.</span>
+
+<span class="sd">            This can be expensive the first time it is called if many properties</span>
+<span class="sd">            need to be calculated from many measurements. This is unavoidable</span>
+<span class="sd">            since the hash must reflect the actual state of the object.</span>
+
+<span class="sd">        :return int: The hash value of the CPUInfo instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the string representation of the CPUInfo instance.</span>
+
+<span class="sd">        :return: The string representation of the CPUInfo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the init parameters excluding &#39;type&#39; and &#39;version&#39;</span>
+        <span class="n">init_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">())</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">calling_args</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="si">!r}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">init_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">(</span><span class="si">{</span><span class="n">calling_args</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare the object&#39;s state for pickling, prioritizing size.</span>
+
+<span class="sd">        This method ensures that the pickled representation of the RawDataBlock</span>
+<span class="sd">        is compact. It achieves this by forcing the calculation of any lazy-evaluated</span>
+<span class="sd">        statistical properties and then excluding any attributes that are not part of the</span>
+<span class="sd">        public interface of the RawDataBlock from the pickled state. Those excluded attributes</span>
+<span class="sd">        can be recalculated upon unpickling on demand and do not need to be stored.</span>
+
+<span class="sd">        This prioritizes a smaller pickled size and fast subsequent unpickling over</span>
+<span class="sd">        preserving the lazy-evaluation state across serialization.</span>
+
+<span class="sd">        :return: A state tuple for pickling.</span>
+<span class="sd">        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Sweep all slot attributes to force calculation of any lazy properties.</span>
+        <span class="c1"># and collect any public attribute values for pickling. The non-public</span>
+        <span class="c1"># attributes will be excluded from the pickled state and can be</span>
+        <span class="c1"># recalculated on demand after unpickling. This keeps the pickled</span>
+        <span class="c1"># representation minimal and about 50% smaller. Which is significant</span>
+        <span class="c1"># for large datasets.</span>
+        <span class="c1"># &#39;version&#39; and &#39;type&#39; are excluded as they are class constants not</span>
+        <span class="c1"># instance attributes and can be inferred.</span>
+        <span class="n">public_attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">())</span>
+        <span class="n">public_attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">public_attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">slot_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
+            <span class="n">attr_name</span> <span class="o">=</span> <span class="n">slot</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">public_attrs</span><span class="p">:</span>
+                <span class="n">slot_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">slot_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Build the state tuple for a __slots__ class. The first element is for</span>
+        <span class="c1"># __dict__ (None in our case) and the second is a tuple of the slotted values.</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">slot_values</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restore the object&#39;s state from a pickled representation.</span>
+
+<span class="sd">        This method is the counterpart to `__getstate__`. It takes the state</span>
+<span class="sd">        tuple and repopulates the instance&#39;s `__slots__`.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This method bypasses `__init__`, which is standard for unpickling.</span>
+
+<span class="sd">        :param state: The state tuple from unpickling.</span>
+<span class="sd">        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The first element of the state tuple is for __dict__, which is None for this class.</span>
+        <span class="c1"># The second element is a tuple of values for the __slots__.</span>
+        <span class="n">slot_values</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">slot</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">,</span> <span class="n">slot_values</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="c1"># Use object.__setattr__ to bypass our immutable setters.</span>
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slot</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;CPUInfo&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a shallow copy of the instance as an optimized deep copy.</span>
+
+<span class="sd">        Since the CPUInfo instance is immutable and composed of immutable components,</span>
+<span class="sd">        a shallow copy is functionally identical to a deep copy. This method overrides</span>
+<span class="sd">        the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.</span>
+
+<span class="sd">        :param memo: The memoization dictionary used by `copy.deepcopy`.</span>
+<span class="sd">                     It is not used in this optimized implementation.</span>
+<span class="sd">        :return CPUInfo: A new, shallow-copied instance of the CPUInfo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># because the CPUInfo is immutable, we can return a copy of self</span>
+        <span class="c1"># instead of performing a full deep copy.</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

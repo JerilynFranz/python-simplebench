@@ -3,20 +3,18 @@
 import re
 from typing import Any, cast
 
-from typechecked import is_immutable, isinstance_of_typehint
+from typechecked import is_immutable
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
 
-from .typeddict_types import CPUInfoData, ImmutableCPUInfoData
+from .typeddict_types import ImmutableCPUInfoData
 
 _HASH_RE = re.compile(r'^[a-f0-9]{64}$')
 
 
-def hash_id(
-    value: str | None, name: str = 'hash_id', *, allow_none: bool = False, allow_empty: bool = False
-) -> str | None:
+def hash_id(value: str) -> str:
     """Validate the hash_id property of CPUInfo.
 
     .. note:: This is a composite validator, not a primitive.
@@ -27,41 +25,32 @@ def hash_id(
        first inspecting its implementation to ensure it will avoid a case where
        two validators invoke each other recursively.
 
-    The hash_id must be a 64-character hexadecimal string
-    or an empty string or None if allowed.
+    The hash_id must be a 64-character hexadecimal string or an empty string.
 
-    - If passed as None and allow_none is True, None is returned.
-    - If passed as an empty string and allow_empty is True, None is returned.
-
-    :param value str | None: The hash_id string to validate.
-    :param str name: The name of the property being validated (for error messages).
-    :param bool allow_none: Whether to allow None as a valid value.
-    :param bool allow_empty: Whether to allow an empty string as a valid value.
-    :return str | None: The validated hash_id string or ``None``.
-    :raises SimpleBenchTypeError: If the value is not a valid hash_id or ``None``.
+    :param value str: The hash_id string to validate.
+    :return str: The validated hash_id string or.
+    :raises SimpleBenchTypeError: If the value is not a valid hash_id or an empty string or.
     """
-    if allow_none and value is None:
-        return None
 
     value = validate_string(
         value,
-        name,
+        'hash_id',
         _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
         _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
         strip=True,
-        allow_empty=allow_empty,
-        message=f'{name} must be a string.',
+        allow_empty=True,
+        message='hash_id must be a string.',
     )
-    if allow_empty and value == '':
-        return None
+    if value == '':
+        return ''
 
     return validate_string_with_regex(
         value,
-        name,
+        'hash_id',
         _HASH_RE,
         _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE,
         _CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE,
-        message=f'{name} must be a 64-character hexadecimal string',
+        message='hash_id must be a 64-character hexadecimal string',
     )
 
 
@@ -91,13 +80,17 @@ def data(value: Any) -> ImmutableCPUInfoData:
         non-empty string, or if the structure contains unsupported types or cycles.
     :raises SimpleBenchTypeError: If the value is not a valid dictionary.
     """
-    if not isinstance_of_typehint(value, CPUInfoData):
+    from simplebench.environment import CPUInfo as EnvCPUInfo
+
+    if not isinstance(value, EnvCPUInfo):
         raise SimpleBenchTypeError(
-            "CPUInfo.data must be a 'CPUInfoData' TypedDict - validation failed.",
-            tag=_CPUInfoErrorTag.INVALID_DATA_ARG_TYPE,
+            f'CPUInfo.data must be an instance of simplebench.environment.CPUInfo, got {type(value).__name__}.',
+            tag=_CPUInfoErrorTag.INVALID_DATA_PROPERTY_TYPE,
         )
-    if is_immutable(value):
+
+    unpacked_value = value.to_dict()
+    if is_immutable(unpacked_value):
         return cast(ImmutableCPUInfoData, value)
 
-    immutable_value = validate_core_data_mapping(value, 'CPUInfo.data', max_depth=10)
+    immutable_value = validate_core_data_mapping(unpacked_value, 'CPUInfo.data', max_depth=10)
     return cast(ImmutableCPUInfoData, immutable_value)

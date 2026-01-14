@@ -12,10 +12,10 @@ simplebench.report.versions.v1.report.report\_schema module
    :show-inheritance:
    :undoc-members:
 
-simplebench.report.versions.v1.report.validate module
------------------------------------------------------
+simplebench.report.versions.v1.report.typeddict\_types module
+-------------------------------------------------------------
 
-.. automodule:: simplebench.report.versions.v1.report.validate
+.. automodule:: simplebench.report.versions.v1.report.typeddict_types
    :members:
    :show-inheritance:
    :undoc-members:

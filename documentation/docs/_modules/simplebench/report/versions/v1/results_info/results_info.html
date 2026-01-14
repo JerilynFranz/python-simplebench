@@ -258,6 +258,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">simplebench.report.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseResultsInfo</span>
@@ -268,7 +269,7 @@
     <span class="n">VariationMarksType</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_validate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.results_info_schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsInfoSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.typeddict_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImmutableResultsInfoDict</span><span class="p">,</span> <span class="n">ResultsInfoData</span>
 
@@ -299,22 +300,22 @@
     <span class="n">ID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SCHEMA</span><span class="o">.</span><span class="n">ID</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The JSON report ID property value for version 1 reports.&quot;&quot;&quot;</span>
 
-    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_init_params_cache</span><span class="p">:</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">({})</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Cache for the constructor parameters of the ResultsInfo class.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_data_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_data_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MappingProxyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the constructor parameters for the schema data class.</span>
 
 <span class="sd">        The parameters are cached after the first call for performance.</span>
 
-<span class="sd">        :return dict[str, Any]: A dictionary of constructor parameter names and types.</span>
+<span class="sd">        It is returned as a read-only mapping and includes &#39;type&#39; and &#39;version&#39;.</span>
+
+<span class="sd">        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">init_params</span><span class="p">(</span><span class="n">ResultsInfoData</span><span class="p">)</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span> <span class="o">=</span> <span class="n">params</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span> <span class="o">=</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_init_params_cache</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
@@ -332,6 +333,7 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
+        <span class="n">hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
         <span class="n">group</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -345,6 +347,7 @@
 <span class="sd">        The input parameters are validated, converted to immutable types as needed,</span>
 <span class="sd">        and stored as private attributes that are accessible via read-only properties.</span>
 
+<span class="sd">        :param str hash_id: The unique hash identifier for the results.</span>
 <span class="sd">        :param str group: The group name of the results.</span>
 <span class="sd">        :param str title: The title of the results.</span>
 <span class="sd">        :param str description: The description of the results.</span>
@@ -354,15 +357,17 @@
 <span class="sd">        :param MetricsObject metrics: The list of metrics.</span>
 <span class="sd">        :param CoreDataMappingType extra_info: Additional information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">n</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_marks</span><span class="p">:</span> <span class="n">ImmutableVariationMarksType</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">variation_marks</span><span class="p">(</span><span class="n">variation_marks</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="p">:</span> <span class="n">MetricsObject</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span><span class="p">:</span> <span class="n">ImmutableCoreDataMappingType</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">extra_info</span><span class="p">(</span><span class="n">extra_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">n</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_variation_marks</span><span class="p">:</span> <span class="n">ImmutableVariationMarksType</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">variation_marks</span><span class="p">(</span><span class="n">variation_marks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span><span class="p">:</span> <span class="n">MetricsObject</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_info</span><span class="p">:</span> <span class="n">ImmutableCoreDataMappingType</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">extra_info</span><span class="p">(</span><span class="n">extra_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_validate</span><span class="o">.</span><span class="n">hash_id</span><span class="p">(</span><span class="n">hash_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id_helper</span><span class="p">(</span><span class="n">ResultsInfoData</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_to_dict_cache</span><span class="p">:</span> <span class="n">ImmutableResultsInfoDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_id_helper</span><span class="p">(</span><span class="n">ResultsInfoData</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ResultsInfo.from_dict">
 <a class="viewcode-back" href="../../../../../../source/simplebench.report.versions.v1.html#simplebench.report.versions.v1.ResultsInfo.from_dict">[docs]</a>
@@ -507,7 +512,9 @@
 <span class="sd">        :return str: The string representation of the ResultsInfo.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the init parameters excluding &#39;type&#39; and &#39;version&#39;</span>
-        <span class="n">init_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">()</span>
+        <span class="n">init_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">())</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">init_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># Build the key-value argument string. Accessing the properties via getattr</span>
         <span class="c1"># will trigger their lazy calculation if they haven&#39;t been computed yet.</span>
@@ -535,7 +542,13 @@
         <span class="c1"># skips any non-public attributes that can be recalculated later.</span>
         <span class="c1"># By skipping non-public attributes, we reduce the pickled size by</span>
         <span class="c1"># about 50% for typical ResultsInfo instances.</span>
-        <span class="n">public_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">()</span>
+
+        <span class="c1"># Build a list of public attribute values based on the data params.</span>
+        <span class="c1"># &#39;type&#39; and &#39;version&#39; are excluded since they are class-level constants</span>
+        <span class="c1"># not stored as instance attributes.</span>
+        <span class="n">public_attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_params</span><span class="p">())</span>
+        <span class="n">public_attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">public_attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">slot_values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">slot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">:</span>
             <span class="n">attr_name</span> <span class="o">=</span> <span class="n">slot</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
@@ -580,6 +593,7 @@
 <span class="sd">        :return ResultsInfo: A new, shallow-copied instance of the ResultsInfo.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># because the ResultsInfo is immutable, we can return a copy of self</span>
+        <span class="c1"># instead of performing a full deep copy.</span>
         <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
 </pre></div>

@@ -8,6 +8,9 @@ from simplebench.exceptions import ErrorTag
 class _CPUInfoErrorTag(ErrorTag):
     """Error tags for JSONCPUInfo reporter base class."""
 
+    INVALID_DATA_PROPERTY_TYPE = 'INVALID_DATA_PROPERTY_TYPE'
+    """The 'data' property is not of type 'simplebench.environment.CPUInfo'."""
+
     INVALID_DATA_PARAM_NON_FINITE_FLOAT = 'INVALID_DATA_PARAM_NON_FINITE_FLOAT'
     """The 'data' argument contains non-finite float values (NaN, Infinity)."""
     INVALID_DATA_PARAM_KEYS_VALUE = 'INVALID_DATA_PARAM_KEYS_VALUE'

@@ -20,14 +20,6 @@ simplebench.report.versions.v1.results\_info.typeddict\_types module
    :show-inheritance:
    :undoc-members:
 
-simplebench.report.versions.v1.results\_info.validate module
-------------------------------------------------------------
-
-.. automodule:: simplebench.report.versions.v1.results_info.validate
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 Module contents
 ---------------
 

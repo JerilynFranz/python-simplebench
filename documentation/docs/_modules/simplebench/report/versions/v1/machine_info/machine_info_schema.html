@@ -320,6 +320,10 @@
                 <span class="c1"># It requires at least one property to be present (the &#39;python&#39; property or any future ones).</span>
                 <span class="s1">&#39;additionalProperties&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
                 <span class="s1">&#39;minProperties&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="c1"># Each property name must match the environment name regex</span>
+                <span class="c1"># They must start with a letter, can contain letters, digits, underscores, hyphens,</span>
+                <span class="c1"># and must end with a letter or digit.</span>
+                <span class="s1">&#39;propertyNames&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;pattern&#39;</span><span class="p">:</span> <span class="s1">&#39;^[a-zA-Z](?:[a-zA-Z0-9_-]*[a-zA-Z0-9])?$&#39;</span><span class="p">},</span>
             <span class="p">},</span>
             <span class="s1">&#39;cpu&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;cpu-info.json&#39;</span><span class="p">},</span>
             <span class="s1">&#39;memory&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;memory-info.json&#39;</span><span class="p">},</span>

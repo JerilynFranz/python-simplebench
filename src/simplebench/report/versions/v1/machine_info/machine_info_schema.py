@@ -65,6 +65,10 @@ class MachineInfoSchema(JSONSchema):
                 # It requires at least one property to be present (the 'python' property or any future ones).
                 'additionalProperties': True,
                 'minProperties': 1,
+                # Each property name must match the environment name regex
+                # They must start with a letter, can contain letters, digits, underscores, hyphens,
+                # and must end with a letter or digit.
+                'propertyNames': {'pattern': '^[a-zA-Z](?:[a-zA-Z0-9_-]*[a-zA-Z0-9])?$'},
             },
             'cpu': {'$ref': 'cpu-info.json'},
             'memory': {'$ref': 'memory-info.json'},

@@ -14,7 +14,8 @@ of the JSON report schema and the V1 implementation itself is essentially a froz
 of the base MemoryInfo representation at the time of the V1 schema release.
 """
 
-from typing import cast
+from types import MappingProxyType
+from typing import Any
 
 from simplebench.report.base import BaseMemoryInfo, JSONSchema
 
@@ -42,14 +43,37 @@ class MemoryInfo(BaseMemoryInfo):
     SCHEMA: type[JSONSchema] = MemoryInfoSchema
     """The JSON schema class for version 1 reports."""
 
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the ResultsInfo class."""
+
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the MemoryInfo class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(MemoryInfoData)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
+
+    __slots__ = ('_hash_id', '_swap_memory', '_virtual_memory', '_dict_cache')
+
     def __init__(
         self, *, hash_id: str = '', swap_memory: SwapMemoryObject, virtual_memory: VirtualMemoryObject
     ) -> None:
         """Initialize MemoryInfo.
 
-        :param str hash_id: The unique hash identifier for the machine information.
-        :param int total_physical: Total physical memory in bytes.
-        :param int total_swap: Total configured swap memory in bytes.
+        :param str hash_id: The unique hash identifier for the MemoryInfo instance.
+        :param SwapMemoryObject swap_memory: The swap memory information.
+        :param VirtualMemoryObject virtual_memory: The virtual memory information.
         """
         self._hash_id = _validate.hash_id(hash_id)
         self._swap_memory = _validate.swap_memory(swap_memory)
@@ -69,10 +93,7 @@ class MemoryInfo(BaseMemoryInfo):
         :param data: The dictionary containing the MemoryInfo data.
         :return MemoryInfo: A MemoryInfo instance.
         """
-        allowed_keys = cls.init_params()
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
-
+        allowed_keys = cls._data_params()
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
@@ -89,7 +110,7 @@ class MemoryInfo(BaseMemoryInfo):
 
         :return MemoryInfoDict: A dictionary representation of the MemoryInfo.
         """
-        return cast(ImmutableMemoryInfoDict, self._dict_cache)
+        return self._dict_cache
 
     @property
     def hash_id(self) -> str:
@@ -114,3 +135,33 @@ class MemoryInfo(BaseMemoryInfo):
         :return VirtualMemoryObject: The virtual memory information.
         """
         return self._virtual_memory
+
+    def __repr__(self) -> str:
+        """Get the string representation of the MemoryInfo instance.
+
+        :return: The string representation of the MemoryInfo.
+        """
+        # Get the init parameters excluding 'type' and 'version'
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
+    def __hash__(self) -> int:
+        """Get the hash of the MemoryInfo instance.
+
+        :return: The hash value.
+        """
+        return hash(self.hash_id)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two MemoryInfo instances.
+
+        :param other: The other object to compare.
+        :return: True if equal, False otherwise.
+        """
+        if not isinstance(other, MemoryInfo):
+            return NotImplemented
+        return self.hash_id == other.hash_id
