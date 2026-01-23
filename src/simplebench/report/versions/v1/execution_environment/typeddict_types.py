@@ -11,7 +11,7 @@ This module defines four distinct dictionary types for handling ExecutionEnviron
 """
 
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
-from simplebench.types import Never, NotRequired
+from simplebench.simplebench_types import Never, NotRequired
 
 # Imports are directly from the specific sub-modules to avoid accidentally creating circular dependencies
 from ..python_info.typeddict_types import PythonInfoData, PythonInfoDict

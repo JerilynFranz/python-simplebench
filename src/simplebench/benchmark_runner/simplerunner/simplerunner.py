@@ -52,10 +52,11 @@ import importlib.util
 import math
 import sys
 import tracemalloc
+from collections.abc import Callable
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Callable, Final, Literal, Optional, TypeAlias
+from typing import TYPE_CHECKING, Any, Final, Literal, Optional, TypeAlias
 
-from simplebench.benchmark_runner import BenchmarkRunner
+from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
 from simplebench.defaults import (
     DEFAULT_CPU_TIMER,
@@ -68,9 +69,9 @@ from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
 from simplebench.metrics import Metric, metrics_registry
+from simplebench.simplebench_types import Values
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
-from simplebench.types import Values
 from simplebench.validators import validate_positive_int
 
 from ._error_tags import _SimpleRunnerErrorTag

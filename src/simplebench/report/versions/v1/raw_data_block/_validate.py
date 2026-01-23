@@ -5,7 +5,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from simplebench.report._error_tags import _RawDataBlockErrorTag
-from simplebench.types import Values
+from simplebench.simplebench_types import Values
 from simplebench.validators import (
     validate_namespaced_identifier,
     validate_positive_float,

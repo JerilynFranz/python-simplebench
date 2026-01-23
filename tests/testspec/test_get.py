@@ -4,12 +4,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, Callable, NoReturn, Optional
+from typing import Any, Callable, NoReturn, Optional, Union
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
 from .constants import NO_EXPECTED_VALUE, NO_OBJ_ASSIGNED
-from .deferred import _resolve_deferred_value
 from .helpers import _process_exception
 
 
@@ -76,9 +75,9 @@ class TestGet(TestSpec):
     get step validation for the set value. Omitting this field is equivalent to setting it to NO_EXPECTED_VALUE."""
     exception: Optional[type[BaseException]] = None
     """Expected exception type (if any) to be raised by getting the attribute."""
-    exception_tag: Optional[str | Enum] = None
+    exception_tag: Optional[Union[str, Enum]] = None
     """Expected tag (if any) to be found in an exception message raised by getting the attribute."""
-    validate: Optional[Callable[[TestGet, Any], None | NoReturn]] = None
+    validate: Optional[Callable[[TestGet, Any], Union[None, NoReturn]]] = None
     """Function to validate obj state after setting the attribute. It should raise an exception
     if the object state is unexpected.
 
@@ -90,9 +89,9 @@ class TestGet(TestSpec):
     The validation function should call the `on_fail` method to raise an exception if the object is not
     in a valid state. None should be returned if the object is valid.
     """
-    display_on_fail: str | Callable[[], str] = ""
+    display_on_fail: Union[str, Callable[[], str]] = ""
     """String or function to display additional information on test failure."""
-    on_fail: Callable[[str], NoReturn] | None = None
+    on_fail: Optional[Callable[[str], NoReturn]] = None
     """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestGet class itself. Default is None."""
@@ -120,7 +119,7 @@ class TestGet(TestSpec):
             raise TypeError("exception must be an Exception type if provided")
         if self.exception_tag is not None and not isinstance(self.exception_tag, (str, Enum)):
             raise TypeError("set_exception_tag must be a str or Enum if provided")
-        if self.on_fail is not None and not callable(self.on_fail):
+        if not callable(self.on_fail):
             raise TypeError("on_fail must be callable")
         if self.display_on_fail and not (isinstance(self.display_on_fail, str) or callable(self.display_on_fail)):
             raise TypeError("display_on_fail must be a str or callable if provided")
@@ -141,9 +140,9 @@ class TestGet(TestSpec):
         # Errors found during the test
         errors: list[str] = []
 
-        obj = _resolve_deferred_value(self.obj)
-        expected = _resolve_deferred_value(self.expected)
-        validate = _resolve_deferred_value(self.validate)
+        obj = self.obj
+        expected = self.expected
+        validate = self.validate
         if obj is NO_OBJ_ASSIGNED:
             if self.on_fail:
                 self.on_fail(f"{self.name}: obj for test is not assigned")

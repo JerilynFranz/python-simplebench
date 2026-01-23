@@ -19,7 +19,7 @@ version 1: :class:`~simplebench.report.versions.v1.report.report_schema.ReportSc
 from typing import Sequence
 
 from simplebench.report.base import ReportElementTypedDict
-from simplebench.types import ImmutableVariationColsType, Never, NotRequired, Required, VariationColsType
+from simplebench.simplebench_types import ImmutableVariationColsType, Never, NotRequired, Required, VariationColsType
 
 from ..machine_info import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
 from ..results_info import ImmutableResultsInfoData, ImmutableResultsInfoDict, ResultsInfoData, ResultsInfoDict

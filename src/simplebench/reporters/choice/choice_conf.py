@@ -1,7 +1,8 @@
 """``ChoiceConf()`` for reporters."""
-
 from collections.abc import Hashable
 from typing import Any, Iterable, Sequence
+
+from typechecked import Immutable
 
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchTypeError
@@ -9,16 +10,11 @@ from simplebench.metrics.metrics_selection import MetricsSelection
 from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.validators import (
-    validate_bool,
-    validate_iterable_of_type,
-    validate_sequence_of_str,
-    validate_string,
-    validate_type,
-)
+
+from . import _validate
 
 
-class ChoiceConf(Hashable, ChoiceProtocol):
+class ChoiceConf(Hashable, ChoiceProtocol, Immutable):
     """Definition of a :class:`~.Choice` configuration for reporters.
 
     A :class:`~.ChoiceConf` represents a specific configuration of an implied :class:`~.Choice`
@@ -88,6 +84,24 @@ class ChoiceConf(Hashable, ChoiceProtocol):
     :param extra: Any additional metadata associated with the choice.
     :type extra: Any | None
     """
+    __slots__ = (
+        '_flags',
+        '_flag_type',
+        '_name',
+        '_description',
+        '_metrics',
+        '_targets',
+        '_default_targets',
+        '_subdir',
+        '_file_suffix',
+        '_file_unique',
+        '_file_append',
+        '_output_format',
+        '_options',
+        '_extra',
+        '_hash_id',
+    )
+
 
     def __init__(
         self,
@@ -105,13 +119,27 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         file_unique: bool | None = None,
         file_append: bool | None = None,
         options: ReporterOptions | None = None,
-        extra: Any = None,
+        extra: Hashable | None = None,
     ) -> None:
         """Construct a :class:`~.ChoiceConf` instance.
 
-        :param flags: An iterable of command-line flags associated with the choice.
+        :param flags: Iterable of flags associated with the choice.
+
+            These are used for command-line selection.
+            They must be unique across all choices for all reporters. This is enforced
+            by the ReporterManager when choices are registered.
+
+            The flags should be in the format used on the command line,
+            typically starting with '--' for long options.
+
+            Example: ['--json', '--json-full']
+
+            The description property of the Choice is used to provide
+            help text for the flags when generating command-line help.
         :type flags: Iterable[str]
-        :param flag_type: The type of command-line flag (e.g., boolean, target_list, etc.).
+        :param flag_type: The type of command-line flag (e.g., The type of command-line
+            flag (e.g., :data:`~simplebench.enums.FlagType.BOOLEAN`,
+            :data:`~simplebench.enums.FlagType.TARGET_LIST`, etc.).
         :type flag_type: :class:`~simplebench.enums.FlagType`
         :param name: A unique name for the choice.
         :type name: str
@@ -171,134 +199,25 @@ class ChoiceConf(Hashable, ChoiceProtocol):
                       benchmarking framework does not interpret or enforce any structure on
                       this data. :class:`~simplebench.reporters.reporter.Reporter` subclasses
                       may choose to utilize this field for their own purposes.
-        :type extra: Any
+
+                      The value must be hashable and immutable to support the immutability
+                      of the :class:`~.ChoiceConf` instance.
+        :type extra: Hashable | None
         :raises SimpleBenchTypeError: If any argument is of an incorrect type.
         :raises SimpleBenchValueError: If any argument has an invalid value (e.g., empty
                                        strings or empty sequences).
         """
-        self._flags: frozenset[str] = frozenset(
-            validate_sequence_of_str(
-                flags,
-                'flags',
-                _ChoiceConfErrorTag.FLAGS_INVALID_ARG_TYPE,
-                _ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE,
-                allow_empty=False,
-                allow_blank=False,
-                allow_whitespace=False,
-            )
-        )
-        """Flags associated with the choice. These are used for command-line selection.
-        They must be unique across all choices for all reporters. This is enforced
-        by the ReporterManager when choices are registered.
-
-        The flags should be in the format used on the command line,
-        typically starting with '--' for long options.
-
-        Example: ['--json', '--json-full']
-
-        The description property of the Choice is used to provide
-        help text for the flags when generating command-line help.
-        """
-        self._flag_type = validate_type(
-            flag_type, FlagType, 'flag_type', _ChoiceConfErrorTag.FLAG_TYPE_INVALID_ARG_TYPE
-        )
-        """The type of command-line flag (e.g., FlagType.BOOLEAN, FlagType.TARGET_LIST, etc.)
-        (private backing field for attribute)"""
-
-        self._name: str = validate_string(
-            name,
-            'name',
-            _ChoiceConfErrorTag.NAME_INVALID_ARG_TYPE,
-            _ChoiceConfErrorTag.NAME_INVALID_ARG_VALUE,
-            allow_empty=False,
-            allow_blank=False,
-        )
-        """Name of the choice (private backing field for attribute)"""
-
-        self._description: str = validate_string(
-            description,
-            'description',
-            _ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
-            _ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
-            allow_empty=False,
-            allow_blank=False,
-        )
-        """Description of the choice (private backing field for attribute)"""
-
-        self._metrics: MetricsSelection = validate_type(
-            metrics, MetricsSelection, 'metrics', _ChoiceConfErrorTag.SECTIONS_INVALID_ARG_TYPE
-        )
-        """Metrics included in the choice (private backing field for attribute)"""
-
-        self._targets: frozenset[Target] = frozenset(
-            validate_iterable_of_type(
-                targets,
-                Target,
-                'targets',
-                _ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE,
-                _ChoiceConfErrorTag.TARGETS_INVALID_ARG_VALUE,
-                allow_empty=False,
-            )
-        )
-        """Output targets for the choice (private backing field for attribute)"""
-
-        self._default_targets: frozenset[Target] = frozenset()
-        """Default output targets for the choice (private backing field for attribute)"""
-        if default_targets is not None:
-            self._default_targets = frozenset(
-                validate_iterable_of_type(
-                    default_targets,
-                    Target,
-                    'default_targets',
-                    _ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
-                    _ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_VALUE,
-                    allow_empty=True,
-                )
-            )
-
-        self._subdir: str | None = None
-        """An optional subdirectory for output files (private backing field for attribute)"""
-        if subdir is not None:
-            self._subdir = validate_string(
-                subdir,
-                'subdir',
-                _ChoiceConfErrorTag.SUBDIR_INVALID_ARG_TYPE,
-                _ChoiceConfErrorTag.SUBDIR_INVALID_ARG_VALUE,
-                allow_empty=True,
-                alphanumeric_only=True,
-            )
-            if len(self._subdir) > 64:
-                raise SimpleBenchTypeError(
-                    'subdir cannot be longer than 64 characters', tag=_ChoiceConfErrorTag.SUBDIR_TOO_LONG
-                )
-
-        self._file_suffix: str | None = None
-        """An optional file suffix for output files (private backing field for attribute)"""
-        if file_suffix is not None:
-            file_suffix = validate_string(
-                file_suffix,
-                'file_suffix',
-                _ChoiceConfErrorTag.FILE_SUFFIX_INVALID_ARG_TYPE,
-                _ChoiceConfErrorTag.FILE_SUFFIX_INVALID_ARG_VALUE,
-                allow_empty=True,
-                allow_blank=False,
-                alphanumeric_only=True,
-            )
-            if len(file_suffix) > 10:
-                raise SimpleBenchTypeError(
-                    'file_suffix cannot be longer than 10 characters', tag=_ChoiceConfErrorTag.FILE_SUFFIX_TOO_LONG
-                )
-            self._file_suffix = file_suffix
-
-        self._file_unique: bool | None = validate_bool(
-            file_unique, 'file_unique', _ChoiceConfErrorTag.FILE_UNIQUE_INVALID_ARG_TYPE, allow_none=True
-        )
-        """Whether to make output file names unique (private backing field for attribute)"""
-
-        self._file_append: bool | None = validate_bool(
-            file_append, 'file_append', _ChoiceConfErrorTag.FILE_APPEND_INVALID_ARG_TYPE, allow_none=True
-        )
-        """Whether to append to existing output files (private backing field for attribute)"""
+        self._flags: frozenset[str] = _validate.flags(flags)
+        self._flag_type = _validate.flag_type(flag_type)
+        self._name: str = _validate.name(name)
+        self._description: str = _validate.description(description)
+        self._metrics: MetricsSelection = _validate.metrics(metrics)
+        self._targets: frozenset[Target] = _validate.targets(targets)
+        self._default_targets: frozenset[Target] = _validate.default_targets(default_targets)
+        self._subdir: str | None = _validate.subdir(subdir)
+        self._file_suffix: str | None = _validate.file_suffix(file_suffix)
+        self._file_unique: bool | None = _validate.file_unique(file_unique)
+        self._file_append: bool | None = _validate.file_append(file_append)
 
         # Ensure that if one is None and the other is not, we set the None one
         # to the opposite of the other to maintain mutual exclusivity
@@ -308,28 +227,19 @@ class ChoiceConf(Hashable, ChoiceProtocol):
             self._file_unique = not self._file_append
         elif self._file_append is None and self._file_unique is not None:
             self._file_append = not self._file_unique
-
         if self._file_unique is not None and self._file_append is not None and self._file_unique == self._file_append:
             raise SimpleBenchTypeError(
                 'file_unique and file_append are mutually exclusive; both cannot be True or False at the same time',
                 tag=_ChoiceConfErrorTag.FILE_UNIQUE_FILE_APPEND_MUTUALLY_EXCLUSIVE,
             )
 
-        self._output_format: Format = validate_type(
-            output_format, Format, 'output_format', _ChoiceConfErrorTag.OUTPUT_FORMAT_INVALID_ARG_TYPE
-        )
-        """Output format for the choice (private backing field for attribute)"""
+        self._output_format: Format = _validate.output_format(output_format)
+        self._options: ReporterOptions | None = _validate.options(options)
+        self._extra: Hashable | None = _validate.extra(extra)
 
-        self._options: ReporterOptions | None = None
-        """An optional ReporterOptions for additional configuration of the reporter
-        (private backing field for attribute)"""
-        if options is not None:
-            self._options = validate_type(
-                options, ReporterOptions, 'options', _ChoiceConfErrorTag.OPTIONS_INVALID_ARG_TYPE
-            )
-
-        self._extra: Any = extra
-        """Additional metadata associated with the choice (private backing field for attribute)"""
+        hash_fields = (slot_key for slot_key in self.__slots__ if slot_key != '_hash_id')
+        hash_values = tuple(hash(getattr(self, key)) for key in hash_fields)
+        self._hash_id: int = hash(hash_values)
 
     @property
     def flags(self) -> frozenset[str]:
@@ -462,29 +372,12 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         return self._extra
 
     def __hash__(self) -> int:
-        """Compute a hash value for the :class:`~.ChoiceConf` instance.
+        """The hash value for the :class:`~.ChoiceConf` instance.
 
-        :return: The computed hash value.
+        :return: The hash value.
         :rtype: int
         """
-        return hash(
-            (
-                self.flags,
-                self.flag_type,
-                self.name,
-                self.description,
-                self.metrics,
-                self.targets,
-                self.default_targets,
-                self.subdir,
-                self.file_suffix,
-                self.file_unique,
-                self.file_append,
-                self.output_format,
-                self.options,
-                self.extra,
-            )
-        )
+        return self._hash_id
 
     def __eq__(self, other: object) -> bool:
         """Check equality between two :class:`~.ChoiceConf` instances.
@@ -497,19 +390,21 @@ class ChoiceConf(Hashable, ChoiceProtocol):
         if not isinstance(other, ChoiceConf):
             return False
 
+        return self.__hash__() == other.__hash__()
+
+    def __repr__(self) -> str:
+        """String representation of the :class:`~.ChoiceConf` instance.
+
+        :return: The string representation.
+        :rtype: str
+        """
         return (
-            self.flags == other.flags
-            and self.flag_type == other.flag_type
-            and self.name == other.name
-            and self.description == other.description
-            and self.metrics == other.metrics
-            and self.targets == other.targets
-            and self.default_targets == other.default_targets
-            and self.subdir == other.subdir
-            and self.file_suffix == other.file_suffix
-            and self.file_unique == other.file_unique
-            and self.file_append == other.file_append
-            and self.output_format == other.output_format
-            and self.options == other.options
-            and self.extra == other.extra
+            f"ChoiceConf(name={self._name!r}, flags={sorted(self._flags)!r}, "
+            f"flag_type={self._flag_type!r}, description={self._description!r}, "
+            f"metrics={self._metrics!r}, targets={sorted(self._targets)!r}, "
+            f"default_targets={sorted(self._default_targets)!r}, "
+            f"output_format={self._output_format!r}, subdir={self._subdir!r}, "
+            f"file_suffix={self._file_suffix!r}, file_unique={self._file_unique!r}, "
+            f"file_append={self._file_append!r}, options={self._options!r}, "
+            f"extra={self._extra!r})"
         )

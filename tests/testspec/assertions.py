@@ -1,9 +1,12 @@
 """TestSpec testing framework - assertion operators."""
+
+# pylint: disable=too-many-return-statements
 import logging
 from enum import Enum
 from typing import Any
 
 log = logging.getLogger(__name__)
+
 
 class Assert(str, Enum):
     """Enumeration of supported assertion operators.
@@ -38,6 +41,7 @@ class Assert(str, Enum):
     :vartype ISSUBCLASS: str
     :cvar str LEN: Checks the length of a collection against an expected value.
     """
+
     EQUAL = '=='
     NOT_EQUAL = '!='
     LESS_THAN = '<'
@@ -63,11 +67,11 @@ def expected_argument_required(assertion: Assert) -> bool:
     :param Assert assertion: The assertion operator to check.
     :return bool: True if the assertion operator requires an expected argument, False otherwise.
     """
-    match assertion:
-        case Assert.IS_NONE | Assert.IS_NOT_NONE | Assert.TRUE | Assert.FALSE:
-            return False
-        case _:
-            return True
+    if assertion in (Assert.IS_NONE, Assert.IS_NOT_NONE, Assert.TRUE, Assert.FALSE):
+        return False
+    else:
+        return True
+
 
 def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
     """Helper function to perform an assertion check.
@@ -82,64 +86,63 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
     :return str: An error message if the assertion fails, otherwise an empty string.
     :raises ValueError: If an unsupported assertion operator is provided.
     """
-    match assertion:
-        case Assert.EQUAL:
-            if not found == expected:
-                return f"Assert.EQUAL failed: found={found}, expected={expected}"
-        case Assert.NOT_EQUAL:
-            if not found != expected:
-                return f"Assert.NOT_EQUAL failed: found={found}, expected={expected}"
-        case Assert.LESS_THAN:
-            if not found < expected:
-                return f"Assert.LESS_THAN failed: found={found}, expected={expected}"
-        case Assert.LESS_THAN_OR_EQUAL:
-            if not found <= expected:
-                return f"Assert.LESS_THAN_OR_EQUAL failed: found={found}, expected={expected}"
-        case Assert.GREATER_THAN:
-            if not found > expected:
-                return f"Assert.GREATER_THAN failed: found={found}, expected={expected}"
-        case Assert.GREATER_THAN_OR_EQUAL:
-            if not found >= expected:
-                return f"Assert.GREATER_THAN_OR_EQUAL failed: found={found}, expected={expected}"
-        case Assert.IN:
-            if not (expected in found):  # pylint: disable=superfluous-parens  # for clarity
-                return f"Assert.IN failed: found={found}, expected={expected}"
-        case Assert.NOT_IN:
-            if not (expected not in found):  # pylint: disable=superfluous-parens  # for clarity
-                return f"Assert.NOT_IN failed: found={found}, expected={expected}"
-        case Assert.IS:
-            if not (found is expected):  # pylint: disable=superfluous-parens  # for clarity
-                return f"Assert.IS failed: found={found}, expected={expected}"
-        case Assert.IS_NOT:
-            if not (found is not expected):  # pylint: disable=superfluous-parens  # for clarity
-                return f"Assert.IS_NOT failed: found={found}, expected={expected}"
-        case Assert.ISINSTANCE:
-            try:
-                if not isinstance(found, expected):
-                    return f"Assert.ISINSTANCE failed: found={type(found)}, expected={expected}"
-            except TypeError as exc:
-                return f"Assert.ISINSTANCE failed: invalid expected type '{expected}': {exc}"
-        case Assert.ISSUBCLASS:
-            try:
-                if not issubclass(found, expected):
-                    return f"Assert.ISSUBCLASS failed: found={found}, expected={expected}"
-            except TypeError as exc:
-                return f"Assert.ISSUBCLASS failed: invalid expected type '{expected}': {exc}"
-        case Assert.IS_NONE:
-            if found is not None:
-                return f"Assert.IS_NONE failed: found={found}"
-        case Assert.IS_NOT_NONE:
-            if found is None:
-                return f"Assert.IS_NOT_NONE failed: found={found}"
-        case Assert.TRUE:
-            if not found:
-                return f"Assert.TRUE failed: found={found}"
-        case Assert.FALSE:
-            if found:
-                return f"Assert.FALSE failed: found={found}"
-        case Assert.LEN:
-            if not len(found) == expected:
-                return f"Assert.LEN failed: found={len(found)}, expected={expected}"
-        case _:
-            return f"Unsupported assertion operator '{assertion}'"
-    return ""
+    if assertion == Assert.EQUAL:
+        if not found == expected:
+            return f'Assert.EQUAL failed: found={found}, expected={expected}'
+    elif assertion == Assert.NOT_EQUAL:
+        if not found != expected:
+            return f'Assert.NOT_EQUAL failed: found={found}, expected={expected}'
+    elif assertion == Assert.LESS_THAN:
+        if not found < expected:
+            return f'Assert.LESS_THAN failed: found={found}, expected={expected}'
+    elif assertion == Assert.LESS_THAN_OR_EQUAL:
+        if not found <= expected:
+            return f'Assert.LESS_THAN_OR_EQUAL failed: found={found}, expected={expected}'
+    elif assertion == Assert.GREATER_THAN:
+        if not found > expected:
+            return f'Assert.GREATER_THAN failed: found={found}, expected={expected}'
+    elif assertion == Assert.GREATER_THAN_OR_EQUAL:
+        if not found >= expected:
+            return f'Assert.GREATER_THAN_OR_EQUAL failed: found={found}, expected={expected}'
+    elif assertion == Assert.IN:
+        if not (expected in found):  # noqa: E713  # Keep for readability
+            return f'Assert.IN failed: found={found}, expected={expected}'
+    elif assertion == Assert.NOT_IN:
+        if not (expected not in found):
+            return f'Assert.NOT_IN failed: found={found}, expected={expected}'
+    elif assertion == Assert.IS:
+        if not (found is expected):  # noqa: E714  # Keep for readability
+            return f'Assert.IS failed: found={found}, expected={expected}'
+    elif assertion == Assert.IS_NOT:
+        if not (found is not expected):
+            return f'Assert.IS_NOT failed: found={found}, expected={expected}'
+    elif assertion == Assert.ISINSTANCE:
+        try:
+            if not isinstance(found, expected):
+                return f'Assert.ISINSTANCE failed: found={type(found)}, expected={expected}'
+        except TypeError as exc:
+            return f"Assert.ISINSTANCE failed: invalid expected type '{expected}': {exc}"
+    elif assertion == Assert.ISSUBCLASS:
+        try:
+            if not issubclass(found, expected):
+                return f'Assert.ISSUBCLASS failed: found={found}, expected={expected}'
+        except TypeError as exc:
+            return f"Assert.ISSUBCLASS failed: invalid expected type '{expected}': {exc}"
+    elif assertion == Assert.IS_NONE:
+        if found is not None:
+            return f'Assert.IS_NONE failed: found={found}'
+    elif assertion == Assert.IS_NOT_NONE:
+        if found is None:
+            return f'Assert.IS_NOT_NONE failed: found={found}'
+    elif assertion == Assert.TRUE:
+        if not found:
+            return f'Assert.TRUE failed: found={found}'
+    elif assertion == Assert.FALSE:
+        if found:
+            return f'Assert.FALSE failed: found={found}'
+    elif assertion == Assert.LEN:
+        if not len(found) == expected:
+            return f'Assert.LEN failed: found={len(found)}, expected={expected}'
+    else:
+        return f"Unsupported assertion operator '{assertion}'"
+    return ''

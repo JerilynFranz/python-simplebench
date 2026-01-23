@@ -1,24 +1,16 @@
 """Container for the results of a single benchmark test."""
-
-from __future__ import annotations
-
+from collections.abc import Mapping
 from types import MappingProxyType
-from typing import Any, Mapping, Optional, TypeAlias
+from typing import Any, Optional
 
-import simplebench.report.versions.v1 as current_version
+import simplebench.report.versions.v1 as reports
 from simplebench.metrics import Metric, MetricCategory
-from simplebench.types import Values
+from simplebench.simplebench_types import Values
 from simplebench.validators import validate_non_blank_string, validate_positive_float, validate_positive_int
 
 from . import validate
 from ._error_tags import _ResultsErrorTag
 from .metrics import Stats
-
-MetricsObject: TypeAlias = current_version.MetricsObject
-ResultsInfo: TypeAlias = current_version.ResultsInfo
-StatsBlock: TypeAlias = current_version.StatsBlock
-ValueBlock: TypeAlias = current_version.ValueBlock
-RawDataBlock: TypeAlias = current_version.RawDataBlock
 
 
 class Results:
@@ -230,13 +222,13 @@ class Results:
         validate.metric(metric)
         return self.iterations[metric]
 
-    def stats_block(self, metric: Metric, full_data: bool = False) -> StatsBlock:
+    def stats_block(self, metric: Metric, full_data: bool = False) -> reports.StatsBlock:
         """Returns the StatsBlock representation of the Stats for the given metric.
 
         :param Metric metric: The metric of the results to return. Must be a registered metric.
         :param bool full_data: Whether to include the full data set in the StatsBlock. Defaults to False.
 
-        :return StatsBlock: The StatsBlock representation of the Stats for the given metric.
+        :return reports.StatsBlock: The StatsBlock representation of the Stats for the given metric.
         """
         validate.metric(metric)
         stats_instance: Stats = self.stats(metric)
@@ -244,7 +236,7 @@ class Results:
             return stats_instance.stats_block(full_data=True)
         return stats_instance.stats_block(full_data=False)
 
-    def sum_value_block(self, metric: Metric) -> ValueBlock:
+    def sum_value_block(self, metric: Metric) -> reports.ValueBlock:
         """Returns the ValueBlock representation of the sum for the given metric.
 
         :param Metric metric: The metric of the results to return. Must be a registered metric.
@@ -253,7 +245,7 @@ class Results:
         """
         validate.metric(metric)
         total_sum: float = self.sum(metric)
-        return ValueBlock(
+        return reports.ValueBlock(
             semantic_type=metric.metric_type.semantic_type,
             timer=None,
             unit=metric.metric_type.unit,
@@ -261,7 +253,7 @@ class Results:
             value=total_sum,
         )
 
-    def raw_block(self, metric: Metric) -> RawDataBlock:
+    def raw_block(self, metric: Metric) -> reports.RawDataBlock:
         """Returns the RawDataBlock representation of the raw data for the given metric.
 
         :param Metric metric: The metric of the results to return. Must be a registered metric.
@@ -269,7 +261,7 @@ class Results:
         """
         validate.metric(metric)
         raw_data: Values = self.raw(metric)
-        return RawDataBlock(
+        return reports.RawDataBlock(
             semantic_type=metric.metric_type.semantic_type,
             timer=None,
             unit=metric.metric_type.unit,
@@ -277,7 +269,7 @@ class Results:
             data=raw_data,
         )
 
-    def results_info(self, full_data: bool = False) -> ResultsInfo:
+    def results_info(self, full_data: bool = False) -> reports.ResultsInfo:
         """Returns a summary of the benchmark results.
 
         :param full_data: Whether to include the full data set in the summary. Defaults to False.
@@ -286,7 +278,7 @@ class Results:
         Returns:
             results_info: A ResultsInfo object containing the summary of the benchmark results.
         """
-        metrics: dict[str, MetricsObject.MetricItem] = {}
+        metrics: dict[str, reports.MetricsObject.MetricItem] = {}
         for metric in self.iterations:
             match metric.metric_type:
                 case MetricCategory.STATISTICAL:
@@ -296,13 +288,13 @@ class Results:
                 case MetricCategory.RAW:
                     metrics[metric.label] = self.raw_block(metric)
 
-        return ResultsInfo(
+        return reports.ResultsInfo(
             group=self.group,
             title=self.title,
             description=self.description,
             n=self.n,
-            variation_cols=self.variation_cols,
-            metrics=MetricsObject(metrics),
+            variation_marks=self.marks,
+            metrics=reports.MetricsObject(metrics),
             extra_info=self.extra_info,
         )
 

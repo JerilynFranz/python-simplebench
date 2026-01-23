@@ -1,12 +1,11 @@
 """Decorators for simplifying benchmark case creation."""
 
-from __future__ import annotations
-
-from typing import Any, Callable, ParamSpec, Sequence, TypeVar
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any, Callable, ParamSpec, Sequence, TypeVar
 
 from simplebench import defaults
-from simplebench.benchmark_runner import BenchmarkRunner
-from simplebench.case import Case, generate_benchmark_id
+from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
+from simplebench.case import validate as case_validate
 from simplebench.doc_utils import format_docstring
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.reporter.options import ReporterOptions
@@ -20,8 +19,12 @@ from simplebench.vcs import get_vcs_info
 
 from ._error_tags import _BenchmarkErrorTag
 
+if TYPE_CHECKING:
+    from simplebench.case import Case
+
+
 # A global registry to hold benchmark cases created by the decorator.
-_DECORATOR_CASES: list[Case] = []
+_DECORATOR_CASES: list['Case'] = []
 """List to store benchmark cases registered via the @benchmark decorator."""
 
 P = ParamSpec('P')
@@ -198,7 +201,7 @@ def benchmark(  # noqa: C901
             _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_VALUE,
         )
 
-    runners = Case.validate_runners(runners)
+    runners = case_validate.runners(runners)
 
     iterations = validate_positive_int(
         iterations,
@@ -243,9 +246,10 @@ def benchmark(  # noqa: C901
 
     n = validate_positive_float(n, 'n', _BenchmarkErrorTag.BENCHMARK_N_TYPE, _BenchmarkErrorTag.BENCHMARK_N_VALUE)
 
-    kwargs_variations = Case.validate_kwargs_variations(kwargs_variations)
-    variation_cols = Case.validate_variation_cols(variation_cols=variation_cols, kwargs_variations=kwargs_variations)
-    options = Case.validate_options(options)
+    kwargs_variations = case_validate.kwargs_variations(kwargs_variations)
+    variation_cols = case_validate.variation_cols(
+        variation_cols_value=variation_cols, kwargs_variations_value=kwargs_variations)
+    options = case_validate.options(options)
 
     if not isinstance(use_field_for_n, str) and use_field_for_n is not None:
         raise SimpleBenchTypeError(
@@ -269,10 +273,11 @@ def benchmark(  # noqa: C901
 
     vcs_info = get_vcs_info()
 
-    def _decorator(func):
+    def _decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         """The actual decorator that wraps the user's function."""
 
-        def case_action_wrapper(_bench: BenchmarkRunner, **kwargs) -> Any:
+        from simplebench.case import Case, generate_benchmark_id
+        def case_action_wrapper(_bench: BenchmarkRunner, **kwargs: Mapping[str, Any]) -> Any:
             """This wrapper becomes the `action` for the `Case`.
 
             It calls the user's decorated function inside `runner.run()`.
@@ -342,7 +347,7 @@ def benchmark(  # noqa: C901
     return _decorator  # @benchmark(...) used with parameters
 
 
-def get_registered_cases() -> list[Case]:
+def get_registered_cases() -> list['Case']:
     """Retrieve all benchmark cases registered via the `@benchmark` decorator.
 
     :return: A list of :class:`Case` objects.

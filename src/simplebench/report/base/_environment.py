@@ -3,7 +3,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 
-from simplebench.types import CoreDataTypes
+from simplebench.simplebench_types import CoreDataTypes
 
 from ._report_element import ReportElement
 

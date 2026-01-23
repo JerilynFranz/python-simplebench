@@ -20,7 +20,7 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, cast
 
 from simplebench.report.base import BaseCPUInfo, JSONSchema
-from simplebench.types import ImmutableCoreDataMappingType
+from simplebench.simplebench_types import ImmutableCoreDataMappingType
 
 from . import _validate
 from .cpu_info_schema import CPUInfoSchema

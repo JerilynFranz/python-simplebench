@@ -2,12 +2,16 @@
 import inspect
 from abc import ABC, abstractmethod
 from types import TracebackType
+from typing import Union
 
 
 class TestSpec(ABC):
     """Base class for test specifications."""
     # Prevent pytest from trying to collect this class as a test case
     __test__ = False
+
+    _creation_traceback: Union[TracebackType, None] = None
+    """The traceback at the point where the TestSpec was created."""
 
     @abstractmethod
     def run(self) -> None:
@@ -35,10 +39,7 @@ class TestSpec(ABC):
 
                 # We've found the first frame outside the testspec package.
                 self._creation_traceback = TracebackType(
-                    tb_next=None,
-                    tb_frame=current_frame,
-                    tb_lasti=current_frame.f_lasti,
-                    tb_lineno=current_frame.f_lineno
+                    None, current_frame, current_frame.f_lasti, current_frame.f_lineno
                 )
                 return
         finally:

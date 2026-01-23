@@ -1,7 +1,8 @@
 """TestSpec testing framework - helper functions."""
+
 import traceback
 from enum import Enum
-from typing import Any
+from typing import Any, Union
 
 
 def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
@@ -21,14 +22,12 @@ def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
     :type kwargs: Any
     :raises NotImplementedError: Always raised to indicate that no action is assigned.
     """
-    raise NotImplementedError("No action assigned for this test.")
+    raise NotImplementedError('No action assigned for this test.')
 
 
 def _process_exception(
-        err: BaseException,
-        exception: type[BaseException] | None,
-        exception_tag: str | Enum | None,
-        label: str) -> list[str]:
+    err: BaseException, exception: Union[type[BaseException], None], exception_tag: Union[str, Enum, None], label: str
+) -> list[str]:
     """Process exception tag validation.
 
     This method checks if the provided exception matches the expected type
@@ -49,32 +48,30 @@ def _process_exception(
     errors: list[str] = []
     if exception is None:
         errors.append(f'Unexpected Exception raised while {label}: {repr(err)}')
-        errors.append("stacktrace = ")
-        errors.append("\n".join(traceback.format_tb(tb=err.__traceback__)))
+        errors.append('stacktrace = ')
+        errors.append('\n'.join(traceback.format_tb(tb=err.__traceback__)))
     elif not isinstance(err, exception):
         errors.append(
-            f'Unexpected exception type while {label}: '
-            f'expected={exception}, found = {type(err)}: {repr(err)}')
+            f'Unexpected exception type while {label}: expected={exception}, found = {type(err)}: {repr(err)}'
+        )
     elif exception_tag:
         # Case 1: The expected tag is an Enum member.
         # This requires the exception object to have a 'tag_code' attribute.
         if isinstance(exception_tag, Enum):
             if not hasattr(err, 'tag_code'):
                 errors.append(
-                    f"Exception {type(err)} is missing the 'tag_code' attribute "
-                    "required for Enum tag validation.")
+                    f"Exception {type(err)} is missing the 'tag_code' attribute required for Enum tag validation."
+                )
             else:
-                actual_tag = getattr(err, 'tag_code')
+                actual_tag = getattr(err, 'tag_code')  # noqa: B009
                 if actual_tag != exception_tag:
-                    errors.append(f"Unexpected exception tag: expected={exception_tag}, "
-                                  f"found={actual_tag}")
+                    errors.append(f'Unexpected exception tag: expected={exception_tag}, found={actual_tag}')
         # Case 2: The expected tag is a string.
         # This performs a substring search in the exception's string representation.
         else:
             if str(exception_tag) not in str(err):
                 errors.append(
-                    f"Correct exception type, but tag '{exception_tag}' "
-                    f"not found in exception message: {repr(err)}"
+                    f"Correct exception type, but tag '{exception_tag}' not found in exception message: {repr(err)}"
                 )
 
     return errors

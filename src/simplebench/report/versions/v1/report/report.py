@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any, Sequence
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report.base import BaseReport, JSONSchema
 from simplebench.report.versions.v1 import MachineInfo
-from simplebench.types import ImmutableVariationColsType, VariationColsType
+from simplebench.simplebench_types import ImmutableVariationColsType, VariationColsType
 from simplebench.validators import validate_sequence_of_type
 
 from . import _validate

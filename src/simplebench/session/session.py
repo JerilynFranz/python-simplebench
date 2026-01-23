@@ -1,7 +1,5 @@
 """Session management for SimpleBench."""
 
-from __future__ import annotations
-
 import logging
 from argparse import ArgumentError, ArgumentParser, Namespace
 from datetime import datetime
@@ -12,8 +10,7 @@ from rich.console import Console
 from rich.progress import Progress
 
 from simplebench import defaults
-from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
-from simplebench.case import Case
+from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.display.rich_progress_tasks import RichProgressTasks
 from simplebench.doc_utils import format_docstring
@@ -24,6 +21,7 @@ from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter_manager import ReporterManager
+from simplebench.type_proxies.case_type_proxy import is_case
 from simplebench.utils import sanitize_filename, timestamp_to_iso8601
 
 from ._error_tags import _SessionErrorTag
@@ -32,6 +30,8 @@ from .validators import validate_timer
 log = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
+    from simplebench.benchmark_runner.simplerunner import SimpleRunner
+    from simplebench.case import Case
     from simplebench.reporters.reporter import Reporter
 
 
@@ -49,9 +49,9 @@ class Session:
     def __init__(
         self,
         *,
-        cases: Optional[Sequence[Case]] = None,
+        cases: Optional[Sequence['Case']] = None,
         verbosity: Verbosity = Verbosity.NORMAL,
-        default_runners: Sequence[type[SimpleRunner]] | None = None,
+        default_runners: Sequence[type['SimpleRunner']] | None = None,
         args_parser: Optional[ArgumentParser] = None,
         show_progress: bool = False,
         output_path: Optional[Path] = None,
@@ -572,12 +572,12 @@ class Session:
         self._verbosity = value
 
     @property
-    def cases(self) -> tuple[Case]:
+    def cases(self) -> tuple['Case', ...]:
         """Tuple of Cases for this session."""
         return self._cases  # type: ignore[return-value]
 
     @cases.setter
-    def cases(self, value: Sequence[Case]) -> None:
+    def cases(self, value: Sequence['Case']) -> None:
         """Set the tuple of :class:`~simplebench.Cases` for this session.
 
         This replaces all existing Cases in the session.
@@ -592,25 +592,25 @@ class Session:
                 tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG,
             )
         for case in value:
-            if not isinstance(case, Case):
+            if not is_case(case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
                 raise SimpleBenchTypeError(error_text, tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE)
         self._cases = tuple(value)
 
-    def add_case(self, case: Case) -> None:
+    def add_case(self, case: 'Case') -> None:
         """Add a :class:`~.case.Case` to the Cases for this session.
 
         :param case: benchmark case to add to the Session
         :raises SimpleBenchTypeError: If the value is not a :class:`~.case.Case` instance.
         """
-        if not isinstance(case, Case):
+        if not is_case(case):
             raise SimpleBenchTypeError(
                 f'case must be a Case instance - cannot be a {type(case)}',
                 tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG,
             )
         self._cases = tuple(list(self._cases) + [case])
 
-    def extend_cases(self, cases: Sequence[Case]) -> None:
+    def extend_cases(self, cases: Sequence['Case']) -> None:
         """Extend the Cases for this session.
 
         :param cases: Sequence of Cases to add to the Session
@@ -623,7 +623,7 @@ class Session:
                 tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG,
             )
         for case in cases:
-            if not isinstance(case, Case):
+            if not is_case(case):
                 error_text = f'items in Sequence must be Case instances - cannot be a {type(case)}'
                 raise SimpleBenchTypeError(error_text, tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE)
         self._cases = tuple(list(self._cases) + list(cases))

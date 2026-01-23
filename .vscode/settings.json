@@ -55,28 +55,25 @@
     "PYTHONPATH": "${workspaceFolder}\\src;${workspaceFolder}\\tests"
   },
   "python.REPL.enableREPLSmartSend": false,
-  "flake8.args": [
-    "--max-line-length=120",
-    "--disable=E501"
-  ],
   "python.createEnvironment.contentButton": "hide",
   "python.envFile": "${workspaceFolder}/.env",
   "python.terminal.launchArgs": [],
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
-  "pylint.cwd": "${workspaceFolder}/src",
   "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit"
-    }
-  },
   "mypy-type-checker.preferDaemon": true,
   "python.terminal.useEnvFile": true,
   "python-env.workspaceSearchPaths": [
-    "venv"
+    ".venv"
   ],
   "pylint.importStrategy": "fromEnvironment",
-  "editor.formatOnSave": true,
   "editor.defaultFormatter": "charliermarsh.ruff",
+  "editor.formatOnSave": false,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        }
+    },
 }
 

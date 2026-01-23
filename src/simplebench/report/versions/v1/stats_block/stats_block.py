@@ -43,7 +43,7 @@ from typing import Any, overload
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.report.base import BaseStatsBlock, JSONSchema
-from simplebench.types._values._values import Values
+from simplebench.simplebench_types._values._values import Values
 
 from . import _validate
 from .stats_block_dict import ImmutableStatsBlockDict, StatsBlockData

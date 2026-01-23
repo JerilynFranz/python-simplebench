@@ -1,14 +1,15 @@
 """TestSpec testing framework - test actions."""
+
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, Callable, NoReturn, Optional
+from typing import Any, NoReturn, Optional, Union
 
 from .assertions import Assert, expected_argument_required, validate_assertion
 from .base import TestSpec
 from .constants import NO_EXPECTED_VALUE
-from .deferred import Deferred, _resolve_deferred_value
 from .helpers import _process_exception, no_assigned_action
 
 log = logging.getLogger(__name__)
@@ -27,13 +28,13 @@ class TestAction(TestSpec):
                    If no action is assigned, the special function `no_assigned_action` is used which
                    raises NotImplementedError when called.
                    Defaults to no_assigned_action.
-    :type action: Callable[..., Any] | Deferred, optional
+    :type action: Callable[..., Any] optional
     :param args: Sequence of positional arguments to be passed to the `action` function or method.
                  Defaults to [].
-    :type args: Sequence[Any] | Deferred, optional
+    :type args: Sequence[Any] optional
     :param kwargs: Dictionary containing keyword arguments to be passed to the `action` function or method.
                    Defaults to {}.
-    :type kwargs: dict[str, Any] | Deferred, optional
+    :type kwargs: dict[str, Any] optional
     :param assertion: The assertion operator to use when comparing the expected and found values.
                       Defaults to Assert.EQUAL.
     :type assertion: Assert, optional
@@ -47,9 +48,11 @@ class TestAction(TestSpec):
     :param obj: Optional object to be validated. Defaults to None.
     :type obj: Optional[Any], optional
     :param validate_obj: Function to validate the optional object. Defaults to None.
-    :type validate_obj: Optional[Callable[[Any], bool] | Deferred], optional
+    :type validate_obj: Optional[Callable[[Any], bool]], optional
     :param validate_result: Function to validate the result of the action. Defaults to None.
-    :type validate_result: Optional[Callable[[Any], bool] | Deferred], optional
+    :type validate_result: Optional[Callable[[Any], bool]], optional
+    :param validate_attribute: Validate a property of the result instead of the result itself. Defaults to None.
+    :type str: Optional[str], optional
     :param exception: Expected exception type (if any) to be raised by the action. Defaults to None.
     :type exception: Optional[type[BaseException]], optional
     :param exception_tag: Expected tag (if any) to be found in the exception message. Defaults to None.
@@ -60,15 +63,16 @@ class TestAction(TestSpec):
                   Defaults to None.
     :type extra: Any, optional
     """
+
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
     name: str
     """Identifying name for the test."""
-    action: Callable[..., Any] | Deferred = no_assigned_action
+    action: Callable[..., Any] = no_assigned_action
     """A reference to a callable function or method to be invoked for the test."""
-    args: Optional[list[Any]] | Deferred = None
+    args: Optional[list[Any]] = None
     """Sequence of positional arguments to be passed to the `action` function or method."""
-    kwargs: Optional[dict[str, Any]] | Deferred = None
+    kwargs: Optional[dict[str, Any]] = None
     """Dictionary containing keyword arguments to be passed to the `action` function or method."""
     assertion: Assert = Assert.EQUAL
     """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
@@ -79,17 +83,19 @@ class TestAction(TestSpec):
     """
     obj: Optional[Any] = None
     """Optional object to be validated."""
-    validate_obj: Optional[Callable[[Any], bool] | Deferred] = None
+    validate_obj: Optional[Callable[[Any], bool]] = None
     """Function to validate the optional object."""
-    validate_result: Optional[Callable[[Any], bool] | Deferred] = None
+    validate_result: Optional[Callable[[Any], bool]] = None
     """Function to validate the result of the action."""
+    validate_attr: Optional[str] = None
+    """Validate an attribute of the result instead of the result itself."""
     exception: Optional[type[BaseException]] = None
     """Expected exception type (if any) to be raised by the action."""
-    exception_tag: Optional[str | Enum] = None
+    exception_tag: Optional[Union[str,  Enum]] = None
     """Expected tag (if any) to be found in the exception message."""
-    display_on_fail: str | Callable[[], str] = ""
+    display_on_fail: Union[str, Callable[[], str]] = ''
     """String or function to display additional information on test failure."""
-    on_fail: Callable[[str], NoReturn] | None = None
+    on_fail: Optional[Callable[[str], NoReturn]] = None
     """Function to call on test failure. (default is pytest.fail)
 
     The function must accept a single string argument containing the failure message
@@ -112,26 +118,28 @@ class TestAction(TestSpec):
         """
         # hide traceback for this function in pytest output
         __tracebackhide__ = True  # pylint: disable=unused-variable
-        test_description: str = f"{self.name}"
+        test_description: str = f'{self.name}'
         errors: list[str] = []
         try:
             # Use empty list/dict if the self field is None
-            action = _resolve_deferred_value(self.action)
-            pos_args = _resolve_deferred_value(self.args, [])
-            kw_args = _resolve_deferred_value(self.kwargs, {})
-            obj = _resolve_deferred_value(self.obj)
-            expected = _resolve_deferred_value(self.expected)
-            validate_result = _resolve_deferred_value(self.validate_result)
-            validate_obj = _resolve_deferred_value(self.validate_obj)
+            action = self.action
+            pos_args = self.args if self.args is not None else []
+            kw_args = self.kwargs if self.kwargs is not None else {}
+            obj = self.obj
+            expected = self.expected
+            validate_result = self.validate_result
+            validate_obj = self.validate_obj
             found: Any = action(*pos_args, **kw_args)
+            if self.validate_attr is not None:
+                found = getattr(found, self.validate_attr)
             if self.exception:
-                errors.append("returned result instead of raising exception")
+                errors.append('returned result instead of raising exception')
 
             else:
                 if validate_result and not validate_result(found):
-                    errors.append(f"failed result validation: found={found}")
+                    errors.append(f'failed result validation: found={found}')
                 if validate_obj and not validate_obj(obj):
-                    errors.append(f"failed object validation: obj={obj}")
+                    errors.append(f'failed object validation: obj={obj}')
                 if not expected_argument_required(self.assertion) or expected is not NO_EXPECTED_VALUE:
                     assertion_result = validate_assertion(self.assertion, expected, found)
                     if assertion_result:
@@ -142,15 +150,12 @@ class TestAction(TestSpec):
                             errors.append(self.display_on_fail)
         except BaseException as err:  # pylint: disable=broad-exception-caught
             new_errors = _process_exception(
-                err=err,
-                exception=self.exception,
-                exception_tag=self.exception_tag,
-                label="running test"
+                err=err, exception=self.exception, exception_tag=self.exception_tag, label='running test'
             )
             errors.extend(new_errors)
 
         if errors:
             if self.on_fail:
-                self.on_fail(test_description + ": " + "\n".join(errors))
+                self.on_fail(test_description + ': ' + '\n'.join(errors))
             else:
-                self._fail(test_description + ": " + "\n".join(errors))
+                self._fail(test_description + ': ' + '\n'.join(errors))

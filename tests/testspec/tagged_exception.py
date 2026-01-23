@@ -23,7 +23,7 @@ class TaggedException(Exception, Generic[E]):
 
     The tag must be an instance of Enum to ensure a controlled set of possible tags.
 
-    It is used by other exceptions in the simplebench package to provide
+    It is used by other exceptions in the typechecked package to provide
     standardized error tagging for easier identification and handling of specific error conditions.
     and is used to create exceptions with specific tags for error handling and identification.
     with this base class.

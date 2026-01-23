@@ -22,7 +22,7 @@ from typing import Any, cast
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
 from simplebench.report.base import Environment, JSONSchema
-from simplebench.types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, ImmutableCoreDataMappingType
+from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, ImmutableCoreDataMappingType
 from simplebench.validators import validate_core_data_mapping
 
 from . import _validate

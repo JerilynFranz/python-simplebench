@@ -16,7 +16,7 @@ from typing import Any, Final, TypeGuard
 
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.types import (
+from simplebench.simplebench_types import (
     CoreDataMappingType,
     CoreDataSequenceType,
     CoreDataSetType,

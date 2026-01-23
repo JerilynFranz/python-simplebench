@@ -9,7 +9,7 @@ from types import MappingProxyType
 from typing import TYPE_CHECKING, Any
 
 from simplebench.report.base import BaseResultsInfo
-from simplebench.types import (
+from simplebench.simplebench_types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
     ImmutableVariationMarksType,

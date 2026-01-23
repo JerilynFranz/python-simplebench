@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Sequence
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.type_proxies import is_case
-from simplebench.types import ImmutableVariationColsType, VariationColsType
+from simplebench.simplebench_types import ImmutableVariationColsType, VariationColsType
 from simplebench.validators import (
     validate_iso8601_datetime,
     validate_sequence_of_str,

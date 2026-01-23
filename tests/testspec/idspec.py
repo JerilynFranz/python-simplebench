@@ -1,6 +1,6 @@
 """TestSpec testing framework - idspec helper."""
 
-from typing import Any
+from typing import Any, Union
 
 import pytest
 
@@ -8,7 +8,7 @@ from .base import TestSpec
 from .context import Context
 
 
-def idspec(id_base: str, testspec: TestSpec | tuple[Context, TestSpec]) -> Any:
+def idspec(id_base: str, testspec: Union[TestSpec, tuple[Context, TestSpec]]) -> Any:
     """Helper function to create a test case with a specific pytest id directly from a TestAction or TestProperty.
 
     This function generates a pytest parameter with a custom id based on the provided base
@@ -29,11 +29,11 @@ def idspec(id_base: str, testspec: TestSpec | tuple[Context, TestSpec]) -> Any:
     :raises TypeError: If testspec is not an instance of TestSpec or id_base is not a str.
     """
     if not isinstance(testspec, (TestSpec, tuple)):
-        raise TypeError(f"testspec must be an instance of TestSpec or a type: got {type(testspec)}")
+        raise TypeError(f'testspec must be an instance of TestSpec or a type: got {type(testspec)}')
     if isinstance(testspec, tuple):
         if len(testspec) != 2 or not isinstance(testspec[0], Context) or not isinstance(testspec[1], TestSpec):
-            raise TypeError("testspec tuple must be of the form (Context, TestSpec)")
+            raise TypeError('testspec tuple must be of the form (Context, TestSpec)')
         testspec = testspec[1]
     if not isinstance(id_base, str):
-        raise TypeError("id_base must be a str")
-    return pytest.param(testspec, id=f"{id_base} {testspec.name}")  # type: ignore[attr-defined]
+        raise TypeError('id_base must be a str')
+    return pytest.param(testspec, id=f'{id_base} {testspec.name}')  # type: ignore[attr-defined]

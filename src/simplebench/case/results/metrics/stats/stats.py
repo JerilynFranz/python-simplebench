@@ -10,7 +10,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric, metrics_registry
 from simplebench.report.versions import v1
 from simplebench.si_units import si_scale_to_unit, si_unit_base
-from simplebench.types import Values
+from simplebench.simplebench_types import Values
 from simplebench.validators import validate_bool, validate_positive_int, validate_type
 
 from ._error_tags import _StatsErrorTag

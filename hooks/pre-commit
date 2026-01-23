@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Pre-commit hook to run tests via Tox or UV before allowing a commit."""
+
+import io
+import os
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from typing import Sequence, Union
+
+# Define types for compatibility with Python < 3.10
+ProcessResult = Union[subprocess.CompletedProcess, subprocess.CalledProcessError]
+
+# Force stdout to use UTF-8 encoding, regardless of the environment.
+# This prevents UnicodeEncodeError when printing emojis on Windows.
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+def find_executable(name: str) -> Union[str, None]:
+    """Find executable in .venv, PATH, or common user directories."""
+
+    # 0. Check local .venv (created by bootstrap.py)
+    # The hook runs from the repo root, so we check relative to CWD
+    repo_root = Path.cwd()
+
+    # Check POSIX path (.venv/bin/name)
+    venv_bin = repo_root / ".venv" / "bin" / name
+    if venv_bin.exists() and os.access(venv_bin, os.X_OK):
+        return str(venv_bin)
+
+    # Check Windows path (.venv/Scripts/name.exe)
+    venv_scripts = repo_root / ".venv" / "Scripts" / (name + ".exe")
+    if venv_scripts.exists():
+        return str(venv_scripts)
+
+    # 1. Standard lookup (respects system PATH)
+    path = shutil.which(name)
+    if path:
+        return path
+
+    # 2. Common fallback paths (VS Code often misses these on macOS)
+    home = os.path.expanduser("~")
+    common_paths = [
+        os.path.join(home, ".cargo", "bin"),  # standard uv install location
+        os.path.join(home, ".local", "bin"),  # standard pip install location
+        "/opt/homebrew/bin",                  # Apple Silicon Homebrew
+        "/usr/local/bin",                     # Intel Mac Homebrew
+    ]
+
+    for directory in common_paths:
+        candidate = os.path.join(directory, name)
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            return candidate
+
+    return None
+
+def run_command(command: Sequence[str], check: bool = True) -> ProcessResult:
+    """Run a shell command and return the completed process."""
+    try:
+        return subprocess.run(command, check=check, capture_output=False)
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing {' '.join(command)}: {e}")
+        return e
+
+def main() -> None:
+    """Main function to run pre-commit hook."""
+    print(">> Running pre-commit hook via Python...")
+
+    # 1. Check if uv or tox is available using robust lookup
+    tox_cmd = find_executable("tox")
+    uv_cmd = find_executable("uv")
+
+    cmd_to_run = []
+
+    if tox_cmd:
+        cmd_to_run = [tox_cmd, "run"]
+    elif uv_cmd:
+        cmd_to_run = [uv_cmd, "run", "tox", "run"]
+    else:
+        print("Error: neither 'tox' nor 'uv' found in PATH or .venv directory.")
+        print(f"Current PATH: {os.environ.get('PATH')}")
+        sys.exit(1)
+
+    # 2. Stash unstaged changes
+    print(">> Stashing unstaged changes...")
+    stash_result = subprocess.run(
+        ["git", "stash", "push", "--keep-index", "--message", "pre-commit-stash"],
+        capture_output=True,
+        text=True
+    )
+
+    was_stashed = "No local changes to save" not in stash_result.stdout and stash_result.returncode == 0
+
+    try:
+        print(f">> Executing: {' '.join(cmd_to_run)}")
+
+        # 3. Run Tox
+        result = run_command(cmd_to_run, check=False)
+
+        if result.returncode != 0:
+            print("\n❌ Tests failed. Commit aborted.")
+            sys.exit(1)
+
+        print("✅ Tests passed.")
+
+    finally:
+        # 4. Pop the stash
+        if was_stashed:
+            print(">> Restoring unstaged changes...")
+            subprocess.run(["git", "stash", "pop", "--quiet"], check=False)
+
+if __name__ == "__main__":
+    main()

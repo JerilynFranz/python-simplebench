@@ -1,32 +1,15 @@
 """``Choice()`` for reporters."""
 
-from __future__ import annotations
-
 from collections.abc import Hashable
 from typing import TYPE_CHECKING, Any
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metrics import Metric
+from simplebench.metrics import MetricsSelection
 from simplebench.reporters.choice._error_tags import _ChoiceErrorTag
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.validators import validate_type
-
-_REPORTER_IMPORTED: bool = False
-"""Indicates whether Reporter has been imported yet."""
-
-
-def deferred_reporter_import() -> None:
-    """Deferred import of :class:`~simplebench.reporters.reporter.Reporter`
-    to avoid circular imports during initialization.
-    """
-    global Reporter, _REPORTER_IMPORTED  # pylint: disable=global-statement
-    if _REPORTER_IMPORTED:
-        return
-    from simplebench.reporters.reporter.reporter import Reporter  # pylint: disable=import-outside-toplevel
-
-    _REPORTER_IMPORTED = True
 
 
 if TYPE_CHECKING:
@@ -120,7 +103,7 @@ class Choice(Hashable, ChoiceProtocol):
 
     __slots__ = ('_reporter', '_choice_conf')
 
-    def __init__(self, *, reporter: Reporter, choice_conf: ChoiceConf) -> None:
+    def __init__(self, *, reporter: 'Reporter', choice_conf: ChoiceConf) -> None:
         """Construct a :class:`~.Choice` instance from a
         :class:`~simplebench.reporters.reporter.Reporter` and a :class:`~.ChoiceConf` instance.
 
@@ -134,7 +117,7 @@ class Choice(Hashable, ChoiceProtocol):
         :raises SimpleBenchValueError: If any argument has an invalid value (e.g., empty strings
                                        or empty sequences).
         """
-        deferred_reporter_import()
+        from simplebench.reporters.reporter.reporter import Reporter
 
         # mypy raises a [type-abstract] error because Reporter is an Abstract Base Class
         # (ABC). We are using the Reporter ABC itself as a type argument in the
@@ -157,7 +140,7 @@ class Choice(Hashable, ChoiceProtocol):
         (private backing field for attribute)"""
 
     @property
-    def reporter(self) -> Reporter:
+    def reporter(self) -> 'Reporter':
         """The :class:`~simplebench.reporters.reporter.Reporter` sub-class associated with the choice."""
         return self._reporter
 
@@ -205,7 +188,7 @@ class Choice(Hashable, ChoiceProtocol):
         return self._choice_conf.description
 
     @property
-    def metrics(self) -> frozenset[Metric]:
+    def metrics(self) -> MetricsSelection:
         """Metrics included in the choice.
 
         These are the metrics that the associated

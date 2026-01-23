@@ -4,11 +4,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, Callable, NoReturn, Optional
+from typing import Any, Callable, NoReturn, Optional, Union
 
 from .base import TestSpec
 from .constants import NO_OBJ_ASSIGNED
-from .deferred import Deferred, _resolve_deferred_value
 from .helpers import _process_exception
 
 
@@ -67,9 +66,9 @@ class TestSet(TestSpec):
     before running the test."""
     exception: Optional[type[BaseException]] = None
     """Expected exception type (if any) to be raised by setting the attribute."""
-    exception_tag: Optional[str | Enum] = None
+    exception_tag: Optional[Union[str, Enum]] = None
     """Expected tag (if any) to be found in an exception message raised by setting the attribute."""
-    validate: Optional[Callable[[TestSet, Any], None | NoReturn] | Deferred] = None
+    validate: Optional[Callable[[TestSet, Any], Union[None, NoReturn]]] = None
     """Function to validate obj state after setting the attribute. It should raise an exception
     if the object state is unexpected.
 
@@ -78,7 +77,7 @@ class TestSet(TestSpec):
     The validation function should call the `on_fail` method to raise an exception if the object is not
     in an expected state. None should be returned if the object state is as expected.
     """
-    on_fail: Callable[[str], NoReturn] | None = None
+    on_fail: Optional[Callable[[str], NoReturn]] = None
     """Function to call on test failure. The function should raise an exception (default is _fail method)."""
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestSet class itself. Default is None."""
@@ -136,7 +135,7 @@ class TestSet(TestSpec):
         # Errors found during the test
         errors: list[str] = []
 
-        obj = _resolve_deferred_value(self.obj)
+        obj = self.obj
         if obj is NO_OBJ_ASSIGNED:
             if self.on_fail:
                 self.on_fail(f"{self.name}: obj for test is not assigned")
@@ -145,7 +144,7 @@ class TestSet(TestSpec):
             raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
 
         # Set the attribute and check for exceptions as appropriate
-        validate = _resolve_deferred_value(self.validate)
+        validate = self.validate
         if validate is not None and not callable(validate):
             raise TypeError("validate must be callable if provided")
         try:

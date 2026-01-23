@@ -1,4 +1,5 @@
 """TestSpec testing framework - context management."""
+
 from typing import Any
 
 
@@ -11,6 +12,7 @@ class Context(dict[str, Any]):
     It can be used to share data between different parts of a test case,
     such as setup, execution, and validation phases.
     """
+
     def __init__(self, /, **kwargs: Any) -> None:
         """Initialize the Context with optional keyword arguments.
 
@@ -31,16 +33,16 @@ class Context(dict[str, Any]):
         """
         # pylint: disable=consider-iterating-dictionary
         if not all(isinstance(key, str) for key in kwargs.keys()):
-            raise TypeError("All keys in Context must be of type str")
+            raise TypeError('All keys in Context must be of type str')
         if not all(key.isidentifier() for key in kwargs.keys()):
-            raise TypeError("All keys in Context must be valid python identifiers")
+            raise TypeError('All keys in Context must be valid python identifiers')
         if not all(not key.startswith('__') and not key.endswith('__') for key in kwargs.keys()):
             raise TypeError("Context keys cannot start or end with double underscores '__'")
         if not all(not hasattr(self, key) for key in kwargs.keys()):
-            raise TypeError("Context keys cannot shadow existing attributes or methods")
+            raise TypeError('Context keys cannot shadow existing attributes or methods')
         super().__init__(**kwargs)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         """Get an attribute from the context dictionary.
 
         :param name: The name of the attribute to get.
@@ -51,5 +53,5 @@ class Context(dict[str, Any]):
         """
         try:
             return self[name]
-        except KeyError:
-            raise AttributeError(f"'Context' object has no attribute '{name}'")  # pylint: disable=raise-missing-from
+        except KeyError as e:
+            raise AttributeError(f"'Context' object has no attribute '{name}'") from e  # pylint: disable=raise-missing-from

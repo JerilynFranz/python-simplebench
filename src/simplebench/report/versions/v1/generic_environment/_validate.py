@@ -4,7 +4,7 @@ import re
 from typing import Any, Final
 
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
-from simplebench.types import ImmutableCoreDataMappingType
+from simplebench.simplebench_types import ImmutableCoreDataMappingType
 from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
 
 _HASH_RE: Final[re.Pattern[str]] = re.compile(r'^[a-f0-9]{64}$')

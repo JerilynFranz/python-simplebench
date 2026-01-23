@@ -205,15 +205,32 @@ exclude_exact = [
 [tool.tox]
 requires = ["tox>=4.22"]
 env_list = [
-    "py31{0-4}",
+    "py310",
+    "py311",
+    "py312",
+    "py313",
+    "py314",
+    "pypy310",
+    "pypy311",
     "lint",
     "doctest",
 ]
-install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
+#install_command = ["uv", "pip", "install", "{opts}", "{packages}"]
+
+
+
+# NOTE: uv sync resolves across all Python versions allowed by [project].requires-python.
+# Docs deps (e.g., Sphinx >= 8.2.3 requires Python >= 3.11), so keep docs deps
+# marker-restricted to avoid resolution failures on 3.9–3.10, even when installing only dev.
+
+# The development dependency group requires Python 3.12+ because some tools do not support older versions.
+[tool.uv.dependency-groups]
+dev = {requires-python = ">=3.12"}
+docs = {requires-python = ">=3.11"}
 
 # labels table for grouping environments
 [tool.tox.labels]
-test = ["py310", "py311", "py312", "py313", "py314", "doctest", "lint"]
+test = ["py310", "py311", "py312", "py313", "py314", "pypy310", "pypy311", "doctest", "lint"]
 
 # --- Base Test Environment for automation from env_list ---
 
@@ -222,22 +239,53 @@ description = "Run test under {base_python}"
 allowlist_externals = ["pytest", "ruff", "mypy", "sphinx-build"]
 dependency_groups = ["test", "lint", "tools", "types"]
 extras = ["all"]
-commands = [["pytest", "{posargs:tests/}"]]
+commands = [
+    ["mypy", "src", "tests"],
+    ["coverage", "run", "-m", "pytest", { replace = "posargs", extend = true }],
+    ["coverage", "report"]
+]
 
 # --- Concrete Test Environments ---
 
-# environments table
-[tool.tox.env]
 
+[tool.tox.env.coverage_html]
+description = "Run tests and generate HTML coverage report"
+base_python = ["python3.12", "python3.13", "python3.14"]
+dependency_groups = ["test", "tools"]
+commands = [
+    ["coverage", "run", "-m", "pytest", {replace = "posargs", extend = true}],
+    ["coverage", "html", "-d", "coverage_html_report"],
+    ["coverage", "report"],
+]
+
+# mypy excluded from pypy envs due to lack of support
+
+[tool.tox.env.pypy310]
+description = "Run tests on PyPy 3.11"
+base_python = ["pypy3.11"]
+dependency_groups = ["test", "tools"]
+commands = [
+    ["coverage", "run", "-m", "pytest", { replace = "posargs", extend = true }],
+    ["coverage", "report"],
+]
+
+[tool.tox.env.pypy311]
+description = "Run tests on PyPy 3.11"
+base_python = ["pypy3.11"]
+dependency_groups = ["test", "tools"]
+commands = [
+    ["coverage", "run", "-m", "pytest", { replace = "posargs", extend = true }],
+    ["coverage", "report"],
+]
 
 # tox devenv -e dev
 [tool.tox.env.dev]
 description = "Development environment with all tools"
 package = "editable"
-dependency_groups = ["test", "types", "tools", "lint"]
+dependency_groups = ["dev", "tools", "types", "docs", "lint", "test"]
 base = ["testenv"]
-base_python = ["python3.12"]
-allowlist_externals = ["pytest", "mypy", "ruff"]
+base_python = ["python3.12", "python3.11", "python3.13", "python3.14"]
+allowlist_externals = ["pytest", "mypy", "ruff", "coverage"]
 
 commands = []
 
@@ -245,7 +293,7 @@ commands = []
 description = "Run linters"
 package = "skip"
 base_python = ["python3.12"]
-dependency_groups = ["lint", "types"]
+dependency_groups = ["lint", "types", "dev"]
 commands = [
     ["ruff", "check", "tests", "src"],
     ["mypy", "src", "tests"],
@@ -255,15 +303,17 @@ commands = [
 # This environment is self-contained and does NOT inherit from basetest.
 description = "Build the documentation"
 base_python = ["python3.12"]
-dependency_groups = ["docs", "test", "types"]
+dependency_groups = ["docs", "test", "types", "dev"]
 extras = ["all"]
 allowlist_externals = ["sphinx-build"]
-commands = [["sphinx-build", "-b", "html", "documentation/", "documentation/docs"]]
+commands = [
+    ["sphinx-build", "-b", "html", "documentation/", "documentation/docs"]
+]
 
 [tool.tox.env.doctest]
 description = "Run doctests in the documentation"
 base_python = ["python3.12"]
-dependency_groups = ["docs", "test", "types"]
+dependency_groups = ["docs", "test", "types", "dev"]
 allowlist_externals = ["sphinx-build", "pytest"]
 extras = ["all"]
 commands = [
@@ -276,6 +326,7 @@ test = [
     "pytest>=8.4.1,<9.0.0",
     "pytest-cov>=6.2.1",
     "coverage>=7.10.6",
+    "autopypath>=1.0.1",
 ]
 
 # Dependencies for linting and code style
@@ -299,11 +350,24 @@ tools = [
     "hatchling>=1.27",
     "mercurial>=6.1",
     "pydeps>=1.23.2",
-    "python-dotenv>=0.21.0",
     "testplan>=25.8.0",
     "tox>=4.32.0",
     "tox-uv>=1.29.0",
     "uv>=0.9.18",
+]
+
+dev = [
+    "pytest>=7.4.1,<9.0.0",
+    "pytest-cov>=4.2.1",
+    "coverage>=6.10.6",
+    "mypy>=1.13.1",
+    "ruff>=0.14.11",
+    "hatch>=1.13",
+    "hatchling>=1.27",
+    "tox>=4.22.0",
+    "tox-uv>=1.13.1",
+    "uv>=0.9.18",
+    "typing-extensions >= 3.10.0.0"
 ]
 
 # Type stubs for development and type checking
@@ -397,3 +461,6 @@ docstring-code-format = true
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 docstring-code-line-length = "dynamic"
+
+[tool.autopypath]
+paths = ["src", "tests"]

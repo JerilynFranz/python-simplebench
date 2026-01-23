@@ -27,7 +27,7 @@ class MetricsCollection(MetricsSelection):
     :raises SimpleBenchValueError: If the provided metrics are an empty Iterable.
     """
 
-    def __init__(self, *args: Metric, metrics: Iterable[Metric] | Metrics | Metric | None = None):
+    def __init__(self, *args: Metric, metrics: Iterable[Metric] | Metrics | Metric | None = None) -> None:
         """Constructor for MetricsCollection.
 
         Only one of the two ways to provide metrics should be used: either positional arguments

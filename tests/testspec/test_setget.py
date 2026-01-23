@@ -1,15 +1,15 @@
 """TestSpec framework - TestSetGet class"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, Callable, NoReturn, Optional
+from typing import Any, Callable, NoReturn, Optional, Union
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
 from .constants import NO_EXPECTED_VALUE, NO_OBJ_ASSIGNED
-from .deferred import _resolve_deferred_value
 from .helpers import _process_exception
 
 
@@ -64,6 +64,7 @@ class TestSetGet(TestSpec):
                   Defaults to None.
     :type extra: Any, optional
     """
+
     __test__ = False  # Prevent pytest from trying to collect this class as a test case
 
     name: str
@@ -87,11 +88,11 @@ class TestSetGet(TestSpec):
     """The name of the attribute to be retrieved for 'expected' validation. If None, use the same as `attribute`."""
     set_exception: Optional[type[Exception]] = None
     """Expected exception type (if any) to be raised by setting the attribute."""
-    set_exception_tag: Optional[str | Enum] = None
+    set_exception_tag: Optional[Union[str, Enum]] = None
     """Expected tag (if any) to be found in an exception message raised by setting the attribute."""
     get_exception: Optional[type[Exception]] = None
     """Expected exception type (if any) to be raised by getting the attribute."""
-    get_exception_tag: Optional[str | Enum] = None
+    get_exception_tag: Optional[Union[str, Enum]] = None
     """Expected tag (if any) to be found in an exception message raised by getting the attribute."""
     validate: Optional[Callable[[TestSetGet, Any], None | NoReturn]] = None
     """Function to validate obj state after setting the attribute. It should raise an exception
@@ -117,23 +118,23 @@ class TestSetGet(TestSpec):
     def __post_init__(self) -> None:
         """Post-initialization validation checks."""
         if not isinstance(self.name, str):
-            raise TypeError("name must be a str")
+            raise TypeError('name must be a str')
         if not isinstance(self.attribute, str):
-            raise TypeError("attribute must be a str")
+            raise TypeError('attribute must be a str')
         if self.obj is None:
-            raise TypeError("obj cannot be None")
+            raise TypeError('obj cannot be None')
         if not isinstance(self.obj, object):
-            raise TypeError("obj must be an object")
-        if self.attribute == "":
-            raise ValueError("attribute cannot be an empty string")
+            raise TypeError('obj must be an object')
+        if self.attribute == '':
+            raise ValueError('attribute cannot be an empty string')
         if self.validate is not None and not callable(self.validate):
-            raise TypeError("validate must be callable if provided")
+            raise TypeError('validate must be callable if provided')
         if self.set_exception is not None and not issubclass(self.set_exception, Exception):
-            raise TypeError("set_exception must be an Exception type if provided")
+            raise TypeError('set_exception must be an Exception type if provided')
         if self.set_exception_tag is not None and not isinstance(self.set_exception_tag, (str, Enum)):
-            raise TypeError("set_exception_tag must be a str or Enum if provided")
+            raise TypeError('set_exception_tag must be a str or Enum if provided')
         if not callable(self.on_fail):
-            raise TypeError("on_fail must be callable")
+            raise TypeError('on_fail must be callable')
         super().__post_init__()
 
     def run(self) -> None:
@@ -146,55 +147,52 @@ class TestSetGet(TestSpec):
         # feature that is just not understood by pylint.
         __tracebackhide__ = True  # pylint: disable=unused-variable
 
-        test_description: str = f"{self.name}"
+        test_description: str = f'{self.name}'
 
         # Errors found during the test
         errors: list[str] = []
 
-        obj = _resolve_deferred_value(self.obj)
+        obj = self.obj
         if obj is NO_OBJ_ASSIGNED:
             if self.on_fail:
-                self.on_fail(f"{self.name}: obj for test is not assigned")
+                self.on_fail(f'{self.name}: obj for test is not assigned')
             else:
-                self._fail(f"{self.name}: obj for test is not assigned")
-            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+                self._fail(f'{self.name}: obj for test is not assigned')
+            raise RuntimeError('unreachable code after on_fail call')  # pylint: disable=raise-missing-from
 
-        # Resolve any deferred values for obj
-        expected = _resolve_deferred_value(self.expected)
-        validate = _resolve_deferred_value(self.validate)
+        expected = self.expected
+        validate = self.validate
 
         # Set the attribute and check for exceptions as appropriate
         try:
             if not hasattr(obj, self.attribute):
-                errors.append(f"obj has no attribute {self.attribute}")
+                errors.append(f'obj has no attribute {self.attribute}')
             else:
                 obj.__setattr__(self.attribute, self.value)
                 if self.set_exception is not None:
-                    errors.append("set operation returned instead of raising an expected exception")
+                    errors.append('set operation returned instead of raising an expected exception')
 
         except BaseException as err:  # pylint: disable=broad-exception-caught
             new_errors = _process_exception(
                 err=err,
                 exception=self.set_exception,
                 exception_tag=self.set_exception_tag,
-                label=f"setting attribute {self.attribute}"
+                label=f'setting attribute {self.attribute}',
             )
             errors.extend(new_errors)
 
         # bail now if there was an error during the set operation
         if errors:
             if self.on_fail:
-                self.on_fail(test_description + ": " + "\n".join(errors))
+                self.on_fail(test_description + ': ' + '\n'.join(errors))
             else:
-                self._fail(test_description + ": " + "\n".join(errors))
-            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+                self._fail(test_description + ': ' + '\n'.join(errors))
+            raise RuntimeError('unreachable code after on_fail call')  # pylint: disable=raise-missing-from
 
         # If there is no get_exception or expected value or validate function, we can't do any validation
         # on the set value, so just return now. This amounts to a minimal test of just setting the attribute
         # it causing an exception.
-        if (self.get_exception is None and
-                expected is NO_EXPECTED_VALUE and
-                validate is None):
+        if self.get_exception is None and expected is NO_EXPECTED_VALUE and validate is None:
             return
 
         # Perform post-set validations if requested. This is skipped if there was an exception
@@ -202,7 +200,7 @@ class TestSetGet(TestSpec):
         attribute_to_get = self.attribute if self.get_attribute is None else self.get_attribute
         try:
             if not hasattr(obj, attribute_to_get):
-                errors.append(f"obj has no attribute {attribute_to_get}")
+                errors.append(f'obj has no attribute {attribute_to_get}')
             else:
                 if validate is not None:
                     validate(self, obj)  # Exception should be raised by validate if unexpected obj state
@@ -213,22 +211,21 @@ class TestSetGet(TestSpec):
                 found: Any = obj.__getattribute__(attribute_to_get)
                 assertion_error = validate_assertion(self.assertion, expected, found)
                 if assertion_error:
-                    errors.append(
-                        f"{assertion_error} for attribute '{attribute_to_get}'")
+                    errors.append(f"{assertion_error} for attribute '{attribute_to_get}'")
 
         except BaseException as err:  # pylint: disable=broad-exception-caught
             new_errors = _process_exception(
                 err=err,
                 exception=self.get_exception,
                 exception_tag=self.get_exception_tag,
-                label=f"getting attribute {attribute_to_get}"
+                label=f'getting attribute {attribute_to_get}',
             )
             errors.extend(new_errors)
 
         # Report any errors found during the validate portion of the test
         if errors:
             if self.on_fail:
-                self.on_fail(test_description + ": " + "\n".join(errors))
+                self.on_fail(test_description + ': ' + '\n'.join(errors))
             else:
-                self._fail(test_description + ": " + "\n".join(errors))
-            raise RuntimeError("unreachable code after on_fail call")  # pylint: disable=raise-missing-from
+                self._fail(test_description + ': ' + '\n'.join(errors))
+            raise RuntimeError('unreachable code after on_fail call')  # pylint: disable=raise-missing-from

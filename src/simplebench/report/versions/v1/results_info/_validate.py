@@ -6,7 +6,7 @@ from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
-from simplebench.types import (
+from simplebench.simplebench_types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
     ImmutableVariationMarksType,

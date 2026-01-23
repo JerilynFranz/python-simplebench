@@ -6,7 +6,7 @@ from types import MappingProxyType
 from typing import Any
 
 from simplebench.report.base import BaseRawDataBlock, JSONSchema
-from simplebench.types import Values
+from simplebench.simplebench_types import Values
 
 from . import _validate
 from .raw_data_block_dict import ImmutableRawDataBlockDict, RawDataBlockData

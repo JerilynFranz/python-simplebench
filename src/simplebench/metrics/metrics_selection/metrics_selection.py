@@ -11,7 +11,7 @@ class MetricsSelection:
     This class is a base class for different types of metric selections.
     """
 
-    def __init__(self, selector_type: MetricsSelectionType):
+    def __init__(self, selector_type: MetricsSelectionType) -> None:
         self._selector_type = selector_type
 
     @property

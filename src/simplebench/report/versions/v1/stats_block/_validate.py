@@ -5,7 +5,7 @@ from typing import Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
-from simplebench.types import Values
+from simplebench.simplebench_types import Values
 from simplebench.validators import (
     validate_float,
     validate_namespaced_identifier,

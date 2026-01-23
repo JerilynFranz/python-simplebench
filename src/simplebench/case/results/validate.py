@@ -7,7 +7,7 @@ from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric, MetricCategory
-from simplebench.types import Values
+from simplebench.simplebench_types import Values
 from simplebench.validators import validate_type
 
 from ._error_tags import _ResultsErrorTag

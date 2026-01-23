@@ -15,7 +15,7 @@ import logging
 from typing import get_args, get_origin
 
 from simplebench.exceptions import SimpleBenchRuntimeError
-from simplebench.types import NotRequired, ReadOnly, Required
+from simplebench.simplebench_types import NotRequired, ReadOnly, Required
 
 from ._error_tags import _TypedDictKeyInfoErrorTag
 

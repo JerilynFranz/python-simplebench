@@ -19,7 +19,7 @@ from types import MappingProxyType
 from typing import TypeAlias
 
 from simplebench.report.base import ReportElementTypedDict
-from simplebench.types import Never, NotRequired, Required
+from simplebench.simplebench_types import Never, NotRequired, Required
 
 from ..raw_data_block import ImmutableRawDataBlockData, ImmutableRawDataBlockDict, RawDataBlockData, RawDataBlockDict
 from ..stats_block import ImmutableStatsBlockData, ImmutableStatsBlockDict, StatsBlockData, StatsBlockDict

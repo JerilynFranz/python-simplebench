@@ -15,7 +15,7 @@ version 1: :class:`~simplebench.report.versions.v1.ResultsInfoSchema`.
 """
 
 from simplebench.report.base import ReportElementTypedDict
-from simplebench.types import (
+from simplebench.simplebench_types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
     ImmutableVariationMarksType,
