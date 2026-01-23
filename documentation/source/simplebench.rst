@@ -23,10 +23,10 @@ Subpackages
    simplebench.reporters
    simplebench.session
    simplebench.si_units
+   simplebench.simplebench_types
    simplebench.timeout
    simplebench.timers
    simplebench.type_proxies
-   simplebench.types
    simplebench.utils
    simplebench.validators
    simplebench.vcs
