@@ -14,5 +14,5 @@ class MetricsUnspecified(MetricsSelection):
     of metrics itself before reporting.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(selector_type=MetricsSelectionType.UNSPECIFIED)

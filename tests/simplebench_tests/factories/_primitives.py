@@ -20,6 +20,7 @@ from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_facto
 from simplebench_tests.factories.path import path_factory
 
 from simplebench.enums import FlagType, Format, Target
+from simplebench.metrics import Metric, metrics_registry
 
 Output: TypeAlias = str | bytes | Text | Table
 
@@ -60,13 +61,13 @@ def default_format_plain() -> Format:
     return Format.PLAIN_TEXT
 
 
-# def default_section() -> Metric:
-#    """Return a single default Metric for testing purposes.
-#
-#    :return: Metric.OPS
-#    :rtype: Metric
-#    """
-#    return metric_types_registry.OPS
+def default_metric() -> Metric:
+    """Return a single default Metric for testing purposes.
+
+    :return: Metric
+    :rtype: Metric
+    """
+    return metrics_registry['STD_OPS_STATS']
 
 
 def default_filename_base() -> str:

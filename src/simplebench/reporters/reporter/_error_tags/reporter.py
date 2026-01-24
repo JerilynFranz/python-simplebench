@@ -10,9 +10,51 @@ __all__ = []
 class _ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :mod:`simplebench.reporters.reporter` module."""
 
+    # _validate.*
+    VALIDATE_FILESYSTEM_IN_TARGETS_INVALID_TARGETS_ARG_TYPE = 'VALIDATE_FILESYSTEM_IN_TARGETS_INVALID_TARGETS_ARG_TYPE'
+    """Invalid type for ``value`` argument when validating filesystem in targets."""
+    VALIDATE_INVALID_FILESYSTEM_PATH_ARG_TYPE = 'VALIDATE_INVALID_FILESYSTEM_PATH_ARG_TYPE'
+    """Invalid type for ``path`` argument when validating filesystem path."""
+    VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_TYPE = 'VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_TYPE'
+    """Invalid type for ``value`` argument when validating callback in targets."""
+    VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_VALUE_TYPE = 'VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_VALUE_TYPE'
+    """Non-Target enum values in ``value`` argument when validating callback in targets."""
+    VALIDATE_NONE_CALLBACK_WITH_CALLBACK_TARGET = 'VALIDATE_NONE_CALLBACK_WITH_CALLBACK_TARGET'
+    """Cannot have Target.CALLBACK in targets when ``callback`` argument is None."""
+    VALIDATE_ARGS_NOT_NAMESPACE = 'VALIDATE_ARGS_NOT_NAMESPACE'
+    """Invalid type for ``args`` argument. Expected :class:`argparse.Namespace` instance."""
+    VALIDATE_INVALID_TARGETS_ARG_TYPE = 'VALIDATE_INVALID_TARGETS_ARG_TYPE'
+    """Invalid type for ``value`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_targets`"""
+    VALIDATE_INVALID_TARGETS_ARG_VALUES = 'VALIDATE_INVALID_TARGETS_ARG_VALUES'
+    """Invalid Target enum values found in ``value`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_targets`"""
+    VALIDATE_INVALID_SUPPORTED_TARGETS_ARG_TYPE = 'VALIDATE_INVALID_SUPPORTED_TARGETS_ARG_TYPE'
+    """Invalid type for ``supported_targets`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_targets`"""
+    VALIDATE_INVALID_SUPPORTED_TARGETS_ARG_VALUES = 'VALIDATE_INVALID_SUPPORTED_TARGETS_ARG_VALUES'
+    """Invalid Target enum values found in ``supported_targets`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_targets`"""
+    VALIDATE_INVALID_FORMATS_ARG_TYPE = 'VALIDATE_INVALID_FORMATS_ARG_TYPE'
+    """Invalid type for ``value`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_formats`"""
+    VALIDATE_INVALID_FORMATS_ARG_VALUES = 'VALIDATE_INVALID_FORMATS_ARG_VALUES'
+    """Invalid Format enum values found in ``value`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_formats`"""
+    VALIDATE_INVALID_SUPPORTED_FORMATS_ARG_TYPE = 'VALIDATE_INVALID_SUPPORTED_FORMATS_ARG_TYPE'
+    """Invalid type for ``supported_formats`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_formats`"""
+    VALIDATE_INVALID_SUPPORTED_FORMATS_ARG_VALUES = 'VALIDATE_INVALID_SUPPORTED_FORMATS_ARG_VALUES'
+    """Invalid Format enum values found in ``supported_formats`` argument in
+    :func:`~simplebench.reporters.reporter._validate.supported_formats`"""
+
     # __init__()
     CONFIG_INVALID_ARG_TYPE = 'CONFIG_INVALID_ARG_TYPE'
     """Invalid type for ``config`` argument in __init__()"""
+
+    # report()
+    REPORT_NON_COLLECTION_METRICS_SELECTION = 'REPORT_NON_COLLECTION_METRICS_SELECTION'
+    """Default report() cannot process non-collection MetricsSelection types in Choice().metrics"""
 
     # log_report()
     LOG_REPORT_INVALID_TIMESTAMP_ARG_TYPE = 'LOG_REPORT_INVALID_TIMESTAMP_ARG_TYPE'
@@ -339,7 +381,7 @@ class _ReporterErrorTag(ErrorTag):
     REPORT_INVALID_CALLBACK_ARG = 'REPORT_INVALID_CALLBACK_ARG'
     """Something other than a callable was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method as the ``callback`` argument"""
-    REPORT_UNSUPPORTED_SECTION = 'REPORT_UNSUPPORTED_SECTION'
+    REPORT_UNSUPPORTED_METRICS = 'REPORT_UNSUPPORTED_SECTION'
     """An unsupported Metric was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.report` method in the Choice.metrics"""
     REPORT_UNSUPPORTED_TARGET = 'REPORT_UNSUPPORTED_TARGET'

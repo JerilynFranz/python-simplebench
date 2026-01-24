@@ -13,7 +13,7 @@ from simplebench.case.results import Iteration
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics import metric_types_registry
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
@@ -242,7 +242,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                     choice_conf=ChoiceConf(
                         **choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))},
         exception=SimpleBenchValueError,
-        exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_SECTION)),
+        exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_METRICS)),
     idspec('REPORT_005', TestAction(
         name=("report() with Target not in Reporter's targets raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_TARGET"),

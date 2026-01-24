@@ -1,0 +1,24 @@
+"""simplebench.reporters.choice.choice_conf.ChoiceConf KWArgs package for SimpleBench tests."""
+import autopypath  # noqa: F401  # isort: skip  # pylint: disable=unused-import
+import pytest
+from simplebench_tests.kwargs.kwargs import kwargs_class_matches_modeled_call
+from simplebench_tests.kwargs.reporters.choice_conf_kwargs import ChoiceConfKWArgs as _KWARGS_CLASS
+
+from simplebench.reporters.choice.choice_conf import ChoiceConf as _MODELED_CLASS
+
+_MODELED_CALL = _MODELED_CLASS.__init__
+
+
+def test_kwargs_matches_signature() -> None:
+    """Test that KWargs sublass __init__ signature matches the modeled class __init__ signature."""
+    kwargs_class_matches_modeled_call(kwargs_class=_KWARGS_CLASS, modeled_call=_MODELED_CALL)
+
+
+def test_can_instantiate() -> None:
+    """Test that the KWArgs subclass can be instantiated."""
+    kwargs_instance = _KWARGS_CLASS()
+    assert isinstance(kwargs_instance, _KWARGS_CLASS)
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

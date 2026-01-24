@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from simplebench.reporters.choices.choices import Choices
     from simplebench.reporters.reporter.options import ReporterOptions
     from simplebench.session import Session
+    from simplebench.simplebench_types import ElementCollection
 
 T = TypeVar('T')
 
@@ -176,7 +177,7 @@ class ReporterProtocol(Protocol):
         ...
 
     @staticmethod
-    def find_options_by_type(options: Iterable[ReporterOptions] | None, cls: type[T]) -> T | None:
+    def find_options_by_type(options: ElementCollection[ReporterOptions] | None, cls: type[T]) -> T | None:
         """Retrieve an instance of type ``cls`` (if present) from a collection of :class:`~.ReporterOptions`.
 
         This is used to extract reporter specific options from an iterable container of generic
@@ -189,8 +190,8 @@ class ReporterProtocol(Protocol):
 
             options = Reporter.find_options_by_type(case.options, CSVReporterOptions)
 
-        :param options: An iterable of :class:`~.ReporterOptions` instances.
-        :type options: Iterable[:class:`~.ReporterOptions`]
+        :param options: A repeatable iterable of :class:`~.ReporterOptions` instances.
+        :type options: ElementCollection[ReporterOptions] | None
         :param cls: The specific subclass type of :class:`~.ReporterOptions` to find.
         :type cls: type[T]
         :return: The instance of the class ``cls`` if found, otherwise ``None``.

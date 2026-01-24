@@ -26,11 +26,15 @@ class Metric:
     metric_type: MetricType
     """Type of the metric, defined by MetricType"""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self._validate_label()
 
     _LABEL_REGEX = re.compile(r'^[A-Z](?:[A-Z0-9_]*[A-Z0-9])?$')
-    """Regex pattern for validating the label of the metric"""
+    """Regex pattern for validating the label of the metric
+
+    It must start with an uppercase letter, end with an uppercase letter or digit,
+    and may contain uppercase letters, digits, and underscores in between.
+    """
 
     def _validate_title(self) -> None:
         """Validate the title of the metric

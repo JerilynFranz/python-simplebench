@@ -2,14 +2,7 @@
 from argparse import ArgumentParser
 
 import pytest
-
-from simplebench.enums import FlagType, Target
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-
-from ....factories import (
+from simplebench_tests.factories import (
     FactoryReporter,
     choice_conf_kwargs_factory,
     choice_factory,
@@ -18,7 +11,13 @@ from ....factories import (
     reporter_factory,
     reporter_namespace_factory,
 )
-from ....testspec import Assert, TestAction, TestSpec, idspec
+from testspec import Assert, TestAction, TestSpec, idspec
+
+from simplebench.enums import FlagType, Target
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 
 
 @pytest.mark.parametrize('testspec', [

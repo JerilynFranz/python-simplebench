@@ -4,17 +4,7 @@ from typing import TypeAlias, TypeVar
 import pytest
 from rich.table import Table
 from rich.text import Text
-
-from simplebench.case import Case
-from simplebench.enums import Target
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics import Metric, metric_types_registry
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-from simplebench.reporters.reporter.options import ReporterOptions
-
-from ....factories import (
+from simplebench_tests.factories import (
     FactoryReporter,
     FactoryReporterOptions,
     argument_parser_factory,
@@ -27,7 +17,7 @@ from ....factories import (
     reporter_config_factory,
     session_factory,
 )
-from ....factories.reporter.reporter_methods import (
+from simplebench_tests.factories.reporter.reporter_methods import (
     CallbackSpy,
     ConsoleSpy,
     FileSystemSpy,
@@ -36,8 +26,17 @@ from ....factories.reporter.reporter_methods import (
     render_by_case_kwargs_factory,
     render_by_section_kwargs_factory,
 )
-from ....kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderByMetricMethodKWArgs
-from ....testspec import Assert, TestAction, TestGet, TestSpec, idspec
+from simplebench_tests.kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderByMetricMethodKWArgs
+from testspec import Assert, TestAction, TestGet, TestSpec, idspec
+
+from simplebench.case import Case
+from simplebench.enums import Target
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metrics import Metric, metric_types_registry
+from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
+from simplebench.reporters.reporter.options import ReporterOptions
 
 Output: TypeAlias = str | bytes | Text | Table
 

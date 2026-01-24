@@ -2,17 +2,7 @@
 from dataclasses import dataclass
 
 import pytest
-
-from simplebench.case import Case
-from simplebench.enums import Target
-from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.reporters.choice.choice import Choice
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-from simplebench.reporters.reporter.options import ReporterOptions
-
-from ....factories import (
+from simplebench_tests.factories import (
     FactoryReporter,
     FactoryReporterOptions,
     case_factory,
@@ -23,7 +13,16 @@ from ....factories import (
     reporter_factory,
     reporter_options_factory,
 )
-from ....testspec import Assert, TestAction, TestSpec, idspec
+from testspec import Assert, TestAction, TestSpec, idspec
+
+from simplebench.case import Case
+from simplebench.enums import Target
+from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.reporters.choice.choice import Choice
+from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
+from simplebench.reporters.reporter.options import ReporterOptions
 
 
 def test_factory_reporter_default_options() -> None:

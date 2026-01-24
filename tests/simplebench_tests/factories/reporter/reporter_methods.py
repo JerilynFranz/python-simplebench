@@ -14,14 +14,28 @@ from typing import TYPE_CHECKING, Any, TypeAlias, overload
 
 from rich.table import Table
 from rich.text import Text
-
-from simplebench.enums import Format
-from simplebench.metadata import Metadata
-from simplebench.metrics import Metric, metric_types_registry
-from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
-
-from ...cache_factory import CacheId, cached_factory
-from ...kwargs.reporters.reporter import (
+from simplebench_tests.cache_factory import CacheId, cached_factory
+from simplebench_tests.factories._primitives import (
+    default_filename_base,
+    default_format_plain,
+    default_metric,
+    default_output,
+    default_output_str,
+    default_subdir,
+    path_factory,
+)
+from simplebench_tests.factories.argparsing import (
+    namespace_factory,
+)
+from simplebench_tests.factories.case import case_factory, default_reporter_callback
+from simplebench_tests.factories.reporter import (
+    choice_factory,
+    report_log_metadata_factory,
+)
+from simplebench_tests.factories.session import (
+    session_factory,
+)
+from simplebench_tests.kwargs.reporters.reporter import (
     DispatchToTargetsMethodKWArgs,
     RenderByCaseMethodKWArgs,
     RenderByMetricMethodKWArgs,
@@ -29,24 +43,15 @@ from ...kwargs.reporters.reporter import (
     TargetConsoleMethodKWArgs,
     TargetFilesystemMethodKWArgs,
 )
-from .. import (
-    case_factory,
-    choice_factory,
-    default_filename_base,
-    default_format_plain,
-    default_output,
-    default_output_str,
-    default_reporter_callback,
-    default_section,
-    default_subdir,
-    namespace_factory,
-    path_factory,
-    report_log_metadata_factory,
-    session_factory,
-)
+
+from simplebench.enums import Format
+from simplebench.metadata import Metadata
+from simplebench.metrics import Metric
+from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+
     # from simplebench.reporters.choice.choice import Choice
     from simplebench.reporters.reporter.options import ReporterOptions
     from simplebench.session import Session
@@ -68,7 +73,7 @@ def target_callback_kwargs_factory(
     Defaults:
         - callback (ReporterCallback): `default_reporter_callback()`
         - case (Case): `case_factory(cache_id=cache_id)`
-        - section (Metric): `default_section()`
+        - metric (Metric): `default_metric()`
         - output_format (Format): `default_format_plain()`
         - output (Output): `default_output_str()`
 
@@ -82,7 +87,7 @@ def target_callback_kwargs_factory(
     defaults = TargetCallbackMethodKWArgs(
         callback=default_reporter_callback,
         case=case_factory(cache_id=cache_id),
-        section=default_section(),
+        metric=default_metric(),
         output_format=default_format_plain(),
         output=default_output_str(),
     )
@@ -196,7 +201,7 @@ def dispatch_to_targets_kwargs_factory(
         path=path_factory(cache_id=cache_id),
         log_metadata=report_log_metadata_factory(),
         session=session_factory(cache_id=cache_id),
-        section=default_section(),
+        section=default_metric(),
         callback=default_reporter_callback,
         output=default_output(),
         filename_base=default_filename_base(),

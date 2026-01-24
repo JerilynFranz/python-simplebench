@@ -15,6 +15,6 @@ from simplebench.reporters.graph.matplotlib.theme.base import Theme
         expected=Theme
     )),
 ])
-def test_init(testspec: TestSpec):
+def test_init(testspec: TestSpec) -> None:
     """Test Theme class initialization."""
     testspec.run()
