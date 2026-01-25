@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import UserDict
 from collections.abc import Hashable, Iterable
-from typing import Generic, Type, TypeVar
+from typing import Generic, TypeVar
 
 from simplebench.exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.protocols import ChoiceProtocol
@@ -27,8 +27,8 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
 
     def __init__(
         self,
-        item_type: Type[T_Item],
-        error_tag_enum: Type[T_Error],
+        item_type: type[T_Item],
+        error_tag_enum: type[T_Error],
         choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error] | None = None,
     ) -> None:
         """Construct generic :class:`~.Choices`/:class:`~.ChoicesConf` container.

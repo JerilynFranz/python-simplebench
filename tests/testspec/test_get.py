@@ -5,7 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any,  NoReturn, Optional, Union
+from typing import Any,  NoReturn
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
@@ -63,22 +63,22 @@ class TestGet(TestSpec):
     """Identifying name for the test."""
     attribute: str
     """The name of the attribute to be tested by setting."""
-    obj: Optional[object] = NO_OBJ_ASSIGNED
+    obj: object | None = NO_OBJ_ASSIGNED
     """The object whose attribute is to be tested. It cannot be None, and must be an instance of object.
     If not provided during construction, the special sentinel value NO_OBJ_ASSIGNED is used. This must be
     replaced with a valid object before running the test."""
     assertion: Assert = Assert.EQUAL
     """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
-    expected: Optional[Any] = NO_EXPECTED_VALUE
+    expected: Any | None = NO_EXPECTED_VALUE
     """Expected value of attribute after setting the attribute. If a get_exception or
     set_exception is set, the expected value is ignored. If there is no expected exception
     and no expected value, use the special sentinel value NO_EXPECTED_VALUE to skip the
     get step validation for the set value. Omitting this field is equivalent to setting it to NO_EXPECTED_VALUE."""
-    exception: Optional[type[BaseException]] = None
+    exception: type[BaseException] | None = None
     """Expected exception type (if any) to be raised by getting the attribute."""
-    exception_tag: Optional[Union[str, Enum]] = None
+    exception_tag: str | Enum | None = None
     """Expected tag (if any) to be found in an exception message raised by getting the attribute."""
-    validate: Optional[Callable[[TestGet, Any], Union[None, NoReturn]]] = None
+    validate: Callable[[TestGet, Any], None | NoReturn] | None = None
     """Function to validate obj state after setting the attribute. It should raise an exception
     if the object state is unexpected.
 
@@ -90,14 +90,14 @@ class TestGet(TestSpec):
     The validation function should call the `on_fail` method to raise an exception if the object is not
     in a valid state. None should be returned if the object is valid.
     """
-    display_on_fail: Union[str, Callable[[], str]] = ""
+    display_on_fail: str | Callable[[], str] = ""
     """String or function to display additional information on test failure."""
-    on_fail: Optional[Callable[[str], NoReturn]] = None
+    on_fail: Callable[[str], NoReturn] | None = None
     """Function to call on test failure. The function should raise an exception (default is pytest.fail)."""
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestGet class itself. Default is None."""
 
-    _creation_traceback: Optional[TracebackType] = None
+    _creation_traceback: TracebackType | None = None
     """The traceback at the point where the TestAction was created."""
 
     def __post_init__(self) -> None:

@@ -91,7 +91,7 @@ class Timeout(Generic[_T]):
     @property
     def timeout_interval(self) -> float:
         """Get the timeout interval in seconds."""
-        return getattr(self, '_private_timeout_interval')
+        return self._private_timeout_interval
 
     def _set_timeout_interval(self, value: float | int):
         """Set the timeout interval in seconds."""
@@ -103,18 +103,18 @@ class Timeout(Generic[_T]):
             raise SimpleBenchValueError(
                 'timeout_interval must be greater than zero', tag=_TimeoutErrorTag.INVALID_TIMEOUT_INTERVAL_VALUE
             )
-        setattr(self, '_private_timeout_interval', float(value))
+        self._private_timeout_interval = float(value)
 
     @property
     def state(self) -> TimeoutState:
         """Get the final state of the timeout execution."""
-        return getattr(self, '_private_state')
+        return self._private_state
 
     def _set_state(self, value: TimeoutState):
         """Set the current state of the timeout context manager."""
         if not isinstance(value, TimeoutState):
             raise SimpleBenchTypeError('state must be a TimeoutState', tag=_TimeoutErrorTag.INVALID_STATE_TYPE)
-        setattr(self, '_private_state', value)
+        self._private_state = value
 
     def _target_wrapper(self, func: Callable[..., Any], *args: Any, **kwargs: Any):
         """

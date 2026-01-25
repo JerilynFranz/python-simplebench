@@ -10,7 +10,7 @@ from rich.text import Text
 from simplebench.case import Case
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metadata import Metadata
-from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics import Metric
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter

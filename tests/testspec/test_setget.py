@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, NoReturn, Optional, Union
+from typing import Any, NoReturn
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
@@ -74,28 +74,28 @@ class TestSetGet(TestSpec):
     """The name of the attribute to be tested by setting."""
     value: Any
     """Value to set the attribute to."""
-    obj: Optional[object] = NO_OBJ_ASSIGNED
+    obj: object | None = NO_OBJ_ASSIGNED
     """The object whose attribute is to be tested. It cannot be None, and must be an instance of object.
     If not provided during construction, the special sentinel value NO_OBJ_ASSIGNED is used. This must be
     replaced with a valid object before running the test."""
     assertion: Assert = Assert.EQUAL
     """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
-    expected: Optional[Any] = NO_EXPECTED_VALUE
+    expected: Any | None = NO_EXPECTED_VALUE
     """Expected value of attribute after setting the attribute. If a get_exception or
     set_exception is set, the expected value is ignored. If there is no expected exception
     and no expected value, use the special sentinel value NO_EXPECTED_VALUE to skip the
     get step validation for the set value. Omitting this field is equivalent to setting it to NO_EXPECTED_VALUE."""
-    get_attribute: Optional[str] = None
+    get_attribute: str | None = None
     """The name of the attribute to be retrieved for 'expected' validation. If None, use the same as `attribute`."""
-    set_exception: Optional[type[Exception]] = None
+    set_exception: type[Exception] | None = None
     """Expected exception type (if any) to be raised by setting the attribute."""
-    set_exception_tag: Optional[Union[str, Enum]] = None
+    set_exception_tag: str | Enum | None = None
     """Expected tag (if any) to be found in an exception message raised by setting the attribute."""
-    get_exception: Optional[type[Exception]] = None
+    get_exception: type[Exception] | None = None
     """Expected exception type (if any) to be raised by getting the attribute."""
-    get_exception_tag: Optional[Union[str, Enum]] = None
+    get_exception_tag: str | Enum | None = None
     """Expected tag (if any) to be found in an exception message raised by getting the attribute."""
-    validate: Optional[Callable[[TestSetGet, Any], None | NoReturn]] = None
+    validate: Callable[[TestSetGet, Any], None | NoReturn] | None = None
     """Function to validate obj state after setting the attribute. It should raise an exception
     if the object state is unexpected.
 
@@ -113,7 +113,7 @@ class TestSetGet(TestSpec):
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestSetGet class itself. Default is None."""
 
-    _creation_traceback: Optional[TracebackType] = None
+    _creation_traceback: TracebackType | None = None
     """The traceback at the point where the TestAction was created."""
 
     def __post_init__(self) -> None:

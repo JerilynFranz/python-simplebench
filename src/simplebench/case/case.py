@@ -1,7 +1,7 @@
 """Benchmark case declaration and execution."""
 import inspect
 import itertools
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Mapping
 from copy import copy
 from datetime import datetime
 from pathlib import Path

@@ -7,7 +7,7 @@ import pytest
 
 from simplebench.case import Case
 from simplebench.metadata import Metadata
-from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics import metric_types_registry
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
@@ -179,7 +179,7 @@ def test_register_reporter_invalid_type():
     assert exc_info.type.__name__ == "SimpleBenchTypeError", (
         f"REGISTER_004 - Expected SimpleBenchTypeError, got {exc_info.type.__name__}.")
     if hasattr(exc_info.value, 'tag_code'):
-        error_tag = getattr(exc_info.value, 'tag_code')
+        error_tag = exc_info.value.tag_code
         assert error_tag == _RegisterReporterErrorTag.INVALID_REPORTER_TYPE_ARG, (
             f"REGISTER_005 - Expected tag INVALID_REPORTER_TYPE_ARG, got {error_tag}.")
     else:

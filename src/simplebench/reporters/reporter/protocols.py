@@ -371,7 +371,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def render(self, *, case: 'Case', metric: 'Metric', options: 'ReporterOptions') -> str | bytes | Text | Table:
+    def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
         """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.

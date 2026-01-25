@@ -16,7 +16,7 @@ from collections.abc import Sequence
 import pathlib
 import sys
 from argparse import ArgumentParser, Namespace
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from rich.console import Console
 
@@ -120,10 +120,10 @@ def _configure_session_from_args(session: Session, cases: Sequence[Case], args: 
     BENCHMARK_ERROR=ExitCode.BENCHMARK_ERROR.value,
 )
 def main(  # pylint: disable=too-many-branches,too-many-statements  # noqa: C901
-    benchmark_cases: Optional[Sequence[Case]] = None,
+    benchmark_cases: Sequence[Case] | None = None,
     *,
-    argv: Optional[list[str]] = None,
-    extra_args: Optional[list[str]] = None,
+    argv: list[str] | None = None,
+    extra_args: list[str] | None = None,
     no_exit: bool = False,
 ) -> ExitCode:
     """Main entry point for running benchmarks via a command-line interface.

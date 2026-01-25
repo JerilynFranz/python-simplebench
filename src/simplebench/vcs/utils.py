@@ -24,7 +24,7 @@ def resolve_vcs_path(search_path: Path | None = None) -> Path:
     """
     has_modules_main = sys.modules.get('__main__') is not None
     has_main_file = has_modules_main and hasattr(sys.modules['__main__'], '__file__')
-    main_file = getattr(sys.modules['__main__'], '__file__') if has_main_file else None
+    main_file = sys.modules['__main__'].__file__ if has_main_file else None
     if search_path:
         start_dir = search_path.parent if search_path.is_file() else search_path
     elif isinstance(main_file, str):

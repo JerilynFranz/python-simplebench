@@ -66,7 +66,7 @@ class MachineInfo:
 
         :return ReportMachineInfo: The ReportMachineInfo representation of the MachineInfo instance.
         """
-        return cast(ReportMachineInfo, getattr(self, '_report_machine_info'))
+        return cast(ReportMachineInfo, self._report_machine_info)
 
     def _to_dict(self) -> ImmutableMachineInfoData:
         """Convert the MachineInfo instance to a dictionary. The dictionary
@@ -76,7 +76,7 @@ class MachineInfo:
 
         :return dict: A dictionary representation of the MachineInfo instance.
         """
-        return cast(ImmutableMachineInfoData, getattr(self, '_dict_cache'))
+        return cast(ImmutableMachineInfoData, self._dict_cache)
 
 
 class MachineInfoFactory:

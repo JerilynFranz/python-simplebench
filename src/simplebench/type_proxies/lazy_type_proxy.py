@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import importlib
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, TypeVar
 
-_LAZY_TYPES_CACHE: dict[str, Type[Any]] = {}
+_LAZY_TYPES_CACHE: dict[str, type[Any]] = {}
 _TYPE_IMPORT_MAP: dict[str, str] = {}
 T = TypeVar('T')
 
@@ -26,12 +26,12 @@ def register_lazy_proxy(proxy_class: type, real_type_name: str, module_path: str
     :param str real_type_name: The name of the real type being proxied.
     :param str module_path: The module path where the real type can be imported from.
     """
-    setattr(proxy_class, '__real_type_name__', real_type_name)
+    proxy_class.__real_type_name__ = real_type_name
     if real_type_name not in _TYPE_IMPORT_MAP:
         _TYPE_IMPORT_MAP[real_type_name] = module_path
 
 
-def _get_real_type(type_name: str) -> Type[Any]:
+def _get_real_type(type_name: str) -> type[Any]:
     """Dynamically import and return the real type by its name.
 
     :param str type_name: The name of the type to import.

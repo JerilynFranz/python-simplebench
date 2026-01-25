@@ -106,7 +106,7 @@ class Report(BaseReport):
         self._title: str = _validate.title(title)
         self._description: str = _validate.description(description)
         self._variation_cols: ImmutableVariationColsType = _validate.variation_cols(variation_cols)
-        self._results: 'tuple[ResultsInfo, ...]' = _validate.results(results)
+        self._results: tuple[ResultsInfo, ...] = _validate.results(results)
         self._machine: MachineInfo = _validate.machine(machine)
         self._hash_id = _validate.hash_id(hash_id)
         if not self._hash_id:

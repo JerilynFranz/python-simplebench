@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from argparse import Namespace
 from pathlib import Path
-from typing import Any, ClassVar, Optional
+from typing import Any, ClassVar
 
 import pytest
 
@@ -105,9 +105,9 @@ class GoodReporter(Reporter):
                    log_metadata: Metadata,
                    case: Case,
                    choice: Choice,
-                   path: Optional[Path] = None,
-                   session: Optional[Session] = None,
-                   callback: Optional[ReporterCallback] = None) -> None:
+                   path: Path | None = None,
+                   session: Session | None = None,
+                   callback: ReporterCallback | None = None) -> None:
         return
 
     def render(self, *, case: Case, section: metric_types_registry, options: ReporterOptions) -> str:

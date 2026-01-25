@@ -155,7 +155,7 @@ class KWArgs(dict[str, Any], Hashable):
         # future reference.
         if not hasattr(cls, '_BASE_KWARGS_CALL'):
             kwargs_class_matches_modeled_call(kwargs_class=cls, modeled_call=call)
-            setattr(cls, '_BASE_KWARGS_CALL', call)
+            cls._BASE_KWARGS_CALL = call
 
         # Cache the __init__ parameter names for use in __sub__ if not already cached.
         # This ensures we get the full set of parameters defined in the subclass __init__

@@ -6,7 +6,7 @@ from typing import Any
 
 from simplebench.case import Case
 from simplebench.enums import Format
-from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics import Metric
 
 
 def default_reporter_callback(  # pylint: disable=unused-argument

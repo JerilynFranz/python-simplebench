@@ -54,7 +54,7 @@ import sys
 import tracemalloc
 from collections.abc import Callable
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Final, Literal, Optional, TypeAlias
+from typing import TYPE_CHECKING, Any, Final, Literal, TypeAlias
 
 from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
@@ -201,8 +201,8 @@ class SimpleRunner(BenchmarkRunner):
         *,
         case: Case,
         kwargs: dict[str, Any],
-        session: Optional[Session] = None,
-        runner: Optional[Callable[..., Any]] = None,
+        session: Session | None = None,
+        runner: Callable[..., Any] | None = None,
     ) -> None:
         """
         :param case: The benchmark case to run.
@@ -247,9 +247,9 @@ class SimpleRunner(BenchmarkRunner):
         *,
         n: int | float,
         action: Callable[..., Any],
-        setup: Optional[Callable[..., Any]] = None,
-        teardown: Optional[Callable[..., Any]] = None,
-        kwargs: Optional[dict[str, Any]] = None,
+        setup: Callable[..., Any] | None = None,
+        teardown: Callable[..., Any] | None = None,
+        kwargs: dict[str, Any] | None = None,
     ) -> Results:
         """Enforce a timeout while running the benchmark with the specified runner.
 
@@ -375,8 +375,8 @@ class SimpleRunner(BenchmarkRunner):
         cpu_timer: Callable[[], int | float],
         action: Callable[..., Any],
         kwargs: dict[str, Any],
-        setup: Optional[Callable[..., Any]],
-        teardown: Optional[Callable[..., Any]],
+        setup: Callable[..., Any] | None,
+        teardown: Callable[..., Any] | None,
     ) -> tuple[float, float]:
         """Run a single timed iteration of the benchmark action for a given number of rounds.
         This method uses an unrolled loop to call the action the specified number of rounds,
@@ -435,9 +435,9 @@ class SimpleRunner(BenchmarkRunner):
         *,
         n: int | float,
         action: Callable[..., Any],
-        setup: Optional[Callable[..., Any]] = None,
-        teardown: Optional[Callable[..., Any]] = None,
-        kwargs: Optional[dict[str, Any]] = None,
+        setup: Callable[..., Any] | None = None,
+        teardown: Callable[..., Any] | None = None,
+        kwargs: dict[str, Any] | None = None,
     ) -> Results:
         """Run a generic benchmark using the specified action and test case.
 
@@ -675,8 +675,8 @@ class SimpleRunner(BenchmarkRunner):
         timer: Callable[[], int],
         cpu_timer: Callable[[], int],
         kwargs: dict[str, Any],
-        setup: Optional[Callable[..., Any]] = None,
-        teardown: Optional[Callable[..., Any]] = None,
+        setup: Callable[..., Any] | None = None,
+        teardown: Callable[..., Any] | None = None,
         action: Callable[..., Any],
     ) -> int:
         """Auto-calibrate the number of rounds for the benchmark.

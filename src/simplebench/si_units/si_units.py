@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utility functions for handling SI units"""
 
 from collections.abc import Sequence

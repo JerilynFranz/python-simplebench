@@ -5,7 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, NoReturn, Optional, Union
+from typing import Any, NoReturn
 
 from .base import TestSpec
 from .constants import NO_OBJ_ASSIGNED
@@ -59,17 +59,17 @@ class TestSet(TestSpec):
     """The name of the attribute to be tested by setting."""
     value: Any
     """Value to set the attribute to."""
-    obj: Optional[object] = NO_OBJ_ASSIGNED
+    obj: object | None = NO_OBJ_ASSIGNED
     """The object whose attribute is to be tested.
 
     It cannot be None, and must be an instance of object. If not provided during construction,
     the special sentinel value NO_OBJ_ASSIGNED is used. This must be replaced with a valid object
     before running the test."""
-    exception: Optional[type[BaseException]] = None
+    exception: type[BaseException] | None = None
     """Expected exception type (if any) to be raised by setting the attribute."""
-    exception_tag: Optional[Union[str, Enum]] = None
+    exception_tag: str | Enum | None = None
     """Expected tag (if any) to be found in an exception message raised by setting the attribute."""
-    validate: Optional[Callable[[TestSet, Any], Union[None, NoReturn]]] = None
+    validate: Callable[[TestSet, Any], None | NoReturn] | None = None
     """Function to validate obj state after setting the attribute. It should raise an exception
     if the object state is unexpected.
 
@@ -78,12 +78,12 @@ class TestSet(TestSpec):
     The validation function should call the `on_fail` method to raise an exception if the object is not
     in an expected state. None should be returned if the object state is as expected.
     """
-    on_fail: Optional[Callable[[str], NoReturn]] = None
+    on_fail: Callable[[str], NoReturn] | None = None
     """Function to call on test failure. The function should raise an exception (default is _fail method)."""
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestSet class itself. Default is None."""
 
-    _creation_traceback: Optional[TracebackType] = None
+    _creation_traceback: TracebackType | None = None
     """The traceback at the point where the TestAction was created."""
 
     def __post_init__(self) -> None:

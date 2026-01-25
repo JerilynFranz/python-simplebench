@@ -24,7 +24,7 @@ def mock_action(*arg, **kwargs) -> None:  # pylint: disable=unused-argument
     return None  # pragma: no cover
 
 
-class MockRunner():
+class MockRunner:
     """A mock SimpleRunner for testing."""
 
     def run(self, n: int, action, **kwargs):  # pylint: disable=unused-argument

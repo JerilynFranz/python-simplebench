@@ -7,7 +7,7 @@ each test case for Pytest.
 """
 
 from collections.abc import Callable
-from typing import Any, NoReturn, Optional, Union
+from typing import Any, NoReturn
 
 from .assertions import Assert
 from .base import TestSpec
@@ -66,18 +66,18 @@ class PytestAction(TestSpec):
         *,
         name: str = '',
         action: Callable[..., Any] = no_assigned_action,
-        args: Optional[list[Any]] = None,
-        kwargs: Optional[dict[str, Any]] = None,
+        args: list[Any] | None = None,
+        kwargs: dict[str, Any] | None = None,
         assertion: Assert = Assert.EQUAL,
         expected: Any = NO_EXPECTED_VALUE,
-        obj: Optional[Any] = None,
-        validate_obj: Optional[Callable[[Any], bool]] = None,
-        validate_result: Optional[Callable[[Any], bool]] = None,
-        validate_attr: Optional[str] = None,
-        exception: Optional[type[BaseException]] = None,
-        exception_tag: Optional[str] = None,
-        display_on_fail: Union[str, Callable[[], str]] = '',
-        on_fail: Optional[Callable[[str], NoReturn]] = None,
+        obj: Any | None = None,
+        validate_obj: Callable[[Any], bool] | None = None,
+        validate_result: Callable[[Any], bool] | None = None,
+        validate_attr: str | None = None,
+        exception: type[BaseException] | None = None,
+        exception_tag: str | None = None,
+        display_on_fail: str | Callable[[], str] = '',
+        on_fail: Callable[[str], NoReturn] | None = None,
         extra: Any = None,
     ) -> Any:
         """Run the test action using pytest.

@@ -1,7 +1,7 @@
 """Container for the results of a single benchmark test."""
 from collections.abc import Mapping
 from types import MappingProxyType
-from typing import Any, Optional
+from typing import Any
 
 import simplebench.report.versions.v1 as reports
 from simplebench.metrics import Metric, MetricCategory
@@ -72,7 +72,7 @@ class Results:
         iterations: Mapping[Metric, Values],
         variation_cols: dict[str, str] | None = None,
         marks: dict[str, tuple[str, ...]] | None = None,
-        extra_info: Optional[dict[str, Any]] = None,
+        extra_info: dict[str, Any] | None = None,
     ) -> None:
         """Initialize a Results object.
 
@@ -117,7 +117,7 @@ class Results:
         self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(variation_cols)
         self._marks: MappingProxyType[str, tuple[str, ...]] = validate.marks(marks)
         self._extra_info = validate.extra_info(extra_info)
-        self._repr_cache: Optional[str] = None  # cache for __repr__
+        self._repr_cache: str | None = None  # cache for __repr__
 
     @property
     def group(self) -> str:

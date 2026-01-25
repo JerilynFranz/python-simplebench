@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 from simplebench.enums import Format, Target
-from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics import Metric
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 
 from ...factories import (

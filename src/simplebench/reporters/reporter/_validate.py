@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session.session import Session
-    from simplebench.reporters.reporter.reporter import Reporter
 
 # No need to export any names from this module directly
 __all__ = []

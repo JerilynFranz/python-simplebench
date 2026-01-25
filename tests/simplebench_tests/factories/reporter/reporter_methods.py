@@ -492,7 +492,7 @@ class CallbackCall:
     output: Any
 
 
-class CallbackSpy():
+class CallbackSpy:
     """Helper mock class to record calls to a reporter callback.
 
     This class records each call made to the callback target method,

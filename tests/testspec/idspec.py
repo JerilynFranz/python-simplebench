@@ -1,6 +1,6 @@
 """TestSpec testing framework - idspec helper."""
 
-from typing import Any, Union
+from typing import Any
 
 import pytest
 
@@ -8,7 +8,7 @@ from .base import TestSpec
 from .context import Context
 
 
-def idspec(id_base: str, testspec: Union[TestSpec, tuple[Context, TestSpec]]) -> Any:
+def idspec(id_base: str, testspec: TestSpec | tuple[Context, TestSpec]) -> Any:
     """Helper function to create a test case with a specific pytest id directly from a TestAction or TestProperty.
 
     This function generates a pytest parameter with a custom id based on the provided base

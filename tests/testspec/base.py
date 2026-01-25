@@ -2,7 +2,6 @@
 import inspect
 from abc import ABC, abstractmethod
 from types import TracebackType
-from typing import Union
 
 
 class TestSpec(ABC):
@@ -10,7 +9,7 @@ class TestSpec(ABC):
     # Prevent pytest from trying to collect this class as a test case
     __test__ = False
 
-    _creation_traceback: Union[TracebackType, None] = None
+    _creation_traceback: TracebackType | None = None
     """The traceback at the point where the TestSpec was created."""
 
     @abstractmethod

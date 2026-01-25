@@ -5,7 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, NoReturn, Optional, Union
+from typing import Any, NoReturn
 
 from .assertions import Assert, expected_argument_required, validate_assertion
 from .base import TestSpec
@@ -70,9 +70,9 @@ class TestAction(TestSpec):
     """Identifying name for the test."""
     action: Callable[..., Any] = no_assigned_action
     """A reference to a callable function or method to be invoked for the test."""
-    args: Optional[list[Any]] = None
+    args: list[Any] | None = None
     """Sequence of positional arguments to be passed to the `action` function or method."""
-    kwargs: Optional[dict[str, Any]] = None
+    kwargs: dict[str, Any] | None = None
     """Dictionary containing keyword arguments to be passed to the `action` function or method."""
     assertion: Assert = Assert.EQUAL
     """The assertion operator to use when comparing the expected and found values. (default is Assert.EQUAL)"""
@@ -81,21 +81,21 @@ class TestAction(TestSpec):
 
     This is used with the `assertion` operator to validate the return value of the function or method.
     """
-    obj: Optional[Any] = None
+    obj: Any | None = None
     """Optional object to be validated."""
-    validate_obj: Optional[Callable[[Any], bool]] = None
+    validate_obj: Callable[[Any], bool] | None = None
     """Function to validate the optional object."""
-    validate_result: Optional[Callable[[Any], bool]] = None
+    validate_result: Callable[[Any], bool] | None = None
     """Function to validate the result of the action."""
-    validate_attr: Optional[str] = None
+    validate_attr: str | None = None
     """Validate an attribute of the result instead of the result itself."""
-    exception: Optional[type[BaseException]] = None
+    exception: type[BaseException] | None = None
     """Expected exception type (if any) to be raised by the action."""
-    exception_tag: Optional[Union[str,  Enum]] = None
+    exception_tag: str | Enum | None = None
     """Expected tag (if any) to be found in the exception message."""
-    display_on_fail: Union[str, Callable[[], str]] = ''
+    display_on_fail: str | Callable[[], str] = ''
     """String or function to display additional information on test failure."""
-    on_fail: Optional[Callable[[str], NoReturn]] = None
+    on_fail: Callable[[str], NoReturn] | None = None
     """Function to call on test failure. (default is pytest.fail)
 
     The function must accept a single string argument containing the failure message
@@ -104,7 +104,7 @@ class TestAction(TestSpec):
     extra: Any = None
     """Extra data for use by test frameworks. It is not used by the TestAction class itself. Default is None."""
 
-    _creation_traceback: Optional[TracebackType] = None
+    _creation_traceback: TracebackType | None = None
     """The traceback at the point where the TestAction was created."""
 
     def run(self) -> None:  # pylint: disable=too-many-branches

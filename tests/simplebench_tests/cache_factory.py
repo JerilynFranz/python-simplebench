@@ -159,7 +159,7 @@ class CachedFactory(Protocol[R_co]):
 
     It can be called with arbitrary arguments, plus the `cache_id` keyword.
     """
-    def __call__(self, *args: Any, cache_id: 'CacheId' = ..., **kwargs: Any) -> R_co:
+    def __call__(self, *args: Any, cache_id: CacheId = ..., **kwargs: Any) -> R_co:
         ...
 
     # Also provide the __signature__ attribute for type checkers

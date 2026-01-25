@@ -39,7 +39,7 @@ class ReportLogEntry(ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> 'ReportLogEntry':
+    def from_dict(cls, data: dict) -> ReportLogEntry:
         """Create a JSONReport instance from a dictionary.
 
         :param data: Dictionary containing the JSON report data.

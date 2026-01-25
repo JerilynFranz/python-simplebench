@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Target enums for SimpleBench."""
 
 from enum import Enum

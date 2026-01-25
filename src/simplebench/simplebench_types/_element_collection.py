@@ -9,8 +9,8 @@ are expected to have collection-like characteristics: supporting iteration,
 length, and membership tests, but not necessarily ordering or indexing.
 """
 
-from collections.abc import Mapping
-from typing import Iterator, Protocol, TypeVar, runtime_checkable, Any
+from collections.abc import Mapping, Iterator
+from typing import Protocol, TypeVar, runtime_checkable, Any
 
 T = TypeVar('T', covariant=True)
 

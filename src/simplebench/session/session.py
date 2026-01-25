@@ -5,7 +5,7 @@ import logging
 from argparse import ArgumentError, ArgumentParser, Namespace
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from rich.console import Console
 from rich.progress import Progress
@@ -50,13 +50,13 @@ class Session:
     def __init__(
         self,
         *,
-        cases: Optional[Sequence['Case']] = None,
+        cases: Sequence['Case'] | None = None,
         verbosity: Verbosity = Verbosity.NORMAL,
         default_runners: Sequence[type['SimpleRunner']] | None = None,
-        args_parser: Optional[ArgumentParser] = None,
+        args_parser: ArgumentParser | None = None,
         show_progress: bool = False,
-        output_path: Optional[Path] = None,
-        console: Optional[Console] = None,
+        output_path: Path | None = None,
+        console: Console | None = None,
         timer: Callable[[], int] | None = None,
         cpu_timer: Callable[[], int] | None = None,
     ) -> None:
@@ -117,7 +117,7 @@ class Session:
         """The timestamp property - backing field for the 'timestamp' attribute."""
         self._epoch_timestamp: float = 0.0
         """The epoch_timestamp property - backing field for the 'epoch_timestamp' attribute."""
-        self._args: Optional[Namespace] = None
+        self._args: Namespace | None = None
         """The command line arguments - backing field for the 'args' attribute."""
         self._console: Console = self._progress.console
         """Rich Console instance for displaying output - backing field for the 'console' attribute."""
@@ -364,7 +364,7 @@ class Session:
                     refresh=True,
                 )
 
-                callback: Optional[ReporterCallback] = case.callback
+                callback: ReporterCallback | None = case.callback
                 reporter: Reporter = choice.reporter
                 output_path: Path | None = self._output_path
                 report_log_path: Path | None = output_path / '_reports_log' if output_path is not None else None
@@ -503,7 +503,7 @@ class Session:
         self._args_parser = value
 
     @property
-    def args(self) -> Optional[Namespace]:
+    def args(self) -> Namespace | None:
         """The command line arguments for the session. This will be None until the parse_args()
         method has been called."""
         return self._args

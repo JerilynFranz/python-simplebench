@@ -98,4 +98,4 @@ class SystemInfo:
 
         :return ImmutableSystemInfoData: An immutable dictionary representation of the SystemInfo.
         """
-        return cast(ImmutableSystemInfoData, getattr(self, '_dict_cache'))
+        return cast(ImmutableSystemInfoData, self._dict_cache)

@@ -2,7 +2,7 @@
 
 import traceback
 from enum import Enum
-from typing import Any, Union
+from typing import Any
 
 
 def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
@@ -26,7 +26,7 @@ def no_assigned_action(*args: Any, **kwargs: Any) -> Any:
 
 
 def _process_exception(
-    err: BaseException, exception: Union[type[BaseException], None], exception_tag: Union[str, Enum, None], label: str
+    err: BaseException, exception: type[BaseException] | None, exception_tag: str | Enum | None, label: str
 ) -> list[str]:
     """Process exception tag validation.
 

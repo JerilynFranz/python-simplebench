@@ -18,7 +18,7 @@ Reporters can produce reports in various formats and output them to different ta
 from abc import ABC, abstractmethod
 from argparse import Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional, TypeAlias, TypeVar
+from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar
 
 from rich.table import Table
 from rich.text import Text
@@ -51,7 +51,6 @@ T = TypeVar('T')
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
-    from simplebench.session import Session
     from simplebench.simplebench_types import ElementCollection
 
 __all__ = []
@@ -219,9 +218,9 @@ class Reporter(
         args: Namespace,
         case: 'Case',
         choice: 'Choice',
-        path: Optional[Path] = None,
+        path: Path | None = None,
         session: 'Optional[Session] = None',
-        callback: Optional[ReporterCallback] = None,
+        callback: ReporterCallback | None = None,
     ) -> None:
         """Generate a report based on the benchmark results.
 
@@ -310,9 +309,9 @@ class Reporter(
         log_metadata: Metadata,
         case: 'Case',
         choice: 'Choice',
-        path: Optional[Path] = None,
+        path: Path | None = None,
         session: 'Optional[Session] = None',
-        callback: Optional[ReporterCallback] = None,
+        callback: ReporterCallback | None = None,
     ) -> None:
         """Orchestration hook for report generation.
 
