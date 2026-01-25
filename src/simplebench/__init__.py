@@ -1,25 +1,27 @@
 """Simple benchmarking framework.
 
 Available imports:
-- main: CLI entry point
-- benchmark: benchmark decorator
-- register_reporter: reporter registration decorator
-- Case: Benchmark Case
-- Mark: Benchmark Mark
-- Results: Benchmark Results
-- CSVOptions: CSV reporter options
-- JSONOptions: JSON reporter options
-- RichTableOptions: Rich Table reporter options
-- Session: Benchmark Session
-- Verbosity: Verbosity enum
+
+- :func:`~simplebench.cli.main`: CLI entry point
+- :func:`~simplebench.benchmark.benchmark`: benchmark decorator
+- :func:`~simplebench.reporters.reporter_manager.decorators.register_reporter`: reporter registration decorator
+- :class:`~simplebench.case.Case`: Benchmark Case
+- :class:`~simplebench.case.Mark`: Benchmark Mark
+- :class:`~simplebench.case.Results`: Benchmark Results
+- :class:`~simplebench.reporters.csv.reporter.options.CSVOptions`: CSV reporter options
+- :class:`~simplebench.reporters.json.reporter.options.JSONOptions`: JSON reporter options
+- :class:`~simplebench.reporters.rich_table.reporter.options.RichTableOptions`: Rich Table reporter options
+- :class:`~simplebench.session.Session`: Benchmark Session
+- :class:`~simplebench.enums.Verbosity`: Verbosity enum
 
 Optional imports (may not be available if extras are not installed):
-- ImageType: Image type enum (graph extra required)
-- Style: Matplotlib style options (graph extra required)
-- Theme: Matplotlib theme options (graph extra required)
-- ScatterPlotOptions: Scatter plot reporter options (graph extra required)
-- BenchmarkRegistrar: Pytest benchmark registrar (pytest extra required)
 
+- :class:`~simplebench.reporters.graph.enums.ImageType`: Image type enum (``graph`` extra required)
+- :class:`~simplebench.reporters.graph.matplotlib.Style`: Matplotlib style options (``graph`` extra required)
+- :class:`~simplebench.reporters.graph.matplotlib.Theme`: Matplotlib theme options (``graph`` extra required)
+- :class:`~simplebench.reporters.graph.scatterplot.reporter.ScatterPlotOptions`: Scatter plot reporter options
+    (``graph`` extra required)
+- :class:`~simplebench._pytest.BenchmarkRegistrar`: Pytest benchmark registrar (``pytest`` extra required)
 """
 
 import importlib
@@ -28,6 +30,7 @@ import importlib.util
 # Lazy submodule imports prevent mass importing of all submodules when importing simplebench modules
 # This improves import times and reduces unnecessary dependencies being loaded during
 # simplebench usage and tests.
+
 _lazy_imports: dict[str, tuple[str, str]] = {
     'main': ('simplebench.cli', 'main'),
     'benchmark': ('simplebench.benchmark', 'benchmark'),
@@ -64,6 +67,12 @@ Attributes are only added to __all__ if all packages in the tuple are available.
 _optional_packages: set[str] = {item for sublist in _optional_imports.values() for item in sublist}
 
 def __getattr__(name: str) -> object:
+    """Import submodules and attributes lazily.
+
+    :param name: Name of the attribute to import.
+    :return: Imported attribute.
+    :raises AttributeError: If the attribute does not exist.
+    """
     if name in _lazy_imports:
         module_name, attr = _lazy_imports[name]
         try:
@@ -75,11 +84,18 @@ def __getattr__(name: str) -> object:
             raise ImportError(f'Could not import {name} from {module_name}') from e
     raise AttributeError(f"module {__name__} has no attribute {name}")
 
-def __dir__() -> list[str]:
-    return sorted(list(globals().keys()) + list(_lazy_imports.keys()))
 
 __all__ = list(set(_lazy_imports.keys()) - _optional_packages)  # type: ignore
 
 for package, optional_attrs in _optional_imports.items():
     if all(importlib.util.find_spec(pkg) is not None for pkg in package):
         __all__ += optional_attrs  # type: ignore
+
+
+def __dir__() -> list[str]:
+    """List available attributes for the module.
+
+    :return: List of available attribute names.
+    :rtype: list[str]
+    """
+    return sorted(list(globals().keys()) + __all__)
