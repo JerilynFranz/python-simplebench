@@ -87,6 +87,7 @@ def __getattr__(name: str) -> object:
 
 __all__ = list(set(_lazy_imports.keys()) - _optional_packages)  # type: ignore
 
+# Add optional attributes to __all__ if their packages are available
 for package, optional_attrs in _optional_imports.items():
     if all(importlib.util.find_spec(pkg) is not None for pkg in package):
         __all__ += optional_attrs  # type: ignore
