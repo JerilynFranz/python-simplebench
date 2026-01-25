@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Utility functions for handling SI units"""
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 

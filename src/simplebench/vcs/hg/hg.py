@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 import re
 import subprocess
 from pathlib import Path
-from typing import Sequence
 
 from simplebench.exceptions import (
     SimpleBenchNotARepositoryError,

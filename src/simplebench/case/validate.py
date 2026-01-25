@@ -1,18 +1,20 @@
 """Validators for the simplebench.case package"""
-
 import inspect
-from copy import copy
-from typing import Any, Callable, Iterable, Sequence, get_type_hints
+from collections.abc import Callable, Mapping
+from types import MappingProxyType
+from typing import Any, get_type_hints
 
 import simplebench.defaults as defaults
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.simplebench_types import ElementCollection, is_element_collection
 from simplebench.validators import validate_positive_float, validate_positive_int, validate_string, validate_type
 from simplebench.vcs import VCSInfo
 
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
+from .mark import Mark
 
 
 def benchmark_id(benchmark_id_value: str) -> str:
@@ -103,19 +105,20 @@ def max_time(max_time_value: float) -> float:
     )
 
 
-def options(options_value: Iterable[ReporterOptions] | None) -> list[ReporterOptions]:
+def options(options_value: ElementCollection[ReporterOptions] | None) -> tuple[ReporterOptions, ...]:
     """Validate the options list.
 
-    :param Iterable[ReporterOptions] | None options_value: The options iterable to validate or None.
+    :param ElementCollection[ReporterOptions] | None options_value: The options iterable to validate or None.
     :return: A shallow copy of the validated options as a list or an empty list if not provided.
-    :rtype: list[ReporterOptions]
-    :raises SimpleBenchTypeError: If options is not a list or if any entry is not a ReporterOption.
+    :rtype: tuple[ReporterOptions, ...]
+    :raises SimpleBenchTypeError: If options is not an ElementCollection or if any entry is not a ReporterOption.
     """
     if options_value is None:
-        return []
-    if not isinstance(options_value, Iterable):
+        return tuple([])
+    if not is_element_collection(options_value):
         raise SimpleBenchTypeError(
-            f'Invalid options: {options_value}. Must be an iterable.', tag=_CaseErrorTag.INVALID_OPTIONS_NOT_ITERABLE
+            f'Invalid options: {options_value}. Must be an ElementCollection.',
+            tag=_CaseErrorTag.INVALID_OPTIONS_NOT_ELEMENT_COLLECTION
         )
     options_list: list[ReporterOptions] = list(options_value)
     for option in options_list:
@@ -124,7 +127,7 @@ def options(options_value: Iterable[ReporterOptions] | None) -> list[ReporterOpt
                 f'Invalid option: {option}. Must be of type ReporterOption or a sub-class.',
                 tag=_CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION,
             )
-    return options_list
+    return tuple(options_list)
 
 
 def rounds(rounds_value: int | None) -> int | None:
@@ -179,24 +182,35 @@ def timeout(timeout_value: float | None, max_time_value: float) -> float:
     return timeout_value
 
 
-def timer(timer_func: Callable[[], int] | None = None) -> Callable[[], int] | None:
+def timer(timer_func: Callable[[], int] | None = None, field_name: str = 'timer') -> Callable[[], int] | None:
     """Validate the timer for a benchmark case.
 
-    :param timer_func: The timer function to validate.
-    :return Callable[[], int] | None: The validated timer function.
+    :param timer_func: (default = :obj:`None`) The timer function to validate.
+    :type timer_func: Callable[[], int] | None
+    :param field_name: (default = 'timer') The name of the field being validated (for error messages).
+    :type field_name: str
+    :return: The validated timer function or :obj:`None` if not provided.
+    :rtype: Callable[[], int] | None
     :raises SimpleBenchTypeError: If timer function is not a callable or does not return an int.
     """
+    if not isinstance(field_name, str):
+        raise SimpleBenchTypeError(
+            f'Invalid field_name: {field_name}. Must be of type str.',
+            tag=_CaseErrorTag.INVALID_TIMER_FIELD_NAME_TYPE
+        )
     if timer_func is None:
         return None
     elif not callable(timer_func):
         raise SimpleBenchTypeError(
-            f'Invalid timer: {type(timer_func)}. Must be a callable.', tag=_CaseErrorTag.INVALID_TIMER_NOT_CALLABLE
+            f'Invalid {field_name} timer: {type(timer_func)}. Must be a callable.',
+            tag=_CaseErrorTag.INVALID_TIMER_NOT_CALLABLE
         )
 
     test_value = timer_func()
     if not isinstance(test_value, int):
         raise SimpleBenchTypeError(
-            (f'Invalid timer: {type(timer_func)}. Timer callable must return an int, got {type(test_value)}.'),
+            (f'Invalid {field_name} timer: {type(timer_func)}. Timer callable must '
+             f'return an int, got {type(test_value)}.'),
             tag=_CaseErrorTag.INVALID_TIMER_RETURN_TYPE,
         )
 
@@ -237,16 +251,25 @@ def title(action_func: FunctionRunner, title_value: str | None = None) -> str:
     )
 
 
-def runners(runner_types: Sequence[type[BenchmarkRunner]] | None) -> list[type[BenchmarkRunner]]:
+def runners(runner_types: ElementCollection[type[BenchmarkRunner]] | None) -> tuple[type[BenchmarkRunner], ...]:
     """Validate the runner class types.
 
-    :param (Sequence[type[BenchmarkRunner]] | None) runner_types: The runner class types to validate or None.
-    :return: The validated runner class types as a list or an empty list if not provided.
-    :rtype: list[type[BenchmarkRunner]]
-    :raises SimpleBenchTypeError: If `runners` is not either a sequence of `Runner` subclasses or a `None` value.
+    :param runner_types: The runner class types to validate or None.
+    :type runner_types: ElementCollection[type[BenchmarkRunner]] | None
+    :return: The validated runner class types as a tuple. If None, returns an empty tuple.
+    :rtype: tuple[type[BenchmarkRunner], ...]
+    :raises SimpleBenchTypeError: If `runners` is not either an :class:`ElementCollection`:
+        of :class:`BenchmarkRunner` subclass types or `None`.
     """
     if runner_types is None:
-        return []
+        return ()
+
+    if not is_element_collection(runner_types):
+        raise SimpleBenchTypeError(
+            f'Invalid runners: {runner_types}. Must be an ElementCollection.',
+            tag=_CaseErrorTag.INVALID_RUNNERS_NOT_ELEMENT_COLLECTION,
+        )
+
     validated_runners: list[type[BenchmarkRunner]] = []
     for runner in runner_types:
         if not issubclass(runner, BenchmarkRunner):
@@ -255,7 +278,7 @@ def runners(runner_types: Sequence[type[BenchmarkRunner]] | None) -> list[type[B
                 tag=_CaseErrorTag.INVALID_RUNNER_NOT_SUBCLASS_OF_RUNNER,
             )
         validated_runners.append(runner)
-    return validated_runners
+    return tuple(validated_runners)
 
 
 def warmup_iterations(warmup_iterations_value: int) -> int:
@@ -274,33 +297,64 @@ def warmup_iterations(warmup_iterations_value: int) -> int:
     )
 
 
-def kwargs_variations(kwargs_variations_value: dict[str, list[Any]] | None) -> dict[str, list[Any]]:
+def kwargs_variations(kwargs_variations_value: Mapping[str, ElementCollection[Any]] | None
+                      ) -> MappingProxyType[str, tuple[Mark, ...]]:
     """Validate the kwargs_variations dictionary.
 
-    Validates that the kwargs_variations is a dictionary where each key is a string
-    that is a valid Python identifier, and each value is a non-empty list.
+    Validates that the kwargs_variations is a Mapping where each key is a string
+    that is a valid Python identifier, and each value is a non-empty ElementCollection of values.
 
-    A shallow copy of the validated dictionary and the lists is performed before returning to prevent
-    external modification.
+    A shallow copy of the validated Mapping is performed and each :class:`ElementCollection` is
+    converted to a tuple of :class:`Mark` instances. Existing :class:`Mark` instances are preserved.
 
-    :param dict[str, list[Any]] | None kwargs_variations_value: The kwargs_variations dictionary to validate.
-        Defaults to {} if None.
-    :return dict[str, list[Any]]: A shallow copy of the validated kwargs_variations dictionary or {} if not provided.
-        The keys are strings that are valid Python identifiers, and the values are non-empty lists.
-        The lists may contain any type of values.
-    :raises SimpleBenchTypeError: If the kwargs_variations_value is not a dictionary or if any key is not a string
-        that is a valid Python identifier.
-    :raises SimpleBenchValueError: If any value is not a list or is an empty list.
+    Values that are not :class:`Mark` instances are converted to :class:`Mark` instances
+    with the name set to the string representation of the value and the value
+    set to the original value. If the value's string representation is not stringifiable,
+    an exception may be raised during this conversion. This is intentional to ensure
+    that all values can be represented as strings for reporting purposes.
+
+    It is the responsibility of the caller to ensure that the values in the ElementCollections
+    are of types that can be meaningfully converted to strings - using :class:`Mark` instances
+    directly is recommended for complex types.
+
+    If a value cannot be converted to a string, a :class:`SimpleBenchTypeError` is raised.
+
+    :param kwargs_variations_value: (default = {}) The kwargs_variations Mapping to validate.
+    :type kwargs_variations_value: Mapping[str, ElementCollection[Any]] | None
+    :return: A shallow copy of the validated kwargs_variations dictionary or {} if not provided.
+        The keys are strings that are valid Python identifiers, and the values are non-empty tuples.
+        The tuples may contain any type of values.
+    :rtype: MappingProxyType[str, tuple[Mark, ...]]
+    :raises SimpleBenchTypeError: If the kwargs_variations_value is not a Mapping.
+    :raises SimpleBenchTypeError: If any key is not a string.
+    :raises SimpleBenchValueError: If any key is not a valid `Python identifier <https://docs.python.org/3/library/stdtypes.html#str.isidentifier>`_.
+    :raises SimpleBenchTypeError: If any value is not an ElementCollection.
+    :raises SimpleBenchValueError: If the value is an empty ElementCollection.
+    :raises SimpleBenchTypeError: If any value cannot be converted to a string for a Mark label.
     """
     if kwargs_variations_value is None:
-        return {}
-    if not isinstance(kwargs_variations_value, dict):
+        return MappingProxyType({})
+
+    if not isinstance(kwargs_variations_value, Mapping):
         raise SimpleBenchTypeError(
-            f'Invalid kwargs_variations: {kwargs_variations_value}. Must be a dictionary.',
-            tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT,
+            f'Invalid kwargs_variations: {kwargs_variations_value}. Must be a Mapping.',
+            tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_MAPPING,
         )
     validated_dict = {}
     for key, kw_value in kwargs_variations_value.items():
+        if not is_element_collection(kw_value):
+            raise SimpleBenchTypeError(
+                f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. '
+                'Values must be an ElementCollection.',
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_ELEMENT_COLLECTION,
+            )
+        if not kw_value:
+            raise SimpleBenchValueError(
+                (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. '
+                 'Values cannot be empty ElementCollections.'),
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST,
+            )
+
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
                 f'Invalid kwargs_variations entry key: {key}. Keys must be of type str.',
@@ -311,23 +365,28 @@ def kwargs_variations(kwargs_variations_value: dict[str, list[Any]] | None) -> d
                 f'Invalid kwargs_variations entry key: {key}. Keys must be valid Python identifiers.',
                 tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER,
             )
-        if not isinstance(kw_value, list):
+
+        try:
+            # Convert each ElementCollection to a sorted tuple of Mark instances as needed
+            # By sorting here, we ensure consistent ordering for reporting later
+            marks_list: list[Mark] = []
+            for item in kw_value:
+                if isinstance(item, Mark):
+                    marks_list.append(item)
+                else:
+                    marks_list.append(Mark(label=str(item), value=item))
+            validated_dict[key] = tuple(sorted(marks_list))
+        except Exception as exc:
             raise SimpleBenchTypeError(
-                f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values must be in a list.',
-                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST,
-            )
-        if not kw_value:
-            raise SimpleBenchValueError(
-                (f'Invalid kwargs_variations entry value for entry "{key}": {kw_value}. Values cannot be empty lists.'),
-                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST,
-            )
-        validated_dict[key] = copy(kw_value)
-    return validated_dict
+                f'Invalid kwargs_variations entry value for entry "{key}": Unable to stringify values. '
+                'All values must be stringifiable for Mark labels. If using complex types, consider '
+                'using Mark instances directly to apply labels.',
+                tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_CANNOT_CONVERT_TO_STRING,
+            ) from exc
+    return MappingProxyType(validated_dict)
 
 
-def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
-    action_func: FunctionRunner, kwargs_variations_value: dict[str, Any]
-) -> FunctionRunner:
+def action_signature(action_func: FunctionRunner, kwargs_variations_value: Mapping[str, Any]) -> FunctionRunner:
     """Validate that action has correct signature.
 
     An action function must accept one of the two following formats for its parameters:
@@ -342,8 +401,10 @@ def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
 
     This is equivalent to the `ActionRunner` protocol.
 
-    :param FunctionRunner action_func: The action function to validate.
-    :param dict[str, Any] kwargs_variations_value: The kwargs variations for the case.
+    :param action_func: The action function to validate.
+    :type action_func: FunctionRunner
+    :param kwargs_variations_value: The kwargs variations for the case.
+    :type kwargs_variations_value: Mapping[str, Any]
     :return FunctionRunner: The validated action function.
     :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature or
         if the kwargs_variations is not a dictionary with valid keys or if the action signature
@@ -390,13 +451,17 @@ def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
         return action_func
 
     # Two arguments: _bench and **kwargs
+    # If **kwargs is present, no further checks are performed.
     if len(action_sig.parameters) == 2:
         # Check for **kwargs parameter
         kwargs_param = action_sig.parameters.get('kwargs')
         if kwargs_param is not None and kwargs_param.kind == inspect.Parameter.VAR_KEYWORD:
             return action_func
 
-    # 2 or more arguments, _bench and explicit keyword-only parameters
+    # 2 or more arguments, _bench and explicit keyword parameters
+    # It does not check parameter types for explicit parameters beyond _bench
+    # and does not handle optional parameters. If optional parameters are needed,
+    # the action should use the **kwargs format or pass default values explicitly.
     for param_name in action_sig.parameters:
         if param_name == '_bench':
             continue
@@ -420,26 +485,31 @@ def action_signature(  # pylint: disable=too-many-branches  # noqa: C901
 
 
 def variation_cols(
-    variation_cols_value: dict[str, str] | None, kwargs_variations_value: dict[str, list[Any]]
-) -> dict[str, str]:
+    variation_cols_value: Mapping[str, str] | None,
+    kwargs_variations_value: Mapping[str, ElementCollection[Mark]]
+) -> MappingProxyType[str, str]:
     """Validate the variation_cols dictionary.
 
-    :param dict[str, str] var_cols: The variation_cols dictionary to validate or None.
-    :param dict[str, list[Any]] kwargs_variations_value: The kwargs_variations dictionary to validate against.
-    :return dict[str, str]: A shallow copy of the validated variation_cols dictionary or {} if not provided.
+    :param variation_cols_value: The variation_cols dictionary to validate or None.
+    :type variation_cols_value: Mapping[str, str] | None
+    :param kwargs_variations_value: The kwargs_variations dictionary to validate against.
+    :type kwargs_variations_value: Mapping[str, ElementCollection[Any]]
+    :return: A shallow copy of the validated variation_cols dictionary or {} if not provided.
         Each key is a keyword argument name from `kwargs_variations_value`, and each value is a
         non-blank string to be used as the column label for that argument in reports.
-    :raises SimpleBenchTypeError: If the variation_cols is not a dictionary or if any key or
+    :rtype: MappingProxyType[str, str]
+    :raises SimpleBenchTypeError: If the variation_cols is not a Mapping or if any key or
         value is not a string.
     :raises SimpleBenchValueError: If any key is not found in `kwargs_variations_value` or if any
         value is a blank string.
     """
     if variation_cols_value is None:
-        return {}
-    if not isinstance(variation_cols_value, dict):
+        return MappingProxyType({})
+
+    if not isinstance(variation_cols_value, Mapping):
         raise SimpleBenchTypeError(
-            f'Invalid variation_cols: {variation_cols_value}. Must be a dictionary.',
-            tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT,
+            f'Invalid variation_cols: {variation_cols_value}. Must be a mapping.',
+            tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_MAPPING,
         )
     validated_dict: dict[str, str] = {}
     for key, vc_value in variation_cols_value.items():
@@ -460,7 +530,7 @@ def variation_cols(
                 tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK,
             )
         validated_dict[key] = stripped_value
-    return validated_dict
+    return MappingProxyType(validated_dict)
 
 
 def vcs_info(vcs_info_value: VCSInfo | None) -> VCSInfo | None:

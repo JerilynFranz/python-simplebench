@@ -1,6 +1,6 @@
 """Validators for session-related objects."""
 
-from typing import Callable
+from collections.abc import Callable
 
 from simplebench.exceptions import SimpleBenchTypeError
 

@@ -10,7 +10,7 @@ length, and membership tests, but not necessarily ordering or indexing.
 """
 
 from collections.abc import Mapping
-from typing import Iterator, Protocol, TypeVar, runtime_checkable
+from typing import Iterator, Protocol, TypeVar, runtime_checkable, Any
 
 T = TypeVar('T', covariant=True)
 
@@ -26,8 +26,10 @@ class ElementCollection(Protocol[T]):
     It does **not** enforce the exclusions of str, bytes, or Mapping types
     from being considered as ElementCollections by 'isinstance' checks.
 
+    This is a Python limitation, not a bug.
+
     You must explicitly check using the :func:`is_element_collection` function
-    rather than relying on :func:`isinstance`.
+    rather than relying on :func:`isinstance` to get fully correct behavior.
 
     It defines the expected methods for objects that have semantics similar to
     sequences or sets where elements can be accessed, counted, and checked for
@@ -36,7 +38,7 @@ class ElementCollection(Protocol[T]):
     Exclusions are made for types that do not fit the element container-like behavior,
     such as strings, bytes, Mappings, or pure Iterables.
 
-    Examples of such collections include built-in types
+    Examples of valid collections include built-in types
     such as lists, tuples, frozensets, sets, Set, Sequence, etc but not including
     strings, bytes, Mappings, or pure Iterables.
 
@@ -44,34 +46,44 @@ class ElementCollection(Protocol[T]):
     are expected to have collection-like characteristics: supporting iteration,
     length, and membership tests, but not necessarily ordering or indexing.
     """
-    def __iter__(self) -> Iterator[T]: ...
-    def __len__(self) -> int: ...
-    def __contains__(self, item: object) -> bool: ...
+
+    def __iter__(self) -> Iterator[T]:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def __contains__(self, item: object, /) -> bool:
+        ...
 
     @classmethod
-    def __subclasshook__(cls, C: type) -> bool:
+    def __subclasshook__(cls, C: type, /) -> bool:
         if cls is ElementCollection:
             if issubclass(C, (str, bytes, Mapping)):
                 return False
-            if all(
-                any("__" + method + "__" in B.__dict__ for B in C.__mro__)
-                for method in ("iter", "len", "contains")
-            ):
-                return True
+            # Check for required methods, but ignore __subclasshook__ itself
+            required_methods = ('__iter__', '__len__', '__contains__')
+            for method in required_methods:
+                if not any(method in B.__dict__ for B in C.__mro__):
+                    return NotImplemented
+            return True
         return NotImplemented
 
-def is_element_collection(obj: object) -> bool:
+def is_element_collection(obj: Any) -> bool:
     """Return True if obj is an ElementCollection.
 
     This function checks if the provided object conforms to the
     ElementCollection Protocol, which requires the presence of
     `__iter__`, `__len__`, and `__contains__` methods,
-    while explicitly excluding types such as strings, bytes, and Mappings.
+    while explicitly excluding types such as :class:`str`, :class:`bytes`,
+    and :class:`Mapping` that do not fit the element container-like behavior.
 
     :param obj: The object to check.
     :type obj: Any
     :return: True if obj is an ElementCollection, False otherwise.
     :rtype: bool
     """
-    return isinstance(obj, ElementCollection)and not isinstance(obj, (str, bytes, Mapping))
-
+    try:
+        return isinstance(obj, ElementCollection)and not isinstance(obj, (str, bytes, Mapping))
+    except TypeError:
+        return False

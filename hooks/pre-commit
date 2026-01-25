@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 """Pre-commit hook to run tests via Tox or UV before allowing a commit."""
 
+from collections.abc import Sequence
 import io
 import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Sequence, Union
+from typing import Union
 
 # Define types for compatibility with Python < 3.10
 ProcessResult = Union[subprocess.CompletedProcess, subprocess.CalledProcessError]

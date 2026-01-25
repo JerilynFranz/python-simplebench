@@ -24,12 +24,10 @@ from rich.table import Table
 from rich.text import Text
 
 from simplebench.case.results import Results
-from simplebench.defaults import BASE_INTERVAL_UNIT, BASE_MEMORY_UNIT, BASE_OPS_PER_INTERVAL_UNIT
 from simplebench.enums import Format, Target
-from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError
 from simplebench.metadata import Metadata
 from simplebench.metrics.metric import Metric
-from simplebench.metrics.metric_types_registry import metric_types_registry as metric_registry
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
@@ -49,7 +47,6 @@ Options: TypeAlias = ReporterOptions
 
 T = TypeVar('T')
 
-_CORE_IMPORTS_DONE: bool = False
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -175,7 +172,7 @@ class Reporter(
 
     @staticmethod
     def find_options_by_type(
-            options: ElementCollection[ReporterOptions] | None,
+            options: 'ElementCollection[ReporterOptions] | None',
             cls: type[T]) -> T | None:
         """Retrieve the first instance of type ``cls`` (if present) from a collection of :class:`~.ReporterOptions`.
 
@@ -220,10 +217,10 @@ class Reporter(
         *,
         log_metadata: Metadata,
         args: Namespace,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Optional[Path] = None,
-        session: Optional[Session] = None,
+        session: 'Optional[Session] = None',
         callback: Optional[ReporterCallback] = None,
     ) -> None:
         """Generate a report based on the benchmark results.
@@ -256,9 +253,9 @@ class Reporter(
         _validate.session(session, 'session')
         _validate.choice(choice, 'choice')
         _validate.callback(callback, 'callback')
-        _validate.supported_metrics(choice.metrics, self.supported_metrics(), 'choice.metrics')
-        _validate.supported_targets(choice.targets, self.supported_targets(), 'choice.targets')
-        _validate.supported_formats(choice.output_format, self.supported_formats(), 'choice.output_format')
+        _validate.supported_metrics(choice.metrics, self.supported_metrics, 'choice.metrics')
+        _validate.supported_targets(choice.targets, self.supported_targets, 'choice.targets')
+        _validate.supported_formats(choice.output_format, self.supported_formats, 'choice.output_format')
         _validate.callback_in_targets(choice.targets, callback, 'CALLBACK in choice.targets, callback argument')
         _validate.filesystem_in_targets(choice.targets, path, 'FILESYSTEM in choice.targets, path argument')
 
@@ -311,10 +308,10 @@ class Reporter(
         *,
         args: Namespace,
         log_metadata: Metadata,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Optional[Path] = None,
-        session: Optional[Session] = None,
+        session: 'Optional[Session] = None',
         callback: Optional[ReporterCallback] = None,
     ) -> None:
         """Orchestration hook for report generation.
@@ -359,8 +356,11 @@ class Reporter(
             args=args,
         )
 
-    def add_choice(self, choice: Choice) -> None:
+    def add_choice(self, choice: 'Choice') -> None:
         """Add a :class:`~simplebench.reporters.choice.choice.Choice` to the reporter's choices.
+
+        If the choice's metrics, targets, or formats are not supported by the reporter,
+        a :class:`~simplebench.exceptions.SimpleBenchValueError` is raised
 
         :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance to add.
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
@@ -370,9 +370,9 @@ class Reporter(
             are not supported by the reporter.
         """
         _validate.choice(choice, 'choice')
-        _validate.supported_metrics(choice.metrics, self.supported_metrics(), 'choice.metrics')
-        _validate.supported_targets(choice.targets, self.supported_targets(), 'choice.targets')
-        _validate.supported_formats(choice.output_format, self.supported_formats(), 'choice.output_format')
+        _validate.supported_metrics(choice.metrics, self.supported_metrics, 'choice.metrics')
+        _validate.supported_targets(choice.targets, self.supported_targets, 'choice.targets')
+        _validate.supported_formats(choice.output_format, self.supported_formats, 'choice.output_format')
         self.choices.add(choice)
 
     @property
@@ -437,6 +437,7 @@ class Reporter(
         """Whether output files should be appended to."""
         return self.config.file_append
 
+    @property
     def supported_metrics(self) -> frozenset[Metric]:
         """The set of supported :class:`~simplebench.metric.Metric` for the reporter.
 
@@ -448,6 +449,7 @@ class Reporter(
         """
         return self.config.metrics
 
+    @property
     def supported_targets(self) -> frozenset[Target]:
         """The set of supported :class:`~simplebench.enums.Target` for the reporter.
 
@@ -458,6 +460,7 @@ class Reporter(
         """
         return self.config.targets
 
+    @property
     def supported_formats(self) -> frozenset[Format]:
         """The set of supported :class:`~simplebench.enums.Format` for the reporter.
 
@@ -467,29 +470,6 @@ class Reporter(
         :class:`~simplebench.enums.Format` that are declared in this set.
         """
         return self.config.formats
-
-    def get_base_unit_for_metric(self, metric: Metric) -> str:
-        """Return the base unit for the specified metric.
-
-        :param metric: The metric to get the base unit for.
-        :type metric: :class:`~simplebench.metric.Metric`
-        :return: The base unit for the metric.
-        :rtype: str
-        """
-        match metric:
-            case metric_registry.OPS:
-                return BASE_OPS_PER_INTERVAL_UNIT
-            case metric_registry.TIMING:
-                return BASE_INTERVAL_UNIT
-            case metric_registry.MEMORY:
-                return BASE_MEMORY_UNIT
-            case metric_registry.PEAK_MEMORY:
-                return BASE_MEMORY_UNIT
-            case _:
-                raise SimpleBenchValueError(
-                    f'Unsupported metric: {metric} (this should never happen)',
-                    tag=_ReporterErrorTag.RUN_REPORT_UNSUPPORTED_SECTION,
-                )
 
     def get_all_stats_values(self, results: list[Results], metric: Metric) -> list[float]:
         """Gathers all primary statistical values for a given metric across multiple results.

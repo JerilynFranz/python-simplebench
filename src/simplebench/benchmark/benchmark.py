@@ -1,7 +1,7 @@
 """Decorators for simplifying benchmark case creation."""
 
-from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Callable, ParamSpec, Sequence, TypeVar
+from collections.abc import Mapping, Callable, Sequence
+from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar
 
 from simplebench import defaults
 from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner

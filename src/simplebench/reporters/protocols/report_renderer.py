@@ -10,7 +10,7 @@ from rich.text import Text
 # Disconnects any possible circular imports
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.metrics import Metric, metric_types_registry
+    from simplebench.metrics import Metric
     from simplebench.reporters.reporter.options import ReporterOptions
 
 

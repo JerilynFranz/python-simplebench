@@ -1,6 +1,7 @@
 """Validator for iterable of specified type(s)."""
 
-from typing import Any, Iterable, TypeVar, overload
+from collections.abc import Iterable
+from typing import Any, TypeVar, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators._error_tags.validators import _ValidatorsErrorTag

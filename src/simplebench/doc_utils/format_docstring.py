@@ -1,7 +1,8 @@
 """Documentation utilities."""
 
+from collections.abc import Callable
 import re
-from typing import Any, Callable, TypeVar, overload
+from typing import Any, TypeVar, overload
 
 # A single TypeVar that can be bound to any callable, which includes
 # both functions and class objects.

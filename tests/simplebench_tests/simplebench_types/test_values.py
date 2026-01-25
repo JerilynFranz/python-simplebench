@@ -1,5 +1,5 @@
 """Test for simplebench.types.values module."""
-
+# ruff: noqa: E501
 import importlib.util  # Import the utility
 import sys
 from pathlib import Path
@@ -7,13 +7,16 @@ from pathlib import Path
 import autopypath  # noqa: F401 # autopypath adjusts sys.path on import when run as script
 import pytest
 
+# TODO: Think about adding a function to autopypath to load modules directly from file paths,
+# bypassing the normal import system __init__.py files loading
+
 # --- Definitive Workaround for circular import ---
 # We cannot use `from simplebench...` as it loads the broken package.
 # Instead, we load the `values.py` module directly from its file path.
 
 # 1. Define the path to the module file.
-MODULE_PATH = Path(__file__).parent.parent.parent / 'src' / 'simplebench' / 'types' / 'values.py'
-MODULE_NAME = 'simplebench.types.values'
+MODULE_PATH = Path(__file__).parent.parent.parent.parent / 'src' / 'simplebench' / 'simplebench_types' / '_values' / '_values.py'
+MODULE_NAME = 'simplebench.simplebench_types._values.values'
 
 # 2. Use importlib to load the module from the path.
 spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)

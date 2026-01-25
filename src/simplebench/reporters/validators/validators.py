@@ -1,8 +1,9 @@
 """Validators for reporters stuff."""
 
 import inspect
+from collections.abc import Callable
 from types import UnionType
-from typing import TYPE_CHECKING, Any, Callable, TypeVar, cast, get_type_hints, overload
+from typing import TYPE_CHECKING, Any, TypeVar, cast, get_type_hints, overload
 
 from rich.table import Table
 from rich.text import Text

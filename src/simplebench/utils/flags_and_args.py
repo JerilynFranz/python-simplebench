@@ -1,8 +1,8 @@
 """Utility functions for command-line flags and argument names."""
 
+from collections.abc import Sequence
 import re
 from argparse import Namespace
-from typing import Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 

@@ -135,8 +135,9 @@ from __future__ import annotations
 
 import inspect
 import threading
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable, Final, NamedTuple, ParamSpec, Protocol, TypeAlias, TypeVar
+from typing import Any, Final, NamedTuple, ParamSpec, Protocol, TypeAlias, TypeVar
 
 # --- Exports ---
 __all__ = [

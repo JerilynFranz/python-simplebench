@@ -1,7 +1,8 @@
 """Factories for creating Results, Iteration, and Stats test objects."""
 from __future__ import annotations
 
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 from simplebench.results.iteration import Iteration
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage

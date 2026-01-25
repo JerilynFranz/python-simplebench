@@ -1,6 +1,6 @@
 """Collection of metrics selected from the registered metrics."""
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric

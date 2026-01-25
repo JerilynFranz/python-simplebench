@@ -1,15 +1,15 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
+
+from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 from simplebench.enums import Format, Target
 from simplebench.metrics import Metric
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
-
-from ....kwargs import KWArgs, NoDefaultValue
 
 
 class ReporterConfigKWArgs(KWArgs):
@@ -26,17 +26,17 @@ class ReporterConfigKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            name: str | NoDefaultValue = NoDefaultValue(),
-            description: str | NoDefaultValue = NoDefaultValue(),
-            metrics: Iterable[Metric] | NoDefaultValue = NoDefaultValue(),
-            targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
-            default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
-            subdir: str | NoDefaultValue = NoDefaultValue(),
-            file_suffix: str | NoDefaultValue = NoDefaultValue(),
-            file_unique: bool | NoDefaultValue = NoDefaultValue(),
-            file_append: bool | NoDefaultValue = NoDefaultValue(),
-            formats: Iterable[Format] | NoDefaultValue = NoDefaultValue(),
-            choices: Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue = NoDefaultValue()) -> None:
+            name: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            description: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            metrics: Iterable[Metric] | NoDefaultValue = NO_DEFAULT_VALUE,
+            targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+            default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+            subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            file_suffix: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            file_unique: bool | NoDefaultValue = NO_DEFAULT_VALUE,
+            file_append: bool | NoDefaultValue = NO_DEFAULT_VALUE,
+            formats: Iterable[Format] | NoDefaultValue = NO_DEFAULT_VALUE,
+            choices: Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a ReporterKWArgs instance. This class is used to hold keyword arguments for
         initializing a Reporter instance in tests.
 

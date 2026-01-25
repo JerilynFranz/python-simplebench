@@ -1,7 +1,8 @@
 """Utility function for generating keyword argument permutations."""
 
+from collections.abc import Sequence
 import itertools
-from typing import Any, Sequence
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
 

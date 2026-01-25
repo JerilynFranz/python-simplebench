@@ -2,7 +2,8 @@
 # pylint: disable=import-outside-toplevel
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from simplebench.enums import Format, Target
 from simplebench.metrics import Metric, metric_types_registry

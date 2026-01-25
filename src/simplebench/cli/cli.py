@@ -12,10 +12,11 @@ configure output verbosity, and specify output paths.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 import pathlib
 import sys
 from argparse import ArgumentParser, Namespace
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Optional
 
 from rich.console import Console
 

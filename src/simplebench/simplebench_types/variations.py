@@ -1,7 +1,7 @@
 """Types used by SimpleBench for variations"""
-
+from collections.abc import Mapping
 from types import MappingProxyType
-from typing import Mapping, TypeAlias
+from typing import TypeAlias
 
 VariationColsType: TypeAlias = Mapping[str, str]
 """Type alias for variation columns used in SimpleBench."""

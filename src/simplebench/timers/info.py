@@ -17,9 +17,9 @@ from __future__ import annotations
 import importlib.util
 import sys
 import time
+from collections.abc import Callable
 from functools import cache
 from types import ModuleType
-from typing import Callable
 
 import numpy as np
 

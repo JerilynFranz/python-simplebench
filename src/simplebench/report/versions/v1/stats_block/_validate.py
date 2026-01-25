@@ -1,7 +1,7 @@
 """Validation functions for V1 StatsBlock properties."""
 
+from collections.abc import Sequence
 import re
-from typing import Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag

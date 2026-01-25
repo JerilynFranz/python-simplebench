@@ -48,6 +48,7 @@ from .metrics_object import (
     ImmutableMetricsObjectDict,
     MetricDataTypes,
     MetricDictTypes,
+    MetricItem,
     MetricsObject,
     MetricsObjectData,
     MetricsObjectDict,
@@ -68,6 +69,8 @@ from .raw_data_block import (
     RawDataBlockDict,
     RawDataBlockSchema,
 )
+from .report import Report, ReportSchema
+from .results_info import ResultsInfo, ResultsInfoSchema
 from .stats_block import StatsBlock, StatsBlockSchema
 from .system_info import (
     ImmutableSystemInfoData,
@@ -86,8 +89,6 @@ from .value_block import (
     ValueBlockSchema,
 )
 from .vcs_info import ImmutableVCSInfoData, ImmutableVCSInfoDict, VCSInfo, VCSInfoData, VCSInfoDict, VCSInfoSchema
-from .report import Report, ReportSchema
-from .results_info import ResultsInfo, ResultsInfoSchema
 
 __all__ = [
     'CPUInfo',
@@ -124,6 +125,7 @@ __all__ = [
     'MetricsObjectDict',
     'MetricDataTypes',
     'MetricDictTypes',
+    'MetricItem',
     'ImmutableMetricsObjectData',
     'ImmutableMetricsObjectDict',
     'ImmutableMetricDataTypes',

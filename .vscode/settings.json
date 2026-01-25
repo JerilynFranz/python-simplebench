@@ -10,9 +10,9 @@
   "python.testing.unittestEnabled": false,
   "python.testing.cwd": "${workspaceFolder}",
   "python.venvPath": [
-    "venv"
+    ".venv"
   ],
-  "python.defaultInterpreterPath": "${workspaceFolder}/venv/bin/python",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
   "python.terminal.activateEnvInCurrentTerminal": true,
   "explorer.autoRevealExclude": {
     ".mypy_cache": true,
@@ -46,10 +46,10 @@
   },
   "markiscodecoverage.searchCriteria": "${workspace_dir}/coverage/*dat",
   "terminal.integrated.env.linux": {
-    "PYTHONPATH": "${workspaceFolder}/src;${workspaceFolder}/tests"
+    "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
   },
   "terminal.integrated.env.osx": {
-    "PYTHONPATH": "${workspaceFolder}/src;${workspaceFolder}/tests"
+    "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
   },
   "terminal.integrated.env.windows": {
     "PYTHONPATH": "${workspaceFolder}\\src;${workspaceFolder}\\tests"
@@ -61,7 +61,7 @@
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
   "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
   "mypy-type-checker.preferDaemon": true,
-  "python.terminal.useEnvFile": true,
+  "python.terminal.useEnvFile": false,
   "python-env.workspaceSearchPaths": [
     ".venv"
   ],

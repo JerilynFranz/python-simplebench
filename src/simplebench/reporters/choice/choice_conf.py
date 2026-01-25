@@ -1,6 +1,6 @@
 """``ChoiceConf()`` for reporters."""
-from collections.abc import Hashable
-from typing import Any, Iterable, Sequence
+from collections.abc import Hashable, Iterable, Sequence
+from typing import Any
 
 from typechecked import Immutable
 

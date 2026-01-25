@@ -12,12 +12,12 @@ from rich.console import Console
 from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case, Results
 from simplebench.case._error_tags import _CaseErrorTag
+from simplebench.case.results import Iteration
 from simplebench.enums import Format, Verbosity
 from simplebench.exceptions import SimpleBenchBenchmarkError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
-from simplebench.case.results import Iteration
 from simplebench.session import Session
 
 from .kwargs import CaseKWArgs
@@ -620,7 +620,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           kwargs_variations='not_a_dict'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_DICT)),
+        exception_tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_NOT_MAPPING)),
     idspec("INIT_033", TestAction(
         name="Invalid (contains key that is not type str) type for kwargs_variations parameter",
         action=Case,

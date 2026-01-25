@@ -5,9 +5,10 @@ powered by the simplebench framework.
 
 from __future__ import annotations
 
+from collections.abc import Mapping, Callable
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import pytest
 from rich.console import Console
@@ -21,6 +22,7 @@ from simplebench.reporters.json import JSONReporter
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.session import Session
+from simplebench.simplebench_types import ElementCollection
 from simplebench.vcs import VCSInfo
 
 log = logging.getLogger(__name__)
@@ -218,7 +220,7 @@ class BenchmarkRegistrar:
     :raises SimpleBenchValueError: If any parameter has an invalid value.
     """
 
-    def __init__(self, sb_session: Session, pytest_node: Item):
+    def __init__(self, sb_session: Session, pytest_node: Item) -> None:
         self._session = sb_session
         self._pytest_node = pytest_node
 
@@ -238,11 +240,11 @@ class BenchmarkRegistrar:
         min_time: float = defaults.DEFAULT_MIN_TIME,
         max_time: float = defaults.DEFAULT_MAX_TIME,
         timeout: float | int | None = None,
-        variation_cols: Optional[dict[str, str]] = None,
-        kwargs_variations: Optional[dict[str, list[Any]]] = None,
-        runners: Optional[list[type[BenchmarkRunner]]] = None,
+        variation_cols: Optional[Mapping[str, str]] = None,
+        kwargs_variations: Optional[Mapping[str, list[Any]]] = None,
+        runners: Optional[ElementCollection[type[BenchmarkRunner]]] = None,
         callback: Optional[ReporterCallback] = None,
-        options: Optional[Iterable[ReporterOptions]] = None,
+        options: Optional[ElementCollection[ReporterOptions]] = None,
     ) -> None:
         """
         This is called by the user (`benchmark(...)`). Its signature mirrors the

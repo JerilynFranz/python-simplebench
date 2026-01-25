@@ -1,5 +1,6 @@
 """Choice KWArgs package for SimpleBench tests."""
-from typing import Iterable
+
+from collections.abc import Iterable
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf

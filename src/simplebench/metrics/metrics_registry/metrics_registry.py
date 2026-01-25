@@ -16,7 +16,7 @@ The registry itself is a global variable named `registry`
 and is an instance of :class:`simplebench.metric.Metrics`.
 """
 
-from typing import Iterable
+from collections.abc import Iterable
 
 import simplebench.metrics.standard_metrics as standard_metrics
 from simplebench.exceptions import SimpleBenchTypeError

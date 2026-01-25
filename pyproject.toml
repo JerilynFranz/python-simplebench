@@ -327,6 +327,7 @@ test = [
     "pytest-cov>=6.2.1",
     "coverage>=7.10.6",
     "autopypath>=1.0.1",
+    "pytest-mypy-plugins>=3.0.0"
 ]
 
 # Dependencies for linting and code style

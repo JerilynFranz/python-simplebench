@@ -1,9 +1,10 @@
 """Factories for creating argparse-related test objects."""
 from __future__ import annotations
 
+from collections.abc import Sequence, Iterable
 import re
 from argparse import ArgumentParser, Namespace
-from typing import Any, Iterable, Sequence
+from typing import Any
 
 from simplebench.enums import Target
 

@@ -109,7 +109,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
         metric = validate_type(metric, Metric, 'metric', _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options', _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
-        base_unit = self.get_base_unit_for_metric(metric=metric)
+        base_unit = metric.metric_type.unit
         results: list[Results] = case.results
 
         all_numbers = self.get_all_stats_values(results=results, metric=metric)
@@ -173,7 +173,7 @@ class ScatterPlotReporter(MatPlotLibReporter):
         metric = validate_type(metric, Metric, 'metric', _ScatterPlotReporterErrorTag.RENDER_INVALID_SECTION)
         options = validate_type(options, Options, 'options', _ScatterPlotReporterErrorTag.RENDER_INVALID_OPTIONS)
 
-        base_unit = self.get_base_unit_for_metric(metric=metric)
+        base_unit = metric.metric_type.unit
         results: list[Results] = case.results
 
         all_numbers = self.get_all_stats_values(results=results, metric=metric)

@@ -8,7 +8,9 @@ from simplebench.exceptions import ErrorTag
 class _MarkErrorTag(ErrorTag):
     """Error tags for the Mark module."""
 
-    NAME_ARG_TYPE = 'NAME_ARG_TYPE'
-    """Invalid name argument passed to the Mark() constructor - must be a string"""
-    NAME_ARG_EMPTY = 'NAME_ARG_EMPTY'
-    """Invalid name argument passed to the Mark() constructor - must not be an empty string"""
+    LABEL_ARG_TYPE = 'LABEL_ARG_TYPE'
+    """Invalid label argument passed to the Mark() constructor - must be a string"""
+    LABEL_ARG_EMPTY = 'LABEL_ARG_EMPTY'
+    """Invalid label argument passed to the Mark() constructor - must not be an empty string"""
+    LABEL_ARG_NAN = 'LABEL_ARG_NAN'
+    """Invalid label argument passed to the Mark() constructor - must not be NaN"""

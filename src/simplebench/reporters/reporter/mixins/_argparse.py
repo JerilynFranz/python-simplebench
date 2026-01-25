@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from argparse import ArgumentParser, Namespace
-from typing import Iterable
 
 from simplebench.enums import FlagType, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError

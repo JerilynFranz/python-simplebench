@@ -7,7 +7,16 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions."""
-
+    INVALID_TIMER_FIELD_NAME_TYPE = 'INVALID_TIMER_FIELD_NAME_TYPE'
+    """The field_name argument passed to the timer validation function is not of type str."""
+    INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_CANNOT_CONVERT_TO_STRING = (
+        'INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_CANNOT_CONVERT_TO_STRING')
+    """The kwargs_variations dictionary contains a value that cannot be converted to a string."""
+    INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_ELEMENT_COLLECTION = (
+        'INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_ELEMENT_COLLECTION')
+    """The kwargs_variations dictionary contains a value that is not an ElementCollection."""
+    INVALID_RUNNERS_NOT_ELEMENT_COLLECTION = 'INVALID_RUNNERS_NOT_ELEMENT_COLLECTION'
+    """The runners argument passed to the Case() constructor is not an ElementCollection."""
     INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL = 'INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL'
     """The include_raw_data argument passed to Case.report() is not a bool."""
     HAVE_NOT_RUN_CASE = 'HAVE_NOT_RUN_CASE'
@@ -88,15 +97,17 @@ class _CaseErrorTag(ErrorTag):
     INVALID_TEARDOWN = 'INVALID_TEARDOWN'
     """Something other than a callable (function or method) or None was passed to the Case() constructor as
     the teardown arg"""
-    INVALID_VARIATION_COLS_NOT_DICT = 'INVALID_VARIATION_COLS_NOT_DICT'
-    """Something other than a dictionary was passed to the Case() constructor as the variation_cols arg"""
+    INVALID_VARIATION_COLS_NOT_MAPPING = 'INVALID_VARIATION_COLS_NOT_MAPPING'
+    """Something other than a :class:`~collections.abc.Mapping` was passed to the
+    Case() constructor as the variation_cols arg"""
     INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS = 'INVALID_VARIATION_COLS_ENTRY_NOT_STRINGS'
     """Something other than string keys and string or number values were found in the dictionary passed to
     the Case() constructor as the variation_cols arg"""
-    INVALID_KWARGS_VARIATIONS_NOT_DICT = 'INVALID_KWARGS_VARIATIONS_NOT_DICT'
-    """Something other than a dictionary was passed to the Case() constructor as the kwargs_variations arg"""
-    INVALID_OPTIONS_NOT_ITERABLE = 'INVALID_OPTIONS_NOT_ITERABLE'
-    """Something other than an iterable was passed to the Case() constructor as the options arg"""
+    INVALID_KWARGS_VARIATIONS_NOT_MAPPING = 'INVALID_KWARGS_VARIATIONS_NOT_MAPPING'
+    """Something other than a :class:`~collections.abc.Mapping` was passed to the Case()
+    constructor as the kwargs_variations arg"""
+    INVALID_OPTIONS_NOT_ELEMENT_COLLECTION = 'INVALID_OPTIONS_NOT_ELEMENT_COLLECTION'
+    """Something other than an ElementCollection was passed to the Case() constructor as the options arg"""
     INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION = 'INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION'
     """Something other than a ReporterOptions instance was found in the iterable passed to the Case() constructor
     as the options arg"""
@@ -125,8 +136,6 @@ class _CaseErrorTag(ErrorTag):
     """The kwargs_variations dictionary contains a key that is not type str"""
     INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER = 'INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER'
     """The kwargs_variations dictionary contains a key that is not a valid Python identifier."""
-    INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST = 'INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST'
-    """The kwargs_variations dictionary contains a value that is not a list."""
     INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST = 'INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_EMPTY_LIST'
     """The kwargs_variations dictionary contains a value that is an empty list."""
     INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS = 'INVALID_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS'

@@ -10,8 +10,8 @@ MetricTypes object.
 """
 
 import re
-from collections.abc import MutableMapping
-from typing import Any, Iterable, Iterator
+from collections.abc import MutableMapping, Iterable, Iterator
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchDuplicateKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics.metric_type import MetricType

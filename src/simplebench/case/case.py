@@ -1,11 +1,12 @@
 """Benchmark case declaration and execution."""
 import inspect
 import itertools
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from copy import copy
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from types import MappingProxyType
+from typing import Any
 
 import simplebench.defaults as defaults
 import simplebench.vcs as vcs
@@ -24,6 +25,7 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.session import Session
+from simplebench.simplebench_types import ElementCollection
 from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_bool
 
@@ -32,6 +34,7 @@ from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 from .mark import Mark
 from .results import Results
+from .state import CaseState
 
 
 def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str:
@@ -193,6 +196,7 @@ class Case:
         '_epoch_timestamp',
         '_machine_info',
         '_node',
+        '_state',
     )
 
     @format_docstring(
@@ -203,12 +207,12 @@ class Case:
     def __init__(
         self,
         *,
-        benchmark_id: Optional[str] = None,
-        vcs_info: Optional[vcs.VCSInfo] = None,
+        benchmark_id: str | None = None,
+        vcs_info: vcs.VCSInfo | None = None,
         action: FunctionRunner,
         group: str = 'default',
-        title: Optional[str] = None,
-        description: Optional[str] = None,
+        title: str | None = None,
+        description: str | None = None,
         iterations: int = defaults.DEFAULT_ITERATIONS,
         warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
         rounds: int | None = None,
@@ -217,16 +221,16 @@ class Case:
         min_time: float = defaults.DEFAULT_MIN_TIME,
         max_time: float = defaults.DEFAULT_MAX_TIME,
         timeout: float | int | None = None,
-        variation_cols: Optional[dict[str, str]] = None,
-        kwargs_variations: Optional[dict[str, list[Any]]] = None,
-        runners: Sequence[type[BenchmarkRunner]] | None = None,
+        variation_cols: Mapping[str, str] | None = None,
+        kwargs_variations: Mapping[str, ElementCollection[Any]] | None = None,
+        runners: ElementCollection[type[BenchmarkRunner]] | None = None,
         callback: ReporterCallback | None = None,
-        options: Optional[Iterable[ReporterOptions]] = None,
+        options: ElementCollection[ReporterOptions] | None = None,
         node: str | None = '',
     ) -> None:
         """The only REQUIRED parameter is `action`.
 
-        :param str | None benchmark_id: (default = :obj:`None`) An optional unique identifier for the benchmark case.
+        :param benchmark_id: (default = :obj:`None`) An optional unique identifier for the benchmark case.
 
             If None, a transient ID is assigned. This is meant to provide a stable identifier for the
             benchmark case across multiple runs for tracking purposes. If not provided,
@@ -237,81 +241,117 @@ class Case:
 
             Benchmark ids must be unique within a benchmarking session and stable across runs
             or they cannot be used for tracking benchmark results over time.
-        :param vcs.VCSInfo | None vcs_info: (default = :obj:`None`) An optional vcs.VCSInfo
+        :type benchmark_id: str | :obj:`None`
+
+        :param vcs_info: (default = :obj:`None`) An optional vcs.VCSInfo
             instance representing the state of the VCS repository.
 
             If not provided, the vcs.VCSInfo will be automatically retrieved from the current
             context of the caller if the code is part of a VCS repository.
-        :param FunctionRunneraction: The function to perform the benchmark.
+        :type vcs_info: :class:`vcs.VCSInfo` | :obj:`None`
 
-            This function must accept a `bench` instance of type BenchmarkRunner and
-            arbitrary keyword arguments ('**kwargs'). See the ``ActionRunner``
-            protocol for the exact signature required. It must return a `Results` object.
-        :param str group: (default = 'default')The benchmark reporting group to which the benchmark case belongs.
+        :param action: The function to perform the benchmark.
+
+            This function must accept a `_bench` instance of type :class:`BenchmarkRunner` and
+            arbitrary keyword arguments (``**kwargs``). See the :class:`ActionRunner`
+            protocol for the exact signature required. It must return a :class:`Results` object.
+        :type action: :class:`FunctionRunner`
+
+        :param group: (default = 'default')The benchmark reporting group to which the benchmark case belongs.
 
             Benchmarks with the same group can be selected for execution without running
             other benchmarks. If not specified, the default group 'default' is used.
-        :param str | None title: (default = :obj:`None`) The title of the benchmark case.
+        :type group: Optional[str]
+
+        :param title: (default = :obj:`None`) The title of the benchmark case.
+        :type title: str | :obj:`None`
 
             If None, the name of the action function will be used. Cannot be blank.
-        :param str | None description: (default = :obj:`None`) A brief description of the benchmark case.
+
+        :param description: (default = :obj:`None`) A brief description of the benchmark case.
 
             If None, the docstring of the action function will be used, or
             '(no description)' if no docstring is available. Cannot be blank.
-        :param int iterations: (default = :data:`~simplebench.defaults.DEFAULT_ITERATIONS`) The
+        :type description: str | :obj:`None`
+
+        :param iterations: (default = :data:`~simplebench.defaults.DEFAULT_ITERATIONS`) The
             minimum number of iterations to run for the benchmark.
-        :param int warmup_iterations: (default = :data:`~simplebench.defaults.DEFAULT_WARMUP_ITERATIONS`) The
+        :type iterations: int
+
+        :param warmup_iterations: (default = :data:`~simplebench.defaults.DEFAULT_WARMUP_ITERATIONS`) The
             number of warmup iterations to run before the benchmark.
-        :param int | None rounds: (default = :obj:`None`) The number of rounds to run for the benchmark.
+        :type warmup_iterations: int
+
+        :param rounds: (default = :obj:`None`) The number of rounds to run for the benchmark.
 
             Rounds are multiple runs of calls to the action within an iteration to mitigate timer
             quantization, loop overhead, and other measurement effects for very fast actions. Setup and teardown
             functions are called only once per iteration (all rounds in the same iteration share the same
             setup/teardown context).
 
-            If None, rounds will be auto-calibrated based on the precision and overhead of the timer function
+            If :obj:`None`, rounds will be auto-calibrated based on the precision and overhead of the timer function
             and the expected execution time of the action. If the action is very fast (e.g., under
             10 microseconds), rounds will be set to a higher value to improve measurement accuracy
             with the goal of reducing timer quantization errors. If the action is slower, rounds
             will be set lower values.
 
             If specified, it must be a positive integer.
-        :param Optional[Callable[[], int]] timer: The timer function to use for the benchmark. If
-            not specified, the default timer from the :class:`Session` (if set) or
+        :type rounds: int | :obj:`None`
+
+        :param timer: (default = :obj:`None`) The timer function to use for the benchmark.
+
+            If :obj:`None`, when tests are run, the timer from the :class:`Session` instance (if set) or
             from :data:`~simplebench.defaults.DEFAULT_TIMER` ({DEFAULT_TIMER})
             is used by benchmark runners that require a timer.
 
             The timer function should be a callable that returns an int representing the
             current wallclock time.
-        :param Optional[Callable[[], int]] cpu_timer: The CPU timer function to use for the benchmark.
-            If not specified, the default CPU timer from the :class:`Session` (if set) or
+        :type timer: Callable[[], int] | :obj:`None`
+
+        :param cpu_timer: (default = :obj:`None`)
+            The CPU timer function to use for the benchmark.
+
+            If :obj:`None`, where tests are run, the cpu_timer from the :class:`Session` instance (if set) or
             from :data:`~simplebench.defaults.DEFAULT_CPU_TIMER` ({DEFAULT_CPU_TIMER})
             is used by benchmark runners that require a CPU timer.
 
             The CPU timer function should be a callable that returns an int representing the
             current CPU time.
-        :param float min_time: The minimum time for the benchmark to run in seconds. Its
-            reference depends on the timer used, but by default it is wall-clock time.
-        :param float max_time: The maximum time for the benchmark run in seconds. Its reference
-            depends on the timer used, but by default it is wall-clock time.
-        :param float | int | None timeout: (default = :obj:`None`) How long to wait before timing
+        :type cpu_timer: Callable[[], int] | :obj:`None`
+
+        :param min_time: (default = :data:`defaults.DEFAULT_MIN_TIME`) ({DEFAULT_MIN_TIME}) The minimum time
+            for the benchmark to run in seconds. Its reference depends on the timer used,
+            but by default it is wall-clock time.
+        :type min_time: float
+
+        :param max_time: (default = :data:`defaults.DEFAULT_MAX_TIME`) ({DEFAULT_MAX_TIME}) The maximum time
+            for the benchmark run in seconds. Its reference depends on the timer used,
+            but by default it is wall-clock time.
+        :type max_time: float
+
+        :param timeout: (default = :obj:`None`) How long to wait before timing
             out a benchmark run (in seconds). It is measured as wall-clock time.
 
-            If None, it waits the full duration of ``max_time`` plus the default timeout grace period
-            ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a positive float or int that is greater
-            than ``max_time`` if provided. This is a safety mechanism to prevent runaway benchmarks.
+            If :obj:`None`, it waits the full duration of :attr:`~simplebench.case.Case.max_time` plus the default
+            timeout grace period ({DEFAULT_TIMEOUT_GRACE_PERIOD} seconds). It must be a positive
+            float or int that is greater than :attr:`~simplebench.case.Case.max_time` if provided.
+            This is a safety mechanism to prevent runaway benchmarks.
 
             If the timeout is reached during a run, a :class:`~simplebench.exceptions.SimpleBenchTimeoutError``
-            will be raised, and the benchmark case's state to TIMED_OUT.
-        :param Optional[dict[str, str]] variation_cols: (default = {}) kwargs to be used
-            for cols to denote kwarg variations.
+            will be raised, and the benchmark case's state changed to TIMED_OUT.
+        :type timeout: float | int | :obj:`None`
+
+        :param variation_cols: (default = :obj:`None`) Keyword arguments to be used for column labels
+            to denote kwarg variations.
 
             Each key is a keyword argument name, and the value is the column label to use for that
-            argument. Only keywords that are also in `kwargs_variations` can be used here. These
-            fields will be added to the output of reporters that support them as columns of data
-            with the specified labels.
+            argument. Only keywords that are also in :attr:`~simplebench.case.Case.kwargs_variations`
+            can be used here. These fields will be added to the output of reporters that support
+            them as columns of data with the specified labels.
 
-            If None, an empty dict is used.
+            If not provided or passed as :obj:`None`, an empty dict is used internally.
+        :type variation_cols: Mapping[str, str] | :obj:`None`
+
         :param Optional[dict[str, list[Any]]] kwargs_variations: (default = {}) A map
             of keyword argument names to a list of possible values for that argument.
 
@@ -387,65 +427,38 @@ class Case:
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
         # kwargs_variations processed first so it can be used for cross-validation of action signature
-        self._kwargs_variations: dict[str, list[Any]] = validate.kwargs_variations(kwargs_variations)
+        self._kwargs_variations: MappingProxyType[str, tuple[Mark, ...]] = validate.kwargs_variations(kwargs_variations)
         self._group: str = validate.group(group)
-        self._action: FunctionRunner = validate.action_signature(action, self._kwargs_variations)
+        self._action: FunctionRunner = validate.action_signature(action, self.kwargs_variations)
         self._title: str = validate.title(self._action, title)
         self._description: str = validate.description(self._action, description)
         self._iterations: int = validate.iterations(iterations)
         self._warmup_iterations: int = validate.warmup_iterations(warmup_iterations)
         self._rounds: int | None = validate.rounds(rounds)
-        self._timer: Callable[[], int] | None = validate.timer(timer)
-        self._cpu_timer: Callable[[], int] | None = validate.timer(cpu_timer)
+        self._timer: Callable[[], int] | None = validate.timer(timer, 'timer')
+        self._cpu_timer: Callable[[], int] | None = validate.timer(cpu_timer, 'cpu_timer')
         self._min_time: float = validate.min_time(min_time)
         self._max_time: float = validate.max_time(max_time)
-        validate.time_range(self._min_time, self._max_time)
-        self._timeout: float = validate.timeout(timeout, self._max_time)
+        validate.time_range(self.min_time, self.max_time)
+        self._timeout: float = validate.timeout(timeout, self.max_time)
         self._benchmark_id = validate.benchmark_id(benchmark_id or generate_benchmark_id(self, action))
-        self._variation_cols: dict[str, str] = validate.variation_cols(variation_cols, self._kwargs_variations)
-        self._variation_marks: dict[str, tuple[str, ...]] = self._generate_variation_marks()
-        self._runners: list[type[BenchmarkRunner]] = validate.runners(runners)
+        self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(
+            variation_cols, self.kwargs_variations)
+        self._runners: tuple[type[BenchmarkRunner], ...] = validate.runners(runners)
         self._callback: ReporterCallback | None = validate_reporter_callback(callback, allow_none=True)
-        self._options: list[ReporterOptions] = validate.options(options)
-        self._results: list[Results] = []  # No validation needed here
+        self._options: tuple[ReporterOptions, ...] = validate.options(options)
         self._vcs_info: vcs.VCSInfo | None = validate.vcs_info(vcs_info or vcs.get_vcs_info())
+        self._node: str = validate.node(node)
 
         # internal state
-        self._report_cache: Report | None = None
-        self._report_cache_raw_data: Report | None = None
+        self._report_cache: reports.Report | None = None
+        self._report_cache_raw_data: reports.Report | None = None
         self._benchmarks_have_run: bool = False
         self._timestamp: str = ''
         self._epoch_timestamp: float = 0.0
         self._machine_info: reports.MachineInfo | None = None
-
-    def _generate_variation_marks(self) -> dict[str, tuple[str, ...]]:
-        """Generate variation marks for the kwarg variations.
-
-        Each variation value is converted to a string representation suitable for use as a mark value.
-        The variation marks are sorted for consistent ordering in reports.
-
-        :return: A dictionary mapping variation column names to mark representation tuples.
-        """
-        variation_marks: dict[str, tuple[str, ...]] = {}
-        for key, values in self.kwargs_variations.items():
-            # Defer sorting until after all values are converted to a consistent type.
-            # This simplifies the logic and avoids type-hinting issues.
-            if all(isinstance(value, (int, float)) for value in values):
-                # For numeric types, sort them numerically before converting to strings
-                # to ensure a natural sort order (e.g., 1, 2, 10 instead of 1, 10, 2).
-                value_marks = [str(v) for v in sorted(values)]
-            else:
-                # For mixed or non-numeric types, convert all to strings first, then sort.
-                processed_values: list[str] = []
-                for value in values:
-                    if isinstance(value, Mark):
-                        processed_values.append(value.name)
-                    else:
-                        processed_values.append(str(value))
-                processed_values.sort()
-                value_marks = processed_values
-            variation_marks[key] = tuple(value_marks)
-        return variation_marks
+        self._state: CaseState = CaseState.PENDING
+        self._results: list[Results] = []  # No validation needed here
 
     @property
     def group(self) -> str:
@@ -567,7 +580,7 @@ class Case:
     def timer(self) -> Callable[[], int] | None:
         """The timer function to use for the benchmark.
 
-        If None, the default timer from the Session() (if set) or from
+        If :obj:`None`, the default timer from the Session() (if set) or from
         `simplebench.defaults.DEFAULT_TIMER` is used by benchmark runners.
 
         The timer function should be a callable that returns an int representing the current time.
@@ -601,7 +614,7 @@ class Case:
         return self._timeout
 
     @property
-    def variation_cols(self) -> dict[str, str]:
+    def variation_cols(self) -> MappingProxyType[str, str]:
         """Keyword arguments to be used for columns to denote kwarg variations.
 
         Each key is a keyword argument name, and the value is the column label to use for that argument.
@@ -614,13 +627,12 @@ class Case:
         Updating variation_cols does not automatically update kwargs_variations, and vice versa.
 
         :return: A dictionary mapping keyword argument names to column labels.
-        :rtype: dict[str, str]
+        :rtype: MappingProxyType[str, str]
         """
-        # shallow copy to prevent external modification of internal dict
-        return copy(self._variation_cols) if self._variation_cols is not None else {}
+        return self._variation_cols
 
     @property
-    def kwargs_variations(self) -> dict[str, list[Any]]:
+    def kwargs_variations(self) -> MappingProxyType[str, tuple[Mark, ...]]:
         """Variations of keyword arguments for the benchmark.
 
         Each key is a keyword argument name, and the value is the column label to use for that argument.
@@ -651,22 +663,19 @@ class Case:
         The action function will be called with these keyword arguments accordingly and must
         accept them.
         """
-        if self._kwargs_variations is None:
-            return {}
-        # shallow copy to prevent external modification of internal dict
-        return {key: list(value) for key, value in self._kwargs_variations.items()}
+        return self._kwargs_variations
 
     @property
-    def variation_marks(self) -> dict[str, tuple[str, ...]]:
+    def variation_marks(self) -> MappingProxyType[str, tuple[str, ...]]:
         """Return marks for the kwarg variations.
 
         :return: A dictionary mapping 'kwarg_name=kwarg_value' to Mark objects.
         """
         # shallow copy to prevent external modification of internal dict
-        return copy(self._variation_marks) if self._variation_marks is not None else {}
+        return self._variation_marks
 
     @property
-    def runners(self) -> list[type[BenchmarkRunner]]:
+    def runners(self) -> tuple[type[BenchmarkRunner], ...]:
         """A list of runners for the benchmark.
 
         If an empty list, the default SimpleRunner will be used. If multiple runners are specified,
@@ -709,13 +718,13 @@ class Case:
         return copy(self._results)
 
     @property
-    def options(self) -> list[ReporterOptions]:
+    def options(self) -> tuple[ReporterOptions, ...]:
         """A list of additional options for the benchmark case."""
         # shallow copy to prevent external modification of internal list
-        return copy(self._options) if self._options is not None else []
+        return self._options
 
     @property
-    def expanded_kwargs_variations(self) -> list[dict[str, Any]]:
+    def expanded_kwargs_variations(self) -> tuple[MappingProxyType[str, Mark], ...]:
         """All combinations of keyword arguments from the specified kwargs_variations.
 
         A mapping of keyword argument names to their variations.
@@ -747,11 +756,16 @@ class Case:
         accept them.
 
         :return: A list of dictionaries, each representing a unique combination of keyword arguments.
-        :rtype: list[dict[str, Any]]
+        :rtype: tuple[MappingProxyType[str, Mark], ...]
         """
-        keys = self.kwargs_variations.keys()
-        values = [self.kwargs_variations[key] for key in keys]
-        return [dict(zip(keys, v, strict=True)) for v in itertools.product(*values)]
+        keys = sorted(self.kwargs_variations.keys())
+        values_list = [self.kwargs_variations[key] for key in keys]
+        combinations = []
+        for v in itertools.product(*values_list):
+            kwargs: MappingProxyType[str, Mark] = MappingProxyType(
+                { key: value for key, value in zip(keys, v, strict=True) })
+            combinations.append(kwargs)
+        return tuple(combinations)
 
     @property
     def timestamp(self) -> str:
@@ -809,7 +823,7 @@ class Case:
         if not runners_list:
             runners_list = defaults.default_runners()
 
-        kwargs: dict[str, Any]
+        kwargs: MappingProxyType[str, Mark]
         # We loop over variations in the outside loop so that progress is reported
         # grouped by each variation run, which is more user-friendly than reporting progress
         # grouped by each runner.
@@ -894,6 +908,23 @@ class Case:
         :return: True if the benchmarks have been run, False otherwise.
         """
         return self._benchmarks_have_run
+
+    @property
+    def state(self) -> CaseState:
+        """The current state of the benchmark case.
+
+        It returns the state of the benchmark case as a CaseState enum value.
+
+        - :data:`CaseState.PENDING`: The benchmark case has not been run yet.
+        - :data:`CaseState.RUNNING`: The benchmark case is currently being run.
+        - :data:`CaseState.COMPLETED`: The benchmark case has been run successfully.
+        - :data:`CaseState.FAILED`: The benchmark case encountered an error during execution.
+        - :data:`CaseState.TIMED_OUT`: The benchmark case timed out during execution.
+
+        :return: The CaseState enum value representing the current state of the benchmark case.
+        :rtype: :class:`CaseState`
+        """
+        return self._state
 
     def report(self, include_raw_data: bool = False) -> reports.Report:
         """Returns the benchmark case and results as a Report object.

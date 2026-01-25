@@ -1,10 +1,11 @@
 """TestSpec framework - TestSet class."""
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any, Callable, NoReturn, Optional, Union
+from typing import Any, NoReturn, Optional, Union
 
 from .base import TestSpec
 from .constants import NO_OBJ_ASSIGNED

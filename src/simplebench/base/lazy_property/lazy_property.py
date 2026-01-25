@@ -1,8 +1,9 @@
 """LazyProperty descriptor module"""
 
+from collections.abc import Callable
 import inspect
 from threading import Lock
-from typing import Callable, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from simplebench.exceptions import SimpleBenchTypeError
 

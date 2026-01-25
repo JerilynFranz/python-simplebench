@@ -16,7 +16,7 @@ version 1: :class:`~simplebench.report.versions.v1.StatsBlockSchema`.
     These types ensure proper validation and serialization of StatsBlock data
 """
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.simplebench_types import Never, NotRequired, Required

@@ -1,8 +1,9 @@
 """Validation functions for V1 report version."""
 
+from collections.abc import Sequence
 import re
 from types import MappingProxyType
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _ReportErrorTag

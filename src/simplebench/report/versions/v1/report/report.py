@@ -14,8 +14,8 @@ The version 1 report is the first stable version of the report format
 and serves as a foundation for future versions.
 """
 
-from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Sequence
+from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Any
 
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report.base import BaseReport, JSONSchema

@@ -278,7 +278,7 @@ class Results:
         Returns:
             results_info: A ResultsInfo object containing the summary of the benchmark results.
         """
-        metrics: dict[str, reports.MetricsObject.MetricItem] = {}
+        metrics: dict[str, reports.MetricItem] = {}
         for metric in self.iterations:
             match metric.metric_type:
                 case MetricCategory.STATISTICAL:

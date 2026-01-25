@@ -13,7 +13,6 @@ from simplebench.metrics import Metric, MetricsCollection
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.config import ReporterConfig
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.reporters.reporter.reporter import Reporter
 from simplebench.simplebench_types import is_element_collection
 from simplebench.type_proxies import is_case, is_choice, is_session
 
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session.session import Session
+    from simplebench.reporters.reporter.reporter import Reporter
 
 # No need to export any names from this module directly
 __all__ = []
@@ -108,7 +108,7 @@ def config(value: Any, field_name: str = 'config') -> ReporterConfig:
     return value
 
 
-def case(value: Any, field_name: str = 'case') -> Case:
+def case(value: Any, field_name: str = 'case') -> 'Case':
     """Validate that the provided value is a :class:`~simplebench.case.Case` instance.
 
     :param value: The value to validate.
@@ -128,7 +128,7 @@ def case(value: Any, field_name: str = 'case') -> Case:
     return value
 
 
-def choice(value: Any, field_name: str = 'choice') -> Choice:
+def choice(value: Any, field_name: str = 'choice') -> 'Choice':
     """Validate that the provided value is a :class:`~simplebench.reporters.choice.choice.Choice` instance.
 
     :param value: The value to validate.
@@ -529,6 +529,8 @@ def subclass_config(cls: type) -> None:
     :raises SimpleBenchNotImplementedError: If required class variables are not implemented
         or are of incorrect types.
     """
+    from simplebench.reporters.reporter.reporter import Reporter
+
     # Verify that we are being called from a subclass of Reporter, not Reporter itself
     if cls is Reporter:
         raise SimpleBenchNotImplementedError(

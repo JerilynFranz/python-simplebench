@@ -4,9 +4,10 @@ These functions raise appropriate exceptions with error tags from exceptions.py
 and return the validated and/or normalized value.
 """
 
+from collections.abc import Sequence
 import re
 from pathlib import Path
-from typing import Any, Sequence, TypeVar, overload
+from typing import Any, TypeVar, overload
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators._error_tags import _ValidatorsErrorTag

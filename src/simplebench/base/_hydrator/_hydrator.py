@@ -7,10 +7,10 @@ set of allowed parameters.
 
 import dataclasses
 import inspect
-from collections.abc import Mapping
+from collections.abc import Mapping, Iterable, Callable
 from copy import copy
 from functools import cache
-from typing import Any, Callable, Iterable, Union, get_args, get_origin, get_type_hints, is_typeddict
+from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
 
 from .._typed_dict_key_info import TypedDictKeyInfo
 from . import _validate

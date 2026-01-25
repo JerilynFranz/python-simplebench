@@ -20,7 +20,7 @@ Example usage:
     # The vals object is guaranteed to be a tuple containing only float numbers.
 """
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from typechecked import Immutable
 

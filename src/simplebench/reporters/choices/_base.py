@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from collections import UserDict
-from collections.abc import Hashable
-from typing import Generic, Iterable, Type, TypeVar
+from collections.abc import Hashable, Iterable
+from typing import Generic, Type, TypeVar
 
 from simplebench.exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.protocols import ChoiceProtocol

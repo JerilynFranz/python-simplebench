@@ -1,7 +1,8 @@
 """Choice KWArgs package for SimpleBench tests."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 from simplebench.reporters.choices import Choices
 

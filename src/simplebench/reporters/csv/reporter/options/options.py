@@ -5,7 +5,7 @@ This module defines the :class:`~.CSVOptions` class, which is a subclass of
 to hold options specific to the CSV reporter.
 """
 
-from typing import Sequence
+from collections.abc import Sequence
 
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.validators import validate_bool, validate_sequence_of_type

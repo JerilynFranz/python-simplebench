@@ -4,9 +4,10 @@
 # noqa: E501
 from __future__ import annotations
 
+from collections.abc import Iterable
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Protocol, TypeVar, runtime_checkable
+from typing import TYPE_CHECKING, Any, ClassVar, Protocol, TypeVar, runtime_checkable
 
 from rich.table import Table
 from rich.text import Text
@@ -45,6 +46,7 @@ class ReporterProtocol(Protocol):
         """A brief description of the reporter."""
         ...
 
+    @property
     def supported_metrics(self) -> frozenset[Metric]:
         """The set of supported :class:`~simplebench.metric.Metric` for the reporter.
 
@@ -56,6 +58,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
+    @property
     def supported_targets(self) -> frozenset[Target]:
         """The set of supported :class:`~simplebench.enums.Target` for the reporter.
 
@@ -66,6 +69,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
+    @property
     def supported_formats(self) -> frozenset[Format]:
         """The set of supported :class:`~simplebench.enums.Format` for the reporter.
 
@@ -582,16 +586,6 @@ class ReporterProtocol(Protocol):
         :param rich_text: The Rich object to convert.
         :type rich_text: :class:`~rich.text.Text` | :class:`~rich.table.Table`
         :return: The plain text representation of the Rich object.
-        :rtype: str
-        """
-        ...
-
-    def get_base_unit_for_metric(self, metric: Metric) -> str:
-        """Return the base unit for the specified metric.
-
-        :param metric: The metric to get the base unit for.
-        :type metric: :class:`~simplebench.metric.Metric`
-        :return: The base unit for the metric.
         :rtype: str
         """
         ...

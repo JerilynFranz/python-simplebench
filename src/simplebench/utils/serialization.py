@@ -1,11 +1,11 @@
 """Serialization utilities for simplebench."""
 
 import json
-from collections.abc import Mapping, Sequence, Set
+from collections.abc import Callable, Mapping, Sequence, Set
 from dataclasses import asdict, is_dataclass
 from json import JSONEncoder
 from types import NoneType
-from typing import Any, Callable, TypeAlias
+from typing import Any, TypeAlias
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_bool, validate_type

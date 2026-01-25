@@ -145,7 +145,7 @@ class PytestReporter(Reporter):
         options = validate_type(options, Options, 'options', _PytestReporterErrorTag.RENDER_INVALID_OPTIONS)
         included_fields = options.fields
 
-        base_unit: str = self.get_base_unit_for_metric(metric=metric)
+        base_unit: str = metric.metric_type.unit
         results: list[Results] = case.results
 
         mean_unit, mean_scale = si_scale_for_smallest(

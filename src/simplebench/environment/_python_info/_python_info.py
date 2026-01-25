@@ -22,8 +22,9 @@ import gc
 import os
 import platform
 import sys
+from collections.abc import Callable
 from types import MappingProxyType
-from typing import Any, Callable, Final, Literal, cast
+from typing import Any, Final, Literal, cast
 
 from simplebench.report.versions.v1 import ImmutablePythonInfoData
 
@@ -170,7 +171,7 @@ class PythonInfo:
         object.__setattr__(self, 'thread_switch_interval', sys.getswitchinterval())
 
         # Cache the created instance for future use
-        setattr(cls, '_cached_proto', self)
+        cls._cached_proto = self
 
         # Prerender the dict cache
         output: dict[str, object] = {}
@@ -340,4 +341,4 @@ class PythonInfo:
         :return ImmutablePythonInfoData: An immutable dictionary containing all
             the Python information.
         """
-        return cast(ImmutablePythonInfoData, getattr(self, '_dict_cache'))
+        return cast(ImmutablePythonInfoData, self._dict_cache)

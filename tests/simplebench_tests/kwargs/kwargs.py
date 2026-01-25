@@ -43,8 +43,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Callable, Hashable
 import inspect
-from typing import Any, Callable, Hashable, Iterable, TypeGuard, TypeVar, cast
+from typing import Any, TypeGuard, TypeVar, cast
 
 T = TypeVar('T')
 

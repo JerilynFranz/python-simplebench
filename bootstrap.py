@@ -1042,6 +1042,7 @@ def set_powershell_execution_policy() -> None:
         controlled_print('You may need to run the following command in PowerShell manually:')
         controlled_print('Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser')
 
+
 def print_instructions(template: str) -> None:
     """Prints instructions to the user on how to activate the virtual environment
     and use the installed tools.

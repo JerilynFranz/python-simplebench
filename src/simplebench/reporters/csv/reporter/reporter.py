@@ -118,7 +118,7 @@ class CSVReporter(Reporter):
 
         included_fields = options.fields
 
-        base_unit: str = self.get_base_unit_for_metric(metric=metric)
+        base_unit: str = metric.metric_type.unit
         results: list[Results] = case.results
 
         # Determine a common SI scale for the output values to improve readability

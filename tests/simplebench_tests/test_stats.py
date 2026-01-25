@@ -1,9 +1,10 @@
 """Tests for the simplebench/stats.py module."""
 # Conflicts with pytest fixtures
 # pylint: disable=redefined-outer-name
+from collections.abc import Sequence
 import statistics
 from enum import Enum
-from typing import Any, Sequence
+from typing import Any
 
 import pytest
 

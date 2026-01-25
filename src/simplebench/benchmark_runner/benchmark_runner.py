@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Callable
+from collections.abc import Callable, Mapping
+from types import MappingProxyType
+from typing import TYPE_CHECKING, Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies import is_case, is_session
@@ -11,9 +13,7 @@ from simplebench.type_proxies import is_case, is_session
 from ._error_tags import _RunnerErrorTag
 
 if TYPE_CHECKING:
-    from simplebench.case import Case
-    from simplebench.case.results import Results
-    from simplebench.metrics import Metric
+    from simplebench.case import Case, Mark, Results
     from simplebench.session import Session
 
 
@@ -25,7 +25,7 @@ class BenchmarkRunner(ABC):
         self,
         *,
         case: Case,
-        kwargs: dict[str, Any],
+        kwargs: Mapping[str, Any],
         session: Session | None = None,
         runner: Callable[..., Any] | None = None,
     ) -> None:
@@ -40,7 +40,7 @@ class BenchmarkRunner(ABC):
         action: Callable[..., Any],
         setup: Callable[..., Any] | None = None,
         teardown: Callable[..., Any] | None = None,
-        kwargs: dict[str, Any] | None = None,
+        kwargs: Mapping[str, Mark] | None = None,
     ) -> Results:
         """Run the benchmark and return the results"""
         raise NotImplementedError('Subclasses must implement the run method')
@@ -87,7 +87,7 @@ class BenchmarkRunner(ABC):
         self._session: Session | None = value
 
     @property
-    def kwargs(self) -> dict[str, Any]:
+    def kwargs(self) -> Mapping[str, Mark]:
         """Return the keyworded arguments for the benchmark.
 
         :return: The keyworded arguments for the benchmark.
@@ -95,36 +95,12 @@ class BenchmarkRunner(ABC):
         return self._kwargs
 
     @kwargs.setter
-    def kwargs(self, value: dict[str, Any]) -> None:
+    def kwargs(self, value: Mapping[str, Mark]) -> None:
         """Set the keyworded arguments for the benchmark.
 
         :param value: The new keyworded arguments for the benchmark.
         """
-        if not isinstance(value, dict):
-            raise SimpleBenchTypeError('kwargs must be a dictionary', tag=_RunnerErrorTag.KWARGS_NOT_A_DICT)
-        self._kwargs: dict[str, Any] = value
+        if not isinstance(value, Mapping):
+            raise SimpleBenchTypeError('kwargs must be a Mapping', tag=_RunnerErrorTag.KWARGS_NOT_A_MAPPING)
+        self._kwargs: Mapping[str, Any] = value if isinstance(value, MappingProxyType) else MappingProxyType(value)
 
-    @property
-    def variation_marks(self) -> dict[str, Any]:
-        """Return the variation marks for the benchmark.
-
-        The variation marks are defined by the :attr:`~.case.Case.variation_cols`
-        and the current keyworded arguments to the function being benchmarked.
-
-        The variation marks identify the specific variations being tested in a run
-        from the kwargs values.
-
-        :return: The variation marks for the benchmark.
-        """
-        return {key: self.kwargs.get(key, None) for key in self.case.variation_cols.keys()}
-
-    @variation_marks.setter
-    def variation_marks(self, value: dict[str, Any]) -> None:
-        """Set the variation marks for the benchmark.
-
-        :param value: The new variation marks for the benchmark.
-        """
-        if not isinstance(value, dict):
-            raise SimpleBenchTypeError(
-                'variation_marks must be a dictionary', tag=_RunnerErrorTag.VARIATION_MARKS_NOT_A_DICT
-            )

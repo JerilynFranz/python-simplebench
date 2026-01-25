@@ -1,10 +1,11 @@
 """Session management for SimpleBench."""
 
+from collections.abc import Sequence, Callable
 import logging
 from argparse import ArgumentError, ArgumentParser, Namespace
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, Optional, Sequence
+from typing import TYPE_CHECKING, Optional
 
 from rich.console import Console
 from rich.progress import Progress

@@ -8,8 +8,9 @@ for a JSON Schema version.
 
 import hashlib
 from abc import ABC
+from collections.abc import Callable
 from types import MappingProxyType
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 from typechecked import Immutable
 

@@ -18,7 +18,7 @@ It has no methods of its own; all functionality is inherited from
 # pylint: disable=useless-parent-delegation
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices._base import _BaseChoices

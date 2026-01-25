@@ -3,7 +3,8 @@ Run a callable with a timeout, ensuring safe termination.
 """
 
 import threading
-from typing import Any, Callable, Generic, ParamSpec, TypeVar, cast
+from collections.abc import Callable
+from typing import Any, Generic, ParamSpec, TypeVar, cast
 
 from ..exceptions import SimpleBenchTimeoutError, SimpleBenchTypeError, SimpleBenchValueError
 from .enums import TimeoutState

@@ -1,7 +1,8 @@
 """Protocols for Choice-like objects."""
 # pylint: disable=unnecessary-ellipsis
 
-from typing import Iterable, Protocol, runtime_checkable
+from collections.abc import Iterable
+from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable
