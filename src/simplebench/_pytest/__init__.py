@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Callable
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import pytest
 from rich.console import Console
