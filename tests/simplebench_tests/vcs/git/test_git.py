@@ -7,8 +7,8 @@ import pytest
 
 from simplebench.vcs.git import Git, GitInfo
 
-from ...factories.path import temp_dir
-from ...testspec import Assert, TestAction, TestGet, TestSpec, idspec
+from simplebench_tests.factories.path import temp_dir
+from testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 _VCS_TEMP_DIR: Path | None = None
 """Temporary directory for VCS tests."""
@@ -43,7 +43,7 @@ def vcs_temp_dir() -> Path:
 
 def repos_archive_path() -> Path:
     """Get the path to the test repos archive file."""
-    return Path("tests", "fixtures", "test_repos.tar.bz2")
+    return Path("tests", "simplebench_tests", "fixtures", "test_repos.tar.bz2")
 
 
 class Repo(str, Enum):

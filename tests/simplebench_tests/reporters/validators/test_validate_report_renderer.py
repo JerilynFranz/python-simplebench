@@ -19,8 +19,8 @@ from simplebench.reporters.validators import validate_report_renderer
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.session import Session
 
-from ...factories import reporter_config_factory
-from ...testspec import Assert, TestAction, TestSpec, idspec
+from simplebench_tests.factories import reporter_config_factory
+from testspec import Assert, TestAction, TestSpec, idspec
 
 T = TypeVar('T')
 

@@ -1,11 +1,10 @@
 """Tests for the simplebench/si_units.py module."""
 
 import pytest
+from testspec import TestAction
 
 from simplebench import si_units
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _SIUnitsErrorTag
-
-from .testspec import TestAction
 
 
 @pytest.mark.parametrize("testspec", [

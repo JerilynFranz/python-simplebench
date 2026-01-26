@@ -9,7 +9,7 @@ from simplebench.enums import Format, Target
 from simplebench.metrics import Metric
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 
-from ...factories import (
+from simplebenchfactories import (
     default_default_targets,
     default_description,
     default_file_append,

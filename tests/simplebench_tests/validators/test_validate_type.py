@@ -1,10 +1,9 @@
 """Tests for simplebench.validators validate_type() function."""
 import pytest
+from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError
 from simplebench.validators import _ValidatorsErrorTag, validate_type
-
-from ..testspec import Assert, TestAction, TestSpec, idspec
 
 
 class GenericErrorTag(ErrorTag):

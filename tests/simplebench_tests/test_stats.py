@@ -1,16 +1,12 @@
 """Tests for the simplebench/stats.py module."""
 # Conflicts with pytest fixtures
 # pylint: disable=redefined-outer-name
-from collections.abc import Sequence
 import statistics
+from collections.abc import Sequence
 from enum import Enum
 from typing import Any
 
 import pytest
-
-from simplebench.case.results import Iteration
-from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics import Metric, metric_types_registry
 from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats, StatsSummary
 from simplebench.stats.exceptions import (
     _MemoryUsageErrorTag,
@@ -20,8 +16,11 @@ from simplebench.stats.exceptions import (
     _StatsErrorTag,
     _StatsSummaryErrorTag,
 )
+from testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
 
-from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
+from simplebench.case.results import Iteration
+from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metrics import Metric, metric_types_registry
 
 
 class Nonsense(str, Enum):

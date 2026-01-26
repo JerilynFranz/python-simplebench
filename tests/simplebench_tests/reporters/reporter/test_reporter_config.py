@@ -10,8 +10,8 @@ from simplebench.reporters.reporter import ReporterConfig
 from simplebench.reporters.reporter._error_tags import _ReporterConfigErrorTag
 from simplebench.validators._error_tags import _ValidatorsErrorTag
 
-from ...factories import reporter_config_kwargs_factory
-from ...testspec import Assert, TestAction, TestSpec, idspec
+from simplebench_tests.factories import reporter_config_kwargs_factory
+from testspec import Assert, TestAction, TestSpec, idspec
 
 
 @pytest.mark.parametrize('testspec', [

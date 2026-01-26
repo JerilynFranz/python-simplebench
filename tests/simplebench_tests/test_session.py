@@ -10,20 +10,20 @@ from typing import Any
 import pytest
 from rich.console import Console
 from rich.progress import Progress
+from simplebench.display.rich_progress_tasks import RichProgressTasks
+from testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, idspec
 
 from simplebench import Case, Results, Session, Verbosity
+from simplebench.benchmark_runner import SimpleRunner
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.choice import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
 from simplebench.reporters.csv import CSVConfig
 from simplebench.reporters.reporter_manager import ReporterManager
-from simplebench.benchmark_runner import SimpleRunner
-from simplebench.display.tasks import RichProgressTasks
 from simplebench.utils import collect_arg_list, flag_to_arg
 
 from .factories import session_factory, session_kwargs_factory
 from .kwargs import SessionKWArgs
-from .testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, idspec
 
 _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""

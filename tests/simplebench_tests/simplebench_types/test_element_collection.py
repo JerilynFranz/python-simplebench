@@ -5,12 +5,11 @@ from collections.abc import Iterable, Mapping, Sequence
 from types import MappingProxyType
 from typing import Any
 
-
 import autopypath  # noqa: F401
 import pytest
 from testspec import PytestAction
 
-from simplebench.simplebench_types._element_collection import is_element_collection
+from simplebench.simplebench_types._element_collection import ElementCollection, is_element_collection
 
 
 class CustomIterable:
@@ -54,93 +53,87 @@ class CustomElementCollection:
     PytestAction('EC_001',
         name="list is ElementCollection",
         action=is_element_collection, args=[[1, 2, 3]],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_002',
         name="tuple is ElementCollection",
         action=is_element_collection, args=[(1, 2, 3)],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_003',
         name="set is ElementCollection",
         action=is_element_collection, args=[{1, 2, 3}],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_004',
         name="frozenset is ElementCollection",
         action=is_element_collection, args=[frozenset({1, 2, 3})],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_005',
         name="str is not ElementCollection",
         action=is_element_collection, args=["hello"],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_006',
         name="bytes is not ElementCollection",
         action=is_element_collection, args=[b"hello"],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_007',
         name="dict is not ElementCollection",
         action=is_element_collection, args=[{'a': 1, 'b': 2}],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_008',
         name="custom iterable is not ElementCollection",
         action=is_element_collection, args=[(x for x in range(3))],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_009',
         name="custom Mapping is not ElementCollection",
         action=is_element_collection, args=[MappingProxyType({'a': 1, 'b': 2})],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_010',
         name="custom ElementCollection is ElementCollection",
         action=is_element_collection, args=[CustomElementCollection([1, 2, 3])],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_011',
         name="custom Iterable is not ElementCollection",
         action=is_element_collection, args=[CustomIterable([1, 2, 3])],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_012',
         name="custom Mapping is not ElementCollection",
         action=is_element_collection, args=[CustomMapping({'a': 1, 'b': 2})],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_013',
         name="empty list is ElementCollection",
         action=is_element_collection, args=[[]],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_014',
         name="empty tuple is ElementCollection",
         action=is_element_collection, args=[()],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_015',
         name="empty set is ElementCollection",
         action=is_element_collection, args=[set()],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_016',
         name="empty frozenset is ElementCollection",
         action=is_element_collection, args=[frozenset()],
-        expected=True
-    ),
+        expected=True),
     PytestAction('EC_017',
         name="None is not ElementCollection",
         action=is_element_collection, args=[None],
-        expected=False
-    ),
+        expected=False),
     PytestAction('EC_018',
         name="CustomElementCollection with different data types",
         action=is_element_collection, args=[CustomElementCollection(['a', 1, 3.14, None])],
-        expected=True
-    ),
+        expected=True),
+    PytestAction('EC_019',
+        name="isinstance fails to identify str as NOT an ElementCollection (python limitation)",
+        action=isinstance, args=["test", ElementCollection],
+        expected=True),
+    PytestAction('EC_020',
+        name="isinstance fails to identify bytes as NOT an ElementCollection (python limitation)",
+        action=isinstance, args=[b'test', ElementCollection],
+        expected=True),
+    PytestAction('EC_021',
+        name="isinstance fails to identify Mapping as NOT an ElementCollection (python limitation)",
+        action=isinstance, args=[{'key': 'value'}, ElementCollection],
+        expected=True),
 ])
 def test_element_collection_protocol(testspec: PytestAction) -> None:
     """Test the ElementCollection Protocol and is_element_collection function."""
@@ -153,3 +146,4 @@ if __name__ == "__main__":
     except BaseException as e:
         print(f"An error occurred while running the tests: {e}")
         print(f"sys.path: {sys.path}")
+        raise

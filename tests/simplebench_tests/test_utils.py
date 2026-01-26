@@ -7,7 +7,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.utils._error_tags import _UtilsErrorTag
 
 from .factories import argument_parser_factory, list_of_strings_flag_factory, namespace_factory
-from .testspec import TestAction, idspec
+from testspec import TestAction, idspec
 
 defaults.DEFAULT_SIGNIFICANT_FIGURES = 3  # Ensure default is as expected for tests
 

@@ -3,8 +3,8 @@ import pytest
 
 from simplebench.reporters.reporter import Reporter as _MODELED_CLASS
 
-from .....kwargs import kwargs_class_matches_modeled_call
-from .....testspec import Assert, TestAction, TestSpec, idspec
+from simplebench_tests.kwargs import kwargs_class_matches_modeled_call
+from testspec import Assert, TestAction, TestSpec, idspec
 from .target_callback_method_kwargs import TargetCallbackMethodKWArgs as _KWARGS_CLASS
 
 _MODELED_CALL = _MODELED_CLASS.target_callback

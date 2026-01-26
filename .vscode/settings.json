@@ -56,7 +56,6 @@
   },
   "python.REPL.enableREPLSmartSend": false,
   "python.createEnvironment.contentButton": "hide",
-  "python.envFile": "${workspaceFolder}/.env",
   "python.terminal.launchArgs": [],
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
   "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
@@ -75,5 +74,6 @@
             "source.organizeImports": "explicit"
         }
     },
+    "python.envFile": "",
 }
 

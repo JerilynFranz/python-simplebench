@@ -8,6 +8,7 @@ from typing import Any
 
 import pytest
 from rich.console import Console
+from testspec import Assert, TestAction, TestGet, TestSet, TestSpec, idspec, no_assigned_action
 
 from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case, Results
@@ -21,7 +22,6 @@ from simplebench.reporters.validators.exceptions import _ReportersValidatorsErro
 from simplebench.session import Session
 
 from .kwargs import CaseKWArgs
-from .testspec import Assert, TestAction, TestGet, TestSet, TestSpec, idspec, no_assigned_action
 
 
 class MockReporterOptions(ReporterOptions):

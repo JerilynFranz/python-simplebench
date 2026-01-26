@@ -9,7 +9,6 @@ import pytest
 
 from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case, Results
-from simplebench.case.results import Iteration
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata

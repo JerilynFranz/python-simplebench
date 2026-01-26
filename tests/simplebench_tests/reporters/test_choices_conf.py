@@ -5,9 +5,9 @@ import pytest
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choices import ChoicesConf, _ChoicesErrorTag
 
-from ..factories import choice_conf_factory, choices_conf_factory, default_choice_name
-from ..kwargs import ChoicesConfKWArgs
-from ..testspec import Assert, TestAction, TestSpec, idspec
+from simplebench_tests.factories import choice_conf_factory, choices_conf_factory, default_choice_name
+from simplebench_tests.kwargs import ChoicesConfKWArgs
+from testspec import Assert, TestAction, TestSpec, idspec
 
 
 @pytest.mark.parametrize(

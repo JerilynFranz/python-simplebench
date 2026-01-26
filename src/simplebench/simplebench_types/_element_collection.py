@@ -9,8 +9,8 @@ are expected to have collection-like characteristics: supporting iteration,
 length, and membership tests, but not necessarily ordering or indexing.
 """
 
-from collections.abc import Mapping, Iterator
-from typing import Protocol, TypeVar, runtime_checkable, Any
+from collections.abc import Iterator, Mapping
+from typing import Any, Protocol, TypeGuard, TypeVar, runtime_checkable
 
 T = TypeVar('T', covariant=True)
 
@@ -45,6 +45,59 @@ class ElementCollection(Protocol[T]):
     This is used to type hint parameters and return types that
     are expected to have collection-like characteristics: supporting iteration,
     length, and membership tests, but not necessarily ordering or indexing.
+
+    Static type checkers can only partially enforce the exclusions of str, bytes,
+    or Mapping types from being considered as ElementCollections.
+
+    For best results, use generic type variables with this Protocol to specify
+    the element type contained within the collection and use the
+    :func:`is_element_collection` function for runtime checks to narrow types accurately.
+
+    Because of Python's limitations, isinstance checks alone may not fully enforce
+    the intended exclusions, so use the provided function for precise checks.
+
+    In particular, static type checkers will not reliably flag Mapping types
+    as invalid ElementCollections.
+
+    isinstance checks will not exclude str, bytes, or Mapping types.
+
+    .. code-block:: python
+      :caption: Example usage of ElementCollection Protocol
+
+        from simplebench.simplebench_types import ElementCollection
+
+        def process_elements(elements: ElementCollection[int]) -> list[int]:
+            return [e * 2 for e in elements if e > 0]
+
+
+    Due to Python's limitations with Protocols and runtime checks,
+    use the :func:`is_element_collection` function to accurately check
+    if an object conforms to this Protocol.
+
+    .. code-block:: python
+       :caption: Example usage of ElementCollection Protocol
+
+       a = [1, -2, 3]
+       b: ElementCollection[int] = a  # This is valid
+
+       a = ['a', 'b', 'c']
+       c: ElementCollection[int] = a  # This will raise a type checker error
+
+       a = 'abc'
+       d: ElementCollection = a  # This will raise a type checker error
+
+       a = b'abc'
+       e: ElementCollection = a  # This will raise a type checker error
+
+       a = (x for x in range(3))
+       g: ElementCollection = a  # This will raise a type checker error
+
+       a = {'key': 'value'}
+       f: ElementCollection = a  # This will NOT reliably raise a type checker error
+
+       assert is_element_collection('value') is False  # Correct runtime check
+       assert is_element_collection({'key': 'value'}) is False  # Correct runtime check
+
     """
 
     def __iter__(self) -> Iterator[T]:
@@ -69,7 +122,8 @@ class ElementCollection(Protocol[T]):
             return True
         return NotImplemented
 
-def is_element_collection(obj: Any) -> bool:
+
+def is_element_collection(obj: Any) -> TypeGuard[ElementCollection]:
     """Return True if obj is an ElementCollection.
 
     This function checks if the provided object conforms to the
@@ -78,12 +132,17 @@ def is_element_collection(obj: Any) -> bool:
     while explicitly excluding types such as :class:`str`, :class:`bytes`,
     and :class:`Mapping` that do not fit the element container-like behavior.
 
+    The function is a TypeGuard, allowing for precise type narrowing
+    in type checking contexts.
+
     :param obj: The object to check.
     :type obj: Any
     :return: True if obj is an ElementCollection, False otherwise.
     :rtype: bool
     """
     try:
-        return isinstance(obj, ElementCollection)and not isinstance(obj, (str, bytes, Mapping))
+        return isinstance(
+            obj, ElementCollection) and not isinstance(obj,
+                                                       (str, bytes, Mapping))
     except TypeError:
         return False

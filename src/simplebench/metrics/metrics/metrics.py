@@ -10,7 +10,7 @@ Metrics object.
 """
 
 import re
-from collections.abc import MutableMapping, Iterator, Iterable
+from collections.abc import Iterable, Iterator, MutableMapping
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchDuplicateKeyError, SimpleBenchTypeError, SimpleBenchValueError
@@ -43,7 +43,7 @@ class Metrics(MutableMapping[str, Metric]):
     start or end with an underscore or digit.
     """
 
-    def __init__(self, metrics: Iterable[Metric] | 'Metrics' | Metric | None = None) -> None:
+    def __init__(self, metrics: 'Iterable[Metric] | Metrics | Metric | None' = None) -> None:
         """Initialize the Metrics object with Metric objects.
 
         :param metrics: A Metric, an Iterable of Metric objects, or a Metrics instance to initialize the Metrics object.
@@ -58,7 +58,7 @@ class Metrics(MutableMapping[str, Metric]):
             metrics = [metrics]
         self.extend(metrics)
 
-    def extend(self, metrics: Iterable[Metric] | 'Metrics') -> None:
+    def extend(self, metrics: 'Iterable[Metric] | Metrics') -> None:
         """Add multiple metrics to the Metrics object.
 
         :param metrics: An Iterable of Metric objects or another Metrics object.

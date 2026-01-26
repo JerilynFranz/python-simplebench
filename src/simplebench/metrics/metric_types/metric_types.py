@@ -43,7 +43,7 @@ class MetricTypes(MutableMapping[str, MetricType]):
     start or end with an underscore or digit.
     """
 
-    def __init__(self, metric_types: Iterable[MetricType] | 'MetricTypes' | MetricType | None = None) -> None:
+    def __init__(self, metric_types: 'Iterable[MetricType] | MetricTypes | MetricType | None' = None) -> None:
         """Initialize the MetricTypes object with an optional list of metric types.
 
         :param metric_types: A MetricType, an Iterable of MetricType objects, or a MetricTypes instance
@@ -58,7 +58,7 @@ class MetricTypes(MutableMapping[str, MetricType]):
             metric_types = [metric_types]
         self.extend(metric_types)
 
-    def extend(self, metric_types: Iterable[MetricType] | 'MetricTypes') -> None:
+    def extend(self, metric_types: 'Iterable[MetricType] | MetricTypes') -> None:
         """Add multiple metric types to the MetricTypes object.
 
         :param metric_types: An Iterable of MetricType objects or another MetricTypes object.

@@ -5,6 +5,8 @@ from enum import Enum
 from functools import cache
 
 import pytest
+from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
+from testspec import Assert, TestAction, TestGet, idspec
 
 from simplebench.case import Results
 from simplebench.case.results import Iteration
@@ -16,10 +18,8 @@ from simplebench.defaults import (
 )
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
 from simplebench.metrics import Metric, metric_types_registry
-from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
 
 from .kwargs import ResultsKWArgs
-from .testspec import Assert, TestAction, TestGet, idspec
 
 
 class Nonsense(str, Enum):

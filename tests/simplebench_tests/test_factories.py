@@ -4,6 +4,7 @@ from argparse import Namespace
 from pathlib import Path
 
 import pytest
+from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench import utils
 from simplebench.benchmark_runner import SimpleRunner
@@ -17,7 +18,6 @@ from simplebench.session import Session
 
 from . import factories
 from .kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterConfigKWArgs
-from .testspec import Assert, TestAction, TestSpec, idspec
 
 
 @pytest.mark.parametrize("testspec", [

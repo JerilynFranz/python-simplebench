@@ -13,7 +13,7 @@ Example:
 The cache for all factories can be cleared by calling `clear_cache()`.
 """
 
-from ..cache_factory import clear_cache
+from simplebench_tests.cache_factory import clear_cache
 from ._primitives import (
     case_group_factory,
     choice_flags_factory,

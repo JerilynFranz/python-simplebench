@@ -3,7 +3,7 @@
 import pytest
 
 from .cache_factory import CACHE_DEFAULT, cached_factory, clear_cache, uncached_factory
-from .testspec import TestAction, TestSpec, idspec
+from testspec import TestAction, TestSpec, idspec
 
 # TODO: Add tests for passthrough of additional arguments to the decorated factory functions
 

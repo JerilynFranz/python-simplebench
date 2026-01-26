@@ -20,7 +20,7 @@ from simplebench.reporters.reporter_manager.decorators import (
 )
 from simplebench.session import Session
 
-from ....factories import reporter_config_factory, reporter_config_kwargs_factory
+from simplebench_tests.factories import reporter_config_factory, reporter_config_kwargs_factory
 
 
 class MockReporterOptions(ReporterOptions):

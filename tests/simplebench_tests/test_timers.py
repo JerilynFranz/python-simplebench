@@ -2,13 +2,12 @@
 import time
 
 import pytest
+from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench.exceptions import SimpleBenchRuntimeError, SimpleBenchTypeError
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from simplebench.timers._error_tags import _TimersErrorTag
 from simplebench.timers.info import fake_timer
-
-from .testspec import Assert, TestAction, TestSpec, idspec
 
 
 @pytest.mark.parametrize("testspec", [

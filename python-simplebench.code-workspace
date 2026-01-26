@@ -8,8 +8,25 @@
 		"pylint.importStrategy": "fromEnvironment",
 		"python.useEnvironmentsExtension": true,
 		"python.terminal.useEnvFile": false,
-		"editor.formatOnSave": true,
+		"editor.formatOnSave": false,
+			"[python]": {
+				"editor.defaultFormatter": "charliermarsh.ruff",
+				"editor.codeActionsOnSave": {
+					"source.fixAll": "explicit",
+					"source.organizeImports": "explicit"
+				}
+			},
 		"files.autoSave": "afterDelay",
-		"editor.defaultFormatter": "charliermarsh.ruff"
+		"editor.defaultFormatter": "charliermarsh.ruff",
+		"python.envFile": "",
+		"terminal.integrated.env.linux": {
+    		"PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+  		},
+  		"terminal.integrated.env.osx": {
+    		"PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/tests"
+  		},
+  		"terminal.integrated.env.windows": {
+    		"PYTHONPATH": "${workspaceFolder}\\src;${workspaceFolder}\\tests"
+  		},
 	},
 }

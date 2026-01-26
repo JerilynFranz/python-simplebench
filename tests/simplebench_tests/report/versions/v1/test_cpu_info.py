@@ -4,7 +4,7 @@ import pytest
 from simplebench.environment._cpu_info._cpu_info import CPUInfo as EnvCPUInfo
 from simplebench.report.versions.v1.cpu_info import CPUInfo as ReportCPUInfo
 
-from ....testspec import Assert, TestAction, TestSpec, idspec
+from testspec import Assert, TestAction, TestSpec, idspec
 
 
 def dummy_cpu_info() -> dict[str, str | int | list[str]]:

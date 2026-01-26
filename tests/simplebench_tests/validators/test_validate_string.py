@@ -4,7 +4,7 @@ import pytest
 from simplebench.exceptions import ErrorTag, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import _ValidatorsErrorTag, validate_string
 
-from ..testspec import Assert, TestAction, TestSpec, idspec
+from testspec import Assert, TestAction, TestSpec, idspec
 
 
 class GenericErrorTag(ErrorTag):
