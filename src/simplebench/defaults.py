@@ -21,7 +21,7 @@ _NO_DEFAULT = _NoDefault()
 
 def default_runners(
     runners: list[type['BenchmarkRunner']] | _NoDefault | None = _NO_DEFAULT,
-) -> list[type['BenchmarkRunner']]:
+) -> tuple[type['BenchmarkRunner'], ...]:
     """Default list of runner classes to use for benchmarking.
 
     This function allows you to set or get the default list of runner classes
@@ -46,17 +46,17 @@ def default_runners(
 
         _DEFAULT_RUNNERS.clear()
         _DEFAULT_RUNNERS.append(SimpleRunner)
-        return _DEFAULT_RUNNERS
+        return tuple(_DEFAULT_RUNNERS)
 
     if isinstance(runners, list):
         if not all(issubclass(runner, BenchmarkRunner) for runner in runners):
             raise TypeError('All items in runners must be subclasses of BenchmarkRunner')
         _DEFAULT_RUNNERS.clear()
         _DEFAULT_RUNNERS.extend(runners)  # Mutate in-place
-        return _DEFAULT_RUNNERS
+        return tuple(_DEFAULT_RUNNERS)
 
     if runners is _NO_DEFAULT:
-        return _DEFAULT_RUNNERS
+        return tuple(_DEFAULT_RUNNERS)
 
     # If we get here, the input was invalid
     raise TypeError(f'runners must be a list of BenchmarkRunner subclasses or None, not {type(runners)}')

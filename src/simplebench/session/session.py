@@ -1,8 +1,8 @@
 """Session management for SimpleBench."""
 
-from collections.abc import Sequence, Callable
 import logging
 from argparse import ArgumentError, ArgumentParser, Namespace
+from collections.abc import Callable, Sequence
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -428,13 +428,13 @@ class Session:
         self._cpu_timer: Callable[[], int] | None = validate_timer(value)
 
     @property
-    def default_runners(self) -> list[type[BenchmarkRunner]]:
+    def default_runners(self) -> tuple[type[BenchmarkRunner], ...]:
         """The session scoped default runner classes to use for Cases that do not specify a runner.
 
-        If not set, returns []. This means that no default runners are set by the session.
+        If not set, returns (). This means that no default runners are set by the session.
 
         This means that if a Case does not specify a list of runners itself, it will use the
-        default runners set by `simplebench.defaults.DEFAULT_RUNNERS` to run
+        default runners set by :data:`~simplebench.defaults.DEFAULT_RUNNERS` to run
         the benchmarks.
         """
         return self._default_runners
@@ -462,7 +462,7 @@ class Session:
         :type runners: Sequence[type[Runner]] or None
         :raises SimpleBenchTypeError: If the value is not a subclass of :class:`~.runners.SimpleRunner` or None.
         """
-        self._default_runners: list[type[BenchmarkRunner]] = []
+        self._default_runners: tuple[type[BenchmarkRunner], ...] = ()
         if runners is None:
             return
 
@@ -473,7 +473,6 @@ class Session:
                 tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG,
             )
 
-        validated_runners: list[type[BenchmarkRunner]] = []
         for runner in runners:
             if not (isinstance(runner, type) and issubclass(runner, BenchmarkRunner)) and runner is not BenchmarkRunner:
                 raise SimpleBenchTypeError(
@@ -481,7 +480,7 @@ class Session:
                     f'None - cannot be a {type(runner)}',
                     tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG,
                 )
-        self._default_runners = validated_runners
+        self._default_runners = tuple(runners)
 
     @property
     def args_parser(self) -> ArgumentParser:

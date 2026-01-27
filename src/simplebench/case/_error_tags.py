@@ -7,6 +7,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions."""
+    INVALID_NODE= 'INVALID_NODE'
+    """The node being accessed is not of the expected type of :class:`str` or :obj:`None`."""
     INVALID_TIMER_FIELD_NAME_TYPE = 'INVALID_TIMER_FIELD_NAME_TYPE'
     """The field_name argument passed to the timer validation function is not of type str."""
     INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_CANNOT_CONVERT_TO_STRING = (

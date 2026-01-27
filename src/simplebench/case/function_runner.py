@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Protocol
+from typing import Any, Protocol
 
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
@@ -19,7 +19,7 @@ class FunctionRunner(Protocol):
 
     .. code-block:: python
 
-        def my_action(bench: BenchmarkRunner, **kwargs) -> Results:
+        def my_action(bench: BenchmarkRunner, **kwargs: dict[str, Any]) -> Results:
             # Benchmark logic here
             def some_function_to_benchmark():
                 pass
@@ -27,10 +27,11 @@ class FunctionRunner(Protocol):
             return bench.run(action=some_function_to_benchmark, **kwargs)
     """
 
-    def __call__(self, _bench: BenchmarkRunner, **kwargs) -> Results:  # type: ignore[reportReturnType]
+    def __call__(self, _bench: BenchmarkRunner, **kwargs: dict[str, Any]) -> Results:
         """Run the benchmark action.
 
         :param _bench: The BenchmarkRunner instance.
         :param kwargs: Additional keyword arguments for the action.
         :return: The results of the benchmark action.
         """
+        ...

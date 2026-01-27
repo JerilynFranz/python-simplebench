@@ -5,7 +5,6 @@ from collections.abc import Callable, Mapping
 from copy import copy
 from datetime import datetime
 from pathlib import Path
-from types import MappingProxyType
 from typing import Any
 
 import simplebench.defaults as defaults
@@ -25,14 +24,13 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.session import Session
-from simplebench.simplebench_types import ElementCollection
+from simplebench.simplebench_types import ElementCollection, KWArgsVariations, VariationCols, VariationMarks
 from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_bool
 
 from . import validate
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
-from simplebench.simplebench_types import Mark, KWArgsVariations, VariationCols, VariationMarks
 from .results import Results
 from .state import CaseState
 
@@ -442,13 +440,13 @@ class Case:
         validate.time_range(self.min_time, self.max_time)
         self._timeout: float = validate.timeout(timeout, self.max_time)
         self._benchmark_id = validate.benchmark_id(benchmark_id or generate_benchmark_id(self, action))
-        self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(
+        self._variation_cols: VariationCols = validate.variation_cols(
             variation_cols, self.kwargs_variations)
         self._runners: tuple[type[BenchmarkRunner], ...] = validate.runners(runners)
         self._callback: ReporterCallback | None = validate_reporter_callback(callback, allow_none=True)
         self._options: tuple[ReporterOptions, ...] = validate.options(options)
         self._vcs_info: vcs.VCSInfo | None = validate.vcs_info(vcs_info or vcs.get_vcs_info())
-        self._node: str = validate.node(node)
+        self._node: str | None = validate.node(node)
 
         # internal state
         self._report_cache: reports.Report | None = None
@@ -614,7 +612,7 @@ class Case:
         return self._timeout
 
     @property
-    def variation_cols(self) -> MappingProxyType[str, str]:
+    def variation_cols(self) -> VariationCols:
         """Keyword arguments to be used for columns to denote kwarg variations.
 
         Each key is a keyword argument name, and the value is the column label to use for that argument.
@@ -627,12 +625,12 @@ class Case:
         Updating variation_cols does not automatically update kwargs_variations, and vice versa.
 
         :return: A dictionary mapping keyword argument names to column labels.
-        :rtype: MappingProxyType[str, str]
+        :rtype: VariationCols
         """
         return self._variation_cols
 
     @property
-    def kwargs_variations(self) -> MappingProxyType[str, tuple[Mark, ...]]:
+    def kwargs_variations(self) -> KWArgsVariations:
         """Variations of keyword arguments for the benchmark.
 
         Each key is a keyword argument name, and the value is the column label to use for that argument.
@@ -662,17 +660,11 @@ class Case:
 
         The action function will be called with these keyword arguments accordingly and must
         accept them.
+
+        :return: A dictionary mapping keyword argument names to lists of possible values.
+        :rtype: KWArgsVariations
         """
         return self._kwargs_variations
-
-    @property
-    def variation_marks(self) -> MappingProxyType[str, tuple[str, ...]]:
-        """Return marks for the kwarg variations.
-
-        :return: A dictionary mapping 'kwarg_name=kwarg_value' to Mark objects.
-        """
-        # shallow copy to prevent external modification of internal dict
-        return self._variation_marks
 
     @property
     def runners(self) -> tuple[type[BenchmarkRunner], ...]:
@@ -724,7 +716,7 @@ class Case:
         return self._options
 
     @property
-    def expanded_kwargs_variations(self) -> tuple[MappingProxyType[str, Mark], ...]:
+    def expanded_kwargs_variations(self) -> tuple[VariationMarks, ...]:
         """All combinations of keyword arguments from the specified kwargs_variations.
 
         A mapping of keyword argument names to their variations.
@@ -734,35 +726,34 @@ class Case:
         When tests are run, the benchmark will be executed for each combination of the specified
         keyword argument variations. For example, if `kwargs_variations` is
 
-        .. code-block:: python3
-          :caption: `kwargs_variations` argument example
+        .. code-block:: python
 
-            ...
-            kwargs_variations = ({'size': [10, 100], 'mode': ['fast', 'accurate']},)
-            ...
+            kwargs_variations = ({
+                'size': [Mark(label=10, value=10), Mark(label=100, value=100)],
+                'mode': [Mark(label='Fast', value='fast'), Mark(label='Accurate', value='accurate')]
+            })
 
         The benchmark will be run 4 times with the following combinations of keyword arguments:
 
-        .. code-block:: python3
-          :linenos:
-          :caption: Keyword (`**kwargs`) Argument Combinations
+        .. code-block:: python
 
-            {size=10, mode='fast'}
-            {size=10, mode='accurate'}
-            {size=100, mode='fast'}
-            {size=100, mode='accurate'}
+            {size=Mark(label=10, value=10), mode=Mark(label='Fast', value='fast')}
+            {size=Mark(label=10, value=10), mode=Mark(label='Accurate', value='accurate')}
+            {size=Mark(label=100, value=100), mode=Mark(label='Fast', value='fast')}
+            {size=Mark(label=100, value=100), mode=Mark(label='Accurate', value='accurate')}
 
         The action function will be called with these keyword arguments accordingly and must
         accept them.
 
-        :return: A list of dictionaries, each representing a unique combination of keyword arguments.
-        :rtype: tuple[MappingProxyType[str, Mark], ...]
+        :return: A tuple of :class:`VariationMarks` dictionaries, each representing a
+            unique combination of keyword arguments.
+        :rtype: tuple[VariationMarks, ...]
         """
         keys = sorted(self.kwargs_variations.keys())
         values_list = [self.kwargs_variations[key] for key in keys]
-        combinations = []
+        combinations: list[VariationMarks] = []
         for v in itertools.product(*values_list):
-            kwargs: MappingProxyType[str, Mark] = MappingProxyType(
+            kwargs = VariationMarks(
                 { key: value for key, value in zip(keys, v, strict=True) })
             combinations.append(kwargs)
         return tuple(combinations)
@@ -786,9 +777,22 @@ class Case:
         This is a read-only attribute that is set when the `run` method is called.
         If the benchmark case has not been run yet, it will be 0.
 
-        :return: The epoch timestamp as an integer.
+        :return: The epoch timestamp.
+        :rtype: float
         """
         return self._epoch_timestamp
+
+    @property
+    def node(self) -> str | None:
+        """The identifier for the node where the benchmark was run.
+
+        This can be used in distributed benchmarking scenarios to identify
+        the source of the benchmark data.
+
+        :return: The node identifier as a string, or None if not set.
+        :rtype: str | None
+        """
+        return self._node
 
     def run(self, session: Session | None = None) -> None:
         """Run the benchmark tests.
@@ -817,32 +821,32 @@ class Case:
         progress_tracker.reset()
 
         # BenchmarkRunner prioritization is Case().runners -> Session().default_runners -> defaults.DEFAULT_RUNNERS
-        runners_list: list[type[BenchmarkRunner]] = self.runners
+        runners_list: tuple[type[BenchmarkRunner], ...] = self.runners
         if not runners_list and session and session.default_runners:
             runners_list = session.default_runners
         if not runners_list:
             runners_list = defaults.default_runners()
 
-        kwargs: MappingProxyType[str, Mark]
+        variation_marks: VariationMarks
         # We loop over variations in the outside loop so that progress is reported
         # grouped by each variation run, which is more user-friendly than reporting progress
         # grouped by each runner.
-        for variations_counter, kwargs in enumerate(all_variations):
+        for variations_counter, variation_marks in enumerate(all_variations):
             for runner in runners_list:
-                bench: BenchmarkRunner = runner(case=self, session=session, kwargs=kwargs)
+                bench: BenchmarkRunner = runner(case=self, session=session, variation_marks=variation_marks)
 
                 try:
-                    results: Results = self.action(bench, **kwargs)
+                    results: Results = self.action(bench, **variation_marks)
                 except SimpleBenchTimeoutError as e:
                     raise SimpleBenchTimeoutError(
                         f'Timeout occurred running benchmark action {str(self.action)} for case '
-                        f'"{self.title}" with kwargs {kwargs}: {e}',
+                        f'"{self.title}" with kwargs {variation_marks}: {e}',
                         tag=_CaseErrorTag.BENCHMARK_ACTION_TIMEOUT_OCCURRED,
                     ) from e
                 except Exception as e:
                     raise SimpleBenchBenchmarkError(
                         f'Error occurred running benchmark action {str(self.action)} for case '
-                        f'"{self.title}" with kwargs {kwargs}: {e}, {type(e)}',
+                        f'"{self.title}" with kwargs {variation_marks}: {e}, {type(e)}',
                         tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION,
                     ) from e
                 self._results.append(results)

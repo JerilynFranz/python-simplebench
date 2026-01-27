@@ -21,6 +21,29 @@ from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 
 
+def node(node_value: str | None) -> str | None:
+    """Validate the node name for a benchmark case.
+
+    The node name must be a non-blank, non-empty string.
+
+    :param node_value: The node name to validate.
+    :return str: The validated node name.
+    :raises SimpleBenchTypeError: If the node is not a string.
+    :raises SimpleBenchValueError: If the node is blank or empty.
+    """
+    if node_value is None:
+       return None
+
+    return validate_string(
+        node_value,
+        'node',
+        _CaseErrorTag.INVALID_NODE,
+        _CaseErrorTag.INVALID_NODE,
+        allow_blank=True,
+        allow_empty=True,
+        strip=True,
+    )
+
 def benchmark_id(benchmark_id_value: str) -> str:
     """Validate the benchmark_id for a benchmark case
 
