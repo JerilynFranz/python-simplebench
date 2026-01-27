@@ -19,7 +19,7 @@ Allowed types are:
     - Sets of the above types
 """
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
-from typing import TYPE_CHECKING, overload
+from typing import overload
 
 from typechecked import Immutable
 
@@ -27,10 +27,8 @@ from simplebench.exceptions import SimpleBenchTypeError
 
 from .._element_collection import ElementCollection, is_element_collection
 from ._error_tags import _CoreDataErrorTag
-from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE
+from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE, CoreDataTypes
 
-if TYPE_CHECKING:
-    from ._types import CoreDataTypes
 
 class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
     """Deep-immutable Sequence container for CoreData types used in SimpleBench.
@@ -91,7 +89,7 @@ class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
         self._data = tuple(data)
 
     @overload
-    def __getitem__(self, index: int) -> 'CoreDataTypes': ...
+    def __getitem__(self, index: int) -> CoreDataTypes: ...
 
     @overload
     def __getitem__(self, index: slice) -> 'CoreDataSequence': ...
@@ -115,7 +113,7 @@ class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
         :param index: The index to set.
         :type index: int
         :param value: The value to set.
-        :type value: CoreData
+        :type value: :class:`CoreDataTypes`
         :raises SimpleBenchTypeError: Always, since CoreDataSequence is immutable.
         """
         raise SimpleBenchTypeError(
@@ -176,8 +174,8 @@ class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
         """
         return hash(self._data)
 
-    def thaw(self) -> list['CoreDataTypes']:
-        """Convert the CoreDataSequenceto a standard mutable list.
+    def thaw(self) -> list[CoreDataTypes]:
+        """Convert the CoreDataSequence to a standard mutable list.
 
         :returns: A mutable list representation of the CoreDataSequence.
         :rtype: list[CoreDataTypes]

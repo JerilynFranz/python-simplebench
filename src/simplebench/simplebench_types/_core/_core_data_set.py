@@ -19,7 +19,6 @@ Allowed types are:
     - Sets of the above types
 """
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
-from typing import TYPE_CHECKING
 
 from typechecked import Immutable
 
@@ -27,10 +26,8 @@ from simplebench.exceptions import SimpleBenchTypeError
 
 from .._element_collection import ElementCollection, is_element_collection
 from ._error_tags import _CoreDataErrorTag
-from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE
+from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE, CoreDataTypes
 
-if TYPE_CHECKING:
-    from ._types import CoreDataTypes
 
 class CoreDataSet(Set[CoreDataTypes], Immutable, Hashable):
     """Deep-immutable Set container for CoreData types used in SimpleBench.
@@ -145,7 +142,7 @@ class CoreDataSet(Set[CoreDataTypes], Immutable, Hashable):
         """
         return hash(self._data)
 
-    def thaw(self) -> set['CoreDataTypes']:
+    def thaw(self) -> set[CoreDataTypes]:
         """Convert the CoreDataSequence to a standard mutable set.
 
         :returns: A mutable set representation of the CoreDataSequence.

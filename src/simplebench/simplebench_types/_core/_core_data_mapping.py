@@ -19,17 +19,13 @@ Allowed types are:
     - Sets of the above types
 """
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
-from typing import TYPE_CHECKING
 
 from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 
 from ._error_tags import _CoreDataErrorTag
-from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE
-
-if TYPE_CHECKING:
-    from ._types import CoreDataTypes
+from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE, CoreDataTypes
 
 
 class CoreDataMapping(Mapping[str, CoreDataTypes], Immutable, Hashable):
@@ -102,13 +98,13 @@ class CoreDataMapping(Mapping[str, CoreDataTypes], Immutable, Hashable):
 
         self._data = data
 
-    def __getitem__(self, key: str) -> 'CoreDataTypes':
+    def __getitem__(self, key: str) -> CoreDataTypes:
         """Get the value for the given key.
 
         :param key: The key.
         :type key: str
-        :returns: The corresponding CoreData value.
-        :rtype: CoreData
+        :returns: The corresponding CoreDataTypes value.
+        :rtype: CoreDataTypes
         :raises KeyError: If the key is not found.
         """
         try:
@@ -118,7 +114,7 @@ class CoreDataMapping(Mapping[str, CoreDataTypes], Immutable, Hashable):
                 f"Key {key!r} not found in CoreDataMapping.",
                 tag=_CoreDataErrorTag.CORE_DATA_MAPPING_KEY_ERROR) from exc
 
-    def __setitem__(self, key: str, value: 'CoreDataTypes') -> None:
+    def __setitem__(self, key: str, value: CoreDataTypes) -> None:
         """Raise an error since CoreDataMapping is immutable.
 
         :param key: The key to set.
@@ -188,7 +184,7 @@ class CoreDataMapping(Mapping[str, CoreDataTypes], Immutable, Hashable):
         return hash(tuple(items))
 
 
-    def thaw(self) -> dict[str, 'CoreDataTypes']:
+    def thaw(self) -> dict[str, CoreDataTypes]:
         """Convert the CoreDataMapping to a standard mutable dict.
 
         :returns: A mutable dict representation of the CoreDataMapping.
