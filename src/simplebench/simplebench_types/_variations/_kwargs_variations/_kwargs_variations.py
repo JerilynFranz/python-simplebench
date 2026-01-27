@@ -83,6 +83,16 @@ class KWArgsVariations(Mapping[str, ElementCollection[Mark]], Immutable):
                 f"Variation field '{key}' not found in KWArgsVariations.",
                 tag=_KWArgsVariationsErrorTag.KWARGS_VARIATIONS_KEY_ERROR) from exc
 
+    def __contains__(self, key: object) -> bool:
+        """Check if the KWArgsVariations contains the given key.
+
+        :param key: The key to check.
+        :type key: object
+        :returns: True if the key is in the KWArgsVariations, False otherwise.
+        :rtype: bool
+        """
+        return key in self._kwarg_variations
+
     def __setitem__(self, key: str, value: tuple[Mark, ...]) -> None:
         """Raise an error since KWArgsVariations is immutable.
 

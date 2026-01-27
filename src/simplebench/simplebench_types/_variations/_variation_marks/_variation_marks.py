@@ -75,6 +75,16 @@ class VariationMarks(Mapping[str, Mark], Immutable):
                 f"Variation field '{key}' not found in VariationMarks.",
                 tag=_VariationMarksErrorTag.VARIATION_MARKS_KEY_ERROR) from exc
 
+    def __contains__(self, key: object) -> bool:
+        """Check if the VariationMarks contains the given key.
+
+        :param key: The key to check.
+        :type key: object
+        :returns: True if the key is in the VariationMarks, False otherwise.
+        :rtype: bool
+        """
+        return key in self._marks
+
     def __setitem__(self, key: str, value: Mark) -> None:
         """Raise an error since VariationMarks is immutable.
 

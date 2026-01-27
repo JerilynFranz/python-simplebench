@@ -50,7 +50,7 @@ import importlib.util
 import math
 import sys
 import tracemalloc
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Final, NamedTuple
 
@@ -166,7 +166,7 @@ class _Measurement(NamedTuple):
     gc_gen2_uncollectable: int
 
 
-_MEASUREMENT_INDEXES: dict[str, int] = {name: idx for idx, name in enumerate(_Measurement._fields)}
+_MEASUREMENT_INDEXES: Final[dict[str, int]] = {name: idx for idx, name in enumerate(_Measurement._fields)}
 """A mapping of measurement field names to their corresponding indexes in the _Measurement tuple."""
 
 # Index constants for measurement tuple elements
@@ -202,7 +202,7 @@ _GC_GEN2_COLLECTED: Final[int] = _MEASUREMENT_INDEXES['gc_gen2_collected']
 _GC_GEN2_UNCOLLECTABLE: Final[int] = _MEASUREMENT_INDEXES['gc_gen2_uncollectable']
 """A constant representing the index of the generation 2 uncollectable garbage element in a measurement tuple."""
 
-_RETAINED_METRICS: list[int] = list(_MEASUREMENT_INDEXES.values())
+_RETAINED_METRICS: Final[list[int]] = list(_MEASUREMENT_INDEXES.values())
 """A list of all measurement indexes to be retained in the results.
 
 This includes all indexes defined in the _Measurement named tuple which
@@ -265,7 +265,7 @@ class SimpleRunner(BenchmarkRunner):
     :param case: The benchmark case to run.
     :type case: Case
     :param variation_marks: The variation marks for the benchmark case.
-    :type variation_marks: VariationMarksType
+    :type variation_marks: VariationMarks
     :param session: The session in which the benchmark is run.
     :type session: Session, optional
     :param runner: The BenchmarkRunner callable to use to run the benchmark.
@@ -276,7 +276,7 @@ class SimpleRunner(BenchmarkRunner):
         self,
         *,
         case: Case,
-        variation_marks: Mapping[str, Any],
+        variation_marks: VariationMarks,
         session: Session | None = None,
         runner: Callable[..., Any] | None = None,
     ) -> None:
@@ -508,7 +508,7 @@ class SimpleRunner(BenchmarkRunner):
         setup: Callable[..., Any] | None = None,
         teardown: Callable[..., Any] | None = None,
         variation_marks: VariationMarks | None = None,
-        variation_cols: VariationColsType | None = None,
+        variation_cols: VariationCols | None = None,
     ) -> Results:
         """Run a generic benchmark using the specified action and test case.
 
@@ -705,8 +705,7 @@ class SimpleRunner(BenchmarkRunner):
             n=n,
             rounds=rounds,
             iterations=iteration_results,
-            variation_cols=variation_cols,
-            marks=variation_marks,
+            variation_marks=variation_marks,
             extra_info={},
         )
         progress_tracker.stop()

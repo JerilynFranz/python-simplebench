@@ -74,6 +74,16 @@ class VariationCols(Mapping[str, str], Immutable):
                 f"Variation field '{key}' not found in VariationCols.",
                 tag=_VariationColsErrorTag.VARIATION_COLS_KEY_ERROR) from exc
 
+    def __contains__(self, key: object) -> bool:
+        """Check if the VariationCols contains the given key.
+
+        :param key: The key to check.
+        :type key: object
+        :returns: True if the key is in the VariationCols, False otherwise.
+        :rtype: bool
+        """
+        return key in self._cols
+
     def __setitem__(self, key: str, value: str) -> None:
         """Raise an error since VariationCols is immutable.
 

@@ -1,20 +1,24 @@
 """Validators for the simplebench.case package"""
 import inspect
 from collections.abc import Callable, Mapping
-from types import MappingProxyType
 from typing import Any, get_type_hints
 
 import simplebench.defaults as defaults
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.simplebench_types import ElementCollection, is_element_collection
+from simplebench.simplebench_types import (
+    ElementCollection,
+    KWArgsVariations,
+    Mark,
+    VariationCols,
+    is_element_collection,
+)
 from simplebench.validators import validate_positive_float, validate_positive_int, validate_string, validate_type
 from simplebench.vcs import VCSInfo
 
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
-from .mark import Mark
 
 
 def benchmark_id(benchmark_id_value: str) -> str:
@@ -298,7 +302,7 @@ def warmup_iterations(warmup_iterations_value: int) -> int:
 
 
 def kwargs_variations(kwargs_variations_value: Mapping[str, ElementCollection[Any]] | None
-                      ) -> MappingProxyType[str, tuple[Mark, ...]]:
+                      ) -> KWArgsVariations:
     """Validate the kwargs_variations dictionary.
 
     Validates that the kwargs_variations is a Mapping where each key is a string
@@ -333,7 +337,7 @@ def kwargs_variations(kwargs_variations_value: Mapping[str, ElementCollection[An
     :raises SimpleBenchTypeError: If any value cannot be converted to a string for a Mark label.
     """
     if kwargs_variations_value is None:
-        return MappingProxyType({})
+        return KWArgsVariations({})
 
     if not isinstance(kwargs_variations_value, Mapping):
         raise SimpleBenchTypeError(
@@ -383,7 +387,7 @@ def kwargs_variations(kwargs_variations_value: Mapping[str, ElementCollection[An
                 'using Mark instances directly to apply labels.',
                 tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_CANNOT_CONVERT_TO_STRING,
             ) from exc
-    return MappingProxyType(validated_dict)
+    return KWArgsVariations(validated_dict)
 
 
 def action_signature(action_func: FunctionRunner, kwargs_variations_value: Mapping[str, Any]) -> FunctionRunner:
@@ -486,14 +490,14 @@ def action_signature(action_func: FunctionRunner, kwargs_variations_value: Mappi
 
 def variation_cols(
     variation_cols_value: Mapping[str, str] | None,
-    kwargs_variations_value: Mapping[str, ElementCollection[Mark]]
-) -> MappingProxyType[str, str]:
+    kwargs_variations_value: KWArgsVariations,
+) -> VariationCols:
     """Validate the variation_cols dictionary.
 
     :param variation_cols_value: The variation_cols dictionary to validate or None.
     :type variation_cols_value: Mapping[str, str] | None
     :param kwargs_variations_value: The kwargs_variations dictionary to validate against.
-    :type kwargs_variations_value: Mapping[str, ElementCollection[Any]]
+    :type kwargs_variations_value: KWArgsVariations
     :return: A shallow copy of the validated variation_cols dictionary or {} if not provided.
         Each key is a keyword argument name from `kwargs_variations_value`, and each value is a
         non-blank string to be used as the column label for that argument in reports.
@@ -504,7 +508,7 @@ def variation_cols(
         value is a blank string.
     """
     if variation_cols_value is None:
-        return MappingProxyType({})
+        return VariationCols({})
 
     if not isinstance(variation_cols_value, Mapping):
         raise SimpleBenchTypeError(
@@ -530,7 +534,7 @@ def variation_cols(
                 tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_VALUE_BLANK,
             )
         validated_dict[key] = stripped_value
-    return MappingProxyType(validated_dict)
+    return VariationCols(validated_dict)
 
 
 def vcs_info(vcs_info_value: VCSInfo | None) -> VCSInfo | None:

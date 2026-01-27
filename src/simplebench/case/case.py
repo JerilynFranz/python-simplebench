@@ -32,7 +32,7 @@ from simplebench.validators import validate_bool
 from . import validate
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
-from .mark import Mark
+from simplebench.simplebench_types import Mark, KWArgsVariations, VariationCols, VariationMarks
 from .results import Results
 from .state import CaseState
 
@@ -427,7 +427,7 @@ class Case:
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
         # kwargs_variations processed first so it can be used for cross-validation of action signature
-        self._kwargs_variations: MappingProxyType[str, tuple[Mark, ...]] = validate.kwargs_variations(kwargs_variations)
+        self._kwargs_variations: KWArgsVariations = validate.kwargs_variations(kwargs_variations)
         self._group: str = validate.group(group)
         self._action: FunctionRunner = validate.action_signature(action, self.kwargs_variations)
         self._title: str = validate.title(self._action, title)
