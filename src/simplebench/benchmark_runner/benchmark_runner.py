@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from types import MappingProxyType
 from typing import TYPE_CHECKING, Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -93,7 +92,7 @@ class BenchmarkRunner(ABC):
 
         :return: The keyworded arguments for the benchmark.
         """
-        return self._kwargs
+        return self._variation_marks
 
     @variation_marks.setter
     def variation_marks(self, value: VariationMarks) -> None:
@@ -105,6 +104,6 @@ class BenchmarkRunner(ABC):
             raise SimpleBenchTypeError(
                 'varation_marks must be a VariationMarks instance',
                 tag=_RunnerErrorTag.VARIATION_MARKS_NOT_A_VARIATION_MARKS,)
-        self._kwargs: VariationMarks = value if isinstance(
-            value, MappingProxyType) else MappingProxyType(value)
+        self._variation_marks: VariationMarks = value if isinstance(
+            value, VariationMarks) else VariationMarks(value)
 

@@ -30,7 +30,7 @@ class _ResultsErrorTag(ErrorTag):
     DESCRIPTION_INVALID_ARG_VALUE = 'DESCRIPTION_INVALID_ARG_VALUE'
     """The description arg passed must be a non-empty string"""
     N_INVALID_ARG_TYPE = 'N_INVALID_ARG_TYPE'
-    """Something other than an int was passed as the n arg"""
+    """Something other than a float was passed as the n arg"""
     N_INVALID_ARG_VALUE = 'N_INVALID_ARG_VALUE'
     """The n arg passed must be greater than zero"""
     ROUNDS_INVALID_ARG_TYPE = 'ROUNDS_INVALID_ARG_TYPE'
@@ -70,9 +70,9 @@ class _ResultsErrorTag(ErrorTag):
     PER_ROUND_TIMINGS_INVALID_ARG_TYPE = 'PER_ROUND_TIMINGS_INVALID_ARG_TYPE'
     """Something other than an OperationTimings instance was passed as the per_round_timings arg"""
     ITERATIONS_INVALID_ARG_TYPE = 'ITERATIONS_INVALID_ARG_TYPE'
-    """Something other than a Mapping of Metric to Values instances was passed as the iterations arg"""
-    ITERATIONS_INVALID_ARG_IN_SEQUENCE = 'ITERATIONS_INVALID_ARG_IN_SEQUENCE'
-    """Something other than an Iteration instance was found in the Sequence passed as the iterations arg"""
+    """Something other than an Iterations instance was passed as the iterations arg"""
+    ITERATIONS_INVALID_ARG_VALUE = 'ITERATIONS_INVALID_ARG_VALUE'
+    """The iterations arg must contain at least one iteration"""
     VARIATION_COLS_INVALID_ARG_TYPE = 'VARIATION_COLS_INVALID_ARG_TYPE'
     """Something other than a dict of str to str was passed as the variation_cols arg"""
     VARIATION_COLS_INVALID_ARG_KEY_TYPE = 'VARIATION_COLS_INVALID_ARG_KEY_TYPE'

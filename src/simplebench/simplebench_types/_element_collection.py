@@ -12,13 +12,13 @@ length, and membership tests, but not necessarily ordering or indexing.
 from collections.abc import Iterator, Mapping
 from typing import Any, Protocol, TypeGuard, TypeVar, runtime_checkable
 
-T = TypeVar('T', covariant=True)
+T_co = TypeVar('T_co', covariant=True)
 
 # No direct exports from this module. All exports are defined in __init__.py
 __all__ = []
 
 @runtime_checkable
-class ElementCollection(Protocol[T]):
+class ElementCollection(Protocol[T_co]):
     """A runtime checkable Protocol representing a collection of elements that
     can be iterated over repeatedly, measured for length, and checked
     for membership.
@@ -100,7 +100,7 @@ class ElementCollection(Protocol[T]):
 
     """
 
-    def __iter__(self) -> Iterator[T]:
+    def __iter__(self) -> Iterator[T_co]:
         ...
 
     def __len__(self) -> int:

@@ -5,11 +5,9 @@ from typing import Any
 
 import simplebench.report.versions.v1 as reports
 from simplebench.metrics import Metric, MetricCategory
-from simplebench.simplebench_types import Values, VariationMarks
-from simplebench.validators import validate_non_blank_string, validate_positive_float, validate_positive_int
+from simplebench.simplebench_types import Iterations, Values, VariationMarks
 
-from . import validate
-from ._error_tags import _ResultsErrorTag
+from . import _validate
 from .metrics import Stats
 
 
@@ -19,7 +17,10 @@ class Results:
     The Results class holds all relevant information about a benchmark test's execution and its outcomes.
     It is used to store the results of a benchmark run for a specific case and combination of parameters.
 
-    It is immutable after creation to ensure data integrity.
+    It is shallow immutable after creation; its properties cannot be modified.
+
+    Because the types of things stored in extras are not completely controlled by SimpleBench,
+    it is not possible to guarantee deep immutability of the contents of the extras property.
 
     :ivar group: The reporting group to which the benchmark case belongs. (read only)
     :vartype group: str
@@ -69,21 +70,27 @@ class Results:
         description: str,
         n: float,
         rounds: int,
-        iterations: Mapping[Metric, Values],
+        iterations: Iterations,
         variation_marks: VariationMarks | None = None,
         extra_info: Mapping[str, Any] | None = None,
     ) -> None:
         """Initialize a Results object.
 
-        :param str group: The reporting group to which the benchmark case belongs.
-        :param str title: The name of the benchmark case.
-        :param str description: A brief description of the benchmark case.
-        :param float n: The O() complexity analysis size/weighting.
-        :param int rounds: The number of rounds the benchmark ran per iteration.
-        :param Mapping[Metric, Values] iterations: A mapping of metrics to their values for the benchmark.
+        :param group: The reporting group to which the benchmark case belongs.
+        :type group: str
+        :param title: The name of the benchmark case.
+        :type title: str
+        :param description: A brief description of the benchmark case.
+        :type description: str
+        :param n: The O() complexity analysis size/weighting.
+        :type n: float
+        :param rounds: The number of rounds the benchmark ran per iteration.
+        :type rounds: int
+        :param iterations: A mapping of Metrics to Values for the benchmark.
+        :type iterations: Iterations
         :param variation_marks: A dictionary of variation marks used to identify
             the benchmark variation. Defaults to :obj:`None`, which results in an empty dictionary.
-        :type variation_marks: VariationMarksType | None, optional
+        :type variation_marks: VariationMarks | None, optional
         :param Optional[Mapping[str, Any]] extra_info: Any extra information to include in the benchmark results.
             Defaults to {}.
         :raises SimpleBenchTypeError: If any of the arguments are of incorrect type.
@@ -93,27 +100,14 @@ class Results:
         self._sum_cache: dict[Metric, float] = {}
         self._raw_cache: dict[Metric, Values] = {}
 
-        self._group: str = validate_non_blank_string(
-            group, 'group', _ResultsErrorTag.GROUP_INVALID_ARG_TYPE, _ResultsErrorTag.GROUP_INVALID_ARG_VALUE
-        )
-        self._title: str = validate_non_blank_string(
-            title, 'title', _ResultsErrorTag.TITLE_INVALID_ARG_TYPE, _ResultsErrorTag.TITLE_INVALID_ARG_VALUE
-        )
-        self._description: str = validate_non_blank_string(
-            description,
-            'description',
-            _ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
-            _ResultsErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
-        )
-        self._n: float = validate_positive_float(
-            n, 'n', _ResultsErrorTag.N_INVALID_ARG_TYPE, _ResultsErrorTag.N_INVALID_ARG_VALUE
-        )
-        self._rounds: int = validate_positive_int(
-            rounds, 'rounds', _ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE, _ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE
-        )
-        self._iterations: MappingProxyType[Metric, Values] = validate.iterations(iterations)
-        self._variation_marks: VariationMarks = validate.variation_marks(variation_marks)
-        self._extra_info = validate.extra_info(extra_info)
+        self._group: str = _validate.group(group)
+        self._title: str = _validate.title(title)
+        self._description: str = _validate.description(description)
+        self._n: float = _validate.n(n)
+        self._rounds: int = _validate.rounds(rounds)
+        self._iterations: Iterations = _validate.iterations(iterations)
+        self._variation_marks: VariationMarks = _validate.variation_marks(variation_marks)
+        self._extra_info = _validate.extra_info(extra_info)
         self._repr_cache: str | None = None  # cache for __repr__
 
     @property

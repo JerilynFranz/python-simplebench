@@ -103,3 +103,37 @@ class Metric:
                 f"Metric type '{self.metric_type}' is not registered in the metric_types_registry",
                 tag=_MetricErrorTag.NOT_REGISTERED_METRIC_TYPE,
             )
+
+    def __eq__(self, value: object) -> bool:
+        """Check equality between two Metric instances.
+
+        :param value: The other Metric instance to compare with.
+        :type value: object
+        :returns: True if both Metric instances are equal, False otherwise.
+        :rtype: bool
+        :raises TypeError: If the other value is not a Metric instance.
+        """
+
+        if not isinstance(value, Metric):
+            return NotImplemented
+        return (
+            self.label == value.label
+            and self.title == value.title
+            and self.description == value.description
+            and self.metric_type == value.metric_type
+        )
+
+    def __lt__(self, value: object) -> bool:
+        """Less than comparison between two Metric instances based on their labels.
+
+        :param value: The other Metric instance to compare with.
+        :type value: object
+        :returns: True if this Metric's label is less than the other Metric's label, False otherwise.
+        :rtype: bool
+        :raises TypeError: If the other value is not a Metric instance.
+        """
+
+        if not isinstance(value, Metric):
+            return NotImplemented
+        return self.label < value.label
+

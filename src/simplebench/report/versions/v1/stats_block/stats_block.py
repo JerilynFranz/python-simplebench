@@ -147,7 +147,7 @@ class StatsBlock(BaseStatsBlock):
     def __init__(
         self,
         *,
-        hash_id: str,
+        hash_id: str = '',
         name: str,
         semantic_type: str,
         description: str = '',
@@ -174,7 +174,7 @@ class StatsBlock(BaseStatsBlock):
     def __init__(
         self,
         *,
-        hash_id: str,
+        hash_id: str = '',
         name: str,
         description: str = '',
         semantic_type: str,
@@ -213,7 +213,7 @@ class StatsBlock(BaseStatsBlock):
     def __init__(
         self,
         *,
-        hash_id: str,
+        hash_id: str = '',
         name: str,
         description: str = '',
         semantic_type: str,

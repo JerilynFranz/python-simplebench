@@ -4,18 +4,16 @@ from __future__ import annotations
 
 import statistics
 from math import isclose, sqrt
-from typing import TypeAlias
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric, metrics_registry
-from simplebench.report.versions import v1
+from simplebench.report.versions import v1 as reports
 from simplebench.si_units import si_scale_to_unit, si_unit_base
 from simplebench.simplebench_types import Values
 from simplebench.validators import validate_bool, validate_positive_int, validate_type
 
 from ._error_tags import _StatsErrorTag
 
-StatsBlock: TypeAlias = v1.StatsBlock
 
 
 class Stats:
@@ -72,8 +70,8 @@ class Stats:
         self._maximum: float | None = None
         self._standard_deviation: float | None = None
         self._relative_standard_deviation: float | None = None
-        self._stats_block: StatsBlock | None = None
-        self._stats_block_full_data: StatsBlock | None = None
+        self._stats_block: reports.StatsBlock | None = None
+        self._stats_block_full_data: reports.StatsBlock | None = None
 
     @property
     def metric(self) -> Metric:
@@ -206,7 +204,7 @@ class Stats:
         quantile_values = statistics.quantiles(self.data, n=102, method='inclusive')
         return Values(quantile_values)
 
-    def stats_block(self, full_data: bool = False) -> StatsBlock:
+    def stats_block(self, full_data: bool = False) -> reports.StatsBlock:
         """Returns a ``StatsBlock`` for the statistics.
 
         The data values are scaled according to the scale factor to provide
@@ -232,23 +230,34 @@ class Stats:
         measurements: Values | None = None
         if full_data:
             measurements = Values(value * self.scale for value in self.data)
-        stats_block = StatsBlock(
-            name=self.metric.title,
-            description=self.metric.description,
-            semantic_type=self.metric.metric_type.semantic_type,
-            unit=si_unit_base(self.unit),
-            scale=1.0,
-            iterations=self.iterations,
-            rounds=self.rounds,
-            minimum=self.minimum * self.scale,
-            maximum=self.maximum * self.scale,
-            mean=self.mean * self.scale,
-            median=self.median * self.scale,
-            standard_deviation=self.standard_deviation * self.scale,
-            relative_standard_deviation=self.relative_standard_deviation,
-            percentiles=Values(pct * self.scale for pct in self.percentiles),
-            measurements=measurements,
-        )
+            stats_block: reports.StatsBlock = reports.StatsBlock(
+                name=self.metric.title,
+                description=self.metric.description,
+                semantic_type=self.metric.metric_type.semantic_type,
+                unit=si_unit_base(self.unit),
+                scale=1.0,
+                iterations=self.iterations,
+                rounds=self.rounds,
+                measurements=measurements,
+            )
+        else:
+            stats_block = reports.StatsBlock(
+                name=self.metric.title,
+                description=self.metric.description,
+                semantic_type=self.metric.metric_type.semantic_type,
+                unit=si_unit_base(self.unit),
+                scale=1.0,
+                iterations=self.iterations,
+                rounds=self.rounds,
+                minimum=self.minimum * self.scale,
+                maximum=self.maximum * self.scale,
+                mean=self.mean * self.scale,
+                median=self.median * self.scale,
+                standard_deviation=self.standard_deviation * self.scale,
+                relative_standard_deviation=self.relative_standard_deviation,
+                percentiles=Values(pct * self.scale for pct in self.percentiles),
+            )
+    
         if full_data:
             self._stats_block_full_data = stats_block
         else:
@@ -303,7 +312,7 @@ class Stats:
         if len(self.percentiles) != len(other.percentiles):
             return False
 
-        for self_pct, other_pct in zip(self.percentiles, other.percentiles):
+        for self_pct, other_pct in zip(self.percentiles, other.percentiles, strict=True):
             if not isclose(self_pct, other_pct / relative_scale):
                 return False
 
