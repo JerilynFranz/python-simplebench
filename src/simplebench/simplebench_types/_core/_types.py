@@ -14,7 +14,6 @@ from typing import TypeAlias
 
 CoreDataTypes: TypeAlias = (
     str
-    | bytes
     | int
     | float
     | bool
@@ -33,7 +32,6 @@ They are serializable, but not necessarily immutable.
 
 Allowed types are:
     - str
-    - bytes
     - int
     - float
     - bool
@@ -44,12 +42,11 @@ Allowed types are:
     - `Set[CoreDataTypes]` (covers set, frozenset)
 """
 
-IMMUTABLE_CORE_DATA_TYPES_TUPLE = (str, bytes, int, float, bool, complex, NoneType, tuple, frozenset, MappingProxyType)
+IMMUTABLE_CORE_DATA_TYPES_TUPLE = (str, int, float, bool, complex, NoneType, tuple, frozenset, MappingProxyType)
 """Tuple of types representing immutable core data primitive types.
 
 Includes:
     - str
-    - bytes
     - int
     - float
     - bool
@@ -62,7 +59,6 @@ Includes:
 
 ImmutableCoreDataTypes: TypeAlias = (
     str
-    | bytes
     | int
     | float
     | bool
@@ -81,7 +77,6 @@ They are both serializable and immutable.
 
 Allowed types are:
     - :class:`str`
-    - :class:`bytes`
     - :class:`int`
     - :class:`float`
     - :class:`complex`
@@ -144,14 +139,13 @@ is an immutable core data type as defined by `ImmutableCoreDataTypes`.
 It is both serializable and immutable.
 """
 
-CORE_DATA_PRIMITIVE_TYPES_TUPLE: tuple[type, ...] = (str, bytes, int, float, bool, complex, NoneType)
+CORE_DATA_PRIMITIVE_TYPES_TUPLE: tuple[type, ...] = (str, int, float, bool, complex, NoneType)
 """Tuple of types representing core data primitive types.
 
 They are all immutable and serializable.
 
 Includes:
     - str
-    - bytes
     - int
     - float
     - bool

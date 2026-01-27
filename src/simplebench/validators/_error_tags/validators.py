@@ -25,8 +25,8 @@ class _ValidatorsErrorTag(ErrorTag):
     """The 'value' parameter is not of type Mapping[str, CoreDataTypes]."""
     INVALID_CORE_MAPPING_PARAM_VALUE = 'INVALID_CORE_MAPPING_PARAM_VALUE'
     """The 'value' parameter contains invalid CoreDataTypes elements."""
-    CYCLIC_REFERENCE_DETECTED = 'CYCLIC_REFERENCE_DETECTED'
-    """A cyclic reference was detected in a core data mapping or sequence."""
+    RECURSION_LIMIT_REACHED = 'RECURSION_LIMIT_REACHED'
+    """Recursion limit reached during validation."""
 
     # validate_namespaced_identifier() tags
     INVALID_TYPE_ERROR_TAG_TYPE = 'INVALID_TYPERROR_TAG_TYPE'
