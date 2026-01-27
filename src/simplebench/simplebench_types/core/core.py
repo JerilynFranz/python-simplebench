@@ -8,8 +8,6 @@ There are also several related `TypeAlias` definitions for mappings, sequences, 
 built upon these core types and is_* functions to validate instances of these types.
 """
 
-from __future__ import annotations
-
 from collections.abc import Mapping, Sequence, Set
 from types import MappingProxyType, NoneType
 from typing import TypeAlias
@@ -82,13 +80,13 @@ data structures within SimpleBench.
 They are both serializable and immutable.
 
 Allowed types are:
-    - str
-    - bytes
-    - int
-    - float
-    - bool
-    
-    - None
+    - :class:`str`
+    - :class:`bytes`
+    - :class:`int`
+    - :class:`float`
+    - :class:`complex`
+    - :class:`bool`
+    - :obj:`None`
     - `tuple[ImmutableCoreDataTypes, ...]`
     - `frozenset[ImmutableCoreDataTypes]`
     - `MappingProxyType[str, ImmutableCoreDataTypes]`

@@ -89,7 +89,7 @@ def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pragma: no cove
             title='benchcase',
             action=benchcase,
             description='Benchmark case'),
-        kwargs={})
+        variation_marks={})
 
     def action() -> None:
         """A simple benchmark case function."""

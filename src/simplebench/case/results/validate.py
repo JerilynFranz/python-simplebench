@@ -7,7 +7,7 @@ from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric, MetricCategory
-from simplebench.simplebench_types import Values
+from simplebench.simplebench_types import Mark, Values, VariationMarks
 from simplebench.validators import validate_type
 
 from ._error_tags import _ResultsErrorTag
@@ -44,10 +44,10 @@ def belongs_to_metric_category(value: Metric, metric_category: MetricCategory) -
     return value
 
 
-def variation_cols(value: dict[str, str] | None) -> MappingProxyType[str, str]:
+def variation_cols(value: Mapping[str, str] | None) -> MappingProxyType[str, str]:
     """Validate the variation_cols dictionary.
 
-    :param dict[str, str] | None value: The variation_cols dictionary to validate.
+    :param Mapping[str, str] | None value: The variation_cols dictionary to validate.
     :returns MappingProxyType[str, str]: A read-only mapping of the validated variation_cols dictionary.
     :raises SimpleBenchTypeError: If the variation_cols is not a dictionary or if any key or
         value is not a string.
@@ -102,12 +102,12 @@ def iterations(iterations_value: Mapping[Metric, Values]) -> MappingProxyType[Me
     return MappingProxyType(iterations_value)
 
 
-def marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tuple[str, ...]]:
+def variation_marks(value: VariationMarks | None) -> VariationMarks:
     """Validate the marks dictionary.
 
     Performs shallow copy of the dictionary to prevent external mutation.
 
-    :param dict[str, tuple[str, ...]] | None value: The marks dictionary to validate.
+    :param Mapping[str, tuple[str, ...]] | None value: The marks dictionary to validate.
     :returns MappingProxyType[str, tuple[str, ...]]: A shallow copy of the validated marks dictionary.
     :raises SimpleBenchTypeError: If the marks is not a dictionary or if any key is not a string.
     :raises SimpleBenchValueError: If any key is a blank string.
@@ -115,12 +115,13 @@ def marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tup
     """
     if value is None:
         return MappingProxyType({})
-    if not isinstance(value, dict):
+    if not isinstance(value, Mapping):
         raise SimpleBenchTypeError(
-            f'Invalid marks: {value}. Must be a dictionary.', tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE
+            f'Invalid marks: {value}. Must be a Mapping.',
+            tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE,
         )
 
-    return_value: dict[str, tuple[str, ...]] = {}
+    return_value: dict[str, str] = {}
     for key, marks_value in value.items():
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
@@ -133,36 +134,29 @@ def marks(value: dict[str, tuple[str, ...]] | None) -> MappingProxyType[str, tup
                 'Invalid marks key value: blank string. Keys must be non-blank strings.',
                 tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE,
             )
-        if not isinstance(marks_value, tuple):
+        if not isinstance(marks_value, Mark):
             raise SimpleBenchTypeError(
-                f'Invalid marks value type: {type(marks_value)}. Must be of type tuple[str, ...].',
+                f'Invalid marks value type: {type(marks_value)}. Must be of type Mark.',
                 tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_TYPE,
             )
-        if not all(isinstance(item, str) for item in marks_value):
-            raise SimpleBenchTypeError(
-                'Invalid marks value item type. All items in the tuple must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE,
-            )
-        return_value[key] = marks_value
-    return MappingProxyType(return_value)
 
 
-def extra_info(value: dict[str, Any] | None) -> MappingProxyType[str, Any]:
+def extra_info(value: Mapping[str, Any] | None) -> MappingProxyType[str, Any]:
     """Validate the extra_info object if passed, or create a default one if None.
 
     Performs deep copy of the dictionary to help mitigate external mutation. This means
     that the extra_info dict must be deepcopy-able.
 
-    :param dict[str, Any] | None value: The extra_info object to validate or None.
+    :param Mapping[str, Any] | None value: The extra_info object to validate or None.
     :returns MappingProxyType[str, Any]: The validated or default extra_info dictionary.
-    :raises SimpleBenchTypeError: If the value is not None and not of type dict[str, Any]
+    :raises SimpleBenchTypeError: If the value is not None and not of type Mapping[str, Any]
     """
     if value is None:
         return MappingProxyType({})
 
-    if not isinstance(value, dict):
+    if not isinstance(value, Mapping):
         raise SimpleBenchTypeError(
-            f'Invalid extra_info type: {type(value)}. Must be of type dict[str, Any].',
+            f'Invalid extra_info type: {type(value)}. Must be of type Mapping[str, Any].',
             tag=_ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE,
         )
 

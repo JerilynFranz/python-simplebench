@@ -2748,6 +2748,7 @@ dependencies = [
     { name = "py-cpuinfo" },
     { name = "rich" },
     { name = "typechecked" },
+    { name = "typeguard" },
     { name = "typing-extensions" },
 ]
 
@@ -2842,6 +2843,7 @@ requires-dist = [
     { name = "seaborn", marker = "extra == 'all'", specifier = ">=0.13.2" },
     { name = "seaborn", marker = "extra == 'graphs'", specifier = ">=0.13.2" },
     { name = "typechecked", specifier = ">=0.11.0" },
+    { name = "typeguard", specifier = ">=4.4.4" },
     { name = "typing-extensions", specifier = ">=4.10.0" },
 ]
 provides-extras = ["all", "graphs", "jsonschema", "psutil", "pytest"]
@@ -3240,6 +3242,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e1/bd/ee8bc70e3961e2d3b376701830de5e7238680616f3435577180f3d26d076/typechecked-0.11.0.tar.gz", hash = "sha256:34182d9f1f586572faf082c407f9fc72179bcab404a5303f24fd86c66ec074bb", size = 692252, upload-time = "2026-01-09T02:37:02.101Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/65/60/d8a03c4c4cd646fd61c924d921b1c5896d61860f990eb37a00db78af6b04/typechecked-0.11.0-py3-none-any.whl", hash = "sha256:cebf4bb8021c1abe83f9fd4acbd6b1531f43282ef8744c705d0ddcf2b7594022", size = 58068, upload-time = "2026-01-09T02:37:00.187Z" },
+]
+
+[[package]]
+name = "typeguard"
+version = "4.4.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c7/68/71c1a15b5f65f40e91b65da23b8224dad41349894535a97f63a52e462196/typeguard-4.4.4.tar.gz", hash = "sha256:3a7fd2dffb705d4d0efaed4306a704c89b9dee850b688f060a8b1615a79e5f74", size = 75203, upload-time = "2025-06-18T09:56:07.624Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1b/a9/e3aee762739c1d7528da1c3e06d518503f8b6c439c35549b53735ba52ead/typeguard-4.4.4-py3-none-any.whl", hash = "sha256:b5f562281b6bfa1f5492470464730ef001646128b180769880468bd84b68b09e", size = 34874, upload-time = "2025-06-18T09:56:05.999Z" },
 ]
 
 [[package]]

@@ -1,10 +1,9 @@
 """Validation functions for type hints and instances against those type hints."""
-# TODO: Refactor to use typechecked isinstance_of_typehint where possible
 
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypedDict, TypeGuard, TypeVar, cast, get_args, get_origin, get_type_hints
 
-from typechecked import isinstance_of_typehint
+from typeguard import check_type
 
 from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
@@ -44,15 +43,17 @@ def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
     :raise SimpleBenchTypeError: If any value has an incorrect type.
     """
     try:
-        valid = isinstance_of_typehint(data, td_cls)
+        valid = check_type(data, td_cls)
     except SimpleBenchTypeError as exc:
         raise SimpleBenchTypeError(
-            f'Data does not conform to TypedDict {td_cls.__name__}: {exc}', tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
+            f'Data does not conform to TypedDict {td_cls.__name__}: {exc} {data}',
+            tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
         ) from exc
 
     if not valid:
         raise SimpleBenchTypeError(
-            f'Data does not conform to TypedDict {td_cls.__name__}', tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
+            f'Data does not conform to TypedDict {td_cls.__name__} : {data}',
+            tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
         )
 
     return cast(T, data)

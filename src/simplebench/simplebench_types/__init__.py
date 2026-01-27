@@ -1,7 +1,13 @@
 """Types used by SimpleBench."""
 
 from ._element_collection import ElementCollection, is_element_collection
+from ._mark import Mark
 from ._values import Values
+from ._variations import (
+    KWArgsVariations,
+    VariationCols,
+    VariationMarks,
+)
 from .core import (
     CORE_DATA_PRIMITIVE_TYPES_TUPLE,
     IMMUTABLE_CORE_DATA_TYPES_TUPLE,
@@ -15,7 +21,6 @@ from .core import (
     ImmutableCoreDataTypes,
 )
 from .typeddict import Never, NotRequired, ReadOnly, Required
-from .variations import ImmutableVariationColsType, ImmutableVariationMarksType, VariationColsType, VariationMarksType
 
 __all__ = [
     'ElementCollection',
@@ -34,9 +39,9 @@ __all__ = [
     'ImmutableCoreDataSetType',
     'ImmutableCoreDataTypes',
     'Values',
-    'VariationColsType',
-    'ImmutableVariationColsType',
-    'VariationMarksType',
-    'ImmutableVariationMarksType',
+    'Mark',
+    'VariationCols',
+    'VariationMarks',
+    'KWArgsVariations',
     'IMMUTABLE_CORE_DATA_TYPES_TUPLE',
 ]

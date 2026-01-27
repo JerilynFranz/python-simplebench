@@ -1,70 +1,42 @@
 """Factories for ReporterConfig instances for use in tests."""
-# pylint: disable=import-outside-toplevel
-from __future__ import annotations
+# pyright: ignore[reportCallIssue]
+# ruff: noqa: F821,F401
 
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
+from simplebench_tests import factories
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, NoDefaultValue, ReporterConfigKWArgs
+
 from simplebench.enums import Format, Target
 from simplebench.metrics import Metric
 from simplebench.reporters.choices.choices_conf import ChoicesConf
+from simplebench.simplebench_types import ElementCollection
 
-from simplebenchfactories import (
-    default_default_targets,
-    default_description,
-    default_file_append,
-    default_file_suffix,
-    default_file_unique,
-    default_formats,
-    default_reporter_name,
-    default_sections,
-    default_subdir,
-    targets_factory,
-)
-from ...kwargs import NoDefaultValue, ReporterConfigKWArgs
-
-# Modules to defer import to avoid circular imports
-_DEFERRED_MODULES_IMPORTED = False
 if TYPE_CHECKING:
     from simplebench.reporters.reporter.config import ReporterConfig
-
-    from ...factories import default_choices_conf
-    _DEFERRED_MODULES_IMPORTED = True
-else:
-    default_choices_conf = None  # pylint: disable=invalid-name
-    ReporterConfig = None  # pylint: disable=invalid-name
-
-
-def deferred_modules_import() -> None:
-    """Defer the import of some modules to avoid circular imports."""
-    global _DEFERRED_MODULES_IMPORTED, ReporterConfig, default_choices_conf  # pylint: disable=global-statement
-    if not _DEFERRED_MODULES_IMPORTED:
-        from simplebench.reporters.reporter.config import ReporterConfig
-
-        from ...factories import default_choices_conf
-        _DEFERRED_MODULES_IMPORTED = True
 
 
 def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
         *,
-        name: str | NoDefaultValue = NoDefaultValue(),
-        description: str | NoDefaultValue = NoDefaultValue(),
-        metrics: Iterable[Metric] | NoDefaultValue = NoDefaultValue(),
-        targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
-        default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
-        subdir: str | NoDefaultValue = NoDefaultValue(),
-        file_suffix: str | NoDefaultValue = NoDefaultValue(),
-        file_unique: bool | NoDefaultValue = NoDefaultValue(),
-        file_append: bool | NoDefaultValue = NoDefaultValue(),
-        formats: Iterable[Format] | NoDefaultValue = NoDefaultValue(),
-        choices: ChoicesConf | NoDefaultValue = NoDefaultValue()) -> ReporterConfigKWArgs:
+        name: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        description: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        metrics: Iterable[Metric] | NoDefaultValue = NO_DEFAULT_VALUE,
+        targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+        default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+        subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        file_suffix: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        file_unique: bool | NoDefaultValue = NO_DEFAULT_VALUE,
+        file_append: bool | NoDefaultValue = NO_DEFAULT_VALUE,
+        formats: Iterable[Format] | NoDefaultValue = NO_DEFAULT_VALUE,
+        choices: ChoicesConf | NoDefaultValue = NO_DEFAULT_VALUE) -> ReporterConfigKWArgs:
     """Constructs a ReporterConfigKWArgs instance for use in tests.
     :param name: The unique identifying name of the reporter. Must be a non-empty string.
     :type name: str
     :param description: A brief description of the reporter. Must be a non-empty string.
     :type description: str
-    :param sections: The set of all Metrics supported by the reporter.
-    :type sections: Iterable[Metric]
+    :param metrics: The set of all Metrics supported by the reporter.
+    :type metrics: Iterable[Metric]
     :param targets: The set of all Targets supported by the reporter.
     :type targets: Iterable[Target]
     :param default_targets: The default set of Targets for the reporter.
@@ -79,20 +51,19 @@ def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
     :param file_unique: Whether output files should have unique names.
     :type file_unique: bool
     """
-    deferred_modules_import()
 
     defaults = {
-        'name': default_reporter_name(),
-        'description': default_description(),
-        'sections': default_sections(),
-        'targets': targets_factory(),
-        'default_targets': default_default_targets(),
-        'subdir': default_subdir(),
-        'file_suffix': default_file_suffix(),
-        'file_unique': default_file_unique(),
-        'file_append': default_file_append(),
-        'formats': default_formats(),
-        'choices': default_choices_conf(),
+        'name': factories.default_reporter_name(),
+        'description': factories.default_description(),
+        'metrics': factories.default_metrics(),
+        'targets': factories.targets_factory(),
+        'default_targets': factories.default_default_targets(),
+        'subdir': factories.default_subdir(),
+        'file_suffix': factories.default_file_suffix(),
+        'file_unique': factories.default_file_unique(),
+        'file_append': factories.default_file_append(),
+        'formats': factories.default_formats(),
+        'choices': factories.default_choices_conf(),
     }
     overrides = {k: v for k, v in locals().items() if k in defaults and not isinstance(v, NoDefaultValue)}
     kwargs = defaults | overrides
@@ -101,25 +72,25 @@ def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
 
 def reporter_config_factory(
         *,
-        name: str | NoDefaultValue = NoDefaultValue(),
-        description: str | NoDefaultValue = NoDefaultValue(),
-        metrics: Iterable[Metric] | NoDefaultValue = NoDefaultValue(),
-        targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
-        default_targets: Iterable[Target] | NoDefaultValue = NoDefaultValue(),
-        subdir: str | NoDefaultValue = NoDefaultValue(),
-        file_suffix: str | NoDefaultValue = NoDefaultValue(),
-        file_unique: bool | NoDefaultValue = NoDefaultValue(),
-        file_append: bool | NoDefaultValue = NoDefaultValue(),
-        formats: Iterable[Format] | NoDefaultValue = NoDefaultValue(),
-        choices: ChoicesConf | NoDefaultValue = NoDefaultValue()) -> ReporterConfig:
+        name: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        description: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        metrics: Iterable[Metric] | NoDefaultValue = NO_DEFAULT_VALUE,
+        targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+        default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+        subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        file_suffix: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        file_unique: bool | NoDefaultValue = NO_DEFAULT_VALUE,
+        file_append: bool | NoDefaultValue = NO_DEFAULT_VALUE,
+        formats: Iterable[Format] | NoDefaultValue = NO_DEFAULT_VALUE,
+        choices: ChoicesConf | NoDefaultValue = NO_DEFAULT_VALUE) -> 'ReporterConfig':
     """Constructs a preconfigured ReporterConfig instance for use in tests.
 
     :param name: The unique identifying name of the reporter. Must be a non-empty string.
     :type name: str
     :param description: A brief description of the reporter. Must be a non-empty string.
     :type description: str
-    :param sections: The set of all Metrics supported by the reporter.
-    :type sections: Iterable[Metric]
+    :param metrics: The set of all Metrics supported by the reporter.
+    :type metrics: Iterable[Metric]
     :param targets: The set of all Targets supported by the reporter.
     :type targets: Iterable[Target]
     :param default_targets: The default set of Targets for the reporter.
@@ -142,13 +113,13 @@ def reporter_config_factory(
     :return: A ReporterConfig instance.
     :rtype: ReporterConfig
     """
-    deferred_modules_import()
+    from simplebench.reporters.reporter.config import ReporterConfig
 
     # Directly use the kwargs factory to get the final set of arguments
     kwargs = reporter_config_kwargs_factory(
         name=name,
         description=description,
-        sections=sections,
+        metrics=metrics,
         targets=targets,
         default_targets=default_targets,
         subdir=subdir,

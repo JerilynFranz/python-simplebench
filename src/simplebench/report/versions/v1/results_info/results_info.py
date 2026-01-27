@@ -12,8 +12,7 @@ from simplebench.report.base import BaseResultsInfo
 from simplebench.simplebench_types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
-    ImmutableVariationMarksType,
-    VariationMarksType,
+    VariationMarks,
 )
 
 from . import _validate
@@ -83,7 +82,7 @@ class ResultsInfo(BaseResultsInfo):
         title: str,
         description: str,
         n: float,
-        variation_marks: VariationMarksType,
+        variation_marks: VariationMarks,
         metrics: 'MetricsObject',
         extra_info: CoreDataMappingType,
     ) -> None:
@@ -106,7 +105,7 @@ class ResultsInfo(BaseResultsInfo):
         self._title: str = _validate.title(title)
         self._description: str = _validate.description(description)
         self._n: float = _validate.n(n)
-        self._variation_marks: ImmutableVariationMarksType = _validate.variation_marks(variation_marks)
+        self._variation_marks: VariationMarks = _validate.variation_marks(variation_marks)
         self._metrics: MetricsObject = _validate.metrics(metrics)
         self._extra_info: ImmutableCoreDataMappingType = _validate.extra_info(extra_info)
         self._hash_id: str = _validate.hash_id(hash_id)
@@ -180,7 +179,7 @@ class ResultsInfo(BaseResultsInfo):
         return self._n
 
     @property
-    def variation_marks(self) -> ImmutableVariationMarksType:
+    def variation_marks(self) -> VariationMarks:
         """Get the variation marks.
 
         :return: The variation marks immutable mapping.

@@ -18,11 +18,10 @@ from simplebench.report.base import ReportElementTypedDict
 from simplebench.simplebench_types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
-    ImmutableVariationMarksType,
     Never,
     NotRequired,
     Required,
-    VariationMarksType,
+    VariationMarks,
 )
 
 from ..metrics_object import MetricsObjectDict
@@ -50,7 +49,7 @@ class _RequiredResultsInfoData(ReportElementTypedDict, total=True):
     title: Required[str]
     description: Required[str]
     n: Required[float]
-    variation_marks: Required[VariationMarksType]
+    variation_marks: Required[VariationMarks]
     metrics: Required[MetricsObjectDict]
     extra_info: Required[CoreDataMappingType]
 
@@ -73,7 +72,7 @@ class _ImmutableRequiredResultsInfoData(ReportElementTypedDict, total=True):
     title: Required[str]
     description: Required[str]
     n: Required[float]
-    variation_marks: Required[ImmutableVariationMarksType]
+    variation_marks: Required[VariationMarks]
     metrics: Required[MetricsObjectDict]
     extra_info: Required[ImmutableCoreDataMappingType]
 
@@ -151,7 +150,7 @@ class ResultsInfoDict(ReportElementTypedDict, total=True):
     title: Required[str]
     description: Required[str]
     n: Required[float]
-    variation_marks: Required[VariationMarksType]
+    variation_marks: Required[VariationMarks]
     metrics: Required[MetricsObjectDict]
     extra_info: Required[CoreDataMappingType]
     type: Required[str]
@@ -180,7 +179,7 @@ class _ImmutableRequiredResultsInfoDict(ReportElementTypedDict, total=True):
     title: Required[str]
     description: Required[str]
     n: Required[float]
-    variation_marks: Required[ImmutableVariationMarksType]
+    variation_marks: Required[VariationMarks]
     metrics: Required[MetricsObjectDict]
     extra_info: Required[ImmutableCoreDataMappingType]
     type: Required[str]

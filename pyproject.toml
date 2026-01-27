@@ -40,6 +40,7 @@ dependencies = [
     "rich>=14.1.0",
     "typechecked>=0.11.0",
     "typing-extensions>=4.10.0",
+    "typeguard>=4.4.4",
 ]
 
 [build-system]

@@ -12,8 +12,8 @@ It provides the following standard Metrics for each benchmark run:
 - STD_TIMING_RAW: timing raw values for each operation
 - STD_CPU_TIME_STATS: CPU time statistics for each operation
 - STD_CPU_TIME_RAW: CPU time raw values for each operation
-- STD_OPS_STATS: operations per second statistics
-- STD_OPS_RAW: operations per second raw values
+- STD_OPS_STATS: operations per second statistics (computed from timing raw values)
+- STD_OPS_RAW: operations per second raw values (computed from timing raw values)
 - STD_MEMORY_STATS: memory usage statistics
 - STD_MEMORY_RAW: memory usage raw values
 - STD_PEAK_MEMORY_STATS: peak memory usage statistics
@@ -45,16 +45,14 @@ provided for convenience and to provide a more complete picture of the benchmark
 results.
 """
 
-from __future__ import annotations
-
 import gc
 import importlib.util
 import math
 import sys
 import tracemalloc
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Final, Literal, TypeAlias
+from typing import TYPE_CHECKING, Any, Final, NamedTuple
 
 from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
@@ -69,7 +67,7 @@ from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
 from simplebench.metrics import Metric, metrics_registry
-from simplebench.simplebench_types import Values
+from simplebench.simplebench_types import Values, VariationCols, VariationMarks
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from simplebench.validators import validate_positive_int
@@ -122,123 +120,194 @@ _timers_module = _create_timers_module(_TIMERS_NAMESPACE)  # Ensure the timers m
 """A dynamically created module to hold generated timer functions."""
 
 
-_Measurement: TypeAlias = tuple[float, float, int, int, int, int, int, int, int, int, int, int, int]
-"""A type alias for a measurement tuple.
+class _Measurement(NamedTuple):
+    """A named tuple to hold measurement data.
 
-The tuple contains the following elements:
-    - timing (float): The time taken to execute the action.
-    - cpu_time (float): The CPU time taken to execute the action.
-    - memory (int): The memory usage of the action.
-    - peak_memory (int): The peak memory usage of the action.
-    - gc_gen0_collections (int): The number of generation 0 garbage collections.
-    - gc_gen0_collected (int): The number of objects collected in generation 0.
-    - gc_gen0_uncollectable (int): The number of uncollectable objects in generation 0.
-    - gc_gen1_collections (int): The number of generation 1 garbage collections.
-    - gc_gen1_collected (int): The number of objects collected in generation 1.
-    - gc_gen1_uncollectable (int): The number of uncollectable objects in generation 1.
-    - gc_gen2_collections (int): The number of generation 2 garbage collections.
-    - gc_gen2_collected (int): The number of objects collected in generation 2.
-    - gc_gen2_uncollectable (int): The number of uncollectable objects in generation 2.
-"""
+    :param timing: The time taken to execute the action.
+    :type timing: float
+    :param cpu_time: The CPU time taken to execute the action.
+    :type cpu_time: float
+    :param memory: The memory usage of the action.
+    :type memory: int
+    :param peak_memory: The peak memory usage of the action.
+    :type peak_memory: int
+    :param gc_gen0_collections: The number of generation 0 garbage collections.
+    :type gc_gen0_collections: int
+    :param gc_gen0_collected: The number of objects collected in generation 0.
+    :type gc_gen0_collected: int
+    :param gc_gen0_uncollectable: The number of uncollectable objects in generation 0.
+    :type gc_gen0_uncollectable: int
+    :param gc_gen1_collections: The number of generation 1 garbage collections.
+    :type gc_gen1_collections: int
+    :param gc_gen1_collected: The number of objects collected in generation 1.
+    :type gc_gen1_collected: int
+    :param gc_gen1_uncollectable: The number of uncollectable objects in generation 1.
+    :type gc_gen1_uncollectable: int
+    :param gc_gen2_collections: The number of generation 2 garbage collections.
+    :type gc_gen2_collections: int
+    :param gc_gen2_collected: The number of objects collected in generation 2.
+    :type gc_gen2_collected: int
+    :param gc_gen2_uncollectable: The number of uncollectable objects in generation 2.
+    :type gc_gen2_uncollectable: int
+    """
+
+    timing: float
+    cpu_time: float
+    memory: int
+    peak_memory: int
+    gc_gen0_collections: int
+    gc_gen0_collected: int
+    gc_gen0_uncollectable: int
+    gc_gen1_collections: int
+    gc_gen1_collected: int
+    gc_gen1_uncollectable: int
+    gc_gen2_collections: int
+    gc_gen2_collected: int
+    gc_gen2_uncollectable: int
+
+
+_MEASUREMENT_INDEXES: dict[str, int] = {name: idx for idx, name in enumerate(_Measurement._fields)}
+"""A mapping of measurement field names to their corresponding indexes in the _Measurement tuple."""
 
 # Index constants for measurement tuple elements
 # This is a performance/code readability optimization to avoid using magic numbers
 # Each constant represents the index of a specific element in the measurement tuple
 # This is faster than using NamedTuple field access and provides a good way
 # to process measurement tuples efficiently and clearly
-_TIMING: Final[Literal[0]] = 0
+#
+_TIMING: Final[int] = _MEASUREMENT_INDEXES['timing']
 """A constant representing the index of the timing element in a measurement tuple."""
-_CPU_TIME: Final[Literal[1]] = 1
+_CPU_TIME: Final[int] = _MEASUREMENT_INDEXES['cpu_time']
 """A constant representing the index of the CPU timing element in a measurement tuple."""
-_MEMORY: Final[Literal[2]] = 2
+_MEMORY: Final[int] = _MEASUREMENT_INDEXES['memory']
 """A constant representing the index of the memory element in a measurement tuple."""
-_PEAK_MEMORY: Final[Literal[3]] = 3
+_PEAK_MEMORY: Final[int] = _MEASUREMENT_INDEXES['peak_memory']
 """A constant representing the index of the peak memory element in a measurement tuple."""
-_GC_GEN0_COLLECTIONS: Final[Literal[4]] = 4
+_GC_GEN0_COLLECTIONS: Final[int] = _MEASUREMENT_INDEXES['gc_gen0_collections']
 """A constant representing the index of the generation 0 garbage collections element in a measurement tuple."""
-_GC_GEN0_COLLECTED: Final[Literal[5]] = 5
+_GC_GEN0_COLLECTED: Final[int] = _MEASUREMENT_INDEXES['gc_gen0_collected']
 """A constant representing the index of the generation 0 collected garbage element in a measurement tuple."""
-_GC_GEN0_UNCOLLECTABLE: Final[Literal[6]] = 6
+_GC_GEN0_UNCOLLECTABLE: Final[int] = _MEASUREMENT_INDEXES['gc_gen0_uncollectable']
 """A constant representing the index of the generation 0 uncollectable garbage element in a measurement tuple."""
-_GC_GEN1_COLLECTIONS: Final[Literal[7]] = 7
+_GC_GEN1_COLLECTIONS: Final[int] = _MEASUREMENT_INDEXES['gc_gen1_collections']
 """A constant representing the index of the generation 1 garbage collections element in a measurement tuple."""
-_GC_GEN1_COLLECTED: Final[Literal[8]] = 8
+_GC_GEN1_COLLECTED: Final[int] = _MEASUREMENT_INDEXES['gc_gen1_collected']
 """A constant representing the index of the generation 1 collected garbage element in a measurement tuple."""
-_GC_GEN1_UNCOLLECTABLE: Final[Literal[9]] = 9
+_GC_GEN1_UNCOLLECTABLE: Final[int] = _MEASUREMENT_INDEXES['gc_gen1_uncollectable']
 """A constant representing the index of the generation 1 uncollectable garbage element in a measurement tuple."""
-_GC_GEN2_COLLECTIONS: Final[Literal[10]] = 10
+_GC_GEN2_COLLECTIONS: Final[int] = _MEASUREMENT_INDEXES['gc_gen2_collections']
 """A constant representing the index of the generation 2 garbage collections element in a measurement tuple."""
-_GC_GEN2_COLLECTED: Final[Literal[11]] = 11
+_GC_GEN2_COLLECTED: Final[int] = _MEASUREMENT_INDEXES['gc_gen2_collected']
 """A constant representing the index of the generation 2 collected garbage element in a measurement tuple."""
-_GC_GEN2_UNCOLLECTABLE: Final[Literal[12]] = 12
+_GC_GEN2_UNCOLLECTABLE: Final[int] = _MEASUREMENT_INDEXES['gc_gen2_uncollectable']
 """A constant representing the index of the generation 2 uncollectable garbage element in a measurement tuple."""
 
+_RETAINED_METRICS: list[int] = list(_MEASUREMENT_INDEXES.values())
+"""A list of all measurement indexes to be retained in the results.
+
+This includes all indexes defined in the _Measurement named tuple which
+means any measurement included in the tuple is automatically retained.
+"""
+
+_STD_OPS_STATS_METRIC: Final[Metric] = metrics_registry['STD_OPS_STATS_METRIC']
+"""The standard operations per second statistics metric.
+
+This is computed from the timing measurements so that it is consistent with them.
+"""
+_STD_OPS_RAW_METRIC: Final[Metric] = metrics_registry['STD_OPS_RAW_METRIC']
+"""The standard operations per second raw metric.
+
+This is computed from the timing measurements so that it is consistent with them.
+"""
+
+_METRIC_TO_MEASUREMENT_INDEX: Final[dict[Metric, int]] = {
+    metrics_registry['STD_TIMING_STATS_METRIC']: _TIMING,
+    metrics_registry['STD_CPU_TIME_STATS_METRIC']: _CPU_TIME,
+    metrics_registry['STD_TIMING_RAW_METRIC']: _TIMING,
+    metrics_registry['STD_CPU_TIME_RAW_METRIC']: _CPU_TIME,
+    metrics_registry['STD_MEMORY_STATS_METRIC']: _MEMORY,
+    metrics_registry['STD_MEMORY_RAW_METRIC']: _MEMORY,
+    metrics_registry['STD_PEAK_MEMORY_STATS_METRIC']: _PEAK_MEMORY,
+    metrics_registry['STD_PEAK_MEMORY_RAW_METRIC']: _PEAK_MEMORY,
+    metrics_registry['STD_TOTAL_ELAPSED_TIME_METRIC']: _TIMING,
+    metrics_registry['STD_TOTAL_CPU_TIME_METRIC']: _CPU_TIME,
+    metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS_METRIC']: _GC_GEN0_COLLECTIONS,
+    metrics_registry['STD_GC_GEN0_COLLECTED_STATS_METRIC']: _GC_GEN0_COLLECTED,
+    metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS_METRIC']: _GC_GEN0_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS_METRIC']: _GC_GEN1_COLLECTIONS,
+    metrics_registry['STD_GC_GEN1_COLLECTED_STATS_METRIC']: _GC_GEN1_COLLECTED,
+    metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS_METRIC']: _GC_GEN1_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS_METRIC']: _GC_GEN2_COLLECTIONS,
+    metrics_registry['STD_GC_GEN2_COLLECTED_STATS_METRIC']: _GC_GEN2_COLLECTED,
+    metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS_METRIC']: _GC_GEN2_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW_METRIC']: _GC_GEN0_COLLECTIONS,
+    metrics_registry['STD_GC_GEN0_COLLECTED_RAW_METRIC']: _GC_GEN0_COLLECTED,
+    metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW_METRIC']: _GC_GEN0_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW_METRIC']: _GC_GEN1_COLLECTIONS,
+    metrics_registry['STD_GC_GEN1_COLLECTED_RAW_METRIC']: _GC_GEN1_COLLECTED,
+    metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW_METRIC']: _GC_GEN1_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW_METRIC']: _GC_GEN2_COLLECTIONS,
+    metrics_registry['STD_GC_GEN2_COLLECTED_RAW_METRIC']: _GC_GEN2_COLLECTED,
+    metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW_METRIC']: _GC_GEN2_UNCOLLECTABLE,
+}
+"""A mapping of metrics to their corresponding measurement indexes.
+
+This is used to extract the relevant measurement data for each metric from
+the measurement tuples.
+
+Any new metrics added to the SimpleBench metrics registry that correspond to
+measurement data must be added here to be included in the benchmark results.
+"""
 
 class SimpleRunner(BenchmarkRunner):
     """A class to run benchmarks for various actions.
 
     :param case: The benchmark case to run.
     :type case: Case
-    :param kwargs: The keyword arguments for the benchmark case.
-    :type kwargs: dict[str, Any]
+    :param variation_marks: The variation marks for the benchmark case.
+    :type variation_marks: VariationMarksType
     :param session: The session in which the benchmark is run.
     :type session: Session, optional
-    :param runners: The BenchmarkRunner classes to use to run the benchmark.
-    :type runners: Callable[..., Any], optional
-
-    :ivar case: The benchmark case to run.
-    :vartype case: Case
-    :ivar kwargs: The keyword arguments for the benchmark case.
-    :vartype kwargs: dict[str, Any]
-    :ivar session: The session in which the benchmark is run.
-    :vartype session: Session, optional
-    :ivar run: The function to use to run the benchmark.
-    :vartype run: Callable[..., Any]
+    :param runner: The BenchmarkRunner callable to use to run the benchmark.
+    :type runner: Callable[..., Any], optional
     """
 
     def __init__(
         self,
         *,
         case: Case,
-        kwargs: dict[str, Any],
+        variation_marks: Mapping[str, Any],
         session: Session | None = None,
         runner: Callable[..., Any] | None = None,
     ) -> None:
         """
         :param case: The benchmark case to run.
-        :param kwargs: The keyword arguments for the benchmark case.
+        :type case: Case
+        :param variation_marks: The variation marks for the benchmark case.
+        :type variation_marks: VariationMarksType
         :param session: The session in which the benchmark is run.
-        :type session: Session, optional
-        :ivar runner: The function to use to run the benchmark. If None, uses :meth:`default_runner`
-            from :class:`SimpleRunner`.
-        :type runner: Callable[..., Any], optional
-
-        :ivar case: The benchmark case to run.
-        :vartype case: Case
-        :ivar kwargs: The keyword arguments for the benchmark case.
-        :vartype kwargs: dict[str, Any]
-        :ivar session: The session in which the benchmark is run.
-        :vartype session: Session, optional
-        :ivar run: The function to use to run the benchmark.
-        :vartype run: Callable[..., Any]
+        :type session: :class:`Session` | :obj:`None`, optional
+        :ivar runner: (default = :meth:`default_runner`) The function to use to run the benchmark.
+            If :obj:`None`, uses :meth:`default_runner`
+        :type runner: Callable[..., Any] | :obj:`None`, optional
         """
         self.case = case
-        self.kwargs = kwargs
+        self.variation_marks = variation_marks
         self._runner: Callable[..., Any] = self.default_runner
-        """Benchmark runner function. Defaults to :meth:`SimpleRunner.default_runner`.
+        """Benchmark runner function. Defaults to :meth:`default_runner`.
 
         The runner function must accept the following parameters:
-            n (int | float): The **O()** 'n' weight of the benchmark.
-            This is used to calculate a weight for the purpose of **O()** analysis.
+            ``n`` (int | float): The **O()** 'n' weight of the benchmark.
+                This is used to calculate a weight for the purpose of **O()** analysis.
 
-            For example, if the action being benchmarked is a function that
-            sorts a list of length n, then n should be the length of the list.
-            If the action being benchmarked is a function that performs
-            a constant-time operation, then n should be 1.
-            action (Callable[..., Any]): The function to benchmark.
-            setup (Optional[Callable[..., Any]]): A setup function to run before each iteration.
-            teardown (Optional[Callable[..., Any]]): A teardown function to run after each iteration.
-            kwargs (Optional[dict[str, Any]]): Keyword arguments to pass to the function being benchmarked.
+                For example, if the action being benchmarked is a function that
+                sorts a list of length n, then n should be the length of the list.
+                If the action being benchmarked is a function that performs
+                a constant-time operation, then n should be 1.
+            ``action`` (Callable[..., Any]): The function to benchmark.
+            ``setup`` (Optional[Callable[..., Any]]): A setup function to run before each iteration.
+            ``teardown`` (Optional[Callable[..., Any]]): A teardown function to run after each iteration.
+            ``kwargs`` (Optional[dict[str, Any]]): Keyword arguments to pass to the function being benchmarked.
         """
         self.session = session
 
@@ -249,7 +318,7 @@ class SimpleRunner(BenchmarkRunner):
         action: Callable[..., Any],
         setup: Callable[..., Any] | None = None,
         teardown: Callable[..., Any] | None = None,
-        kwargs: dict[str, Any] | None = None,
+        variation_marks: VariationMarks | None = None,
     ) -> Results:
         """Enforce a timeout while running the benchmark with the specified runner.
 
@@ -275,7 +344,7 @@ class SimpleRunner(BenchmarkRunner):
         :param action: The function to benchmark.
         :param setup: A setup function to run before each iteration.
         :param teardown: A teardown function to run after each iteration.
-        :param kwargs: Keyword arguments to pass to the function being benchmarked.
+        :param variation_marks: Variation marks to apply to the benchmark.
         :return: The results of the benchmark.
         :rtype: Results
         :raises SimpleBenchTimeoutError: If the benchmark exceeds the specified timeout for the case.
@@ -290,9 +359,10 @@ class SimpleRunner(BenchmarkRunner):
         func_name = getattr(action, '__qualname__', getattr(action, '__name__', repr(action)))
         benchmark_id = self.case.benchmark_id
         timeout_interval = self.case.timeout
+        marks = {} if variation_marks is None else variation_marks
         try:
             result = Timeout(timeout_interval).run(
-                self._runner, n=n, action=action, setup=setup, teardown=teardown, kwargs=kwargs
+                self._runner, n=n, action=action, setup=setup, teardown=teardown, kwargs=marks
             )
         except SimpleBenchTimeoutError as e:
             raise SimpleBenchTimeoutError(
@@ -437,7 +507,8 @@ class SimpleRunner(BenchmarkRunner):
         action: Callable[..., Any],
         setup: Callable[..., Any] | None = None,
         teardown: Callable[..., Any] | None = None,
-        kwargs: dict[str, Any] | None = None,
+        variation_marks: VariationMarks | None = None,
+        variation_cols: VariationColsType | None = None,
     ) -> Results:
         """Run a generic benchmark using the specified action and test case.
 
@@ -458,15 +529,23 @@ class SimpleRunner(BenchmarkRunner):
             sorts a list of length n, then n should be the length of the list.
             If the action being benchmarked is a function that performs
             a constant-time operation, then n should be 1.
-        :param Callable[..., Any] action: The action to benchmark.
-        :param Optional[Callable[..., Any]] setup: A setup function to run before each iteration.
-        :param Optional[Callable[..., Any]] teardown: A teardown function to run after each iteration.
-        :param Optional[dict[str, Any]] kwargs: Keyword arguments to pass to the action.
+        :type n: int | float
+        :param action: The action to benchmark.
+        :type action: Callable[..., Any]
+        :param setup: A setup function to run before each iteration.
+        :type setup: Callable[..., Any] | None, optional
+        :param teardown: A teardown function to run after each iteration.
+        :type teardown: Callable[..., Any] | None, optional
+        :param variation_marks: Keyword arguments to pass to the action.
+        :type variation_marks: VariationMarksType | None, optional
         :return: The results of the benchmark.
         :rtype: Results
         """
-        if kwargs is None:
+        kwargs: dict[str, Any] = {}
+        if variation_marks is None:
             kwargs = {}
+        else:
+            kwargs = { k: v.value for k, v in variation_marks.items() }
 
         group: str = self.case.group
         title: str = self.case.title
@@ -573,20 +652,20 @@ class SimpleRunner(BenchmarkRunner):
             gc_gen1_end = gc.get_stats()[1]
             gc_gen2_end = gc.get_stats()[2]
 
-            iteration_result: _Measurement = (
-                elapsed,
-                cpu_elapsed,
-                memory,
-                peak_memory,
-                int(gc_gen0_end['collections'] - gc_gen0_start['collections']),
-                int(gc_gen0_end['collected'] - gc_gen0_start['collected']),
-                int(gc_gen0_end['uncollectable'] - gc_gen0_start['uncollectable']),
-                int(gc_gen1_end['collections'] - gc_gen1_start['collections']),
-                int(gc_gen1_end['collected'] - gc_gen1_start['collected']),
-                int(gc_gen1_end['uncollectable'] - gc_gen1_start['uncollectable']),
-                int(gc_gen2_end['collections'] - gc_gen2_start['collections']),
-                int(gc_gen2_end['collected'] - gc_gen2_start['collected']),
-                int(gc_gen2_end['uncollectable'] - gc_gen2_start['uncollectable']),
+            iteration_result = _Measurement(
+                timing=elapsed,
+                cpu_time=cpu_elapsed,
+                memory=memory,
+                peak_memory=peak_memory,
+                gc_gen0_collections=int(gc_gen0_end['collections'] - gc_gen0_start['collections']),
+                gc_gen0_collected=int(gc_gen0_end['collected'] - gc_gen0_start['collected']),
+                gc_gen0_uncollectable=int(gc_gen0_end['uncollectable'] - gc_gen0_start['uncollectable']),
+                gc_gen1_collections=int(gc_gen1_end['collections'] - gc_gen1_start['collections']),
+                gc_gen1_collected=int(gc_gen1_end['collected'] - gc_gen1_start['collected']),
+                gc_gen1_uncollectable=int(gc_gen1_end['uncollectable'] - gc_gen1_start['uncollectable']),
+                gc_gen2_collections=int(gc_gen2_end['collections'] - gc_gen2_start['collections']),
+                gc_gen2_collected=int(gc_gen2_end['collected'] - gc_gen2_start['collected']),
+                gc_gen2_uncollectable=int(gc_gen2_end['uncollectable'] - gc_gen2_start['uncollectable']),
             )
             iterations_list.append(iteration_result)
             wall_time = float(timer())
@@ -603,58 +682,21 @@ class SimpleRunner(BenchmarkRunner):
                 ),
             )
 
-        retained_metrics: list[int] = [
-            _TIMING,
-            _CPU_TIME,
-            _MEMORY,
-            _PEAK_MEMORY,
-            _GC_GEN0_COLLECTIONS,
-            _GC_GEN0_COLLECTED,
-            _GC_GEN0_UNCOLLECTABLE,
-            _GC_GEN1_COLLECTIONS,
-            _GC_GEN1_COLLECTED,
-            _GC_GEN1_UNCOLLECTABLE,
-            _GC_GEN2_COLLECTIONS,
-            _GC_GEN2_COLLECTED,
-            _GC_GEN2_UNCOLLECTABLE,
-        ]
-        values: list[Values] = [] * len(retained_metrics)
-        for metric in sorted(retained_metrics):
+        # This takes the 'per-iteration' measurements of metrics and converts them into
+        # Values objects for each metric with all iterations collected 'per-metric'
+        # instead.
+        values: list[Values] = [] * len(_METRIC_TO_MEASUREMENT_INDEX)
+        for metric in sorted(_RETAINED_METRICS):
             values[metric] = Values(iteration[metric] for iteration in iterations_list)
-        ops_values: Values = Values(1 / timing if timing else 0.0 for timing in values[_TIMING])
 
+        # Calculate operations per second values as a special case just for easier access
+        ops_values: Values = Values(1 / timing if timing else 0.0 for timing in values[_TIMING])
         iteration_results: dict[Metric, Values] = {
-            metrics_registry['STD_TIMING_STATS']: values[_TIMING],
-            metrics_registry['STD_CPU_TIME_STATS']: values[_CPU_TIME],
-            metrics_registry['STD_TIMING_RAW']: values[_TIMING],
-            metrics_registry['STD_CPU_TIME_RAW']: values[_CPU_TIME],
-            metrics_registry['STD_OPS_STATS']: ops_values,
-            metrics_registry['STD_OPS_RAW']: ops_values,
-            metrics_registry['STD_MEMORY_STATS']: values[_MEMORY],
-            metrics_registry['STD_MEMORY_RAW']: values[_MEMORY],
-            metrics_registry['STD_PEAK_MEMORY_STATS']: values[_PEAK_MEMORY],
-            metrics_registry['STD_PEAK_MEMORY_RAW']: values[_PEAK_MEMORY],
-            metrics_registry['STD_TOTAL_ELAPSED_TIME']: values[_TIMING],
-            metrics_registry['STD_TOTAL_CPU_TIME']: values[_CPU_TIME],
-            metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS']: values[_GC_GEN0_COLLECTIONS],
-            metrics_registry['STD_GC_GEN0_COLLECTED_STATS']: values[_GC_GEN0_COLLECTED],
-            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS']: values[_GC_GEN0_UNCOLLECTABLE],
-            metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS']: values[_GC_GEN1_COLLECTIONS],
-            metrics_registry['STD_GC_GEN1_COLLECTED_STATS']: values[_GC_GEN1_COLLECTED],
-            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS']: values[_GC_GEN1_UNCOLLECTABLE],
-            metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS']: values[_GC_GEN2_COLLECTIONS],
-            metrics_registry['STD_GC_GEN2_COLLECTED_STATS']: values[_GC_GEN2_COLLECTED],
-            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS']: values[_GC_GEN2_UNCOLLECTABLE],
-            metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW']: values[_GC_GEN0_COLLECTIONS],
-            metrics_registry['STD_GC_GEN0_COLLECTED_RAW']: values[_GC_GEN0_COLLECTED],
-            metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW']: values[_GC_GEN0_UNCOLLECTABLE],
-            metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW']: values[_GC_GEN1_COLLECTIONS],
-            metrics_registry['STD_GC_GEN1_COLLECTED_RAW']: values[_GC_GEN1_COLLECTED],
-            metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW']: values[_GC_GEN1_UNCOLLECTABLE],
-            metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW']: values[_GC_GEN2_COLLECTIONS],
-            metrics_registry['STD_GC_GEN2_COLLECTED_RAW']: values[_GC_GEN2_COLLECTED],
-            metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']: values[_GC_GEN2_UNCOLLECTABLE],
+            _STD_OPS_STATS_METRIC: ops_values,
+            _STD_OPS_RAW_METRIC: ops_values
         }
+        for metric, index in _METRIC_TO_MEASUREMENT_INDEX.items():
+            iteration_results[metric] = values[index]
 
         benchmark_results = Results(
             group=group,
@@ -663,6 +705,8 @@ class SimpleRunner(BenchmarkRunner):
             n=n,
             rounds=rounds,
             iterations=iteration_results,
+            variation_cols=variation_cols,
+            marks=variation_marks,
             extra_info={},
         )
         progress_tracker.stop()
@@ -688,6 +732,10 @@ class SimpleRunner(BenchmarkRunner):
         The goal is to choose a number of rounds such that the total time taken
         for the action is significantly larger than the timer functions' precision and overhead,
         to reduce the impact of timer quantization errors on the measurement.
+
+        It targets a measurement time that provides a specified number of significant figures
+        (specified by :data:`~simplebench.defaults.DEFAULT_SIGNIFICANT_FIGURES`) above
+        the noise floor of the timer functions.
 
         :param timer: The timer function to use for the benchmark.
         :param cpu_timer: The CPU timer function to use for the benchmark.

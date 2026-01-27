@@ -14,6 +14,7 @@ The cache for all factories can be cleared by calling `clear_cache()`.
 """
 
 from simplebench_tests.cache_factory import clear_cache
+
 from ._primitives import (
     case_group_factory,
     choice_flags_factory,
@@ -33,6 +34,8 @@ from ._primitives import (
     default_formats,
     default_iterations,
     default_max_time,
+    default_metric,
+    default_metrics,
     default_min_time,
     default_output,
     default_output_format,
@@ -40,8 +43,6 @@ from ._primitives import (
     default_report_output,
     default_reporter_name,
     default_rounds,
-    # default_metric,
-    # default_metrics,
     default_subdir,
     default_targets,
     default_targets_factory,
@@ -154,8 +155,8 @@ __all__ = [
     'default_subdir',
     'default_filename_base',
     # 'metrics_factory',
-    # 'default_metric',
-    # 'default_metrics',
+    'default_metric',
+    'default_metrics',
     'targets_factory',
     'default_targets',
     'default_targets_factory',

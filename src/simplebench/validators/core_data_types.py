@@ -437,27 +437,21 @@ def _internal_validate_core_data(
 
     # Sets before Sequences because Sets are also Sequences
     elif isinstance(item, Set):
-        parents.add(item_id)
         results = _internal_validate_core_data_set(
             item=item, is_immutable=is_immutable, name=name, depth=depth, max_depth=max_depth, parents=parents
         )
-        parents.remove(item_id)
         return results
 
     elif isinstance(item, Mapping):
-        parents.add(item_id)
         results = _internal_validate_core_data_mapping(
             item=item, is_immutable=is_immutable, name=name, depth=depth, max_depth=max_depth, parents=parents
         )
-        parents.remove(item_id)
         return results
 
     elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
-        parents.add(item_id)
         results = _internal_validate_core_data_sequence(
             item=item, is_immutable=is_immutable, name=name, depth=depth, max_depth=max_depth, parents=parents
         )
-        parents.remove(item_id)
         return results
 
     raise SimpleBenchTypeError(

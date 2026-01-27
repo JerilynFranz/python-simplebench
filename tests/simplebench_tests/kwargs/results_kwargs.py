@@ -22,9 +22,9 @@ class ResultsKWArgs(KWArgs):
         n: int | NoDefaultValue = NO_DEFAULT_VALUE,
         rounds: int | NoDefaultValue = NO_DEFAULT_VALUE,
         iterations: Mapping[Metric, Values] | NoDefaultValue = NO_DEFAULT_VALUE,
-        variation_cols: dict[str, str] | NoDefaultValue = NO_DEFAULT_VALUE,
-        marks: dict[str, tuple[str, ...]] | NoDefaultValue = NO_DEFAULT_VALUE,
-        extra_info: dict[str, Any] | NoDefaultValue = NO_DEFAULT_VALUE,
+        variation_cols: Mapping[str, str] | NoDefaultValue = NO_DEFAULT_VALUE,
+        marks: Mapping[str, tuple[str, ...]] | NoDefaultValue = NO_DEFAULT_VALUE,
+        extra_info: Mapping[str, Any] | NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Initialize ResultsKWArgs with optional keyword arguments.
 
@@ -39,8 +39,8 @@ class ResultsKWArgs(KWArgs):
         :param int n: The number of iterations.
         :param int rounds: The number of rounds in the benchmark case.
         :param Mapping[Metric, Values] iterations: A mapping of Metric to their corresponding Values.
-        :param dict[str, str] variation_cols: Variation columns as a dictionary.
-        :param dict[str, tuple[str, ...]] marks: Variation marks as a dictionary.
-        :param dict[str, Any] extra_info: Additional information as a dictionary.
+        :param Mapping[str, str] variation_cols: Variation columns as a dictionary.
+        :param Mapping[str, tuple[str, ...]] marks: Variation marks as a dictionary.
+        :param Mapping[str, Any] extra_info: Additional information as a dictionary.
         """
         super().__init__(call=Results.__init__, kwargs=locals())

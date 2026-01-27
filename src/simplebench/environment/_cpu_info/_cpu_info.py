@@ -86,9 +86,33 @@ class CPUInfo(Immutable):
         cls = self.__class__
         if cache_key is None:  # No caching; always gather fresh data if None
             validated_data = validate_core_data_mapping(get_cpu_info(), 'CPUInfo.data', max_depth=10)
-            self._info = typed_dict_mimic(validated_data, ImmutableCPUInfoData)
+            self._info = typed_dict_mimic({'data': validated_data}, ImmutableCPUInfoData)
         else:
             self._info = cls._get_cached_cpu_info(cache_key)
+
+    @property
+    def info(self) -> ImmutableCPUInfoData:
+        """Get the CPU information dictionary.
+
+        This dictionary contains all the CPU information gathered from the
+        :module:`cpuinfo` module at the time of this instance's creation
+        as an immutable :class:`ImmutableCPUInfoData` :class:`~typing.TypedDict`.
+
+        It returns a :class:`~types.MappingProxyType` object, so it cannot be modified
+        although it functionally behaves like a standard dictionary.
+
+        Because the data is immutable, it is safe to share and pass around
+        without risk of unintended modifications. Because it is typed as a
+        :class:`ImmutableCPUInfoData`, static type checkers can verify correct
+        usage of the data contained within it by checking for the presence
+        and types of specific keys.
+
+        The :func:`typechecked.is_immutable` function will recognize this
+        dictionary as immutable.
+
+        :return ImmutableCPUInfoData: The CPU information dictionary.
+        """
+        return self._info
 
     def to_dict(self) -> ImmutableCPUInfoData:
         """Get the CPU information dictionary.

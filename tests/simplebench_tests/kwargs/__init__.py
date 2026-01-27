@@ -1,6 +1,12 @@
 """KWArgs for SimpleBench tests."""
 
-from simplebench_tests.kwargs.kwargs import KWArgs, NoDefaultValue, is_kwargs, kwargs_class_matches_modeled_call
+from simplebench_tests.kwargs.kwargs import (
+    NO_DEFAULT_VALUE,
+    KWArgs,
+    NoDefaultValue,
+    is_kwargs,
+    kwargs_class_matches_modeled_call,
+)
 
 from .case_kwargs import CaseKWArgs
 from .reporters import (
@@ -19,6 +25,7 @@ from .session_kwargs import SessionKWArgs
 __all__ = [
     'KWArgs',
     'NoDefaultValue',
+    'NO_DEFAULT_VALUE',
     'kwargs_class_matches_modeled_call',
     'is_kwargs',
     'ChoiceKWArgs',

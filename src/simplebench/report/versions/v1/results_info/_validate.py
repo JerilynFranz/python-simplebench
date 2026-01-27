@@ -9,8 +9,7 @@ from simplebench.report._error_tags import _ResultsInfoErrorTag
 from simplebench.simplebench_types import (
     CoreDataMappingType,
     ImmutableCoreDataMappingType,
-    ImmutableVariationMarksType,
-    VariationMarksType,
+    VariationMarks,
 )
 from simplebench.validators import (
     validate_core_data_mapping,
@@ -124,7 +123,7 @@ def n(value: float) -> float:
     return value
 
 
-def variation_marks(value: VariationMarksType) -> ImmutableVariationMarksType:
+def variation_marks(value: VariationMarks) -> VariationMarks:
     """Validate the variation_marks property.
 
     Validates that `variation_marks` is a mapping of strings to strings

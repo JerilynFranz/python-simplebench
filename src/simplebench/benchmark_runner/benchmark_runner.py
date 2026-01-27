@@ -3,17 +3,18 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.simplebench_types import VariationMarks
 from simplebench.type_proxies import is_case, is_session
 
 from ._error_tags import _RunnerErrorTag
 
 if TYPE_CHECKING:
-    from simplebench.case import Case, Mark, Results
+    from simplebench.case import Case, Results
     from simplebench.session import Session
 
 
@@ -25,7 +26,7 @@ class BenchmarkRunner(ABC):
         self,
         *,
         case: Case,
-        kwargs: Mapping[str, Any],
+        variation_marks: VariationMarks,
         session: Session | None = None,
         runner: Callable[..., Any] | None = None,
     ) -> None:
@@ -40,7 +41,7 @@ class BenchmarkRunner(ABC):
         action: Callable[..., Any],
         setup: Callable[..., Any] | None = None,
         teardown: Callable[..., Any] | None = None,
-        kwargs: Mapping[str, Mark] | None = None,
+        variation_marks: VariationMarks | None = None,
     ) -> Results:
         """Run the benchmark and return the results"""
         raise NotImplementedError('Subclasses must implement the run method')
@@ -87,20 +88,23 @@ class BenchmarkRunner(ABC):
         self._session: Session | None = value
 
     @property
-    def kwargs(self) -> Mapping[str, Mark]:
+    def variation_marks(self) -> VariationMarks:
         """Return the keyworded arguments for the benchmark.
 
         :return: The keyworded arguments for the benchmark.
         """
         return self._kwargs
 
-    @kwargs.setter
-    def kwargs(self, value: Mapping[str, Mark]) -> None:
+    @variation_marks.setter
+    def variation_marks(self, value: VariationMarks) -> None:
         """Set the keyworded arguments for the benchmark.
 
         :param value: The new keyworded arguments for the benchmark.
         """
-        if not isinstance(value, Mapping):
-            raise SimpleBenchTypeError('kwargs must be a Mapping', tag=_RunnerErrorTag.KWARGS_NOT_A_MAPPING)
-        self._kwargs: Mapping[str, Any] = value if isinstance(value, MappingProxyType) else MappingProxyType(value)
+        if not isinstance(value, VariationMarks):
+            raise SimpleBenchTypeError(
+                'varation_marks must be a VariationMarks instance',
+                tag=_RunnerErrorTag.VARIATION_MARKS_NOT_A_VARIATION_MARKS,)
+        self._kwargs: VariationMarks = value if isinstance(
+            value, MappingProxyType) else MappingProxyType(value)
 

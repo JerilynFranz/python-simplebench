@@ -5,7 +5,7 @@ from typing import Any
 
 import simplebench.report.versions.v1 as reports
 from simplebench.metrics import Metric, MetricCategory
-from simplebench.simplebench_types import Values
+from simplebench.simplebench_types import Values, VariationMarks
 from simplebench.validators import validate_non_blank_string, validate_positive_float, validate_positive_int
 
 from . import validate
@@ -53,7 +53,7 @@ class Results:
         '_rounds',
         '_iterations',
         '_variation_cols',
-        '_marks',
+        '_variation_marks',
         '_extra_info',
         '_repr_cache',
         '_stats_cache',
@@ -70,9 +70,8 @@ class Results:
         n: float,
         rounds: int,
         iterations: Mapping[Metric, Values],
-        variation_cols: dict[str, str] | None = None,
-        marks: dict[str, tuple[str, ...]] | None = None,
-        extra_info: dict[str, Any] | None = None,
+        variation_marks: VariationMarks | None = None,
+        extra_info: Mapping[str, Any] | None = None,
     ) -> None:
         """Initialize a Results object.
 
@@ -82,11 +81,10 @@ class Results:
         :param float n: The O() complexity analysis size/weighting.
         :param int rounds: The number of rounds the benchmark ran per iteration.
         :param Mapping[Metric, Values] iterations: A mapping of metrics to their values for the benchmark.
-        :param dict[str, str] | None variation_cols: The columns to use for labelling kwarg variations
-            in the benchmark. Defaults to None, which results in an empty dictionary.
-        :param dict[str, tuple[str, ...]] | None marks: A dictionary of variation marks used to identify
-            the benchmark variation. Defaults to None, which results in an empty dictionary.
-        :param Optional[dict[str, Any]] extra_info: Any extra information to include in the benchmark results.
+        :param variation_marks: A dictionary of variation marks used to identify
+            the benchmark variation. Defaults to :obj:`None`, which results in an empty dictionary.
+        :type variation_marks: VariationMarksType | None, optional
+        :param Optional[Mapping[str, Any]] extra_info: Any extra information to include in the benchmark results.
             Defaults to {}.
         :raises SimpleBenchTypeError: If any of the arguments are of incorrect type.
         :raises SimpleBenchValueError: If any of the arguments have invalid values.
@@ -114,8 +112,7 @@ class Results:
             rounds, 'rounds', _ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE, _ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE
         )
         self._iterations: MappingProxyType[Metric, Values] = validate.iterations(iterations)
-        self._variation_cols: MappingProxyType[str, str] = validate.variation_cols(variation_cols)
-        self._marks: MappingProxyType[str, tuple[str, ...]] = validate.marks(marks)
+        self._variation_marks: VariationMarks = validate.variation_marks(variation_marks)
         self._extra_info = validate.extra_info(extra_info)
         self._repr_cache: str | None = None  # cache for __repr__
 

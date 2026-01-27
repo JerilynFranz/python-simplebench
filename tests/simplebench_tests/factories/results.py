@@ -4,10 +4,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
-from simplebench.results.iteration import Iteration
-from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage
 
-from ..kwargs import ResultsKWArgs
+from simplebench_tests.kwargs import ResultsKWArgs
 from ._primitives import (
     case_group_factory,
     description_factory,

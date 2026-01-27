@@ -6,6 +6,8 @@ from rich.console import Console
 
 from ..cache_factory import CacheId, uncached_factory
 
+# No '*' imports here to control what is exposed in the package namespace
+__all__ = []
 
 # overloads provide a tooltip assist for the decorated function and IDE tooltips
 # This is necessary because the cache_factory decorators create a function
@@ -108,3 +110,5 @@ def console_factory(*, cache_id: CacheId = None) -> Console:  # pylint: disable=
                    width=None,
                    color_system=None,
                    legacy_windows=False)
+
+

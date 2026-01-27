@@ -1,5 +1,5 @@
 """Mark module for SimpleBench cases."""
 
-from .mark import Mark
+from ._mark import Mark
 
 __all__ = ['Mark']

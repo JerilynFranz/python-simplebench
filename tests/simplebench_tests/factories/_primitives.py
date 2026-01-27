@@ -70,6 +70,28 @@ def default_metric() -> Metric:
     return metrics_registry['STD_OPS_STATS']
 
 
+def default_metrics() -> tuple[Metric, ...]:
+    """Return a default tuple of Metrics for testing purposes.
+
+    It always returns the same tuple instance of Metrics
+
+    - metrics_registry['STD_OPS_STATS'],
+    - metrics_registry['STD_TIMING_STATS'],
+    - metrics_registry['STD_MEMORY_STATS'],
+    - metrics_registry['STD_PEAK_MEMORY_STATS'],
+
+    :return: (metrics_registry['STD_OPS_STATS'], metrics_registry['STD_TIMING_STATS'],
+        metrics_registry['STD_MEMORY_STATS'], metrics_registry['STD_PEAK_MEMORY_STATS'])
+    :rtype: tuple[Metric, ...]
+    """
+    return (
+        metrics_registry['STD_OPS_STATS'],
+        metrics_registry['STD_TIMING_STATS'],
+        metrics_registry['STD_MEMORY_STATS'],
+        metrics_registry['STD_PEAK_MEMORY_STATS'],
+    )
+
+
 def default_filename_base() -> str:
     """Return a default filename base string for testing purposes.
 

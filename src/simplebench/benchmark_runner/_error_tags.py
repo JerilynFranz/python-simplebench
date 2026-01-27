@@ -12,7 +12,5 @@ class _RunnerErrorTag(ErrorTag):
     """The 'case' value is not a valid Case instance."""
     NOT_A_SESSION = 'NOT_A_SESSION'
     """The 'session' value is not a valid Session instance."""
-    KWARGS_NOT_A_MAPPING = 'KWARGS_NOT_A_MAPPING'
-    """The 'kwargs' value is not a valid mapping."""
-    VARIATION_MARKS_NOT_A_MAPPING = 'VARIATION_MARKS_NOT_A_MAPPING'
-    """The 'variation_marks' value is not a valid mapping."""
+    VARIATION_MARKS_NOT_A_VARIATION_MARKS = 'VARIATION_MARKS_NOT_A_VARIATION_MARKS'
+    """The 'variation_marks' value is not a valid VariationMarks instance."""
