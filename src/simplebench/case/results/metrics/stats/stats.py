@@ -1,7 +1,5 @@
 """Base benchmark statistics class."""
 
-from __future__ import annotations
-
 import statistics
 from math import isclose, sqrt
 
@@ -19,6 +17,9 @@ class Stats:
     :ivar int iterations: The total number of iterations represented by the data points. (read only)
     :ivar int rounds: The number of rounds each data point represents. (read only)
     :ivar Values data: Tuple of floating point data points. (read only)
+    :itype data: simplebench.simplebench_types.Values
+    :ivar timer: The timer used for the measurement. (read only)
+    :itype timer: str | None
     :ivar float mean: The mean of the data. (read only)
     :ivar float median: The median of the data. (read only)
     :ivar float minimum: The minimum of the data. (read only)

@@ -71,15 +71,22 @@ class CoreDataSet(Set[CoreDataTypes], Immutable, Hashable):
                 tag=_CoreDataErrorTag.CORE_DATA_SET_NOT_ELEMENT_COLLECTION)
         data: Set[CoreDataTypes] = set()
 
+        if all(isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for item in __iterable):
+            self._data = frozenset(__iterable)
+            return
+
         for item in __iterable:
-            if isinstance(item, Mapping):
+            if isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
+                data.add(item)
+            elif isinstance(item, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
+                data.add(item)
+            elif isinstance(item, Mapping):
                 data.add(CoreDataMapping(item))
-            elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
-                data.add(CoreDataSequence(item))
             elif isinstance(item, Set):
                 data.add(CoreDataSet(item))
-            elif isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-                data.add(item)
+            elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
+                data.add(CoreDataSequence(item))
+
             else: # Never
                  raise SimpleBenchTypeError(
                     f'Invalid item type passed to CoreDataSet: {item!r}. '

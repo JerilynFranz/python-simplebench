@@ -81,15 +81,22 @@ class CoreDataMapping(Mapping[str, CoreDataTypes], Immutable, Hashable):
 
         data: dict[str, CoreDataTypes] = {}
 
+        if all(isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for value in __mapping.values()):
+            self._data = dict(__mapping)
+            return
+
         for key, value in __mapping.items():
-            if isinstance(value, Mapping):
+            if isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
+                data[key] = value
+            elif isinstance(value, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
+                data[key] = value
+            elif isinstance(value, Mapping):
                 data[key] = CoreDataMapping(value)
-            elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
-                data[key] = CoreDataSequence(value)
             elif isinstance(value, Set):
                 data[key] = CoreDataSet(value)
-            elif isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-                data[key] = value
+            elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+                data[key] = CoreDataSequence(value)
+
             else:
                  raise SimpleBenchTypeError(
                     f'Invalid value type passed to CoreDataMapping for key {key!r}: {value!r}. '

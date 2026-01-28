@@ -1,15 +1,11 @@
 """Types used by SimpleBench."""
 
-from ._element_collection import ElementCollection, is_element_collection
-from ._extras import Extras
-from ._iterations import Iterations
-from ._mark import Mark
-from ._metrics_timers import MetricsTimers
-from ._values import Values
-from ._variations import (
-    KWArgsVariations,
-    VariationCols,
-    VariationMarks,
+from ._compatibility_types import (
+    Never,
+    NotRequired,
+    ReadOnly,
+    Required,
+    Self,
 )
 from ._core import (
     CORE_DATA_PRIMITIVE_TYPES_TUPLE,
@@ -26,7 +22,17 @@ from ._core import (
     ImmutableCoreDataSetType,
     ImmutableCoreDataTypes,
 )
-from .typeddict import Never, NotRequired, ReadOnly, Required
+from ._element_collection import ElementCollection, is_element_collection
+from ._extras import Extras
+from ._iterations import Iterations
+from ._mark import Mark
+from ._metrics_timers import MetricsTimers
+from ._values import Values
+from ._variations import (
+    KWArgsVariations,
+    VariationCols,
+    VariationMarks,
+)
 
 __all__ = [
     'MetricsTimers',
@@ -34,6 +40,7 @@ __all__ = [
     'ElementCollection',
     'is_element_collection',
     'NotRequired',
+    'Self',
     'ReadOnly',
     'Required',
     'Never',

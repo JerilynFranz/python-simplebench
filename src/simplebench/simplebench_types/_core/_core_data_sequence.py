@@ -24,6 +24,7 @@ from typing import overload
 from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.simplebench_types import Self
 
 from .._element_collection import ElementCollection, is_element_collection
 from ._error_tags import _CoreDataErrorTag
@@ -44,6 +45,16 @@ class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
     :param __iterable: An iterable of CoreData elements to initialize the sequence or :obj:`None`.
     :type __iterable: Iterable[CoreData] | None
     """
+
+    def __new__(cls, __iterable: ElementCollection | None = None) -> Self:
+        """Create a new CoreDataSequence instance.
+
+        :param __iterable: An iterable of CoreData elements to initialize the sequence or :obj:`None`.
+        :type __iterable: Iterable[CoreDataTypes] | None
+        """
+        if isinstance(__iterable, cls):
+            return __iterable
+        return super().__new__(cls)
 
     def __init__(self, __iterable: ElementCollection | None = None) -> None:
         """Initialize the CoreDataSequence.
@@ -71,15 +82,22 @@ class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
                 tag=_CoreDataErrorTag.CORE_DATA_SEQUENCE_NOT_ELEMENT_COLLECTION)
         data: list[CoreDataTypes] = []
 
+        if all(isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for item in __iterable):
+            self._data = tuple(__iterable)
+            return
+
         for item in __iterable:
-            if isinstance(item, Mapping):
+            if isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
+                data.append(item)
+            elif isinstance(item, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
+                data.append(item)
+            elif isinstance(item, Mapping):
                 data.append(CoreDataMapping(item))
-            elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
-                data.append(CoreDataSequence(item))
             elif isinstance(item, Set):
                 data.append(CoreDataSet(item))
-            elif isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-                data.append(item)
+            elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
+                data.append(CoreDataSequence(item))
+
             else:
                  raise SimpleBenchTypeError(
                     f'Invalid item type passed to CoreDataSequence: {item!r}. '

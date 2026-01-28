@@ -73,6 +73,18 @@ class RawDataBlockSchema(JSONSchema):
                 'type': 'number',
                 'exclusiveMinimum': 0,
             },
+            'iterations': {
+                'title': 'Number of Iterations',
+                'description': "Number of measured iterations. This corresponds to the number of items in the 'measurements' array.",
+                'type': 'integer',
+                'exclusiveMinimum': 0,
+            },
+            'rounds': {
+                'title': 'Number of Rounds',
+                'description': 'Number of rounds executed for each iteration. The total number of operations is iterations * rounds.',
+                'type': 'integer',
+                'exclusiveMinimum': 0,
+            },
             'data': {
                 'title': 'Data',
                 'description': 'The raw measurement data as an array of numbers.',

@@ -90,7 +90,7 @@ class StatsBlockSchema(JSONSchema):
             },
             'iterations': {
                 'title': 'Number of Iterations',
-                'description': "Number of measured iterations. This corresponds to the number of items in the 'measurements' array.",
+                'description': "Number of measured iterations.",
                 'type': 'integer',
                 'exclusiveMinimum': 0,
             },
@@ -133,13 +133,6 @@ class StatsBlockSchema(JSONSchema):
                 'items': {'type': 'number'},
                 'minItems': 101,
                 'maxItems': 101,
-            },
-            'measurements': {
-                'title': 'Measurements',
-                'description': 'Raw data series of measurements collected (one value per iteration). The values are the AVERAGE per iteration (i.e., total time for the iteration divided by number of rounds). This array may be empty if raw measurements were not recorded.',
-                'type': 'array',
-                'items': {'type': 'number'},
-                'default': [],
             },
         },
         'required': [

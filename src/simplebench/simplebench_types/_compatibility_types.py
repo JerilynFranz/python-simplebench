@@ -1,11 +1,12 @@
 """TypedDict related type hints.
 
-This module provides imports for `Required`, `NotRequired`, `Never`,
-and `ReadOnly` to be used in defining `TypedDict` types throughout SimpleBench.
+This module provides imports for `Required`, `NotRequired`, `Never`, `ReadOnly` to
+be used in defining `TypedDict` types,and `Self` for use in class methods.
 
 These types are conditionally imported from either typing or typing_extensions
-based on the Python version to ensure compatibility. The import is centralized
-here to reduce boilerplate code for versioned imports, maintain consistency
+based on feature detection.
+
+The import is centralized here to reduce boilerplate code for versioned imports, maintain consistency
 across the codebase, and to simplify future updates.
 
 See Also:
@@ -13,14 +14,16 @@ See Also:
     - :class:`NotRequired`: Indicates that a key in a `TypedDict` is optional.
     - :class:`ReadOnly`: Indicates that a key in a `TypedDict` is read-only
     - :class:`Never`: Indicates a key in a `TypedDict` that should never be present.
+    - :class:`Self`: Indicates the instance type in class methods.
 """
+# ruff: noqa: F401
 
 import sys
 
 if sys.version_info >= (3, 11):
-    from typing import Never, NotRequired, Required
+    from typing import Never, NotRequired, Required, Self
 else:
-    from typing_extensions import Never, NotRequired, Required
+    from typing_extensions import Never, NotRequired, Required, Self
 
 if sys.version_info >= (3, 13):
     from typing import ReadOnly
@@ -28,4 +31,5 @@ if sys.version_info >= (3, 13):
 else:
     from typing_extensions import ReadOnly
 
-__all__ = ['Never', 'ReadOnly', 'NotRequired', 'Required']
+# No * exports from this module
+__all__ = []

@@ -6,7 +6,7 @@ from types import MappingProxyType
 from typing import Any
 
 from simplebench.report.base import BaseRawDataBlock, JSONSchema
-from simplebench.simplebench_types import Values
+from simplebench.simplebench_types import Values, CoreDataMapping
 
 from . import _validate
 from .raw_data_block_dict import ImmutableRawDataBlockDict, RawDataBlockData
@@ -15,10 +15,14 @@ from .raw_data_block_schema import RawDataBlockSchema
 
 class RawDataBlock(BaseRawDataBlock):
     """Class representing a raw data block (V1).
+    :param str hash_id: The hash ID string for the raw data block.
+    :param str name: The name string for the raw data block. ('name' field in JSON data)
     :param str semantic_type: The semantic type string for the raw data block. ('type' field in JSON data)
+    :param str description: The description string for the raw data block.
     :param (str | None) timer: The timer string or None.
     :param str unit: The unit of measurement.
     :param float scale: The scale factor.
+    :param int rounds: The number of rounds per data point.
     :param Values data: The raw data values of the block.
     :raise SimpleBenchTypeError: If any parameter is of incorrect type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
@@ -60,10 +64,13 @@ class RawDataBlock(BaseRawDataBlock):
         self,
         *,
         hash_id: str = '',
+        name: str,
         semantic_type: str,
-        timer: str | None = None,
+        description: str,
         unit: str,
         scale: float,
+        rounds: int,
+        timer: str | None = None,
         data: Sequence[int | float] | Values,
     ) -> None:
         """Initialize RawDataBlock class.
@@ -79,15 +86,19 @@ class RawDataBlock(BaseRawDataBlock):
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
         self._hash_id: str = _validate.hash_id(hash_id)
+        self._name: str = _validate.name(name)
+        self._description: str = _validate.description(description)
         self._semantic_type: str = _validate.semantic_type(semantic_type)
         self._timer: str | None = _validate.timer(timer)
+        self._data: Values = _validate.data(data)
+        self._rounds: int = _validate.rounds(rounds)
+        self._iterations: int = len(self._data)
         self._unit: str = _validate.unit(unit)
         self._scale: float = _validate.scale(scale)
-        self._data: Values = _validate.data(data)
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(RawDataBlockData)
 
-        self._to_dict_cache: ImmutableRawDataBlockDict | None = None  # Cache for to_dict output
+        self._to_dict_cache: CoreDataMapping | None = None  # Cache for to_dict output
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> 'RawDataBlock':
@@ -109,7 +120,7 @@ class RawDataBlock(BaseRawDataBlock):
         )
         return cls(**kwargs)
 
-    def to_dict(self) -> ImmutableRawDataBlockDict:
+    def to_dict(self) -> CoreDataMapping:
         """Convert the RawDataBlock instance to a dictionary.
 
         The returned dictionary conforms to the 'shape' of the :class:`RawDataBlockDict` type,
@@ -118,7 +129,20 @@ class RawDataBlock(BaseRawDataBlock):
         :return ImmutableRawDataBlockDict: Dictionary representation of the RawDataBlock instance.
         """
         if self._to_dict_cache is None:
-            self._to_dict_cache = self._to_dict_helper(ImmutableRawDataBlockDict)
+            self._to_dict_cache = CoreDataMapping({
+                'version': self.VERSION,
+                'type': self.TYPE,
+                'hash_id': self.hash_id,
+                'name': self._name,
+                'semantic_type': self.semantic_type,
+                'description': self._description,
+                'unit': self.unit,
+                'scale': self.scale,
+                'rounds': self._rounds,
+                'iterations': self._iterations,
+                'timer': self.timer,
+                'data': self.data,
+            })
         return self._to_dict_cache
 
     @property
