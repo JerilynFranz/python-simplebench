@@ -1,8 +1,10 @@
 """Value module."""
 
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
-from simplebench.metrics import Metric
+
+if TYPE_CHECKING:
+    from simplebench.metrics import Metric
 
 
 class Value(NamedTuple):
@@ -13,7 +15,7 @@ class Value(NamedTuple):
         value (`float`): The value of the metric measurement (position 1).
     """
 
-    metric: Metric
+    metric: 'Metric'
     """The metric being measured. (position 0)"""
 
     value: float

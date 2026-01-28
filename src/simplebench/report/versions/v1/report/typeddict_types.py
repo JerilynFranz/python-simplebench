@@ -16,10 +16,10 @@ version 1: :class:`~simplebench.report.versions.v1.report.report_schema.ReportSc
     These types ensure proper validation and serialization of Report data
 """
 
-from collections.abc import Sequence
+from collections.abc import Sequence, Mapping
 
 from simplebench.report.base import ReportElementTypedDict
-from simplebench.simplebench_types import ImmutableVariationColsType, Never, NotRequired, Required, VariationColsType
+from simplebench.simplebench_types import VariationCols, Never, NotRequired, Required
 
 from ..machine_info import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
 from ..results_info import ImmutableResultsInfoData, ImmutableResultsInfoDict, ResultsInfoData, ResultsInfoDict
@@ -56,7 +56,7 @@ class _RequiredReportData(_ReportBase, total=True):
 
     results: Required[Sequence[ResultsInfoData]]
     machine: Required[MachineInfoData]
-    variation_cols: Required[VariationColsType]
+    variation_cols: Required[Mapping[str, str]]
 
 
 class ReportData(_RequiredReportData, total=False):
@@ -90,7 +90,7 @@ class _RequiredImmutableReportData(_ReportBase, total=True):
 
     results: Required[tuple[ImmutableResultsInfoData, ...]]
     machine: Required[ImmutableMachineInfoData]
-    variation_cols: Required[ImmutableVariationColsType]
+    variation_cols: Required[Mapping[str, str]]
 
 
 class ImmutableReportData(_RequiredImmutableReportData, total=False):
@@ -137,7 +137,7 @@ class ReportDict(_ReportBase, total=True):
 
     results: Required[tuple[ResultsInfoDict, ...]]
     machine: Required[MachineInfoDict]
-    variation_cols: Required[VariationColsType]
+    variation_cols: Required[VariationCols]
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
@@ -159,7 +159,7 @@ class ImmutableReportDict(_ReportBase, total=True):
 
     results: Required[tuple[ImmutableResultsInfoDict, ...]]
     machine: Required[ImmutableMachineInfoDict]
-    variation_cols: Required[ImmutableVariationColsType]
+    variation_cols: Required[VariationCols]
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]

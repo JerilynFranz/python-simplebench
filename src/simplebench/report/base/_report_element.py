@@ -19,8 +19,7 @@ from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBenchTypeError
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.report.validate import report_element_typed_dict_mimic
-from simplebench.simplebench_types import IMMUTABLE_CORE_DATA_TYPES_TUPLE, ImmutableCoreDataMappingType
-from simplebench.validators import is_immutable_core_data
+from simplebench.simplebench_types import IMMUTABLE_CORE_DATA_TYPES_TUPLE, CoreDataMapping, ImmutableCoreDataMappingType
 
 from ._json_schema import JSONSchema
 
@@ -111,7 +110,7 @@ class ReportElement(Hydrator, Immutable, ABC):
                     data['version'] = cls.VERSION
                     continue
 
-            value: Callable[[], ImmutableCoreDataMappingType] | ImmutableCoreDataMappingType | _NoMatch = getattr(
+            value: Callable[[], CoreDataMapping] | CoreDataMapping | _NoMatch = getattr(
                 self, key, _NO_MATCH
             )
             to_dict_fn: Callable[[], ImmutableCoreDataMappingType] | None = getattr(value, 'to_dict', None)
@@ -123,8 +122,8 @@ class ReportElement(Hydrator, Immutable, ABC):
                     tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
                 )
 
-            # Already an ImmutableCoreDataMappingType
-            elif is_immutable_core_data(value):
+            # Already a CoreDataMapping
+            elif isinstance(value, CoreDataMapping):
                 data[key] = value
 
             # Has a callable to_dict method

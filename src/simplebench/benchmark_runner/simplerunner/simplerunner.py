@@ -210,46 +210,46 @@ This includes all indexes defined in the _Measurement named tuple which
 means any measurement included in the tuple is automatically retained.
 """
 
-_STD_OPS_STATS_METRIC: Final[Metric] = metrics_registry['STD_OPS_STATS_METRIC']
+_STD_OPS_STATS_METRIC: Final[Metric] = metrics_registry['STD_OPS_STATS']
 """The standard operations per second statistics metric.
 
 This is computed from the timing measurements so that it is consistent with them.
 """
-_STD_OPS_RAW_METRIC: Final[Metric] = metrics_registry['STD_OPS_RAW_METRIC']
+_STD_OPS_RAW_METRIC: Final[Metric] = metrics_registry['STD_OPS_RAW']
 """The standard operations per second raw metric.
 
 This is computed from the timing measurements so that it is consistent with them.
 """
 
 _METRIC_TO_MEASUREMENT_INDEX: Final[dict[Metric, int]] = {
-    metrics_registry['STD_TIMING_STATS_METRIC']: _TIMING,
-    metrics_registry['STD_CPU_TIME_STATS_METRIC']: _CPU_TIME,
-    metrics_registry['STD_TIMING_RAW_METRIC']: _TIMING,
-    metrics_registry['STD_CPU_TIME_RAW_METRIC']: _CPU_TIME,
-    metrics_registry['STD_MEMORY_STATS_METRIC']: _MEMORY,
-    metrics_registry['STD_MEMORY_RAW_METRIC']: _MEMORY,
-    metrics_registry['STD_PEAK_MEMORY_STATS_METRIC']: _PEAK_MEMORY,
-    metrics_registry['STD_PEAK_MEMORY_RAW_METRIC']: _PEAK_MEMORY,
-    metrics_registry['STD_TOTAL_ELAPSED_TIME_METRIC']: _TIMING,
-    metrics_registry['STD_TOTAL_CPU_TIME_METRIC']: _CPU_TIME,
-    metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS_METRIC']: _GC_GEN0_COLLECTIONS,
-    metrics_registry['STD_GC_GEN0_COLLECTED_STATS_METRIC']: _GC_GEN0_COLLECTED,
-    metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS_METRIC']: _GC_GEN0_UNCOLLECTABLE,
-    metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS_METRIC']: _GC_GEN1_COLLECTIONS,
-    metrics_registry['STD_GC_GEN1_COLLECTED_STATS_METRIC']: _GC_GEN1_COLLECTED,
-    metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS_METRIC']: _GC_GEN1_UNCOLLECTABLE,
-    metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS_METRIC']: _GC_GEN2_COLLECTIONS,
-    metrics_registry['STD_GC_GEN2_COLLECTED_STATS_METRIC']: _GC_GEN2_COLLECTED,
-    metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS_METRIC']: _GC_GEN2_UNCOLLECTABLE,
-    metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW_METRIC']: _GC_GEN0_COLLECTIONS,
-    metrics_registry['STD_GC_GEN0_COLLECTED_RAW_METRIC']: _GC_GEN0_COLLECTED,
-    metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW_METRIC']: _GC_GEN0_UNCOLLECTABLE,
-    metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW_METRIC']: _GC_GEN1_COLLECTIONS,
-    metrics_registry['STD_GC_GEN1_COLLECTED_RAW_METRIC']: _GC_GEN1_COLLECTED,
-    metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW_METRIC']: _GC_GEN1_UNCOLLECTABLE,
-    metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW_METRIC']: _GC_GEN2_COLLECTIONS,
-    metrics_registry['STD_GC_GEN2_COLLECTED_RAW_METRIC']: _GC_GEN2_COLLECTED,
-    metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW_METRIC']: _GC_GEN2_UNCOLLECTABLE,
+    metrics_registry['STD_TIMING_STATS']: _TIMING,
+    metrics_registry['STD_CPU_TIME_STATS']: _CPU_TIME,
+    metrics_registry['STD_TIMING_RAW']: _TIMING,
+    metrics_registry['STD_CPU_TIME_RAW']: _CPU_TIME,
+    metrics_registry['STD_MEMORY_STATS']: _MEMORY,
+    metrics_registry['STD_MEMORY_RAW']: _MEMORY,
+    metrics_registry['STD_PEAK_MEMORY_STATS']: _PEAK_MEMORY,
+    metrics_registry['STD_PEAK_MEMORY_RAW']: _PEAK_MEMORY,
+    metrics_registry['STD_TOTAL_ELAPSED_TIME']: _TIMING,
+    metrics_registry['STD_TOTAL_CPU_TIME']: _CPU_TIME,
+    metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS']: _GC_GEN0_COLLECTIONS,
+    metrics_registry['STD_GC_GEN0_COLLECTED_STATS']: _GC_GEN0_COLLECTED,
+    metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS']: _GC_GEN0_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS']: _GC_GEN1_COLLECTIONS,
+    metrics_registry['STD_GC_GEN1_COLLECTED_STATS']: _GC_GEN1_COLLECTED,
+    metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS']: _GC_GEN1_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS']: _GC_GEN2_COLLECTIONS,
+    metrics_registry['STD_GC_GEN2_COLLECTED_STATS']: _GC_GEN2_COLLECTED,
+    metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS']: _GC_GEN2_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW']: _GC_GEN0_COLLECTIONS,
+    metrics_registry['STD_GC_GEN0_COLLECTED_RAW']: _GC_GEN0_COLLECTED,
+    metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW']: _GC_GEN0_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW']: _GC_GEN1_COLLECTIONS,
+    metrics_registry['STD_GC_GEN1_COLLECTED_RAW']: _GC_GEN1_COLLECTED,
+    metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW']: _GC_GEN1_UNCOLLECTABLE,
+    metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW']: _GC_GEN2_COLLECTIONS,
+    metrics_registry['STD_GC_GEN2_COLLECTED_RAW']: _GC_GEN2_COLLECTED,
+    metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']: _GC_GEN2_UNCOLLECTABLE,
 }
 """A mapping of metrics to their corresponding measurement indexes.
 
@@ -277,34 +277,34 @@ def _metric_timers(
     wall_timer_name: str = wall_timer.__name__
     cpu_timer_name: str = cpu_timer.__name__
     return {
-        metrics_registry['STD_TIMING_STATS_METRIC']: wall_timer_name,
-        metrics_registry['STD_CPU_TIME_STATS_METRIC']: cpu_timer_name,
-         metrics_registry['STD_TIMING_RAW_METRIC']: wall_timer_name,
-        metrics_registry['STD_CPU_TIME_RAW_METRIC']: cpu_timer_name,
-        metrics_registry['STD_MEMORY_STATS_METRIC']: None,
-        metrics_registry['STD_MEMORY_RAW_METRIC']: None,
-        metrics_registry['STD_PEAK_MEMORY_STATS_METRIC']: None,
-        metrics_registry['STD_PEAK_MEMORY_RAW_METRIC']: None,
-        metrics_registry['STD_TOTAL_ELAPSED_TIME_METRIC']: wall_timer_name,
-        metrics_registry['STD_TOTAL_CPU_TIME_METRIC']: cpu_timer_name,
-        metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN0_COLLECTED_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN1_COLLECTED_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN2_COLLECTED_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS_METRIC']: None,
-        metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN0_COLLECTED_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN1_COLLECTED_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN2_COLLECTED_RAW_METRIC']: None,
-        metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW_METRIC']: None,
+        metrics_registry['STD_TIMING_STATS']: wall_timer_name,
+        metrics_registry['STD_CPU_TIME_STATS']: cpu_timer_name,
+         metrics_registry['STD_TIMING_RAW']: wall_timer_name,
+        metrics_registry['STD_CPU_TIME_RAW']: cpu_timer_name,
+        metrics_registry['STD_MEMORY_STATS']: None,
+        metrics_registry['STD_MEMORY_RAW']: None,
+        metrics_registry['STD_PEAK_MEMORY_STATS']: None,
+        metrics_registry['STD_PEAK_MEMORY_RAW']: None,
+        metrics_registry['STD_TOTAL_ELAPSED_TIME']: wall_timer_name,
+        metrics_registry['STD_TOTAL_CPU_TIME']: cpu_timer_name,
+        metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS']: None,
+        metrics_registry['STD_GC_GEN0_COLLECTED_STATS']: None,
+        metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTED_STATS']: None,
+        metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTED_STATS']: None,
+        metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS']: None,
+        metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW']: None,
+        metrics_registry['STD_GC_GEN0_COLLECTED_RAW']: None,
+        metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTED_RAW']: None,
+        metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTED_RAW']: None,
+        metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']: None,
     }
 
 
@@ -324,9 +324,9 @@ class SimpleRunner(BenchmarkRunner):
     def __init__(
         self,
         *,
-        case: Case,
+        case: 'Case',
         variation_marks: VariationMarks,
-        session: Session | None = None,
+        session: 'Session | None' = None,
         runner: Callable[..., Any] | None = None,
     ) -> None:
         """

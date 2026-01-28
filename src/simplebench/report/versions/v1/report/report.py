@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report.base import BaseReport, JSONSchema
 from simplebench.report.versions.v1 import MachineInfo
-from simplebench.simplebench_types import ImmutableVariationColsType, VariationColsType
+from simplebench.simplebench_types import VariationCols
 from simplebench.validators import validate_sequence_of_type
 
 from . import _validate
@@ -84,7 +84,7 @@ class Report(BaseReport):
         group: str,
         title: str,
         description: str,
-        variation_cols: VariationColsType,
+        variation_cols: VariationCols,
         results: 'Sequence[ResultsInfo]',
         machine: MachineInfo,
     ) -> None:
@@ -105,7 +105,7 @@ class Report(BaseReport):
         self._group: str = _validate.group(group)
         self._title: str = _validate.title(title)
         self._description: str = _validate.description(description)
-        self._variation_cols: ImmutableVariationColsType = _validate.variation_cols(variation_cols)
+        self._variation_cols: VariationCols = _validate.variation_cols(variation_cols)
         self._results: tuple[ResultsInfo, ...] = _validate.results(results)
         self._machine: MachineInfo = _validate.machine(machine)
         self._hash_id = _validate.hash_id(hash_id)
@@ -205,13 +205,10 @@ class Report(BaseReport):
         return self._description
 
     @property
-    def variation_cols(self) -> ImmutableVariationColsType:
+    def variation_cols(self) -> VariationCols:
         """Return the variation_cols property.
 
-        A copy of the variation_cols dictionary is returned to prevent
-        external modification of the internal state.
-
-        :return ImmutableVariationColsType: The variation_cols dictionary as an immutable mapping.
+        :return VariationCols: The variation_cols dictionary as an immutable mapping.
         """
         return self._variation_cols
 

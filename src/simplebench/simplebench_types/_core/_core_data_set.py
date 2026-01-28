@@ -29,7 +29,7 @@ from ._error_tags import _CoreDataErrorTag
 from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE, CoreDataTypes
 
 
-class CoreDataSet(Set[CoreDataTypes], Immutable, Hashable):
+class CoreDataSet(Set[CoreDataTypes], ElementCollection, Immutable, Hashable):
     """Deep-immutable Set container for CoreData types used in SimpleBench.
 
     This represents a set where all elements are of type :class:`CoreData`.

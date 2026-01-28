@@ -116,7 +116,7 @@ class Raw:
         return len(self.data)
 
     def raw_data_block(self) -> reports.RawDataBlock:
-        """Returns a ``RawDataBlock`` for the statistics.
+        """Returns a :class:`RawDataBlock` for the statistics.
 
         The data values are scaled according to the scale factor to provide
         human-readable values using the base unit rather than the scaled unit.

@@ -5,20 +5,12 @@ from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 from ._typed_dict import is_typed_dict_mimic, typed_dict_mimic
 from .core_data_types import (
     is_core_data,
-    is_core_data_mapping,
     is_core_data_primitive,
     is_core_data_primitive_type,
-    is_core_data_sequence,
-    is_core_data_set,
-    is_immutable_core_data,
     validate_core_data,
     validate_core_data_mapping,
     validate_core_data_sequence,
     validate_core_data_set,
-    validate_immutable_core_data,
-    validate_immutable_core_data_mapping,
-    validate_immutable_core_data_sequence,
-    validate_immutable_core_data_set,
 )
 from .dates_and_times import validate_iso8601_datetime
 from .identifiers import validate_namespaced_identifier
@@ -54,10 +46,6 @@ __all__ = [
     'is_core_data',
     'is_core_data_primitive',
     'is_core_data_primitive_type',
-    'is_core_data_mapping',
-    'is_core_data_sequence',
-    'is_core_data_set',
-    'is_immutable_core_data',
     '_ValidatorsErrorTag',
     'validate_bool',
     'validate_core_data',
@@ -69,10 +57,6 @@ __all__ = [
     'validate_float',
     'validate_float_range',
     'validate_frozenset_of_type',
-    'validate_immutable_core_data',
-    'validate_immutable_core_data_mapping',
-    'validate_immutable_core_data_sequence',
-    'validate_immutable_core_data_set',
     'validate_int',
     'validate_int_range',
     'validate_iso8601_datetime',

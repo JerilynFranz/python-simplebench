@@ -1,17 +1,15 @@
 """Validation functions for V1 report version."""
 
-from collections.abc import Sequence
 import re
-from types import MappingProxyType
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _ReportErrorTag
+from simplebench.simplebench_types import VariationCols
 from simplebench.type_proxies import is_case
-from simplebench.simplebench_types import ImmutableVariationColsType, VariationColsType
 from simplebench.validators import (
     validate_iso8601_datetime,
-    validate_sequence_of_str,
     validate_sequence_of_type,
     validate_string,
     validate_type,
@@ -126,7 +124,7 @@ def description(value: str) -> str:
     )
 
 
-def variation_cols(value: VariationColsType) -> ImmutableVariationColsType:
+def variation_cols(value: VariationCols) -> VariationCols:
     """Validate a variation_cols dictionary.
 
     :param VariationColsType value: The variation_cols dictionary to validate.
@@ -134,28 +132,12 @@ def variation_cols(value: VariationColsType) -> ImmutableVariationColsType:
     :raises SimpleBenchTypeError: If variation_cols is not a dict.
     :raises SimpleBenchValueError: If the keys or values in variation_cols are not strings.
     """
-    if not isinstance(value, dict):
+    if not isinstance(value, VariationCols):
         raise SimpleBenchValueError(
-            'variation_cols must be a dictionary', tag=_ReportErrorTag.INVALID_VARIATION_COLS_PROPERTY_TYPE
+            f'variation_cols must be a VariationCols instance, found {type(value).__name__}.',
+            tag=_ReportErrorTag.INVALID_VARIATION_COLS_TYPE,
         )
-
-    validate_sequence_of_str(
-        value.keys(),
-        'variation_cols keys',
-        _ReportErrorTag.INVALID_VARIATION_COLS_KEYS_TYPE,
-        _ReportErrorTag.INVALID_VARIATION_COLS_KEYS_VALUE,
-        allow_empty=False,
-    )
-
-    validate_sequence_of_str(
-        value.values(),
-        'variation_cols values',
-        _ReportErrorTag.INVALID_VARIATION_COLS_VALUES_TYPE,
-        _ReportErrorTag.INVALID_VARIATION_COLS_VALUES_VALUE,
-        allow_empty=False,
-    )
-
-    return MappingProxyType(value)
+    return value
 
 
 def results(value: 'Sequence[ResultsInfo]') -> 'tuple[ResultsInfo, ...]':
@@ -215,7 +197,9 @@ def case_has_been_run(value: 'Case') -> None:
     :param value: The Case instance to validate.
     :raises SimpleBenchValueError: If the Case has not been run.
     """
-    if not value.has_run:
+    from simplebench.case import CaseState
+
+    if value.state is not CaseState.COMPLETED:
         raise SimpleBenchValueError(
             'The provided Case instance has not been run yet.', tag=_ReportErrorTag.CASE_HAS_NOT_BEEN_RUN
         )

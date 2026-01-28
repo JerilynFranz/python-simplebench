@@ -1,6 +1,8 @@
 """Runners for executing benchmarks"""
+# ruff: noqa F401
 
 from .benchmark_runner import BenchmarkRunner
 from .simplerunner import SimpleRunner
 
-__all__ = ['BenchmarkRunner', 'SimpleRunner']
+# No * imports here
+__all__ = []

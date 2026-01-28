@@ -9,6 +9,7 @@ elements conform to the allowed primitive types.
 
 import math
 from collections.abc import Mapping, Sequence, Set
+from typing import Any, TypeGuard
 
 from simplebench.exceptions import SimpleBenchRecursionError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.simplebench_types import (
@@ -22,6 +23,7 @@ from simplebench.simplebench_types import (
 )
 from simplebench.validators import _ValidatorsErrorTag
 
+_CORE_PRIMITIVES_SET = {str, int, float, bool, complex, type(None)}
 
 def validate_core_data_mapping(item: CoreDataMappingType, name: str) -> CoreDataMapping:
     """Validate a CoreDataTypes mapping.
@@ -257,3 +259,40 @@ def validate_core_data(item: CoreDataTypes, name: str) -> CoreDataTypes:
             f"Recursion limit reached {exc}",
             tag=_ValidatorsErrorTag.RECURSION_LIMIT_REACHED) from exc
 
+
+def is_core_data_primitive(value: Any) -> TypeGuard[str | int | float | bool | complex | None]:
+    """Check if a value is a core data primitive type.
+
+    The allowed primitive types are str, int, float, bool, complex, and None.
+
+    All core primitive types are immutable and serializable.
+
+    :param object value: The value to check.
+    :return bool: True if the value is a core data primitive type, False otherwise.
+    """
+    return isinstance(value, (str, int, float, bool, complex)) or value is None
+
+
+def is_core_data_primitive_type(value_type: Any) -> TypeGuard[type[str | int | float | bool | complex | None]]:
+    """Check if a type is a core data primitive type.
+
+    The allowed primitive types are str, int, float, bool, complex, and NoneType.
+
+    All core primitive types are immutable and serializable.
+
+    :param object value_type: The type to check.
+    :return bool: True if the type is a core data primitive type, False otherwise.
+    """
+    return value_type in _CORE_PRIMITIVES_SET
+
+def is_core_data(value: CoreDataTypes) -> TypeGuard[CoreDataTypes]:
+    """Check if a value is a valid CoreDataTypes instance.
+
+    :param object value: The value to check.
+    :return bool: True if the value is a valid CoreDataTypes instance, False otherwise.
+    """
+    try:
+        validate_core_data(value, 'CoreData is checking')
+        return True
+    except (ValueError, TypeError):
+        return False

@@ -23,15 +23,15 @@ from typing import overload
 
 from typechecked import Immutable
 
+from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.simplebench_types import Self
 
 from .._element_collection import ElementCollection, is_element_collection
 from ._error_tags import _CoreDataErrorTag
 from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, IMMUTABLE_CORE_DATA_TYPES_TUPLE, CoreDataTypes
 
 
-class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
+class CoreDataSequence(Sequence[CoreDataTypes], ElementCollection, Immutable, Hashable):
     """Deep-immutable Sequence container for CoreData types used in SimpleBench.
 
     This represents a sequence where all elements are of type :class:`CoreData`.
@@ -45,17 +45,6 @@ class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
     :param __iterable: An iterable of CoreData elements to initialize the sequence or :obj:`None`.
     :type __iterable: Iterable[CoreData] | None
     """
-
-    def __new__(cls, __iterable: ElementCollection | None = None) -> Self:
-        """Create a new CoreDataSequence instance.
-
-        :param __iterable: An iterable of CoreData elements to initialize the sequence or :obj:`None`.
-        :type __iterable: Iterable[CoreDataTypes] | None
-        """
-        if isinstance(__iterable, cls):
-            return __iterable
-        return super().__new__(cls)
-
     def __init__(self, __iterable: ElementCollection | None = None) -> None:
         """Initialize the CoreDataSequence.
 
@@ -71,6 +60,7 @@ class CoreDataSequence(Sequence[CoreDataTypes], Immutable, Hashable):
         from ._core_data_mapping import CoreDataMapping
         from ._core_data_set import CoreDataSet
 
+        _log.debug('Initializing CoreDataSequence with iterable: %r', __iterable)
         self._data: tuple[CoreDataTypes, ...]
         if __iterable is None:
             self._data: tuple[CoreDataTypes, ...] = ()
