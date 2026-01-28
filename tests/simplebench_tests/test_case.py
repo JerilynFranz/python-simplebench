@@ -10,19 +10,25 @@ import pytest
 from rich.console import Console
 from testspec import Assert, TestAction, TestGet, TestSet, TestSpec, idspec, no_assigned_action
 
-from simplebench.benchmark_runner import SimpleRunner
+from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
 from simplebench.case import Case, Results
 from simplebench.case._error_tags import _CaseErrorTag
-from simplebench.case.results import Iteration
 from simplebench.enums import Format, Verbosity
 from simplebench.exceptions import SimpleBenchBenchmarkError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.session import Session
+from simplebench.simplebench_types import VariationMarks, MetricsTimers, Values, Extras, Iterations
 
 from .kwargs import CaseKWArgs
+from . import factories
 
+_VALUES = Values([0.1, 0.2])
+_DEFAULT_METRIC = factories.default_metric()
+_DEFAULT_TIMER = 'time.perf_counter'
+_DEFAULT_METRICS_TIMERS = MetricsTimers({ _DEFAULT_METRIC: _DEFAULT_TIMER })
+_DEFAULT_ITERATIONS = Iterations({ _DEFAULT_METRIC: _VALUES })
 
 class MockReporterOptions(ReporterOptions):
     """A mock ReporterOptions for testing purposes."""
@@ -30,107 +36,109 @@ class MockReporterOptions(ReporterOptions):
         self.name = name
 
 
-def benchcase(_bench: SimpleRunner, **kwargs) -> Results:
+def benchcase(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function."""  # fixed docstring for testing purposes
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, **kwargs)
+    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def benchcase_with_no_docstring(_bench: SimpleRunner, **kwargs) -> Results:  # pylint: disable=missing-function-docstring  # noqa: E501
+def benchcase_with_no_docstring(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:  # pylint: disable=missing-function-docstring  # noqa: E501
     # No docstring benchcase for testing purposes
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, **kwargs)
+    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def benchcase_with_size(_bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_with_size(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
     :param _bench: The benchmark runner.
-    :param kwargs: The keyword arguments.
+    :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
     def action(size: int) -> None:
         """A simple benchmark case function with a size parameter and weighted n."""
         _ = sum(range(size))
-    if 'size' not in kwargs:
-        raise ValueError("Missing required 'size' parameter in kwargs")
-    return _bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
+    if 'size' not in variation_marks:
+        raise ValueError("Missing required 'size' parameter in variation_marks")
+    return _bench.run(n=variation_marks['size'].value, action=action, variation_marks=variation_marks)
 
 
-def benchcase_with_size_and_factor(_bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_with_size_and_factor(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
     :param _bench: The benchmark runner.
-    :param kwargs: The keyword arguments.
+    :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
     def action(size: int, factor: int) -> None:
         """A simple benchmark case function with size and factor parameters and weighted n."""
         _ = sum(range(size)) * factor
-    if 'size' not in kwargs or 'factor' not in kwargs:
-        raise ValueError("Missing required 'size' or 'factor' parameter in kwargs")
-    return _bench.run(n=kwargs['size'] * kwargs['factor'], action=action, kwargs=kwargs)
+    if 'size' not in variation_marks or 'factor' not in variation_marks:
+        raise ValueError("Missing required 'size' or 'factor' parameter in variation_marks")
+    return _bench.run(n=variation_marks['size'].value * variation_marks['factor'].value,
+                      action=action, variation_marks=variation_marks)
 
-
-def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pragma: no cover
+def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results:  # pragma: no cover
     """A broken benchmark case function that is missing the required 'bench' parameter.
 
-    :param kwargs: The keyword arguments.
+    :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
     _bench = SimpleRunner(
         case=Case(
             group='example',
             title='benchcase',
-            action=benchcase,
+            action=benchcase,  # type: ignore[arg-type]  # expected to be broken
             description='Benchmark case'),
-        variation_marks={})
+        variation_marks=VariationMarks({}))
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def broken_benchcase_missing_kwargs(_bench: SimpleRunner) -> Results:  # pragma: no cover
-    """A broken benchmark case function that is missing the required '**kwargs' parameter.
+def broken_benchcase_missing_kwargs(_bench: BenchmarkRunner) -> Results:  # pragma: no cover
+    """A broken benchmark case function that is missing the required 'variation_marks' parameter.
 
     :param _bench: The benchmark runner.
     :return: The benchmark results.
     """
-    kwargs: dict[str, Any] = {}
+    variation_marks = VariationMarks({})
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def broken_benchcase_wrong_kwargs_kind(_bench: SimpleRunner, kwargs: dict[str, Any]) -> Results:  # pragma: no cover
-    """A broken benchmark case function that has the wrong kind of kwargs parameter (should be '**kwargs').
+def broken_benchcase_wrong_kwargs_kind(
+        _bench: BenchmarkRunner, variation_marks: dict[str, Any]) -> Results:  # pragma: no cover
+    """A broken benchmark case function that has the wrong kind of variation_marks parameter (should be VariationMarks).
 
     :param _bench: The benchmark runner.
-    :param kwargs: The keyword arguments.
+    :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, variation_marks=variation_marks)  # type: ignore[arg-type]  # expected to be broken
 
 
-def broken_benchcase_extra_param(_bench: SimpleRunner, extra_param: Any, **kwargs: Any) -> Results:  # pragma: no cover
-    """A broken benchmark case function that has an extra parameter (should only have 'bench' and '**kwargs').
+def broken_benchcase_extra_param(
+        _bench: BenchmarkRunner, extra_param: Any, variation_marks: VariationMarks) -> Results:  # pragma: no cover
+    """A broken benchmark case function that has an extra parameter (should only have 'bench' and 'variation_marks').
 
     :param _bench: The benchmark runner.
     :param extra_param: An extra parameter.
-    :param kwargs: The keyword arguments.
+    :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
     if extra_param is None:
@@ -139,24 +147,24 @@ def broken_benchcase_extra_param(_bench: SimpleRunner, extra_param: Any, **kwarg
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
 
-
-def broken_benchcase_action_that_raises(_bench: SimpleRunner, **kwargs: Any) -> Results:  # pragma: no cover
+def broken_benchcase_action_that_raises(
+        _bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:  # pragma: no cover
     """A broken benchmark case function whose action raises an exception.
 
     :param _bench: The benchmark runner.
-    :param kwargs: The keyword arguments.
+    :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
     def action() -> None:
         """A simple benchmark case function that raises an exception."""
         raise RuntimeError("Intentional error in benchmark action")
-    return _bench.run(n=1000, action=action, kwargs=kwargs)
+    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
 class BadRunner:  # pragma: no cover
-    """A Class that is not a subclass of SimpleRunner, used to test invalid runner parameter."""
+    """A Class that is not a subclass of BenchmarkRunner, used to test invalid runner parameter."""
 
 
 @cache
@@ -263,8 +271,8 @@ def broken_callback_extra_param(  # pylint: disable=unused-argument  # pragma: n
     (should only have 'case', 'metric', 'output_format', and 'output')."""
 
 
-def broken_callback_no_type_hints(  # pylint: disable=unused-argument  # pragma: no cover
-        case, metric, output_format, output):  # type: ignore[no-untyped-def]
+def broken_callback_no_type_hints(  # noqa: ANN201  # pragma: no cover
+        case, metric, output_format, output):  # type: ignore[no-untyped-def]  # noqa: ANN001
     """A broken callback function that has no type hints."""
 
 
@@ -345,7 +353,7 @@ def displayless_console() -> Console:
     return Console(quiet=True)
 
 
-def test_casekwargs_matches_case_signature():
+def test_casekwargs_matches_case_signature() -> None:
     """Verify CaseKWArgs signature matches Case.__init__.
 
     This test ensures that the CaseKWArgs class has the same parameters as
@@ -570,19 +578,19 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         exception=SimpleBenchValueError,
         exception_tag=_CaseErrorTag.INVALID_TIME_RANGE)),
     idspec("INIT_026", TestAction(
-        name="Invalid (not a SimpleRunner subclass) type for runner option",
+        name="Invalid (not a BenchmarkRunner subclass) type for runner option",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          runner=BadRunner),  # type: ignore[arg-type]  # Invalid: Not a SimpleRunner subclass
+                          runner=BadRunner),  # type: ignore[arg-type]  # Invalid: Not a BenchmarkRunner subclass
         exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_RUNNER_NOT_SIMPLE_RUNNER_SUBCLASS)),
+        exception_tag=_CaseErrorTag.INVALID_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS)),
     idspec("INIT_027", TestAction(
         name="Invalid (not a dict) type for variation_cols parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          variation_cols='not_a_dict'),  # type: ignore[arg-type]
+                          variation_cols='not_a_VariationCols'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_DICT)),
+        exception_tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_VARIATION_COLS)),
     idspec("INIT_028", TestAction(
         name="Invalid (contains key that is not type str) type for variation_cols parameter",
         action=Case,
@@ -685,9 +693,9 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         name="Invalid (contains item that is not a list) type for kwargs_variations parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          kwargs_variations={'size': 'not_a_list'}),  # type: ignore[dict-item]  # Invalid item type
+                          kwargs_variations={'size': 'not_an_element_collection'}),  # type: ignore[dict-item]  # Invalid item type
         exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_LIST)),
+        exception_tag=_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_VALUE_NOT_ELEMENT_COLLECTION)),
     idspec("INIT_042", TestAction(
         name="Invalid type for callback parameter(str instead of callable)",
         action=Case,
@@ -845,7 +853,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         name="runner attribute is initialized to SimpleRunner class when provided",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          runner=SimpleRunner),
+                          runners=[SimpleRunner]),
         validate_result=lambda obj: issubclass(obj.runner, SimpleRunner))),
     idspec("INIT_065", TestAction(
         name="Missing description parameter and docstring - default to '(no description)'",
@@ -933,8 +941,9 @@ def test_case_init(testspec: TestAction) -> None:
                                 description='new_description',
                                 n=1,
                                 rounds=1,
-                                total_elapsed=1,
-                                iterations=[Iteration(elapsed=0.1)])],
+                                metrics_timers=_DEFAULT_METRICS_TIMERS,
+                                iterations=_DEFAULT_ITERATIONS,
+                                extra_info=Extras())],
         obj=base_case(),
         exception=AttributeError)),
     idspec("ATTR_014", TestSet(
@@ -1089,12 +1098,12 @@ def test_getting_attributes(testspec: TestSpec) -> None:
         extra={
             'output_expected': False,
             'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
-                                      min_time=0.01, max_time=0.1, action=benchcase, runner=SimpleRunner),
+                                      min_time=0.01, max_time=0.1, action=benchcase, runners=[SimpleRunner]),
         })),
     idspec("RUN_008", TestAction(
         name="Benchmark case with SimpleRunner set as session default_runner runs without exceptions",
         action=no_assigned_action,
-        kwargs={'session': Session(default_runner=SimpleRunner)},
+        kwargs={'session': Session(default_runners=[SimpleRunner])},
         extra={
             'output_expected': False,
             'case_kwargs': CaseKWArgs(group='example', title='benchcase', description='Benchmark case',
@@ -1112,7 +1121,7 @@ def test_getting_attributes(testspec: TestSpec) -> None:
                                       min_time=0.01, max_time=0.1, action=broken_benchcase_action_that_raises),
         })),
 ])
-def test_run(capsys, testspec: TestAction) -> None:
+def test_run(capsys: pytest.CaptureFixture[str], testspec: TestAction) -> None:
     """Test the run method of the Case class.
 
     :param capsys: The pytest capsys fixture.

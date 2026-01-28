@@ -1,13 +1,13 @@
 """ActionRunner protocol for SimpleBench."""
 
-from __future__ import annotations
-
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
+from simplebench.simplebench_types import VariationMarks
 
 
+@runtime_checkable
 class FunctionRunner(Protocol):
     """A protocol for benchmark action functions used by Case.
 
@@ -19,19 +19,19 @@ class FunctionRunner(Protocol):
 
     .. code-block:: python
 
-        def my_action(bench: BenchmarkRunner, **kwargs: dict[str, Any]) -> Results:
+        def my_action(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
             # Benchmark logic here
             def some_function_to_benchmark():
                 pass
 
-            return bench.run(action=some_function_to_benchmark, **kwargs)
+            return bench.run(action=some_function_to_benchmark, variation_marks=variation_marks)
     """
 
-    def __call__(self, _bench: BenchmarkRunner, **kwargs: object) -> Results:
+    def __call__(self, _bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
         """Run the benchmark action.
 
         :param _bench: The BenchmarkRunner instance.
-        :param kwargs: Additional keyword arguments for the action.
+        :param variation_marks: Variation marks for the action.
         :return: The results of the benchmark action.
         """
         ...

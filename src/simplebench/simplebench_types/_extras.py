@@ -25,7 +25,7 @@ class Extras(CoreDataMapping):
     The keys are restricted to be of type :class:`str` and conform to
     :func:`str.isidentifier` and the values must be of type :class:`CoreDataTypes`.
     """
-    def __init__(self, __mapping: Mapping[str, CoreDataTypes]) -> None:
+    def __init__(self, __mapping: Mapping[str, CoreDataTypes] | None = None) -> None:
         """Construct an Extras instance.
 
         :param __mapping: The mapping of keys to core data types.
@@ -35,4 +35,6 @@ class Extras(CoreDataMapping):
         :raises SimpleBenchTypeError: If any keys are not of type :class:`str` and a :func:`str.isidentifier`.
         :raises SimpleBenchTypeError: If any values are not of type :class:`CoreDataTypes`.
         """
+        if __mapping is None:
+            __mapping = {}
         super().__init__(__mapping)

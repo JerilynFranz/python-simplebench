@@ -68,7 +68,8 @@ from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
 from simplebench.metrics import Metric, metrics_registry
-from simplebench.simplebench_types import Values, VariationCols, VariationMarks
+from simplebench.simplebench_types import Extras, Iterations, Values, VariationCols, VariationMarks
+from simplebench.simplebench_types._metrics_timers._metrics_timers import MetricsTimers
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from simplebench.validators import validate_positive_int
@@ -741,10 +742,11 @@ class SimpleRunner(BenchmarkRunner):
         # instead.
         values: list[Values] = [] * len(_METRIC_TO_MEASUREMENT_INDEX)
         for metric in sorted(_RETAINED_METRICS):
-            values[metric] = Values(iteration[metric] for iteration in iterations_list)
+            values[metric] = Values(tuple(iteration[metric] for iteration in iterations_list))
 
         # Calculate operations per second values as a special case just for easier access
-        ops_values: Values = Values(1 / timing if timing else 0.0 for timing in values[_TIMING])
+        timing_values: Values = values[_TIMING]
+        ops_values: Values = Values(tuple(1 / timing if timing != 0 else 0.0 for timing in timing_values))
         iteration_results: dict[Metric, Values] = {
             _STD_OPS_STATS_METRIC: ops_values,
             _STD_OPS_RAW_METRIC: ops_values
@@ -758,10 +760,10 @@ class SimpleRunner(BenchmarkRunner):
             description=description,
             n=n,
             rounds=rounds,
-            iterations=iteration_results,
-            metrics_timers=_timers_for_metrics,
+            iterations=Iterations(iteration_results),
+            metrics_timers=MetricsTimers(_timers_for_metrics),
             variation_marks=variation_marks,
-            extra_info={},
+            extra_info=Extras()
         )
         progress_tracker.stop()
 

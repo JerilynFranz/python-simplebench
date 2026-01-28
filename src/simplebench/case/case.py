@@ -149,7 +149,7 @@ class Case:
         from simplebench import Case, BenchmarkRunner, Results, main
 
 
-        def my_benchmark_action(_bench: BenchmarkRunner, **kwargs) -> Results:
+        def my_benchmark_action(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
             # Perform benchmark action here
             def benchmark_operation():
                 sum(range(1000))  # Example operation to benchmark
@@ -839,7 +839,7 @@ class Case:
                 bench: BenchmarkRunner = runner(case=self, session=session, variation_marks=variation_marks)
 
                 try:
-                    results: Results = self.action(bench, **variation_marks)
+                    results: Results = self.action(bench, variation_marks)
                 except SimpleBenchTimeoutError as e:
                     self._state = CaseState.TIMED_OUT
                     raise SimpleBenchTimeoutError(

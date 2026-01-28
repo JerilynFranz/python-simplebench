@@ -20,7 +20,7 @@ Example usage:
     # The vals object is guaranteed to be a tuple containing only float numbers.
 """
 
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 
 import autopypath  # noqa: F401
 import pytest
@@ -121,9 +121,30 @@ class Values(CoreDataSequence):
                 'All items in the iterable must be int or float',
                 tag=_ValuesErrorTag.INVALID_VALUES_CONTENT_TYPE
             )
-        self._data= tuple(float(item) for item in working_copy)  # type: ignore[arg-type]
+        self._data: tuple[float, ...] = tuple(float(item) for item in working_copy)  # type: ignore[arg-type]
         _log.debug('Values instance created successfully')
         return
+
+    def __getitem__(self, index: int | slice) -> 'float | Values':  # type: ignore[override]
+        """Get the item or slice at the specified index.
+
+        :param index: The index or slice of the item(s) to retrieve.
+        :type index: int | slice
+        :returns: The item at the specified index or a CoreDataSequence for a slice.
+        :rtype: float | Values
+        :raises IndexError: If the index is out of range.
+        """
+        if isinstance(index, slice):
+            return Values(self._data[index])
+        return self._data[index]
+
+    def __iter__(self) -> Iterator[float]:
+        """Return an iterator over the CoreDataSet.
+
+        :returns: An iterator over the elements in the set.
+        :rtype: Iterator[CoreDataTypes]
+        """
+        return iter(self._data)
 
     def __eq__(self, other: object) -> bool:
         """Check equality with another Values instance or tuple of floats."""

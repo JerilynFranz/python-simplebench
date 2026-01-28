@@ -4,7 +4,7 @@ from typing import Any
 
 import simplebench.report.versions.v1 as reports
 from simplebench.metrics import Metric, MetricCategory
-from simplebench.simplebench_types import Extras, Iterations, Values, VariationMarks, MetricsTimers
+from simplebench.simplebench_types import Extras, Iterations, MetricsTimers, Values, VariationMarks
 
 from . import _validate
 from .metrics import Stats
@@ -69,7 +69,7 @@ class Results:
         rounds: int,
         iterations: Iterations,
         metrics_timers: MetricsTimers,
-        variation_marks: VariationMarks,
+        variation_marks: VariationMarks | None = None,
         extra_info: Extras,
     ) -> None:
         """Initialize a Results object.

@@ -95,7 +95,7 @@ from .case import (
     case_kwargs_factory,
     default_benchcase,
     default_minimal_case_kwargs,
-    default_runner,
+    default_runners,
     minimal_case_kwargs_factory,
     runner_factory,
 )
@@ -232,7 +232,7 @@ __all__ = [
     'case_factory',
     'session_factory',
     'runner_factory',
-    'default_runner',
+    'default_runners',
     'case_kwargs_factory',
     'minimal_case_kwargs_factory',
     'default_minimal_case_kwargs',

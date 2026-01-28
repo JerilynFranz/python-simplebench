@@ -255,3 +255,12 @@ class _CaseErrorTag(ErrorTag):
     """Invalid rounds argument value passed to the Case() constructor"""
     BENCHMARK_ACTION_TIMEOUT_OCCURRED = 'BENCHMARK_ACTION_TIMEOUT_OCCURRED'
     """A timeout occurred while running the benchmark action."""
+    INVALID_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS = 'INVALID_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS'
+    """Attempted to set a runner for Case that is not a subclass of BenchmarkRunner."""
+    INVALID_DEFAULT_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS = 'INVALID_DEFAULT_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS'
+    """Attempted to set a default runner for Case that is not a BenchmarkRunner or a subclass."""
+    INVALID_VARIATION_COLS_NOT_VARIATION_COLS = 'INVALID_VARIATION_COLS_NOT_VARIATION_COLS'
+    """Something other than a VariationCols instance was passed to the Case() constructor as the variation_cols arg."""
+    INVALID_KWARGS_VARIATIONS_NOT_KWARGS_VARIATIONS = 'INVALID_KWARGS_VARIATIONS_NOT_KWARGS_VARIATIONS'
+    """Something other than a KWArgsVariations instance was passed to the Case() constructor as the
+    kwargs_variations arg."""

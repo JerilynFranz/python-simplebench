@@ -1,7 +1,6 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
 
 from collections.abc import Callable, Iterable, Sequence
-from typing import Any
 
 from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
@@ -11,6 +10,7 @@ from simplebench.case import Case
 from simplebench.case.function_runner import FunctionRunner
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.simplebench_types import ElementCollection
 
 
 class CaseKWArgs(KWArgs):
@@ -43,7 +43,7 @@ class CaseKWArgs(KWArgs):
         max_time: float | NoDefaultValue = NO_DEFAULT_VALUE,
         timeout: float | NoDefaultValue = NO_DEFAULT_VALUE,
         variation_cols: dict[str, str] | NoDefaultValue = NO_DEFAULT_VALUE,
-        kwargs_variations: dict[str, list[Any]] | NoDefaultValue = NO_DEFAULT_VALUE,
+        kwargs_variations: dict[str, ElementCollection] | NoDefaultValue = NO_DEFAULT_VALUE,
         runners: Sequence[type[SimpleRunner]] | NoDefaultValue = NO_DEFAULT_VALUE,
         callback: ReporterCallback | NoDefaultValue = NO_DEFAULT_VALUE,
         options: Iterable[ReporterOptions] | NoDefaultValue = NO_DEFAULT_VALUE,

@@ -28,24 +28,24 @@ from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case, Results
 
 
-def default_benchcase(_bench: SimpleRunner, **kwargs) -> Results:
+def default_benchcase(_bench: SimpleRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
     .. code-block:: python
 
-        def default_benchcase(bench: SimpleRunner, **kwargs) -> Results:
+        def default_benchcase(bench: SimpleRunner, **kwargs: dict[str, Any]) -> Results:
             def action() -> None:
                 '''A simple benchmark case function.'''
                 sum(range(10))  # Example operation to benchmark
 
-            return bench.run(n=10, action=action, **kwargs)
+            return bench.run(n=10, action=action, variation_marks=variation_marks)
     """
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(10))  # Example operation to benchmark
 
-    return _bench.run(n=10, action=action, **kwargs)
+    return _bench.run(n=10, action=action, variation_marks=variation_marks)
 
 
 @cached_factory
@@ -91,15 +91,15 @@ def runner_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> type[SimpleRunner]:
     return SimpleRunner
 
 
-def default_runner() -> type[SimpleRunner]:
-    """Return a default SimpleRunner type for testing purposes.
+def default_runners() -> tuple[type[SimpleRunner], ...]:
+    """Return a default SimpleRunner types tuple for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
 
     :return: `SimpleRunner`
     :rtype: type[SimpleRunner]
     """
-    return runner_factory(cache_id=f'{__name__}.default_runner:singleton')
+    return (runner_factory(cache_id=f'{__name__}.default_runners:singleton'),)
 
 
 # provide overloads for better tooltips and docstrings
@@ -207,7 +207,7 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
         max_time=default_max_time(),
         variation_cols=variation_cols_factory(cache_id=cache_id),
         kwargs_variations=kwargs_variations_factory(cache_id=cache_id),
-        runner=default_runner(),
+        runners=default_runners(),
         callback=default_reporter_callback,
         options=default_reporter_options_tuple(),
     )
