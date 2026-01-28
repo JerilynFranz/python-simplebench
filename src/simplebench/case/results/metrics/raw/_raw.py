@@ -1,8 +1,6 @@
 """Raw data metric implementation."""
-from math import isclose
 from simplebench.metrics import Metric
 from simplebench.report.versions import v1 as reports
-from simplebench.si_units import si_scale_to_unit, si_unit_base
 from simplebench.simplebench_types import Values
 
 from . import _validate
@@ -148,12 +146,7 @@ class Raw:
     def __eq__(self, other: object) -> bool:
         """Compare two Raw objects for equality.
 
-        Equality is based on the metric, rounds, timer, unit, scale, and data points.
-
-        It handles scale differences between two Raw objects and compares
-        the data accordingly using an appropriate tolerance for floating-point comparisons.
-
-        It also verifies that the units are equivalent when converted to their SI base units.
+        Compares all core attributes of the Raw objects to determine if they are equal.
 
         :param object other: The other object to compare against.
         :return: True if the objects are considered equal, False otherwise.
@@ -162,27 +155,22 @@ class Raw:
         if not isinstance(other, Raw):
             return NotImplemented
 
-        # this handles scale differences between two Raw objects
-        self_base_unit: str = si_unit_base(self.unit)
-        other_base_unit: str = si_unit_base(other.unit)
-        if self_base_unit != other_base_unit:
+        # Fast paths for common cases
+        if (self.timer != other.timer
+                or self.name != other.name
+                or self.metric != other.metric
+                or self.description != other.description
+                or self.iterations != other.iterations
+                or self.rounds != other.rounds):
+            return False
+        if self.data is other.data:
+            return True
+        if len(self.data) != len(other.data):
             return False
 
-        scale_by: float = si_scale_to_unit(base_unit=self_base_unit, current_unit=other.unit, target_unit=self.unit)
-        relative_scale: float = self.scale / other.scale
+        # Check that the data is the same
+        return tuple(self.data) == tuple(other.data)
 
-        if self.rounds != other.rounds:
-            return False
-
-        if not isclose(scale_by, relative_scale):
-            return False
-
-        if not (
-         
-        ):
-            return False
-
-        return si_unit_base(self.unit) == si_unit_base(other.unit)
 
     def __repr__(self) -> str:
         """The string representation of the Raw object.

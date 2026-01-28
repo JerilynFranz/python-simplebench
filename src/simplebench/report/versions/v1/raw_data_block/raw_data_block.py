@@ -6,10 +6,10 @@ from types import MappingProxyType
 from typing import Any
 
 from simplebench.report.base import BaseRawDataBlock, JSONSchema
-from simplebench.simplebench_types import Values, CoreDataMapping
+from simplebench.simplebench_types import CoreDataMapping, Values
 
 from . import _validate
-from .raw_data_block_dict import ImmutableRawDataBlockDict, RawDataBlockData
+from .raw_data_block_dict import RawDataBlockData
 from .raw_data_block_schema import RawDataBlockSchema
 
 
@@ -76,10 +76,13 @@ class RawDataBlock(BaseRawDataBlock):
         """Initialize RawDataBlock class.
 
         :param str hash_id: The hash ID string for the raw data block.
+        :param str name: The name string for the raw data block.
+        :param str description: The description string for the raw data block.
         :param str semantic_type: The semantic type string for the raw data block.
         :param (str | None) timer: The timer string or None.
         :param str unit: The unit of measurement.
         :param float scale: The scale factor.
+        :param int rounds: The number of rounds per data point.
         :param Values data: The raw data values of the block.
         :param (str | None) timer: The timer string or None.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
@@ -126,20 +129,20 @@ class RawDataBlock(BaseRawDataBlock):
         The returned dictionary conforms to the 'shape' of the :class:`RawDataBlockDict` type,
         is immutable, and can be serialized to JSON.
 
-        :return ImmutableRawDataBlockDict: Dictionary representation of the RawDataBlock instance.
+        :return CoreDataMapping: Dictionary representation of the RawDataBlock instance.
         """
         if self._to_dict_cache is None:
             self._to_dict_cache = CoreDataMapping({
                 'version': self.VERSION,
                 'type': self.TYPE,
                 'hash_id': self.hash_id,
-                'name': self._name,
+                'name': self.name,
                 'semantic_type': self.semantic_type,
-                'description': self._description,
+                'description': self.description,
                 'unit': self.unit,
                 'scale': self.scale,
-                'rounds': self._rounds,
-                'iterations': self._iterations,
+                'rounds': self.rounds,
+                'iterations': self.iterations,
                 'timer': self.timer,
                 'data': self.data,
             })
@@ -152,6 +155,22 @@ class RawDataBlock(BaseRawDataBlock):
         :return str: The hash ID of the raw data block.
         """
         return self._hash_id
+
+    @property
+    def name(self) -> str:
+        """Get the name of the raw data block.
+
+        :return str: The name of the raw data block.
+        """
+        return self._name
+
+    @property
+    def description(self) -> str:
+        """Get the description of the raw data block.
+
+        :return str: The description of the raw data block.
+        """
+        return self._description
 
     @property
     def semantic_type(self) -> str:
@@ -177,6 +196,22 @@ class RawDataBlock(BaseRawDataBlock):
         :raise SimpleBenchTypeError: If scale is not a float.
         """
         return self._scale
+
+    @property
+    def rounds(self) -> int:
+        """Get the number of rounds per data point.
+
+        :return int: The number of rounds.
+        """
+        return self._rounds
+
+    @property
+    def iterations(self) -> int:
+        """Get the number of iterations (data points).
+
+        :return int: The number of iterations.
+        """
+        return self._iterations
 
     @property
     def timer(self) -> str | None:

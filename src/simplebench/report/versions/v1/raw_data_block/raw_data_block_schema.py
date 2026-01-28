@@ -56,6 +56,17 @@ class RawDataBlockSchema(JSONSchema):
                     'my_plugin::context_switches',
                 ],
             },
+            'name': {
+                'title': 'Measurement Name',
+                'description': 'Human-readable name of the measurement.',
+                'type': 'string',
+                'minLength': 1,
+            },
+            'description': {
+                'title': 'Measurement Description',
+                'description': "A brief description of the measurement's content or purpose.",
+                'type': 'string',
+            },
             'timer': {
                 'title': 'Timer',
                 'description': "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
@@ -92,7 +103,7 @@ class RawDataBlockSchema(JSONSchema):
                 'items': {'type': 'number'},
             },
         },
-        'required': ['version', 'type', 'hash_id', 'semantic_type', 'unit', 'scale', 'data'],
+        'required': ['version', 'type', 'hash_id', 'semantic_type', 'name', 'description', 'unit', 'scale', 'iterations', 'rounds', 'data'],
         'additionalProperties': False,
     }
 

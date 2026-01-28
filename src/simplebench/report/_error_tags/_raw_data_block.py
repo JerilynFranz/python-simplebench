@@ -10,6 +10,10 @@ __all__ = []
 class _RawDataBlockErrorTag(ErrorTag):
     """Error tags for JSON raw data block representation exceptions."""
 
+    INVALID_NAME_TYPE = 'INVALID_NAME_TYPE'
+    """The name value is not a string."""
+    INVALID_NAME_VALUE = 'INVALID_NAME_VALUE'
+    """The name value is blank."""
     INVALID_HASH_ID_TYPE = 'INVALID_HASH_ID_TYPE'
     """The hash_id value is not a string."""
     INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'

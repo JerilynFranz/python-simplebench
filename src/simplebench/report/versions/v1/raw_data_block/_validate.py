@@ -48,6 +48,51 @@ def hash_id(value: str) -> str:
         _RawDataBlockErrorTag.INVALID_HASH_ID_VALUE,
     )
 
+def name(value: str) -> str:
+    """Validate the name.
+
+    The name must be a non-blank string.
+
+    :param str value: The name string to validate.
+    :return str: The validated name string.
+    :raise SimpleBenchTypeError: If the name is not a string.
+    :raise SimpleBenchValueError: If the name is blank.
+    """
+    return validate_string(
+        value,
+        'name',
+        _RawDataBlockErrorTag.INVALID_NAME_TYPE,
+        _RawDataBlockErrorTag.INVALID_NAME_VALUE,
+        allow_blank=False,
+    )
+
+
+def description(value: str) -> str:
+    """Validate the description.
+
+    The description must be a string (can be blank).
+
+    :param str value: The description string to validate.
+    :return str: The validated description string.
+    :raise SimpleBenchTypeError: If the description is not a string.
+    """
+    return validate_string(
+        value,
+        'description',
+        _RawDataBlockErrorTag.INVALID_NAME_TYPE,
+        _RawDataBlockErrorTag.INVALID_NAME_VALUE,
+        allow_blank=True,
+    )
+
+
+def rounds(value: int) -> int:
+    """Validate that rounds is a non-negative integer."""
+    if not isinstance(value, int):
+        raise TypeError(f"Expected int for rounds, got {type(value).__name__}")
+    if value < 0:
+        raise ValueError("Rounds must be non-negative")
+    return value
+
 
 def data(value: Values | Sequence[int | float]) -> Values:
     """Validate the data.
