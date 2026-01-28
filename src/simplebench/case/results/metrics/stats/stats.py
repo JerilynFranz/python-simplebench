@@ -5,16 +5,12 @@ from __future__ import annotations
 import statistics
 from math import isclose, sqrt
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics import Metric, metrics_registry
+from simplebench.metrics import Metric
 from simplebench.report.versions import v1 as reports
 from simplebench.si_units import si_scale_to_unit, si_unit_base
 from simplebench.simplebench_types import Values
-from simplebench.validators import validate_bool, validate_positive_int, validate_type
 
-from ._error_tags import _StatsErrorTag
-
-
+from . import _validate
 
 class Stats:
     """Generic container for statistics on a benchmark.
@@ -36,8 +32,9 @@ class Stats:
 
     __slots__ = (
         '_metric',
-        '_rounds',
         '_data',
+        '_timer',
+        '_rounds',
         '_percentiles',
         '_mean',
         '_median',
@@ -46,42 +43,54 @@ class Stats:
         '_standard_deviation',
         '_relative_standard_deviation',
         '_stats_block',
-        '_stats_block_full_data',
     )
 
-    def __init__(self, *, metric: Metric, data: Values, rounds: int) -> None:
+    def __init__(self, *, metric: Metric, data: Values, rounds: int, timer: str | None) -> None:
         """Initialize the Stats object.
 
-        :param Metric metric: The metric definition for the benchmark.
-        :param Values data: Tuple of data points.
-        :param int rounds: The number of rounds each data point represents.
+        :param metric: The metric definition for the benchmark.
+        :type metric: Metric
+        :param data: Values tuple of data points.
+        :type data: Values
+        :param rounds: The number of rounds each data point represents.
+        :type rounds: int
+        :param timer: The timer used for the measurement.
+        :type timer: str | None
         :raises SimpleBenchTypeError: If any of the arguments are of the wrong type.
         :raises SimpleBenchValueError: If any of the arguments have invalid values.
         """
-        self._metric: Metric = self._validate_metric(metric)
-        self._rounds: int = validate_positive_int(
-            rounds, 'rounds', _StatsErrorTag.INVALID_ROUNDS_ARG_TYPE, _StatsErrorTag.INVALID_ROUNDS_ARG_VALUE
-        )
-        self._data: Values = validate_type(data, Values, 'data', _StatsErrorTag.INVALID_DATA_ARG_TYPE)
-        self._percentiles: Values | None = None
-        self._mean: float | None = None
-        self._median: float | None = None
-        self._minimum: float | None = None
-        self._maximum: float | None = None
-        self._standard_deviation: float | None = None
-        self._relative_standard_deviation: float | None = None
-        self._stats_block: reports.StatsBlock | None = None
-        self._stats_block_full_data: reports.StatsBlock | None = None
+        self._metric: Metric = _validate.metric(metric)
+        self._rounds: int = _validate.rounds(rounds)
+        self._timer: str | None = _validate.timer(timer)
+        self._data: Values = _validate.data(data)
 
     @property
     def metric(self) -> Metric:
         """The metric of the benchmark."""
         return self._metric
 
+    # This takes advantage of the fact that Values is immutable
+    # to allow us to keep references to it without copying.
+    # So this has nearly zero overhead for memory or performance.
+    @property
+    def data(self) -> Values:
+        """The data points of the benchmark."""
+        return self._data
+
     @property
     def name(self) -> str:
         """The name of the metric."""
         return self.metric.title
+
+    @property
+    def semantic_type(self) -> str:
+        """The semantic type of the metric"""
+        return self.metric.metric_type.semantic_type
+
+    @property
+    def description(self) -> str:
+        """"The description of the metric"""
+        return self.metric.metric_type.description
 
     @property
     def unit(self) -> str:
@@ -110,17 +119,21 @@ class Stats:
         return self._rounds
 
     @property
+    def timer(self) -> str | None:
+        """The timer used for the measurement.
+
+        :return: The timer name or None if not specified.
+        :rtype: str | None
+        """
+        return self._timer
+
+    @property
     def iterations(self) -> int:
         """The total number of iterations represented by the data points.
 
         Each iteration represents a single measurement, which may represent multiple rounds.
         """
         return len(self.data)
-
-    @property
-    def data(self) -> Values:
-        """The data points."""
-        return self._data
 
     @property
     def mean(self) -> float:
@@ -204,7 +217,7 @@ class Stats:
         quantile_values = statistics.quantiles(self.data, n=102, method='inclusive')
         return Values(quantile_values)
 
-    def stats_block(self, full_data: bool = False) -> reports.StatsBlock:
+    def stats_block(self) -> reports.StatsBlock:
         """Returns a ``StatsBlock`` for the statistics.
 
         The data values are scaled according to the scale factor to provide
@@ -212,57 +225,25 @@ class Stats:
 
         The unit is converted to its SI base unit representation. (e.g., "ms" becomes "s")
 
-        This does not include raw data points, only the statistics unless `full_data` is set to True.
+        This does not include raw data points, only the statistical data.
 
         The returned StatsBlock is cached for efficiency.
 
-        :param bool full_data: If True, include the raw data points in the StatsBlock measurement field.
-        :return: A StatsBlock object representing the statistics.
+        :returns: A StatsBlock object representing the statistics.
+        :rtype: reports.StatsBlock
         """
-        validate_bool(full_data, 'full_data', _StatsErrorTag.INVALID_FULL_DATA_ARG_TYPE)
-        if full_data:
-            if self._stats_block_full_data is not None:
-                return self._stats_block_full_data
-        else:
-            if self._stats_block is not None:
-                return self._stats_block
-
-        measurements: Values | None = None
-        if full_data:
-            measurements = Values(value * self.scale for value in self.data)
-            stats_block: reports.StatsBlock = reports.StatsBlock(
-                name=self.metric.title,
-                description=self.metric.description,
-                semantic_type=self.metric.metric_type.semantic_type,
-                unit=si_unit_base(self.unit),
-                scale=1.0,
-                iterations=self.iterations,
+        if self._stats_block is None:
+             self._stats_block = reports.StatsBlock(
+                name=self.name,
+                semantic_type=self.semantic_type,
+                description=self.description,
+                unit=self.unit,
+                scale=self.scale,
                 rounds=self.rounds,
-                measurements=measurements,
+                timer=self.timer,
+                measurements=self.data
             )
-        else:
-            stats_block = reports.StatsBlock(
-                name=self.metric.title,
-                description=self.metric.description,
-                semantic_type=self.metric.metric_type.semantic_type,
-                unit=si_unit_base(self.unit),
-                scale=1.0,
-                iterations=self.iterations,
-                rounds=self.rounds,
-                minimum=self.minimum * self.scale,
-                maximum=self.maximum * self.scale,
-                mean=self.mean * self.scale,
-                median=self.median * self.scale,
-                standard_deviation=self.standard_deviation * self.scale,
-                relative_standard_deviation=self.relative_standard_deviation,
-                percentiles=Values(pct * self.scale for pct in self.percentiles),
-            )
-    
-        if full_data:
-            self._stats_block_full_data = stats_block
-        else:
-            self._stats_block = stats_block
-        return stats_block
+        return self._stats_block
 
     def __eq__(self, other: object) -> bool:
         """Compare two Stats objects for equality.
@@ -319,15 +300,22 @@ class Stats:
         return si_unit_base(self.unit) == si_unit_base(other.unit)
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(metric='{self.metric}', rounds={self.rounds}, data={self.data!r})"
+        """The string representation of the Stats object.
 
-    def _validate_metric(self, metric: Metric) -> Metric:
-        if not isinstance(metric, Metric):
-            raise SimpleBenchTypeError(
-                'The metric argument must be a Metric object.', tag=_StatsErrorTag.INVALID_METRIC_ARG_TYPE
-            )
-        if metric not in metrics_registry:
-            raise SimpleBenchValueError(
-                'The metric argument is not a registered metric definition.', tag=_StatsErrorTag.UNREGISTERED_METRIC
-            )
-        return metric
+        .. warning::
+            This representation is intended for debugging purposes only
+            and may change without notice in future releases. Do not
+            rely on this format for programmatic access.
+
+            The data points are not included in the representation
+            to avoid excessive output.
+
+        :returns: The string representation of the Stats object.
+        :rtype: str
+
+        """
+        return (f"{self.__class__.__name__}("
+                f"metric='{self.metric}', "
+                f"rounds={self.rounds}, "
+                f"timer={self.timer!r}"
+                f"data=...)")

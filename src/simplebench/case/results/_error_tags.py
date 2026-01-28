@@ -8,6 +8,8 @@ from simplebench.exceptions import ErrorTag
 class _ResultsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the Results module."""
 
+    METRICS_TIMERS_INVALID_ARG_TYPE = 'METRICS_TIMERS_INVALID_ARG_TYPE'
+    """Something other than a MetricsTimers instance was passed as the metrics_timers arg"""
     INVALID_METRIC_ARG_TYPE = 'INVALID_METRIC_ARG_TYPE'
     """Something other than a Metric was passed as the metric arg"""
     INVALID_METRIC_CATEGORY_ARG_TYPE = 'INVALID_METRIC_CATEGORY_ARG_TYPE'
@@ -58,13 +60,13 @@ class _ResultsErrorTag(ErrorTag):
     TOTAL_ELAPSED_INVALID_ARG_VALUE = 'TOTAL_ELAPSED_INVALID_ARG_VALUE'
     """The total_elapsed arg passed must be greater than zero"""
     VARIATION_MARKS_INVALID_ARG_TYPE = 'VARIATION_MARKS_INVALID_ARG_TYPE'
-    """Something other than a dict of str to str was passed as the variation_marks arg"""
+    """Something other than a VariationMarks instance was passed as the variation_marks arg"""
     VARIATION_MARKS_INVALID_ARG_KEY_TYPE = 'VARIATION_MARKS_INVALID_ARG_KEY_TYPE'
     """Something other than a str was found as a key in the dict passed as the variation_marks arg"""
     VARIATION_MARKS_INVALID_ARG_VALUE_TYPE = 'VARIATION_MARKS_INVALID_ARG_VALUE_TYPE'
     """Something other than a str was found as a value in the dict passed as the variation_marks arg"""
     EXTRA_INFO_INVALID_ARG_TYPE = 'EXTRA_INFO_INVALID_ARG_TYPE'
-    """Something other than a dict was passed as the extra_info arg"""
+    """Something other than Extras instance was passed as the extra_info arg"""
     OPS_PER_SECOND_INVALID_ARG_TYPE = 'OPS_PER_SECOND_INVALID_ARG_TYPE'
     """Something other than an OperationsPerInterval instance was passed as the ops_per_second arg"""
     PER_ROUND_TIMINGS_INVALID_ARG_TYPE = 'PER_ROUND_TIMINGS_INVALID_ARG_TYPE'

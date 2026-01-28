@@ -51,6 +51,7 @@ import math
 import sys
 import tracemalloc
 from collections.abc import Callable
+from functools import cache
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Final, NamedTuple
 
@@ -259,6 +260,54 @@ Any new metrics added to the SimpleBench metrics registry that correspond to
 measurement data must be added here to be included in the benchmark results.
 """
 
+
+@cache
+def _metric_timers(
+        wall_timer: Callable[[], int | float],
+        cpu_timer: Callable[[], int | float]) -> dict[Metric, str | None]:
+    """Return a mapping of metrics to their corresponding timer names or None.
+
+    :param wall_timer: The wall-clock timer function used for the benchmark.
+    :type wall_timer: Callable[[], int | float]
+    :param cpu_timer: The CPU timer function used for the benchmark.
+    :type cpu_timer: Callable[[], int | float]
+    :return: A dictionary mapping metrics to their timer names.
+    :rtype: dict[Metric, str | None]
+    """
+    wall_timer_name: str = wall_timer.__name__
+    cpu_timer_name: str = cpu_timer.__name__
+    return {
+        metrics_registry['STD_TIMING_STATS_METRIC']: wall_timer_name,
+        metrics_registry['STD_CPU_TIME_STATS_METRIC']: cpu_timer_name,
+         metrics_registry['STD_TIMING_RAW_METRIC']: wall_timer_name,
+        metrics_registry['STD_CPU_TIME_RAW_METRIC']: cpu_timer_name,
+        metrics_registry['STD_MEMORY_STATS_METRIC']: None,
+        metrics_registry['STD_MEMORY_RAW_METRIC']: None,
+        metrics_registry['STD_PEAK_MEMORY_STATS_METRIC']: None,
+        metrics_registry['STD_PEAK_MEMORY_RAW_METRIC']: None,
+        metrics_registry['STD_TOTAL_ELAPSED_TIME_METRIC']: wall_timer_name,
+        metrics_registry['STD_TOTAL_CPU_TIME_METRIC']: cpu_timer_name,
+        metrics_registry['STD_GC_GEN0_COLLECTIONS_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN0_COLLECTED_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTIONS_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTED_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTIONS_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTED_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_STATS_METRIC']: None,
+        metrics_registry['STD_GC_GEN0_COLLECTIONS_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN0_COLLECTED_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN0_UNCOLLECTABLE_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTIONS_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN1_COLLECTED_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN1_UNCOLLECTABLE_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTIONS_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN2_COLLECTED_RAW_METRIC']: None,
+        metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW_METRIC']: None,
+    }
+
+
 class SimpleRunner(BenchmarkRunner):
     """A class to run benchmarks for various actions.
 
@@ -437,6 +486,8 @@ class SimpleRunner(BenchmarkRunner):
 
         return getattr(_timers_module, timer_name)
 
+
+
     def _run_timed_iteration(
         self,
         *,
@@ -566,6 +617,9 @@ class SimpleRunner(BenchmarkRunner):
             cpu_timer = self.case.cpu_timer
         elif self.session is not None and self.session.cpu_timer is not None:
             cpu_timer = self.session.cpu_timer
+
+        _timers_for_metrics: dict[Metric, str | None] = _metric_timers(wall_timer=timer,
+                                                                       cpu_timer=cpu_timer)
 
         # warmup iterations are not included in the final stats
         # We start the count from -warmup_iterations to ensure we do the correct number of warmup
@@ -705,6 +759,7 @@ class SimpleRunner(BenchmarkRunner):
             n=n,
             rounds=rounds,
             iterations=iteration_results,
+            metrics_timers=_timers_for_metrics,
             variation_marks=variation_marks,
             extra_info={},
         )

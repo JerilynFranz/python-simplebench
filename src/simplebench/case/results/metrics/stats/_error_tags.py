@@ -8,12 +8,16 @@ from simplebench.exceptions.error_tag import ErrorTag
 class _StatsErrorTag(ErrorTag):
     """ErrorTags for the Stats class."""
 
+    INVALID_TIMER_ARG_TYPE = 'INVALID_TIMER_ARG_TIME'
+    """Timer arg must be a str"""
+    INVALID_METRIC_CATEGORY = 'INVALID_METRIC_CATEGORY'
+    """Must be a :data:`MetricCategory.STATISTICAL` Metric"""
     INVALID_FULL_DATA_ARG_TYPE = 'INVALID_FULL_DATA_ARG_TYPE'
     """Invalid full_data argument passed - must be a bool"""
     EMPTY_DATA_ARG = 'EMPTY_DATA_ARG'
     """Empty data argument passed to the Stats() constructor"""
     INVALID_METRIC_ARG_TYPE = 'INVALID_METRIC_ARG_TYPE'
-    """Invalid metric argument passed to the Stats() constructor - must be a MetricDefinition"""
+    """Invalid metric argument passed to the Stats() constructor - must be a :class:`~simplebench.metrics.Metric`"""
     UNREGISTERED_METRIC = 'UNREGISTERED_METRIC'
     """Metric not registered in the metrics registry"""
     INVALID_UNIT_ARG_TYPE = 'INVALID_UNIT_ARG_TYPE'

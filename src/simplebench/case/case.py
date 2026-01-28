@@ -2,7 +2,6 @@
 import inspect
 import itertools
 from collections.abc import Callable, Mapping
-from copy import copy
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -16,8 +15,8 @@ from simplebench.enums import Color
 from simplebench.exceptions import (
     SimpleBenchAttributeError,
     SimpleBenchBenchmarkError,
+    SimpleBenchRuntimeError,
     SimpleBenchTimeoutError,
-    SimpleBenchValueError,
 )
 from simplebench.report.versions import v1 as reports
 from simplebench.reporters.protocols import ReporterCallback
@@ -137,15 +136,14 @@ class Case:
     precision and overhead of the timer function. If you do use it, you may want to run dual benchmarks
     with `rounds=1` and `rounds >> 1` to see how much the reported variability and other metrics change.
 
-    The Case class is designed to be immutable after creation. Once a Case instance
+    The Case class is designed to be immutable after creation and running. Once a Case instance
     is created, its properties cannot be directly changed. This immutability ensures that
-    benchmark cases remain consistent throughout their lifecycle.
+    benchmark cases remain consistent throughout their lifecycle. The only operation
+    that can change its state after creation is calling the :method:`run` method to
+    run the benchmark. The benchmark will be run and the results of the run can
+    be read from the :property:`report` property.
 
-    The results of the benchmark runs are stored in the `results` property, which is a list
-    of Results objects. Each Results object corresponds to a specific combination of
-    keyword argument variations.
-
-    .. code-block:: python3
+    .. code-block:: python
       :caption: Minimal Example
 
         from simplebench import Case, BenchmarkRunner, Results, main
@@ -189,10 +187,8 @@ class Case:
         '_cpu_timer',
         '_report_cache',
         '_report_cache_raw_data',
-        '_benchmarks_have_run',
         '_timestamp',
         '_epoch_timestamp',
-        '_machine_info',
         '_node',
         '_state',
     )
@@ -451,12 +447,10 @@ class Case:
         # internal state
         self._report_cache: reports.Report | None = None
         self._report_cache_raw_data: reports.Report | None = None
-        self._benchmarks_have_run: bool = False
         self._timestamp: str = ''
         self._epoch_timestamp: float = 0.0
-        self._machine_info: reports.MachineInfo | None = None
         self._state: CaseState = CaseState.PENDING
-        self._results: list[Results] = []  # No validation needed here
+        self._results: tuple[Results, ...] = ()
 
     @property
     def group(self) -> str:
@@ -697,7 +691,7 @@ class Case:
         return self._callback
 
     @property
-    def results(self) -> list[Results]:
+    def results(self) -> tuple[Results, ...]:
         """The benchmark list of Results for the case.
 
         This is a read-only attribute. To add results, use the `run` method.
@@ -705,9 +699,12 @@ class Case:
         :return list[Results]: A list of Results objects. One for each variation run in the benchmark case.
         :raises SimpleBenchValueError: If the benchmark case has not been run yet.
         """
-        self.validate_has_run()
-        # shallow copy to prevent external modification of internal list
-        return copy(self._results)
+        if self.state is not CaseState.COMPLETED:
+            raise SimpleBenchRuntimeError(
+                f'The results are not available because the benchmark case has not run to completion: {self.state}',
+                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE
+            )
+        return self._results
 
     @property
     def options(self) -> tuple[ReporterOptions, ...]:
@@ -767,7 +764,11 @@ class Case:
 
         :return: The ISO 8601 timestamp as a string.
         """
-        self.validate_has_run('Cannot get timestamp: benchmark case has not been run yet.')
+        if self.state is not CaseState.COMPLETED:
+            raise SimpleBenchRuntimeError(
+                f'The timestap is not available because the benchmark case has not run to completion: {self.state}',
+                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE
+            )
         return self._timestamp
 
     @property
@@ -808,6 +809,7 @@ class Case:
         :raises SimpleBenchTimeoutError: If a timeout occurs during the benchmark action.
         :raises SimpleBenchBenchmarkError: If an error occurs during the benchmark action.
         """
+        self._state = CaseState.RUNNING
         self._set_timestamp(session)
 
         all_variations = self.expanded_kwargs_variations
@@ -831,6 +833,7 @@ class Case:
         # We loop over variations in the outside loop so that progress is reported
         # grouped by each variation run, which is more user-friendly than reporting progress
         # grouped by each runner.
+        pending_results: list[Results] = []
         for variations_counter, variation_marks in enumerate(all_variations):
             for runner in runners_list:
                 bench: BenchmarkRunner = runner(case=self, session=session, variation_marks=variation_marks)
@@ -838,25 +841,28 @@ class Case:
                 try:
                     results: Results = self.action(bench, **variation_marks)
                 except SimpleBenchTimeoutError as e:
+                    self._state = CaseState.TIMED_OUT
                     raise SimpleBenchTimeoutError(
                         f'Timeout occurred running benchmark action {str(self.action)} for case '
                         f'"{self.title}" with kwargs {variation_marks}: {e}',
                         tag=_CaseErrorTag.BENCHMARK_ACTION_TIMEOUT_OCCURRED,
                     ) from e
                 except Exception as e:
+                    self._state = CaseState.FAILED
                     raise SimpleBenchBenchmarkError(
                         f'Error occurred running benchmark action {str(self.action)} for case '
                         f'"{self.title}" with kwargs {variation_marks}: {e}, {type(e)}',
                         tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION,
                     ) from e
-                self._results.append(results)
+                pending_results.append(results)
             progress_tracker.update(
                 description=(f'Running case {self.title} ({variations_counter + 1}/{len(all_variations)})'),
                 completed=variations_counter + 1,
                 refresh=True,
             )
         progress_tracker.stop()
-        self._mark_case_as_run()
+        self._results = tuple(pending_results)
+        self._state = CaseState.COMPLETED
 
     def _set_timestamp(self, session: Session | None) -> None:
         """Set the timestamp for the benchmark case.
@@ -873,45 +879,6 @@ class Case:
         else:
             self._epoch_timestamp = datetime.now().timestamp()
             self._timestamp = timestamp_to_iso8601(self.epoch_timestamp)
-
-    def _mark_case_as_run(self) -> None:
-        """Mark the case as having been run.
-
-        This method sets the internal flag to indicate that the benchmarks
-        for this case have been executed.
-
-        It also clears any cached report data to ensure that subsequent report generation reflects the latest
-        results.
-
-        :param session: The session in which the case was run.
-        """
-        self._benchmarks_have_run = True
-        self._report_cache = None
-        self._report_cache_raw_data = None
-        self._machine_info = None  # Reset machine info cache
-
-    @property
-    def machine_info(self) -> reports.MachineInfo:
-        """Get the MachineInfo for the benchmark case.
-
-        This property retrieves the MachineInfo associated with the benchmark case.
-        If the MachineInfo has not been set yet, it will be created and cached
-        for future access.
-
-        :return: The MachineInfo instance for the benchmark case.
-        """
-        if self._machine_info is None:
-            self._machine_info = reports.MachineInfo()
-
-        return self._machine_info
-
-    @property
-    def has_run(self) -> bool:
-        """Returns whether the benchmarks for this case have been run.
-
-        :return: True if the benchmarks have been run, False otherwise.
-        """
-        return self._benchmarks_have_run
 
     @property
     def state(self) -> CaseState:
@@ -943,7 +910,11 @@ class Case:
         :param include_raw_data: Whether to include raw data. Defaults to False.
         :return: A JSON serializable representation of the benchmark case and results.
         """
-        self.validate_has_run()
+        if self.state is not CaseState.COMPLETED:
+            raise SimpleBenchRuntimeError(
+                f'The report is not available because the benchmark case has not run to completion: {self.state}',
+                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE
+            )
         validate_bool(include_raw_data, 'include_raw_data', _CaseErrorTag.INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL)
 
         if include_raw_data:
@@ -961,19 +932,3 @@ class Case:
 
         # TODO: Implement report generation logic here
         return report
-
-    def validate_has_run(self, message: str = '') -> None:
-        """Validate the has_run state of the benchmark case.
-
-        If the :attr:`has_run` state is not True, raises a SimpleBenchValueError.
-
-        :param message: Optional custom error message to use if the has_run state is not True.
-        :raises SimpleBenchValueError: If :attr:`has_run` is not True.
-        """
-        if not self.has_run:
-            raise SimpleBenchValueError(
-                message
-                or f'Cannot generate report for case "{self.title}" because benchmarks have not been run yet. '
-                f'Please run the benchmarks using the `run()` method before generating a report.',
-                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE,
-            )

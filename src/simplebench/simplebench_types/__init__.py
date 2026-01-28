@@ -4,6 +4,7 @@ from ._element_collection import ElementCollection, is_element_collection
 from ._extras import Extras
 from ._iterations import Iterations
 from ._mark import Mark
+from ._metrics_timers import MetricsTimers
 from ._values import Values
 from ._variations import (
     KWArgsVariations,
@@ -28,6 +29,7 @@ from ._core import (
 from .typeddict import Never, NotRequired, ReadOnly, Required
 
 __all__ = [
+    'MetricsTimers',
     'Extras',
     'ElementCollection',
     'is_element_collection',

@@ -154,7 +154,7 @@ class StatsBlock(BaseStatsBlock):
         unit: str,
         scale: float,
         rounds: int,
-        timer: str,
+        timer: str | None = None,
         measurements: Sequence[float] | Values,
     ) -> None:
         """Initialize a StatsBlock by calculating statistics from raw measurements.
@@ -182,7 +182,7 @@ class StatsBlock(BaseStatsBlock):
         scale: float,
         iterations: int,
         rounds: int,
-        timer: str,
+        timer: str | None = None,
         mean: float,
         median: float,
         minimum: float,
@@ -221,7 +221,7 @@ class StatsBlock(BaseStatsBlock):
         scale: float,
         iterations: int | None = None,
         rounds: int,
-        timer: str = '',
+        timer: str | None = None,
         mean: float | None = None,
         median: float | None = None,
         minimum: float | None = None,

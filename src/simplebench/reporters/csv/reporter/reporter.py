@@ -178,7 +178,7 @@ class CSVReporter(Reporter):
                 if not options.variation_cols_last:
                     # Add variation marks in the order defined by the case
                     # and only those that are defined in the variation columns
-                    for value in result.marks.values():
+                    for value in result.variation_marks.values():
                         if value in case.variation_cols:
                             row.append(value)
 
@@ -210,7 +210,7 @@ class CSVReporter(Reporter):
                                 row.append(sigfigs(stats_target.relative_standard_deviation))
 
                 if options.variation_cols_last:
-                    for value in result.marks.values():
+                    for value in result.variation_marks.values():
                         if value in case.variation_cols:
                             row.append(value)
 

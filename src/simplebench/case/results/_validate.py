@@ -7,10 +7,25 @@ implement the necessary validation logic directly.
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric, MetricCategory
-from simplebench.simplebench_types import Iterations, Mark, VariationMarks
+from simplebench.simplebench_types import Extras, Iterations, MetricsTimers, VariationMarks
 
 from ._error_tags import _ResultsErrorTag
 
+
+def metrics_timers(value: MetricsTimers) -> MetricsTimers:
+    """Confirm that the metrics_timers argument is a MetricsTimers instance.
+
+    :param value: The metrics_timers to validate.
+    :type value: MetricsTimers
+    :returns: The validated MetricsTimers instance.
+    :rtype: MetricsTimers
+    :raises SimpleBenchTypeError: If the value is not a :class:`MetricsTimers` instance.
+    """
+    if not isinstance(value, MetricsTimers):
+        raise SimpleBenchTypeError(
+            f'"metrics_timers" must be a MetricsTimers instance not a {type(value)}.',
+            tag=_ResultsErrorTag.METRICS_TIMERS_INVALID_ARG_TYPE,)
+    return value
 
 def group(value: str) -> str:
     """Validate group name for Results.
@@ -191,44 +206,7 @@ def belongs_to_metric_category(value: Metric, metric_category: MetricCategory) -
     return value
 
 
-def variation_cols(value: Mapping[str, str] | None) -> MappingProxyType[str, str]:
-    """Validate the variation_cols dictionary.
-
-    :param Mapping[str, str] | None value: The variation_cols dictionary to validate.
-    :returns MappingProxyType[str, str]: A read-only mapping of the validated variation_cols dictionary.
-    :raises SimpleBenchTypeError: If the variation_cols is not a dictionary or if any key or
-        value is not a string.
-    :raises SimpleBenchValueError: If any value is a blank string.
-    """
-    if value is None:
-        return MappingProxyType({})
-    if not isinstance(value, dict):
-        raise SimpleBenchTypeError(
-            f'Invalid variation_cols: {value}. Must be a dictionary.',
-            tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_TYPE,
-        )
-
-    for key, val in value.items():
-        if not isinstance(key, str):
-            raise SimpleBenchTypeError(
-                f'Invalid variation_cols key type: {type(key)}. Must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_TYPE,
-            )
-        if key == '':
-            raise SimpleBenchValueError(
-                'Invalid variation_cols key value: empty string. Keys must be non-empty strings.',
-                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_VALUE,
-            )
-        if not isinstance(val, str):
-            raise SimpleBenchTypeError(
-                f'Invalid variation_cols value type: {type(val)}. Must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE,
-            )
-    # shallow copy to prevent external mutation
-    return MappingProxyType(copy(value))
-
-
-def variation_marks(value: VariationMarks | None) -> VariationMarks:
+def variation_marks(value: VariationMarks) -> VariationMarks:
     """Validate the marks dictionary.
 
     Performs shallow copy of the dictionary to prevent external mutation.
@@ -239,52 +217,28 @@ def variation_marks(value: VariationMarks | None) -> VariationMarks:
     :raises SimpleBenchValueError: If any key is a blank string.
     :raises SimpleBenchTypeError: If any value is not a tuple of strings.
     """
-    if value is None:
-        return VariationMarks({})
-    if not isinstance(value, Mapping):
+    if not isinstance(value, VariationMarks):
         raise SimpleBenchTypeError(
-            f'Invalid marks: {value}. Must be a Mapping.',
+            f'Invalid marks: {value}. Must be a VariationMarks instance.',
             tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE,
         )
+    return value
 
-    return_value: dict[str, str] = {}
-    for key, marks_value in value.items():
-        if not isinstance(key, str):
-            raise SimpleBenchTypeError(
-                f'Invalid marks key type: {type(key)}. Must be of type str.',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_TYPE,
-            )
-        stripped_key = key.strip()
-        if stripped_key == '':
-            raise SimpleBenchValueError(
-                'Invalid marks key value: blank string. Keys must be non-blank strings.',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE,
-            )
-        if not isinstance(marks_value, Mark):
-            raise SimpleBenchTypeError(
-                f'Invalid marks value type: {type(marks_value)}. Must be of type Mark.',
-                tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_VALUE_TYPE,
-            )
-
-
-def extra_info(value: Mapping[str, Any] | None) -> MappingProxyType[str, Any]:
+def extra_info(value: Extras) -> Extras:
     """Validate the extra_info object if passed, or create a default one if None.
 
     Performs deep copy of the dictionary to help mitigate external mutation. This means
     that the extra_info dict must be deepcopy-able.
 
-    :param Mapping[str, Any] | None value: The extra_info object to validate or None.
-    :returns MappingProxyType[str, Any]: The validated or default extra_info dictionary.
-    :raises SimpleBenchTypeError: If the value is not None and not of type Mapping[str, Any]
+    :param value: The extra_info data
+    :type value: Extras
+    :returns: The validated Extras instance.
+    :rtype: :class:`Extras`
+    :raises SimpleBenchTypeError: If the value is not a :class:`Extras` instance.
     """
-    if value is None:
-        return MappingProxyType({})
-
-    if not isinstance(value, Mapping):
+    if not isinstance(value, Extras):
         raise SimpleBenchTypeError(
-            f'Invalid extra_info type: {type(value)}. Must be of type Mapping[str, Any].',
+            f'Invalid extra_info type: {type(value)}. Must be of type Extras',
             tag=_ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE,
         )
-
-    # Perform deep copy to prevent external mutation
-    return MappingProxyType(deepcopy(value))
+    return value
