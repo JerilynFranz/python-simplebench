@@ -19,7 +19,7 @@ from simplebench.validators import validate_type
 
 from ._error_tags import _JSONReporterErrorTag
 from ..config import JSONConfig
-from .options import JSONOptions
+from simplebench.options import JSONOptions
 
 Options: TypeAlias = JSONOptions
 

@@ -28,7 +28,7 @@ from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case, Results
 
 
-def default_benchcase(_bench: SimpleRunner, variation_marks: VariationMarks) -> Results:
+def default_benchcase(bench: SimpleRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
     .. code-block:: python
@@ -45,7 +45,7 @@ def default_benchcase(_bench: SimpleRunner, variation_marks: VariationMarks) -> 
         """A simple benchmark case function."""
         sum(range(10))  # Example operation to benchmark
 
-    return _bench.run(n=10, action=action, variation_marks=variation_marks)
+    return bench.run(n=10, action=action, variation_marks=variation_marks)
 
 
 @cached_factory

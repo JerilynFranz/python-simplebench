@@ -6,7 +6,6 @@ from benchmark results.
 
 Public API
 ----------
-- :class:`simplebench.reporters.csv.options.CSVField`: Enum defining the fields available for CSV reporting.
 - :class:`simplebench.reporters.csv.reporter.CSVReporter`: The CSV reporter class.
 - :class:`simplebench.reporters.csv.config.CSVConfig`: Configuration class for the CSV reporter.
 

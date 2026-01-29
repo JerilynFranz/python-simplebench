@@ -11,9 +11,9 @@ from simplebench.simplebench_types import VariationMarks
 class FunctionRunner(Protocol):
     """A protocol for benchmark action functions used by Case.
 
-    The function must accept two parameters: a 'bench' parameter and a '**kwargs' parameter.
-    The 'bench' parameter is a subclass of BenchmarkRunner, and '**kwargs' allows for additional
-    keyword arguments to be passed to the function being benchmarked.
+    The function must accept two parameters: a 'bench' parameter and a 'variation_marks' parameter.
+    The 'bench' parameter is a subclass of BenchmarkRunner, and 'variation_marks' allows for
+    keyword arguments to be passed to the function being benchmarked in the form of VariationMarks.
 
     Example action function signature:
 
@@ -27,10 +27,10 @@ class FunctionRunner(Protocol):
             return bench.run(action=some_function_to_benchmark, variation_marks=variation_marks)
     """
 
-    def __call__(self, _bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
+    def __call__(self, bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
         """Run the benchmark action.
 
-        :param _bench: The BenchmarkRunner instance.
+        :param bench: The BenchmarkRunner instance.
         :param variation_marks: Variation marks for the action.
         :return: The results of the benchmark action.
         """

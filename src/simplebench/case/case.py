@@ -18,9 +18,9 @@ from simplebench.exceptions import (
     SimpleBenchRuntimeError,
     SimpleBenchTimeoutError,
 )
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.report.versions import v1 as reports
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.session import Session
 from simplebench.simplebench_types import ElementCollection, KWArgsVariations, VariationCols, VariationMarks
@@ -149,12 +149,12 @@ class Case:
         from simplebench import Case, BenchmarkRunner, Results, main
 
 
-        def my_benchmark_action(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
+        def my_benchmark_action(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
             # Perform benchmark action here
             def benchmark_operation():
                 sum(range(1000))  # Example operation to benchmark
 
-            return _bench.run(benchmark_operation)
+            return bench.run(benchmark_operation)
 
 
         if __name__ == '__main__':
@@ -365,7 +365,7 @@ class Case:
                 from simplebench.benchmark_runner import SimpleRunner
 
 
-                def my_benchmark_action(_bench: SimpleRunner, mode: str) -> Results:
+                def my_benchmark_action(bench: SimpleRunner, mode: str) -> Results:
                     # Benchmark action implementation
                     pass
 

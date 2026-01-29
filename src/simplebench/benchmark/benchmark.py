@@ -1,6 +1,6 @@
 """Decorators for simplifying benchmark case creation."""
 
-from collections.abc import Mapping, Callable, Sequence
+from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar
 
 from simplebench import defaults
@@ -9,7 +9,7 @@ from simplebench.case import validate as case_validate
 from simplebench.doc_utils import format_docstring
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.options.reporter.options import ReporterOptions
-from simplebench.simplebench_types import ElementCollection
+from simplebench.simplebench_types import ElementCollection, VariationMarks
 from simplebench.validators import validate_non_blank_string
 from simplebench.vcs import get_vcs_info
 
@@ -211,23 +211,23 @@ def benchmark(  # noqa: C901
         """The actual decorator that wraps the user's function."""
 
         from simplebench.case import Case, generate_benchmark_id
-        def case_action_wrapper(_bench: BenchmarkRunner, **kwargs: Mapping[str, Any]) -> Any:
+        def case_action_wrapper(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Any:
             """This wrapper becomes the `action` for the `Case`.
 
             It calls the user's decorated function inside `runner.run()`.
 
-            :param _bench: The benchmark runner executing the benchmark.
-            :param kwargs: Any keyword arguments from `kwargs_variations`.
+            :param bench: The benchmark runner executing the benchmark.
+            :param variation_marks: Keyword arguments from `kwargs_variations` as Marks.
             """
             # The designated use_field_for_n field will always be present
-            # in kwargs if specified due to prior validation.
-            n_for_run = n if use_field_for_n is None else kwargs.get(use_field_for_n)
+            # in variation_marks if specified due to prior validation.
+            n_for_run = n if use_field_for_n is None else variation_marks[use_field_for_n].value
             if not isinstance(n_for_run, (int, float)) or n_for_run <= 0:
                 raise SimpleBenchValueError(
-                    "The 'n' value determined for the benchmark run must be a positive integer.",
+                    "The 'n' value determined for the benchmark run must be a positive number.",
                     tag=_BenchmarkErrorTag.BENCHMARK_N_FOR_RUN_INVALID_VALUE,
                 )
-            return _bench.run(action=func, n=n_for_run, kwargs=kwargs)
+            return bench.run(action=func, n=n_for_run, variation_marks=variation_marks)
 
         final_benchmark_id = benchmark_id
         if final_benchmark_id is None:

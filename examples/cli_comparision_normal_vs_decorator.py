@@ -2,11 +2,12 @@
 """A simple benchmark case function."""
 from typing import Any
 
+from simplebench.runners import SimpleRunner
+
 import simplebench
 from simplebench.case import Case, Results
 from simplebench.reporters.graph.enums import ImageType
 from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
-from simplebench.runners import SimpleRunner
 
 
 @simplebench.benchmark(
@@ -22,13 +23,13 @@ def benchcase_one():
     sum(range(100))  # Example operation to benchmark
 
 
-def benchcase_two(_bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_two(bench: SimpleRunner, **kwargs: Any) -> Results:
     """A simple benchmark case function."""
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(100))  # Example operation to benchmark
-    return _bench.run(n=100, action=action, kwargs=kwargs)
+    return bench.run(n=100, action=action, kwargs=kwargs)
 
 
 def benchmark_cases_list_factory() -> list[Case]:

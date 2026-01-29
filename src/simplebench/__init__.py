@@ -30,11 +30,11 @@ Pytest related imports (requires ``pytest`` extra)
 """
 # ruff: noqa: F401
 
+from simplebench import options
 from simplebench.benchmark import benchmark
 from simplebench.case import Case
 from simplebench.cli import main
 from simplebench.enums import Verbosity
-from simplebench import options
 from simplebench.reporters.reporter_manager.decorators.register_reporter import register_reporter
 from simplebench.session import Session
 from simplebench.simplebench_types import Mark

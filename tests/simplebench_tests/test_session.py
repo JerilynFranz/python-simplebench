@@ -10,11 +10,11 @@ from typing import Any
 import pytest
 from rich.console import Console
 from rich.progress import Progress
-from simplebench.display.rich_progress_tasks import RichProgressTasks
 from testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, idspec
 
 from simplebench import Case, Results, Session, Verbosity
 from simplebench.benchmark_runner import SimpleRunner
+from simplebench.display.rich_progress_tasks import RichProgressTasks
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
 from simplebench.reporters.choice import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
@@ -29,10 +29,10 @@ _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""
 
 
-def benchcase(_bench: SimpleRunner, **kwargs) -> Results:
+def benchcase(bench: SimpleRunner, **kwargs) -> Results:
     """A simple benchmark case function.
 
-    :param _bench: The benchmark runner.
+    :param bench: The benchmark runner.
     :param kwargs: Keyword arguments for the benchmark.
     :return: The benchmark results.
     """
@@ -40,7 +40,7 @@ def benchcase(_bench: SimpleRunner, **kwargs) -> Results:
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, **kwargs)
+    return bench.run(n=1000, action=action, **kwargs)
 
 
 @pytest.mark.parametrize("testspec", [

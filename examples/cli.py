@@ -2,29 +2,30 @@
 """A simple benchmark case function."""
 from typing import Any
 
+from simplebench.runners import SimpleRunner
+
 import simplebench
 from simplebench import Case
 from simplebench.case import Results
 from simplebench.reporters.graph import ImageType
 from simplebench.reporters.graph.matplotlib import Style
 from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
-from simplebench.runners import SimpleRunner
 
 
-def benchcase_one(_bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_one(bench: SimpleRunner, **kwargs: Any) -> Results:
     """A simple benchmark case function."""
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(100000))  # Example operation to benchmark
-    return _bench.run(n=100000, action=action, kwargs=kwargs)
+    return bench.run(n=100000, action=action, kwargs=kwargs)
 
 
-def benchcase_four(_bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_four(bench: SimpleRunner, **kwargs: Any) -> Results:
     """A simple benchmark case function."""
     def action(size: int) -> int:
         """A simple benchmark case function."""
         return sum(range(size))  # Example operation to benchmark
-    return _bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
+    return bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
 
 
 @simplebench.benchmark(

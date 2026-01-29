@@ -8,8 +8,8 @@ import simplebench.vcs as vcs
 from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case
 from simplebench.case.function_runner import FunctionRunner
-from simplebench.reporters.protocols import ReporterCallback
 from simplebench.options.reporter.options import ReporterOptions
+from simplebench.reporters.protocols import ReporterCallback
 from simplebench.simplebench_types import ElementCollection
 
 
@@ -149,7 +149,7 @@ class CaseKWArgs(KWArgs):
                 from simplebench.benchmark_runner import SimpleRunner
 
 
-                def my_benchmark_action(_bench: SimpleRunner, mode: str) -> Results:
+                def my_benchmark_action(bench: SimpleRunner, mode: str) -> Results:
                     # Benchmark action implementation
                     pass
 

@@ -5,8 +5,8 @@ powered by the simplebench framework.
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Callable
 import logging
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -18,7 +18,7 @@ from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
 from simplebench.case.results import Results
 from simplebench.reporters._pytest import PytestReporter
-from simplebench.reporters.json import JSONReporter
+from simplebench.reporters.json.reporter import JSONReporter
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import ReporterOptions
 from simplebench.session import Session
@@ -256,10 +256,10 @@ class BenchmarkRegistrar:
 
         # This is the wrapper that conforms to the FunctionRunner protocol.
         # It closes over the user's `action`.
-        def benchmark_action_wrapper(_bench: BenchmarkRunner, **kwargs: Any) -> Results:
+        def benchmark_action_wrapper(bench: BenchmarkRunner, **kwargs: Any) -> Results:
             """The benchmark action wrapper."""
             # The `kwargs` here are the per-variation kwargs from the Case.
-            return _bench.run(action=action, n=1, kwargs=kwargs)
+            return bench.run(action=action, n=1, kwargs=kwargs)
 
         if description is None:
             description = action.__doc__ or '(no description)'

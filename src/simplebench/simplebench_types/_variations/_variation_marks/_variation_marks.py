@@ -30,7 +30,7 @@ class VariationMarks(Mapping[str, Mark], Immutable):
     """
     __slots__ = ("_marks",)
 
-    def __init__(self, marks: Mapping[str, Mark]) -> None:
+    def __init__(self, marks: Mapping[str, Mark ]) -> None:
         """Construct a VariationMarks instance.
 
         :param Mapping[str, Mark] marks: The mapping of variation field names to their Marks.

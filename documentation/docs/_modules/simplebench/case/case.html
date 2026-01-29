@@ -428,12 +428,12 @@
 <span class="sd">        from simplebench import Case, BenchmarkRunner, Results, main</span>
 
 
-<span class="sd">        def my_benchmark_action(_bench: BenchmarkRunner, **kwargs) -&gt; Results:</span>
+<span class="sd">        def my_benchmark_action(bench: BenchmarkRunner, **kwargs) -&gt; Results:</span>
 <span class="sd">            # Perform benchmark action here</span>
 <span class="sd">            def benchmark_operation():</span>
 <span class="sd">                sum(range(1000))  # Example operation to benchmark</span>
 
-<span class="sd">            return _bench.run(benchmark_operation)</span>
+<span class="sd">            return bench.run(benchmark_operation)</span>
 
 
 <span class="sd">        if __name__ == &#39;__main__&#39;:</span>
@@ -601,7 +601,7 @@
 <span class="sd">                from simplebench.benchmark_runner import SimpleRunner</span>
 
 
-<span class="sd">                def my_benchmark_action(_bench: SimpleRunner, mode: str) -&gt; Results:</span>
+<span class="sd">                def my_benchmark_action(bench: SimpleRunner, mode: str) -&gt; Results:</span>
 <span class="sd">                    # Benchmark action implementation</span>
 <span class="sd">                    pass</span>
 

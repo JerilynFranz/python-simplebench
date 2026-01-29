@@ -35,27 +35,27 @@ class MockReporterOptions(ReporterOptions):
         self.name = name
 
 
-def benchcase(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
+def benchcase(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function."""  # fixed docstring for testing purposes
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def benchcase_with_no_docstring(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:  # pylint: disable=missing-function-docstring  # noqa: E501
+def benchcase_with_no_docstring(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:  # pylint: disable=missing-function-docstring  # noqa: E501
     # No docstring benchcase for testing purposes
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def benchcase_with_size(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
+def benchcase_with_size(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
-    :param _bench: The benchmark runner.
+    :param bench: The benchmark runner.
     :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
@@ -64,13 +64,13 @@ def benchcase_with_size(_bench: BenchmarkRunner, variation_marks: VariationMarks
         _ = sum(range(size))
     if 'size' not in variation_marks:
         raise ValueError("Missing required 'size' parameter in variation_marks")
-    return _bench.run(n=variation_marks['size'].value, action=action, variation_marks=variation_marks)
+    return bench.run(n=variation_marks['size'].value, action=action, variation_marks=variation_marks)
 
 
-def benchcase_with_size_and_factor(_bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
+def benchcase_with_size_and_factor(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
-    :param _bench: The benchmark runner.
+    :param bench: The benchmark runner.
     :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
@@ -79,7 +79,7 @@ def benchcase_with_size_and_factor(_bench: BenchmarkRunner, variation_marks: Var
         _ = sum(range(size)) * factor
     if 'size' not in variation_marks or 'factor' not in variation_marks:
         raise ValueError("Missing required 'size' or 'factor' parameter in variation_marks")
-    return _bench.run(n=variation_marks['size'].value * variation_marks['factor'].value,
+    return bench.run(n=variation_marks['size'].value * variation_marks['factor'].value,
                       action=action, variation_marks=variation_marks)
 
 def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results:  # pragma: no cover
@@ -88,7 +88,7 @@ def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results: 
     :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
-    _bench = SimpleRunner(
+    bench = SimpleRunner(
         case=Case(
             group='example',
             title='benchcase',
@@ -99,13 +99,13 @@ def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results: 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def broken_benchcase_missing_kwargs(_bench: BenchmarkRunner) -> Results:  # pragma: no cover
+def broken_benchcase_missing_kwargs(bench: BenchmarkRunner) -> Results:  # pragma: no cover
     """A broken benchmark case function that is missing the required 'variation_marks' parameter.
 
-    :param _bench: The benchmark runner.
+    :param bench: The benchmark runner.
     :return: The benchmark results.
     """
     variation_marks = VariationMarks({})
@@ -113,14 +113,14 @@ def broken_benchcase_missing_kwargs(_bench: BenchmarkRunner) -> Results:  # prag
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
 def broken_benchcase_wrong_kwargs_kind(
-        _bench: BenchmarkRunner, variation_marks: dict[str, Any]) -> Results:  # pragma: no cover
+        bench: BenchmarkRunner, variation_marks: dict[str, Any]) -> Results:  # pragma: no cover
     """A broken benchmark case function that has the wrong kind of variation_marks parameter (should be VariationMarks).
 
-    :param _bench: The benchmark runner.
+    :param bench: The benchmark runner.
     :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
@@ -128,14 +128,14 @@ def broken_benchcase_wrong_kwargs_kind(
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, variation_marks=variation_marks)  # type: ignore[arg-type]  # expected to be broken
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)  # type: ignore[arg-type]  # expected to be broken
 
 
 def broken_benchcase_extra_param(
-        _bench: BenchmarkRunner, extra_param: Any, variation_marks: VariationMarks) -> Results:  # pragma: no cover
+        bench: BenchmarkRunner, extra_param: Any, variation_marks: VariationMarks) -> Results:  # pragma: no cover
     """A broken benchmark case function that has an extra parameter (should only have 'bench' and 'variation_marks').
 
-    :param _bench: The benchmark runner.
+    :param bench: The benchmark runner.
     :param extra_param: An extra parameter.
     :param variation_marks: The variation marks.
     :return: The benchmark results.
@@ -146,20 +146,20 @@ def broken_benchcase_extra_param(
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 def broken_benchcase_action_that_raises(
-        _bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:  # pragma: no cover
+        bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:  # pragma: no cover
     """A broken benchmark case function whose action raises an exception.
 
-    :param _bench: The benchmark runner.
+    :param bench: The benchmark runner.
     :param variation_marks: The variation marks.
     :return: The benchmark results.
     """
     def action() -> None:
         """A simple benchmark case function that raises an exception."""
         raise RuntimeError("Intentional error in benchmark action")
-    return _bench.run(n=1000, action=action, variation_marks=variation_marks)
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
 class BadRunner:  # pragma: no cover

@@ -12,6 +12,7 @@ from simplebench.simplebench_types import (
     KWArgsVariations,
     Mark,
     VariationCols,
+    VariationMarks,
     is_element_collection,
 )
 from simplebench.validators import validate_positive_float, validate_positive_int, validate_string, validate_type
@@ -413,26 +414,25 @@ def kwargs_variations(kwargs_variations_value: Mapping[str, ElementCollection[An
     return KWArgsVariations(validated_dict)
 
 
-def action_signature(action_func: FunctionRunner,
-                     kwargs_variations_value: Mapping[str, Any]) -> FunctionRunner:
+def action_signature(action_func: FunctionRunner) -> FunctionRunner:
     """Validate that action has correct signature.
 
-    An action function must accept one of the two following formats for its parameters:
+    An action function must accept one of the two following formats for
+    its parameters:
 
-    **Two Parameters**
-        - _bench: BenchmarkRunner
-        - **kwargs: Arbitrary keyword arguments
-
-    **Explicit Parameters**
-        - _bench: BenchmarkRunner
-        - any number of explicit parameters
+    1. **One Parameter**
+        - `_bench`: BenchmarkRunner instance
+    2. **Two Parameters**
+        - `_bench`: BenchmarkRunner instance
+        - `variation_marks: VariationMarks`: Arbitrary keyword arguments.
+            This is a mapping where each key is a keyword argument name from
+            `kwargs_variations`, and each value is the corresponding `Mark` instance
+            for the current variation.
 
     This is equivalent to the `FunctionRunner` protocol.
 
     :param action_func: The action function to validate.
     :type action_func: FunctionRunner
-    :param kwargs_variations_value: The kwargs variations for the case.
-    :type kwargs_variations_value: Mapping[str, Any]
     :return FunctionRunner: The validated action function.
     :raises SimpleBenchTypeError: If the action is not callable or has an invalid signature or
         if the kwargs_variations is not a dictionary with valid keys or if the action signature
@@ -451,7 +451,6 @@ def action_signature(action_func: FunctionRunner,
         type_hints = {}
 
     action_sig = inspect.signature(action_func)
-    kwargs_variations_value = kwargs_variations(kwargs_variations_value)
 
     bench_param = action_sig.parameters.get('_bench')
     if bench_param is None:
@@ -474,40 +473,33 @@ def action_signature(action_func: FunctionRunner,
             tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE,
         )
 
-    # No arguments other than _bench
+    # No arguments other than bench
     if len(action_sig.parameters) == 1:
         return action_func
 
-    # Two arguments: _bench and **kwargs
-    # If **kwargs is present, no further checks are performed.
-    if len(action_sig.parameters) == 2:
-        # Check for **kwargs parameter
-        kwargs_param = action_sig.parameters.get('kwargs')
-        if kwargs_param is not None and kwargs_param.kind == inspect.Parameter.VAR_KEYWORD:
-            return action_func
+    # Too many arguments
+    if len(action_sig.parameters) > 2:
+        raise SimpleBenchTypeError(
+            f'Invalid action: {action_func}. Must accept either only a "_bench" parameter or '
+            'a "_bench" parameter and a "variation_marks" parameter',
+            tag=_CaseErrorTag.INVALID_ACTION_TOO_MANY_PARAMETERS,
+        )
 
-    # 2 or more arguments, _bench and explicit keyword parameters
-    # It does not check parameter types for explicit parameters beyond _bench
-    # and does not handle optional parameters. If optional parameters are needed,
-    # the action should use the **kwargs format or pass default values explicitly.
-    for param_name in action_sig.parameters:
-        if param_name == '_bench':
-            continue
-        if param_name not in kwargs_variations_value:
-            raise SimpleBenchTypeError(
-                (f'Invalid action: {action_func}. Parameter "{param_name}" not '
-                 f'found in kwargs_variations.: {kwargs_variations_value!r}'),
-                tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS,
-            )
-    for param_name in kwargs_variations_value:
-        if param_name not in action_sig.parameters:
-            raise SimpleBenchTypeError(
-                (
-                    f'Invalid action: {action_func}. kwargs_variations key "{param_name}" '
-                    'not found in action parameters.'
-                ),
-                tag=_CaseErrorTag.INVALID_ACTION_KWARGS_VARIATIONS_KEY_NOT_IN_PARAMETERS,
-            )
+    # Two arguments: bench and variation_marks
+
+    # Check for variation_marks parameter
+    variations_annotation = type_hints.get('variation_marks', None)
+    if variations_annotation is None:
+        raise SimpleBenchTypeError(
+            f'Invalid action: {action_func}. Must accept a "variation_marks" parameter.',
+            tag=_CaseErrorTag.INVALID_ACTION_MISSING_VARIATION_MARKS_PARAMETER,
+        )
+    elif variations_annotation is not VariationMarks:
+        raise SimpleBenchTypeError(
+            (f'Invalid action: {action_func}. "variation_marks" parameter must be of type '
+                f'VariationMarks. Found: {variations_annotation}.'),
+            tag=_CaseErrorTag.INVALID_ACTION_VARIATION_MARKS_PARAMETER_WRONG_TYPE,
+        )
 
     # All checks passed
     return action_func
