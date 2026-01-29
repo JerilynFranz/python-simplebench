@@ -36,7 +36,7 @@ from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 
 Output: TypeAlias = str | bytes | Text | Table
 

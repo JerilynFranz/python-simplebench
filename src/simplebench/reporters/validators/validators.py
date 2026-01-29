@@ -12,7 +12,7 @@ from simplebench.enums import Format
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import Metric
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 
 # Deferred imports to avoid circular dependencies. This pattern is required for any

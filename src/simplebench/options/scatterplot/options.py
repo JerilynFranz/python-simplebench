@@ -1,6 +1,6 @@
 """Options for the scatter plot reporter"""
 
-from simplebench.reporters.graph.matplotlib import MatPlotLibOptions
+from ..matplotlib import MatPlotLibOptions
 
 
 class ScatterPlotOptions(MatPlotLibOptions):

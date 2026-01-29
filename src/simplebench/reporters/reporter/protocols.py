@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
     from simplebench.reporters.choices.choices import Choices
-    from simplebench.reporters.reporter.options import ReporterOptions
+    from simplebench.options.reporter.options import ReporterOptions
     from simplebench.session import Session
     from simplebench.simplebench_types import ElementCollection
 

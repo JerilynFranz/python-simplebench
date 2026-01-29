@@ -1,7 +1,5 @@
 """Base class for reporter-specific options."""
 
-from __future__ import annotations
-
 __all__ = []
 
 

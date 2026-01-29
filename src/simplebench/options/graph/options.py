@@ -1,6 +1,6 @@
 """Base class for graph reporters in the :mod:`~simplebench.reporters` package."""
 
-from simplebench.reporters.reporter.options import ReporterOptions
+from ..reporter import ReporterOptions
 
 
 class GraphOptions(ReporterOptions):

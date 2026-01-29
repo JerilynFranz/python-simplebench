@@ -17,8 +17,8 @@ from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 from ._error_tags import _RichTableReporterErrorTag
-from .config import RichTableConfig
-from .options import RichTableField, RichTableOptions
+from ..config import RichTableConfig
+from ..options import RichTableField, RichTableOptions
 
 Options: TypeAlias = RichTableOptions
 

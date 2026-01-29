@@ -7,7 +7,6 @@ reporters for line plots, bar charts, scatter plots, etc.
 
 Public API
 ----------
-- :class:`~.MatPlotLibOptions`: Options specific to Matplotlib based graph reporters.
 - :class:`~.MatPlotLibReporter`: Base class for Matplotlib based graph reporters.
 - :class:`~.Style`: Enumeration of available styles.
 - :class:`~.Theme`: Theme management for Matplotlib based graph reporters.
@@ -16,7 +15,7 @@ Public API
 
 from .constants import SUPPORTED_IMAGE_TYPES
 from .enums import Style
-from .reporter import MatPlotLibOptions, MatPlotLibReporter
+from .reporter import MatPlotLibReporter
 from .theme import Theme
 
-__all__ = ['MatPlotLibOptions', 'MatPlotLibReporter', 'Style', 'SUPPORTED_IMAGE_TYPES', 'Theme']
+__all__ = ['MatPlotLibReporter', 'Style', 'SUPPORTED_IMAGE_TYPES', 'Theme']

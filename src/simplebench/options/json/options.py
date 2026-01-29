@@ -1,6 +1,6 @@
 """Reporter for benchmark results using JSON files."""
 
-from simplebench.reporters.reporter import ReporterOptions
+from ..reporter import ReporterOptions
 
 
 class JSONOptions(ReporterOptions):

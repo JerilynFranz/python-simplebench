@@ -20,7 +20,7 @@ from simplebench.exceptions import (
 )
 from simplebench.report.versions import v1 as reports
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_reporter_callback
 from simplebench.session import Session
 from simplebench.simplebench_types import ElementCollection, KWArgsVariations, VariationCols, VariationMarks

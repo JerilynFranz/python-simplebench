@@ -6,12 +6,10 @@ from benchmark results.
 
 Public API
 ----------
-- :class:`~.RichTableConfig`: Configuration class for the Rich Table reporter.
-- :class:`~.RichTableField`: Field enumeration for the Rich Table reporter.
-- :class:`~.RichTableOptions`: Options class for the Rich Table reporter.
-- :class:`~.RichTableReporter`: The Rich Table reporter class.
+- :class:`simplebench.reporters.rich_table.config.RichTableConfig`: Configuration class for the Rich Table reporter.
+- :class:`simplebench.reporters.rich_table.options.RichTableField`: Field enumeration for the Rich Table
+    reporter options.
+- :class:`simplebench.reporters.rich_table.reporter.RichTableReporter`: The Rich Table reporter class.
 """
+# No imports here to keep eager imports at bay
 
-from .reporter import RichTableConfig, RichTableField, RichTableOptions, RichTableReporter
-
-__all__ = ['RichTableConfig', 'RichTableField', 'RichTableOptions', 'RichTableReporter']

@@ -15,15 +15,15 @@ from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import Metric
 from simplebench.reporters.reporter import Reporter
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
 from ._error_tags import _CSVReporterErrorTag
-from .config import CSVConfig
-from .options import CSVField, CSVOptions
+from ..config import CSVConfig
+from ..options import CSVField, CSVOptions
 
 Options: TypeAlias = CSVOptions
 

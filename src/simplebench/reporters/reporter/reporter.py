@@ -38,7 +38,7 @@ from simplebench.reporters.reporter.mixins import (
     _ReporterPrioritizationMixin,
     _ReporterTargetMixin,
 )
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 
 from . import _validate

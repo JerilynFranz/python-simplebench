@@ -13,7 +13,7 @@ Public API
 - MatPlotLibReporter: Base class for MatPlotLib based graph reporters.
 """
 
-from .options import MatPlotLibOptions
+from ..options import MatPlotLibOptions
 from .reporter import MatPlotLibReporter
 
 __all__ = ['MatPlotLibOptions', 'MatPlotLibReporter']

@@ -9,7 +9,7 @@ from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case
 from simplebench.case.function_runner import FunctionRunner
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.simplebench_types import ElementCollection
 
 

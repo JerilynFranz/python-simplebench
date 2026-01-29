@@ -18,7 +18,7 @@ from simplebench.type_proxies import is_case
 from simplebench.validators import validate_type
 
 from ._error_tags import _JSONReporterErrorTag
-from .config import JSONConfig
+from ..config import JSONConfig
 from .options import JSONOptions
 
 Options: TypeAlias = JSONOptions

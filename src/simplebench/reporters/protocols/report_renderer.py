@@ -11,7 +11,7 @@ from rich.text import Text
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.metrics import Metric
-    from simplebench.reporters.reporter.options import ReporterOptions
+    from simplebench.options.reporter.options import ReporterOptions
 
 
 @runtime_checkable

@@ -9,8 +9,9 @@ from simplebench.enums import FlagType, Format, Target
 from simplebench.metrics.metrics_selection import MetricsSelection, MetricsUnspecified
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.json.reporter.options import JSONOptions
 from simplebench.reporters.reporter.config import ReporterConfig
+
+from .options import JSONOptions
 
 
 class JSONConfig(ReporterConfig):
@@ -72,7 +73,8 @@ class JSONConfig(ReporterConfig):
                         flag_type=FlagType.TARGET_LIST,
                         name='json-data',
                         description=(
-                            'statistical results + full data to JSON (filesystem, console, callback, default=filesystem)'
+                            'statistical results + full data to JSON (filesystem, console, callback, '
+                            'default=filesystem)'
                         ),
                         metrics=init_metrics,
                         targets=allowed_targets,

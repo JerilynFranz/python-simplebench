@@ -9,7 +9,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics.metrics_selection import MetricsSelection
 from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 
 from . import _validate
 

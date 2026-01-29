@@ -8,7 +8,7 @@ from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case import validate as case_validate
 from simplebench.doc_utils import format_docstring
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.simplebench_types import ElementCollection
 from simplebench.validators import validate_non_blank_string
 from simplebench.vcs import get_vcs_info

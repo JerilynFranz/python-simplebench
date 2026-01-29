@@ -1,14 +1,8 @@
 """Rich Table Reporter public API
 
 Provides the following classes:
-- :class:`~.RichTableConfig`
-- :class:`~.RichTableField`
-- :class:`~.RichTableOptions`
-- :class:`~.RichTableReporter`
+- :class:`~simplebench.reporters.rich_table.reporter.RichTableReporter`
 """
+# ruff: noqa: F401
 
-from .config import RichTableConfig
-from .options import RichTableField, RichTableOptions
 from .reporter import RichTableReporter
-
-__all__ = ['RichTableConfig', 'RichTableField', 'RichTableOptions', 'RichTableReporter']

@@ -7,7 +7,7 @@ from typechecked import is_immutable
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.metrics.metrics_selection import MetricsSelection
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.validators import (
     validate_iterable_of_type,
     validate_sequence_of_str,

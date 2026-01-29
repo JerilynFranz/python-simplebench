@@ -6,7 +6,7 @@ from typing import Any, get_type_hints
 import simplebench.defaults as defaults
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.simplebench_types import (
     ElementCollection,
     KWArgsVariations,

@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections.abc import Hashable
 from typing import overload
 
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 
 from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory
 

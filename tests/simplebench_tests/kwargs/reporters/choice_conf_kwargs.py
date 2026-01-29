@@ -8,7 +8,7 @@ from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultV
 from simplebench.enums import FlagType, Format, Target
 from simplebench.metrics.metrics_selection import MetricsSelection
 from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 
 
 class ChoiceConfKWArgs(KWArgs):

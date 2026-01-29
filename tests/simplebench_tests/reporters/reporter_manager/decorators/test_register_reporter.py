@@ -11,7 +11,7 @@ from simplebench.metrics import metric_types_registry
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
-from simplebench.reporters.reporter.options import ReporterOptions
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.reporter_manager.decorators import (
     _RegisterReporterErrorTag,
     clear_registered_reporters,

@@ -7,13 +7,5 @@ using Matplotlib as the underlying graphing library.
 
 Public API
 ----------
-- ScatterPlotConfig: Configuration class for the ScatterPlot reporter.
-- ScatterPlotOptions: Options class for the ScatterPlot reporter.
-- ScatterPlotReporter: The ScatterPlot reporter class.
+- :class:`~simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter`: The ScatterPlot reporter class.
 """
-
-from .config import ScatterPlotConfig
-from .options import ScatterPlotOptions
-from .reporter import ScatterPlotReporter
-
-__all__ = ['ScatterPlotConfig', 'ScatterPlotOptions', 'ScatterPlotReporter']

@@ -6,11 +6,7 @@ from benchmark results.
 
 Public API
 ----------
-- :class:`~.JSONConfig`: Configuration class for the JSON reporter.
-- :class:`~.JSONOptions`: Options class for the JSON reporter.
-- :class:`~.JSONReporter`: The JSON reporter class.
+- :class:`simplebench.reporters.json.config.JSONConfig`: Configuration class for the JSON reporter.
+- :class:`simplebench.reporters.json.reporter.JSONReporter`: The JSON reporter class.
+- :class:`simplebench.reporters.json.reader.JSONReportReader`: The JSON report reader class.
 """
-
-from .reporter import JSONConfig, JSONOptions, JSONReporter
-
-__all__ = ['JSONReporter', 'JSONConfig', 'JSONOptions']

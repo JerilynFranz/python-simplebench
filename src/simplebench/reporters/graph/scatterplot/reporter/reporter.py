@@ -20,8 +20,8 @@ from simplebench.validators import validate_type
 
 from ...matplotlib import MatPlotLibReporter
 from ._error_tags import _ScatterPlotReporterErrorTag
-from .config import ScatterPlotConfig
-from .options import ScatterPlotOptions
+from ..config import ScatterPlotConfig
+from ..options import ScatterPlotOptions
 
 Options: TypeAlias = ScatterPlotOptions
 

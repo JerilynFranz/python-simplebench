@@ -10,12 +10,12 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.graph.enums.image_type import ImageType
 
 # simplebench.reporters.graph imports
-from simplebench.reporters.graph.options import GraphOptions
+from ..graph import GraphOptions
 from simplebench.validators import validate_bool, validate_float, validate_int_range, validate_type
 
 # simplebench.reporters.graph.matplotlib imports
-from ...enums.style import Style
-from ...theme import DefaultTheme, Theme
+from simplebench.reporters.graph.matplotlib.enums import Style
+from simplebench.reporters.graph.matplotlib.theme import DefaultTheme, Theme
 
 # simplebench.reporters.graph.matplotlib.options imports
 from ._error_tags import _MatPlotLibOptionsErrorTag

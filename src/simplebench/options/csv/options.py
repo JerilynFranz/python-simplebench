@@ -7,9 +7,9 @@ to hold options specific to the CSV reporter.
 
 from collections.abc import Sequence
 
-from simplebench.reporters.reporter import ReporterOptions
 from simplebench.validators import validate_bool, validate_sequence_of_type
 
+from ..reporter import ReporterOptions
 from ._error_tags import _CSVOptionsErrorTag
 from .fields import CSVField
 
