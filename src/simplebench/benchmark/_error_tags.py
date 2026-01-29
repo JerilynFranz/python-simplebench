@@ -8,10 +8,14 @@ from simplebench.exceptions import ErrorTag
 class _BenchmarkErrorTag(ErrorTag):
     """ErrorTags for simplebench.decorators in SimpleBench."""
 
+    BENCHMARK_CPU_TIMER_TYPE = 'BENCHMARK_CPU_TIMER_TYPE'
+    """Something other than a callable was passed as the cpu_timer"""
+    BENCHMARK_CPU_TIMER_RETURN_TYPE = 'BENCHMARK_CPU_TIMER_RETURN_TYPE'
+    """The callable passed as the cpu_timer did not return an int"""
     BENCHMARK_TIMER_TYPE = 'BENCHMARK_TIMER_TYPE'
     """Something other than a callable was passed as the timer"""
     BENCHMARK_TIMER_RETURN_TYPE = 'BENCHMARK_TIMER_RETURN_TYPE'
-    """The callable passed as the timer did not return a float or int"""
+    """The callable passed as the timer did not return an int"""
     BENCHMARK_GROUP_TYPE = 'BENCHMARK_GROUP_TYPE'
     """Something other than a str was passed as the group"""
     BENCHMARK_GROUP_VALUE = 'BENCHMARK_GROUP_VALUE'
@@ -48,6 +52,8 @@ class _BenchmarkErrorTag(ErrorTag):
     """Something other than a float was passed as the max_time"""
     BENCHMARK_MAX_TIME_VALUE = 'BENCHMARK_MAX_TIME_VALUE'
     """The max_time must be a positive float"""
+    BENCHMARK_MAX_TIME_LESS_THAN_MIN_TIME = 'BENCHMARK_MAX_TIME_LESS_THAN_MIN_TIME'
+    """The max_time must be greater than or equal to min_time"""
     BENCHMARK_TIMEOUT_TYPE = 'BENCHMARK_TIMEOUT_TYPE'
     """Something other than a float or None was passed as the timeout"""
     BENCHMARK_TIMEOUT_VALUE = 'BENCHMARK_TIMEOUT_VALUE'

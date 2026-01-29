@@ -7,16 +7,13 @@ from simplebench import defaults
 from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case import validate as case_validate
 from simplebench.doc_utils import format_docstring
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchValueError
 from simplebench.reporters.reporter.options import ReporterOptions
-from simplebench.validators import (
-    validate_non_blank_string,
-    validate_non_negative_int,
-    validate_positive_float,
-    validate_positive_int,
-)
+from simplebench.simplebench_types import ElementCollection
+from simplebench.validators import validate_non_blank_string
 from simplebench.vcs import get_vcs_info
 
+from . import _validate
 from ._error_tags import _BenchmarkErrorTag
 
 if TYPE_CHECKING:
@@ -44,11 +41,12 @@ def benchmark(  # noqa: C901
     warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
     rounds: int | None = None,
     timer: Callable[[], int] | None = None,
+    cpu_timer: Callable[[], int] | None = None,
     min_time: float = defaults.DEFAULT_MIN_TIME,
     max_time: float = defaults.DEFAULT_MAX_TIME,
     timeout: float | None = None,
     variation_cols: dict[str, str] | None = None,
-    kwargs_variations: dict[str, list[Any]] | None = None,
+    kwargs_variations: dict[str, ElementCollection[Any]] | None = None,
     options: list[ReporterOptions] | None = None,
     n: int | float = 1,
     use_field_for_n: str | None = None,
@@ -140,7 +138,9 @@ def benchmark(  # noqa: C901
 
             If specified, it must be a positive integer.
     :param timer: A callable that returns the current time. If None, the default timer is used.
-        The timer function should return a float or int representing the current time.
+        The timer function should return an int representing the current time.
+    :param cpu_timer: A callable that returns the current CPU time. If None, the default CPU timer is used.
+        The CPU timer function should return an int representing the current CPU time.
     :param min_time: The minimum time in seconds to run the benchmark.  Must be a positive number.
         Its reference depends on the timer used, but by default it is wall-clock time.
     :param max_time: The maximum time in seconds to run the benchmark.
@@ -182,95 +182,29 @@ def benchmark(  # noqa: C901
         func = group
         group = 'default'
 
-    group = validate_non_blank_string(
-        group, 'group', _BenchmarkErrorTag.BENCHMARK_GROUP_TYPE, _BenchmarkErrorTag.BENCHMARK_GROUP_VALUE
-    )
-
     # we can't fully validate title and description yet if they are None
     # because they will be inferred later from the function being decorated
-    if title is not None:
-        title = validate_non_blank_string(
-            title, 'title', _BenchmarkErrorTag.BENCHMARK_TITLE_TYPE, _BenchmarkErrorTag.BENCHMARK_TITLE_VALUE
-        )
+    title = _validate.title(title)
+    description = _validate.description(description)
 
-    if description is not None:
-        description = validate_non_blank_string(
-            description,
-            'description',
-            _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_TYPE,
-            _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_VALUE,
-        )
-
+    group = case_validate.group(group)
     runners = case_validate.runners(runners)
-
-    iterations = validate_positive_int(
-        iterations,
-        'iterations',
-        _BenchmarkErrorTag.BENCHMARK_ITERATIONS_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_ITERATIONS_VALUE,
-    )
-
-    warmup_iterations = validate_non_negative_int(
-        warmup_iterations,
-        'warmup_iterations',
-        _BenchmarkErrorTag.BENCHMARK_WARMUP_ITERATIONS_TYPE,
-        _BenchmarkErrorTag.BENCHMARK_WARMUP_ITERATIONS_VALUE,
-    )
-
-    if rounds is not None:
-        rounds = validate_positive_int(
-            rounds, 'rounds', _BenchmarkErrorTag.BENCHMARK_ROUNDS_TYPE, _BenchmarkErrorTag.BENCHMARK_ROUNDS_VALUE
-        )
-
-    timer = validate_timer(
-        timer, 'timer', _BenchmarkErrorTag.BENCHMARK_TIMER_TYPE, _BenchmarkErrorTag.BENCHMARK_TIMER_RETURN_TYPE
-    )
-
-    min_time = validate_positive_float(
-        min_time, 'min_time', _BenchmarkErrorTag.BENCHMARK_MIN_TIME_TYPE, _BenchmarkErrorTag.BENCHMARK_MIN_TIME_VALUE
-    )
-
-    max_time = validate_positive_float(
-        max_time, 'max_time', _BenchmarkErrorTag.BENCHMARK_MAX_TIME_TYPE, _BenchmarkErrorTag.BENCHMARK_MAX_TIME_VALUE
-    )
-
-    timeout_value = max_time + defaults.DEFAULT_TIMEOUT_GRACE_PERIOD if timeout is None else timeout
-    timeout = validate_positive_float(
-        timeout_value, 'timeout', _BenchmarkErrorTag.BENCHMARK_TIMEOUT_TYPE, _BenchmarkErrorTag.BENCHMARK_TIMEOUT_VALUE
-    )
-    if timeout <= 0:
-        raise SimpleBenchValueError(
-            "The 'timeout' parameter to the @benchmark decorator must be a positive float or None.",
-            tag=_BenchmarkErrorTag.BENCHMARK_TIMEOUT_CANNOT_BE_ZERO_OR_NEGATIVE,
-        )
-
-    n = validate_positive_float(n, 'n', _BenchmarkErrorTag.BENCHMARK_N_TYPE, _BenchmarkErrorTag.BENCHMARK_N_VALUE)
-
-    kwargs_variations = case_validate.kwargs_variations(kwargs_variations)
-    variation_cols = case_validate.variation_cols(
-        variation_cols_value=variation_cols, kwargs_variations_value=kwargs_variations)
-    options = case_validate.options(options)
-
-    if not isinstance(use_field_for_n, str) and use_field_for_n is not None:
-        raise SimpleBenchTypeError(
-            "The 'use_field_for_n' parameter to the @benchmark decorator must be a string if passed.",
-            tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE,
-        )
-
-    if isinstance(use_field_for_n, str) and isinstance(kwargs_variations, dict):
-        if use_field_for_n not in kwargs_variations:
-            raise SimpleBenchValueError(
-                "The 'use_field_for_n' parameter to the @benchmark decorator must "
-                f'match one of the kwargs_variations keys: {list(kwargs_variations.keys())}',
-                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS,
-            )
-        if not all(isinstance(v, int) and v > 0 for v in kwargs_variations[use_field_for_n]):
-            raise SimpleBenchValueError(
-                f"The values for the '{use_field_for_n}' entry in 'kwargs_variations' "
-                "must all be positive integers when used with 'use_field_for_n'.",
-                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE,
-            )
-
+    iterations = case_validate.iterations(iterations)
+    warmup_iterations = case_validate.warmup_iterations(warmup_iterations)
+    rounds = case_validate.rounds(rounds)
+    timer = case_validate.timer(timer, 'timer')
+    cpu_timer = case_validate.timer(cpu_timer, 'cpu_timer')
+    min_time = case_validate.min_time(min_time)
+    max_time = case_validate.max_time(max_time)
+    case_validate.max_greater_than_min(min_time, max_time)
+    timeout = case_validate.timeout(timeout, max_time)
+    n = case_validate.n(n)
+    validated_kwargs_variations = case_validate.kwargs_variations(kwargs_variations)
+    validated_variation_cols = case_validate.variation_cols(
+        variation_cols_value=variation_cols, kwargs_variations_value=validated_kwargs_variations)
+    validated_options = case_validate.options(options)
+    use_field_for_n = _validate.use_field_for_n(
+        use_field_for_n, validated_kwargs_variations)
     vcs_info = get_vcs_info()
 
     def _decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -331,9 +265,9 @@ def benchmark(  # noqa: C901
             min_time=min_time,
             max_time=max_time,
             timeout=timeout,
-            variation_cols=variation_cols,
+            variation_cols=validated_variation_cols,
             kwargs_variations=kwargs_variations,
-            options=options,
+            options=validated_options,
         )
 
         # Add the created case to the global registry.
@@ -362,37 +296,3 @@ def clear_registered_cases() -> None:
     This can be useful in testing scenarios to reset the state.
     """
     _DECORATOR_CASES.clear()
-
-
-def validate_timer(
-    timer: Callable[[], int] | None,
-    param_name: str,
-    type_error_tag: _BenchmarkErrorTag,
-    return_type_error_tag: _BenchmarkErrorTag,
-) -> Callable[[], int] | None:
-    """Validate the timer parameter for the benchmark decorator.
-
-    :param timer: The timer function to validate.
-    :param param_name: The name of the parameter (for error messages).
-    :param type_error_tag: The error tag to use for type errors.
-    :param return_type_error_tag: The error tag to use for return type errors.
-    :return: The validated timer function or None.
-    :raises SimpleBenchTypeError: If the timer is not callable.
-    :raises SimpleBenchTypeError: If the timer does not return a float or int.
-    """
-    if timer is not None:
-        if not callable(timer):
-            raise SimpleBenchTypeError(
-                f"The '{param_name}' parameter to the @benchmark decorator must be a callable if provided.",
-                tag=type_error_tag,
-            )
-
-        test_value = timer()
-        if not isinstance(test_value, int):
-            raise SimpleBenchTypeError(
-                f"The callable provided for the '{param_name}' parameter to the @benchmark decorator "
-                'must return an int.',
-                tag=return_type_error_tag,
-            )
-
-    return timer

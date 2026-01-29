@@ -27,7 +27,6 @@ that marks can be accurately compared and managed within the SimpleBench framewo
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.validators import validate_string
 
 from ._error_tags import _MarkErrorTag
 
@@ -66,6 +65,8 @@ class Mark:
         :type value: Any
         :raises SimpleBenchTypeError: If `label` is not a non-empty string.
         """
+        from simplebench.validators import validate_string
+
         self._label: str | int | float
         if isinstance(label, (int, float)):
             if label != label:  # Check for NaN

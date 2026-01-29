@@ -1,4 +1,4 @@
-"""ActionRunner protocol for SimpleBench."""
+"""FunctionRunner protocol for SimpleBench."""
 
 from typing import Protocol, runtime_checkable
 

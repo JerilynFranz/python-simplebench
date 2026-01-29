@@ -1,11 +1,10 @@
 """Tests for the case.py module."""
-# pylint: disable=too-many-lines
-# from __future__ import annotations
 import inspect
 from argparse import ArgumentParser
 from functools import cache
 from typing import Any
 
+import autopypath  # noqa: F401  # modifies sys.path to include project root
 import pytest
 from rich.console import Console
 from testspec import Assert, TestAction, TestGet, TestSet, TestSpec, idspec, no_assigned_action
@@ -19,10 +18,10 @@ from simplebench.metrics import Metric
 from simplebench.reporters.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.session import Session
-from simplebench.simplebench_types import VariationMarks, MetricsTimers, Values, Extras, Iterations
+from simplebench.simplebench_types import Extras, Iterations, MetricsTimers, Values, VariationMarks
 
-from .kwargs import CaseKWArgs
-from . import factories
+from simplebench_tests import factories
+from simplebench_tests.kwargs import CaseKWArgs
 
 _VALUES = Values([0.1, 0.2])
 _DEFAULT_METRIC = factories.default_metric()
@@ -581,7 +580,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         name="Invalid (not a BenchmarkRunner subclass) type for runner option",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          runner=BadRunner),  # type: ignore[arg-type]  # Invalid: Not a BenchmarkRunner subclass
+                          runners=[BadRunner]),  # type: ignore[arg-type]  # Invalid: Not a BenchmarkRunner subclass
         exception=SimpleBenchTypeError,
         exception_tag=_CaseErrorTag.INVALID_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS)),
     idspec("INIT_027", TestAction(
@@ -1146,3 +1145,7 @@ def test_run(capsys: pytest.CaptureFixture[str], testspec: TestAction) -> None:
             assert output != "", "Expected output to stdout/stderr during session run"
         else:
             assert output == "", "Expected no output to stdout/stderr during displayless session run"
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

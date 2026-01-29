@@ -413,7 +413,8 @@ def kwargs_variations(kwargs_variations_value: Mapping[str, ElementCollection[An
     return KWArgsVariations(validated_dict)
 
 
-def action_signature(action_func: FunctionRunner, kwargs_variations_value: Mapping[str, Any]) -> FunctionRunner:
+def action_signature(action_func: FunctionRunner,
+                     kwargs_variations_value: Mapping[str, Any]) -> FunctionRunner:
     """Validate that action has correct signature.
 
     An action function must accept one of the two following formats for its parameters:
@@ -426,7 +427,7 @@ def action_signature(action_func: FunctionRunner, kwargs_variations_value: Mappi
         - _bench: BenchmarkRunner
         - any number of explicit parameters
 
-    This is equivalent to the `ActionRunner` protocol.
+    This is equivalent to the `FunctionRunner` protocol.
 
     :param action_func: The action function to validate.
     :type action_func: FunctionRunner
@@ -494,7 +495,8 @@ def action_signature(action_func: FunctionRunner, kwargs_variations_value: Mappi
             continue
         if param_name not in kwargs_variations_value:
             raise SimpleBenchTypeError(
-                (f'Invalid action: {action_func}. Parameter "{param_name}" not found in kwargs_variations.'),
+                (f'Invalid action: {action_func}. Parameter "{param_name}" not '
+                 f'found in kwargs_variations.: {kwargs_variations_value!r}'),
                 tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_NOT_IN_KWARGS_VARIATIONS,
             )
     for param_name in kwargs_variations_value:
@@ -572,3 +574,39 @@ def vcs_info(vcs_info_value: VCSInfo | None) -> VCSInfo | None:
         if vcs_info_value is None
         else validate_type(vcs_info_value, VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
     )
+
+def max_greater_than_min(min_time: float, max_time: float) -> None:
+    """Validate that max_time is greater than or equal to min_time.
+
+    :param min_time: The minimum time.
+    :param max_time: The maximum time.
+    :raises SimpleBenchValueError: If max_time is not greater than or equal to min_time.
+    """
+    if max_time < min_time:
+        raise SimpleBenchValueError(
+            "The 'max_time' parameter to the @benchmark decorator must be greater than or equal to 'min_time'.",
+            tag=_CaseErrorTag.BENCHMARK_MAX_TIME_LESS_THAN_MIN_TIME)
+
+
+
+def n(value: int | float) -> float:
+    """Validate benchmark 'n' parameter.
+
+    :param value: The 'n' value to validate.
+    :type value: int | float
+    :returns: The validated 'n' value.
+    :rtype: int | float
+    :raises SimpleBenchTypeError: If the 'n' value is not an int or float.
+    :raises SimpleBenchValueError: If the 'n' value is not positive.
+    """
+    if not isinstance(value, (int, float)):
+        raise SimpleBenchTypeError(
+            f"The 'n' parameter to the @benchmark decorator must be an int or float, got {type(value).__name__}.",
+            tag=_CaseErrorTag.BENCHMARK_N_TYPE,
+        )
+    if value <= 0:
+        raise SimpleBenchValueError(
+            "The 'n' parameter to the @benchmark decorator must be a positive integer or float value.",
+            tag=_CaseErrorTag.BENCHMARK_N_VALUE,
+        )
+    return float(value)

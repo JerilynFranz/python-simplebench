@@ -70,7 +70,7 @@ class CaseKWArgs(KWArgs):
         :param action: The function to perform the benchmark.
 
             This function must accept a `bench` instance of type BenchmarkRunner and
-            arbitrary keyword arguments ('**kwargs'). See the ``ActionRunner``
+            arbitrary keyword arguments ('**kwargs'). See the ``FunctionRunner``
             protocol for the exact signature required. It must return a `Results` object.
         :param group: The benchmark reporting group to which the benchmark case belongs.
 

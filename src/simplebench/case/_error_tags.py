@@ -264,3 +264,9 @@ class _CaseErrorTag(ErrorTag):
     INVALID_KWARGS_VARIATIONS_NOT_KWARGS_VARIATIONS = 'INVALID_KWARGS_VARIATIONS_NOT_KWARGS_VARIATIONS'
     """Something other than a KWArgsVariations instance was passed to the Case() constructor as the
     kwargs_variations arg."""
+    BENCHMARK_MAX_TIME_LESS_THAN_MIN_TIME = 'BENCHMARK_MAX_TIME_LESS_THAN_MIN_TIME'
+    """The max_time parameter is less than the min_time parameter."""
+    BENCHMARK_N_TYPE = 'BENCHMARK_N_TYPE'
+    """The 'n' parameter is not of type float or int."""
+    BENCHMARK_N_VALUE = 'BENCHMARK_N_VALUE'
+    """The 'n' parameter is not positive."""

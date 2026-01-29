@@ -123,7 +123,7 @@ class BenchmarkRegistrar:
     :param action: The function to perform the benchmark.
 
         This function must accept a `bench` instance of type SimpleRunner and
-        arbitrary keyword arguments ('**kwargs'). See the ``ActionRunner``
+        arbitrary keyword arguments ('**kwargs'). See the ``FunctionRunner``
         protocol for the exact signature required. It must return a `Results` object.
     :param group: The benchmark reporting group to which the benchmark case belongs.
 
@@ -254,7 +254,7 @@ class BenchmarkRegistrar:
         # The full name of the test, including parameterization, is a good default title.
         default_title = self._pytest_node.nodeid
 
-        # This is the wrapper that conforms to the ActionRunner protocol.
+        # This is the wrapper that conforms to the FunctionRunner protocol.
         # It closes over the user's `action`.
         def benchmark_action_wrapper(_bench: BenchmarkRunner, **kwargs: Any) -> Results:
             """The benchmark action wrapper."""

@@ -10,21 +10,21 @@ from typing import TYPE_CHECKING
 from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
-from simplebench.metrics import Metric
 
 from ._error_tags import _IterationsErrorTag
 
-
 if TYPE_CHECKING:
+    from simplebench.metrics import Metric
     from simplebench.simplebench_types import Values
 
-class Iterations(Mapping[Metric, 'Values'], Immutable):
-    """Mapping container for Values collections of iteration results used in SimpleBench.
-    Maps Metrics to their corresponding collections of Values for a specific iteration.
-    """
-    __slots__ = ("__iterations",)
 
-    def __init__(self, iterations: Mapping[Metric, 'Values']) -> None:
+class Iterations(Mapping['Metric', 'Values'], Immutable):
+    """Mapping container for Values collections of iteration results used in SimpleBench.
+    Maps 'Metric's to their corresponding collections of Values for a specific iteration.
+    """
+    __slots__ = ("_iterations",)
+
+    def __init__(self, iterations: Mapping['Metric', 'Values']) -> None:
         """Construct an Iterations instance.
 
         :param iterations: The mapping of Metrics to their Values collections.
@@ -34,6 +34,10 @@ class Iterations(Mapping[Metric, 'Values'], Immutable):
         :raises SimpleBenchTypeError: If any keys are not of type :class:`Metric`.
         :raises SimpleBenchTypeError: If any values are not of type :class:`Values`.
         """
+        from simplebench.metrics import Metric
+        from simplebench.simplebench_types import Values
+
+
         if not isinstance(iterations, Mapping):
             raise SimpleBenchTypeError(
                 f"Invalid iterations: {iterations}. Must be a mapping of Metrics to Values.",
@@ -49,10 +53,10 @@ class Iterations(Mapping[Metric, 'Values'], Immutable):
                 "All values in iterations must be Values.",
                 tag=_IterationsErrorTag.ITERATIONS_INVALID_ARG_VALUE_TYPE,
             )
-        # Shallow copy is sufficient since Metric and Values are immutable
+        # Shallow copy is sufficient since 'Metric' and Values are immutable
         self._iterations: dict[Metric, Values] = dict(iterations)
 
-    def __getitem__(self, key: Metric) -> 'Values':
+    def __getitem__(self, key: 'Metric') -> 'Values':
         """Get the values for the given metric.
 
         :param key: The metric.
@@ -78,7 +82,7 @@ class Iterations(Mapping[Metric, 'Values'], Immutable):
         """
         return key in self._iterations
 
-    def __setitem__(self, key: Metric, value: 'Values') -> None:
+    def __setitem__(self, key: 'Metric', value: 'Values') -> None:
         """Raise an error since Iterations is immutable.
 
         :param key: The key to set.
@@ -92,7 +96,7 @@ class Iterations(Mapping[Metric, 'Values'], Immutable):
             tag=_IterationsErrorTag.ITERATIONS_IMMUTABLE,
             )
 
-    def __iter__(self) -> Iterator[Metric]:
+    def __iter__(self) -> Iterator['Metric']:
         """Iterate over the iteration Metric keys.
 
         :returns Iterator[Metric]: An iterator over the :class:`Metric` keys

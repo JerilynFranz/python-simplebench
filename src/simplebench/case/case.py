@@ -247,7 +247,7 @@ class Case:
         :param action: The function to perform the benchmark.
 
             This function must accept a `_bench` instance of type :class:`BenchmarkRunner` and
-            arbitrary keyword arguments (``**kwargs``). See the :class:`ActionRunner`
+            arbitrary keyword arguments (``**kwargs``). See the :class:`FunctionRunner`
             protocol for the exact signature required. It must return a :class:`Results` object.
         :type action: :class:`FunctionRunner`
 
