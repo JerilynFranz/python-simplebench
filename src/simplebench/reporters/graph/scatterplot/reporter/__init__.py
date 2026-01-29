@@ -9,3 +9,7 @@ Public API
 ----------
 - :class:`~simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter`: The ScatterPlot reporter class.
 """
+# ruff: noqa: F401
+
+from ._error_tags import _ScatterPlotReporterErrorTag
+from .reporter import ScatterPlotReporter

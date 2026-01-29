@@ -7,6 +7,8 @@ from .context import Context
 from .helpers import no_assigned_action
 from .idspec import idspec
 from .pytest_action import PytestAction
+from .pytest_get import PytestGet
+from .pytest_set import PytestSet
 from .test_action import TestAction
 from .test_get import TestGet
 from .test_set import TestSet
@@ -22,6 +24,8 @@ __all__ = [
     'Assert',
     'Context',
     'PytestAction',
+    'PytestGet',
+    'PytestSet',
     'TestAction',
     'TestGet',
     'TestSet',

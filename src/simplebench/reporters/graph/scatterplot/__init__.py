@@ -12,3 +12,9 @@ Public API
 - :class:`simplebench.reporters.graph.scatterplot.reporter.ScatterPlotReporter`: The
     ScatterPlot reporter class.
 """
+# ruff: noqa: F401
+from .config import ScatterPlotConfig
+from .reporter import ScatterPlotReporter, _ScatterPlotReporterErrorTag
+
+__all__ = ['ScatterPlotReporter', 'ScatterPlotConfig']
+

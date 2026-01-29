@@ -104,8 +104,8 @@ class TestSet(TestSpec):
             raise TypeError("exception must be an Exception type if provided")
         if self.exception_tag is not None and not isinstance(self.exception_tag, (str, Enum)):
             raise TypeError("exception_tag must be a str or Enum if provided")
-        if not callable(self.on_fail):
-            raise TypeError("on_fail must be callable")
+        if self.on_fail is not None and not callable(self.on_fail):
+            raise TypeError(f"on_fail must be callable: {self.on_fail!r}")
         super().__post_init__()
 
     def run(self) -> None:

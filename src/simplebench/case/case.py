@@ -423,7 +423,7 @@ class Case:
         # kwargs_variations processed first so it can be used for cross-validation of action signature
         self._kwargs_variations: KWArgsVariations = validate.kwargs_variations(kwargs_variations)
         self._group: str = validate.group(group)
-        self._action: FunctionRunner = validate.action_signature(action, self.kwargs_variations)
+        self._action: FunctionRunner = validate.action_signature(action)
         self._title: str = validate.title(self._action, title)
         self._description: str = validate.description(self._action, description)
         self._iterations: int = validate.iterations(iterations)

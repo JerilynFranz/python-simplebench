@@ -421,9 +421,9 @@ def action_signature(action_func: FunctionRunner) -> FunctionRunner:
     its parameters:
 
     1. **One Parameter**
-        - `_bench`: BenchmarkRunner instance
+        - `bench`: BenchmarkRunner instance. This is for cases without variations.
     2. **Two Parameters**
-        - `_bench`: BenchmarkRunner instance
+        - `bench`: BenchmarkRunner instance
         - `variation_marks: VariationMarks`: Arbitrary keyword arguments.
             This is a mapping where each key is a keyword argument name from
             `kwargs_variations`, and each value is the corresponding `Mark` instance
@@ -452,24 +452,24 @@ def action_signature(action_func: FunctionRunner) -> FunctionRunner:
 
     action_sig = inspect.signature(action_func)
 
-    bench_param = action_sig.parameters.get('_bench')
+    bench_param = action_sig.parameters.get('bench')
     if bench_param is None:
         raise SimpleBenchTypeError(
-            f'Invalid action: {action_func}. Must accept a "_bench" parameter.',
+            f'Invalid action: {action_func}. Must accept a "bench" parameter.',
             tag=_CaseErrorTag.INVALID_ACTION_MISSING_BENCH_PARAMETER,
         )
     if bench_param.annotation is inspect.Parameter.empty:
         raise SimpleBenchTypeError(
-            f'Invalid action: {action_func}. "_bench" parameter must be annotated with BenchmarkRunner.',
+            f'Invalid action: {action_func}. "bench" parameter must be annotated with BenchmarkRunner.',
             tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_NOT_ANNOTATED,
         )
 
     # Use the resolved type hint if available, otherwise use the annotation from signature
-    actual_annotation = type_hints.get('_bench', bench_param.annotation)
+    actual_annotation = type_hints.get('bench', bench_param.annotation)
 
     if actual_annotation != BenchmarkRunner:
         raise SimpleBenchTypeError(
-            f'Invalid action: {action_func}. "_bench" parameter must be of type BenchmarkRunner.',
+            f'Invalid action: {action_func}. "bench" parameter must be of type BenchmarkRunner.',
             tag=_CaseErrorTag.INVALID_ACTION_BENCH_PARAMETER_WRONG_TYPE,
         )
 
@@ -480,8 +480,8 @@ def action_signature(action_func: FunctionRunner) -> FunctionRunner:
     # Too many arguments
     if len(action_sig.parameters) > 2:
         raise SimpleBenchTypeError(
-            f'Invalid action: {action_func}. Must accept either only a "_bench" parameter or '
-            'a "_bench" parameter and a "variation_marks" parameter',
+            f'Invalid action: {action_func}. Must accept either only a "bench" parameter or '
+            'a "bench" parameter and a "variation_marks" parameter',
             tag=_CaseErrorTag.INVALID_ACTION_TOO_MANY_PARAMETERS,
         )
 

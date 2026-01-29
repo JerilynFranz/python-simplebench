@@ -10,3 +10,11 @@ Public API
 - :class:`simplebench.reporters.json.reporter.JSONReporter`: The JSON reporter class.
 - :class:`simplebench.reporters.json.reader.JSONReportReader`: The JSON report reader class.
 """
+# ruff: noqa: F401
+
+from .config import JSONConfig
+
+# from .reader import JSONReportReader
+from .reporter import JSONReporter, _JSONReporterErrorTag
+
+__all__ = ["JSONConfig", "JSONReporter"]

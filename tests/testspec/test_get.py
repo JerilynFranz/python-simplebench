@@ -5,7 +5,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 from types import TracebackType
-from typing import Any,  NoReturn
+from typing import Any, NoReturn
 
 from .assertions import Assert, validate_assertion
 from .base import TestSpec
@@ -120,8 +120,8 @@ class TestGet(TestSpec):
             raise TypeError("exception must be an Exception type if provided")
         if self.exception_tag is not None and not isinstance(self.exception_tag, (str, Enum)):
             raise TypeError("set_exception_tag must be a str or Enum if provided")
-        if not callable(self.on_fail):
-            raise TypeError("on_fail must be callable")
+        if self.on_fail and not callable(self.on_fail):
+            raise TypeError(f"on_fail must be callable: {self.on_fail!r}")
         if self.display_on_fail and not (isinstance(self.display_on_fail, str) or callable(self.display_on_fail)):
             raise TypeError("display_on_fail must be a str or callable if provided")
         super().__post_init__()

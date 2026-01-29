@@ -5,4 +5,5 @@ Provides the following classes:
 """
 # ruff: noqa: F401
 
+from ._error_tags import _RichTableReporterErrorTag
 from .reporter import RichTableReporter

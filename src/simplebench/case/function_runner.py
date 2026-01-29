@@ -1,6 +1,6 @@
 """FunctionRunner protocol for SimpleBench."""
 
-from typing import Protocol, runtime_checkable
+from typing import Protocol, runtime_checkable, overload
 
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
@@ -31,7 +31,9 @@ class FunctionRunner(Protocol):
         """Run the benchmark action.
 
         :param bench: The BenchmarkRunner instance.
+        :type bench: BenchmarkRunner
         :param variation_marks: Variation marks for the action.
+        :type variation_marks: VariationMarks
         :return: The results of the benchmark action.
         """
         ...

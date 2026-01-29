@@ -24,6 +24,8 @@ class PytestAction(TestSpec):
     of flexibility. This is a thin wrapper around :class:`TestAction` that adds pytest-specific
     functionality, such as assigning unique ids to each test case.
 
+    They are intended to be used with pytest's parameterized testing features.
+
     :param str ident: Id for the test.
     :param str name: Identifying name for the test.
     :param Optional[Callable[..., Any]] action: A reference to a callable function or method to be invoked for the test.
@@ -149,4 +151,5 @@ class PytestAction(TestSpec):
         :rtype: Any
         """
         raise NotImplementedError(
-            'PytestAction instances are not meant to be run directly.')
+            'PytestAction instances are not meant to be run directly.'
+            'pytest will "unwrap" them and run the underlying TestAction instances.')

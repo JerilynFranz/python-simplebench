@@ -108,9 +108,9 @@ def n(value: float) -> float:
     :raises SimpleBenchValueError: If n is not a positive float (> 0).
     :raises SimpleBenchTypeError: If n is not a float.
     """
-    if not isinstance(value, float):
+    if not isinstance(value, (float, int)):
         raise SimpleBenchTypeError(
-            f'"n" must be a float not {type(value)}.',
+            f'"n" must be a float or int not {type(value)}.',
             tag=_ResultsErrorTag.N_INVALID_ARG_TYPE,
             )
     if value <= 0.0:
@@ -118,7 +118,7 @@ def n(value: float) -> float:
             '"n" must be a positive float.',
             tag=_ResultsErrorTag.N_INVALID_ARG_VALUE
             )
-    return value
+    return float(value)
 
 
 def rounds(value: int) -> int:
@@ -206,7 +206,7 @@ def belongs_to_metric_category(value: Metric, metric_category: MetricCategory) -
     return value
 
 
-def variation_marks(value: VariationMarks) -> VariationMarks:
+def variation_marks(value: VariationMarks | None) -> VariationMarks:
     """Validate the marks dictionary.
 
     Performs shallow copy of the dictionary to prevent external mutation.
@@ -217,6 +217,8 @@ def variation_marks(value: VariationMarks) -> VariationMarks:
     :raises SimpleBenchValueError: If any key is a blank string.
     :raises SimpleBenchTypeError: If any value is not a tuple of strings.
     """
+    if value is None:
+        return VariationMarks()
     if not isinstance(value, VariationMarks):
         raise SimpleBenchTypeError(
             f'Invalid marks: {value}. Must be a VariationMarks instance.',

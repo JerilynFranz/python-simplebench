@@ -11,5 +11,9 @@ Public API
     reporter options.
 - :class:`simplebench.reporters.rich_table.reporter.RichTableReporter`: The Rich Table reporter class.
 """
-# No imports here to keep eager imports at bay
+# ruff: noqa: F401
 
+from .config import RichTableConfig
+from .reporter import RichTableReporter, _RichTableReporterErrorTag
+
+__all__ = ["RichTableConfig", "RichTableReporter"]

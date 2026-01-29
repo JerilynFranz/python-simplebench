@@ -10,4 +10,9 @@ Public API
 - :class:`simplebench.reporters.csv.config.CSVConfig`: Configuration class for the CSV reporter.
 
 """
-# No imports here to keep eager imports at bay
+# ruff: noqa: F401
+
+from .config import CSVConfig
+from .reporter import CSVReporter, _CSVReporterErrorTag
+
+__all__ = ['CSVReporter', 'CSVConfig']

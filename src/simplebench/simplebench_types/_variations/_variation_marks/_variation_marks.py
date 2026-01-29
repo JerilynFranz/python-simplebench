@@ -30,13 +30,15 @@ class VariationMarks(Mapping[str, Mark], Immutable):
     """
     __slots__ = ("_marks",)
 
-    def __init__(self, marks: Mapping[str, Mark ]) -> None:
+    def __init__(self, marks: Mapping[str, Mark ] | None = None) -> None:
         """Construct a VariationMarks instance.
 
         :param Mapping[str, Mark] marks: The mapping of variation field names to their Marks.
         :raises SimpleBenchTypeError: If the marks argument is not a mapping of strings to strings, or
             if any keys are not valid identifiers.
         """
+        if marks is None:
+            marks = {}
         if not isinstance(marks, Mapping):
             raise SimpleBenchTypeError(
                 f"Invalid marks: {marks}. Must be a mapping of strings to Marks.",

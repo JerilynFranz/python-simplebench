@@ -10,7 +10,7 @@ import pytest
 from rich.console import Console
 from simplebench_tests import factories
 from simplebench_tests.kwargs import CaseKWArgs
-from testspec import Assert, PytestAction, TestAction, TestGet, TestSet, TestSpec, idspec, no_assigned_action
+from testspec import Assert, PytestAction, PytestGet, PytestSet, TestAction, TestSpec, no_assigned_action
 
 from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
 from simplebench.case import Case, Results
@@ -102,7 +102,7 @@ def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results: 
     return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
-def broken_benchcase_missing_kwargs(bench: BenchmarkRunner) -> Results:  # pragma: no cover
+def broken_benchcase_missing_variation_marks(bench: BenchmarkRunner) -> Results:  # pragma: no cover
     """A broken benchmark case function that is missing the required 'variation_marks' parameter.
 
     :param bench: The benchmark runner.
@@ -871,65 +871,65 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         exception=SimpleBenchValueError,
         exception_tag=_CaseErrorTag.INVALID_ROUNDS_VALUE),
 ])
-def test_case_init(testspec: TestAction) -> None:
+def test_case_init(testspec: TestSpec) -> None:
     """Test the initialization of the Case class.
 
     :param testspec: The test specification to run.
-    :type testspec: TestAction
+    :type testspec: TestSpec
     """
     testspec.run()
 
 
 @pytest.mark.parametrize("testspec", [
-    idspec("ATTR_001", TestSet(
+    PytestSet("ATTR_001",
         name="Test setting read-only attribute 'group'",
         attribute='group', value='new_group', obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_002", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_002",
         name="Test setting read-only attribute 'title'",
         attribute='title', value='new_title', obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_003", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_003",
         name="Test setting read-only attribute 'description'",
         attribute='description', value='new_description', obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_004", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_004",
         name="Test setting read-only attribute 'action'",
         attribute='action', value=benchcase, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_005", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_005",
         name="Test setting read-only attribute 'iterations'",
         attribute='iterations', value=50, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_006", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_006",
         name="Test read-only attribute 'warmup_iterations'",
         attribute='warmup_iterations', value=20, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_007", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_007",
         name="Test setting read-only attribute 'min_time'",
         attribute='min_time', value=1.0, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_008", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_008",
         name="Test setting read-only attribute 'max_time'",
         attribute='max_time', value=10.0, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_009", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_009",
         name="Test setting read-only attribute 'variation_cols'",
         attribute='variation_cols', value={'param1': 'Param 1'}, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_010", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_010",
         name="Test read-only attribute 'kwargs_variations'",
         attribute='kwargs_variations', value={'param1': [1, 2, 3]}, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_011", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_011",
         name="Test read-only attribute 'runner'",
         attribute='runner', value=SimpleRunner, obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_012", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_012",
         name="Test setting read-only attribute 'callback'",
         obj=base_case(), attribute='callback', value=lambda case, metric, fmt, output: None,
-        exception=AttributeError)),
-    idspec("ATTR_013", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_013",
         name="Test setting read-only attribute 'results'",
         attribute='results', value=[Results(
                                 group='new_group',
@@ -941,11 +941,11 @@ def test_case_init(testspec: TestAction) -> None:
                                 iterations=_DEFAULT_ITERATIONS,
                                 extra_info=Extras())],
         obj=base_case(),
-        exception=AttributeError)),
-    idspec("ATTR_014", TestSet(
+        exception=AttributeError),
+    PytestSet("ATTR_014",
         name="Test setting read-only attribute 'options'",
         attribute='options', value=[], obj=base_case(),
-        exception=AttributeError)),
+        exception=AttributeError),
 ])
 def test_setting_read_only_attributes(testspec: TestSpec) -> None:
     """Test attempting to set read-only attributes on Case instances.
@@ -957,62 +957,62 @@ def test_setting_read_only_attributes(testspec: TestSpec) -> None:
 
 
 @pytest.mark.parametrize("testspec", [
-    idspec("GET_001", TestGet(
+    PytestGet('GET_001',
         name="Test getting attribute 'group'",
         attribute='group', obj=base_case(),
-        expected=base_casekwargs().get('group'))),
-    idspec("GET_002", TestGet(
+        expected=base_casekwargs().get('group')),
+    PytestGet('GET_002',
         name="Test getting attribute 'title'",
         attribute='title', obj=base_case(),
-        expected=base_casekwargs().get('title'))),
-    idspec("GET_003", TestGet(
+        expected=base_casekwargs().get('title')),
+    PytestGet('GET_003',
         name="Test getting attribute 'description'",
         attribute='description', obj=base_case(),
-        expected=base_casekwargs().get('description'))),
-    idspec("GET_004", TestGet(
+        expected=base_casekwargs().get('description')),
+    PytestGet('GET_004',
         name="Test getting attribute 'action'",
         attribute='action', obj=base_case(),
-        expected=base_casekwargs().get('action'))),
-    idspec("GET_005", TestGet(
+        expected=base_casekwargs().get('action')),
+    PytestGet('GET_005',
         name="Test getting attribute 'iterations'",
         attribute='iterations', obj=base_case(),
-        expected=base_casekwargs().get('iterations'))),
-    idspec("GET_006", TestGet(
+        expected=base_casekwargs().get('iterations')),
+    PytestGet('GET_006',
         name="Test getting attribute 'warmup_iterations'",
         attribute='warmup_iterations', obj=base_case(),
-        expected=base_casekwargs().get('warmup_iterations'))),
-    idspec("GET_007", TestGet(
+        expected=base_casekwargs().get('warmup_iterations')),
+    PytestGet('GET_007',
         name="Test getting attribute 'min_time'",
         attribute='min_time', obj=base_case(),
-        expected=base_casekwargs().get('min_time'))),
-    idspec("GET_008", TestGet(
+        expected=base_casekwargs().get('min_time')),
+    PytestGet('GET_008',
         name="Test getting attribute 'max_time'",
         attribute='max_time', obj=base_case(),
-        expected=base_casekwargs().get('max_time'))),
-    idspec("GET_009", TestGet(
+        expected=base_casekwargs().get('max_time')),
+    PytestGet('GET_009',
         name="Test getting attribute 'variation_cols'",
         attribute='variation_cols', obj=base_case(),
-        expected=base_casekwargs().get('variation_cols'))),
-    idspec("GET_010", TestGet(
+        expected=base_casekwargs().get('variation_cols')),
+    PytestGet('GET_010',
         name="Test getting attribute 'kwargs_variations'",
         attribute='kwargs_variations', obj=base_case(),
-        expected=base_casekwargs().get('kwargs_variations'))),
-    idspec("GET_011", TestGet(
+        expected=base_casekwargs().get('kwargs_variations')),
+    PytestGet('GET_011',
         name="Test getting attribute 'runner'",
         attribute='runner', obj=base_case(),
-        expected=base_casekwargs().get('runner'))),
-    idspec("GET_012", TestGet(
+        expected=base_casekwargs().get('runner')),
+    PytestGet('GET_012',
         name="Test getting attribute 'callback'",
         attribute='callback', obj=base_case(),
-        expected=base_casekwargs().get('callback'))),
-    idspec("GET_013", TestGet(
+        expected=base_casekwargs().get('callback')),
+    PytestGet('GET_013',
         name="Test getting attribute 'results'",
         attribute='results', obj=postrun_benchmark_case(),
-        expected=postrun_benchmark_case().results)),
-    idspec("GET_014", TestGet(
+        expected=postrun_benchmark_case().results),
+    PytestGet('GET_014',
         name="Test getting attribute 'options'",
         attribute='options', obj=base_case(),
-        expected=base_casekwargs().get('options'))),
+        expected=base_casekwargs().get('options')),
 ])
 def test_getting_attributes(testspec: TestSpec) -> None:
     """Test getting attributes on Case instances.
@@ -1121,7 +1121,7 @@ def test_run(capsys: pytest.CaptureFixture[str], testspec: TestAction) -> None:
 
     :param capsys: The pytest capsys fixture.
     :param testspec: The test specification to run.
-    :type testspec: TestAction
+    :type testspec: TestSpec
     """
     if isinstance(testspec, TestAction):
         if 'case_kwargs' not in testspec.extra or not isinstance(testspec.extra['case_kwargs'], CaseKWArgs):
