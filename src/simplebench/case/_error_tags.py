@@ -27,7 +27,7 @@ class _CaseErrorTag(ErrorTag):
     """The runners argument passed to the Case() constructor is not an ElementCollection."""
     INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL = 'INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL'
     """The include_raw_data argument passed to Case.report() is not a bool."""
-    HAVE_NOT_RUN_CASE = 'HAVE_NOT_RUN_CASE'
+    HAVE_NOT_RUN_CASE_YET = 'HAVE_NOT_RUN_CASE_YET'
     """An action depending on the benchmark having been run was requested before running the benchmarks in the Case."""
     INVALID_CPU_TIMER_NOT_CALLABLE = 'INVALID_CPU_TIMER_NOT_CALLABLE'
     """The CPU timer argument passed to the Case() constructor is not a callable."""

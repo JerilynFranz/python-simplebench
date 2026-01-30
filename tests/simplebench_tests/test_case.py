@@ -3,7 +3,7 @@
 import inspect
 from argparse import ArgumentParser
 from functools import cache
-from typing import Any
+from typing import Any, cast
 
 import autopypath  # noqa: F401  # modifies sys.path to include project root
 import pytest
@@ -16,12 +16,26 @@ from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
 from simplebench.case import Case, Results
 from simplebench.case._error_tags import _CaseErrorTag
 from simplebench.enums import Format, Verbosity
-from simplebench.exceptions import SimpleBenchBenchmarkError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import (
+    SimpleBenchBenchmarkError,
+    SimpleBenchRuntimeError,
+    SimpleBenchTypeError,
+    SimpleBenchValueError,
+)
 from simplebench.metrics import Metric
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.session import Session
-from simplebench.simplebench_types import Extras, Iterations, MetricsTimers, Values, VariationMarks
+from simplebench.simplebench_types import (
+    Extras,
+    Iterations,
+    KWArgsVariations,
+    Mark,
+    MetricsTimers,
+    Values,
+    VariationCols,
+    VariationMarks,
+)
 
 _VALUES = Values([0.1, 0.2])
 _DEFAULT_METRIC = factories.default_metric()
@@ -589,7 +603,7 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           variation_cols='not_a_VariationCols'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_VARIATION_COLS),
+        exception_tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_MAPPING),
     PytestAction("INIT_028",
         name="Invalid (contains key that is not type str) type for variation_cols parameter",
         action=Case,
@@ -650,12 +664,12 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
     #    exception=SimpleBenchValueError,
     #    exception_tag=_CaseErrorTag.INVALID_ACTION_PARAMETER_COUNT),
     PytestAction("INIT_036",
-        name="Invalid (not a list) type for options parameter",
+        name="Invalid (not an ElementCollection) type for options parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
                           options='not_a_list'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_CaseErrorTag.INVALID_OPTIONS_ENTRY_NOT_REPORTER_OPTION),
+        exception_tag=_CaseErrorTag.INVALID_OPTIONS_NOT_ELEMENT_COLLECTION),
     PytestAction("INIT_037",
         name="Invalid (contains item that is not a ReporterOptions) type for options parameter",
         action=Case,
@@ -834,23 +848,25 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_NOT_KEYWORD_ONLY),
     PytestAction("INIT_062",
-        name="results attribute is initialized to empty list",
+        name="Accessing results before run triggers exception",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase),
-        validate_result=lambda obj: obj.results == [],
-        assertion=Assert.ISINSTANCE,
-        expected=Case),
+        validate_attr='results',
+        exception=SimpleBenchRuntimeError,
+        exception_tag=_CaseErrorTag.HAVE_NOT_RUN_CASE_YET),
     PytestAction("INIT_063",
-        name="runner attribute is initialized to None when not provided",
+        name="runners attribute is initialized to () when not provided",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase),
-        validate_result=lambda obj: obj.runner is None),
+        validate_attr='runners',
+        expected=tuple()),
     PytestAction("INIT_064",
-        name="runner attribute is initialized to SimpleRunner class when provided",
+        name="runners attribute is initialized to [SimpleRunner]  when provided",
         action=Case,
-        kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action=benchcase,
-                          runners=[SimpleRunner]),
-        validate_result=lambda obj: issubclass(obj.runner, SimpleRunner)),
+        kwargs=CaseKWArgs(
+            group='example', title='benchcase', description='Benchmark case', action=benchcase,
+            runners=[SimpleRunner]),
+        validate_result=lambda obj: issubclass(obj.runners[0], SimpleRunner)),
     PytestAction("INIT_065",
         name="Missing description parameter and docstring - default to '(no description)'",
         action=Case,
@@ -922,8 +938,8 @@ def test_case_init(testspec: TestSpec) -> None:
         attribute='kwargs_variations', value={'param1': [1, 2, 3]}, obj=base_case(),
         exception=AttributeError),
     PytestSet("ATTR_011",
-        name="Test read-only attribute 'runner'",
-        attribute='runner', value=SimpleRunner, obj=base_case(),
+        name="Test read-only attribute 'runners'",
+        attribute='runners', value=SimpleRunner, obj=base_case(),
         exception=AttributeError),
     PytestSet("ATTR_012",
         name="Test setting read-only attribute 'callback'",
@@ -940,7 +956,7 @@ def test_case_init(testspec: TestSpec) -> None:
                                 metrics_timers=_DEFAULT_METRICS_TIMERS,
                                 iterations=_DEFAULT_ITERATIONS,
                                 extra_info=Extras())],
-        obj=base_case(),
+        obj=postrun_benchmark_case(),
         exception=AttributeError),
     PytestSet("ATTR_014",
         name="Test setting read-only attribute 'options'",
@@ -992,15 +1008,15 @@ def test_setting_read_only_attributes(testspec: TestSpec) -> None:
     PytestGet('GET_009',
         name="Test getting attribute 'variation_cols'",
         attribute='variation_cols', obj=base_case(),
-        expected=base_casekwargs().get('variation_cols')),
+        expected=VariationCols(cast(dict[str, str], base_casekwargs().get('variation_cols')))),
     PytestGet('GET_010',
         name="Test getting attribute 'kwargs_variations'",
         attribute='kwargs_variations', obj=base_case(),
-        expected=base_casekwargs().get('kwargs_variations')),
+        expected=KWArgsVariations({'size': [Mark('10', 10), Mark('100', 100), Mark('1000', 1000)]})),
     PytestGet('GET_011',
-        name="Test getting attribute 'runner'",
-        attribute='runner', obj=base_case(),
-        expected=base_casekwargs().get('runner')),
+        name="Test getting attribute 'runners'",
+        attribute='runners', obj=base_case(),
+        expected=tuple()),
     PytestGet('GET_012',
         name="Test getting attribute 'callback'",
         attribute='callback', obj=base_case(),
@@ -1012,7 +1028,7 @@ def test_setting_read_only_attributes(testspec: TestSpec) -> None:
     PytestGet('GET_014',
         name="Test getting attribute 'options'",
         attribute='options', obj=base_case(),
-        expected=base_casekwargs().get('options')),
+        expected=tuple(base_casekwargs().get('options'))),  # type: ignore[arg-type]
 ])
 def test_getting_attributes(testspec: TestSpec) -> None:
     """Test getting attributes on Case instances.

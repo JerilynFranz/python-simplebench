@@ -702,7 +702,7 @@ class Case:
         if self.state is not CaseState.COMPLETED:
             raise SimpleBenchRuntimeError(
                 f'The results are not available because the benchmark case has not run to completion: {self.state}',
-                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE
+                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE_YET
             )
         return self._results
 
@@ -767,7 +767,7 @@ class Case:
         if self.state is not CaseState.COMPLETED:
             raise SimpleBenchRuntimeError(
                 f'The timestap is not available because the benchmark case has not run to completion: {self.state}',
-                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE
+                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE_YET
             )
         return self._timestamp
 
@@ -913,7 +913,7 @@ class Case:
         if self.state is not CaseState.COMPLETED:
             raise SimpleBenchRuntimeError(
                 f'The report is not available because the benchmark case has not run to completion: {self.state}',
-                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE
+                tag=_CaseErrorTag.HAVE_NOT_RUN_CASE_YET
             )
         validate_bool(include_raw_data, 'include_raw_data', _CaseErrorTag.INVALID_REPORT_INCLUDE_RAW_DATA_NOT_BOOL)
 

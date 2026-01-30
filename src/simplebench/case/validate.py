@@ -303,7 +303,7 @@ def runners(runner_types: ElementCollection[type[BenchmarkRunner]] | None) -> tu
         if not issubclass(runner, BenchmarkRunner):
             raise SimpleBenchTypeError(
                 f'Invalid runner: {runner}. Must be a subclass of BenchmarkRunner.',
-                tag=_CaseErrorTag.INVALID_RUNNER_NOT_SUBCLASS_OF_RUNNER,
+                tag=_CaseErrorTag.INVALID_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS,
             )
         validated_runners.append(runner)
     return tuple(validated_runners)
