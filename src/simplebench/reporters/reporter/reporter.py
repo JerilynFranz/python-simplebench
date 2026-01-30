@@ -220,7 +220,7 @@ class Reporter(
         case: 'Case',
         choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
+        session: 'Session | None' = None,
         callback: ReporterCallback | None = None,
     ) -> None:
         """Generate a report based on the benchmark results.

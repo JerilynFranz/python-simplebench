@@ -14,7 +14,7 @@ from rich.text import Text
 
 from simplebench.enums import Format, Target
 from simplebench.metadata import Metadata
-from simplebench.metrics import Metric
+from simplebench.metrics import Metric, MetricsSelection
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter.config import ReporterConfig
 
@@ -47,7 +47,7 @@ class ReporterProtocol(Protocol):
         ...
 
     @property
-    def supported_metrics(self) -> frozenset[Metric]:
+    def supported_metrics(self) -> MetricsSelection:
         """The set of supported :class:`~simplebench.metric.Metric` for the reporter.
 
         This is the set of :class:`~simplebench.metric.Metric` that the reporter can include
