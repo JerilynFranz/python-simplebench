@@ -11,6 +11,10 @@ class _ReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :mod:`simplebench.reporters.reporter` module."""
 
     # _validate.*
+    REPORT_NON_SUPPORTED_METRICS = 'REPORT_NON_SUPPORTED_METRICS'
+    """Unsupported type for ``supported_metrics`` argument when validating supported metrics."""
+    REPORT_NON_COLLECTION_SUPPORTED_METRICS = 'REPORT_NON_COLLECTION_SUPPORTED_METRICS'
+    """Invalid type for ``supported_metrics`` argument when validating supported metrics."""
     VALIDATE_FILESYSTEM_IN_TARGETS_INVALID_TARGETS_ARG_TYPE = 'VALIDATE_FILESYSTEM_IN_TARGETS_INVALID_TARGETS_ARG_TYPE'
     """Invalid type for ``value`` argument when validating filesystem in targets."""
     VALIDATE_INVALID_FILESYSTEM_PATH_ARG_TYPE = 'VALIDATE_INVALID_FILESYSTEM_PATH_ARG_TYPE'

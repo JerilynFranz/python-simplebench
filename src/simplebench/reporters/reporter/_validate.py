@@ -9,10 +9,10 @@ from requests import Session
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metrics import Metric, MetricsCollection
+from simplebench.metrics import MetricsCollection, MetricsSelection, MetricsUnspecified
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter.config import ReporterConfig
-from simplebench.options.reporter.options import ReporterOptions
 from simplebench.simplebench_types import is_element_collection
 from simplebench.type_proxies import is_case, is_choice, is_session
 
@@ -167,33 +167,53 @@ def metrics_collection(value: Any, field_name: str = 'metrics_collection') -> Me
     return value
 
 def supported_metrics(
-            value: Any,
-            supported_metrics: Set[Metric],
-            field_name: str = 'choice.metrics') -> MetricsCollection:
+            value: MetricsSelection,
+            supported_metrics: MetricsSelection,
+            field_name: str = 'choice.metrics') -> MetricsSelection:
     """Validate that the provided value is a :class:`~simplebench.metrics.metrics.MetricsCollection` instance
     and that it only contains supported Metrics.
 
     :param value: The metrics collection value to validate.
-    :type value: Any
+    :type value: MetricsCollection
     :param field_name: (default = 'choice.metrics') The name of the field being validated, used in error messages.
-    :type field_name: :class:`~simplebench.metrics.MetricsCollection`
+    :type field_name: str
     :param supported_metrics: The set of supported Metric instances.
-    :type supported_metrics: Set[Metric]
+    :type supported_metrics: MetricsSelection
     :raises SimpleBenchTypeError: If the provided value is not a MetricsCollection instance.
     :raises SimpleBenchValueError: If the MetricsCollection contains unsupported Metrics
 
     :return: The validated MetricsCollection instance.
     """
+    # If value is MetricsUnspecified, then supported_metrics must also be MetricsUnspecified
+    if isinstance(value, MetricsUnspecified):
+        if isinstance(supported_metrics, MetricsUnspecified):
+            return value
+        raise SimpleBenchTypeError(
+            f'{field_name!r} must be a MetricsCollection instance',
+            tag=_ReporterErrorTag.REPORT_NON_COLLECTION_SUPPORTED_METRICS)
+
+    # If supported_metrics is MetricsUnspecified, then either MetricsCollection or MetricsUnspecified is allowed
+    if isinstance(supported_metrics, MetricsUnspecified):
+        if isinstance(value, (MetricsCollection, MetricsUnspecified)):
+            return value
+        raise SimpleBenchTypeError(
+            'supported_metrics must be either a MetricsUnspecified or MetricsCollection instance',
+            tag=_ReporterErrorTag.REPORT_NON_SUPPORTED_METRICS)
+
+    # Both value and supported_metrics must be MetricsCollection instances
     if not isinstance(value, MetricsCollection):
         message = f'Expected a MetricsCollection instance for {field_name!r}: found {type(value).__name__}'
         raise SimpleBenchTypeError(
             message,
             tag=_ReporterErrorTag.REPORT_NON_COLLECTION_METRICS_SELECTION,
         )
-    metrics_set = set(value.metrics.values())
-    unsupported_metrics = metrics_set - supported_metrics
+    if not isinstance(supported_metrics, MetricsCollection):
+        raise SimpleBenchNotImplementedError(
+            'supported_metrics must be a MetricsCollection instance',
+            tag=_ReporterErrorTag.REPORT_NON_COLLECTION_SUPPORTED_METRICS)
+    unsupported_metrics = value - supported_metrics
     if unsupported_metrics:
-        metrics_error = f'Unsupported Metric(s) in {field_name!r}: {unsupported_metrics}'
+        metrics_error = f'Unsupported Metric(s) in {field_name!r}: {unsupported_metrics.metrics_keys!r}'
         raise SimpleBenchValueError(metrics_error, tag=_ReporterErrorTag.REPORT_UNSUPPORTED_METRICS)
 
     return value

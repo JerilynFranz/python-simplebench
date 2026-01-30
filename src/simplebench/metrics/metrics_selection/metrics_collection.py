@@ -4,6 +4,7 @@ from collections.abc import Iterator, Set
 from typing import cast
 
 from typechecked import Immutable
+
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric
 from simplebench.metrics.metrics import Metrics
@@ -27,39 +28,34 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable):
     The collection itself behaves like a set, supporting standard set operations such as
     union, intersection, difference, and symmetric difference.
 
-    :param metrics: A set of metrics to be selected from the given universe.
-    :type metrics: ElementCollection[Metric] | Metrics | Metric | None
-
+    :param args: Positional arguments of Metric, Metrics, or ElementCollection of Metric instances.
+    :type args: tuple[ElementCollection[Metric] | Metrics | Metric, ...]
+    :return: A MetricsCollection instance containing the selected metrics.
+    :rtype: MetricsCollection
     :raises SimpleBenchTypeError: If the provided metrics are not a Metric, Metrics, or
         ElementCollection of Metric instances.
-    :raises SimpleBenchValueError: If the provided metrics are an empty Iterable.
+    :raises SimpleBenchValueError: If the provided metrics are an empty collection.
     """
 
-    def __init__(self, *args: Metric, metrics: ElementCollection[Metric] | Metrics | Metric | None = None) -> None:
+    def __init__(self, *args: ElementCollection[Metric] | Metrics | Metric) -> None:
         """Constructor for MetricsCollection.
 
         Only one of the two ways to provide metrics should be used: either positional arguments
-        or the `metrics` keyword argument.
+        or the `metrics` keyword argument. Only one of these should be provided at a time.
 
-        :param args: Positional arguments of Metric instances.
-        :param metrics: A keyword argument that can be an Iterable of Metric instances,
-            a Metrics instance, or a single Metric instance.
-        :type metrics: ElementCollection[Metric] | Metrics | Metric | None
-        :raises SimpleBenchTypeError: If the provided metrics are not an Iterable[Metrics] or a Metrics instance.
-        :raises SimpleBenchValueError: If the provided metrics are an empty Iterable.
+        :param args: Positional arguments of Metric, Metrics, or ElementCollection of Metric instances.
+        :type args: tuple[ElementCollection[Metric] | Metrics | Metric, ...]
+        :raises SimpleBenchTypeError: If the provided metrics are not an ElementCollection[Metric], Metrics,
+            or Metric instance.
+        :raises SimpleBenchValueError: If no metrics are provided.
         """
         all_metrics: list[Metric] = []
 
-        if args and metrics:
-            raise SimpleBenchTypeError(
-                "Cannot provide both positional arguments and the 'metrics' keyword argument.",
-                tag=_MetricSelectionErrorTag.METRICS_ARGS_AND_METRICS,
-            )
-
-        source = args or metrics
-        if source is None:
-            # No metrics provided, let validation handle it.
-            pass
+        source = args
+        if source is None or (isinstance(source, tuple) and len(source) == 0):
+            self._metrics = Metrics()
+            super().__init__(selector_type=MetricsSelectionType.COLLECTION)
+            return
 
         elif isinstance(source, Metrics):
             # Handle a single Metrics instance passed via keyword
@@ -90,15 +86,20 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable):
         """Validate the provided metrics.
 
         :param metrics: An iterable of Metric instances to validate.
+        :type metrics: ElementCollection[Metric]
         :return: A new Metrics instance containing the validated metrics.
+        :rtype: Metrics
+        :raises SimpleBenchTypeError: If the provided metrics are not a ElementCollection[Metric].
+        :raises SimpleBenchValueError: If the provided metrics are an empty collection.
         """
-        if isinstance(metrics, (str, bytes)):
+        if not is_element_collection(metrics):
             raise SimpleBenchTypeError(
-                'metrics must be an Iterable[Metric] or a Metrics instance',
-                tag=_MetricSelectionErrorTag.METRICS_STRING_OR_BYTES,
+                'metrics must be an ElementCollection[Metric]',
+                tag=_MetricSelectionErrorTag.METRICS_NOT_ITERABLE
             )
-        if not metrics:
-            raise SimpleBenchValueError('metrics cannot be empty', tag=_MetricSelectionErrorTag.METRICS_EMPTY)
+        if len(metrics) == 0:
+            return Metrics()
+
         metrics_set = set(metrics)
         for metric in metrics_set:
             if not isinstance(metric, Metric):
@@ -167,28 +168,28 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable):
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) & set(other)
-        return MetricsCollection(metrics=list(metrics))
+        return MetricsCollection(metrics)
 
     def __or__(self, other: object) -> 'MetricsCollection':
         """Return the union of two sets as a new MetricsCollection."""
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) | set(other)
-        return MetricsCollection(metrics=list(metrics))
+        return MetricsCollection(metrics)
 
     def __sub__(self, other: object) -> 'MetricsCollection':
         """Return the difference of two sets as a new MetricsCollection."""
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) - set(other)
-        return MetricsCollection(metrics=list(metrics))
+        return MetricsCollection(metrics)
 
     def __xor__(self, other: object) -> 'MetricsCollection':
         """Return the symmetric difference of two sets as a new MetricsCollection."""
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) ^ set(other)
-        return MetricsCollection(metrics=list(metrics))
+        return MetricsCollection(metrics)
 
     def isdisjoint(self, other: object) -> bool:
         """Return True if two sets have a null intersection."""
