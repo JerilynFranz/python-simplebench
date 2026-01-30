@@ -27,7 +27,8 @@ from simplebench.case.results import Results
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError
 from simplebench.metadata import Metadata
-from simplebench.metrics.metric import Metric
+from simplebench.metrics import Metric, MetricsSelection
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
@@ -38,7 +39,6 @@ from simplebench.reporters.reporter.mixins import (
     _ReporterPrioritizationMixin,
     _ReporterTargetMixin,
 )
-from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 
 from . import _validate
@@ -51,6 +51,7 @@ T = TypeVar('T')
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.reporters.choice.choice import Choice
+    from simplebench.session import Session
     from simplebench.simplebench_types import ElementCollection
 
 __all__ = []
@@ -219,7 +220,7 @@ class Reporter(
         case: 'Case',
         choice: 'Choice',
         path: Path | None = None,
-        session: 'Optional[Session] = None',
+        session: Session | None = None,
         callback: ReporterCallback | None = None,
     ) -> None:
         """Generate a report based on the benchmark results.
@@ -310,7 +311,7 @@ class Reporter(
         case: 'Case',
         choice: 'Choice',
         path: Path | None = None,
-        session: 'Optional[Session] = None',
+        session: 'Session | None' = None,
         callback: ReporterCallback | None = None,
     ) -> None:
         """Orchestration hook for report generation.
@@ -437,7 +438,7 @@ class Reporter(
         return self.config.file_append
 
     @property
-    def supported_metrics(self) -> frozenset[Metric]:
+    def supported_metrics(self) -> MetricsSelection:
         """The set of supported :class:`~simplebench.metric.Metric` for the reporter.
 
         This is the set of :class:`~simplebench.metric.Metric` that the reporter can include

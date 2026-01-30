@@ -16,7 +16,7 @@ class _MetricSelectionErrorTag(ErrorTag):
     METRICS_ARGS_AND_METRICS = 'METRICS_ARGS_AND_METRICS'
     """Both *args and metrics are provided. Only one should be provided."""
     METRICS_NOT_ITERABLE = 'METRICS_NOT_ITERABLE'
-    """The provided metrics are not iterable."""
+    """The provided metrics are not a Metric, Metrics, or ElementCollection of Metric instances."""
     METRICS_STRING_OR_BYTES = 'METRICS_STRING_OR_BYTES'
     """The provided metrics are a string or bytes (not Metrics instances or Iterable[Metric])."""
     METRICS_NOT_METRIC = 'METRICS_NOT_METRIC'

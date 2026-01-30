@@ -125,9 +125,10 @@ Issues = "https://github.com/JerilynFranz/python-simplebench/issues"
 Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGELOG.rst"
 
 
-[tool.pytest.ini_options]
-testpaths = "tests"
-norecursedirs = ".git .tox .vscode venv* .*_cache build dist testplan.py"
+[tool.pytest]
+minversion = "9.0.0"
+testpaths = ["tests"]
+norecursedirs = [".git", ".tox", ".vscode", "venv*", ".*_cache", "build", "dist", "testplan.py"]
 
 [tool.coverage.run]
 branch = true

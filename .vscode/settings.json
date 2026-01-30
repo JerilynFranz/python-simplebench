@@ -60,7 +60,7 @@
   "python.testing.autoTestDiscoverOnSaveEnabled": true,
   "codeQL.createQuery.qlPackLocation": "{$workspaceFolder}",
   "mypy-type-checker.preferDaemon": true,
-  "python.terminal.useEnvFile": false,
+  "python.terminal.useEnvFile": true,
   "python-env.workspaceSearchPaths": [
     ".venv"
   ],
@@ -74,6 +74,6 @@
             "source.organizeImports": "explicit"
         }
     },
-    "python.envFile": "",
+    "python.envFile": "${workspaceFolder}/.env",
 }
 

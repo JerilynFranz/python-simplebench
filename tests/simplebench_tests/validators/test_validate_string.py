@@ -48,7 +48,7 @@ class GenericErrorTag(ErrorTag):
         action=validate_string,
         kwargs={
             "value": "test_string",
-            "field_name": "param_name",
+            "name": "param_name",
             "type_error_tag": GenericErrorTag.INVALID_ARG_TYPE,
             "value_error_tag": GenericErrorTag.INVALID_ARG_VALUE},
         assertion=Assert.EQUAL,

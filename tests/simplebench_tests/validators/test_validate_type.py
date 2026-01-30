@@ -22,7 +22,7 @@ TEST_STRING: str = 'asbc'
         kwargs={
             "value": TEST_STRING,
             "types": "not_a_type",
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
@@ -33,7 +33,7 @@ TEST_STRING: str = 'asbc'
         kwargs={
             "value": TEST_STRING,
             "types": (str, 123),
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
@@ -44,7 +44,7 @@ TEST_STRING: str = 'asbc'
         kwargs={
             "value": TEST_STRING,
             "types": str,
-            "field_name": 123,
+            "name": 123,
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
@@ -55,7 +55,7 @@ TEST_STRING: str = 'asbc'
         kwargs={
             "value": TEST_STRING,
             "types": str,
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": "not_an_errortag",
         },
         exception=SimpleBenchTypeError,
@@ -77,7 +77,7 @@ def test_param(testspec: TestSpec):
         kwargs={
             "value": "a string",
             "types": str,
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         assertion=Assert.ISINSTANCE,
@@ -88,7 +88,7 @@ def test_param(testspec: TestSpec):
         kwargs={
             "value": 123,
             "types": str,
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
@@ -99,7 +99,7 @@ def test_param(testspec: TestSpec):
         kwargs={
             "value": 123,
             "types": (str, int),
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         assertion=Assert.ISINSTANCE,
@@ -110,7 +110,7 @@ def test_param(testspec: TestSpec):
         kwargs={
             "value": 12.3,
             "types": (str, int),
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         exception=SimpleBenchTypeError,
@@ -121,7 +121,7 @@ def test_param(testspec: TestSpec):
         kwargs={
             "value": TEST_STRING,
             "types": str,
-            "field_name": "test_field",
+            "name": "test_field",
             "error_tag": GenericErrorTag.INVALID_ARG_TYPE,
         },
         assertion=Assert.IS,

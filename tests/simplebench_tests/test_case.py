@@ -1,6 +1,7 @@
 """Tests for the case.py module."""
 
 import inspect
+import sys
 from argparse import ArgumentParser
 from functools import cache
 from typing import Any, cast
@@ -1160,4 +1161,6 @@ def test_run(capsys: pytest.CaptureFixture[str], testspec: TestAction) -> None:
 
 
 if __name__ == "__main__":
+    if "typeguard" in sys.modules:
+        sys.modules.pop("typeguard")
     pytest.main([__file__])
