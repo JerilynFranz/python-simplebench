@@ -409,10 +409,10 @@ class SimpleRunner(BenchmarkRunner):
         func_name = getattr(action, '__qualname__', getattr(action, '__name__', repr(action)))
         benchmark_id = self.case.benchmark_id
         timeout_interval = self.case.timeout
-        marks = {} if variation_marks is None else variation_marks
+        marks = VariationMarks() if variation_marks is None else variation_marks
         try:
             result = Timeout(timeout_interval).run(
-                self._runner, n=n, action=action, setup=setup, teardown=teardown, kwargs=marks
+                self._runner, n=n, action=action, setup=setup, teardown=teardown, variation_marks=marks
             )
         except SimpleBenchTimeoutError as e:
             raise SimpleBenchTimeoutError(
@@ -472,13 +472,11 @@ class SimpleRunner(BenchmarkRunner):
         timer_name = f'_simplerunner_timer_function_{rounds}'
         if not hasattr(_timers_module, timer_name):
             time_function_lines: list[str] = []
-            time_function_lines.extend(
-                [
-                    f'def {timer_name}(timer: Callable[[], float | int], cpu_timer: Callable[[], float | int], action: Callable[..., Any], kwargs: dict[str, Any]) -> tuple[float, float]:',  # pylint: disable=line-too-long  # noqa: E501
-                    '    start = timer()',
-                    '    start_cpu = cpu_timer()',
-                ]
-            )
+            time_function_lines.extend([
+                f'def {timer_name}(timer, cpu_timer, action, kwargs):',
+                '    start = timer()',
+                '    start_cpu = cpu_timer()',
+            ])
             time_function_lines.extend(['    action(**kwargs)'] * rounds)
             time_function_lines.extend(['    end = timer()', '    end_cpu = cpu_timer()'])
             time_function_lines.append('    return float(end - start), float(end_cpu - start_cpu)')

@@ -1,12 +1,11 @@
 """Base reporter configuration class."""
 
-from __future__ import annotations
 
 from dataclasses import dataclass
 
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.metrics import Metric
+from simplebench.metrics import MetricsSelection
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter._error_tags.config import _ReporterConfigErrorTag
 from simplebench.validators import validate_dirpath, validate_iterable_of_type, validate_string, validate_type
@@ -34,7 +33,7 @@ class ReporterConfig:
     Attributes:
         name (str): The unique name for the reporter (e.g., 'rich-table').
         description (str): A short description of what the reporter does.
-        metrics (frozenset[Metric]): The master set of metrics this reporter can handle.
+        metrics (MetricsSelection): The master set of metrics this reporter can handle.
         targets (frozenset[Target]): The master set of targets this reporter can output to.
         default_targets (frozenset[Target]): The default subset of ``targets`` to use.
         formats (frozenset[Format]): The master set of formats this reporter can produce.
@@ -51,7 +50,7 @@ class ReporterConfig:
     description: str
     """A short description of what the reporter does. Cannot be empty or blank."""
 
-    metrics: frozenset[Metric]
+    metrics: MetricsSelection
     """The master set of :class:`~.Metric` enums this reporter can handle. This constrains
     the metrics that can be used by any :class:`~.ChoiceConf` in the ``choices`` list.
     """
@@ -126,14 +125,9 @@ class ReporterConfig:
             allow_empty=False,
             allow_blank=False,
         )
-        validate_iterable_of_type(
-            self.metrics,
-            Metric,
-            'metrics',
-            type_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_TYPE,
-            value_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_VALUE,
-            allow_empty=True,
-        )
+        validate_type(
+            self.metrics, MetricsSelection, 'metrics',
+            _ReporterConfigErrorTag.INVALID_SECTIONS_TYPE)
         validate_iterable_of_type(
             self.targets,
             Target,
@@ -194,7 +188,6 @@ class ReporterConfig:
         # and replace subdir with the validated version
         # This uses object.__setattr__ to bypass the frozen=True restriction.
         object.__setattr__(self, 'subdir', subdir)
-        object.__setattr__(self, 'metrics', frozenset(self.metrics))
         object.__setattr__(self, 'targets', frozenset(self.targets))
         object.__setattr__(self, 'default_targets', frozenset(self.default_targets))
         object.__setattr__(self, 'formats', frozenset(self.formats))

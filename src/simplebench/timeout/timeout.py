@@ -116,7 +116,7 @@ class Timeout(Generic[_T]):
             raise SimpleBenchTypeError('state must be a TimeoutState', tag=_TimeoutErrorTag.INVALID_STATE_TYPE)
         self._private_state = value
 
-    def _target_wrapper(self, func: Callable[..., Any], *args: Any, **kwargs: Any):
+    def _target_wrapper(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
         """
         Internal wrapper to run in the worker thread.
         It captures the result or any exception that occurs.

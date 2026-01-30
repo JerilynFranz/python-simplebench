@@ -8,6 +8,7 @@ from typing import Any
 
 import simplebench.defaults as defaults
 import simplebench.vcs as vcs
+from simplebench._log import _log
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.doc_utils import format_docstring
@@ -850,8 +851,8 @@ class Case:
                 except Exception as e:
                     self._state = CaseState.FAILED
                     raise SimpleBenchBenchmarkError(
-                        f'Error occurred running benchmark action {str(self.action)} for case '
-                        f'"{self.title}" with kwargs {variation_marks}: {e}, {type(e)}',
+                        f'Error occurred running benchmark action {self.action!r} for case '
+                        f'"{self.title}" with variation {variation_marks!r}: {e}, {type(e)}',
                         tag=_CaseErrorTag.BENCHMARK_ACTION_RAISED_EXCEPTION,
                     ) from e
                 pending_results.append(results)

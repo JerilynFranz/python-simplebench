@@ -4,6 +4,7 @@ from typing import Any
 
 from typechecked import is_immutable
 
+from simplebench._log import _log
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.metrics.metrics_selection import MetricsSelection
@@ -28,9 +29,10 @@ def flags(value: Any) -> frozenset[str]:
     :raises SimpleBenchValueError: If one or more items in the flags argument is an empty string,
         blank string, or whitespace-only string.
     """
+    _log.debug('Validating flags: %r', value)
     return frozenset(
             validate_sequence_of_str(
-                flags,
+                value,
                 'flags',
                 _ChoiceConfErrorTag.FLAGS_INVALID_ARG_TYPE,
                 _ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE,
@@ -50,7 +52,7 @@ def flag_type(value: Any) -> FlagType:
     :raises SimpleBenchTypeError: The flag_type argument is not a :class:`~simplebench.enums.FlagType` enum value.
     """
     return validate_type(
-            flag_type, FlagType,
+            value, FlagType,
             'flag_type', _ChoiceConfErrorTag.FLAG_TYPE_INVALID_ARG_TYPE
         )
 
@@ -124,7 +126,7 @@ def targets(value: Any) -> frozenset[Target]:
     """
     return frozenset(
         validate_iterable_of_type(
-            targets,
+            value,
             Target,
             'targets',
             _ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE,
@@ -150,7 +152,7 @@ def default_targets(value: Any) -> frozenset[Target]:
 
     return frozenset(
         validate_iterable_of_type(
-            default_targets,
+            value,
             Target,
             'default_targets',
             _ChoiceConfErrorTag.DEFAULT_TARGETS_INVALID_ARG_TYPE,
