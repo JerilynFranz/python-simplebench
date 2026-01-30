@@ -96,7 +96,6 @@ class Values(CoreDataSequence):
                 'or a CoreDataSequence.',
                 tag=_ValuesErrorTag.VALUES_NOT_ELEMENT_COLLECTION_OR_CORE_DATA_SEQUENCE)
 
-        _log.debug('Creating Values instance from iterable: %r', __values)
         if isinstance(__values, Values):
             self._data = __values._data
             _log.debug('Input is already a Values instance, returning a Values instance.')

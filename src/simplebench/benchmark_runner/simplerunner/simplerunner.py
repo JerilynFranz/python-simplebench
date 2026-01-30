@@ -66,7 +66,12 @@ from simplebench.defaults import (
 )
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
-from simplebench.exceptions import SimpleBenchImportError, SimpleBenchTimeoutError, SimpleBenchTypeError
+from simplebench.exceptions import (
+    SimpleBenchImportError,
+    SimpleBenchRuntimeError,
+    SimpleBenchTimeoutError,
+    SimpleBenchTypeError,
+)
 from simplebench.metrics import Metric, metrics_registry
 from simplebench.simplebench_types import Extras, Iterations, Values, VariationCols, VariationMarks
 from simplebench.simplebench_types._metrics_timers._metrics_timers import MetricsTimers
@@ -204,8 +209,8 @@ _GC_GEN2_COLLECTED: Final[int] = _MEASUREMENT_INDEXES['gc_gen2_collected']
 _GC_GEN2_UNCOLLECTABLE: Final[int] = _MEASUREMENT_INDEXES['gc_gen2_uncollectable']
 """A constant representing the index of the generation 2 uncollectable garbage element in a measurement tuple."""
 
-_RETAINED_METRICS: Final[list[int]] = list(_MEASUREMENT_INDEXES.values())
-"""A list of all measurement indexes to be retained in the results.
+_RETAINED_METRICS: Final[list[int]] = list(sorted(_MEASUREMENT_INDEXES.values()))
+"""A sorted list of all measurement indexes to be retained in the results.
 
 This includes all indexes defined in the _Measurement named tuple which
 means any measurement included in the tuple is automatically retained.
@@ -280,8 +285,10 @@ def _metric_timers(
     return {
         metrics_registry['STD_TIMING_STATS']: wall_timer_name,
         metrics_registry['STD_CPU_TIME_STATS']: cpu_timer_name,
-         metrics_registry['STD_TIMING_RAW']: wall_timer_name,
+        metrics_registry['STD_TIMING_RAW']: wall_timer_name,
         metrics_registry['STD_CPU_TIME_RAW']: cpu_timer_name,
+        metrics_registry['STD_OPS_STATS']: wall_timer_name,
+        metrics_registry['STD_OPS_RAW']: wall_timer_name,
         metrics_registry['STD_MEMORY_STATS']: None,
         metrics_registry['STD_MEMORY_RAW']: None,
         metrics_registry['STD_PEAK_MEMORY_STATS']: None,
@@ -738,10 +745,10 @@ class SimpleRunner(BenchmarkRunner):
         # This takes the 'per-iteration' measurements of metrics and converts them into
         # Values objects for each metric with all iterations collected 'per-metric'
         # instead.
-        values: list[Values] = [] * len(_METRIC_TO_MEASUREMENT_INDEX)
-        for metric in sorted(_RETAINED_METRICS):
-            values[metric] = Values(tuple(iteration[metric] for iteration in iterations_list))
-
+        empty_values = Values(())
+        values: list[Values] = [empty_values] * len(_METRIC_TO_MEASUREMENT_INDEX)
+        for metric_index in _RETAINED_METRICS:
+            values[metric_index] = Values(tuple(iteration[metric_index] for iteration in iterations_list))
         # Calculate operations per second values as a special case just for easier access
         timing_values: Values = values[_TIMING]
         ops_values: Values = Values(tuple(1 / timing if timing != 0 else 0.0 for timing in timing_values))
@@ -749,8 +756,9 @@ class SimpleRunner(BenchmarkRunner):
             _STD_OPS_STATS_METRIC: ops_values,
             _STD_OPS_RAW_METRIC: ops_values
         }
-        for metric, index in _METRIC_TO_MEASUREMENT_INDEX.items():
-            iteration_results[metric] = values[index]
+        for metric, metric_index in _METRIC_TO_MEASUREMENT_INDEX.items():
+            if values[metric_index]:
+                iteration_results[metric] = values[metric_index]
 
         benchmark_results = Results(
             group=group,
@@ -769,7 +777,7 @@ class SimpleRunner(BenchmarkRunner):
 
     def _calibrate_rounds(
         self,
-        *,  # noqa: C901
+        *,
         timer: Callable[[], int],
         cpu_timer: Callable[[], int],
         kwargs: dict[str, Any],

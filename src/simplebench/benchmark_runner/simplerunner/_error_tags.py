@@ -8,6 +8,10 @@ from simplebench.exceptions import ErrorTag
 class _SimpleRunnerErrorTag(ErrorTag):
     """ErrorTags for the runners module."""
 
+    # default_runner() tags
+    SIMPLERUNNER_PROCESSING_ITERATION_RESULTS_INDEX_ERROR = 'SIMPLERUNNER_PROCESSING_ITERATION_RESULTS_INDEX_ERROR'
+    """An invalid index was accessed while processing benchmark iteration results."""
+
     # _create_timers_module() tags
     RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE = 'RUNNERS_CREATE_TIMERS_MODULE_INVALID_NAMESPACE_TYPE'
     """The namespace argument for creating the timers module was not a string."""
