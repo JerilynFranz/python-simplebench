@@ -3,6 +3,10 @@ test_repos/
 
 *.py[oc]
 
+# .env files
+.env
+.env.*
+
 # codeql
 # codeql-custom-queries-python/
 
