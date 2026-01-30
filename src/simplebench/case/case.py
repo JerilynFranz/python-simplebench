@@ -8,7 +8,6 @@ from typing import Any
 
 import simplebench.defaults as defaults
 import simplebench.vcs as vcs
-from simplebench._log import _log
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.doc_utils import format_docstring

@@ -68,7 +68,6 @@ from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.enums import Color
 from simplebench.exceptions import (
     SimpleBenchImportError,
-    SimpleBenchRuntimeError,
     SimpleBenchTimeoutError,
     SimpleBenchTypeError,
 )

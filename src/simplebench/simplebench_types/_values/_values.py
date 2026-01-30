@@ -104,7 +104,7 @@ class Values(CoreDataSequence):
         if isinstance(__values, CoreDataSequence):
             if all(isinstance(item, (float)) for item in __values):
                 _log.debug('Input is a CoreDataSequence with all float items.')
-                self._data = __values._data
+                self._data = __values._data  # type: ignore[attr-defined]
                 return
             else:
                 _log.debug('Input is a CoreDataSequence but contains non-float items.')

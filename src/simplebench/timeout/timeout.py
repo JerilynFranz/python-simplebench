@@ -52,7 +52,7 @@ class Timeout(Generic[_T]):
             sys.exit(1)
     """
 
-    def __init__(self, timeout_interval: float | int):
+    def __init__(self, timeout_interval: float | int) -> None:
         """Creates a Timeout instance.
 
         A Timeout instance can be used to run a callable with via the run method
@@ -93,7 +93,7 @@ class Timeout(Generic[_T]):
         """Get the timeout interval in seconds."""
         return self._private_timeout_interval
 
-    def _set_timeout_interval(self, value: float | int):
+    def _set_timeout_interval(self, value: float | int) -> None:
         """Set the timeout interval in seconds."""
         if not isinstance(value, (float, int)):
             raise SimpleBenchTypeError(
@@ -110,7 +110,7 @@ class Timeout(Generic[_T]):
         """Get the final state of the timeout execution."""
         return self._private_state
 
-    def _set_state(self, value: TimeoutState):
+    def _set_state(self, value: TimeoutState) -> None:
         """Set the current state of the timeout context manager."""
         if not isinstance(value, TimeoutState):
             raise SimpleBenchTypeError('state must be a TimeoutState', tag=_TimeoutErrorTag.INVALID_STATE_TYPE)
