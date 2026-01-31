@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import pytest
+from simplebench_tests.factories import reporter_config_kwargs_factory
+from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -9,9 +11,6 @@ from simplebench.metrics import metric_types_registry
 from simplebench.reporters.reporter import ReporterConfig
 from simplebench.reporters.reporter._error_tags import _ReporterConfigErrorTag
 from simplebench.validators._error_tags import _ValidatorsErrorTag
-
-from simplebench_tests.factories import reporter_config_kwargs_factory
-from testspec import Assert, TestAction, TestSpec, idspec
 
 
 @pytest.mark.parametrize('testspec', [
@@ -64,7 +63,7 @@ from testspec import Assert, TestAction, TestSpec, idspec
         kwargs=reporter_config_kwargs_factory(sections={
             metric_types_registry.OPS, "not_a_section_enum"}),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_ReporterConfigErrorTag.INVALID_SECTIONS_TYPE)),
+        exception_tag=_ReporterConfigErrorTag.INVALID_METRICS_TYPE)),
     idspec('INIT_009', TestAction(
         name=("Init of ReporterConfig with targets containing non-Target enum raises "
               "SimpleBenchTypeError/TARGETS_INVALID_ARG_TYPE"),

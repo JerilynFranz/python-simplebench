@@ -9,7 +9,7 @@ from simplebench_tests import factories
 from simplebench_tests.kwargs import NO_DEFAULT_VALUE, NoDefaultValue, ReporterConfigKWArgs
 
 from simplebench.enums import Format, Target
-from simplebench.metrics import Metric
+from simplebench.metrics import Metric, MetricsSelection
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.simplebench_types import ElementCollection
 
@@ -21,7 +21,7 @@ def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
         *,
         name: str | NoDefaultValue = NO_DEFAULT_VALUE,
         description: str | NoDefaultValue = NO_DEFAULT_VALUE,
-        metrics: Iterable[Metric] | NoDefaultValue = NO_DEFAULT_VALUE,
+        metrics: MetricsSelection | NoDefaultValue = NO_DEFAULT_VALUE,
         targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
         default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
         subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
@@ -55,7 +55,7 @@ def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
     defaults = {
         'name': factories.default_reporter_name(),
         'description': factories.default_description(),
-        'metrics': factories.default_metrics(),
+        'metrics': factories.default_metrics_selection(),
         'targets': factories.targets_factory(),
         'default_targets': factories.default_default_targets(),
         'subdir': factories.default_subdir(),
@@ -74,7 +74,7 @@ def reporter_config_factory(
         *,
         name: str | NoDefaultValue = NO_DEFAULT_VALUE,
         description: str | NoDefaultValue = NO_DEFAULT_VALUE,
-        metrics: Iterable[Metric] | NoDefaultValue = NO_DEFAULT_VALUE,
+        metrics: MetricsSelection | NoDefaultValue = NO_DEFAULT_VALUE,
         targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
         default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
         subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,

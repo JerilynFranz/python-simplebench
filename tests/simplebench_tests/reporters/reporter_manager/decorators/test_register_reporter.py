@@ -1,20 +1,21 @@
 """Tests for the register_reporter decorator."""
+import sys
 from argparse import Namespace
 from pathlib import Path
 from typing import Any, ClassVar
 
 import pytest
-
 from rich.table import Table
 from rich.text import Text
+from simplebench_tests import factories
 
 from simplebench.case import Case
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
-from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.reporter_manager.decorators import (
     _RegisterReporterErrorTag,
     clear_registered_reporters,
@@ -22,8 +23,6 @@ from simplebench.reporters.reporter_manager.decorators import (
     register_reporter,
 )
 from simplebench.session import Session
-
-from simplebench_tests import factories
 
 
 class MockReporterOptions(ReporterOptions):
@@ -187,3 +186,8 @@ def test_register_reporter_invalid_type() -> None:
             f"REGISTER_005 - Expected tag INVALID_REPORTER_TYPE_ARG, got {error_tag}.")
     else:
         pytest.fail("REGISTER_006 - Exception does not have a 'tag_code' attribute.")
+
+
+if __name__ == "__main__":
+    sys.modules.pop('typeguard')
+    pytest.main([__file__])

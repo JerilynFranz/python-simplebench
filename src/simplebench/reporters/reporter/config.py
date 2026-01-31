@@ -125,9 +125,11 @@ class ReporterConfig:
             allow_empty=False,
             allow_blank=False,
         )
+
         validate_type(
             self.metrics, MetricsSelection, 'metrics',
-            _ReporterConfigErrorTag.INVALID_SECTIONS_TYPE)
+            _ReporterConfigErrorTag.INVALID_METRICS_TYPE)
+
         validate_iterable_of_type(
             self.targets,
             Target,

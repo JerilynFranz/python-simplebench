@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 from simplebench.enums import Format, Target
-from simplebench.metrics import Metric
+from simplebench.metrics import MetricsSelection
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.reporters.reporter.config import ReporterConfig
@@ -28,7 +28,7 @@ class ReporterConfigKWArgs(KWArgs):
             *,
             name: str | NoDefaultValue = NO_DEFAULT_VALUE,
             description: str | NoDefaultValue = NO_DEFAULT_VALUE,
-            metrics: Iterable[Metric] | NoDefaultValue = NO_DEFAULT_VALUE,
+            metrics: MetricsSelection | NoDefaultValue = NO_DEFAULT_VALUE,
             targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
             default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
             subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
