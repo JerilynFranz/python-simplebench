@@ -16,17 +16,15 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric, metric_types_registry
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
-from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-from simplebench.reporters.reporter.prioritized import Prioritized
-from simplebench.reporters.reporter.protocols import ReporterProtocol
+from simplebench.reporters.reporter import Prioritized, ReporterProtocol, _ReporterErrorTag
 from simplebench.type_proxies import is_case, is_choice, is_session
 from simplebench.utils import sanitize_filename
 from simplebench.validators import validate_string, validate_type
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.session import Session
     from simplebench.reporters.choice import Choice
+    from simplebench.session import Session
 
 
 class _ReporterOrchestrationMixin:

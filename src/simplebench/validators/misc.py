@@ -4,8 +4,8 @@ These functions raise appropriate exceptions with error tags from exceptions.py
 and return the validated and/or normalized value.
 """
 
-from collections.abc import Sequence
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Any, TypeVar, overload
 
@@ -684,14 +684,69 @@ def validate_filename(filename: Any) -> str:
         )
     return filename
 
-
 # Validate directory path element regex: alphanumeric characters, dashes, and underscores only,
 # at least one character long, cannot start or end with an underscore or dash.
 #
 _DIRPATH_ELEMENT_RE = re.compile(r'^[A-Za-z0-9](?:[-_A-Za-z0-9]*[A-Za-z0-9])?$')
 
 
-def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
+def validate_dirname(dirname: Any, *, allow_empty: bool = False) -> str:
+    """Validate a directory name for use in the filesystem.
+
+    This is a single directory name (not a full path).
+
+        (validation primitive - does not depend on other validators)
+
+    It validates that:
+        - The directory name is a string.
+        - The directory name is made of alphanumeric characters,
+          underscores, or dashes, and is at least one character long.
+        - The directory name does not start or end with an underscore or dash.
+        - If allow_empty is False, that the directory name is not an empty string. If
+          allow_empty is True, an empty string is considered to be a valid dirname (default is
+        - The total directory name length does not exceed 255 characters.
+
+    :param dirname: The directory name to validate.
+    :type dirname: str
+    :param allow_empty: Whether to allow an empty directory name. Defaults to False.
+    :type allow_empty: bool
+    :return: The validated directory name.
+    :rtype: str
+    :raises SimpleBenchTypeError: If the directory name is not a string.
+    :raises SimpleBenchValueError: If the directory name is invalid.
+    """
+    if not isinstance(dirname, str):
+        raise SimpleBenchTypeError(
+            f'Invalid directory name type: {type(dirname)}. Must be a str.',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_INVALID_DIRNAME_ARG_TYPE,
+        )
+
+    if dirname == '':
+        if allow_empty:
+            return ''
+
+        raise SimpleBenchValueError(
+            'Directory name cannot be an empty string.',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_EMPTY_NOT_ALLOWED)
+
+    if not re.match(_DIRPATH_ELEMENT_RE, dirname):
+        raise SimpleBenchValueError(
+            'Dirname must consist of '
+            'only alphanumeric (A-Z, a-z, 0-9), underscore (_), or dash (-) characters, '
+            'cannot start or end with an underscore or dash, and must be '
+            'at least one character long ',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_INVALID_CHARACTERS,
+        )
+
+    if len(dirname) > 255:
+        raise SimpleBenchValueError(
+            f"Directory name cannot be longer than 255 characters (passed directory name was '{dirname}')",
+            tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_TOO_LONG,
+        )
+    return dirname
+
+
+def validate_dirpath(dirpath: Any, allow_empty: bool = False, field_name: str = 'dirpath') -> str:
     """Validate a directory path for use in the filesystem.
 
     It validates that:
@@ -710,6 +765,7 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
 
     :param str dirpath: The directory path to validate.
     :param bool allow_empty: Whether to allow an empty directory path. Defaults to False.
+    :param str field_name: The name of the field being validated (for error messages). Defaults to 'dirpath'.
     :return: The validated directory path.
     :rtype: str
     :raises SimpleBenchTypeError: If the directory path is not a string.
@@ -718,20 +774,21 @@ def validate_dirpath(dirpath: Any, allow_empty: bool = False) -> str:
     if not isinstance(allow_empty, bool):
         raise SimpleBenchTypeError(
             f'Invalid allow_empty type: {type(allow_empty)}. Must be a bool.',
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE,
-        )
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_ALLOW_EMPTY_ARG_TYPE)
+    if not isinstance(field_name, str):
+        raise SimpleBenchTypeError(
+            f'Invalid field_name type: {type(field_name)}. Must be a str.',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_FIELD_NAME_ARG_TYPE)
 
     if not isinstance(dirpath, str):
         raise SimpleBenchTypeError(
-            f'Invalid dirpath type: {type(dirpath)}. Must be a str.',
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE,
-        )
+            f'Invalid {field_name} type: {type(dirpath)}. Must be a str.',
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE)
 
     if not allow_empty and dirpath == '':
         raise SimpleBenchValueError(
             'Directory path cannot be an empty string.',
-            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE,
-        )
+            tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE)
 
     if not dirpath and allow_empty:
         return ''

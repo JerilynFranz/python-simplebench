@@ -1,15 +1,13 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
-from __future__ import annotations
-
 from collections.abc import Iterable
 
-from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 from simplebench.enums import Format, Target
 from simplebench.metrics import MetricsSelection
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.config import ReporterConfig
+from simplebench.reporters.choice import ChoiceConf
+from simplebench.reporters.choices import ChoicesConf
+from simplebench.reporters.reporter import ReporterConfig
 
 
 class ReporterConfigKWArgs(KWArgs):
@@ -23,7 +21,7 @@ class ReporterConfigKWArgs(KWArgs):
     to the ReporterConfig class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
     """
-    def __init__(  # pylint: disable=unused-argument
+    def __init__(
             self,
             *,
             name: str | NoDefaultValue = NO_DEFAULT_VALUE,
@@ -69,3 +67,5 @@ class ReporterConfigKWArgs(KWArgs):
         :type choices: Iterable[ChoiceConf] | Choices
         """
         super().__init__(call=ReporterConfig.__init__, kwargs=locals())
+
+

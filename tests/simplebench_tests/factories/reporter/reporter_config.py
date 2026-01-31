@@ -14,7 +14,7 @@ from simplebench.reporters.choices.choices_conf import ChoicesConf
 from simplebench.simplebench_types import ElementCollection
 
 if TYPE_CHECKING:
-    from simplebench.reporters.reporter.config import ReporterConfig
+    from simplebench.reporters.reporter._config import ReporterConfig
 
 
 def reporter_config_kwargs_factory(  # pylint: disable=unused-argument
@@ -113,7 +113,7 @@ def reporter_config_factory(
     :return: A ReporterConfig instance.
     :rtype: ReporterConfig
     """
-    from simplebench.reporters.reporter.config import ReporterConfig
+    from simplebench.reporters.reporter._config import ReporterConfig
 
     # Directly use the kwargs factory to get the final set of arguments
     kwargs = reporter_config_kwargs_factory(

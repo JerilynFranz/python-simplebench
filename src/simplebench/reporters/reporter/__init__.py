@@ -1,8 +1,18 @@
-"""Reporter base package in the reporters package."""
+"""Reporter base package in the reporters package.
 
-from simplebench.reporters.reporter.config import ReporterConfig
-from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-from simplebench.options.reporter.options import ReporterOptions
-from simplebench.reporters.reporter.reporter import Reporter
+Public classes:
+- :class:`Prioritized`
+- :class:`Reporter`
+- :class:`ReporterConfig`
+- :class:`ReporterProtocol`
 
-__all__ = ['Reporter', 'ReporterConfig', '_ReporterErrorTag', 'ReporterOptions']
+"""
+# ruff: noqa F401
+
+from ._config import ReporterConfig, _ReporterConfigErrorTag
+from ._error_tags import _ReporterErrorTag
+from ._prioritized import Prioritized, _PrioritizedErrorTag
+from .protocols import ReporterProtocol
+from .reporter import Reporter
+
+__all__ = ['Reporter', 'ReporterConfig', 'Prioritized', 'ReporterProtocol']

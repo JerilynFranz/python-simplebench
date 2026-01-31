@@ -12,7 +12,7 @@ from simplebench.metadata import Metadata
 from simplebench.metrics import MetricsCollection, MetricsSelection, MetricsUnspecified
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter.config import ReporterConfig
+from simplebench.reporters.reporter._config import ReporterConfig
 from simplebench.simplebench_types import is_element_collection
 from simplebench.type_proxies import is_case, is_choice, is_session
 

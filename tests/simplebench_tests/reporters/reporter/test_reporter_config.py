@@ -42,7 +42,7 @@ from simplebench.validators._error_tags import _ValidatorsErrorTag
         action=ReporterConfig,
         kwargs=reporter_config_kwargs_factory(formats=set()),
         exception=SimpleBenchValueError,
-        exception_tag=_ReporterConfigErrorTag.INVALID_FORMATS_VALUE)),
+        exception_tag=_ReporterConfigErrorTag.INVALID_FORMATS_ELEMENT_TYPE)),
     idspec('INIT_006', TestAction(
         name="Init of ReporterConfig with missing choices raises TypeError",
         action=ReporterConfig,

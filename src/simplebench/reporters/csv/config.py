@@ -16,7 +16,7 @@ from simplebench.metrics import (
 )
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.config import ReporterConfig
+from simplebench.reporters.reporter._config import ReporterConfig
 
 
 class CSVConfig(ReporterConfig):

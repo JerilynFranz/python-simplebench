@@ -8,6 +8,18 @@ from simplebench.exceptions import ErrorTag
 class _ValidatorsErrorTag(ErrorTag):
     """ErrorTags for validator-related exceptions."""
 
+    # validated_dirname() tags
+    VALIDATE_DIRNAME_INVALID_DIRNAME_ARG_TYPE = 'VALIDATE_DIRNAME_INVALID_DIRNAME_ARG_TYPE'
+    """The 'dirname' argument must be a str."""
+    VALIDATE_DIRNAME_TOO_LONG = 'VALIDATE_DIRNAME_TOO_LONG'
+    """The 'dirname' argument cannot be longer than 255 characters."""
+    VALIDATE_DIRNAME_EMPTY_NOT_ALLOWED = 'VALIDATE_DIRNAME_EMPTY_NOT_ALLOWED'
+    """The 'dirname' argument cannot be an empty string."""
+    VALIDATE_DIRNAME_INVALID_CHARACTERS = 'VALIDATE_DIRNAME_INVALID_CHARACTERS'
+    """The 'dirname' argument contains invalid characters."""
+
+
+
     # general tags
     INVALID_NAME_PARAM_TYPE = 'INVALID_NAME_PARAM_TYPE'
     """The 'name' parameter is not of type str."""
@@ -39,6 +51,8 @@ class _ValidatorsErrorTag(ErrorTag):
     """The namespaced identifier is not valid."""
 
     # validate_dirpath() tags
+    VALIDATE_DIRPATH_INVALID_FIELD_NAME_ARG_TYPE = 'VALIDATE_DIRPATH_INVALID_FIELD_NAME_ARG_TYPE'
+    """The 'field_name' argument must be a str."""
     VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE = 'VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_TYPE'
     """The 'dirpath' argument must be a str."""
     VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE = 'VALIDATE_DIRPATH_INVALID_DIRPATH_ARG_VALUE'

@@ -24,19 +24,21 @@ class _ReporterConfigErrorTag(ErrorTag):
     """The 'metrics' argument is an empty iterable when not allowed."""
 
     INVALID_TARGETS_TYPE = 'INVALID_TARGETS_TYPE'
-    """The 'targets' argument is not an iterable of Target enums."""
+    """The 'targets' argument is not an ElementCollection of Target enums."""
     INVALID_TARGETS_VALUE = 'INVALID_TARGETS_VALUE'
-    """The 'targets' argument is an empty iterable when not allowed."""
+    """The 'targets' argument is an empty ElementCollection when not allowed."""
+    INVALID_TARGETS_ELEMENT_TYPE = 'INVALID_TARGETS_ELEMENT_TYPE'
+    """An element in the 'targets' argument is not a Target enum."""
 
     INVALID_DEFAULT_TARGETS_TYPE = 'INVALID_DEFAULT_TARGETS_TYPE'
-    """The 'default_targets' argument is not an iterable of Target enums."""
-    INVALID_DEFAULT_TARGETS_VALUE = 'INVALID_DEFAULT_TARGETS_VALUE'
-    """The 'default_targets' argument is an empty iterable when not allowed."""
+    """The 'default_targets' argument is not an ElementCollection of Target enums."""
+    INVALID_DEFAULT_TARGETS_ELEMENT_TYPE = 'INVALID_DEFAULT_TARGETS_ELEMENT_TYPE'
+    """An element in the 'default_targets' argument is not a Target enum."""
 
     INVALID_FORMATS_TYPE = 'INVALID_FORMATS_TYPE'
-    """The 'formats' argument is not an iterable of Format enums."""
-    INVALID_FORMATS_VALUE = 'INVALID_FORMATS_VALUE'
-    """The 'formats' argument is an empty iterable when not allowed."""
+    """The 'formats' argument is not an ElementCollection of Format enums."""
+    INVALID_FORMATS_ELEMENT_TYPE = 'INVALID_FORMATS_ELEMENT_TYPE'
+    """An element in the 'formats' argument is not a Format enum."""
 
     INVALID_CHOICES_TYPE = 'INVALID_CHOICES_TYPE'
     """The 'choices' argument is not a ChoicesConf instance."""

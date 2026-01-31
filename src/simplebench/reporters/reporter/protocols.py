@@ -16,7 +16,7 @@ from simplebench.enums import Format, Target
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric, MetricsSelection
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
-from simplebench.reporters.reporter.config import ReporterConfig
+from simplebench.reporters.reporter._config import ReporterConfig
 
 if TYPE_CHECKING:
     from simplebench.case import Case

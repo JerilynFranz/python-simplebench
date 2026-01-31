@@ -17,6 +17,7 @@ from .identifiers import validate_namespaced_identifier
 from .misc import (
     validate_bool,
     validate_dirpath,
+    validate_dirname,
     validate_filename,
     validate_float,
     validate_float_range,
@@ -52,6 +53,7 @@ __all__ = [
     'validate_core_data_sequence',
     'validate_core_data_set',
     'validate_core_data_mapping',
+    'validate_dirname',
     'validate_dirpath',
     'validate_filename',
     'validate_float',

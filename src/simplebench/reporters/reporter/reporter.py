@@ -32,8 +32,8 @@ from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-from simplebench.reporters.reporter.config import ReporterConfig
-from simplebench.reporters.reporter.mixins import (
+from simplebench.reporters.reporter._config import ReporterConfig
+from simplebench.reporters.reporter._mixins import (
     _ReporterArgparseMixin,
     _ReporterOrchestrationMixin,
     _ReporterPrioritizationMixin,

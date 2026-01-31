@@ -6,7 +6,7 @@ import pytest
 from simplebench_tests.kwargs.kwargs import kwargs_class_matches_modeled_call
 from simplebench_tests.kwargs.reporters import ReporterConfigKWArgs as _KWARGS_CLASS
 
-from simplebench.reporters.reporter.config import ReporterConfig as _MODELED_CLASS
+from simplebench.reporters.reporter._config import ReporterConfig as _MODELED_CLASS
 
 _MODELED_CALL = _MODELED_CLASS.__init__
 

@@ -12,8 +12,8 @@ from simplebench.type_proxies import is_case, is_choice
 
 if TYPE_CHECKING:
     from simplebench.case import Case
-    from simplebench.reporters.choice.choice import Choice
-    from simplebench.reporters.reporter.protocols import ReporterProtocol
+    from simplebench.reporters.choice import Choice
+    from simplebench.reporters.reporter import ReporterProtocol
 
 
 class _ReporterPrioritizationMixin:

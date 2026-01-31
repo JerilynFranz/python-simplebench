@@ -10,7 +10,7 @@ from simplebench.metrics.metrics_selection import MetricsSelection, MetricsUnspe
 from simplebench.options import JSONOptions
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter.config import ReporterConfig
+from simplebench.reporters.reporter._config import ReporterConfig
 
 
 class JSONConfig(ReporterConfig):
