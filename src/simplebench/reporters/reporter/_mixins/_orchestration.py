@@ -15,6 +15,7 @@ from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics.metrics_selection import MetricsCollection
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter import Prioritized, ReporterProtocol, _ReporterErrorTag
 from simplebench.type_proxies import is_case, is_choice, is_session
@@ -330,10 +331,15 @@ class _ReporterOrchestrationMixin:
             session=session,
             callback=callback,
         )
+        metrics = choice.metrics
+        if not isinstance(metrics, MetricsCollection):
+            raise SimpleBenchTypeError(
+                'choice.metrics must be a MetricsCollection instance for render_by_metric',
+                tag=_ReporterErrorTag.RENDER_BY_METRIC_NOT_A_METRICS_COLLECTION)
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         log_metadata.case = case
         log_metadata.choice = choice
-        for metric in choice.metrics:
+        for metric in metrics:
             output = actual_renderer(case=case, metric=metric, options=prioritized.options)
             self.dispatch_to_targets(
                 output=output,
