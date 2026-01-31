@@ -46,7 +46,7 @@ from collections.abc import Callable, Hashable, Iterable
 from typing import Any, TypeGuard, TypeVar, Union, cast, get_args, get_origin
 
 log = logging.getLogger(__name__)
-#log.setLevel('DEBUG')
+log.setLevel('DEBUG')
 
 T = TypeVar('T')
 
@@ -62,6 +62,16 @@ class NoDefaultValue:
 NO_DEFAULT_VALUE = NoDefaultValue()
 """Sentinel value indicating no default value provided."""
 
+
+class Sentinel:
+    """A base class for sentinel values."""
+
+    def __repr__(self) -> str:
+        """Return a string representation of the sentinel."""
+        return f'<{self.__class__.__name__}>'
+
+_SENTINEL = Sentinel()
+"""A generic sentinel value instance."""
 
 class KWArgs(dict[str, Any], Hashable):
     """A base class to hold keyword arguments for calling a function or initializing a class.
@@ -102,7 +112,7 @@ class KWArgs(dict[str, Any], Hashable):
                 super().__init__(locals())
     """
 
-    def __init__(self, call: Callable[..., Any], kwargs: dict[str, Any]) -> None:
+    def __init__(self, call: Callable[..., Any], kwargs: dict[str, Any], globalns: dict[str, Any] | None = None) -> None:
         """Initializes the KWArgs instance from a dictionary of arguments.
 
         This constructor is intended to be called from a subclass's __init__
@@ -143,7 +153,7 @@ class KWArgs(dict[str, Any], Hashable):
         # matches the modeled call's signature and cache the call for
         # future reference.
         if not hasattr(cls, '_BASE_KWARGS_CALL'):
-            kwargs_class_matches_modeled_call(kwargs_class=cls, modeled_call=call)
+            kwargs_class_matches_modeled_call(kwargs_class=cls, modeled_call=call, globalns=globalns)
             cls._BASE_KWARGS_CALL = call  # type: ignore[attr-defined]
 
         # Cache the __init__ parameter names for use in __sub__ if not already cached.
@@ -272,7 +282,11 @@ class KWArgs(dict[str, Any], Hashable):
         return cls(**new_kwargs)  # type: ignore[return-value]
 
 
-def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs], modeled_call: Callable[..., Any]) -> None:
+def kwargs_class_matches_modeled_call(
+        kwargs_class: type[KWArgs], modeled_call: Callable[..., Any],
+        globalns: dict[str, Any] | None = None,
+        localns: dict[str, Any] | None = None
+        ) -> None:
     """Verify KWArgs().__init__() signature matches the modeled call signature.
 
     Helper function to compare the signatures for testing.
@@ -282,10 +296,10 @@ def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs], modeled_call: 
     the two that could lead to errors in tests or misunderstandings
     about the parameters required to call the modeled call.
 
-   It compares both the presence of parameters and their types,
-   excluding any 'Optional[...] | None' or ' | NoDefaultValue' and
-   any defaults from type annotations. This ensures that the
-   parameters in the kwargs_class are compatible with those in the modeled_call.
+    It compares both the presence of parameters and their types,
+    excluding any 'Optional[...]' | None' or ' | NoDefaultValue' and
+    any defaults from type annotations. This ensures that the
+    parameters in the kwargs_class are compatible with those in the modeled_call.
 
     :raises AssertionError: If there are any extra or missing parameters in the
                             kwargs_class compared to the modeled_call or if
@@ -295,6 +309,10 @@ def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs], modeled_call: 
         raise TypeError('kwargs_class must have an __init__ method.')
     if not callable(modeled_call):
         raise TypeError('modeled_call must be a callable.')
+
+    import types
+    from typing import get_type_hints
+
     modeled_sig = inspect.signature(modeled_call)
     kwargs_sig = inspect.signature(kwargs_class.__init__)
 
@@ -313,59 +331,53 @@ def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs], modeled_call: 
 
     assert modeled_params == kwargs_params, error
 
-    # Check that,  excluding 'Optional[...]' | None' or ' | NoDefaultValue' and
-    # any defaults from type annotations, the parameter types match
-    # between the two signatures.
-    for param_name in modeled_params:
-        modeled_param = modeled_sig.parameters[param_name]
-        kwargs_param = kwargs_sig.parameters[param_name]
-        modeled_annotation = modeled_param.annotation
-        kwargs_annotation = kwargs_param.annotation
+    # Use get_type_hints for robust type extraction
+    modeled_hints = get_type_hints(modeled_call, globalns=globalns, localns=localns)
+    kwargs_hints = get_type_hints(kwargs_class.__init__, globalns=globalns, localns=localns)
 
-        def _strip_novalue_and_none(annotation: Any) -> Any:
-            """Return the annotation with all NoDefaultValue and NoneType stripped out, flattening unions."""
-            origin = get_origin(annotation)
-            if origin is None:
-                # Not a generic type, return as is
-                if (annotation is type(None)
-                    or getattr(annotation, '__name__', None) == 'NoDefaultValue'
-                    or getattr(annotation, '__qualname__', None) == 'NoDefaultValue'
-                    or annotation is NoDefaultValue):
-                    log.debug(
-                        f'Stripping NoDefaultValue and None from annotation: {annotation}, origin: {origin}, args: []')
-                    return Any  # If the annotation is only None or NoDefaultValue, return Any
-                return annotation
+    def _strip_novalue_and_none(annotation: Any) -> Any:
+        """Return the annotation with all NoDefaultValue and NoneType stripped out, flattening unions."""
+        origin = get_origin(annotation)
+        # Accept both typing.Union and types.UnionType (from | operator)
+        if origin in (Union, types.UnionType):
             args = get_args(annotation)
-            log.debug(
-                f'Stripping NoDefaultValue and None from annotation: {annotation}, origin: {origin}, args: {args}')
-
             filtered: list[Any] = []
             for item in args:
-                if get_origin(item) is Union:
-                    # Flatten nested unions
+                item_origin = get_origin(item)
+                if item_origin in (Union, types.UnionType):
                     filtered.extend(get_args(item))
                 else:
                     filtered.append(item)
-
-            # Remove NoneType and NoDefaultValue from the flattened args
             filtered = [
-                    arg for arg in filtered
+                arg for arg in filtered
                 if arg is not type(None)
                 and getattr(arg, '__name__', None) != 'NoDefaultValue'
                 and getattr(arg, '__qualname__', None) != 'NoDefaultValue'
                 and arg is not NoDefaultValue
             ]
-
-            # Remove duplicates
             filtered = list(dict.fromkeys(filtered))
             if len(filtered) == 1:
                 return filtered[0]
-            # Rebuild the union using the | operator (Python 3.10+)
-            log.debug(f'Filtered annotations for annotation "{annotation!r}": {filtered}')
+            if not filtered:
+                return Any
             result = filtered[0]
             for arg in filtered[1:]:
                 result = result | arg
             return result
+        if (
+            annotation is type(None)
+            or getattr(annotation, '__name__', None) == 'NoDefaultValue'
+            or getattr(annotation, '__qualname__', None) == 'NoDefaultValue'
+            or annotation is NoDefaultValue
+        ):
+            return Any
+        return annotation
+
+    # Check that, excluding 'Optional[...]' | None' or ' | NoDefaultValue' and
+    # any defaults from type annotations, the parameter types match
+    for param_name in modeled_params:
+        modeled_annotation = modeled_hints.get(param_name, Any)
+        kwargs_annotation = kwargs_hints.get(param_name, Any)
 
         stripped_modeled_annotation = _strip_novalue_and_none(modeled_annotation)
         log.debug('Stripped modeled annotation for parameter "%s": %r', param_name, stripped_modeled_annotation)

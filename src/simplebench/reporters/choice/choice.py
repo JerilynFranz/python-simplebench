@@ -1,19 +1,17 @@
 """``Choice()`` for reporters."""
 
 from collections.abc import Hashable
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
 from simplebench.metrics import MetricsSelection
 from simplebench.reporters.choice._error_tags import _ChoiceErrorTag
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.protocols import ChoiceProtocol
-from simplebench.options.reporter.options import ReporterOptions
+from simplebench.reporters.reporter import Reporter
+
+from simplebench.options.reporter import ReporterOptions
 from simplebench.validators import validate_type
-
-
-if TYPE_CHECKING:
-    from simplebench.reporters.reporter.reporter import Reporter
 
 
 class Choice(Hashable, ChoiceProtocol):
@@ -103,7 +101,7 @@ class Choice(Hashable, ChoiceProtocol):
 
     __slots__ = ('_reporter', '_choice_conf')
 
-    def __init__(self, *, reporter: 'Reporter', choice_conf: ChoiceConf) -> None:
+    def __init__(self, *, reporter: Reporter, choice_conf: ChoiceConf) -> None:
         """Construct a :class:`~.Choice` instance from a
         :class:`~simplebench.reporters.reporter.Reporter` and a :class:`~.ChoiceConf` instance.
 

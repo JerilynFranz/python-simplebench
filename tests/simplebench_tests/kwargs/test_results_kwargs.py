@@ -1,4 +1,5 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
+import sys
 
 import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
@@ -22,4 +23,5 @@ def test_can_instantiate() -> None:
 
 
 if __name__ == '__main__':
+    sys.modules.pop('typeguard')
     pytest.main([__file__])

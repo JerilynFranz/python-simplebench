@@ -1,15 +1,9 @@
 """Choice KWArgs package for SimpleBench tests."""
-from __future__ import annotations
-
-from collections.abc import Iterable
-from typing import TYPE_CHECKING
-
+from simplebench.reporters.choice import Choice
 from simplebench.reporters.choices import Choices
+from simplebench.simplebench_types import ElementCollection
 
-from ..kwargs import KWArgs, NoDefaultValue
-
-if TYPE_CHECKING:
-    from simplebench.reporters.choice import Choice
+from ..kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class ChoicesKWArgs(KWArgs):
@@ -23,13 +17,13 @@ class ChoicesKWArgs(KWArgs):
     to the Choices class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
     """
-    def __init__(  # pylint: disable=unused-argument
+    def __init__(
             self,
-            choices: Iterable[Choice] | Choices | NoDefaultValue = NoDefaultValue()) -> None:
+            choices: ElementCollection[Choice] | Choices | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a ChoicesKWArgs instance. This class is used to hold keyword arguments for
         initializing a Choices instance in tests.
 
         :param choices: An iterable of Choice instances.
-        :type choices: Iterable[Choice] | Choices | NoDefaultValue
+        :type choices: ElementCollection[Choice] | Choices | NoDefaultValue
         """
-        super().__init__(call=Choices.__init__, kwargs=locals())
+        super().__init__(call=Choices.__init__, kwargs=locals(), globalns=globals())

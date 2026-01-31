@@ -1,27 +1,11 @@
 """Choices for reporters."""
 
-from __future__ import annotations
-
-from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.reporters.choices._base import _BaseChoices
 from simplebench.reporters.choices._error_tags import _ChoicesErrorTag
-
-_CHOICE_IMPORTED: bool = False
-"""Indicates whether :class:`~simplebench.reporters.choice.Choice` has been imported yet."""
-
-
-def deferred_choice_import() -> None:
-    """Deferred import of :class:`~simplebench.reporters.choice.Choice`
-    to avoid circular imports during initialization."""
-    global Choice, _CHOICE_IMPORTED  # pylint: disable=global-statement
-    if _CHOICE_IMPORTED:
-        return
-    from simplebench.reporters.choice.choice import Choice  # pylint: disable=import-outside-toplevel
-
-    _CHOICE_IMPORTED = True
+from simplebench.simplebench_types import ElementCollection
 
 
 if TYPE_CHECKING:
@@ -38,20 +22,21 @@ class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
     a collection of :class:`~simplebench.reporters.choice.Choice` instances.
     """
 
-    def __init__(self, choices: Iterable[Choice] | Choices | None = None) -> None:
+    def __init__(self, choices: 'ElementCollection[Choice] | Choices | None' = None) -> None:
         """Construct a :class:`~.Choices` container.
 
-        :param choices: An ``Iterable`` of :class:`~simplebench.reporters.choice.Choice`
+        :param choices: An ``ElementCollection`` of :class:`~simplebench.reporters.choice.Choice`
                         instances or another :class:`~.Choices` instance to
                         initialize the container with. If ``None``, an empty container
                         is created.
-        :type choices: Iterable[:class:`~simplebench.reporters.choice.Choice`] | \
+        :type choices: ElementCollection[:class:`~simplebench.reporters.choice.Choice`] | \
             :class:`~.Choices` | None
         """
-        deferred_choice_import()
+        from simplebench.reporters.choice import Choice
+
         super().__init__(item_type=Choice, error_tag_enum=_ChoicesErrorTag, choices=choices)
 
-    def add(self, choice: Choice) -> None:
+    def add(self, choice: 'Choice') -> None:
         """Add a :class:`~simplebench.reporters.choice.Choice` instance to the container.
 
         The ``choice.name`` attribute is used as the key in the container and
@@ -86,7 +71,7 @@ class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
         """
         return set(self._flags_index.keys())
 
-    def get_choice_for_arg(self, arg: str) -> Choice | None:
+    def get_choice_for_arg(self, arg: str) -> 'Choice | None':
         """Return the :class:`~simplebench.reporters.choice.Choice` instance associated with
         the given ``Namespace`` arg name.
 
@@ -103,7 +88,7 @@ class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
         return self._args_index.get(arg, None)
 
     def extend(  # type: ignore[reportIncompatibleMethodOverride, override]
-        self, choices: Iterable[Choice] | Choices
+        self, choices: 'ElementCollection[Choice] | Choices'
     ) -> None:
         """Add :class:`~simplebench.reporters.choice.Choice` instances to the container.
         It does so by adding each :class:`~simplebench.reporters.choice.Choice` in the
@@ -152,7 +137,7 @@ class Choices(_BaseChoices['Choice', _ChoicesErrorTag]):
     # custom __setitem__ method to make Choices into a type restricted dict
     # We override __setitem__ to enforce that only Choice instances
     # can be added to the container, and to maintain internal indexes.
-    def __setitem__(self, key: str, value: Choice) -> None:
+    def __setitem__(self, key: str, value: 'Choice') -> None:
         """Set a value in the :class:`~.Choices` container.
 
         This restricts setting values to only :class:`~simplebench.reporters.choice.Choice`

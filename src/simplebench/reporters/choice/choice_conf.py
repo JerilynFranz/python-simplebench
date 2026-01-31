@@ -1,5 +1,5 @@
 """``ChoiceConf()`` for reporters."""
-from collections.abc import Hashable, Iterable, Sequence
+from collections.abc import Hashable, Sequence
 from typing import Any
 
 from typechecked import Immutable
@@ -10,6 +10,7 @@ from simplebench.metrics.metrics_selection import MetricsSelection
 from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.options.reporter.options import ReporterOptions
+from simplebench.simplebench_types import ElementCollection, Extras
 
 from . import _validate
 
@@ -112,14 +113,14 @@ class ChoiceConf(Hashable, ChoiceProtocol, Immutable):
         description: str,
         metrics: MetricsSelection,
         output_format: Format,
-        targets: Iterable[Target],
-        default_targets: Iterable[Target] | None = None,
+        targets: ElementCollection[Target],
+        default_targets: ElementCollection[Target] | None = None,
         subdir: str | None = None,
         file_suffix: str | None = None,
         file_unique: bool | None = None,
         file_append: bool | None = None,
         options: ReporterOptions | None = None,
-        extra: Hashable | None = None,
+        extra: Extras | None = None,
     ) -> None:
         """Construct a :class:`~.ChoiceConf` instance.
 

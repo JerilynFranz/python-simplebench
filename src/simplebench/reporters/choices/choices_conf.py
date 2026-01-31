@@ -14,15 +14,10 @@ a collection of :class:`~simplebench.reporters.choice.ChoiceConf` instances.
 It has no methods of its own; all functionality is inherited from
 :class:`~simplebench.reporters.choices._base._BaseChoices`.
 """
-
-# pylint: disable=useless-parent-delegation
-from __future__ import annotations
-
-from collections.abc import Iterable
-
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices._base import _BaseChoices
 from simplebench.reporters.choices._error_tags import _ChoicesErrorTag
+from simplebench.simplebench_types import ElementCollection
 
 
 class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):
@@ -37,15 +32,16 @@ class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):
     a collection of :class:`~simplebench.reporters.choice.ChoiceConf` instances.
     """
 
-    def __init__(self, choices: Iterable[ChoiceConf] | ChoicesConf | None = None) -> None:
+    def __init__(self,
+                 choices: 'ElementCollection[ChoiceConf] | ChoicesConf | None' = None) -> None:
         """Construct a :class:`~.Choices` container.
 
-        :param choices: An ``Iterable`` of
+        :param choices: An ``ElementCollection`` of
                         :class:`~simplebench.reporters.choice.ChoiceConf` instances
                         or another :class:`~.ChoicesConf` instance to
                         initialize the container with. If ``None``, an empty container
                         is created.
-        :type choices: Iterable[:class:`~simplebench.reporters.choice.ChoiceConf`] | \
+        :type choices: ElementCollection[:class:`~simplebench.reporters.choice.ChoiceConf`] | \
             :class:`~.ChoicesConf` | None
         """
         super().__init__(item_type=ChoiceConf, error_tag_enum=_ChoicesErrorTag, choices=choices)
@@ -68,7 +64,7 @@ class ChoicesConf(_BaseChoices[ChoiceConf, _ChoicesErrorTag]):
         super().add(choice)
 
     def extend(  # type: ignore[reportIncompatibleMethodOverride, override]
-        self, choices: Iterable[ChoiceConf] | ChoicesConf
+        self, choices: 'ElementCollection[ChoiceConf] | ChoicesConf'
     ) -> None:
         """Add :class:`~simplebench.reporters.choice.ChoiceConf` instances to the container.
 

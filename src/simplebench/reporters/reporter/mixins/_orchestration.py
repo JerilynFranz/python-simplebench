@@ -4,9 +4,6 @@ It provides methods to orchestrate the rendering of reports by case or by metric
 handling the dispatching of outputs to various targets such as filesystem, console,
 or callback functions.
 """
-
-from __future__ import annotations
-
 from argparse import Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -18,7 +15,6 @@ from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric, metric_types_registry
-from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.prioritized import Prioritized
@@ -30,6 +26,7 @@ from simplebench.validators import validate_string, validate_type
 if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.session import Session
+    from simplebench.reporters.choice import Choice
 
 
 class _ReporterOrchestrationMixin:
@@ -54,10 +51,10 @@ class _ReporterOrchestrationMixin:
         renderer: ReportRenderer | None,
         log_metadata: Metadata,
         args: Namespace,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
+        session: 'Session | None' = None,
         callback: ReporterCallback | None = None,
     ) -> None:
         """Validate common arguments for render_by_case and render_by_metric methods.
@@ -145,10 +142,10 @@ class _ReporterOrchestrationMixin:
         renderer: ReportRenderer | None = None,
         log_metadata: Metadata,
         args: Namespace,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
+        session: 'Session | None' = None,
         callback: ReporterCallback | None = None,
     ) -> None:
         """Render the report for an entire case at once across all applicable metrics.
@@ -252,10 +249,10 @@ class _ReporterOrchestrationMixin:
         renderer: ReportRenderer | None = None,
         log_metadata: Metadata,
         args: Namespace,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
+        session: 'Session | None' = None,
         callback: ReporterCallback | None = None,
     ) -> None:
         """Render a report for each metric and dispatch to targets.
@@ -360,11 +357,11 @@ class _ReporterOrchestrationMixin:
         log_metadata: Metadata,
         filename_base: str,
         args: Namespace,
-        choice: Choice,
-        case: Case,
+        choice: 'Choice',
+        case: 'Case',
         metric: Metric,
         path: Path | None = None,
-        session: Session | None = None,
+        session: 'Session | None' = None,
         callback: ReporterCallback | None = None,
     ) -> None:
         """Deliver the rendered output to the specified targets.

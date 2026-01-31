@@ -4,7 +4,7 @@ import itertools
 from collections.abc import Callable, Mapping
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import simplebench.defaults as defaults
 import simplebench.vcs as vcs
@@ -22,7 +22,6 @@ from simplebench.options.reporter.options import ReporterOptions
 from simplebench.report.versions import v1 as reports
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.validators import validate_reporter_callback
-from simplebench.session import Session
 from simplebench.simplebench_types import ElementCollection, KWArgsVariations, VariationCols, VariationMarks
 from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_bool
@@ -32,6 +31,9 @@ from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 from .results import Results
 from .state import CaseState
+
+if TYPE_CHECKING:
+    from simplebench.session import Session
 
 
 def generate_benchmark_id(obj: object | None, action: Callable[..., Any]) -> str:
@@ -795,7 +797,7 @@ class Case:
         """
         return self._node
 
-    def run(self, session: Session | None = None) -> None:
+    def run(self, session: 'Session | None' = None) -> None:
         """Run the benchmark tests.
 
         This method will execute the benchmark for each combination of
@@ -864,7 +866,7 @@ class Case:
         self._results = tuple(pending_results)
         self._state = CaseState.COMPLETED
 
-    def _set_timestamp(self, session: Session | None) -> None:
+    def _set_timestamp(self, session: 'Session | None') -> None:
         """Set the timestamp for the benchmark case.
 
         This method sets the timestamp for the benchmark case to the current time.

@@ -1,5 +1,7 @@
 """simplebench.reporters.choice.choice_conf.ChoiceConf KWArgs package for SimpleBench tests."""
-import autopypath  # noqa: F401  # isort: skip  # pylint: disable=unused-import
+import sys
+
+import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
 from simplebench_tests.kwargs.kwargs import kwargs_class_matches_modeled_call
 from simplebench_tests.kwargs.reporters.choice_conf_kwargs import ChoiceConfKWArgs as _KWARGS_CLASS
@@ -21,4 +23,5 @@ def test_can_instantiate() -> None:
 
 
 if __name__ == "__main__":
+    sys.modules.pop("typeguard")
     pytest.main([__file__])

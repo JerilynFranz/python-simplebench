@@ -1,24 +1,27 @@
 """Mixin for argparse-related functionality for the Reporter class."""
 
-from __future__ import annotations
 
 from collections.abc import Iterable
 from argparse import ArgumentParser, Namespace
+from typing import TYPE_CHECKING
 
 from simplebench.enums import FlagType, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.utils import collect_arg_list
 from simplebench.validators import validate_iterable_of_type, validate_type
 
 
+if TYPE_CHECKING:
+    from simplebench.reporters.choice import Choice
+
+
 class _ReporterArgparseMixin:
     """Mixin for argparse-related functionality for the Reporter class."""
 
     def select_targets_from_args(
-        self: ReporterProtocol, *, args: Namespace, choice: Choice, default_targets: Iterable[Target]
+        self: ReporterProtocol, *, args: Namespace, choice: 'Choice', default_targets: Iterable[Target]
     ) -> set[Target]:
         """Select the output targets based on command-line arguments and choice configuration.
 
@@ -42,6 +45,8 @@ class _ReporterArgparseMixin:
         :raises SimpleBenchTypeError: If args is not an argparse.Namespace instance.
         :raises SimpleBenchValueError: If an unsupported target is specified in the arguments.
         """
+        from simplebench.reporters.choice import Choice
+
         args = validate_type(args, Namespace, 'args', _ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_ARGS_ARG)
         choice = validate_type(choice, Choice, 'choice', _ReporterErrorTag.SELECT_TARGETS_FROM_ARGS_INVALID_CHOICE_ARG)
         default_targets = validate_iterable_of_type(
@@ -118,7 +123,7 @@ class _ReporterArgparseMixin:
                         tag=_ReporterErrorTag.ADD_FLAGS_UNSUPPORTED_FLAG_TYPE,
                     )
 
-    def add_list_of_targets_flags_to_argparse(self: ReporterProtocol, parser: ArgumentParser, choice: Choice) -> None:
+    def add_list_of_targets_flags_to_argparse(self: ReporterProtocol, parser: ArgumentParser, choice: 'Choice') -> None:
         """Add a Choice's command-line flags to an ArgumentParser.
 
         This is a default implementation of adding flags that accept multiple
@@ -148,6 +153,8 @@ class _ReporterArgparseMixin:
         :type choice: Choice
         :raises SimpleBenchTypeError: If the parser arg is not an ArgumentParser instance.
         """
+        from simplebench.reporters.choice import Choice
+
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 'parser arg must be an argparse.ArgumentParser instance',
@@ -168,7 +175,7 @@ class _ReporterArgparseMixin:
             # when no targets are explicitly specified.
             parser.add_argument(flag, action='append', nargs='*', choices=targets, help=choice.description)
 
-    def add_boolean_flags_to_argparse(self: ReporterProtocol, parser: ArgumentParser, choice: Choice) -> None:
+    def add_boolean_flags_to_argparse(self: ReporterProtocol, parser: ArgumentParser, choice: 'Choice') -> None:
         """Adds a Choice's command-line flags to an ArgumentParser.
 
         This is a default implementation that adds boolean flags for each Choice's flags.
@@ -180,6 +187,8 @@ class _ReporterArgparseMixin:
         :param choice: The Choice instance for which to add the flags.
         :type choice: Choice
         """
+        from simplebench.reporters.choice import Choice
+
         if not isinstance(parser, ArgumentParser):
             raise SimpleBenchTypeError(
                 'parser arg must be an argparse.ArgumentParser instance',

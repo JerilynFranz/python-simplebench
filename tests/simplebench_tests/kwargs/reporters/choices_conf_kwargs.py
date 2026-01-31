@@ -1,11 +1,9 @@
 """Choice KWArgs package for SimpleBench tests."""
-
-from collections.abc import Iterable
-
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
+from simplebench.simplebench_types import ElementCollection
 
-from ..kwargs import KWArgs, NoDefaultValue
+from ..kwargs import KWArgs, NoDefaultValue, NO_DEFAULT_VALUE
 
 
 class ChoicesConfKWArgs(KWArgs):
@@ -19,9 +17,9 @@ class ChoicesConfKWArgs(KWArgs):
     to the ChoicesConf class during initialization with linting tools guiding the types of each
     parameter without constraining the presence of or strictly enforcing the types of any parameter.
     """
-    def __init__(  # pylint: disable=unused-argument
+    def __init__(
             self,
-            choices: Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue = NoDefaultValue()) -> None:
+            choices: ElementCollection[ChoiceConf] | ChoicesConf | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a ChoicesKWArgs instance. This class is used to hold keyword arguments for
         initializing a Choices instance in tests.
 

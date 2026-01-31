@@ -1,7 +1,6 @@
 """simplebench.reporters.choice.Choice KWArgs package for SimpleBench tests."""
 
-from collections.abc import Iterable, Sequence
-from typing import Any
+from collections.abc import Sequence
 
 from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
@@ -9,6 +8,7 @@ from simplebench.enums import FlagType, Format, Target
 from simplebench.metrics.metrics_selection import MetricsSelection
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.options.reporter.options import ReporterOptions
+from simplebench.simplebench_types import ElementCollection, Extras
 
 
 class ChoiceConfKWArgs(KWArgs):
@@ -30,14 +30,14 @@ class ChoiceConfKWArgs(KWArgs):
             description: str | NoDefaultValue = NO_DEFAULT_VALUE,
             metrics: MetricsSelection | NoDefaultValue = NO_DEFAULT_VALUE,
             output_format: Format | NoDefaultValue = NO_DEFAULT_VALUE,
-            targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
-            default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+            targets: ElementCollection[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+            default_targets: ElementCollection[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
             subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
             file_suffix: str | NoDefaultValue = NO_DEFAULT_VALUE,
             file_unique: bool | NoDefaultValue = NO_DEFAULT_VALUE,
             file_append: bool | NoDefaultValue = NO_DEFAULT_VALUE,
             options: ReporterOptions | NoDefaultValue = NO_DEFAULT_VALUE,
-            extra: Any | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
+            extra: Extras | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a ChoiceConfKWArgs instance. This class is used to hold keyword arguments for
         initializing a ChoiceConf instance in tests.
 

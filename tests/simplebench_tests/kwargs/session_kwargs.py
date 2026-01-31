@@ -7,7 +7,7 @@ from pathlib import Path
 from rich.console import Console
 from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
-from simplebench.benchmark_runner import SimpleRunner
+from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
 from simplebench.enums import Verbosity
 from simplebench.session import Session
@@ -26,7 +26,7 @@ class SessionKWArgs(KWArgs):
         *,
         cases: Sequence[Case] | NoDefaultValue = NO_DEFAULT_VALUE,
         verbosity: Verbosity | NoDefaultValue = NO_DEFAULT_VALUE,
-        default_runners: Sequence[type[SimpleRunner]] | NoDefaultValue = NO_DEFAULT_VALUE,
+        default_runners: Sequence[type[BenchmarkRunner]] | NoDefaultValue = NO_DEFAULT_VALUE,
         args_parser: ArgumentParser | NoDefaultValue = NO_DEFAULT_VALUE,
         show_progress: bool | NoDefaultValue = NO_DEFAULT_VALUE,
         output_path: Path | NoDefaultValue = NO_DEFAULT_VALUE,

@@ -11,7 +11,8 @@ from rich.progress import Progress
 
 from simplebench._log import _log
 from simplebench import defaults
-from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
+from simplebench.benchmark_runner import BenchmarkRunner
+from simplebench.case import Case
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.display.rich_progress_tasks import RichProgressTasks
 from simplebench.doc_utils import format_docstring
@@ -30,8 +31,6 @@ from .validators import validate_timer
 
 
 if TYPE_CHECKING:
-    from simplebench.benchmark_runner.simplerunner import SimpleRunner
-    from simplebench.case import Case
     from simplebench.reporters.reporter import Reporter
 
 
@@ -49,9 +48,9 @@ class Session:
     def __init__(
         self,
         *,
-        cases: Sequence['Case'] | None = None,
+        cases: Sequence[Case] | None = None,
         verbosity: Verbosity = Verbosity.NORMAL,
-        default_runners: Sequence[type['SimpleRunner']] | None = None,
+        default_runners: Sequence[type[BenchmarkRunner]] | None = None,
         args_parser: ArgumentParser | None = None,
         show_progress: bool = False,
         output_path: Path | None = None,
