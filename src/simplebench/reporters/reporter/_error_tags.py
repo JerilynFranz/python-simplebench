@@ -499,3 +499,9 @@ class _ReporterErrorTag(ErrorTag):
     """Something other than a rich.Text or rich.Table instance was passed to the
     :meth:`~simplebench.reporters.reporter.reporter.Reporter.rich_text_to_plain_text` method as the ``rich_text``
     argument"""
+
+    # render_by_metric()
+    RENDER_BY_METRIC_NOT_A_METRICS_COLLECTION = 'RENDER_BY_METRIC_NOT_A_METRICS_COLLECTION'
+    """The ``choice.metrics`` argument passed to the
+    :py:meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.render_by_metric` method
+    is not a MetricsCollection instance"""
