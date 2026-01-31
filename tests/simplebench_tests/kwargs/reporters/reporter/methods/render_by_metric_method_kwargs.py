@@ -11,7 +11,7 @@ from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
 
-from ....kwargs import KWArgs, NoDefaultValue
+from ....kwargs import KWArgs, NoDefaultValue, NO_DEFAULT_VALUE
 
 
 class RenderByMetricMethodKWArgs(KWArgs):
@@ -23,17 +23,17 @@ class RenderByMetricMethodKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            renderer: ReportRenderer | NoDefaultValue = NoDefaultValue(),
-            args: Namespace | NoDefaultValue = NoDefaultValue(),
-            log_metadata: Metadata | NoDefaultValue = NoDefaultValue(),
-            case: Case | NoDefaultValue = NoDefaultValue(),
-            choice: Choice | NoDefaultValue = NoDefaultValue(),
-            path: Path | NoDefaultValue = NoDefaultValue(),
-            session: Session | NoDefaultValue = NoDefaultValue(),
-            callback: ReporterCallback | NoDefaultValue = NoDefaultValue()) -> None:
+            renderer: ReportRenderer | NoDefaultValue = NO_DEFAULT_VALUE,
+            args: Namespace | NoDefaultValue = NO_DEFAULT_VALUE,
+            log_metadata: Metadata | NoDefaultValue = NO_DEFAULT_VALUE,
+            case: Case | NoDefaultValue = NO_DEFAULT_VALUE,
+            choice: Choice | NoDefaultValue = NO_DEFAULT_VALUE,
+            path: Path | NoDefaultValue = NO_DEFAULT_VALUE,
+            session: Session | NoDefaultValue = NO_DEFAULT_VALUE,
+            callback: ReporterCallback | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a RenderByMetricMethodKWArgs instance.
 
         This class is used to hold keyword arguments for calling the Reporter().render_by_section()
         instance method in tests.
         """
-        super().__init__(call=Reporter.render_by_section, kwargs=locals())
+        super().__init__(call=Reporter.render_by_metric, kwargs=locals())

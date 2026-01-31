@@ -5,9 +5,12 @@ from typing import Any, ClassVar
 
 import pytest
 
+from rich.table import Table
+from rich.text import Text
+
 from simplebench.case import Case
 from simplebench.metadata import Metadata
-from simplebench.metrics import metric_types_registry
+from simplebench.metrics import Metric
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
@@ -20,7 +23,7 @@ from simplebench.reporters.reporter_manager.decorators import (
 )
 from simplebench.session import Session
 
-from simplebench_tests.factories import reporter_config_factory, reporter_config_kwargs_factory
+from simplebench_tests import factories
 
 
 class MockReporterOptions(ReporterOptions):
@@ -29,13 +32,13 @@ class MockReporterOptions(ReporterOptions):
 
 class MockReporter(Reporter):
     """A mock reporter subclass for testing purposes."""
-    _OPTIONS_TYPE: ClassVar[type[MockReporterOptions]] = MockReporterOptions  # pylint: disable=line-too-long  # type: ignore[reportInvalidVariableOverride]  # noqa: E501
+    _OPTIONS_TYPE: ClassVar[type[MockReporterOptions]] = MockReporterOptions  # type: ignore[reportIncompatibleVariableOverride]
     """The ReporterOptions subclass type for the reporter: `MockReporterOptions`"""
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
     """Keyword arguments for constructing a MockReporterOptions hardcoded default instance: `{}`"""
 
     def __init__(self, name: str = 'mock') -> None:
-        config = reporter_config_factory(**reporter_config_kwargs_factory(name=name))
+        config = factories.reporter_config_factory(**factories.reporter_config_kwargs_factory(name=name))
         super().__init__(config)
 
     def run_report(self,
@@ -66,7 +69,7 @@ class MockReporter(Reporter):
         :param callback: The reporter callback.
         :type callback: ReporterCallback | None
         """
-        self.render_by_section(  # pragma: no cover
+        self.render_by_metric(  # pragma: no cover
             renderer=self.render,
             log_metadata=log_metadata,
             args=args,
@@ -76,7 +79,7 @@ class MockReporter(Reporter):
             session=session,
             callback=callback)
 
-    def render(self, *, case: Case, section: metric_types_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+    def render(self, *, case: 'Case', metric: 'Metric', options: 'ReporterOptions') -> str | bytes | Text | Table:
         """A mock render method.
 
         :param case: The benchmark case.
@@ -132,7 +135,7 @@ def test_register_reporter() -> None:
             :param callback: The reporter callback.
             :type callback: ReporterCallback | None
             """
-            self.render_by_section(  # pragma: no cover
+            self.render_by_metric(  # pragma: no cover
                 renderer=self.render,
                 log_metadata=log_metadata,
                 args=args,
@@ -142,7 +145,7 @@ def test_register_reporter() -> None:
                 session=session,
                 callback=callback)
 
-        def render(self, *, case: Case, section: metric_types_registry, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+        def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
             """A mock render method.
 
             :param case: The benchmark case.
@@ -168,18 +171,18 @@ def test_register_reporter() -> None:
         "REGISTER_003 - Registered reporters should have been cleared (they were not).")
 
 
-def test_register_reporter_invalid_type():
+def test_register_reporter_invalid_type() -> None:
     """Test that registering an invalid reporter type raises an error."""
     with pytest.raises(Exception) as exc_info:
 
         @register_reporter  # type: ignore
-        class InvalidReporter:  # pylint: disable=unused-variable
+        class InvalidReporter:
             """An invalid reporter that does not inherit from Reporter."""
 
     assert exc_info.type.__name__ == "SimpleBenchTypeError", (
         f"REGISTER_004 - Expected SimpleBenchTypeError, got {exc_info.type.__name__}.")
     if hasattr(exc_info.value, 'tag_code'):
-        error_tag = exc_info.value.tag_code
+        error_tag = exc_info.value.tag_code  # type: ignore[attr-defined]
         assert error_tag == _RegisterReporterErrorTag.INVALID_REPORTER_TYPE_ARG, (
             f"REGISTER_005 - Expected tag INVALID_REPORTER_TYPE_ARG, got {error_tag}.")
     else:

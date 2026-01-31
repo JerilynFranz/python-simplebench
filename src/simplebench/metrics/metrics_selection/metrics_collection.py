@@ -1,6 +1,6 @@
 """Collection of metrics selected from the registered metrics."""
 
-from collections.abc import Iterator, Set
+from collections.abc import Hashable, Iterator, Set
 from typing import cast
 
 from typechecked import Immutable
@@ -18,7 +18,7 @@ from .metrics_selection_type import MetricsSelectionType
 __all__ = []
 
 
-class MetricsCollection(MetricsSelection, Set[Metric], Immutable):
+class MetricsCollection(MetricsSelection, Set[Metric], Immutable, Hashable):
     """Represents a resolved, immutable collection of metrics selected from the registered metrics
 
     This class is used to represent a resolved set of metrics that have been
@@ -106,19 +106,36 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable):
                 raise SimpleBenchTypeError(
                     'Some metrics are not of type Metric', tag=_MetricSelectionErrorTag.METRICS_NOT_METRIC
                 )
-            if metric not in metrics_registry:
+            if metric.label not in metrics_registry:
                 raise SimpleBenchValueError(
-                    'metrics must be registered with the metrics registry', tag=_MetricSelectionErrorTag.NOT_REGISTERED
+                    f'metrics must be registered with the metrics registry: Not found {metric!r}',
+                    tag=_MetricSelectionErrorTag.NOT_REGISTERED
                 )
         return Metrics(metrics_set)
 
     @property
     def metrics(self) -> Metrics:
-        """Returns a :class:`Metrics` instance of the metrics selected from the given universe."""
-        return self._metrics
+        """Returns a :class:`Metrics` instance of the metrics selected from the given universe.
+
+        This is a copy of the internal metrics to ensure immutability.
+
+        :return: A Metrics instance containing the selected metrics.
+        :rtype: Metrics
+        """
+        return Metrics(self._metrics)
 
     def __contains__(self, item: object) -> bool:
-        """Check if a metric is in the collection."""
+        """Check if a metric is in the collection.
+
+        It can be checked by Metric instance or by metric label.
+
+        :param item: The metric to check for.
+        :type item: Metric | str
+        :return: True if the metric is in the collection, False otherwise.
+        :rtype: bool
+        """
+        if isinstance(item, Metric):
+            return item.label in self._metrics
         return item in self._metrics
 
     def __iter__(self) -> Iterator[Metric]:
@@ -126,74 +143,155 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable):
         return iter(self._metrics.values())
 
     def __len__(self) -> int:
-        """Return the number of metrics in the collection."""
+        """Return the number of metrics in the collection.
+
+        :return: The number of metrics.
+        :rtype: int
+        """
         return len(self._metrics)
 
     @property
-    def metrics_keys(self) -> ElementCollection[str]:
-        """Return the names of the metrics in the collection."""
-        return self._metrics.keys()
+    def metrics_keys(self) -> tuple[str, ...]:
+        """Return the names of the metrics in the collection.
+
+        :return: A tuple of metric names.
+        :rtype: tuple[str, ...]
+        """
+        return tuple(self._metrics.keys())
 
     def __repr__(self) -> str:
-        """Return a string representation of the MetricsCollection."""
+        """Return a string representation of the MetricsCollection.
+
+        :return: A string representation of the MetricsCollection.
+        :rtype: str
+        """
         metrics_list = ', '.join(repr(metric) for metric in self._metrics.values())
         return f'MetricsCollection(metrics=[{metrics_list}])'
 
     def __le__(self, other: object) -> bool:
-        """Return True if this set is a subset of another set."""
+        """Return True if this set is a subset of another set.
+
+        :param other: The other set to compare against.
+        :type other: object
+        :return: True if this set is a subset of the other set, False otherwise.
+        :rtype: bool
+        """
         if not isinstance(other, Set):
             return NotImplemented
         return set(self._metrics.values()) <= set(other)
 
     def __lt__(self, other: object) -> bool:
-        """Return True if this set is a proper subset of another set."""
+        """Return True if this set is a proper subset of another set.
+
+        :param other: The other set to compare against.
+        :type other: object
+        :return: True if this set is a proper subset of the other set, False otherwise.
+        :rtype: bool
+        """
         if not isinstance(other, Set):
             return NotImplemented
         return set(self._metrics.values()) < set(other)
 
     def __ge__(self, other: object) -> bool:
-        """Return True if this set is a superset of another set."""
+        """Return True if this set is a superset of another set.
+
+        :param other: The other set to compare against.
+        :type other: object
+        :return: True if this set is a superset of the other set, False otherwise.
+        :rtype: bool
+        """
         if not isinstance(other, Set):
             return NotImplemented
         return set(self._metrics.values()) >= set(other)
 
     def __gt__(self, other: object) -> bool:
-        """Return True if this set is a proper superset of another set."""
+        """Return True if this set is a proper superset of another set.
+
+        :param other: The other set to compare against.
+        :type other: object
+        :return: True if this set is a proper superset of the other set, False otherwise.
+        :rtype: bool
+        """
         if not isinstance(other, Set):
             return NotImplemented
         return set(self._metrics.values()) > set(other)
 
     def __and__(self, other: object) -> 'MetricsCollection':
-        """Return the intersection of two sets as a new MetricsCollection."""
+        """Return the intersection of two sets as a new MetricsCollection.
+
+        :param other: The other set to intersect with.
+        :type other: object
+        :return: A new MetricsCollection containing the intersection of the two sets.
+        :rtype: MetricsCollection
+        """
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) & set(other)
         return MetricsCollection(metrics)
 
     def __or__(self, other: object) -> 'MetricsCollection':
-        """Return the union of two sets as a new MetricsCollection."""
+        """Return the union of two sets as a new MetricsCollection.
+
+        :param other: The other set to union with.
+        :type other: object
+        :return: A new MetricsCollection containing the union of the two sets.
+        :rtype: MetricsCollection
+        """
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) | set(other)
         return MetricsCollection(metrics)
 
     def __sub__(self, other: object) -> 'MetricsCollection':
-        """Return the difference of two sets as a new MetricsCollection."""
+        """Return the difference of two sets as a new MetricsCollection.
+
+        :param other: The other set to subtract.
+        :type other: object
+        :return: A new MetricsCollection containing the difference of the two sets.
+        :rtype: MetricsCollection
+        """
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) - set(other)
         return MetricsCollection(metrics)
 
     def __xor__(self, other: object) -> 'MetricsCollection':
-        """Return the symmetric difference of two sets as a new MetricsCollection."""
+        """Return the symmetric difference of two sets as a new MetricsCollection.
+
+        :param other: The other set to symmetric difference with.
+        :type other: object
+        :return: A new MetricsCollection containing the symmetric difference of the two sets.
+        :rtype: MetricsCollection
+        """
         if not isinstance(other, Set):
             return NotImplemented
         metrics = set(self._metrics.values()) ^ set(other)
         return MetricsCollection(metrics)
 
     def isdisjoint(self, other: object) -> bool:
-        """Return True if two sets have a null intersection."""
+        """Return True if two sets have a null intersection.
+
+        :param other: The other set to compare against.
+        :type other: object
+        :return: True if the two sets have a null intersection, False otherwise.
+        :rtype: bool
+        """
         if not isinstance(other, Set):
             return NotImplemented
         return set(self._metrics.values()).isdisjoint(other)
 
+    def __hash__(self) -> int:
+        """Return the hash of the MetricsCollection."""
+        return hash(frozenset(sorted(self._metrics.values())))
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two MetricsCollection instances.
+
+        :param other: The other MetricsCollection to compare against.
+        :type other: object
+        :return: True if both MetricsCollection instances are equal, False otherwise.
+        :rtype: bool
+        """
+        if not isinstance(other, MetricsCollection):
+            return NotImplemented
+        return self._metrics == other._metrics

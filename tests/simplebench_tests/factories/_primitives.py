@@ -20,7 +20,7 @@ from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_facto
 from simplebench_tests.factories.path import path_factory
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metrics import Metric, metrics_registry
+from simplebench.metrics import Metric, MetricsSelection, metrics_registry, MetricsCollection
 
 Output: TypeAlias = str | bytes | Text | Table
 
@@ -69,6 +69,16 @@ def default_metric() -> Metric:
     """
     return metrics_registry['STD_OPS_STATS']
 
+
+def default_metrics_selection() -> MetricsSelection:
+    """Return a default MetricsSelection for testing purposes.
+
+    :return: MetricsSelection
+    :rtype: MetricsSelection
+    """
+    return MetricsCollection(metrics_registry['STD_OPS_STATS'],
+                             metrics_registry['STD_TIMING_STATS'],
+                             metrics_registry['STD_MEMORY_STATS'],)
 
 def default_metrics() -> tuple[Metric, ...]:
     """Return a default tuple of Metrics for testing purposes.

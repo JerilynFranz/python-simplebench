@@ -7,7 +7,7 @@ from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultV
 
 from simplebench.case import Results
 from simplebench.metrics import Metric
-from simplebench.simplebench_types import Values
+from simplebench.simplebench_types import Extras, Values, Iterations, MetricsTimers, VariationMarks
 
 
 class ResultsKWArgs(KWArgs):
@@ -19,12 +19,12 @@ class ResultsKWArgs(KWArgs):
         group: str | NoDefaultValue = NO_DEFAULT_VALUE,
         title: str | NoDefaultValue = NO_DEFAULT_VALUE,
         description: str | NoDefaultValue = NO_DEFAULT_VALUE,
-        n: int | NoDefaultValue = NO_DEFAULT_VALUE,
+        n: float | NoDefaultValue = NO_DEFAULT_VALUE,
         rounds: int | NoDefaultValue = NO_DEFAULT_VALUE,
-        iterations: Mapping[Metric, Values] | NoDefaultValue = NO_DEFAULT_VALUE,
-        variation_cols: Mapping[str, str] | NoDefaultValue = NO_DEFAULT_VALUE,
-        marks: Mapping[str, tuple[str, ...]] | NoDefaultValue = NO_DEFAULT_VALUE,
-        extra_info: Mapping[str, Any] | NoDefaultValue = NO_DEFAULT_VALUE,
+        iterations: Iterations | NoDefaultValue = NO_DEFAULT_VALUE,
+        variation_marks: VariationMarks | NoDefaultValue = NO_DEFAULT_VALUE,
+        metrics_timers: MetricsTimers | NoDefaultValue = NO_DEFAULT_VALUE,
+        extra_info: Extras | NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Initialize ResultsKWArgs with optional keyword arguments.
 
@@ -36,11 +36,11 @@ class ResultsKWArgs(KWArgs):
         :param str group: The group name for the results.
         :param str title: The title of the results.
         :param str description: A description of the results.
-        :param int n: The number of iterations.
-        :param int rounds: The number of rounds in the benchmark case.
-        :param Mapping[Metric, Values] iterations: A mapping of Metric to their corresponding Values.
-        :param Mapping[str, str] variation_cols: Variation columns as a dictionary.
-        :param Mapping[str, tuple[str, ...]] marks: Variation marks as a dictionary.
-        :param Mapping[str, Any] extra_info: Additional information as a dictionary.
+        :param float n: The O() complexity weight.
+        :param int rounds: The number of rounds per iteration.
+        :param Iterations iterations: A mapping of Metrics to Values for the benchmark
+        :param VariationMarks variation_marks: Variation marks as a dictionary.
+        :param MetricsTimers metrics_timers: A mapping of Metrics to their timing information.
+        :param Extras extra_info: Additional information as a dictionary.
         """
         super().__init__(call=Results.__init__, kwargs=locals())

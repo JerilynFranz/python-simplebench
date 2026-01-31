@@ -3,7 +3,7 @@
 This class is designed to store and manage metrics in a structured way for
 use in benchmarks and reporters. Each metric is stored as an attribute of the
 Metrics object, and the class ensures that all keys are valid Python identifiers
-and that all values are instances of MetricDefinition. Once a metric is added, it
+and that all values are instances of Metric. Once a metric is added, it
 cannot be changed. The class also provides a method to delete a metric from the
 Metrics object.
 
@@ -13,8 +13,15 @@ import re
 from collections.abc import Iterable, Iterator, MutableMapping
 from typing import Any
 
-from simplebench.exceptions import SimpleBenchDuplicateKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics.metric.metric import Metric
+from simplebench.exceptions import (
+    SimpleBenchAttributeError,
+    SimpleBenchDuplicateKeyError,
+    SimpleBenchKeyError,
+    SimpleBenchNotImplementedError,
+    SimpleBenchTypeError,
+    SimpleBenchValueError,
+)
+from simplebench.metrics import Metric
 
 from ._error_tags import _MetricsErrorTag
 
@@ -28,11 +35,11 @@ class Metrics(MutableMapping[str, Metric]):
     Each metric is stored as an attribute of the Metrics object.
 
     The class ensures that all keys are valid Python identifiers and that all
-    values are instances of MetricDefinition. Once a metric is added, it cannot
+    values are instances of Metric. Once a metric is added, it cannot
     be changed.
 
     The class also provides a method to delete a metric from the Metrics object.
-    The key must exist in the Metrics object and contain a MetricDefinition object.
+    The key must exist in the Metrics object and contain a Metric object.
     """
 
     _VALID_KEY_REGEX = re.compile(r'^[A-Z](?:[A-Z0-9_]*[A-Z0-9])?$')
@@ -52,6 +59,7 @@ class Metrics(MutableMapping[str, Metric]):
         :raises SimpleBenchDuplicateKeyError: If a duplicate key is found.
         """
         super().__init__()
+        object.__setattr__(self, '_metrics', {})  # Bypass locked out __setattr__
         if metrics is None:
             return
         if isinstance(metrics, Metric):
@@ -127,18 +135,30 @@ class Metrics(MutableMapping[str, Metric]):
 
     def __setattr__(self, name: str, value: Any) -> None:
         """Set an attribute on the Metrics object.
-
         :param name: The attribute name.
         :param value: The attribute value.
-        :raises AttributeError: If the key is a valid metric key and exists in the Metrics object
+        :raises NotImplementedError: Always, as setting attributes is not allowed.
         """
-        if self._is_valid_key_name(name):
-            raise AttributeError(
-                f"Cannot set metric '{name}' directly as an attribute. "
-                "Use the dictionary-style assignment: metrics['{name}'] = value"
-            )
+        raise SimpleBenchNotImplementedError(
+            'Metrics attributes cannot be set directly. Use __setitem__ instead.',
+            tag=_MetricsErrorTag.ATTRIBUTE_SET_NOT_ALLOWED)
 
-        super().__setattr__(name, value)
+    def __getattr__(self, name: str) -> Any:
+        """Get an attribute from the Metrics object.
+
+        :param name: The attribute name.
+        :return: The attribute value.
+        :raises SimpleBenchAttributeError: If the attribute does not exist.
+        """
+        try:
+            return super().__getattribute__(name)
+        except AttributeError:
+            if name in self._metrics:
+                return self._metrics[name]
+            raise SimpleBenchAttributeError(
+                f"'Metrics' object has no attribute '{name}'",
+                tag=_MetricsErrorTag.NOT_A_METRIC,
+                name=name, obj=self) from None
 
     def __getitem__(self, name: str) -> Metric:
         """Get a mapping value from the Metrics object.
@@ -146,33 +166,40 @@ class Metrics(MutableMapping[str, Metric]):
         If the key is not a string, a SimpleBenchTypeError is raised.
         If the key does not match the regex pattern for a metric key, a
         SimpleBenchValueError is raised.
+
         If the key does not exist in the Metrics object or does not contain a
-        MetricDefinition object, a KeyError is raised.
+        Metric object, a KeyError is raised.
+
         :param name: The key to get.
         :return: The value associated with the key.
         :raises SimpleBenchTypeError: If the key is not a string.
         :raises KeyError: If the key does not exist in the Metrics object or
-            does not contain a MetricDefinition object.
+            does not contain a Metric object.
         """
-        if name not in self:
-            raise KeyError(name)
-        return getattr(self, name)
+        if name not in self._metrics:
+            raise SimpleBenchKeyError(
+                f'Key "{name}" not found in Metrics object',
+                tag=_MetricsErrorTag.METRIC_NOT_FOUND)
+        return self._metrics[name]
 
     def __setitem__(self, name: str, value: Metric) -> None:
         """Set a mapping value in the Metrics object.
 
         - If the key is not a string, a SimpleBenchTypeError is raised.
         - If the key does not match the regex pattern for a metric key, a SimpleBenchValueError is raised.
-        - If the value is not an instance of MetricDefinition, a SimpleBenchTypeError is raised.
-        - If the key does not match the label of the MetricDefinition object, a SimpleBenchValueError is raised.
-        - If the key already exists and is associated with a different MetricDefinition object,
+        - If the value is not an instance of Metric, a SimpleBenchTypeError is raised.
+        - If the key does not match the label of the Metric object, a SimpleBenchValueError is raised.
+        - If the key already exists and is associated with a different Metric object,
             a SimpleBenchDuplicateKeyError is raised.
 
         :param name: The key to set.
+        :type name: str
         :param value: The value to set.
-        :raises SimpleBenchTypeError: If the value is not an instance of MetricDefinition.
-        :raises SimpleBenchValueError: If the key does not match the label of the MetricDefinition object.
+        :type value: Metric
+        :raises SimpleBenchTypeError: If the value is not an instance of Metric.
+        :raises SimpleBenchValueError: If the key does not match the label of the Metric object.
         :raises SimpleBenchDuplicateKeyError: If the key already exists in the Metrics object
+        :raises SimpleBenchAttributeError: If the key conflicts with existing Metrics object attribute.
         """
         name = self._validate_key_name(name)
         if not isinstance(value, Metric):
@@ -181,9 +208,17 @@ class Metrics(MutableMapping[str, Metric]):
             raise SimpleBenchValueError(
                 'Key must match the label of the Metric object', tag=_MetricsErrorTag.MISMATCHED_KEY
             )
-        if hasattr(self, name):
+
+        # Prevent conflicts with 'real' object attributes.
+        if name in self.__dict__:
+            raise SimpleBenchAttributeError(
+                f"Attribute '{name}' conflicts with existing Metrics object attribute",
+                tag=_MetricsErrorTag.ATTRIBUTE_CONFLICT,
+                name=name, obj=self)
+
+        if name in self._metrics:
             # If the exact same object is already registered, it's a no-op.
-            if getattr(self, name) is value:
+            if self._metrics[name] is value:
                 return
 
             # Otherwise, it's a different object trying to use the same key.
@@ -192,8 +227,7 @@ class Metrics(MutableMapping[str, Metric]):
             )
 
         # The key is not yet present, so we can safely set it.
-        # Use object.__setattr__ to bypass our custom __setattr__ method.
-        object.__setattr__(self, name, value)
+        self._metrics[name] = value
 
     def __add__(self, other: 'Metrics | Metric') -> 'Metrics':
         """Create a new Metrics object by combining two Metrics objects
@@ -314,37 +348,35 @@ class Metrics(MutableMapping[str, Metric]):
     def __delitem__(self, name: str) -> None:
         """Delete a mapping value from the Metrics object.
 
-        If the key is not a string, a SimpleBenchTypeError is raised.
-        If the key does not match the regex pattern for a metric key, a
-        SimpleBenchValueError is raised.
-        If the key does not exist in the Metrics object, a KeyError is raised.
-        If the key does not contain a MetricDefinition object, a KeyError is raised.
         :param name: The key to delete.
-        :raises SimpleBenchTypeError: If the key is not a string.
-        :raises SimpleBenchValueError: If the key does not match the regex pattern for a metric key.
-        :raises KeyError: If the key does not exist in the Metrics object or does not contain a MetricDefinition object.
+        :type name: str
+
+        :raises SimpleBenchKeyError: If the key does not exist in the Metrics object.
         """
-        if name not in self:
-            raise KeyError(name)
-        delattr(self, name)
+        if name not in self._metrics:
+            raise SimpleBenchKeyError(
+                f'Key "{name}" not found in Metrics object',
+                tag=_MetricsErrorTag.METRIC_NOT_FOUND)
+        del self._metrics[name]
 
     def __contains__(self, name: Any) -> bool:
-        """Return True if the key is a valid metric key and exists in the Metrics object
-        and contains a MetricDefinition object.
+        """Return True if the key exists in the Metrics object.
 
         :param name: The key to check.
-        :return: True if the key is a valid metric key and exists in the Metrics object
-            and contains a MetricDefinition object."""
-        if not self._is_valid_key_name(name):
-            return False
-        if not hasattr(self, name):
-            return False
-        return isinstance(getattr(self, name), Metric)
+        :type name: str
+        :return: True if the key exists in the Metrics object."""
+        return name in self._metrics
 
     def __iter__(self) -> Iterator[str]:
-        for key, value in self.__dict__.items():
-            if self._is_valid_key_name(key) and isinstance(value, Metric):
-                yield key
+        """Return an iterator over the metric keys in the Metrics object.
+        :return: An iterator over the metric keys.
+        :rtype: Iterator[str]
+        """
+        yield from self._metrics.keys()
 
     def __len__(self) -> int:
-        return sum(1 for _ in self)
+        """Return the number of metrics in the Metrics object.
+        :return: The number of metrics.
+        :rtype: int
+        """
+        return len(self._metrics)
