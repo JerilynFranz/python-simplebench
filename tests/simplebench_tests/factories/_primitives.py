@@ -5,22 +5,23 @@ factories in other modules.
 """
 
 # pylint: disable=unused-argument
-from __future__ import annotations
 
 from pathlib import Path
-from typing import TypeAlias, overload
+from typing import Any, TypeAlias, overload
 
 import autopypath  # noqa: F401 - imported to setup sys.path for test imports when run directly
 import pytest
 from rich.table import Table
 from rich.text import Text
 
+from simplebench.simplebench_types import ElementCollection
+
 # from simplebench.metrics import Metric, metric_types_registry
 from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory
 from simplebench_tests.factories.path import path_factory
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metrics import Metric, MetricsSelection, metrics_registry, MetricsCollection
+from simplebench.metrics import Metric, MetricsCollection, MetricsSelection, metrics_registry
 
 Output: TypeAlias = str | bytes | Text | Table
 
@@ -745,7 +746,7 @@ def variation_cols_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, st
 
 
 @cached_factory
-def kwargs_variations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, list]:
+def kwargs_variations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, ElementCollection]:
     """Return a set of kwargs variations for testing purposes.
 
     This is for use in configuring benchmark cases in tests.
@@ -758,7 +759,9 @@ def kwargs_variations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
     :return: `{}`
     :rtype: dict[str, list[Any]]
     """
-    return {}
+    a: dict[str, list[Any]] = {}
+    b: dict[str, ElementCollection[Any]] = a  # This is valid
+    return b
 
 
 @cached_factory

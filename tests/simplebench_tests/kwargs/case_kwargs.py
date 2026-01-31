@@ -1,11 +1,12 @@
 """simplebench.cases.Case KWArgs package for SimpleBench tests."""
 
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Mapping
+from typing import Any
 
-from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 import simplebench.vcs as vcs
-from simplebench.benchmark_runner import SimpleRunner
+from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
 from simplebench.case.function_runner import FunctionRunner
 from simplebench.options.reporter.options import ReporterOptions
@@ -41,13 +42,13 @@ class CaseKWArgs(KWArgs):
         cpu_timer: Callable[[], int] | NoDefaultValue = NO_DEFAULT_VALUE,
         min_time: float | NoDefaultValue = NO_DEFAULT_VALUE,
         max_time: float | NoDefaultValue = NO_DEFAULT_VALUE,
-        timeout: float | NoDefaultValue = NO_DEFAULT_VALUE,
-        variation_cols: dict[str, str] | NoDefaultValue = NO_DEFAULT_VALUE,
-        kwargs_variations: dict[str, ElementCollection] | NoDefaultValue = NO_DEFAULT_VALUE,
-        runners: Sequence[type[SimpleRunner]] | NoDefaultValue = NO_DEFAULT_VALUE,
+        timeout: float | int | NoDefaultValue = NO_DEFAULT_VALUE,
+        variation_cols: Mapping[str, str] | NoDefaultValue = NO_DEFAULT_VALUE,
+        kwargs_variations: Mapping[str, ElementCollection[Any]] | NoDefaultValue = NO_DEFAULT_VALUE,
+        runners: ElementCollection[type[BenchmarkRunner]] | NoDefaultValue = NO_DEFAULT_VALUE,
         callback: ReporterCallback | NoDefaultValue = NO_DEFAULT_VALUE,
-        options: Iterable[ReporterOptions] | NoDefaultValue = NO_DEFAULT_VALUE,
-        node: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        options: ElementCollection[ReporterOptions] | NoDefaultValue = NO_DEFAULT_VALUE,
+        node: str |NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Constructs a CaseKWArgs instance. This class is used to hold keyword arguments for
         initializing a Case instance in tests.

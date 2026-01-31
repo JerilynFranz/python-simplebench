@@ -1,6 +1,6 @@
 """Test simplebench/reporters/reporter/reporter.py module"""
-from __future__ import annotations
 
+import sys
 from argparse import Namespace
 from pathlib import Path
 from typing import Any, ClassVar
@@ -21,7 +21,7 @@ from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.session import Session
 
-from ...factories import (
+from simplebench_tests.factories import (
     FactoryReporter,
     FactoryReporterOptions,
     case_factory,
@@ -40,7 +40,7 @@ from ...factories import (
     reporter_factory,
     session_factory,
 )
-from ...testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
+from testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
 
 
 def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
@@ -744,3 +744,8 @@ def test_run_report(testspec: TestSpec) -> None:
     :type testspec: TestSpec
     """
     testspec.run()
+
+
+if __name__ == '__main__':
+    sys.modules.pop('typeguard')
+    pytest.main([__file__])

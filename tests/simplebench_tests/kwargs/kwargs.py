@@ -40,12 +40,13 @@
 #
 # This would allow flexibility in testing scenarios while reducing boilerplate
 # and maintenance overhead for KWArgs subclasses.
-
-from __future__ import annotations
-
-from collections.abc import Iterable, Callable, Hashable
 import inspect
-from typing import Any, TypeGuard, TypeVar, cast
+import logging
+from collections.abc import Callable, Hashable, Iterable
+from typing import Any, TypeGuard, TypeVar, Union, cast, get_args, get_origin
+
+log = logging.getLogger(__name__)
+#log.setLevel('DEBUG')
 
 T = TypeVar('T')
 
@@ -60,21 +61,6 @@ class NoDefaultValue:
 
 NO_DEFAULT_VALUE = NoDefaultValue()
 """Sentinel value indicating no default value provided."""
-
-
-def is_kwargs(obj: object) -> TypeGuard[KWArgs]:
-    """Checks a passed object is a valid KWArgs instance and
-    returns true if so, false otherwise.
-
-    This function can be used in type checking to narrow
-    the type of an object to KWArgs when the check passes.
-
-    :param obj: The object to check.
-    :type obj: object
-    :return: True if the object is a KWArgs instance, False otherwise.
-    :rtype: bool
-    """
-    return isinstance(obj, KWArgs)
 
 
 class KWArgs(dict[str, Any], Hashable):
@@ -94,6 +80,9 @@ class KWArgs(dict[str, Any], Hashable):
     This class is intended to be subclassed for specific functions or methods under test,
     with each subclass defining its own __init__ method parameters using the
     NoDefaultValue pattern.
+
+    It is designed to be used in conjunction with the `kwargs_class_matches_modeled_call`
+    function to ensure that the subclass __init__ signature matches the modeled function or method signature.
 
     Subclass implementation example:
 
@@ -155,7 +144,7 @@ class KWArgs(dict[str, Any], Hashable):
         # future reference.
         if not hasattr(cls, '_BASE_KWARGS_CALL'):
             kwargs_class_matches_modeled_call(kwargs_class=cls, modeled_call=call)
-            cls._BASE_KWARGS_CALL = call
+            cls._BASE_KWARGS_CALL = call  # type: ignore[attr-defined]
 
         # Cache the __init__ parameter names for use in __sub__ if not already cached.
         # This ensures we get the full set of parameters defined in the subclass __init__
@@ -184,7 +173,7 @@ class KWArgs(dict[str, Any], Hashable):
         """
         return hash(frozenset(self.items()))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Checks equality between this KWArgs instance and another object.
 
         :param other: The object to compare against.
@@ -293,11 +282,14 @@ def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs], modeled_call: 
     the two that could lead to errors in tests or misunderstandings
     about the parameters required to call the modeled call.
 
-    It does not check parameter types or default values, only the presence
-    or absence of parameter names.
+   It compares both the presence of parameters and their types,
+   excluding any 'Optional[...] | None' or ' | NoDefaultValue' and
+   any defaults from type annotations. This ensures that the
+   parameters in the kwargs_class are compatible with those in the modeled_call.
 
     :raises AssertionError: If there are any extra or missing parameters in the
-                            kwargs_class compared to the modeled_call
+                            kwargs_class compared to the modeled_call or if
+                            there are any parameter type mismatches.
     """
     if not hasattr(kwargs_class, '__init__'):
         raise TypeError('kwargs_class must have an __init__ method.')
@@ -320,3 +312,89 @@ def kwargs_class_matches_modeled_call(kwargs_class: type[KWArgs], modeled_call: 
     error = '\n'.join(error_messages)
 
     assert modeled_params == kwargs_params, error
+
+    # Check that,  excluding 'Optional[...]' | None' or ' | NoDefaultValue' and
+    # any defaults from type annotations, the parameter types match
+    # between the two signatures.
+    for param_name in modeled_params:
+        modeled_param = modeled_sig.parameters[param_name]
+        kwargs_param = kwargs_sig.parameters[param_name]
+        modeled_annotation = modeled_param.annotation
+        kwargs_annotation = kwargs_param.annotation
+
+        def _strip_novalue_and_none(annotation: Any) -> Any:
+            """Return the annotation with all NoDefaultValue and NoneType stripped out, flattening unions."""
+            origin = get_origin(annotation)
+            if origin is None:
+                # Not a generic type, return as is
+                if (annotation is type(None)
+                    or getattr(annotation, '__name__', None) == 'NoDefaultValue'
+                    or getattr(annotation, '__qualname__', None) == 'NoDefaultValue'
+                    or annotation is NoDefaultValue):
+                    log.debug(
+                        f'Stripping NoDefaultValue and None from annotation: {annotation}, origin: {origin}, args: []')
+                    return Any  # If the annotation is only None or NoDefaultValue, return Any
+                return annotation
+            args = get_args(annotation)
+            log.debug(
+                f'Stripping NoDefaultValue and None from annotation: {annotation}, origin: {origin}, args: {args}')
+
+            filtered: list[Any] = []
+            for item in args:
+                if get_origin(item) is Union:
+                    # Flatten nested unions
+                    filtered.extend(get_args(item))
+                else:
+                    filtered.append(item)
+
+            # Remove NoneType and NoDefaultValue from the flattened args
+            filtered = [
+                    arg for arg in filtered
+                if arg is not type(None)
+                and getattr(arg, '__name__', None) != 'NoDefaultValue'
+                and getattr(arg, '__qualname__', None) != 'NoDefaultValue'
+                and arg is not NoDefaultValue
+            ]
+
+            # Remove duplicates
+            filtered = list(dict.fromkeys(filtered))
+            if len(filtered) == 1:
+                return filtered[0]
+            # Rebuild the union using the | operator (Python 3.10+)
+            log.debug(f'Filtered annotations for annotation "{annotation!r}": {filtered}')
+            result = filtered[0]
+            for arg in filtered[1:]:
+                result = result | arg
+            return result
+
+        stripped_modeled_annotation = _strip_novalue_and_none(modeled_annotation)
+        log.debug('Stripped modeled annotation for parameter "%s": %r', param_name, stripped_modeled_annotation)
+        stripped_kwargs_annotation = _strip_novalue_and_none(kwargs_annotation)
+        log.debug('Stripped kwargs annotation for parameter "%s": %r', param_name, stripped_kwargs_annotation)
+
+        if stripped_modeled_annotation != stripped_kwargs_annotation:
+            log.debug('Parameter "%s" type mismatch: %s has %r, but %s has %r.',
+                      param_name, kwargs_class.__name__, stripped_kwargs_annotation,
+                      modeled_call.__name__, stripped_modeled_annotation)
+            error_messages.append(
+                f'Parameter "{param_name}" type mismatch: '
+                f'{kwargs_class.__name__} has {stripped_kwargs_annotation}, '
+                f'but {modeled_call.__name__} has {stripped_modeled_annotation}.'
+            )
+    if error_messages:
+        error = '\n'.join(error_messages)
+        raise AssertionError(error)
+
+def is_kwargs(obj: object) -> TypeGuard[KWArgs]:
+    """Checks a passed object is a valid KWArgs instance and
+    returns true if so, false otherwise.
+
+    This function can be used in type checking to narrow
+    the type of an object to KWArgs when the check passes.
+
+    :param obj: The object to check.
+    :type obj: object
+    :return: True if the object is a KWArgs instance, False otherwise.
+    :rtype: bool
+    """
+    return isinstance(obj, KWArgs)

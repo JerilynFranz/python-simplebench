@@ -1,12 +1,14 @@
 """Factories for creating Case, Session, and BenchmarkRunner test objects."""
 
 # pylint: disable=unused-argument
-from __future__ import annotations
 
-from typing import overload
+from typing import Any, overload
 
 import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
+
+from simplebench.simplebench_types import VariationMarks, ElementCollection
+
 from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from simplebench_tests.factories._primitives import (
     default_case_group,
@@ -24,11 +26,11 @@ from simplebench_tests.factories.reporter_callback import default_reporter_callb
 from simplebench_tests.factories.reporter_options import default_reporter_options_tuple
 from simplebench_tests.kwargs import CaseKWArgs
 
-from simplebench.benchmark_runner import SimpleRunner
+from simplebench.benchmark_runner import SimpleRunner, BenchmarkRunner
 from simplebench.case import Case, Results
 
 
-def default_benchcase(bench: SimpleRunner, variation_marks: VariationMarks) -> Results:
+def default_benchcase(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
     .. code-block:: python
@@ -212,6 +214,38 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
         options=default_reporter_options_tuple(),
     )
 
+
+from collections.abc import Sequence, Mapping
+a: dict[str, list[int]] = {'param1': [1, 2, 3]}
+b: dict[str, Sequence[int]] = a  # This is invalid
+"""[{
+	"resource": "/Users/snowhare/git/python-simplebench/tests/simplebench_tests/factories/case.py",
+	"owner": "Pylance",
+	"code": {
+		"value": "reportAssignmentType",
+		"target": {
+			"$mid": 1,
+			"path": "/microsoft/pylance-release/blob/main/docs/diagnostics/reportAssignmentType.md",
+			"scheme": "https",
+			"authority": "github.com"
+		}
+	},
+	"severity": 8,
+	"message": "Type \"dict[str, list[int]]\" is not assignable to declared type \"dict[str, Sequence[int]]\"\n  \"dict[str, list[int]]\" is not assignable to \"dict[str, Sequence[int]]\"\n    Type parameter \"_VT@dict\" is invariant, but \"list[int]\" is not the same as \"Sequence[int]\"\n    Consider switching from \"dict\" to \"Mapping\" which is covariant in the value type",
+	"source": "Pylance",
+	"startLineNumber": 220,
+	"startColumn": 31,
+	"endLineNumber": 220,
+	"endColumn": 32,
+	"modelVersionId": 619,
+	"origin": "extHost1"
+}]"""
+c: dict[str, list[int] | Sequence[int]] = a  # This is invalid
+"""
+
+"""
+
+d: Mapping[str, Sequence[int]] = a  # This is valid
 
 # provide overloads for better tooltips and docstrings
 @overload
