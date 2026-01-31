@@ -112,7 +112,9 @@ class KWArgs(dict[str, Any], Hashable):
                 super().__init__(locals())
     """
 
-    def __init__(self, call: Callable[..., Any], kwargs: dict[str, Any], globalns: dict[str, Any] | None = None) -> None:
+    def __init__(self, call: Callable[..., Any],
+                 kwargs: dict[str, Any],
+                 globalns: dict[str, Any] | None = None) -> None:
         """Initializes the KWArgs instance from a dictionary of arguments.
 
         This constructor is intended to be called from a subclass's __init__
@@ -137,6 +139,10 @@ class KWArgs(dict[str, Any], Hashable):
         :param kwargs: A dictionary of arguments, typically from a
                        call to `locals()` in a subclass's `__init__` method.
         :type kwargs: dict[str, Any]
+        :param globalns: An optional dictionary representing the global namespace
+                         for type hint resolution.
+        :type globalns: dict[str, Any] | None
+        :raises TypeError: If call is not a callable.
         :raises TypeError: If the provided arguments are not of the expected types.
         :raises AssertionError: If the resulting KWArgs does not match the call argument's signature parameter names.
         """
