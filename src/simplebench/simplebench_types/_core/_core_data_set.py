@@ -69,7 +69,7 @@ class CoreDataSet(Set[CoreDataTypes], ElementCollection, Immutable, Hashable):
             raise SimpleBenchTypeError(
                 'CoreDataSet must be initialized with an ElementCollection of CoreData.',
                 tag=_CoreDataErrorTag.CORE_DATA_SET_NOT_ELEMENT_COLLECTION)
-        data: Set[CoreDataTypes] = set()
+        data: set[CoreDataTypes] = set()
 
         if all(isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for item in __iterable):
             self._data = frozenset(__iterable)

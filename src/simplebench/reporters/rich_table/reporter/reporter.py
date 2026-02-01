@@ -120,7 +120,7 @@ class RichTableReporter(Reporter):
         included_fields = options.fields
 
         base_unit: str = metric.metric_type.unit
-        results: list[Results] = case.results
+        results: tuple[Results, ...] = case.results
 
         mean_unit, mean_scale = si_scale_for_smallest(
             numbers=[result.results_metric(metric).mean for result in results], base_unit=base_unit

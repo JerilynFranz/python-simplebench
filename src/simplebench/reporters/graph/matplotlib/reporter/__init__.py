@@ -13,7 +13,8 @@ Public API
 - MatPlotLibReporter: Base class for MatPlotLib based graph reporters.
 """
 
-from ..options import MatPlotLibOptions
+from simplebench.options.matplotlib import MatPlotLibOptions
+
 from .reporter import MatPlotLibReporter
 
 __all__ = ['MatPlotLibOptions', 'MatPlotLibReporter']

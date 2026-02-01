@@ -13,7 +13,7 @@ import seaborn as sns
 from simplebench.case.results import Results
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import Metric
-from simplebench.reporters.reporter import ReporterOptions
+from simplebench.options.reporter import ReporterOptions
 from simplebench.si_units import si_scale_for_largest
 from simplebench.type_proxies import is_case
 from simplebench.validators import validate_type
@@ -21,7 +21,7 @@ from simplebench.validators import validate_type
 from ...matplotlib import MatPlotLibReporter
 from ._error_tags import _ScatterPlotReporterErrorTag
 from ..config import ScatterPlotConfig
-from ..options import ScatterPlotOptions
+from simplebench.options import ScatterPlotOptions
 
 Options: TypeAlias = ScatterPlotOptions
 

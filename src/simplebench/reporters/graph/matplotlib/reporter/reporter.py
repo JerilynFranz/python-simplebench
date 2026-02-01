@@ -7,7 +7,7 @@ such as line plots, bar charts, scatter plots, etc.
 from typing import TypeAlias
 
 from simplebench.reporters.reporter.reporter import Reporter
-from ..options import MatPlotLibOptions
+from simplebench.options.matplotlib import MatPlotLibOptions
 
 Options: TypeAlias = MatPlotLibOptions
 
