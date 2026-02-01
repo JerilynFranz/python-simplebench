@@ -1,7 +1,0 @@
-simplebench.metrics.metrics\_selection.metrics\_collection module
-=================================================================
-
-.. automodule:: simplebench.metrics.metrics_selection.metrics_collection
-   :members:
-   :undoc-members:
-   :show-inheritance:
