@@ -129,3 +129,20 @@ def test_pickle_cpu_info(testspec: TestSpec) -> None:
 def test_repr(testspec: TestSpec) -> None:
     """Test the __repr__ method of CPUInfo."""
     testspec.run()
+
+
+@pytest.mark.parametrize("testspec", [
+    PytestAction('HASH_001',
+        name="hash returns an integer",
+        action=hash, args=[CPUInfo('hashtest')],
+        assertion=Assert.ISINSTANCE,
+        expected=int),
+    PytestAction('HASH_002',
+        name="hash is consistent across multiple cached calls",
+        action=hash, args=[CPUInfo('hashtest')],
+        assertion=Assert.EQUAL,
+        expected=hash(CPUInfo('hashtest'))),
+])
+def test_hash(testspec: TestSpec) -> None:
+    """Test the __hash__ method of CPUInfo."""
+    testspec.run()
