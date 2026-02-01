@@ -38,7 +38,7 @@ dependencies = [
     "numpy>=1.26.4",
     "py-cpuinfo>=9.0.0",
     "rich>=14.1.0",
-    "typechecked>=0.11.0",
+    "typechecked>=0.11.1",
     "typing-extensions>=4.10.0",
     "typeguard>=4.4.4",
 ]
@@ -232,7 +232,9 @@ env_list = [
 # The development dependency group requires Python 3.12+ because some tools do not support older versions.
 [tool.uv.dependency-groups]
 dev = {requires-python = ">=3.12"}
-docs = {requires-python = ">=3.11"}
+docs = {requires-python = ">=3.12"}
+#doctest = {requires-python = ">=3.12"}#types = {requires-python = ">=3.12"}
+#lint = {requires-python = ">=3.12"}
 
 # labels table for grouping environments
 [tool.tox.labels]
@@ -309,7 +311,7 @@ commands = [
 description = "Type checking environment"
 package = "skip"
 base_python = ["python3.12"]
-dependency_groups = ["types", "dev"]
+dependency_groups = ["lint", "types", "dev"]
 commands = [
     ["mypy", "src", "tests"],
 ]
@@ -390,9 +392,10 @@ dev = [
 
 # Type stubs for development and type checking
 types = [
-    "mypy>=1.17.1",
     "pandas-stubs>=2.3.2.250827",
     "types-seaborn>=0.13.2.20250809",
+    "types-psutil",
+    "types-jsonschema",
 ]
 
 

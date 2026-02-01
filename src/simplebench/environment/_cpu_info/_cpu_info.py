@@ -7,7 +7,7 @@ the :module:`cpuinfo` module.
 
 from functools import cache
 
-from cpuinfo import get_cpu_info
+from cpuinfo import get_cpu_info  # type: ignore
 from typechecked import Immutable
 
 from simplebench.report.versions.v1 import ImmutableCPUInfoData
@@ -57,7 +57,7 @@ class CPUInfo(Immutable):
         :param str | None cache_key: An optional key to identify a cache entry.
         :return ImmutableCPUInfoData: The CPU information as an immutable dictionary.
         """
-        validated_data = validate_core_data_mapping(get_cpu_info(), 'CPUInfo.data', max_depth=10)
+        validated_data = validate_core_data_mapping(get_cpu_info(), 'CPUInfo.data')
         cpu_info: ImmutableCPUInfoData = typed_dict_mimic(validated_data, ImmutableCPUInfoData)
         return cpu_info
 
@@ -85,7 +85,7 @@ class CPUInfo(Immutable):
         self._cache_key: str | None = _validate.cache_key(cache_key)
         cls = self.__class__
         if cache_key is None:  # No caching; always gather fresh data if None
-            validated_data = validate_core_data_mapping(get_cpu_info(), 'CPUInfo.data', max_depth=10)
+            validated_data = validate_core_data_mapping(get_cpu_info(), 'CPUInfo.data')
             self._info = typed_dict_mimic({'data': validated_data}, ImmutableCPUInfoData)
         else:
             self._info = cls._get_cached_cpu_info(cache_key)

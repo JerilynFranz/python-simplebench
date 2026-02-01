@@ -4,8 +4,6 @@ from collections.abc import Set
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from requests import Session
-
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
@@ -13,6 +11,7 @@ from simplebench.metrics import MetricsCollection, MetricsSelection, MetricsUnsp
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._config import ReporterConfig
+from simplebench.session import Session
 from simplebench.simplebench_types import is_element_collection
 from simplebench.type_proxies import is_case, is_choice, is_session
 

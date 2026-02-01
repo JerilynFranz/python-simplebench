@@ -23,7 +23,7 @@ from simplebench.validators import validate_type
 
 from ._error_tags import _CSVReporterErrorTag
 from ..config import CSVConfig
-from ..options import CSVField, CSVOptions
+from simplebench.options import CSVField, CSVOptions
 
 Options: TypeAlias = CSVOptions
 

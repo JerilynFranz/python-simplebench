@@ -10,15 +10,16 @@ from simplebench.case.results import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import Metric
-from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.options import RichTableField, RichTableOptions
+from simplebench.options.reporter import ReporterOptions
+from simplebench.reporters.reporter import Reporter
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
-from ._error_tags import _RichTableReporterErrorTag
 from ..config import RichTableConfig
-from ..options import RichTableField, RichTableOptions
+from ._error_tags import _RichTableReporterErrorTag
 
 Options: TypeAlias = RichTableOptions
 
