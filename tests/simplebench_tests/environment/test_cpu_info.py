@@ -146,3 +146,7 @@ def test_repr(testspec: TestSpec) -> None:
 def test_hash(testspec: TestSpec) -> None:
     """Test the __hash__ method of CPUInfo."""
     testspec.run()
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])
