@@ -12,7 +12,7 @@ from abc import ABC
 
 from ._report_element import ReportElement
 
-__all__ = []
+__all__: list[str] = []
 
 
 class BaseResultsInfo(ReportElement, ABC):

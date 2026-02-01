@@ -3,7 +3,7 @@
 from simplebench.report._error_tags import _SwapMemoryErrorTag
 from simplebench.validators import validate_float_range, validate_non_negative_int
 
-__all__ = []
+__all__: list[str] = []
 
 
 def total(value: int) -> int:

@@ -11,7 +11,7 @@ from typing import Any, Generic, TypeVar
 
 E = TypeVar('E', bound=Exception)
 
-__all__ = []
+__all__: list[str] = []
 
 
 class TaggedException(Exception, Generic[E]):

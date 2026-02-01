@@ -4,4 +4,4 @@
 from ._variation_cols import VariationCols
 
 # No * imports
-__all__ = []
+__all__: list[str] = []

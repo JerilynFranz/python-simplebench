@@ -5,4 +5,4 @@ from .python_info import PythonInfo
 from .python_info_schema import PythonInfoSchema
 from .typeddict_types import ImmutablePythonInfoData, ImmutablePythonInfoDict, PythonInfoData, PythonInfoDict
 
-__all__ = []
+__all__: list[str] = []

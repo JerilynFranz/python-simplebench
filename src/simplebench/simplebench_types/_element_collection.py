@@ -15,7 +15,7 @@ from typing import Any, Protocol, TypeGuard, TypeVar, runtime_checkable
 T_co = TypeVar('T_co', covariant=True)
 
 # No direct exports from this module. All exports are defined in __init__.py
-__all__ = []
+__all__: list[str] = []
 
 @runtime_checkable
 class ElementCollection(Protocol[T_co]):

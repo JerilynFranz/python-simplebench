@@ -31,8 +31,8 @@ from simplebench.metrics import Metric, MetricsSelection
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choices.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter._config import ReporterConfig
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter._mixins import (
     _ReporterArgparseMixin,
     _ReporterOrchestrationMixin,
@@ -54,7 +54,7 @@ if TYPE_CHECKING:
     from simplebench.session import Session
     from simplebench.simplebench_types import ElementCollection
 
-__all__ = []
+__all__: list[str] = []
 
 
 class Reporter(

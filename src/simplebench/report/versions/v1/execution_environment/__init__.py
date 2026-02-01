@@ -10,4 +10,4 @@ from .typeddict_types import (
     ImmutableExecutionEnvironmentDict,
 )
 
-__all__ = []
+__all__: list[str] = []

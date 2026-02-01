@@ -16,7 +16,7 @@ from simplebench.validators import validate_bool, validate_iso8601_datetime, val
 
 _HASH_ID_REGEX = re.compile(r'^[a-fA-F0-9]{64}$')
 
-__all__ = []
+__all__: list[str] = []
 
 
 def hash_id(value: str) -> str:

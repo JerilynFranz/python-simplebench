@@ -243,8 +243,11 @@ class Results:
         _validate.metric(metric)
         raw_data: Values = self.raw(metric)
         return reports.RawDataBlock(
+            name=metric.label,
+            description=metric.description,
             semantic_type=metric.metric_type.semantic_type,
             timer=None,
+            rounds=self.rounds,
             unit=metric.metric_type.unit,
             scale=metric.metric_type.scale,
             data=raw_data,

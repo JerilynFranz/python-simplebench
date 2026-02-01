@@ -25,7 +25,7 @@ from .swap_memory import SwapMemoryObject
 from .typeddict_types import ImmutableMemoryInfoDict, MemoryInfoData, MemoryInfoDict
 from .virtual_memory import VirtualMemoryObject
 
-__all__ = []
+__all__: list[str] = []
 
 
 class MemoryInfo(BaseMemoryInfo):

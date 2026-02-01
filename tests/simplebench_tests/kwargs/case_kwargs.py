@@ -3,8 +3,6 @@
 from collections.abc import Callable, Mapping
 from typing import Any
 
-from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
-
 import simplebench.vcs as vcs
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
@@ -12,6 +10,8 @@ from simplebench.case.function_runner import FunctionRunner
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.simplebench_types import ElementCollection
+
+from .kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class CaseKWArgs(KWArgs):

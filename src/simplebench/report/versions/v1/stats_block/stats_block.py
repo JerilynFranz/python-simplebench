@@ -49,7 +49,7 @@ from . import _validate
 from .stats_block_dict import ImmutableStatsBlockDict, StatsBlockData
 from .stats_block_schema import StatsBlockSchema
 
-__all__ = []
+__all__: list[str] = []
 
 
 class StatsBlock(BaseStatsBlock):

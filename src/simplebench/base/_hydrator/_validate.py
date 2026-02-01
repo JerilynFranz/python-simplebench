@@ -18,7 +18,10 @@ def data(value: Mapping[str, Any]) -> dict[str, Any]:
     :return: A validated, mutable `dict` copy of the data.
     :raises: SimpleBenchTypeError if the data dictionary is invalid.
     """
-    validate_type(value, Mapping, 'data', _HydratorErrorTag.INVALID_DATA_TYPE)
+    if not isinstance(value, Mapping):
+        raise SimpleBenchTypeError(
+            'The `data` parameter must be of type `Mapping`', tag=_HydratorErrorTag.INVALID_DATA_TYPE
+        )
 
     if not all(isinstance(key, str) for key in value.keys()):
         raise SimpleBenchTypeError(

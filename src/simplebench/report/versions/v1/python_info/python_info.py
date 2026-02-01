@@ -24,7 +24,7 @@ from .typeddict_types import ImmutablePythonInfoDict, PythonInfoData
 
 _LOCK = threading.Lock()
 
-__all__ = []
+__all__: list[str] = []
 
 
 class PythonInfo(BasePythonInfo):

@@ -3,7 +3,7 @@ from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
 from simplebench.simplebench_types import ElementCollection
 
-from ..kwargs import KWArgs, NoDefaultValue, NO_DEFAULT_VALUE
+from ..kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class ChoicesConfKWArgs(KWArgs):

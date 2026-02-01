@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-__all__ = []
+__all__: list[str] = []
 
 
 class ErrorTag(str, Enum):

@@ -2,7 +2,7 @@
 
 from .metrics_selection_type import MetricsSelectionType
 
-__all__ = []
+__all__: list[str] = []
 
 
 class MetricsSelection:

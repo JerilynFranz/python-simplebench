@@ -3,4 +3,4 @@
 # ruff: noqa: F401
 from ._cpu_info import CPUInfo
 
-__all__ = []
+__all__: list[str] = []

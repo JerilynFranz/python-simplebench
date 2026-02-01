@@ -226,7 +226,7 @@ To deactivate the virtual environment, run:
 
 
 
-# --- Confirmation prompt message ---
+# Platform-specific configs and messages
 
 if _is_windows():
     PLATFORM_PROMPT_MESSAGE = """
@@ -240,8 +240,24 @@ The execution policy will be set only for the current user.
 ************************************************************
 
 """
+
+    # Use ; as path separator on Windows
+    # Also use backslashes for paths in .env on Windows
+    # Set to '' to disable .env creation
+    DOT_ENV_CONTENT="""
+PYTHONPATH={repo_root}\\src;{repo_root}\\tests
+"""
+
+# POSIX (Linux, macOS, etc.)
 else:
     PLATFORM_PROMPT_MESSAGE = ''
+
+    # Use : as path separator on POSIX systems
+    # Also use forward slashes for paths in .env on POSIX
+    # Set to '' to disable .env creation
+    DOT_ENV_CONTENT="""
+PYTHONPATH={repo_root}/src:{repo_root}/tests
+"""
 
 CONFIRMATION_PROMPT_MESSAGE = f"""
 This script will create a {VENV_DIR} directory in the root
@@ -1043,6 +1059,38 @@ def set_powershell_execution_policy() -> None:
         controlled_print('Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser')
 
 
+def install_dot_env(repo_root: Path) -> None:
+    """Installs a .env file into the root directory of the repository.
+
+    It can substitute the {repo_root} placeholder with the actual
+    repository root path if defined in the :data:`DOT_ENV_CONTENT`.
+
+    It will skip installation if the .env file already exists or if
+    :data:`DOT_ENV_CONTENT` is empty.
+
+    :param repo_root Path: The root directory of the repository.
+    :param bin_dir Path: The bin/Scripts directory of the virtual environment.
+    """
+    _validate_path(repo_root, 'repo_root', exists=True)
+    dot_env_path = repo_root / '.env'
+    if not DOT_ENV_CONTENT:
+        controlled_print('.env installation is disabled; skipping .env installation.')
+        return
+
+    if dot_env_path.exists():
+        controlled_print(f".env file already exists at '{dot_env_path}'; skipping installation.")
+        return
+
+    controlled_print(f"Installing .env file at '{dot_env_path}'...")
+    env_content = DOT_ENV_CONTENT.replace('{repo_root}', str(repo_root))
+    try:
+        with dot_env_path.open('w') as dot_env_file:
+            dot_env_file.write(env_content)
+    except Exception as e:
+        controlled_print(f'Error: Could not write .env file at {dot_env_path}: {e}')
+        controlled_print('Skipping .env installation.')
+
+
 def print_instructions(template: str) -> None:
     """Prints instructions to the user on how to activate the virtual environment
     and use the installed tools.
@@ -1165,6 +1213,7 @@ def main() -> None:
         create_virtual_environment(venv_dir, python_exe)
         install_tools(python_exe, BOOTSTRAP_MODULES)
         install_vcs_hooks(repo_root, forced=args.force_hooks)
+        install_dot_env(repo_root)
         set_powershell_execution_policy()
 
         bin_dir = venv_dir / ('Scripts' if _is_windows() else 'bin')

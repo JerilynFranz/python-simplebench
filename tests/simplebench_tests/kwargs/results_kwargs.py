@@ -1,19 +1,16 @@
 """Keyword arguments for :class:`~simplebench.case.Results` testing"""
 
-from collections.abc import Mapping
-from typing import Any
-
-from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 from simplebench.case import Results
-from simplebench.metrics import Metric
-from simplebench.simplebench_types import Extras, Values, Iterations, MetricsTimers, VariationMarks
+from simplebench.simplebench_types import Extras, Iterations, MetricsTimers, VariationMarks
+
+from .kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class ResultsKWArgs(KWArgs):
     """A class to hold keyword arguments for initializing a Results instance."""
 
-    def __init__(  # pylint: disable=unused-argument
+    def __init__(
         self,
         *,
         group: str | NoDefaultValue = NO_DEFAULT_VALUE,

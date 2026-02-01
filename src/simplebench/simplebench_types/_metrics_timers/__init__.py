@@ -3,6 +3,5 @@
 
 from ._metrics_timers import MetricsTimers
 
-
 # No * imports exported from this module
-__all__ = []
+__all__: list[str] = []

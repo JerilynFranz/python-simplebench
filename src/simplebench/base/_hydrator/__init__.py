@@ -4,4 +4,4 @@
 from ._error_tags import _HydratorErrorTag
 from ._hydrator import Hydrator
 
-__all__ = []
+__all__: list[str] = []

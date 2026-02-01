@@ -18,7 +18,7 @@ from abc import ABC
 
 from simplebench.report.base._report_element import ReportElement
 
-__all__ = []
+__all__: list[str] = []
 
 
 class BaseCPUInfo(ReportElement, ABC):

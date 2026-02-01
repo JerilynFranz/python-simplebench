@@ -9,7 +9,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 
 from .._error_tags import _JSONSchemaErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 class JSONSchema(ABC):

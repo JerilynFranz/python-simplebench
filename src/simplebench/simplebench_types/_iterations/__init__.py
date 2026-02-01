@@ -4,4 +4,4 @@
 from ._iterations import Iterations
 
 # No * export
-__all__ = []
+__all__: list[str] = []

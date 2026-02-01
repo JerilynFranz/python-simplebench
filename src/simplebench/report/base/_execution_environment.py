@@ -20,7 +20,7 @@ from abc import ABC
 from ._environment import Environment
 from ._report_element import ReportElement
 
-__all__ = []
+__all__: list[str] = []
 
 
 class BaseExecutionEnvironment(ReportElement, ABC):

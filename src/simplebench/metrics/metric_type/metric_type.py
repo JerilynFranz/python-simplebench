@@ -9,7 +9,7 @@ from simplebench.validators import validate_float, validate_namespaced_identifie
 
 from ._error_tags import _MetricTypeErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 _deferred_imports_done: bool = False

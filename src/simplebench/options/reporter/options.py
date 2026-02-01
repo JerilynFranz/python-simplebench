@@ -1,6 +1,6 @@
 """Base class for reporter-specific options."""
 
-__all__ = []
+__all__: list[str] = []
 
 
 class ReporterOptions:

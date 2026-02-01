@@ -20,7 +20,7 @@ from simplebench.simplebench_types import Never, NotRequired, Required
 from .swap_memory import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 from .virtual_memory import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
 
-__all__ = []
+__all__: list[str] = []
 
 
 class _RequiredMemoryInfo(ReportElementTypedDict, total=True):

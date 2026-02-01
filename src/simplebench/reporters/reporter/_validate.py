@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from simplebench.session.session import Session
 
 # No need to export any names from this module directly
-__all__ = []
+__all__: list[str] = []
 
 
 def cls_type(value: Any, field_name: str = 'cls_type') -> type:

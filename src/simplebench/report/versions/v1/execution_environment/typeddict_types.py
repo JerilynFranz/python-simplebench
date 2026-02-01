@@ -16,7 +16,7 @@ from simplebench.simplebench_types import Never, NotRequired
 # Imports are directly from the specific sub-modules to avoid accidentally creating circular dependencies
 from ..python_info.typeddict_types import PythonInfoData, PythonInfoDict
 
-__all__ = []
+__all__: list[str] = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

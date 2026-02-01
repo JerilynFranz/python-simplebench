@@ -17,12 +17,12 @@ from simplebench import defaults
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
 from simplebench.case.results import Results
+from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters._pytest import PytestReporter
 from simplebench.reporters.json.reporter import JSONReporter
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter import ReporterOptions
 from simplebench.session import Session
-from simplebench.simplebench_types import ElementCollection
+from simplebench.simplebench_types import ElementCollection, VariationMarks
 from simplebench.vcs import VCSInfo
 
 log = logging.getLogger(__name__)
@@ -256,10 +256,10 @@ class BenchmarkRegistrar:
 
         # This is the wrapper that conforms to the FunctionRunner protocol.
         # It closes over the user's `action`.
-        def benchmark_action_wrapper(bench: BenchmarkRunner, **kwargs: Any) -> Results:
+        def benchmark_action_wrapper(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
             """The benchmark action wrapper."""
             # The `kwargs` here are the per-variation kwargs from the Case.
-            return bench.run(action=action, n=1, kwargs=kwargs)
+            return bench.run(action=action, n=1, variation_marks=variation_marks)
 
         if description is None:
             description = action.__doc__ or '(no description)'

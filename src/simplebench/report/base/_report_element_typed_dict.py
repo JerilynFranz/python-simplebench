@@ -2,7 +2,7 @@
 
 from typing import TypedDict
 
-__all__ = []
+__all__: list[str] = []
 
 
 class ReportElementTypedDict(TypedDict):

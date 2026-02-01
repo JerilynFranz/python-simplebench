@@ -5,4 +5,4 @@ from .value_block import ValueBlock
 from .value_block_dict import ImmutableValueBlockData, ImmutableValueBlockDict, ValueBlockData, ValueBlockDict
 from .value_block_schema import ValueBlockSchema
 
-__all__ = []
+__all__: list[str] = []

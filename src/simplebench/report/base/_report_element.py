@@ -25,7 +25,7 @@ from ._json_schema import JSONSchema
 
 T = TypeVar('T', bound=ReportElementTypedDict)
 
-__all__ = []
+__all__: list[str] = []
 
 
 class _NoMatch:

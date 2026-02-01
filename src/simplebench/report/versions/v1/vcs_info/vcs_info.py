@@ -20,7 +20,7 @@ from . import _validate
 from .typeddict_types import ImmutableVCSInfoDict, VCSInfoData
 from .vcs_info_schema import VCSInfoSchema
 
-__all__ = []
+__all__: list[str] = []
 
 
 class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes

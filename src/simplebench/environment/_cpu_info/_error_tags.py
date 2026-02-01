@@ -4,7 +4,7 @@
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 @enum_docstrings

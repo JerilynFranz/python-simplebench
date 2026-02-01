@@ -11,7 +11,7 @@ from simplebench.validators import validate_bool, validate_string, validate_stri
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""
 
-__all__ = []
+__all__: list[str] = []
 
 
 def hash_id(value: str) -> str:

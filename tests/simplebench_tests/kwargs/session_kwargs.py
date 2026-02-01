@@ -1,16 +1,17 @@
 """simplebench.session KWArgs package for SimpleBench tests."""
 
-from collections.abc import Callable, Sequence
 from argparse import ArgumentParser
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from rich.console import Console
-from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
 from simplebench.enums import Verbosity
 from simplebench.session import Session
+
+from .kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class SessionKWArgs(KWArgs):

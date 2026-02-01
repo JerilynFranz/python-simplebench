@@ -56,7 +56,7 @@ else:
     Metrics = None  # pylint: disable=invalid-name
 
 
-__all__ = []
+__all__: list[str] = []
 
 
 _CACHED_METRICS = None

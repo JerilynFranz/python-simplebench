@@ -3,4 +3,4 @@
 
 from ._values import Values
 
-__all__ = []
+__all__: list[str] = []

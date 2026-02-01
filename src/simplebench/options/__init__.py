@@ -26,4 +26,4 @@ except ImportError:
     pass
 
 # No * exports defined
-__all__ = []
+__all__: list[str] = []

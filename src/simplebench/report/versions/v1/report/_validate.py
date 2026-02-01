@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from simplebench.case import Case
     from simplebench.report.versions.v1 import MachineInfo, ResultsInfo
 
-__all__ = []
+__all__: list[str] = []
 
 _HASH_RE: re.Pattern[str] = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""

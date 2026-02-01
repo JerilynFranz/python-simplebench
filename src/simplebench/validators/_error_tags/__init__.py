@@ -3,4 +3,4 @@
 
 from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 
-__all__ = []
+__all__: list[str] = []

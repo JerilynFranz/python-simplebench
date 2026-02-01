@@ -10,4 +10,4 @@ from .raw_data_block_dict import (
 )
 from .raw_data_block_schema import RawDataBlockSchema
 
-__all__ = []
+__all__: list[str] = []

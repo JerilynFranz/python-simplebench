@@ -3,4 +3,4 @@
 
 from .metric_types import MetricTypes
 
-__all__ = []
+__all__: list[str] = []

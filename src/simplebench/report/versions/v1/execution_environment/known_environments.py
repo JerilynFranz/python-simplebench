@@ -15,7 +15,7 @@ preventing the accidental use of incorrect types for these known environments.
 from simplebench.report.base import Environment
 from simplebench.report.versions.v1.python_info.python_info import PythonInfo
 
-__all__ = []
+__all__: list[str] = []
 
 
 KNOWN_ENVIRONMENTS: dict[str, type[Environment]] = {'python': PythonInfo}

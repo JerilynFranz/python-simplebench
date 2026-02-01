@@ -1,9 +1,9 @@
 """simplebench.reporters.choice.Choice KWArgs package for SimpleBench tests."""
 
-from simplebench_tests.kwargs.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
-
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.reporter import Reporter
+
+from ..kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class ChoiceKWArgs(KWArgs):

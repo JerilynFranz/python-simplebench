@@ -16,7 +16,7 @@ from simplebench.base._hydrator import Hydrator
 
 from ._report_element import ReportElement
 
-__all__ = []
+__all__: list[str] = []
 
 
 class BaseMemoryInfo(ReportElement, Hydrator, ABC):

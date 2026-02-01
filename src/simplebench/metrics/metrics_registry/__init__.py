@@ -10,4 +10,4 @@ from .metrics_registry import (
     unregister_metrics,
 )
 
-__all__ = []
+__all__: list[str] = []

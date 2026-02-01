@@ -13,4 +13,4 @@ from .typeddict_types import (
     MetricsObjectDict,
 )
 
-__all__ = []
+__all__: list[str] = []

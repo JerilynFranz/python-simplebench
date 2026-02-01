@@ -4,7 +4,7 @@ from simplebench.metrics.metrics_selection.metrics_selection_type import Metrics
 
 from .metrics_selection import MetricsSelection
 
-__all__ = []
+__all__: list[str] = []
 
 
 class MetricsUnspecified(MetricsSelection):

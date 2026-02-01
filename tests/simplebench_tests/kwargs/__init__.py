@@ -1,14 +1,13 @@
 """KWArgs for SimpleBench tests."""
 
-from simplebench_tests.kwargs.kwargs import (
+from .case_kwargs import CaseKWArgs
+from .kwargs import (
     NO_DEFAULT_VALUE,
     KWArgs,
     NoDefaultValue,
     is_kwargs,
     kwargs_class_matches_modeled_call,
 )
-
-from .case_kwargs import CaseKWArgs
 from .reporters import (
     ChoiceConfKWArgs,
     ChoiceKWArgs,

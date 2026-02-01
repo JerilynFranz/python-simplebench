@@ -5,4 +5,4 @@ from .system_info import SystemInfo
 from .system_info_schema import SystemInfoSchema
 from .typeddict_types import ImmutableSystemInfoData, ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
 
-__all__ = []
+__all__: list[str] = []

@@ -18,4 +18,4 @@ from ._types import (
 )
 
 # No * imports at this level
-__all__ = []
+__all__: list[str] = []

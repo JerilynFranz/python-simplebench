@@ -25,7 +25,7 @@ from ..raw_data_block import ImmutableRawDataBlockData, ImmutableRawDataBlockDic
 from ..stats_block import ImmutableStatsBlockData, ImmutableStatsBlockDict, StatsBlockData, StatsBlockDict
 from ..value_block import ImmutableValueBlockData, ImmutableValueBlockDict, ValueBlockData, ValueBlockDict
 
-__all__ = []
+__all__: list[str] = []
 
 # --- Type aliases for metric item types ---
 

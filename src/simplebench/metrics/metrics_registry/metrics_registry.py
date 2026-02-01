@@ -29,7 +29,7 @@ from simplebench.validators import validate_iterable_of_type
 
 from ._error_tags import _MetricsRegistryErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 def register_metrics(metrics: Metric | Iterable[Metric] | Metric) -> None:

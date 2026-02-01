@@ -5,15 +5,15 @@ import re
 from simplebench.report._error_tags import _MachineInfoErrorTag
 from simplebench.validators import validate_string, validate_string_with_regex, validate_type
 
-from ..memory_info import MemoryInfo
-from ..system_info import SystemInfo
 from ..cpu_info import CPUInfo
 from ..execution_environment import ExecutionEnvironment
+from ..memory_info import MemoryInfo
+from ..system_info import SystemInfo
 
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""
 
-__all__ = []
+__all__: list[str] = []
 
 
 def hash_id(value: str) -> str:

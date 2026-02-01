@@ -10,7 +10,7 @@ from simplebench.validators import validate_string, validate_type
 
 from ._error_tags import _MetricErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 @dataclass(frozen=True, kw_only=True)

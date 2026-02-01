@@ -15,7 +15,7 @@ from simplebench.validators import typed_dict_mimic, validate_core_data_mapping
 
 from . import _validate
 
-__all__ = []
+__all__: list[str] = []
 
 
 class CPUInfo(Immutable):

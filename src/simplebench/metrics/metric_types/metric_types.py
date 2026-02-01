@@ -10,7 +10,7 @@ MetricTypes object.
 """
 
 import re
-from collections.abc import MutableMapping, Iterable, Iterator
+from collections.abc import Iterable, Iterator, MutableMapping
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchDuplicateKeyError, SimpleBenchTypeError, SimpleBenchValueError
@@ -18,7 +18,7 @@ from simplebench.metrics.metric_type import MetricType
 
 from ._error_tags import _MetricTypesErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 class MetricTypes(MutableMapping[str, MetricType]):

@@ -16,15 +16,15 @@ version 1: :class:`~simplebench.report.versions.v1.report.report_schema.ReportSc
     These types ensure proper validation and serialization of Report data
 """
 
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
 
 from simplebench.report.base import ReportElementTypedDict
-from simplebench.simplebench_types import VariationCols, Never, NotRequired, Required
+from simplebench.simplebench_types import Never, NotRequired, Required, VariationCols
 
 from ..machine_info import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
 from ..results_info import ImmutableResultsInfoData, ImmutableResultsInfoDict, ResultsInfoData, ResultsInfoDict
 
-__all__ = []
+__all__: list[str] = []
 
 
 # A base for fields that are always required and have the same type.

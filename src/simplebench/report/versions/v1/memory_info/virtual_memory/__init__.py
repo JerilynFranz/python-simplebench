@@ -4,4 +4,4 @@
 from .typeddict_types import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
 from .virtual_memory import VirtualMemoryObject
 
-__all__ = []
+__all__: list[str] = []

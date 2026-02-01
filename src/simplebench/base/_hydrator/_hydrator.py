@@ -7,7 +7,7 @@ set of allowed parameters.
 
 import dataclasses
 import inspect
-from collections.abc import Mapping, Iterable, Callable
+from collections.abc import Callable, Iterable, Mapping
 from copy import copy
 from functools import cache
 from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
@@ -15,7 +15,7 @@ from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddic
 from .._typed_dict_key_info import TypedDictKeyInfo
 from . import _validate
 
-__all__ = []
+__all__: list[str] = []
 
 
 class Hydrator:

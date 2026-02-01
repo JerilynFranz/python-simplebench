@@ -31,7 +31,7 @@ from . import _validate
 from .value_block_dict import ImmutableValueBlockDict, ValueBlockData
 from .value_block_schema import ValueBlockSchema
 
-__all__ = []
+__all__: list[str] = []
 
 
 class ValueBlock(BaseValueBlock):

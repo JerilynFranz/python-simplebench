@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """A simple benchmark case function."""
-from typing import Any
 
-from simplebench.runners import SimpleRunner
+from simplebench.benchmark_runner import BenchmarkRunner
 
 import simplebench
 from simplebench.case import Case, Results
 from simplebench.reporters.graph.enums import ImageType
-from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
+from simplebench.options import ScatterPlotOptions
+from simplebench.simplebench_types import VariationMarks
 
 
 @simplebench.benchmark(
@@ -18,18 +18,20 @@ from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
     warmup_iterations=10,
     options=[ScatterPlotOptions(image_type=ImageType.PNG)]
 )
-def benchcase_one():
+
+
+def benchcase_one() -> None:
     """A simple benchmark case function via decorators."""
     sum(range(100))  # Example operation to benchmark
 
 
-def benchcase_two(bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_two(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function."""
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(100))  # Example operation to benchmark
-    return bench.run(n=100, action=action, kwargs=kwargs)
+    return bench.run(n=100, action=action, variation_marks=variation_marks)
 
 
 def benchmark_cases_list_factory() -> list[Case]:

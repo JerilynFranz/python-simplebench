@@ -12,7 +12,7 @@ from simplebench.validators import validate_core_data_mapping, validate_type
 from ..generic_environment import GenericEnvironment
 from .known_environments import KNOWN_ENVIRONMENTS
 
-__all__ = []
+__all__: list[str] = []
 
 
 _ENV_NAME_REGEX: re.Pattern[str] = re.compile(r'^[a-zA-Z](?:[a-zA-Z0-9_-]*[a-zA-Z0-9])?$')

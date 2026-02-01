@@ -25,7 +25,7 @@ from .typeddict_types import ImmutableMachineInfoDict, MachineInfoData, MachineI
 if TYPE_CHECKING:
     from simplebench.report.versions.v1 import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
 
-__all__ = []
+__all__: list[str] = []
 
 
 class MachineInfo(BaseMachineInfo):

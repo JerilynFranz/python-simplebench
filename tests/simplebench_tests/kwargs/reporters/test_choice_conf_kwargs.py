@@ -3,7 +3,7 @@ import sys
 
 import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
-from simplebench_tests.kwargs.kwargs import kwargs_class_matches_modeled_call
+from simplebench_tests.kwargs import kwargs_class_matches_modeled_call
 from simplebench_tests.kwargs.reporters.choice_conf_kwargs import ChoiceConfKWArgs as _KWARGS_CLASS
 
 from simplebench.reporters.choice.choice_conf import ChoiceConf as _MODELED_CLASS

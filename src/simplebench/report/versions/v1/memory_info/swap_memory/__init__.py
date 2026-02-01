@@ -4,4 +4,4 @@
 from .swap_memory import SwapMemoryObject
 from .typeddict_types import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 
-__all__ = []
+__all__: list[str] = []

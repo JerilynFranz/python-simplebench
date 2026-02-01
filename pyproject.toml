@@ -80,6 +80,10 @@ exclude = [
 [tool.hatch.version]
 path = "src/simplebench/_meta.py"
 
+
+[tool.mypy]
+mypy_path = "src,tests"
+
 [tool.pyright]
 include = ["src", "tests", "bench"]
 exclude = ["**/node_modules",
@@ -301,6 +305,15 @@ commands = [
     ["mypy", "src", "tests"],
 ]
 
+[tool.tox.env.types]
+description = "Type checking environment"
+package = "skip"
+base_python = ["python3.12"]
+dependency_groups = ["types", "dev"]
+commands = [
+    ["mypy", "src", "tests"],
+]
+
 [tool.tox.env.docs]
 # This environment is self-contained and does NOT inherit from basetest.
 description = "Build the documentation"
@@ -339,6 +352,7 @@ lint = [
     "ruff>=0.14.11"
 ]
 
+
 # Dependencies for building documentation
 docs = [
     "furo>=2025.09.25",
@@ -376,6 +390,7 @@ dev = [
 
 # Type stubs for development and type checking
 types = [
+    "mypy>=1.17.1",
     "pandas-stubs>=2.3.2.250827",
     "types-seaborn>=0.13.2.20250809",
 ]
@@ -468,3 +483,4 @@ docstring-code-line-length = "dynamic"
 
 [tool.autopypath]
 paths = ["src", "tests"]
+

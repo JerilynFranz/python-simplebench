@@ -11,9 +11,10 @@ from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case
 from simplebench.enums import FlagType, Format, Target
 from simplebench.metrics import Metric
+from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
-from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
 
 from . import factories

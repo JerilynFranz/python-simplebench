@@ -6,7 +6,7 @@ from . import _validate
 from .system_info_schema import SystemInfoSchema
 from .typeddict_types import ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
 
-__all__ = []
+__all__: list[str] = []
 
 
 class SystemInfo(BaseSystemInfo):

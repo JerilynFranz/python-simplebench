@@ -16,7 +16,7 @@ from typing import TypeAlias
 
 from ._report_element import ReportElement
 
-__all__ = []
+__all__: list[str] = []
 
 
 class Metrics(ReportElement, ABC):

@@ -14,4 +14,4 @@ from ._variation_marks import VariationMarks
 from ._kwargs_variations import KWArgsVariations
 
 # No * imports
-__all__ = []
+__all__: list[str] = []

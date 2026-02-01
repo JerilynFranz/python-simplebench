@@ -7,7 +7,7 @@ from simplebench.simplebench_types import CoreDataTypes
 
 from ._report_element import ReportElement
 
-__all__ = []
+__all__: list[str] = []
 
 
 class Environment(ReportElement, ABC):

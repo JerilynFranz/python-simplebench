@@ -1,3 +1,3 @@
 """Versions package for SimpleBench reports."""
 
-__all__ = []
+__all__: list[str] = []

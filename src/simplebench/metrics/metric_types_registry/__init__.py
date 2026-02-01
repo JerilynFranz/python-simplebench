@@ -9,4 +9,4 @@ from .metric_types_registry import (
     unregister_metric_types,
 )
 
-__all__ = []
+__all__: list[str] = []

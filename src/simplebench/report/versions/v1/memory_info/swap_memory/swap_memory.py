@@ -16,7 +16,7 @@ from simplebench.report.base import BaseSwapMemoryObject
 from . import _validate
 from .typeddict_types import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 
-__all__ = []
+__all__: list[str] = []
 
 
 class SwapMemoryObject(BaseSwapMemoryObject):

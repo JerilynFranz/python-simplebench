@@ -5,4 +5,4 @@ from .report import Report
 from .report_schema import ReportSchema
 from .typeddict_types import ImmutableReportData, ImmutableReportDict, ReportData, ReportDict
 
-__all__ = []
+__all__: list[str] = []

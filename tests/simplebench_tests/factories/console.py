@@ -7,7 +7,7 @@ from rich.console import Console
 from ..cache_factory import CacheId, uncached_factory
 
 # No '*' imports here to control what is exposed in the package namespace
-__all__ = []
+__all__: list[str] = []
 
 # overloads provide a tooltip assist for the decorated function and IDE tooltips
 # This is necessary because the cache_factory decorators create a function

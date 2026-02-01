@@ -22,7 +22,7 @@ from .typeddict_types import ImmutableResultsInfoDict, ResultsInfoData
 if TYPE_CHECKING:
     from .. import MetricsObject
 
-__all__ = []
+__all__: list[str] = []
 
 
 class ResultsInfo(BaseResultsInfo):

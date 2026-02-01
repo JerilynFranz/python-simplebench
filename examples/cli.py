@@ -1,34 +1,32 @@
 #!/usr/bin/env python3
 """A simple benchmark case function."""
-from typing import Any
 
-from simplebench.runners import SimpleRunner
-
-import simplebench
-from simplebench import Case
-from simplebench.case import Results
-from simplebench.reporters.graph import ImageType
-from simplebench.reporters.graph.matplotlib import Style
-from simplebench.reporters.graph.scatterplot import ScatterPlotOptions
+from simplebench import BenchmarkRunner, Case, ImageType, Results, Style, VariationMarks, benchmark, main, options
 
 
-def benchcase_one(bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_one(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function."""
+
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(100000))  # Example operation to benchmark
-    return bench.run(n=100000, action=action, kwargs=kwargs)
+
+    return bench.run(n=100000, action=action, variation_marks=variation_marks)
 
 
-def benchcase_four(bench: SimpleRunner, **kwargs: Any) -> Results:
+def benchcase_four(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function."""
+
     def action(size: int) -> int:
         """A simple benchmark case function."""
         return sum(range(size))  # Example operation to benchmark
-    return bench.run(n=kwargs['size'], action=action, kwargs=kwargs)
+
+    return bench.run(n=variation_marks['size'].value,
+                     action=action,
+                     variation_marks=variation_marks)
 
 
-@simplebench.benchmark(
+@benchmark(
     'example3',
     title='sum_numbers',
     description='A benchmark case function that sums numbers up to n.',
@@ -52,14 +50,14 @@ def benchmark_cases_list_factory() -> list[Case]:
              description='A simple benchmark case function.',
              variation_cols={},
              kwargs_variations={},
-             options=[ScatterPlotOptions(image_type=ImageType.PNG)]),
+             options=[options.ScatterPlotOptions(image_type=ImageType.PNG)]),
         Case(group='example2',
              title='benchcase_two',
              action=benchcase_one,
              description='A simple benchmark case function (fake second).',
              variation_cols={},
              kwargs_variations={},
-             options=[ScatterPlotOptions(style=Style.SEABORN_V0_8, image_type=ImageType.SVG)]),
+             options=[options.ScatterPlotOptions(style=Style.SEABORN_V0_8, image_type=ImageType.SVG)]),
         Case(group='example4',
              title='benchcase_four',
              action=benchcase_four,
@@ -71,4 +69,4 @@ def benchmark_cases_list_factory() -> list[Case]:
 
 if __name__ == '__main__':
     cases = benchmark_cases_list_factory()
-    simplebench.main(cases)
+    main(cases)

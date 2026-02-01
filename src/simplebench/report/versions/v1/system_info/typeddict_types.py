@@ -19,7 +19,7 @@ version 1: :class:`~simplebench.report.versions.v1.SystemInfoSchema`.
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.simplebench_types import Never, NotRequired, Required
 
-__all__ = []
+__all__: list[str] = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

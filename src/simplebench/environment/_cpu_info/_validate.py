@@ -4,7 +4,7 @@ from simplebench.validators import validate_string
 
 from ._error_tags import _CPUInfoErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 def cache_key(value: str | None) -> str | None:

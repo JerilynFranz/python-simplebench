@@ -5,4 +5,4 @@ from .benchmark_runner import BenchmarkRunner
 from .simplerunner import SimpleRunner
 
 # No * imports here
-__all__ = []
+__all__: list[str] = []

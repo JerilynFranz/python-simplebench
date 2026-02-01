@@ -26,7 +26,7 @@ from simplebench.simplebench_types import (
 
 from ..metrics_object import MetricsObjectDict
 
-__all__ = []
+__all__: list[str] = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 

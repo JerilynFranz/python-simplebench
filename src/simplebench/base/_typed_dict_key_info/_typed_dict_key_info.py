@@ -19,7 +19,7 @@ from simplebench.simplebench_types import NotRequired, ReadOnly, Required
 
 from ._error_tags import _TypedDictKeyInfoErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 log = logging.getLogger(__name__)

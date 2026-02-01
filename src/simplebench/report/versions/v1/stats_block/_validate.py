@@ -1,7 +1,7 @@
 """Validation functions for V1 StatsBlock properties."""
 
-from collections.abc import Sequence
 import re
+from collections.abc import Sequence
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
@@ -17,7 +17,7 @@ from simplebench.validators import (
     validate_string_with_regex,
 )
 
-__all__ = []
+__all__: list[str] = []
 
 _HASH_ID_REGEX: re.Pattern[str] = re.compile(r'^[A-Za-z0-9]{64}$')
 """Regex pattern for validating hash IDs.

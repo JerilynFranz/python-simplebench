@@ -12,8 +12,9 @@ from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric
+from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
-from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.reporters.reporter import Reporter
 from simplebench.type_proxies import is_case
 from simplebench.validators import validate_type
 

@@ -32,4 +32,4 @@ else:
     from typing_extensions import ReadOnly
 
 # No * exports from this module
-__all__ = []
+__all__: list[str] = []

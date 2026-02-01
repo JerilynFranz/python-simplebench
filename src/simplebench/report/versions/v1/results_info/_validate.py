@@ -21,7 +21,7 @@ from simplebench.validators import (
 
 from .. import MetricsObject
 
-__all__ = []
+__all__: list[str] = []
 
 _HASH_RE: re.Pattern[str] = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""

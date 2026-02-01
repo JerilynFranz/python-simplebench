@@ -16,7 +16,7 @@ version 1: :class:`~simplebench.report.versions.v1.MemoryInfoSchema`.
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.simplebench_types import Never, NotRequired, Required
 
-__all__ = []
+__all__: list[str] = []
 
 
 class _RequiredSwapMemoryObject(ReportElementTypedDict, total=True):

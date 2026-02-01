@@ -25,7 +25,7 @@ from simplebench.metrics import Metric
 
 from ._error_tags import _MetricsErrorTag
 
-__all__ = []
+__all__: list[str] = []
 
 
 class Metrics(MutableMapping[str, Metric]):

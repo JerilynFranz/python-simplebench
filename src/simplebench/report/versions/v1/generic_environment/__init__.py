@@ -3,4 +3,4 @@
 
 from .generic_environment import GenericEnvironment, GenericEnvironmentSchema
 
-__all__ = []
+__all__: list[str] = []

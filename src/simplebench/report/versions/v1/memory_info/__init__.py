@@ -7,4 +7,4 @@ from .swap_memory import ImmutableSwapMemoryObjectDict, SwapMemoryObject, SwapMe
 from .typeddict_types import ImmutableMemoryInfoData, ImmutableMemoryInfoDict, MemoryInfoData, MemoryInfoDict
 from .virtual_memory import ImmutableVirtualMemoryObjectDict, VirtualMemoryObject, VirtualMemoryObjectDict
 
-__all__ = []
+__all__: list[str] = []

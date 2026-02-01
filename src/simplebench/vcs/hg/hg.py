@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 import re
 import subprocess
+from collections.abc import Sequence
 from pathlib import Path
 
 from simplebench.exceptions import (
@@ -278,7 +278,7 @@ class Hg:
                 case 'changeset':
                     changeset_id = value.strip()
                 case 'date':
-                    epoch_date: float = float(value.strip())
+                    epoch_date = float(value.strip())
                 case _:
                     continue
         date: str = timestamp_to_iso8601(epoch_date)

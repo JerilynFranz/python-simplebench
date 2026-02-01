@@ -28,7 +28,7 @@ from simplebench.validators import validate_core_data_mapping
 from . import _validate
 from .generic_environment_schema import GenericEnvironmentSchema
 
-__all__ = []
+__all__: list[str] = []
 
 
 class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):

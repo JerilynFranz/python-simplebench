@@ -16,7 +16,7 @@ from . import _validate
 from .known_environments import KNOWN_ENVIRONMENTS
 from .typeddict_types import ExecutionEnvironmentDict
 
-__all__ = []
+__all__: list[str] = []
 
 
 class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):

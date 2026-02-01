@@ -11,7 +11,8 @@ from simplebench.case import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import Metric
-from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.options.reporter import ReporterOptions
+from simplebench.reporters.reporter import Reporter
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs

@@ -21,7 +21,7 @@ from simplebench.validators import (
 
 _HASH_ID_REGEX = re.compile(r'^[a-fA-F0-9]{64}$')
 
-__all__ = []
+__all__: list[str] = []
 
 
 def hash_id(val: str) -> str:

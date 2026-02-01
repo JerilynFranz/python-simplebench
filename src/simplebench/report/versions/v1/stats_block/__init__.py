@@ -5,4 +5,4 @@ from .stats_block import StatsBlock
 from .stats_block_dict import ImmutableStatsBlockData, ImmutableStatsBlockDict, StatsBlockData, StatsBlockDict
 from .stats_block_schema import StatsBlockSchema
 
-__all__ = []
+__all__: list[str] = []

@@ -15,7 +15,7 @@ from ._error_tags import _MetricSelectionErrorTag
 from .metrics_selection import MetricsSelection
 from .metrics_selection_type import MetricsSelectionType
 
-__all__ = []
+__all__: list[str] = []
 
 
 class MetricsCollection(MetricsSelection, Set[Metric], Immutable, Hashable):

@@ -21,4 +21,4 @@ from ._virtual_memory import BaseVirtualMemoryObject
 from .metrics import Metrics
 from .report import BaseReport
 
-__all__ = []
+__all__: list[str] = []

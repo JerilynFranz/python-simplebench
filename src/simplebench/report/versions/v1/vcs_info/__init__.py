@@ -5,4 +5,4 @@ from .typeddict_types import ImmutableVCSInfoData, ImmutableVCSInfoDict, VCSInfo
 from .vcs_info import VCSInfo
 from .vcs_info_schema import VCSInfoSchema
 
-__all__ = []
+__all__: list[str] = []

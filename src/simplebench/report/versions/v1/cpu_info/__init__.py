@@ -5,4 +5,4 @@ from .cpu_info import CPUInfo
 from .cpu_info_schema import CPUInfoSchema
 from .typeddict_types import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
 
-__all__ = []
+__all__: list[str] = []

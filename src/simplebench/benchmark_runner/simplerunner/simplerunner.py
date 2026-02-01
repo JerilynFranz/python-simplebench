@@ -516,8 +516,12 @@ class SimpleRunner(BenchmarkRunner):
         :param Optional[Callable[..., Any]] teardown: A teardown function to run after the iteration.
         :return float: The elapsed time for the iteration in seconds.
         """
-        kiloround_timer = self._timer_function(1000)
         timer_metrics: int
+        total_elapsed: float
+        total_elapsed_cpu: float
+
+        kiloround_timer = self._timer_function(1000)
+
         if rounds < 1000:
             # for less than 1000 rounds, we can use the generated timer function directly
             timer_metrics = 1
@@ -530,8 +534,8 @@ class SimpleRunner(BenchmarkRunner):
             # for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a "kiloround")
             # to reduce the footprint of the generated timer functions and avoid hitting
             # Python's function size limits.
-            total_elapsed: float = 0.0
-            total_elapsed_cpu: float = 0.0
+            total_elapsed = 0.0
+            total_elapsed_cpu = 0.0
             timer_metrics = 0
             kiloround_chunks, remaining_rounds = divmod(rounds, 1000)
             if callable(setup):
