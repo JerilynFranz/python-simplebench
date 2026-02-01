@@ -4,7 +4,10 @@ Usage:
     python -m kwargs module.functionname
     python -m kwargs module.ClassName
 
-Generates a KWArgs subclass for the specified callable or class.
+Generates a KWArgs subclass stub for the specified callable or class.
+
+It is a 'best effort' generator and may require manual adjustments.
+
 """
 
 import importlib
@@ -31,7 +34,7 @@ def get_type_name(t: Any) -> str:
         else:
             name = str(origin)
 
-        def render_arg(arg):
+        def render_arg(arg: Any) -> str:
             if isinstance(arg, (tuple, list)):
                 return '[' + ', '.join(get_type_name(a) for a in arg) + ']' if arg else '[]'
             return get_type_name(arg)
