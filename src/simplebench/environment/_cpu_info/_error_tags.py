@@ -11,6 +11,8 @@ __all__: list[str] = []
 class _CPUInfoErrorTag(ErrorTag):
     """Error tags for CPU information retrieval issues."""
 
+    INVALID_CPUINFO_DATA = 'INVALID_CPUINFO_DATA'
+    """The CPU information data is invalid or malformed."""
     INVALID_CACHE_KEY_PARAM_TYPE = 'INVALID_CACHE_KEY_PARAM_TYPE'
     """The 'cache_key' argument is not of type 'str'."""
     INVALID_CACHE_KEY_PARAM_VALUE = 'INVALID_CACHE_KEY_PARAM_VALUE'

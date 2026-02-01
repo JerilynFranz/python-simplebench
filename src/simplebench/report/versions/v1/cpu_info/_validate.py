@@ -4,12 +4,13 @@ import re
 from typing import Any, cast
 
 from typechecked import is_immutable
+from typeguard import check_type
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
 
-from .typeddict_types import ImmutableCPUInfoData
+from .typeddict_types import CPUInfoData, ImmutableCPUInfoData
 
 _HASH_RE = re.compile(r'^[a-f0-9]{64}$')
 
@@ -88,9 +89,12 @@ def data(value: Any) -> ImmutableCPUInfoData:
             tag=_CPUInfoErrorTag.INVALID_DATA_PROPERTY_TYPE,
         )
 
-    unpacked_value = value.to_dict()
-    if is_immutable(unpacked_value):
-        return cast(ImmutableCPUInfoData, value)
+    try:
+        unpacked_value = check_type(value.to_dict(), ImmutableCPUInfoData)
+    except TypeError as exc:
+        raise SimpleBenchTypeError(
+            f'CPUInfo.data must be a dictionary with string keys and values of valid types, got {type(unpacked_value).__name__}.',
+            tag=_CPUInfoErrorTag.INVALID_DATA_PROPERTY_TYPE,
+        ) from exc
 
-    immutable_value = validate_core_data_mapping(unpacked_value, 'CPUInfo.data', max_depth=10)
-    return cast(ImmutableCPUInfoData, immutable_value)
+    return unpacked_value
