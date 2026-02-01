@@ -4,6 +4,7 @@ import pickle
 import autopypath  # noqa: F401
 import pytest
 from testspec import Assert, PytestAction, TestSpec
+from typechecked import Immutable
 
 from simplebench.environment import CPUInfo
 from simplebench.environment._cpu_info import _CPUInfoErrorTag
@@ -72,6 +73,11 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
         action=CPUInfo, kwargs={'cache_key': ''},
         exception=SimpleBenchValueError,
         exception_tag=_CPUInfoErrorTag.INVALID_CACHE_KEY_PARAM_VALUE),
+    PytestAction('INIT_014',
+        name="CPUInfo is Immutable",
+        action=CPUInfo, kwargs={'cache_key': 'immutabletest'},
+        assertion=Assert.ISINSTANCE,
+        expected=Immutable)
 ])
 def test_init(testspec: TestSpec) -> None:
     """Test initializing CPUInfo."""
@@ -103,11 +109,23 @@ def test_pickle_cpu_info(testspec: TestSpec) -> None:
     testspec.run()
 
 
-def test_repr() -> None:
+@pytest.mark.parametrize("testspec", [
+    PytestAction('REPR_001',
+        name="repr returns a string",
+        action=repr, args=[CPUInfo('reprtest')],
+        assertion=Assert.ISINSTANCE,
+        expected=str),
+    PytestAction('REPR_002',
+        name="repr returns consistent data on multiple cached calls",
+        action=repr, args=[CPUInfo('reprtest')],
+        assertion=Assert.EQUAL,
+        expected=repr(CPUInfo('reprtest'))),
+    PytestAction('REPR_003',
+        name="repr starts and ends with expected substrings",
+        action=repr, args=[CPUInfo('reprtest')],
+        validate_result=lambda result: result.startswith(
+            "CPUInfo(cache_key='reprtest', info=") and result.endswith(")")),
+])
+def test_repr(testspec: TestSpec) -> None:
     """Test the __repr__ method of CPUInfo."""
-    cpu_info = CPUInfo('reprtest')
-    repr_str = repr(cpu_info)
-    assert isinstance(repr_str, str), "REPR_001 repr() should return a string"
-    expected_start = "CPUInfo(cache_key='reprtest', info="
-    assert repr_str.startswith(expected_start), "REPR_002 repr() should start with expected string"
-    assert repr_str.endswith(")"), "REPR_003 repr() should end with a closing parenthesis"
+    testspec.run()
