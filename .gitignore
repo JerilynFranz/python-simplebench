@@ -24,7 +24,11 @@ test_repos/
 .venv-3*
 
 # Sphinx stuff
-documentation/_build
+documentation/
+docs_source/_build
+docs_source/doctrees
+docs_source/html
+docs_source/source
 
 # Bazel generated stuff
 bazel-bin

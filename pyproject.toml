@@ -73,7 +73,7 @@ exclude = [
     "/coverage_html_report/",
     "/documentation/",
     "/examples/",
-    "/docs/",
+    "/docs_source/",
     "python-simplebench.code-workspace",
     "uv.lock",
 ]
@@ -176,7 +176,7 @@ format = "svg"
 max_bacon = 1
 max_cluster_size = 2
 max_module_depth = 5
-output = "docs/dependencies.svg"
+output = "documentation/dependencies.svg"
 reverse = true
 cluster = true
 rankdir = "BT"
@@ -309,7 +309,7 @@ dependency_groups = ["docs", "test", "types", "dev"]
 extras = ["all"]
 allowlist_externals = ["sphinx-build"]
 commands = [
-    ["sphinx-build", "-b", "html", "documentation/", "documentation/docs"]
+    ["sphinx-build", "-b", "html", "docs_source/", "documentation"]
 ]
 
 [tool.tox.env.doctest]
@@ -319,7 +319,8 @@ dependency_groups = ["docs", "test", "types", "dev"]
 allowlist_externals = ["sphinx-build", "pytest"]
 extras = ["all"]
 commands = [
-    ["sphinx-build", "-b", "doctest", "documentation/", "documentation/_build/doctest"],
+    ["sphinx-build", "-b", "doctest", "docs_source", "documentation/doctest_output"],
+    ["pytest", "documentation/doctest_output", { replace = "posargs", extend = true }],
 ]
 
 [dependency-groups]
