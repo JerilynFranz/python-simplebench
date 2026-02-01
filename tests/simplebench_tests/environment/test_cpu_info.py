@@ -101,3 +101,13 @@ def test_init(testspec: TestSpec) -> None:
 def test_pickle_cpu_info(testspec: TestSpec) -> None:
     """Test that CPUInfo instances can be pickled and unpickled."""
     testspec.run()
+
+
+def test_repr() -> None:
+    """Test the __repr__ method of CPUInfo."""
+    cpu_info = CPUInfo('reprtest')
+    repr_str = repr(cpu_info)
+    assert isinstance(repr_str, str), "REPR_001 repr() should return a string"
+    expected_start = "CPUInfo(cache_key='reprtest', info="
+    assert repr_str.startswith(expected_start), "REPR_002 repr() should start with expected string"
+    assert repr_str.endswith(")"), "REPR_003 repr() should end with a closing parenthesis"
