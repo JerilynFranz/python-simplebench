@@ -11,7 +11,6 @@ from simplebench.metrics import MetricsCollection, MetricsSelection, MetricsUnsp
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._config import ReporterConfig
-from simplebench.session import Session
 from simplebench.simplebench_types import is_element_collection
 from simplebench.type_proxies import is_case, is_choice, is_session
 
@@ -329,7 +328,7 @@ def path(value: Any, field_name: str = 'path') -> Path:
     return value
 
 
-def session(value: Any, field_name: str = 'session') -> Session:
+def session(value: Any, field_name: str = 'session') -> 'Session':
     """Validate that the provided value is a :class:`~simplebench.session.session.Session` instance.
 
     :param value: The value to validate.

@@ -8,6 +8,7 @@ from simplebench.metrics import MetricsSelection
 from simplebench.reporters.choice import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
 from simplebench.reporters.reporter import ReporterConfig
+from simplebench.simplebench_types import ElementCollection
 
 
 class ReporterConfigKWArgs(KWArgs):
@@ -27,14 +28,14 @@ class ReporterConfigKWArgs(KWArgs):
             name: str | NoDefaultValue = NO_DEFAULT_VALUE,
             description: str | NoDefaultValue = NO_DEFAULT_VALUE,
             metrics: MetricsSelection | NoDefaultValue = NO_DEFAULT_VALUE,
-            targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
-            default_targets: Iterable[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+            targets: ElementCollection[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
+            default_targets: ElementCollection[Target] | NoDefaultValue = NO_DEFAULT_VALUE,
             subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
             file_suffix: str | NoDefaultValue = NO_DEFAULT_VALUE,
             file_unique: bool | NoDefaultValue = NO_DEFAULT_VALUE,
             file_append: bool | NoDefaultValue = NO_DEFAULT_VALUE,
-            formats: Iterable[Format] | NoDefaultValue = NO_DEFAULT_VALUE,
-            choices: Iterable[ChoiceConf] | ChoicesConf | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
+            formats: ElementCollection[Format] | NoDefaultValue = NO_DEFAULT_VALUE,
+            choices: ChoicesConf | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a ReporterKWArgs instance. This class is used to hold keyword arguments for
         initializing a Reporter instance in tests.
 
@@ -43,12 +44,12 @@ class ReporterConfigKWArgs(KWArgs):
         :param description: A brief description of the reporter. Must be a non-empty string.
                             or None if no specific options are defined.
         :type description: str
-        :param sections: The set of all Metrics supported by the reporter.
-        :type sections: set[Metric]
+        :param metrics: The set of all Metrics supported by the reporter.
+        :type metrics: ElementCollection[Metric]
         :param targets: The set of all Targets supported by the reporter.
-        :type targets: set[Target]
+        :type targets: ElementCollection[Target]
         :param default_targets: The default set of Targets for the reporter.
-        :type default_targets: set[Target] | None
+        :type default_targets: ElementCollection[Target] | None
         :param subdir: The subdirectory where report files will be saved.
         :type subdir: str
         :param file_suffix: An optional file suffix for reporter output files.
@@ -61,10 +62,10 @@ class ReporterConfigKWArgs(KWArgs):
         :param file_append: Whether output files should be appended to.
         :type file_append: bool
         :param formats: The set of Formats supported by the reporter.
-        :type formats: set[Format]
+        :type formats: ElementCollection[Format]
         :param choices: A Choices instance defining the sections, output targets,
                         and formats supported by the reporter. Must have at least one Choice.
-        :type choices: Iterable[ChoiceConf] | Choices
+        :type choices: ChoicesConf
         """
         super().__init__(call=ReporterConfig.__init__, kwargs=locals())
 
