@@ -1,11 +1,17 @@
 """KWArgs for Reporter.target_callback() method."""
+# ruff: noqa: F401
+# These imports are necessary for the class to run correctly as
+# because we need them in the global namespace.
+# Also, ruff will remove "unused" imports without the noqa directive.
+from rich.table import Table
+from rich.text import Text
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
+
 from simplebench.case import Case
 from simplebench.enums import Format
 from simplebench.metrics import Metric
 from simplebench.reporters.protocols.reporter_callback import ReporterCallback
-from simplebench.reporters.reporter import Reporter
-
-from ....kwargs import KWArgs, NoDefaultValue
+from simplebench.reporters.reporter import Reporter, ReporterProtocol
 
 
 class TargetCallbackMethodKWArgs(KWArgs):
@@ -33,11 +39,11 @@ class TargetCallbackMethodKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),
-            case: Case | NoDefaultValue = NoDefaultValue(),
-            metric: Metric | NoDefaultValue = NoDefaultValue(),
-            output_format: Format | NoDefaultValue = NoDefaultValue(),
-            output: str | bytes | NoDefaultValue = NoDefaultValue(),
+            callback: ReporterCallback | NoDefaultValue = NO_DEFAULT_VALUE,
+            case: Case | NoDefaultValue = NO_DEFAULT_VALUE,
+            metric: Metric | NoDefaultValue = NO_DEFAULT_VALUE,
+            output_format: Format | NoDefaultValue = NO_DEFAULT_VALUE,
+            output: str | bytes | Text | Table | NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Constructs a TargetCallbackMethodKWArgs instance.
 
@@ -48,11 +54,12 @@ class TargetCallbackMethodKWArgs(KWArgs):
         :type callback: ReporterCallback | None
         :param case: The Case instance representing the benchmarked code.
         :type case: Case
-        :param section: The Metric of the report.
-        :type section: Metric
+        :param metric: The Metric of the report.
+        :type metric: Metric
         :param output_format: The Format of the report.
         :type output_format: Format
         :param output: The report data to pass to the callback function.
         :type output: str | bytes
         """
-        super().__init__(call=Reporter.target_callback, kwargs=locals())
+        super().__init__(
+            call=Reporter.target_callback, kwargs=locals(), globalns=globals())

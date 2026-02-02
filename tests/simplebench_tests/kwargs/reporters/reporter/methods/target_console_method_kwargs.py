@@ -1,11 +1,14 @@
 """KWArgs for Reporter.target_console() method."""
+# ruff: noqa: F401
+# These imports are necessary for the class to run correctly as
+# because we need them in the global namespace.
+# Also, ruff will remove "unused" imports without the noqa directive.
 from rich.table import Table
 from rich.text import Text
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
-from simplebench.reporters.reporter import Reporter
+from simplebench.reporters.reporter import Reporter, ReporterProtocol
 from simplebench.session import Session
-
-from ....kwargs import KWArgs, NoDefaultValue
 
 
 class TargetConsoleMethodKWArgs(KWArgs):
@@ -27,8 +30,8 @@ class TargetConsoleMethodKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            session: Session | NoDefaultValue = NoDefaultValue(),
-            output: str | bytes | Text | Table | NoDefaultValue = NoDefaultValue(),
+            session: Session | NoDefaultValue = NO_DEFAULT_VALUE,
+            output: str | bytes | Text | Table | NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Constructs a TargetConsoleMethodKWArgs instance.
 
@@ -40,4 +43,4 @@ class TargetConsoleMethodKWArgs(KWArgs):
         :param output: The report data to write to the console.
         :type output: str | bytes | Text | Table
         """
-        super().__init__(call=Reporter.target_console, kwargs=locals())
+        super().__init__(call=Reporter.target_console, kwargs=locals(), globalns=globals())

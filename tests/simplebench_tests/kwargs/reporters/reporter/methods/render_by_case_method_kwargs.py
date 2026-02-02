@@ -1,17 +1,16 @@
 """simplebench.reporters.reporter.Reporter render_by_case() KWArgs package for SimpleBench tests."""
-from __future__ import annotations
 
-from argparse import Namespace
+from argparse import Namespace  #
 from pathlib import Path
 
 from simplebench.case import Case
-from simplebench.reporters.choice.choice import Choice
 from simplebench.metadata import Metadata
+from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
 
-from ....kwargs import KWArgs, NoDefaultValue
+from ....kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class RenderByCaseMethodKWArgs(KWArgs):
@@ -47,14 +46,14 @@ class RenderByCaseMethodKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            renderer: ReportRenderer | NoDefaultValue = NoDefaultValue(),
-            log_metadata: Metadata | NoDefaultValue = NoDefaultValue(),
-            args: Namespace | NoDefaultValue = NoDefaultValue(),
-            case: Case | NoDefaultValue = NoDefaultValue(),
-            choice: Choice | NoDefaultValue = NoDefaultValue(),
-            path: Path | NoDefaultValue = NoDefaultValue(),
-            session: Session | NoDefaultValue = NoDefaultValue(),
-            callback: ReporterCallback | NoDefaultValue = NoDefaultValue()) -> None:
+            renderer: ReportRenderer | NoDefaultValue = NO_DEFAULT_VALUE,
+            log_metadata: Metadata | NoDefaultValue = NO_DEFAULT_VALUE,
+            args: Namespace | NoDefaultValue = NO_DEFAULT_VALUE,
+            case: Case | NoDefaultValue = NO_DEFAULT_VALUE,
+            choice: Choice | NoDefaultValue = NO_DEFAULT_VALUE,
+            path: Path | NoDefaultValue = NO_DEFAULT_VALUE,
+            session: Session | NoDefaultValue = NO_DEFAULT_VALUE,
+            callback: ReporterCallback | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a RenderByCaseMethodKWArgs instance.
 
         This class is used to hold keyword arguments for calling the Reporter().render_by_case()
@@ -79,4 +78,4 @@ class RenderByCaseMethodKWArgs(KWArgs):
                          Leave as None if no callback is needed.
         :type callback: ReporterCallback | None
         """
-        super().__init__(call=Reporter.render_by_case, kwargs=locals())
+        super().__init__(call=Reporter.render_by_case, kwargs=locals(), globalns=globals())

@@ -1,6 +1,4 @@
 """KWArgs for the Reporter.dispatch_to_targets method tests."""
-from __future__ import annotations
-
 from argparse import Namespace
 from pathlib import Path
 
@@ -15,7 +13,7 @@ from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
 
-from ....kwargs import KWArgs, NoDefaultValue
+from ....kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class DispatchToTargetsMethodKWArgs(KWArgs):
@@ -32,16 +30,16 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            output: str | bytes | Text | Table | NoDefaultValue = NoDefaultValue(),
-            filename_base: str | NoDefaultValue = NoDefaultValue(),
-            log_metadata: Metadata | NoDefaultValue = NoDefaultValue(),
-            args: Namespace | NoDefaultValue = NoDefaultValue(),
-            choice: Choice | NoDefaultValue = NoDefaultValue(),
-            case: Case | NoDefaultValue = NoDefaultValue(),
-            metric: Metric | NoDefaultValue = NoDefaultValue(),
-            path: Path | NoDefaultValue = NoDefaultValue(),
-            session: Session | NoDefaultValue = NoDefaultValue(),
-            callback: ReporterCallback | NoDefaultValue = NoDefaultValue(),
+            output: str | bytes | Text | Table | NoDefaultValue = NO_DEFAULT_VALUE,
+            log_metadata: Metadata | NoDefaultValue = NO_DEFAULT_VALUE,
+            filename_base: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            args: Namespace | NoDefaultValue = NO_DEFAULT_VALUE,
+            choice: Choice | NoDefaultValue = NO_DEFAULT_VALUE,
+            case: Case | NoDefaultValue = NO_DEFAULT_VALUE,
+            metric: Metric | NoDefaultValue = NO_DEFAULT_VALUE,
+            path: Path | NoDefaultValue = NO_DEFAULT_VALUE,
+            session: Session | NoDefaultValue = NO_DEFAULT_VALUE,
+            callback: ReporterCallback | NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Constructs a DispatchToTargetsMethodKWArgs instance.
 
@@ -72,4 +70,4 @@ class DispatchToTargetsMethodKWArgs(KWArgs):
                          Leave as None if no callback is needed.
         :type callback: ReporterCallback | None
         """
-        super().__init__(call=Reporter.dispatch_to_targets, kwargs=locals())
+        super().__init__(call=Reporter.dispatch_to_targets, kwargs=locals(), globalns=globals())

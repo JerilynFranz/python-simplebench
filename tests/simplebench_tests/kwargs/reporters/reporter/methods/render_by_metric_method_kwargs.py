@@ -1,17 +1,16 @@
 """simplebench.reporters.reporter.Reporter render_by_section() KWArgs package for SimpleBench tests."""
-from __future__ import annotations
 
 from argparse import Namespace
 from pathlib import Path
 
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
+
 from simplebench.case import Case
-from simplebench.reporters.choice.choice import Choice
 from simplebench.metadata import Metadata
+from simplebench.reporters.choice.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
-
-from ....kwargs import KWArgs, NoDefaultValue, NO_DEFAULT_VALUE
 
 
 class RenderByMetricMethodKWArgs(KWArgs):
@@ -24,8 +23,8 @@ class RenderByMetricMethodKWArgs(KWArgs):
             self,
             *,
             renderer: ReportRenderer | NoDefaultValue = NO_DEFAULT_VALUE,
-            args: Namespace | NoDefaultValue = NO_DEFAULT_VALUE,
             log_metadata: Metadata | NoDefaultValue = NO_DEFAULT_VALUE,
+            args: Namespace | NoDefaultValue = NO_DEFAULT_VALUE,
             case: Case | NoDefaultValue = NO_DEFAULT_VALUE,
             choice: Choice | NoDefaultValue = NO_DEFAULT_VALUE,
             path: Path | NoDefaultValue = NO_DEFAULT_VALUE,
@@ -36,4 +35,5 @@ class RenderByMetricMethodKWArgs(KWArgs):
         This class is used to hold keyword arguments for calling the Reporter().render_by_section()
         instance method in tests.
         """
-        super().__init__(call=Reporter.render_by_metric, kwargs=locals())
+        super().__init__(
+            call=Reporter.render_by_metric, kwargs=locals(), globalns=globals())

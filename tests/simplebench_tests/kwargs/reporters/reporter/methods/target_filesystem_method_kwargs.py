@@ -1,15 +1,16 @@
 """KWArgs for the Reporter.target_filesystem method tests."""
-from __future__ import annotations
-
+# ruff: noqa: F401
+# These imports are necessary for the class to run correctly
+# because we need them in the global namespace.
+# Also, ruff will remove "unused" imports without the noqa directive.
 from pathlib import Path
 
 from rich.table import Table
 from rich.text import Text
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 from simplebench.metadata import Metadata
-from simplebench.reporters.reporter import Reporter
-
-from ....kwargs import KWArgs, NoDefaultValue
+from simplebench.reporters.reporter import Reporter, ReporterProtocol
 
 
 class TargetFilesystemMethodKWArgs(KWArgs):
@@ -26,13 +27,13 @@ class TargetFilesystemMethodKWArgs(KWArgs):
     def __init__(  # pylint: disable=unused-argument
             self,
             *,
-            log_metadata: Metadata | NoDefaultValue = NoDefaultValue(),
-            path: Path | NoDefaultValue = NoDefaultValue(),
-            subdir: str | NoDefaultValue = NoDefaultValue(),
-            filename: str | NoDefaultValue = NoDefaultValue(),
-            output: str | bytes | Text | Table | NoDefaultValue = NoDefaultValue(),
-            unique: bool | NoDefaultValue = NoDefaultValue(),
-            append: bool | NoDefaultValue = NoDefaultValue(),
+            log_metadata: Metadata | NoDefaultValue = NO_DEFAULT_VALUE,
+            path: Path | NoDefaultValue = NO_DEFAULT_VALUE,
+            subdir: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            filename: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            output: str | bytes | Text | Table | NoDefaultValue = NO_DEFAULT_VALUE,
+            unique: bool | NoDefaultValue = NO_DEFAULT_VALUE,
+            append: bool | NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Constructs a TargetFilesystemMethodKWArgs instance.
 
@@ -54,4 +55,4 @@ class TargetFilesystemMethodKWArgs(KWArgs):
         :param append: If True, append to the file if it already exists. Otherwise, raise an error.
         :type append: bool
         """
-        super().__init__(call=Reporter.target_filesystem, kwargs=locals())
+        super().__init__(call=Reporter.target_filesystem, kwargs=locals(), globalns=globals())

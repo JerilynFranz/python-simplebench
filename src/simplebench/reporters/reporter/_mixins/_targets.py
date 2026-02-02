@@ -169,7 +169,9 @@ class _ReporterTargetMixin:
         if callback is not None:
             callback(case=case, metric=metric, output_format=output_format, output=output)
 
-    def target_console(self: ReporterProtocol, session: Session | None, output: str | bytes | Text | Table) -> None:
+    def target_console(self: ReporterProtocol,
+                       session: Session | None,
+                       output: str | bytes | Text | Table) -> None:
         """Helper method to output report data to the console.
 
         It uses the Rich Console instance from the Session if provided, otherwise

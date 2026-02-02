@@ -1,40 +1,34 @@
 """Tests for TargetConsoleMethodKWArgs."""
+# ruff: noqa: F401
+# These imports are necessary for the tests to run correctly as
+# standalone tests because we need them in the global namespace.
+# Also, ruff will remove "unused" imports without the noqa directive.
+import autopypath
 import pytest
-
-from simplebench.reporters.reporter import Reporter as _MODELED_CLASS
-
+from rich.table import Table
+from rich.text import Text
 from simplebench_tests.kwargs import kwargs_class_matches_modeled_call
-from testspec import Assert, TestAction, TestSpec, idspec
-from .target_console_method_kwargs import TargetConsoleMethodKWArgs as _KWARGS_CLASS
+from simplebench_tests.kwargs.reporters.reporter.methods.target_console_method_kwargs import TargetConsoleMethodKWArgs
 
+from simplebench.reporters.reporter import Reporter, ReporterProtocol
+from simplebench.session import Session
+
+_MODELED_CLASS = Reporter
 _MODELED_CALL = _MODELED_CLASS.target_console
+_KWARGS_CLASS = TargetConsoleMethodKWArgs
+
+def test_kwargs_matches_signature() -> None:
+    """Test that KWargs subclass __init__ signature matches the modeled call signature."""
+    kwargs_class_matches_modeled_call(
+        kwargs_class=_KWARGS_CLASS, modeled_call=_MODELED_CALL,
+        globalns=globals())
 
 
-def target_console_method_kwargs_testspecs() -> list[TestSpec]:
-    """Generates TestSpecs for testing TargetConsoleMethodKWArgs.
-
-    :return: A list of TestSpec instances for testing TargetConsole  MethodKWArgs.
-    :rtype: list[TestSpec]
-    """
-    testspecs: list[TestSpec] = [
-        idspec("KWARGS_001", TestAction(
-            name="Validate KWArgs subclass signature vs modeled call (no exception)",
-            action=kwargs_class_matches_modeled_call,
-            kwargs={
-                'kwargs_class': _KWARGS_CLASS,
-                'modeled_call': _MODELED_CALL,
-            })),
-        idspec("KWARGS_002", TestAction(
-            name="Instantate KWArgs subclass default instance",
-            action=_KWARGS_CLASS,
-            assertion=Assert.ISINSTANCE,
-            expected=_KWARGS_CLASS))
-    ]
-
-    return testspecs
+def test_can_instantiate() -> None:
+    """Test that KWArgs subclass can be instantiated."""
+    kwargs_instance = _KWARGS_CLASS()
+    assert isinstance(kwargs_instance, _KWARGS_CLASS)
 
 
-@pytest.mark.parametrize("testspec", target_console_method_kwargs_testspecs())
-def test_target_console_method_kwargs(testspec: TestSpec):
-    """Tests for TargetConsoleMethodKWArgs."""
-    testspec.run()
+if __name__ == "__main__":
+    pytest.main([__file__])
