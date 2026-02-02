@@ -1,10 +1,9 @@
 """Tests for simplebench.report.versions.v1.cpu_info.CPUInfo class."""
 import pytest
+from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench.environment._cpu_info._cpu_info import CPUInfo as EnvCPUInfo
 from simplebench.report.versions.v1.cpu_info import CPUInfo as ReportCPUInfo
-
-from testspec import Assert, TestAction, TestSpec, idspec
 
 
 def dummy_cpu_info() -> dict[str, str | int | list[str]]:
@@ -46,7 +45,7 @@ def dummy_cpu_info() -> dict[str, str | int | list[str]]:
         idspec("INIT_002", TestAction(
            name="Initialize CPUInfo from environment.CPUInfo.info property",
            action=ReportCPUInfo,
-           kwargs={"data": EnvCPUInfo().info},
+           kwargs={"data": EnvCPUInfo().to_dict()},
            assertion=Assert.ISINSTANCE,
            expected=ReportCPUInfo)),
         idspec("INIT_003", TestAction(

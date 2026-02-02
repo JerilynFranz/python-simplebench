@@ -76,21 +76,21 @@ class FactoryReporterForOrchestration(FactoryReporter):
         """Spy for filesystem target method calls."""
 
     def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> Output:
-        """Render the report for the given case, section, and options.
+        """Render the report for the given case, metric, and options.
 
         Unlike the base FactoryReporter, this method uses a RenderSpy
         to record calls for testing purposes.
 
         :param case: The benchmark case.
         :type case: Case
-        :param section: The report section.
-        :type section: Metric
+        :param metric: The report metric.
+        :type metric: Metric
         :param options: The reporter options.
         :type options: ReporterOptions
         :return: The rendered output.
         :rtype: Output
         """
-        return self.render_spy(case=case, section=section, options=options)
+        return self.render_spy(case=case, metric=metric, options=options)
 
 
 def _orchestration_reporter_factory(choice_name: str,
