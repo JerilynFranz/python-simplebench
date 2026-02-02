@@ -36,9 +36,10 @@ from simplebench_tests.kwargs import ChoiceConfKWArgs, ChoicesConfKWArgs
 
 from simplebench.case import Case
 from simplebench.metrics import Metric
+from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
-from simplebench.reporters.reporter import Reporter, ReporterConfig, ReporterOptions
+from simplebench.reporters.reporter import Reporter, ReporterConfig
 
 
 @uncached_factory
