@@ -22,7 +22,7 @@ from typeguard import check_type
 
 from simplebench._log import _log
 from simplebench.report.base import BaseCPUInfo, JSONSchema
-from simplebench.simplebench_types import ImmutableCoreDataMappingType
+from simplebench.simplebench_types import CoreDataMappingType
 
 from . import _validate
 from .cpu_info_schema import CPUInfoSchema
@@ -191,7 +191,7 @@ class CPUInfo(BaseCPUInfo):
                         'type': cls.TYPE,
                         'version': cls.VERSION,
                         'hash_id': self.hash_id,
-                        'data': cast(ImmutableCoreDataMappingType, self.data),
+                        'data': cast(CoreDataMappingType, self.data),
                     }
                 ),
             )

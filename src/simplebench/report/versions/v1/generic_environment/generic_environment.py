@@ -22,7 +22,7 @@ from typing import Any, cast
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
 from simplebench.report.base import Environment, JSONSchema
-from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, ImmutableCoreDataMappingType
+from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, CoreDataMapping
 from simplebench.validators import validate_core_data_mapping
 
 from . import _validate
@@ -76,8 +76,8 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         if 'hash_id' in local_data:
             self._hash_id = _validate.hash_id(local_data.pop('hash_id'))
 
-        self._from_dict: ImmutableCoreDataMappingType = _validate.data_as_core_data_mapping(local_data, 'data')
-        validated_data = validate_core_data_mapping(local_data, 'data', max_depth=5)
+        self._from_dict: CoreDataMapping = _validate.data_as_core_data_mapping(local_data, 'data')
+        validated_data = validate_core_data_mapping(local_data, 'data')
         thawed_data = dict(validated_data)  # Make a mutable copy for internal use
         self._hash_id = self._generate_hash_id(thawed_data) if self._hash_id == '' else self._hash_id
         thawed_data['hash_id'] = self._hash_id
@@ -85,8 +85,8 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
             thawed_data['type'] = self.TYPE
         if 'version' not in thawed_data:
             thawed_data['version'] = self.VERSION
-        validated_data = cast(ImmutableCoreDataMappingType, MappingProxyType(thawed_data))  # Make immutable for storage
-        self._from_dict: ImmutableCoreDataMappingType = validated_data
+        validated_data = CoreDataMapping(thawed_data)
+        self._from_dict = validated_data
 
     def _generate_hash_id(self, data: Any) -> str:
         """Helper method to compute the hash_id property from the data mapping.
@@ -183,16 +183,16 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         """
         return cls(data)
 
-    def to_dict(self) -> ImmutableCoreDataMappingType:
+    def to_dict(self) -> CoreDataMapping:
         """Returns the GenericEnvironment as an immutable MappingProxyType dictionary suitable for JSON serialization.
 
-        The returned instance is of type :class:`MappingProxyType` to ensure immutability
+        The returned instance is of type :class:`CoreDataMapping` to ensure immutability
         and will always reflect the state of the instance at the time of the first call.
 
         The exact same instance is returned on subsequent calls to ensure consistency
         and this is true even in multi-threaded scenarios.
 
-        :return ImmutableCoreDataMappingType: A dictionary representation of the GenericEnvironment.
+        :return CoreDataMapping: A dictionary representation of the GenericEnvironment.
         """
         return self._from_dict
 

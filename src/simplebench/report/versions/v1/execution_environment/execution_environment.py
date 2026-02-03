@@ -9,7 +9,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.report.base import BaseExecutionEnvironment, Environment
 from simplebench.report.versions.v1.python_info import PythonInfo
-from simplebench.simplebench_types import CoreDataMappingType, ImmutableCoreDataMappingType
+from simplebench.simplebench_types import CoreDataMappingType, CoreDataMapping
 from simplebench.validators import validate_core_data_mapping
 
 from . import _validate
@@ -67,7 +67,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
         :param data: The dictionary containing execution environment information.
         :return: A ExecutionEnvironment instance.
         """
-        imported_environments: dict[str, ImmutableCoreDataMappingType | Environment] = {}
+        imported_environments: dict[str, CoreDataMappingType | Environment] = {}
         for env_name, env_value in data.items():
             if env_name in KNOWN_ENVIRONMENTS:
                 environment: type[Environment] = KNOWN_ENVIRONMENTS[env_name]
@@ -75,8 +75,7 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
                 imported_environments[env_name] = imported_instance
             else:
                 imported_environments[env_name] = validate_core_data_mapping(
-                    env_value, f"Environment '{env_name}'", max_depth=5
-                )
+                    env_value, f"Environment '{env_name}'")
         return cls(**imported_environments)
 
     def to_dict(self) -> ExecutionEnvironmentDict:

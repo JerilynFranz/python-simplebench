@@ -34,3 +34,9 @@ class _CoreDataErrorTag(ErrorTag):
     """An attempt was made to modify an immutable CoreDataMapping."""
     CORE_DATA_COMPARISON_UNSUPPORTED_TYPE = 'CORE_DATA_COMPARISON_UNSUPPORTED_TYPE'
     """An unsupported CoreData type was used in comparison."""
+    CORE_DATA_SEQUENCE_UNSUPPORTED_PICKLE_VERSION = 'CORE_DATA_SEQUENCE_UNSUPPORTED_PICKLE_VERSION'
+    """An unsupported pickle version was encountered when unpickling CoreDataSequence."""
+    CORE_DATA_SET_UNSUPPORTED_PICKLE_VERSION = 'CORE_DATA_SET_UNSUPPORTED_PICKLE_VERSION'
+    """An unsupported pickle version was encountered when unpickling CoreDataSet."""
+    CORE_DATA_MAPPING_UNSUPPORTED_PICKLE_VERSION = 'CORE_DATA_MAPPING_UNSUPPORTED_PICKLE_VERSION'
+    """An unsupported pickle version was encountered when unpickling CoreDataMapping."""

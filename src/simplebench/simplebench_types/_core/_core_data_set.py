@@ -12,7 +12,6 @@ Allowed types are:
         - int
         - float
         - bool
-        - complex
         - NoneType
     - Sequences of the above types
     - Mappings of str to the above types
@@ -20,13 +19,14 @@ Allowed types are:
 """
 import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchAssertionError, SimpleBenchTypeError
 
 from .._element_collection import ElementCollection, is_element_collection
+from . import _common
 from ._error_tags import _CoreDataErrorTag
 
 if TYPE_CHECKING:
@@ -66,11 +66,12 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         from ._core_data_sequence import CoreDataSequence
         from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, ImmutableCoreDataTypes
 
-
-        self._data: frozenset[ImmutableCoreDataTypes]
+        self._hash_cache: int | None = None
+        self._content_hash_cache: str | None = None
+        self._data: set[ImmutableCoreDataTypes]
 
         if __elements is None:
-            self._data = frozenset()
+            self._data = set()
             return
 
         if not is_element_collection(__elements):
@@ -80,7 +81,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         data: set[CoreDataTypes] = set()
 
         if all(isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for item in __elements):
-            self._data = frozenset(__elements)
+            self._data = set(__elements)
             return
 
         for item in __elements:
@@ -103,8 +104,6 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         # Wrap in frozenset to ensure immutability
         # We've already validated all items are ImmutableCoreDataTypes
         self._data = frozenset(data)  # type: ignore[arg-type]
-        self._hash_cache: int | None = None
-        self._content_hash_cache: str | None = None
 
     def __contains__(self, item: object) -> bool:
         """Check if the item is in the CoreDataSet.
@@ -152,46 +151,6 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             return False
         return self._data == other._data
 
-    def _rich_compare_value(self, value: 'ImmutableCoreDataTypes') -> str:
-        """Returns a string representation for rich comparison purposes.
-
-        We don't actually care about the comparision value, just that
-        it is consistent and largely guaranteed to be unique for
-        each item value.
-
-        Since in a set the order is not guaranteed, we generate a reproducible
-        and consistent value by their string representation or content
-        hash if they are immutable core data types. This ensures that
-        two sets with the same content will have the same
-        representation for comparison.
-
-        Since it is only used in generating a cached content hash, this is
-        efficient enough for our purposes.
-
-        .. note:: This is a helper method for internal use only. It
-              should not be used outside of this class. It's also
-              vulnerable to infinite recursion if used on recursive
-              data structure since it would never find a base case to stop.
-
-              However, since CoreDataSet is immutable and cannot contain
-              recursive references, this should not be an issue in practice.
-
-        :returns: A sorted list of the set items.
-        :rtype: list[CoreDataTypes]
-        """
-        from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE
-
-        if value is None:
-            return ''
-        if isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-            return repr(value)
-        if isinstance(value, CoreDataSet):
-            return value.content_hash()
-
-        raise SimpleBenchAssertionError(
-            f'Unsupported CoreData type for rich comparison: {type(value)!r}',
-            tag=_CoreDataErrorTag.CORE_DATA_COMPARISON_UNSUPPORTED_TYPE)
-
     def content_hash(self) -> str:
         """Return a SHA256 hash of the CoreDataSet content.
 
@@ -203,7 +162,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         if self._content_hash_cache is None:
             hasher = hashlib.sha256()
             # We don't care what the order is, just that it is consistent
-            values = sorted(self._data, key=self._rich_compare_value)
+            values = sorted(self._data, key=_common.rich_compare_value)
             for item in values:
                 if isinstance(item, (CoreDataSequence, CoreDataMapping, CoreDataSet)):
                     hasher.update(item.content_hash().encode('utf-8'))
@@ -223,7 +182,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             self._hash_cache = hash(self._data)
         return self._hash_cache
 
-    def thaw(self) -> set[CoreDataTypes]:
+    def thaw(self) -> set['CoreDataTypes']:
         """Convert the CoreDataSequence to a standard mutable set.
 
         :returns: A mutable set representation of the CoreDataSequence.
@@ -241,3 +200,88 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
                 thawed_set.add(value)
         return thawed_set
 
+    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
+        """Prepare the object's state for pickling, prioritizing size.
+
+        This method ensures that the pickled representation of the CoreDataSet
+        is as compact as possible. It achieves this by excluding any cached
+        attributes that can be recomputed upon unpickling, such as hash caches.
+
+        Because the internal data is stored as python built-in types (tuples,
+        dicts, sets and other python primitive types), the pickled size is minimized.
+
+        Future versions of SimpleBench may change the pickling format, so
+        pickled data should not be considered stable across versions.
+
+        A version number is included in the pickled state to allow for
+        potential future migrations if the internal structure changes.
+
+        It is always in the 0th index of the state tuple.
+
+        :return: A state tuple for pickling.
+        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        slot_values: list[Any] = []
+        for slot in self.__slots__:
+            if slot in ('_data', '_version'):
+                slot_values.append(getattr(self, slot))
+            else:
+                slot_values.append(None)
+
+        # Build the state tuple for a __slots__ class. The first element is for
+        # __dict__ (None in our case) and the second is a tuple of the slotted values.
+        state = tuple(slot_values)
+        return (None, state)
+
+    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
+        """Restore the object's state from a pickled representation.
+
+        This method is the counterpart to `__getstate__`. It takes the state
+        tuple and repopulates the instance's `__slots__`.
+
+        .. note::
+            This method bypasses `__init__`, which is standard for unpickling.
+
+        :param state: The state tuple from unpickling.
+        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # The first element of the state tuple is for __dict__, which is None for this class.
+        # The second element is a tuple of values for the __slots__.
+        slots_by_version = {1: ('_version', '_data', '_hash_cache', '_content_hash_cache')}
+        slot_values = state[1]
+        version = slot_values[0]
+        slots = slots_by_version.get(version)
+        if slots is None:
+            raise SimpleBenchTypeError(
+                f'Unsupported CoreDataSet pickled version: {version!r}.',
+                tag=_CoreDataErrorTag.CORE_DATA_SET_UNSUPPORTED_PICKLE_VERSION)
+
+        match version:
+            case 1:
+                for slot, value in zip(slots, slot_values, strict=True):
+                    # Use object.__setattr__ to bypass our immutable setters.
+                    object.__setattr__(self, slot, value)
+            case _:
+                raise SimpleBenchTypeError(
+                    f'Unsupported CoreDataSet pickled version: {version!r}.',
+                    tag=_CoreDataErrorTag.CORE_DATA_SET_UNSUPPORTED_PICKLE_VERSION)
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'CoreDataSet':
+        """Return the same CoreDataSet.
+
+        Since the CoreDataSet instance is immutable and composed of
+        immutable components, there is no need to perform a deep copy
+        of its contents. Instead, we simply return the instance itself
+        which is a extremely fast O(1) operation.
+
+        If a true deep copy is required for some reason, the caller
+        can manually create a new instance by passing the thawed contents
+        to the constructor.
+
+        :param memo: The memoization dictionary used by `copy.deepcopy`.
+                     It is not used in this optimized implementation.
+        :return CoreDataSet: The same CoreDataSet instance.
+        """
+        # because the CoreDataSet is immutable, we return self
+        # instead of performing an actual copy.
+        return self

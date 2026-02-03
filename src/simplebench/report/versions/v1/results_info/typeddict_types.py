@@ -17,7 +17,7 @@ version 1: :class:`~simplebench.report.versions.v1.ResultsInfoSchema`.
 from simplebench.report.base import ReportElementTypedDict
 from simplebench.simplebench_types import (
     CoreDataMappingType,
-    ImmutableCoreDataMappingType,
+    CoreDataMapping,
     Never,
     NotRequired,
     Required,
@@ -62,9 +62,9 @@ class _ImmutableRequiredResultsInfoData(ReportElementTypedDict, total=True):
     :param Required[str] title: The title of the results.
     :param Required[str] description: The description of the results.
     :param Required[float] n: The n-complexity value.
-    :param Required[ImmutableVariationMarksType] variation_marks: The variation marks mapping.
+    :param Required[VariationMarks] variation_marks: The variation marks mapping.
     :param Required[MetricsObjectDict] metrics: The metrics object data.
-    :param Required[extra_info: ImmutableCoreDataMappingType] extra_info: Additional information.
+    :param Required[extra_info: CoreDataMapping] extra_info: Additional information.
     """
 
     semantic_type: Required[str]
@@ -74,7 +74,7 @@ class _ImmutableRequiredResultsInfoData(ReportElementTypedDict, total=True):
     n: Required[float]
     variation_marks: Required[VariationMarks]
     metrics: Required[MetricsObjectDict]
-    extra_info: Required[ImmutableCoreDataMappingType]
+    extra_info: Required[CoreDataMapping]
 
 
 class ResultsInfoData(_RequiredResultsInfoData, total=False):
@@ -181,7 +181,7 @@ class _ImmutableRequiredResultsInfoDict(ReportElementTypedDict, total=True):
     n: Required[float]
     variation_marks: Required[VariationMarks]
     metrics: Required[MetricsObjectDict]
-    extra_info: Required[ImmutableCoreDataMappingType]
+    extra_info: Required[CoreDataMapping]
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
@@ -195,13 +195,13 @@ class ImmutableResultsInfoDict(_ImmutableRequiredResultsInfoDict, total=False):
     :param Required[str] title: The title of the results.
     :param Required[str] description: The description of the results.
     :param Required[float] n: The n-complexity value.
-    :param Required[VariationMarksType] variation_marks: The variation marks mapping.
+    :param Required[VariationMarks] variation_marks: The variation marks mapping.
     :param Required[MetricsObjectDict] metrics: The metrics object data.
-    :param Required[ImmutableCoreDataMappingType] extra_info: Additional information.
+    :param Required[CoreDataMapping] extra_info: Additional information.
     :param Required[str] hash_id: The unique hash identifier for the Results information.
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
-    :param Required[ImmutableCoreDataMappingType] extra_info: Additional information.
+    :param Required[CoreDataMapping] extra_info: Additional information.
 
     """
 

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any
 from simplebench.report.base import BaseResultsInfo
 from simplebench.simplebench_types import (
     CoreDataMappingType,
-    ImmutableCoreDataMappingType,
+    CoreDataMapping,
     VariationMarks,
 )
 
@@ -107,7 +107,7 @@ class ResultsInfo(BaseResultsInfo):
         self._n: float = _validate.n(n)
         self._variation_marks: VariationMarks = _validate.variation_marks(variation_marks)
         self._metrics: MetricsObject = _validate.metrics(metrics)
-        self._extra_info: ImmutableCoreDataMappingType = _validate.extra_info(extra_info)
+        self._extra_info: CoreDataMapping = _validate.extra_info(extra_info)
         self._hash_id: str = _validate.hash_id(hash_id)
         if not self._hash_id:
             self._hash_id: str = self._hash_id_helper(ResultsInfoData)
@@ -195,12 +195,12 @@ class ResultsInfo(BaseResultsInfo):
         return self._metrics
 
     @property
-    def extra_info(self) -> ImmutableCoreDataMappingType:
+    def extra_info(self) -> CoreDataMapping:
         """Get the extra info.
 
         The extra info immutable mapping is returned.
 
-        :return ImmutableCoreDataMappingType: The extra info immutable mapping.
+        :return CoreDataMapping: The extra info immutable mapping.
         """
         return self._extra_info
 

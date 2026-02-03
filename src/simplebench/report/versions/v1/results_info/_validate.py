@@ -8,7 +8,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
 from simplebench.simplebench_types import (
     CoreDataMappingType,
-    ImmutableCoreDataMappingType,
+    CoreDataMapping,
     VariationMarks,
 )
 from simplebench.validators import (
@@ -135,18 +135,13 @@ def variation_marks(value: VariationMarks) -> VariationMarks:
     """
     validate_type(
         value,
-        Mapping,
+        VariationMarks,
         'variation_marks',
         _ResultsInfoErrorTag.INVALID_VARIATION_MARKS_TYPE,
-        message=f'variation_marks must be a Mapping, got {type(value)}',
+        message=f'variation_marks must be a VariationMarks, got {type(value)}',
     )
-    if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
-        raise SimpleBenchTypeError(
-            'All keys and values in variation_marks must be strings',
-            tag=_ResultsInfoErrorTag.INVALID_VARIATION_MARKS_CONTENT,
-        )
 
-    return MappingProxyType(value)
+    return value
 
 
 def metrics(value: MetricsObject) -> MetricsObject:
@@ -171,7 +166,7 @@ def metrics(value: MetricsObject) -> MetricsObject:
     return value
 
 
-def extra_info(value: CoreDataMappingType) -> ImmutableCoreDataMappingType:
+def extra_info(value: CoreDataMappingType) -> CoreDataMapping:
     """Validate the extra_info property.
 
     Validates that `extra_info` is a mapping of strings to CoreDataTypes that
@@ -184,4 +179,4 @@ def extra_info(value: CoreDataMappingType) -> ImmutableCoreDataMappingType:
     :raises SimpleBenchValueError: If the nesting depth exceeds 10 levels or if there are cyclic references
         or has keys that are not strings or are blank or empty strings.
     """
-    return validate_core_data_mapping(value, 'extra_info', max_depth=10)
+    return validate_core_data_mapping(value, 'extra_info')

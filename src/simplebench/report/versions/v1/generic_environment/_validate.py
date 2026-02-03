@@ -4,7 +4,7 @@ import re
 from typing import Any, Final
 
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
-from simplebench.simplebench_types import ImmutableCoreDataMappingType
+from simplebench.simplebench_types import CoreDataMapping
 from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
 
 _HASH_RE: Final[re.Pattern[str]] = re.compile(r'^[a-f0-9]{64}$')
@@ -42,6 +42,6 @@ def hash_id(value: str) -> str:
     )
 
 
-def data_as_core_data_mapping(data: Any, context: str) -> ImmutableCoreDataMappingType:
+def data_as_core_data_mapping(data: Any, context: str) -> CoreDataMapping:
     """Validate that kwargs dictionary contains only core data mapping types."""
-    return validate_core_data_mapping(data, context, max_depth=5)
+    return validate_core_data_mapping(data, context)
