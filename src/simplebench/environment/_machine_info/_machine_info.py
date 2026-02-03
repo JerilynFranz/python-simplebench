@@ -3,17 +3,17 @@
 import platform
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import ClassVar, cast
+from typing import TYPE_CHECKING, ClassVar, cast
 
 from simplebench.environment._cpu_info import CPUInfo
 from simplebench.environment._memory_info import MemoryInfo
 from simplebench.environment._python_info import PythonInfo
 from simplebench.environment._system_info import SystemInfo
-from simplebench.report.versions.v1 import ImmutableMachineInfoData
-from simplebench.report.versions.v1 import MachineInfo as ReportMachineInfo
 
 from . import _validate
 
+if TYPE_CHECKING:
+    from simplebench.report.versions import v1 as report
 
 @dataclass(frozen=True, kw_only=True)
 class MachineInfo:
@@ -39,6 +39,8 @@ class MachineInfo:
         compatibility with report MachineInfo structure.
 
         """
+        from simplebench.report.versions import v1 as report
+
         _validate.node(self.node)
         _validate.cpu_info(self.cpu)
         _validate.python_info(self.python)
@@ -57,18 +59,18 @@ class MachineInfo:
                 }
             ),
         )
-        object.__setattr__(self, '_report_machine_info', ReportMachineInfo.from_dict(self._to_dict()))
+        object.__setattr__(self, '_report_machine_info', report.MachineInfo.from_dict(self._to_dict()))
 
     @property
-    def as_report_machine_info(self) -> ReportMachineInfo:
+    def as_report_machine_info(self) -> 'report.MachineInfo':
         """The :class:`simplebench.report.versions.v1.MachineInfo` representation of the
         :class:`simplebench.environment.MachineInfo` instance.
 
-        :return ReportMachineInfo: The ReportMachineInfo representation of the MachineInfo instance.
+        :return report.MachineInfo: The ReportMachineInfo representation of the MachineInfo instance.
         """
-        return cast(ReportMachineInfo, self._report_machine_info)
+        return cast('report.MachineInfo', self._report_machine_info)
 
-    def _to_dict(self) -> ImmutableMachineInfoData:
+    def _to_dict(self) -> 'report.ImmutableMachineInfoData':
         """Convert the MachineInfo instance to a dictionary. The dictionary
         conforms to the :class:`simplebench.report.versions.v1.ImmutableMachineInfoData` type
         which means it can be directly for importing into report MachineInfo objects
@@ -76,8 +78,7 @@ class MachineInfo:
 
         :return dict: A dictionary representation of the MachineInfo instance.
         """
-        return cast(ImmutableMachineInfoData, self._dict_cache)
-
+        return cast('report.ImmutableMachineInfoData', self._dict_cache)
 
 class MachineInfoFactory:
     """Factory for creating and caching MachineInfo instances.

@@ -6,13 +6,16 @@ the :module:`cpuinfo` module.
 """
 
 from functools import cache
+from typing import TYPE_CHECKING
 
 from cpuinfo import get_cpu_info  # type: ignore  # cpuinfo doesn't have type stubs
 from typechecked import Immutable
 
-from simplebench.report.versions.v1 import ImmutableCPUInfoData
 
 from . import _validate
+
+if TYPE_CHECKING:
+    from simplebench.report.versions import v1 as report
 
 __all__: list[str] = []
 
@@ -54,7 +57,7 @@ class CPUInfo(Immutable):
 
     @cache
     @staticmethod
-    def _get_cached_cpu_info(cache_key: str) -> ImmutableCPUInfoData:  #  pylint: disable=unused-argument
+    def _get_cached_cpu_info(cache_key: str) -> 'report.ImmutableCPUInfoData':  #  pylint: disable=unused-argument
         """Get the cached CPU information from the `cpuinfo` module.
 
         The data is validated and converted a :class:`~simplebench.simplebench_types.CoreDataMappingType`
@@ -64,7 +67,8 @@ class CPUInfo(Immutable):
         Cache is managed based on the provided cache key by the :func:`functools.cache` decorator.
 
         :param str | None cache_key: An optional key to identify a cache entry.
-        :return ImmutableCPUInfoData: The CPU information as an immutable dictionary.
+        :return: The CPU information as an immutable dictionary.
+        :rtype: report.ImmutableCPUInfoData
         """
         return _validate.cpu_info({'data': get_cpu_info() })
 
@@ -92,10 +96,10 @@ class CPUInfo(Immutable):
         :raises SimpleBenchValueError: If cache_key is an empty string or contains non-alphanumeric characters.
         """
         self._cache_key: str | None = _validate.cache_key(cache_key)
-        self._info: ImmutableCPUInfoData = _validate.cpu_info(
+        self._info: report.ImmutableCPUInfoData = _validate.cpu_info(
             {'data': get_cpu_info() }) if cache_key is None else self.__class__._get_cached_cpu_info(cache_key)
 
-    def to_dict(self) -> ImmutableCPUInfoData:
+    def to_dict(self) -> 'report.ImmutableCPUInfoData':
         """Get the CPU information dictionary.
 
         This dictionary contains all the CPU information gathered from the

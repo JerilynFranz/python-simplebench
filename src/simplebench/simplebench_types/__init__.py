@@ -9,17 +9,16 @@ from ._compatibility_types import (
 )
 from ._core import (
     CORE_DATA_PRIMITIVE_TYPES_TUPLE,
+    CORE_DATA_TYPES_TUPLE,
     IMMUTABLE_CORE_DATA_TYPES_TUPLE,
     CoreDataMapping,
     CoreDataMappingType,
+    CoreDataPrimitiveTypes,
     CoreDataSequence,
     CoreDataSequenceType,
     CoreDataSet,
     CoreDataSetType,
     CoreDataTypes,
-    ImmutableCoreDataMappingType,
-    ImmutableCoreDataSequenceType,
-    ImmutableCoreDataSetType,
     ImmutableCoreDataTypes,
 )
 from ._element_collection import ElementCollection, is_element_collection
@@ -52,9 +51,8 @@ __all__ = [
     'CORE_DATA_PRIMITIVE_TYPES_TUPLE',
     'CoreDataSequenceType',
     'CoreDataSetType',
-    'ImmutableCoreDataMappingType',
-    'ImmutableCoreDataSequenceType',
-    'ImmutableCoreDataSetType',
+    'CoreDataPrimitiveTypes',
+    'IMMUTABLE_CORE_DATA_TYPES_TUPLE',
     'ImmutableCoreDataTypes',
     'Values',
     'Iterations',
@@ -62,5 +60,5 @@ __all__ = [
     'VariationCols',
     'VariationMarks',
     'KWArgsVariations',
-    'IMMUTABLE_CORE_DATA_TYPES_TUPLE',
+    'CORE_DATA_TYPES_TUPLE',
 ]

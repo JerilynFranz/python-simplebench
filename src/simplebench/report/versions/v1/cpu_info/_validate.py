@@ -3,8 +3,7 @@
 import re
 from typing import Any, cast
 
-from typechecked import is_immutable
-from typeguard import check_type
+from typeguard import TypeCheckError, check_type
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _CPUInfoErrorTag
@@ -81,20 +80,19 @@ def data(value: Any) -> ImmutableCPUInfoData:
         non-empty string, or if the structure contains unsupported types or cycles.
     :raises SimpleBenchTypeError: If the value is not a valid dictionary.
     """
-    from simplebench.environment import CPUInfo as EnvCPUInfo
-
-    if not isinstance(value, EnvCPUInfo):
-        raise SimpleBenchTypeError(
-            f'CPUInfo.data must be an instance of simplebench.environment.CPUInfo, got {type(value).__name__}.',
-            tag=_CPUInfoErrorTag.INVALID_DATA_PROPERTY_TYPE,
-        )
+    from simplebench import environment
+    if isinstance(value, environment.CPUInfo):
+        dict_value = value.to_dict()
+        return data(dict_value)
+    else:
+        dict_value = value
 
     try:
-        unpacked_value = check_type(value.to_dict(), ImmutableCPUInfoData)
-    except TypeError as exc:
+        check_type(dict_value, CPUInfoData)
+
+    except TypeCheckError as exc:
         raise SimpleBenchTypeError(
-            f'CPUInfo.data must be a dictionary with string keys and values of valid types, got {type(unpacked_value).__name__}.',
+            f'CPUInfo.data must be a dictionary with string keys and values of valid types, got {value!r}.',
             tag=_CPUInfoErrorTag.INVALID_DATA_PROPERTY_TYPE,
         ) from exc
-
-    return unpacked_value
+    return cast(ImmutableCPUInfoData, validate_core_data_mapping(dict_value, 'CPUInfo.data'))

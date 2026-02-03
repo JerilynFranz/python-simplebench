@@ -15,9 +15,10 @@ type-checking purposes.
 
 These types ensure proper validation and serialization of CPUInfo data
 """
+# ruff: noqa: F401
 
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
-from simplebench.simplebench_types import CoreDataMappingType, Never, NotRequired, Required
+from simplebench.simplebench_types import CoreDataMappingType, CoreDataTypes, Never, NotRequired, Required
 
 __all__ = ['CPUInfoData', 'CPUInfoDict', 'ImmutableCPUInfoData', 'ImmutableCPUInfoDict']
 

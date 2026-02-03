@@ -26,7 +26,6 @@ from rich.text import Text
 from simplebench.case.results import Results
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError
-from simplebench.metadata import Metadata
 from simplebench.metrics import Metric, MetricsSelection
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choices.choices import Choices
@@ -50,6 +49,7 @@ T = TypeVar('T')
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.metadata import Metadata
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session import Session
     from simplebench.simplebench_types import ElementCollection
@@ -215,7 +215,7 @@ class Reporter(
     def report(
         self,  # pylint: disable=too-many-arguments  # noqa: C901
         *,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         args: Namespace,
         case: 'Case',
         choice: 'Choice',
@@ -307,7 +307,7 @@ class Reporter(
         self,
         *,
         args: Namespace,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         case: 'Case',
         choice: 'Choice',
         path: Path | None = None,

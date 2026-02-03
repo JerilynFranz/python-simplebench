@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any
 
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metadata import Metadata
 from simplebench.metrics import MetricsCollection, MetricsSelection, MetricsUnspecified
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
@@ -18,6 +17,7 @@ from ._error_tags import _ReporterErrorTag
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.metadata import Metadata
     from simplebench.reporters.choice.choice import Choice
     from simplebench.session.session import Session
 
@@ -462,7 +462,7 @@ def callback(value: Any, field_name: str = 'callback') -> ReporterCallback | Non
         )
     return value
 
-def log_metadata(value: Any, field_name: str = 'log_metadata') -> Metadata:
+def log_metadata(value: Any, field_name: str = 'log_metadata') -> 'Metadata':
     """Validate that the provided value is a :class:`~simplebench.metadata.Metadata` instance.
 
     :param value: The value to validate.
@@ -473,6 +473,8 @@ def log_metadata(value: Any, field_name: str = 'log_metadata') -> Metadata:
 
     :return: The validated Metadata instance.
     """
+    from simplebench.metadata import Metadata
+
     if not isinstance(value, Metadata):
         message = f'Expected a Metadata instance for {field_name!r}'
         raise SimpleBenchTypeError(
@@ -481,7 +483,7 @@ def log_metadata(value: Any, field_name: str = 'log_metadata') -> Metadata:
         )
     return value
 
-def reports_log_path(value: Metadata, field_name: str = 'log_metadata.reports_log_path') -> Path | None:
+def reports_log_path(value: 'Metadata', field_name: str = 'log_metadata.reports_log_path') -> Path | None:
     """Validate that the provided value is a :class:`~simplebench.metadata.Metadata` instance
     and that its 'reports_log_path' property is either a :class:`~pathlib.Path` instance or ``None``.
 

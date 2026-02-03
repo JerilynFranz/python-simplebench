@@ -19,7 +19,11 @@ from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBenchTypeError
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.report.validate import report_element_typed_dict_mimic
-from simplebench.simplebench_types import IMMUTABLE_CORE_DATA_TYPES_TUPLE, CoreDataMapping, ImmutableCoreDataMappingType
+from simplebench.simplebench_types import (
+    IMMUTABLE_CORE_DATA_PRIMITIVE_TYPES_TUPLE,
+    CoreDataMapping,
+    ImmutableCoreDataMappingType,
+)
 
 from ._json_schema import JSONSchema
 
@@ -140,7 +144,7 @@ class ReportElement(Hydrator, Immutable, ABC):
                 )
 
         for key, value in data.items():
-            if isinstance(value, IMMUTABLE_CORE_DATA_TYPES_TUPLE):
+            if isinstance(value, IMMUTABLE_CORE_DATA_PRIMITIVE_TYPES_TUPLE):
                 continue
             raise SimpleBenchTypeError(
                 f"ReportElement._to_dict_helper produced invalid data for key '{key}': "

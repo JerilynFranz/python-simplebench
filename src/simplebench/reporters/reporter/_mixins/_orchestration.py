@@ -13,7 +13,6 @@ from rich.text import Text
 
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metadata import Metadata
 from simplebench.metrics import Metric, metric_types_registry
 from simplebench.metrics.metrics_selection import MetricsCollection
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
@@ -24,8 +23,10 @@ from simplebench.validators import validate_string, validate_type
 
 if TYPE_CHECKING:
     from simplebench.case import Case
+    from simplebench.metadata import Metadata
     from simplebench.reporters.choice import Choice
     from simplebench.session import Session
+
 
 
 class _ReporterOrchestrationMixin:
@@ -48,7 +49,7 @@ class _ReporterOrchestrationMixin:
         self: ReporterProtocol,
         *,
         renderer: ReportRenderer | None,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         args: Namespace,
         case: 'Case',
         choice: 'Choice',
@@ -139,7 +140,7 @@ class _ReporterOrchestrationMixin:
         self: ReporterProtocol,
         *,
         renderer: ReportRenderer | None = None,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         args: Namespace,
         case: 'Case',
         choice: 'Choice',
@@ -246,7 +247,7 @@ class _ReporterOrchestrationMixin:
         self: ReporterProtocol,
         *,
         renderer: ReportRenderer | None = None,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         args: Namespace,
         case: 'Case',
         choice: 'Choice',
@@ -358,7 +359,7 @@ class _ReporterOrchestrationMixin:
         self: ReporterProtocol,
         *,
         output: str | bytes | Text | Table,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         filename_base: str,
         args: Namespace,
         choice: 'Choice',

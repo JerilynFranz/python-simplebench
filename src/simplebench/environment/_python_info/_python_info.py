@@ -24,9 +24,11 @@ import platform
 import sys
 from collections.abc import Callable
 from types import MappingProxyType
-from typing import Any, Final, Literal, cast
+from typing import Any, Final, Literal, cast, TYPE_CHECKING
 
-from simplebench.report.versions.v1 import ImmutablePythonInfoData
+
+if TYPE_CHECKING:
+    from simplebench.report.versions import v1 as report
 
 _BUILDNO: Final[Literal[0]] = 0
 """Index for build number in platform.python_build() tuple."""
@@ -333,12 +335,12 @@ class PythonInfo:
 
         return MappingProxyType(env_data)
 
-    def to_dict(self) -> ImmutablePythonInfoData:
+    def to_dict(self) -> 'report.ImmutablePythonInfoData':
         """Get the Python information dictionary.
 
         This dictionary contains all the Python information gathered from the
         :module:`pythoninfo` module at the time of the instance's creation.
-        :return ImmutablePythonInfoData: An immutable dictionary containing all
+        :return report.ImmutablePythonInfoData: An immutable dictionary containing all
             the Python information.
         """
-        return cast(ImmutablePythonInfoData, self._dict_cache)
+        return cast('report.ImmutablePythonInfoData', self._dict_cache)

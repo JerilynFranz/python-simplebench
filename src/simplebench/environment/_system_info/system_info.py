@@ -14,10 +14,10 @@ import platform
 from types import MappingProxyType
 from typing import TYPE_CHECKING, cast
 
-from simplebench.report.versions.v1 import ImmutableSystemInfoData
 
 if TYPE_CHECKING:
     from typing import ClassVar
+    from simplebench.report.versions import v1 as report
 
 
 @dataclasses.dataclass(frozen=True)
@@ -91,11 +91,11 @@ class SystemInfo:
             object.__setattr__(self, 'machine', cls._singleton_cache.machine)
             object.__setattr__(self, '_dict_cache', cls._singleton_cache._dict_cache)
 
-    def to_dict(self) -> ImmutableSystemInfoData:
+    def to_dict(self) -> 'report.ImmutableSystemInfoData':
         """Convert the SystemInfo to an immutable dictionary representation.
 
         This is useful for serialization or reporting purposes.
 
-        :return ImmutableSystemInfoData: An immutable dictionary representation of the SystemInfo.
+        :return report.ImmutableSystemInfoData: An immutable dictionary representation of the SystemInfo.
         """
-        return cast(ImmutableSystemInfoData, self._dict_cache)
+        return cast('report.ImmutableSystemInfoData', self._dict_cache)

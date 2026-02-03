@@ -12,7 +12,6 @@ from rich.text import Text
 
 from simplebench.enums import Format
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metadata import Metadata
 from simplebench.metrics import Metric
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
@@ -20,6 +19,7 @@ from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.validators import validate_filename, validate_string, validate_type
 
 if TYPE_CHECKING:
+    from simplebench.metadata import Metadata
     from simplebench.case import Case
     from simplebench.session import Session
 

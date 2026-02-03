@@ -2,9 +2,8 @@
 
 from functools import cache
 from types import MappingProxyType
-from typing import NamedTuple, cast
+from typing import NamedTuple, cast, TYPE_CHECKING
 
-from simplebench.report.versions.v1 import ImmutableMemoryInfoData
 
 _PSUTIL_AVAILABLE: bool = False  # pylint: disable=invalid-name
 try:
@@ -13,6 +12,10 @@ try:
     _PSUTIL_AVAILABLE = True  # pylint: disable=invalid-name
 except ImportError:
     pass
+
+
+if TYPE_CHECKING:
+    from simplebench.report.versions import v1 as report
 
 
 __all__ = ['MemoryInfo', 'SwapMemory', 'VirtualMemory']
@@ -152,7 +155,7 @@ class MemoryInfo:
             self._smem = _get_swap_memory(cache_key)
         else:
             raise TypeError('cache_key must be a string or None')
-        self._dict_cache: ImmutableMemoryInfoData | None = None
+        self._dict_cache: report.ImmutableMemoryInfoData | None = None
 
     @property
     def virtual_memory(self) -> VirtualMemory:
@@ -170,16 +173,16 @@ class MemoryInfo:
         """
         return self._smem
 
-    def to_dict(self) -> ImmutableMemoryInfoData:
+    def to_dict(self) -> 'report.ImmutableMemoryInfoData':
         """Return the MemoryInfo as an ImmutableMemoryInfoData dictionary.
         The returned dictionary is an immutable MappingProxyType and
         is cached for subsequent calls to this method.
 
-        :return ImmutableMemoryInfoData: A dictionary representation of the MemoryInfo.
+        :return report.ImmutableMemoryInfoData: A dictionary representation of the MemoryInfo.
         """
         if self._dict_cache is None:
             self._dict_cache = cast(
-                ImmutableMemoryInfoData,
+                'report.ImmutableMemoryInfoData',
                 MappingProxyType(
                     {
                         'virtual_memory': MappingProxyType(

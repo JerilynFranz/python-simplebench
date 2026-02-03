@@ -5,14 +5,13 @@ information for benchmarks, including file paths, timestamps, and
 associations with Case and Choice instances.
 """
 
-from __future__ import annotations
-
-from abc import ABC
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
+from simplebench.case import Case
 from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.reporters.choice.choice import Choice
 from simplebench.type_proxies import is_case, is_choice
 from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_type
@@ -22,12 +21,8 @@ from ..reporters.log.base.report_log_entry import ReportLogEntry
 from ..reporters.log.versions import json_class
 from ._error_tags import _MetadataErrorTag
 
-if TYPE_CHECKING:
-    from simplebench.case import Case
-    from simplebench.reporters.choice.choice import Choice
 
-
-class Metadata(ABC):
+class Metadata:
     """Container for benchmark metadata.
 
     This class holds metadata for a benchmark, including

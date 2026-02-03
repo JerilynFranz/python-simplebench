@@ -4,13 +4,14 @@ This module defines a base class `Hydrator` for objects, which includes methods
 for initializing, converting to and from dictionaries, and validating against a
 set of allowed parameters.
 """
-
 import dataclasses
 import inspect
 from collections.abc import Callable, Iterable, Mapping
 from copy import copy
 from functools import cache
 from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
+
+from simplebench._log import _log
 
 from .._typed_dict_key_info import TypedDictKeyInfo
 from . import _validate
@@ -249,12 +250,19 @@ class Hydrator:
         process_as_handlers = _validate.process_as(process_as or {}, allowed_fields_map)
 
         data = cls._apply_defaults(data, defaults_for_fields)
+        _log.debug("Data after applying defaults: %s", data)
         _validate.match_on_values(data, match_on_fields)
+        _log.debug("Data after match_on validation: %s", data)
         _validate.allowed_keys_against_data(data, allowed_fields_map)
+        _log.debug("Data after allowed keys validation: %s", data)
         _validate.required_keys_against_data(data, allowed_fields_map, optional_fields_set)
+        _log.debug("Data after required keys validation: %s", data)
         output = cls._apply_process_as_handlers(data, process_as_handlers)
+        _log.debug("Data after applying process_as handlers: %s", output)
         output = cls._remove_skipped_fields(output, skip_fields_set)
+        _log.debug("Data after removing skipped fields: %s", output)
         _validate.data_types(output, allowed_fields_map)
+        _log.debug("Data after data types validation: %s", output)
         return output
 
     @staticmethod
@@ -310,13 +318,25 @@ class Hydrator:
         :return dict[str, Any]: A dictionary mapping parameter names for the TypedDict to their types.
         """
         output: dict[str, Any] = {}
-        annotations = get_type_hints(typeddict_cls)
+        _log.debug("Initializing TypedDict parameters for %s", typeddict_cls.__name__)
+        if not is_typeddict(typeddict_cls):
+            raise TypeError(f"Provided class {typeddict_cls.__name__} is not a TypedDict.")
+        try:
+            signature = inspect.signature(typeddict_cls)
+        except ValueError:
+            signature = None
+        _log.debug("TypedDict %s signature: %s", typeddict_cls.__name__, signature)
+        annotations = get_type_hints(typeddict_cls,
+                                     globalns=vars(inspect.getmodule(typeddict_cls)),
+                                     localns=dict(vars(typeddict_cls)))
+        _log.debug("TypedDict %s annotations: %s", typeddict_cls.__name__, annotations)
         for key in annotations:
             if key == '__immutable__':
                 continue
             value_info = TypedDictKeyInfo(key, typeddict_cls)
             value_type = value_info.value_type
-            annotations[key] = cls._unwrap_typeddict_type(value_type)
+            output[key] = cls._unwrap_typeddict_type(value_type)
+        _log.debug("TypedDict %s: %s", typeddict_cls.__name__, output)
         return output
 
     @classmethod

@@ -10,6 +10,7 @@ from .tagged_exception import TaggedException
 
 __all__ = [
     'TaggedException',
+    'SimpleBenchAssertionError',
     'SimpleBenchBenchmarkError',
     'SimpleBenchDuplicateKeyError',
     'SimpleBenchTypeError',
@@ -623,6 +624,35 @@ class SimpleBenchRecursionError(TaggedException[RecursionError]):
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
         """Raises a SimpleBenchRecursionError with the given message and tag.
+
+        Args:
+            msg (str): The error message.
+            tag (ErrorTag): The tag code.
+        """
+        message = generate_message(msg, tag)
+        super().__init__(message, tag=tag)
+
+
+class SimpleBenchAssertionError(TaggedException[AssertionError]):
+    """Base class for all SimpleBench assertion errors.
+
+    It differs from a standard AssertionError by the addition of a
+    tag code used to very specifically identify where the error
+    was thrown in the code for testing and development support.
+
+    This tag code does not have a direct semantic meaning except to identify
+    the specific code throwing the exception for tests.
+
+    Usage:
+        raise SimpleBenchAssertionError("An error occurred", tag=MyErrorTags.SOME_ERROR)
+
+    Args:
+        msg (str, positional): The error message.
+        tag (ErrorTag): The tag code.
+    """
+
+    def __init__(self, msg: str, *, tag: ErrorTag) -> None:
+        """Raises a SimpleBenchAssertionError with the given message and tag.
 
         Args:
             msg (str): The error message.

@@ -12,13 +12,15 @@ As the foundational version, this class is considered immutable. Future versions
 will inherit from this class to extend its functionality, but this implementation
 will not be changed.
 """
-
 import hashlib
 import json
 from copy import copy
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, cast
 
+from typeguard import check_type
+
+from simplebench._log import _log
 from simplebench.report.base import BaseCPUInfo, JSONSchema
 from simplebench.simplebench_types import ImmutableCoreDataMappingType
 
@@ -27,8 +29,7 @@ from .cpu_info_schema import CPUInfoSchema
 from .typeddict_types import CPUInfoData, ImmutableCPUInfoData, ImmutableCPUInfoDict
 
 if TYPE_CHECKING:
-    from simplebench.environment import CPUInfo as EnvCPUInfo
-
+    from simplebench import environment
 
 class CPUInfo(BaseCPUInfo):
     """Class representing a JSON CPUInfo version 1."""
@@ -57,15 +58,21 @@ class CPUInfo(BaseCPUInfo):
         """
         if not cls._init_params_cache:
             params = cls.init_params(CPUInfoData)
+            _log.debug("Cached CPUInfo init parameters: %s", params)
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
     __slots__ = ('_data', '_hash_id', '_to_dict_cache')
 
-    def __init__(self, *, hash_id: str = '', data: 'EnvCPUInfo') -> None:
+    def __init__(self, *,
+                 hash_id: str = '',
+                 data: CPUInfoData | None = None,
+                 cpu_info: 'environment.CPUInfo | None' = None) -> None:
         """Initialize CPUInfo.
 
-        :param str hash_id: The unique hash identifier for the CPU information.
+        Only one of `data` or `cpu_info` may be provided.
+
+        :param hash_id: The unique hash identifier for the CPU information.
             If not provided it will be computed automatically.
 
             The hash_id must be a 64 character hexadecimal string or an empty string.
@@ -89,14 +96,24 @@ class CPUInfo(BaseCPUInfo):
 
             hash_id values are NOT validated against the data content on initialization
             because it is only an opaque identifier, not a data validation mechanism.
-
-        :param environment.CPUInfo data: The CPU information data collected from the system
+        :type hash_id: str
+        :param cpu_info: The CPU information data collected from the system
             It must be an instance of `simplebench.environment.CPUInfo`.
+            If provided, the `data` parameter must be None.
+        :type cpu_info: environment.CPUInfo | None
+        :param CPUInfoData data: The raw CPU information data as a dictionary.
+            If provided, the `cpu_info` parameter must be None.
+        :type data: CPUInfoData | None
         :raises SimpleBenchTypeError: If any of the parameters are of incorrect type.
         :raises SimpleBenchValueError: If any of the parameters have invalid values.
         """
+        if cpu_info is not None:
+            if data is not None:
+                raise ValueError("Cannot provide both 'data' and 'cpu_info' parameters.")
+            data = cpu_info.to_dict()
         self._data: ImmutableCPUInfoData = _validate.data(data)
-        self._hash_id: str = _validate.hash_id(hash_id)
+        # prioritize the passed hash_id, else fetch from data if present, else compute later
+        self._hash_id: str = _validate.hash_id(hash_id) or self.data.get('hash_id', '')
         self._to_dict_cache: ImmutableCPUInfoDict | None = None
 
     @property
@@ -140,15 +157,22 @@ class CPUInfo(BaseCPUInfo):
         :return CPUInfo: A CPUInfo instance.
         """
         allowed_keys = cls._data_params()
+        _log.debug("CPUInfo.from_dict allowed keys: %s", allowed_keys)
+        _log.debug("CPUInfo.from_dict input data: %s", data)
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
             skip_fields={'version', 'type'},
             optional_fields={'hash_id', 'version', 'type'},
-            defaults={'hash_id': None, 'version': cls.VERSION, 'type': cls.TYPE},
+            defaults={'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
         )
-        return cls(**kwargs)
+        _log.info("CPUInfo.from_dict initialized with kwargs: %s", kwargs)
+        validated_data = check_type(kwargs, CPUInfoData)
+        hash_id_value = validated_data.get('hash_id', '')
+        if 'hash_id' in validated_data:
+            del validated_data['hash_id']
+        return cls(data=validated_data, hash_id=hash_id_value)
 
     def to_dict(self) -> ImmutableCPUInfoDict:
         """Returns the CPUInfo as an immutable dictionary suitable for JSON serialization.

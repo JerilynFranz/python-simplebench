@@ -3,19 +3,22 @@
 Import module and access validators via imported _validate module.
 """
 from collections.abc import Mapping
+from typing import TYPE_CHECKING
 
 from typeguard import check_type
 
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.report.versions import v1 as report
 from simplebench.validators import validate_core_data_mapping, validate_string
 
 from ._error_tags import _CPUInfoErrorTag
 
+if TYPE_CHECKING:
+    from simplebench.report.versions import v1 as report
+
 __all__: list[str] = []
 
 
-def cpu_info(value: Mapping[str, dict[str, object]]) -> report.ImmutableCPUInfoData:
+def cpu_info(value: Mapping[str, dict[str, object]]) -> 'report.ImmutableCPUInfoData':
     """Validate the CPU information dictionary.
 
     It expects a mapping type (such as dict) that conforms to the
@@ -32,6 +35,8 @@ def cpu_info(value: Mapping[str, dict[str, object]]) -> report.ImmutableCPUInfoD
     :rtype: CoreDataMappingType (cast as ImmutableCPUInfoData typed dict for static type checking)
     :raises SimpleBenchTypeError: If the value is not a valid CPUInfoData structure.
     """
+    from simplebench.report.versions import v1 as report
+
     if not isinstance(value, Mapping):
         raise SimpleBenchTypeError(
             'CPU information data must be a mapping type (such as dict).',

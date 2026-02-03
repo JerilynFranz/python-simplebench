@@ -32,3 +32,5 @@ class _CoreDataErrorTag(ErrorTag):
     """A key error occurred when accessing CoreDataMapping."""
     CORE_DATA_MAPPING_IMMUTABLE = 'CORE_DATA_MAPPING_IMMUTABLE'
     """An attempt was made to modify an immutable CoreDataMapping."""
+    CORE_DATA_COMPARISON_UNSUPPORTED_TYPE = 'CORE_DATA_COMPARISON_UNSUPPORTED_TYPE'
+    """An unsupported CoreData type was used in comparison."""
