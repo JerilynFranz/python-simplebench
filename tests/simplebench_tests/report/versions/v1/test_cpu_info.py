@@ -1,11 +1,13 @@
 """Tests for simplebench.report.versions.v1.cpu_info.CPUInfo class."""
 # ruff: noqa: F401
 import autopypath  # noqa: F401
-from typeguard import check_type
 import pytest
-from testspec import Assert, PytestAction, TestAction, TestSpec, idspec
+from testspec import Assert, PytestAction, TestSpec
+from typeguard import check_type
 
 from simplebench import environment
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.report.versions import v1 as report
 from simplebench.simplebench_types import CoreDataTypes
 
@@ -55,9 +57,29 @@ def dummy_cpu_info() -> report.CPUInfoData:
            expected=report.CPUInfo),
         PytestAction("INIT_003",
            name="Initialize CPUInfo directly from environment.CPUInfo instance",
-           action=report.CPUInfo, kwargs={'data': environment.CPUInfo()},
+           action=report.CPUInfo, kwargs={"data": environment.CPUInfo()},
            assertion=Assert.ISINSTANCE,
            expected=report.CPUInfo),
+        PytestAction("INIT_004",
+           name="Initialize CPUInfo with forced hash_id",
+           action=report.CPUInfo, kwargs={"data": dummy_cpu_info(), "hash_id": "a"*64},
+           validate_attr="hash_id",
+           expected="a"*64),
+        PytestAction("INIT_005",
+           name="Initialize CPUInfo with invalid hash_id type",
+           action=report.CPUInfo, kwargs={"data": dummy_cpu_info(), "hash_id": 12345},
+           exception=SimpleBenchTypeError,
+           exception_tag=_CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE),
+        PytestAction("INIT_006",
+           name="Initialize CPUInfo with invalid hash_id value",
+           action=report.CPUInfo, kwargs={"data": dummy_cpu_info(), "hash_id": "invalid_hash"},
+           exception=SimpleBenchValueError,
+           exception_tag=_CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE),
+        PytestAction("INIT_007",
+           name="Initialize CPUInfo with invalid data type",
+           action=report.CPUInfo, kwargs={"data": "not_a_dict"},
+           exception=SimpleBenchTypeError,
+           exception_tag=_CPUInfoErrorTag.INVALID_DATA_PROPERTY_TYPE),
     ]
 )
 def test_cpu_info_init(testspec: TestSpec) -> None:

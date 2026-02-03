@@ -22,7 +22,7 @@ def validate_string(  # noqa: C901
 ) -> str:
     """Validate and normalize a string field.
 
-    (validation primitive - does not depend on other validators)
+    .. note:: Validation primitive - does not depend on other validators
 
     Validates that the value is a string. Optionally strips leading/trailing whitespace,
     checks for emptiness, blankness (whitespace-only strings), and alphanumeric content.
@@ -210,7 +210,7 @@ def validate_string_with_regex(
 ) -> str:
     """Validate that a string matches a specified regex pattern.
 
-            (validation primitive - does not depend on other validators)
+    .. note:: Validation primitive - does not depend on other validators
 
     :param str value: The string to validate.
     :param str name: The name of the property being validated (for error messages).

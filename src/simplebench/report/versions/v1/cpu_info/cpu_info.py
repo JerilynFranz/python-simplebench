@@ -66,11 +66,9 @@ class CPUInfo(BaseCPUInfo):
 
     def __init__(self, *,
                  hash_id: str = '',
-                 data: CPUInfoData | None = None,
-                 cpu_info: 'environment.CPUInfo | None' = None) -> None:
+                 data: 'environment.CPUInfo | CPUInfoData | None' = None
+            ) -> None:
         """Initialize CPUInfo.
-
-        Only one of `data` or `cpu_info` may be provided.
 
         :param hash_id: The unique hash identifier for the CPU information.
             If not provided it will be computed automatically.
@@ -97,20 +95,12 @@ class CPUInfo(BaseCPUInfo):
             hash_id values are NOT validated against the data content on initialization
             because it is only an opaque identifier, not a data validation mechanism.
         :type hash_id: str
-        :param cpu_info: The CPU information data collected from the system
-            It must be an instance of `simplebench.environment.CPUInfo`.
-            If provided, the `data` parameter must be None.
-        :type cpu_info: environment.CPUInfo | None
-        :param CPUInfoData data: The raw CPU information data as a dictionary.
-            If provided, the `cpu_info` parameter must be None.
-        :type data: CPUInfoData | None
+        :param data: The raw CPU information data either as an environment.CPUInfo instance
+            or as a dictionary conforming to the CPUInfoData TypedDict structure.
+        :type data: environment.CPUInfo | CPUInfoData | None
         :raises SimpleBenchTypeError: If any of the parameters are of incorrect type.
         :raises SimpleBenchValueError: If any of the parameters have invalid values.
         """
-        if cpu_info is not None:
-            if data is not None:
-                raise ValueError("Cannot provide both 'data' and 'cpu_info' parameters.")
-            data = cpu_info.to_dict()
         self._data: ImmutableCPUInfoData = _validate.data(data)
         # prioritize the passed hash_id, else fetch from data if present, else compute later
         self._hash_id: str = _validate.hash_id(hash_id) or self.data.get('hash_id', '')
@@ -250,7 +240,7 @@ class CPUInfo(BaseCPUInfo):
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
         """Prepare the object's state for pickling, prioritizing size.
 
-        This method ensures that the pickled representation of the RawDataBlock
+        This method ensures that the pickled representation of the instance
         is compact. It achieves this by forcing the calculation of any lazy-evaluated
         statistical properties and then excluding any attributes that are not part of the
         public interface of the RawDataBlock from the pickled state. Those excluded attributes
