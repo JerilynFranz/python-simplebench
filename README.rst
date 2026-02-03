@@ -1,4 +1,4 @@
-.. image:: doc_source/_static/images/simplebench-logo.svg
+.. image:: docs_source/_static/images/simplebench-logo.svg
     :align: center
 
 ===========
