@@ -37,6 +37,7 @@ requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.26.4",
     "py-cpuinfo>=9.0.0",
+    "simplejson>=3.20.2",
     "rich>=14.1.0",
     "typechecked>=0.11.1",
     "typing-extensions>=4.10.0",
@@ -384,6 +385,7 @@ default = [
     "numpy>=1.26.4",
     "py-cpuinfo>=9.0.0",
     "rich>=14.1.0",
+    "simplejson>=3.20.2",
     "typechecked>=0.11.1",
     "typing-extensions>=4.10.0",
     "typeguard>=4.4.4",
@@ -416,6 +418,7 @@ types = [
     "types-seaborn>=0.13.2.20250809",
     "types-psutil",
     "types-jsonschema",
+    "types-simplejson",
 ]
 
 

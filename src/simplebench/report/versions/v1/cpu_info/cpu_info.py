@@ -12,9 +12,6 @@ As the foundational version, this class is considered immutable. Future versions
 will inherit from this class to extend its functionality, but this implementation
 will not be changed.
 """
-import hashlib
-import json
-from copy import copy
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, cast
 
@@ -26,7 +23,7 @@ from simplebench.simplebench_types import CoreDataMappingType
 
 from . import _validate
 from .cpu_info_schema import CPUInfoSchema
-from .typeddict_types import CPUInfoData, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from .typeddict_types import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
 
 if TYPE_CHECKING:
     from simplebench import environment
@@ -110,23 +107,45 @@ class CPUInfo(BaseCPUInfo):
     def hash_id(self) -> str:
         """Get the hash_id property.
 
-        We can't use the helper from the base class because we need to
-        compute the hash_id based on the data property which is a complex structure
-        of dictionaries and lists. So we serialize the data to a sorted JSON string
-        and compute the SHA256 hash of that string.
+        If the hash_id was not provided during initialization, it is computed
+        from the data content on first access and then cached for future accesses.
 
         :return str: The hash_id string.
         """
-        if self._hash_id is None:
-            serialized = json.dumps(self.data, sort_keys=True, separators=(',', ':'))
-            self._hash_id = hashlib.sha256(serialized.encode('utf-8')).hexdigest()
+        if self._hash_id == '':
+            self._hash_id = self._data.content_hash()  # type: ignore[attr-defined]
         return self._hash_id
+
+    def for_json(self) -> CPUInfoDict:
+        """Get a JSON-serializable representation of the CPUInfo.
+
+        This method is used by simplejson.dumps() when serializing the object.
+
+        :return CPUInfoDict: A mutable dictionary representation of the CPUInfo.
+        """
+        return self.to_dict().thaw()  # type: ignore[attr-defined]
 
     @property
     def data(self) -> ImmutableCPUInfoData:
         """Get the data property.
 
-        :return ImmutableCoreDataMappingType: An immutable mapping of the CPU information data.
+        The type hint is for static analysis and code completion in IDEs and reflects
+        that the data has been validated against that typed dict declaration.
+
+        TypedDicts are not actual types at runtime - they are a Python typing construct
+        that more-or-less 'promises' that the dict will conform to that structure
+        but does not enforce it at runtime.
+
+        It behaves like a normal dict at runtime but is deeply validated and
+        immutable. If you need a mutable version, you can use its thaw() method
+        to obtain a standard mutable dict copy of the data.
+
+        The actual object type is enforced at runtime to be an immutable
+        :class:`CoreDataMapping` instance conforming to the expected :class:`ImmutableCPUInfoData`
+        TypedDict structure.
+
+        :return: An immutable mapping of the CPU information data.
+        :rtype: ImmutableCPUInfoData (dict-like :class:`CoreDataMapping` instance)
         """
         return self._data
 
@@ -143,7 +162,7 @@ class CPUInfo(BaseCPUInfo):
         representation. The 'version' and 'type' properties are validated
         against the class's VERSION and TYPE attributes if they are present.
 
-        :param CPUInfoDict data: The dictionary containing CPU information.
+        :param CPUInfoData data: The dictionary containing CPU information.
         :return CPUInfo: A CPUInfo instance.
         """
         allowed_keys = cls._data_params()
@@ -165,7 +184,7 @@ class CPUInfo(BaseCPUInfo):
         return cls(data=validated_data, hash_id=hash_id_value)
 
     def to_dict(self) -> ImmutableCPUInfoDict:
-        """Returns the CPUInfo as an immutable dictionary suitable for JSON serialization.
+        """Returns the CPUInfo as an immutable dictionary.
 
         This includes all properties defined in the :class:`CPUInfoSchema`
         for the version 1 CPUInfo.
@@ -191,7 +210,7 @@ class CPUInfo(BaseCPUInfo):
         """Check equality between two CPUInfo instances.
 
         .. note::
-            Triggers the lazy eval properties to be evaluated if they have not been already.
+            Triggers the lazy eval of s to be evaluated if they have not been already.
             This ensures that comparisons are made based on the actual values of the properties.
 
             This can be expensive the first time it is called if many properties
@@ -205,7 +224,7 @@ class CPUInfo(BaseCPUInfo):
         if not isinstance(other, CPUInfo):
             return NotImplemented
 
-        return hash(self) == hash(other)
+        return self._data == other._data
 
     def __hash__(self) -> int:
         """Compute the hash of the CPUInfo instance.
@@ -296,11 +315,14 @@ class CPUInfo(BaseCPUInfo):
             object.__setattr__(self, slot, value)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'CPUInfo':
-        """Return a shallow copy of the instance as an optimized deep copy.
+        """Return self as a copy for deep copy operations.
 
         Since the CPUInfo instance is immutable and composed of immutable components,
-        a shallow copy is functionally identical to a deep copy. This method overrides
+        this is functionally identical to a deep copy. This method overrides
         the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.
+
+        If a true deep copy is required, the caller should manually create a new instance
+        from the dictionary representation using `CPUInfo.from_dict(self.to_dict().thaw())`.
 
         :param memo: The memoization dictionary used by `copy.deepcopy`.
                      It is not used in this optimized implementation.
@@ -308,4 +330,4 @@ class CPUInfo(BaseCPUInfo):
         """
         # because the CPUInfo is immutable, we can return a copy of self
         # instead of performing a full deep copy.
-        return copy(self)
+        return self

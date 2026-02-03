@@ -110,11 +110,10 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
                 data[key] = value
             elif isinstance(value, Mapping):
                 data[key] = CoreDataMapping(value)
-            elif isinstance(value, Set):
-                data[key] = CoreDataSet(value)
             elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
                 data[key] = CoreDataSequence(value)
-
+            elif isinstance(value, Set):
+                data[key] = CoreDataSet(value)
             else:
                  raise SimpleBenchTypeError(
                     f'Invalid value type passed to CoreDataMapping for key {key!r}: {value!r}. '
@@ -287,6 +286,46 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
             items = ((key, self._data[key]) for key in keys)
             self._hash_cache = hash(tuple(items))
         return self._hash_cache
+
+    def replace(self, **changes: Mapping[str, 'CoreDataTypes']) -> 'CoreDataMapping':
+        """Return a new CoreDataMapping with specified changes applied.
+
+        This method creates a new CoreDataMapping instance by applying
+        the provided key-value pairs as updates to the existing mapping.
+        If a key already exists, its value is replaced; if it does not exist,
+        the key-value pair is added.
+
+        .. code-block:: python
+            original = CoreDataMapping({'a': 1, 'b': 2})
+            modified = original.replace(b=3, c=4)
+            # original is still CoreDataMapping({'a': 1, 'b': 2})
+            # modified is CoreDataMapping({'a': 1, 'b': 3, 'c': 4})
+
+        :param changes: Key-value pairs to update in the mapping.
+        :type changes: Mapping[str, CoreDataTypes]
+        :returns: A new CoreDataMapping with the specified changes applied.
+        :rtype: CoreDataMapping
+        :raises SimpleBenchTypeError: If the changes argument is not a Mapping
+                                      or contains invalid keys or values.
+        """
+        if not isinstance(changes, Mapping):
+            raise SimpleBenchTypeError(
+                'Changes passed to CoreDataMapping.replace() must be a Mapping of str to CoreDataTypes.',
+                tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_ARG_TYPE)
+
+        if not all(isinstance(key, str) for key in changes.keys()):
+            raise SimpleBenchTypeError(
+                'All keys in CoreDataMapping.replace() must be of type str and valid identifiers.',
+                tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_KEY_TYPE)
+        if not all(key.isidentifier() for key in changes.keys()):
+            raise SimpleBenchTypeError(
+                'All keys in CoreDataMapping.replace() must be non-empty, non-blank strings and valid identifiers.',
+                tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_KEY_VALUE)
+
+        # A shallow copy of the existing data to hold the modified data.
+        # We don't need to validate keys or values because the constructor
+        # will do that for us when we create the new instance
+        return CoreDataMapping(dict(self._data) | changes)
 
     def thaw(self) -> dict[str, 'CoreDataTypes']:
         """Convert the CoreDataMapping to a standard mutable dict.

@@ -82,7 +82,6 @@ def data(value: Any) -> ImmutableCPUInfoData:
     if isinstance(value, environment.CPUInfo):
         dict_value = value.to_dict().thaw()  # type: ignore[attr-defined]
         _log.info('Validating CPUInfo data from environment.CPUInfo instance. %s', dict_value)
-        return data(dict_value)
     else:
         dict_value = value
 
