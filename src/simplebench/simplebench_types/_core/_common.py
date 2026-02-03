@@ -31,7 +31,7 @@ def rich_compare_value(value: 'ImmutableCoreDataTypes') -> str:
               data structure since it would never find a base case to stop.
 
               However, since CoreDataSet is immutable and cannot contain
-              recursive references, this should not be an issue in practice.
+              recursive references during construction, this should not be an issue in practice.
 
         :returns: A sorted list of the set items.
         :rtype: list[CoreDataTypes]

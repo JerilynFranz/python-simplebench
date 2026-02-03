@@ -21,6 +21,7 @@ import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
 from typing import TYPE_CHECKING, Any, overload
 
+import simplejson
 from typechecked import Immutable
 
 from simplebench._log import _log
@@ -221,7 +222,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         :rtype: int
         """
         if self._hash_cache is None:
-            self._hash_cache = hash(self._data)
+            self._hash_cache = hash(self.content_hash())
         return self._hash_cache
 
     def thaw(self) -> list['CoreDataTypes']:
@@ -241,6 +242,23 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
             else:
                 thawed_list.append(value)
         return thawed_list
+
+    def for_json(self) -> list['CoreDataTypes']:
+        """Convert the CoreDataSequence to a JSON-serializable list.
+
+        :returns: A JSON-serializable list representation of the CoreDataSequence.
+        :rtype: list[CoreDataTypes]
+        """
+        return self.thaw()
+
+    def as_json(self) -> str:
+        """Serialize the CoreDataSequence to a JSON string.
+
+        :returns: A JSON string representation of the CoreDataSequence.
+        :rtype: str
+        """
+        return simplejson.dumps(
+            self.for_json(), sort_keys=True, separators=(',', ':'), for_json=True, iterable_as_array=True)
 
     def count(self, value: 'ImmutableCoreDataTypes') -> int:
         """Return the number of occurrences of value in the CoreDataSequence.

@@ -21,11 +21,25 @@ Allowed types are:
     - Sequences of the above types
     - Mappings of str to the above types
     - Sets of the above types
+
+When constructed from standard Python data structures, all contents are
+converted to their respective immutable CoreData wrappers as needed and
+the resulting structure is deeply immutable and acyclic.
+
+While not actually a subclass of dict, it fully implements the Mapping interface
+and can be used in most places where a read-only dict-like object is expected
+without modification capabilities.
+
+It is possible via the :meth:`replace` method to create cyclical references,
+so care should be taken to avoid such scenarios as they may lead to unexpected
+behavior and potentially non-serializability or infinite recursion during
+operations like hashing, comparison, or serialization.
 """
 import hashlib
 from collections.abc import Hashable, ItemsView, Iterator, KeysView, Mapping, Sequence, Set, ValuesView
 from typing import TYPE_CHECKING, Any, TypeVar
 
+import simplejson
 from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
@@ -282,24 +296,31 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
         :rtype: int
         """
         if self._hash_cache is None:
-            keys = tuple(sorted(self._data.keys()))
-            items = ((key, self._data[key]) for key in keys)
-            self._hash_cache = hash(tuple(items))
+            self._hash_cache = hash(self.content_hash())
         return self._hash_cache
 
     def replace(self, **changes: Mapping[str, 'CoreDataTypes']) -> 'CoreDataMapping':
         """Return a new CoreDataMapping with specified changes applied.
 
-        This method creates a new CoreDataMapping instance by applying
+        This method creates and returns a new CoreDataMapping instance by applying
         the provided key-value pairs as updates to the existing mapping.
         If a key already exists, its value is replaced; if it does not exist,
-        the key-value pair is added.
+        the key-value pair is added. The original CoreDataMapping remains unchanged.
 
         .. code-block:: python
             original = CoreDataMapping({'a': 1, 'b': 2})
             modified = original.replace(b=3, c=4)
             # original is still CoreDataMapping({'a': 1, 'b': 2})
             # modified is CoreDataMapping({'a': 1, 'b': 3, 'c': 4})
+
+        .. warning:: It is **possible** to create a CoreDataMapping with
+            cyclical references using this method. Care should be taken
+            to avoid such scenarios as they may lead to unexpected behavior
+            and potentially non-serializability or infinite recursion during
+            operations like hashing, comparison, or serialization.
+
+            Normally, CoreDataMapping instances should be acyclic because
+            their construction from standard data structures prevents cycles.
 
         :param changes: Key-value pairs to update in the mapping.
         :type changes: Mapping[str, CoreDataTypes]
@@ -344,6 +365,23 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
             else:
                 thawed_dict[key] = value
         return thawed_dict
+
+    def for_json(self) -> dict[str, Any]:
+        """Convert the CoreDataMapping to a JSON-serializable dict.
+
+        :returns: A JSON-serializable dict representation of the CoreDataMapping.
+        :rtype: dict[str, Any]
+        """
+        return self.thaw()
+
+    def as_json(self) -> str:
+        """Serialize the CoreDataMapping to a JSON string.
+
+        :returns: A JSON string representation of the CoreDataMapping.
+        :rtype: str
+        """
+        return simplejson.dumps(
+            self.for_json(), sort_keys=True, separators=(',', ':'), for_json=True, iterable_as_array=True)
 
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
         """Prepare the object's state for pickling, prioritizing size.

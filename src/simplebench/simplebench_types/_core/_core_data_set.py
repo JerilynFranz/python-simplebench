@@ -21,6 +21,7 @@ import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
 from typing import TYPE_CHECKING, Any
 
+import simplejson
 from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchAssertionError, SimpleBenchTypeError
@@ -179,7 +180,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         :rtype: int
         """
         if self._hash_cache is None:
-            self._hash_cache = hash(self._data)
+            self._hash_cache = hash(self.content_hash())
         return self._hash_cache
 
     def thaw(self) -> set['CoreDataTypes']:
@@ -199,6 +200,23 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             else:
                 thawed_set.add(value)
         return thawed_set
+
+    def for_json(self) -> set['CoreDataTypes']:
+        """Convert the CoreDataSet to a JSON-serializable set.
+
+        :returns: A JSON-serializable set representation of the CoreDataSet.
+        :rtype: set[CoreDataTypes]
+        """
+        return self.thaw()
+
+    def as_json(self) -> str:
+        """Serialize the CoreDataSet to a JSON string.
+
+        :returns: A JSON string representation of the CoreDataSet.
+        :rtype: str
+        """
+        return simplejson.dumps(
+            self.for_json(), sort_keys=True, separators=(',', ':'), for_json=True, iterable_as_array=True)
 
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
         """Prepare the object's state for pickling, prioritizing size.
