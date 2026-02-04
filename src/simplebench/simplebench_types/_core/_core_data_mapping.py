@@ -44,6 +44,7 @@ from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 
+from . import _common
 from ._error_tags import _CoreDataErrorTag
 
 if TYPE_CHECKING:
@@ -51,6 +52,7 @@ if TYPE_CHECKING:
 
 _T = TypeVar('_T', bound=None)
 
+# TODO: Update to handle bytes and str inputs
 
 class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashable):
     """Deep-immutable Mapping container for CoreData types used in SimpleBench.
@@ -299,7 +301,7 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
             self._hash_cache = hash(self.content_hash())
         return self._hash_cache
 
-    def replace(self, **changes: Mapping[str, 'CoreDataTypes']) -> 'CoreDataMapping':
+    def replace(self, **changes: 'CoreDataTypes') -> 'CoreDataMapping':
         """Return a new CoreDataMapping with specified changes applied.
 
         This method creates and returns a new CoreDataMapping instance by applying
@@ -323,21 +325,12 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
             their construction from standard data structures prevents cycles.
 
         :param changes: Key-value pairs to update in the mapping.
-        :type changes: Mapping[str, CoreDataTypes]
+        :type changes: **CoreDataTypes
         :returns: A new CoreDataMapping with the specified changes applied.
         :rtype: CoreDataMapping
         :raises SimpleBenchTypeError: If the changes argument is not a Mapping
                                       or contains invalid keys or values.
         """
-        if not isinstance(changes, Mapping):
-            raise SimpleBenchTypeError(
-                'Changes passed to CoreDataMapping.replace() must be a Mapping of str to CoreDataTypes.',
-                tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_ARG_TYPE)
-
-        if not all(isinstance(key, str) for key in changes.keys()):
-            raise SimpleBenchTypeError(
-                'All keys in CoreDataMapping.replace() must be of type str and valid identifiers.',
-                tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_KEY_TYPE)
         if not all(key.isidentifier() for key in changes.keys()):
             raise SimpleBenchTypeError(
                 'All keys in CoreDataMapping.replace() must be non-empty, non-blank strings and valid identifiers.',
@@ -348,31 +341,61 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
         # will do that for us when we create the new instance
         return CoreDataMapping(dict(self._data) | changes)
 
-    def thaw(self) -> dict[str, 'CoreDataTypes']:
+    def thaw(self, preserve_immutability: bool = False) -> 'dict[str, CoreDataTypes] | CoreDataMapping':
         """Convert the CoreDataMapping to a standard mutable dict.
 
+        :param preserve_immutability: If True, the nested :class:`CoreDataMapping`
+            instances are preserved as-is instead of being thawed
+            to mutable :class:`dict`. Defaults to :obj:`False`. This is useful
+            when the caller wants to maintain the immutability of nested mappings
+            and mainly used for internal purposes when recursively thawing CoreDataSet instances.
+        :type preserve_immutability: bool
         :returns: A mutable dict representation of the CoreDataMapping.
-        :rtype: dict[str, CoreDataTypes]
+        :rtype: dict[str, CoreDataTypes] | CoreDataMapping
         """
         # Import here to avoid circular imports
         from ._core_data_sequence import CoreDataSequence
         from ._core_data_set import CoreDataSet
 
+        if preserve_immutability:
+            return self
         thawed_dict: dict[str, CoreDataTypes] = {}
         for key, value in self._data.items():
             if isinstance(value, (CoreDataSet, CoreDataMapping, CoreDataSequence)):
-                thawed_dict[key] = value.thaw()
+                thawed_dict[key] = value.thaw(preserve_immutability=preserve_immutability)
             else:
                 thawed_dict[key] = value
         return thawed_dict
 
-    def for_json(self) -> dict[str, Any]:
+    def for_json(self) -> dict[str, 'CoreDataTypes']:
         """Convert the CoreDataMapping to a JSON-serializable dict.
 
+        JSON-serialization inherently loses some type information since JSON
+        does not have a set type, so this method is intended for serialization
+        purposes only and not for general data manipulation.
+
+        This differs from `thaw` in that `thaw` returns mutable types where possible
+        and so cannot unwrap nested CoreData* types within sets, while `for_json`
+        focuses solely on preparing the data for JSON serialization and
+        so converts nested CoreData* types appropriately to JSON-serializable forms
+        regardless of Python semantics like sets vs lists or mutability constraints.
+
         :returns: A JSON-serializable dict representation of the CoreDataMapping.
-        :rtype: dict[str, Any]
+        :rtype: dict[str, 'CoreDataTypes']
         """
-        return self.thaw()
+        from ._core_data_sequence import CoreDataSequence
+        from ._core_data_set import CoreDataSet
+
+        json_dict: dict[str, CoreDataTypes] = {}
+        for key, value in self._data.items():
+            if isinstance(value, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
+                json_dict[key] = value.for_json()
+            elif isinstance(value, bytes):  # bytes are converted to data URLs for JSON compatibility
+                json_dict[key] = _common.data_url(value)
+            else:
+                json_dict[key] = value
+        return json_dict
+
 
     def as_json(self) -> str:
         """Serialize the CoreDataMapping to a JSON string.
@@ -382,72 +405,6 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
         """
         return simplejson.dumps(
             self.for_json(), sort_keys=True, for_json=True, iterable_as_array=True)
-
-    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
-        """Prepare the object's state for pickling, prioritizing size.
-
-        This method ensures that the pickled representation of the CoreDataMapping
-        is as compact as possible. It achieves this by excluding any cached
-        attributes that can be recomputed upon unpickling, such as hash caches.
-
-        Because the internal data is stored as python built-in types (tuples,
-        dicts, sets and other python primitive types), the pickled size is minimized.
-
-        Future versions of SimpleBench may change the pickling format, so
-        pickled data should not be considered stable across versions.
-
-        A version number is included in the pickled state to allow for
-        potential future migrations if the internal structure changes.
-
-        It is always in the 0th index of the state tuple.
-
-        :return: A state tuple for pickling.
-        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
-        """
-        slot_values: list[Any] = []
-        for slot in self.__slots__:
-            if slot in ('_data', '_version'):
-                slot_values.append(getattr(self, slot))
-            else:
-                slot_values.append(None)
-
-        # Build the state tuple for a __slots__ class. The first element is for
-        # __dict__ (None in our case) and the second is a tuple of the slotted values.
-        state = tuple(slot_values)
-        return (None, state)
-
-    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
-        """Restore the object's state from a pickled representation.
-
-        This method is the counterpart to `__getstate__`. It takes the state
-        tuple and repopulates the instance's `__slots__`.
-
-        .. note::
-            This method bypasses `__init__`, which is standard for unpickling.
-
-        :param state: The state tuple from unpickling.
-        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
-        """
-        # The first element of the state tuple is for __dict__, which is None for this class.
-        # The second element is a tuple of values for the __slots__.
-        slots_by_version = {1: ('_version', '_data', '_hash_cache', '_content_hash_cache')}
-        slot_values = state[1]
-        version = slot_values[0]
-        slots = slots_by_version.get(version)
-        if slots is None:
-            raise SimpleBenchTypeError(
-                f'Unsupported CoreDataMapping pickled version: {version!r}.',
-                tag=_CoreDataErrorTag.CORE_DATA_MAPPING_UNSUPPORTED_PICKLE_VERSION)
-
-        match version:
-            case 1:
-                for slot, value in zip(slots, slot_values, strict=True):
-                    # Use object.__setattr__ to bypass our immutable setters.
-                    object.__setattr__(self, slot, value)
-            case _:
-                raise SimpleBenchTypeError(
-                    f'Unsupported CoreDataMapping pickled version: {version!r}.',
-                    tag=_CoreDataErrorTag.CORE_DATA_MAPPING_UNSUPPORTED_PICKLE_VERSION)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'CoreDataMapping':
         """Return the same CoreDataMapping.
@@ -463,6 +420,24 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
 
         :param memo: The memoization dictionary used by `copy.deepcopy`.
                      It is not used in this optimized implementation.
+        :return CoreDataMapping: The same CoreDataMapping instance.
+        """
+        # because the CoreDataMapping is immutable, we return self
+        # instead of performing an actual copy.
+        return self
+
+    def __copy__(self) -> 'CoreDataMapping':
+        """Return the same CoreDataMapping.
+
+        Since the CoreDataMapping instance is immutable and composed of
+        immutable components, there is no need to perform a shallow copy
+        of its contents. Instead, we simply return the same instance
+        which is a extremely fast O(1) operation.
+
+        If a true copy is required for some reason, the caller
+        can manually create a new instance by passing the thawed contents
+        to the constructor.
+
         :return CoreDataMapping: The same CoreDataMapping instance.
         """
         # because the CoreDataMapping is immutable, we return self

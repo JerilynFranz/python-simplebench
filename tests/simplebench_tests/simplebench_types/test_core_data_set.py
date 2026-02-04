@@ -79,21 +79,27 @@ from simplebench.simplebench_types._core._error_tags import _CoreDataErrorTag
         assertion=Assert.ISINSTANCE,
         expected=CoreDataSet),
     PytestAction('INIT_012',
-        name='Init with string (should raise error)',
+        name='Init with string',
         action=CoreDataSet,
-        args=['not a set'],
-        exception=SimpleBenchTypeError,
-        exception_tag=_CoreDataErrorTag.CORE_DATA_SET_NOT_ELEMENT_COLLECTION),
+        args=['a string'],
+        assertion=Assert.ISINSTANCE,
+        expected=CoreDataSet),
     PytestAction('INIT_013',
-        name='Init with bytes (should raise error)',
+        name='Init with bytes',
         action=CoreDataSet,
-        args=[b'not a set'],
-        exception=SimpleBenchTypeError,
-        exception_tag=_CoreDataErrorTag.CORE_DATA_SET_NOT_ELEMENT_COLLECTION),
+        args=[b'some bytes'],
+        assertion=Assert.ISINSTANCE,
+        expected=CoreDataSet),
     PytestAction('INIT_014',
         name='Init with nested CoreDataTypes',
         action=CoreDataSet,
         args=[{CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}), CoreDataSet({4, 5})}],
+        assertion=Assert.ISINSTANCE,
+        expected=CoreDataSet),
+    PytestAction('INIT_015',
+        name='Init with dictionary item',
+        action=CoreDataSet,
+        args=[[{'str_key':  'value'}]],
         assertion=Assert.ISINSTANCE,
         expected=CoreDataSet),
 ])
@@ -197,7 +203,7 @@ def test_len(testspec: TestSpec) -> None:
     PytestAction('THAW_002',
         name='Test thaw method of nested CoreDataSet',
         action=CoreDataSet({CoreDataSet({1, 2}), CoreDataSet({'a', 'b'})}).thaw,
-        expected={CoreDataSet({1, 2}), CoreDataSet({'a', 'b'})}),
+        expected={frozenset({1, 2}), frozenset({'a', 'b'})}),
     PytestAction('THAW_003',
         name='Test thaw method of CoreDataSet with CoreDataMapping',
         action=CoreDataSet({CoreDataMapping({'a': 1})}).thaw,
@@ -205,7 +211,7 @@ def test_len(testspec: TestSpec) -> None:
     PytestAction('THAW_004',
         name='Test thaw method of CoreDataSet with CoreDataSequence',
         action=CoreDataSet({CoreDataSequence([2, 3])}).thaw,
-        expected={CoreDataSequence([2, 3])}),
+        expected={tuple([2, 3])}),
     PytestAction('THAW_005',
         name='Test thaw method of empty CoreDataSet',
         action=CoreDataSet(set()).thaw,
@@ -218,9 +224,9 @@ def test_len(testspec: TestSpec) -> None:
             CoreDataSet({4, 5})
         }).thaw,
         expected={
-            CoreDataSequence([1, 2]),
+            tuple([1, 2]),
             CoreDataMapping({'a': 3}),
-            CoreDataSet({4, 5})
+            frozenset({4, 5})
         }),
     PytestAction('THAW_007',
         name='Test round-trip thawing and re-creation of CoreDataSet',
@@ -233,24 +239,29 @@ def test_thaw(testspec: TestSpec) -> None:
 
 @pytest.mark.parametrize('testspec', [
     PytestAction('AS_JSON_001',
-        name='Test as_json method of CoreDataSet with primitive types',
+        name='Test as_json method with primitive types',
         action=CoreDataSet({1, 'two', 3.0, None}).as_json,
         expected=simplejson.dumps({1, 'two', 3.0, None}, sort_keys=True, for_json=True, iterable_as_array=True)),
     PytestAction('AS_JSON_002',
         name='Test as_json method of nested CoreDataSet',
         action=CoreDataSet({CoreDataSet({'a', 'b'})}).as_json,
-        assertion=Assert.REVERSE_IN,
-        expected=('[["b", "a"]]', '["a", "b"]')),
+        assertion=Assert.ISINSTANCE,
+        expected=str),
     PytestAction('AS_JSON_003',
-        name='Test as_json method of CoreDataSet with CoreDataMapping',
+        name='Test as_json method with CoreDataMapping',
         action=CoreDataSet({CoreDataMapping({'a': 1})}).as_json,
         expected='[{"a": 1}]'),
     PytestAction('AS_JSON_004',
-        name='Test as_json method of CoreDataSet with CoreDataSequence',
+        name='Test as_json method with CoreDataSequence',
         action=CoreDataSet({CoreDataSequence([2, 3])}).as_json,
         expected="[[2, 3]]"),
     PytestAction('AS_JSON_005',
-        name='Test as_json method of empty CoreDataSet',
+        name='Test as_json method with CoreDataSet',
+        action=CoreDataSet({CoreDataSet({1, 2})}).as_json,
+        assertion=Assert.REVERSE_IN,
+        expected=('[[1, 2]]', '[[2, 1]]')),
+    PytestAction('AS_JSON_006',
+        name='Test as_json method with empty CoreDataSet',
         action=CoreDataSet(set()).as_json,
         expected="[]"),
 ])
@@ -318,6 +329,21 @@ def test_deep_copy(testspec: TestSpec) -> None:
 ])
 def test_pickling(testspec: TestSpec) -> None:
     testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    PytestAction('EQUAL_001',
+        name='Test equality of identical CoreDataSet instances',
+        action=lambda: CoreDataSet({1, 2, 3}) == CoreDataSet({1, 2, 3}),
+        assertion=Assert.TRUE),
+    PytestAction('EQUAL_002',
+        name='Test inequality of different CoreDataSet instances',
+        action=lambda: CoreDataSet({1, 2, 3}) == CoreDataSet({4, 5, 6}),
+        assertion=Assert.FALSE),
+])
+def test_equality(testspec: TestSpec) -> None:
+    testspec.run()
+
 
 if __name__ == "__main__":
     pytest.main([__file__])

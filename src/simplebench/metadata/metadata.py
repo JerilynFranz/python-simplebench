@@ -173,7 +173,7 @@ class Metadata:
             raise SimpleBenchValueError(
                 "Cannot save to log: 'reports_log_path' is not set.", tag=_MetadataErrorTag.REPORTS_LOG_PATH_NOT_SET
             )
-        json_log_entry = self.to_json()
+        json_log_entry = self.as_json()
         reports_log_path = self.reports_log_path
         if not reports_log_path.parent.exists():
             reports_log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -207,3 +207,12 @@ class Metadata:
             git=git_info,
             machine_info=MachineInfo(),
         )
+
+    def as_json(self) -> str:
+        """Convert metadata to a JSON string for logging.
+
+        :return: JSON string representation of the metadata.
+        """
+        log_entry = self.as_log_entry()
+        return "{}"   # TODO: implement JSON serialization logic
+        return log_entry.to_json()

@@ -486,6 +486,47 @@ def test_hash(testspec: TestSpec) -> None:
 
 
 @pytest.mark.parametrize('testspec', [
+        PytestAction('CONTENT_HASH_001',
+            name='Test content hashing of CoreDataSequence',
+            action=CoreDataSequence([1, 2, 3]).content_hash,
+            args=[],
+            assertion=Assert.ISINSTANCE,
+            expected=str),
+        PytestAction('CONTENT_HASH_002',
+            name='Test content hashing of different CoreDataSequence instances with same content',
+            action=CoreDataSequence([1, 2, 3]).content_hash,
+            args=[],
+            assertion=Assert.EQUAL,
+            expected=CoreDataSequence([1, 2, 3]).content_hash()),
+        PytestAction('CONTENT_HASH_003',
+            name='Test content hashing of CoreDataSequence different content',
+            action=CoreDataSequence([1, 2, 3]).content_hash,
+            args=[],
+            assertion=Assert.NOT_EQUAL,
+            expected=CoreDataSequence([1, 2, [3]]).content_hash()),
+    ]
+)
+def test_content_hash(testspec: TestSpec) -> None:
+    """Test content hashing of CoreDataSequence."""
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    PytestAction('EQUAL_001',
+        name='Test equality of identical CoreDataSequence instances',
+        action=lambda: CoreDataSequence([1, 2, 3]) == CoreDataSequence([1, 2, 3]),
+        expected=True),
+    PytestAction('EQUAL_002',
+        name='Test inequality of different CoreDataSequence instances',
+        action=lambda: CoreDataSequence([1, 2, 3]) == CoreDataSequence([1, 2, 4]),
+        expected=False),
+])
+def test_equal(testspec: TestSpec) -> None:
+    """Test equality of CoreDataSequence."""
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
     PytestAction('THAW_001',
         name='Test thaw method of CoreDataSequence with primitive types',
         action=CoreDataSequence([1, 'two', 3.0, True, None]).thaw,

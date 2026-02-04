@@ -52,3 +52,17 @@ def rich_compare_value(value: 'ImmutableCoreDataTypes') -> str:
             f'Unsupported CoreData type for rich comparison: {type(value)!r}',
             tag=_CoreDataErrorTag.CORE_DATA_COMPARISON_UNSUPPORTED_TYPE)
 
+
+def data_url(data: bytes, mime_type: str = 'application/octet-stream') -> str:
+    """Generates a data URL for the given bytes data.
+
+    :param data: The bytes data to encode in the data URL.
+    :type data: bytes
+    :param mime_type: The MIME type of the data. Defaults to 'application/octet-stream'.
+    :type mime_type: str
+    :returns: A data URL representing the bytes data.
+    :rtype: str
+    """
+    import base64
+    encoded_data = base64.b64encode(data).decode('ascii')
+    return f'data:{mime_type};base64,{encoded_data}'

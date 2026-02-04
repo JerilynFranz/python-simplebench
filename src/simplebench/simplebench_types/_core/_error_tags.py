@@ -8,6 +8,8 @@ from simplebench.exceptions import ErrorTag
 class _CoreDataErrorTag(ErrorTag):
     """Error tags for core type errors."""
 
+    CORE_DATA_SET_INVALID_BYTES = 'CORE_DATA_SET_INVALID_BYTES'
+    """Bytes were provided to CoreDataSet, which does not support bytes."""
     INVALID_CACHE_TYPE = 'INVALID_CACHE_TYPE'
     """The provided cache size is not an integer."""
     INVALID_CACHE_SIZE = 'INVALID_CACHE_SIZE'

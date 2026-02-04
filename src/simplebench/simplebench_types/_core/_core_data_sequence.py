@@ -37,6 +37,8 @@ if TYPE_CHECKING:
     from ._types import CoreDataTypes, ImmutableCoreDataTypes
 
 
+# TODO: Add support for initializing from bytes or str
+
 class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
                        ElementCollection['ImmutableCoreDataTypes'],
                        Immutable,
@@ -235,31 +237,64 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
             self._hash_cache = hash(self.content_hash())
         return self._hash_cache
 
-    def thaw(self) -> list['CoreDataTypes']:
+    def thaw(self, preserve_immutability: bool = False) -> list['CoreDataTypes'] | tuple['CoreDataTypes', ...]:
         """Convert the CoreDataSequence to a standard mutable list.
+
+        :param preserve_immutability: If :obj:`True`, nested :class:`CoreDataMapping`
+            instances are preserved as-is instead of being thawed
+            to mutable :class:`dict` and nested :class:`CoreDataSequence` instances
+            are thawed to tuples instead of lists.
+
+            Defaults to :obj:`False`. This is useful
+            when the caller wants to maintain the immutability of nested types
+            and mainly used for internal purposes when thawing CoreDataSet instances.
+
+        :type preserve_immutability: bool
 
         :returns: A mutable list representation of the CoreDataSequence.
         :rtype: list[CoreDataTypes]
         """
-        # Import here to avoid circular imports
         from ._core_data_mapping import CoreDataMapping
         from ._core_data_set import CoreDataSet
 
         thawed_list: list[CoreDataTypes] = []
         for value in self._data:
             if isinstance(value, (CoreDataSet, CoreDataMapping, CoreDataSequence)):
-                thawed_list.append(value.thaw())
+                thawed_list.append(value.thaw(preserve_immutability=preserve_immutability))
             else:
                 thawed_list.append(value)
+        if preserve_immutability:
+            return tuple(thawed_list)
         return thawed_list
 
     def for_json(self) -> list['CoreDataTypes']:
         """Convert the CoreDataSequence to a JSON-serializable list.
 
+        JSON-serialization inherently loses some type information since JSON
+        does not have a set type, so this method is intended for serialization
+        purposes only and not for general data manipulation.
+
+        This differs from `thaw` in that `thaw` returns mutable types where possible
+        and so cannot unwrap nested CoreData* types within sets, while `for_json`
+        focuses solely on preparing the data for JSON serialization and
+        so converts nested CoreData* types appropriately to JSON-serializable forms
+        regardless of Python semantics like sets vs lists or mutability constraints.
+
         :returns: A JSON-serializable list representation of the CoreDataSequence.
         :rtype: list[CoreDataTypes]
         """
-        return self.thaw()
+        from ._core_data_mapping import CoreDataMapping
+        from ._core_data_set import CoreDataSet
+
+        json_list: list[CoreDataTypes] = []
+        for value in self._data:
+            if isinstance(value, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
+                json_list.append(value.for_json())
+            elif isinstance(value, bytes):  # bytes are converted to data URLs for JSON compatibility
+                json_list.append(_common.data_url(value))
+            else:
+                json_list.append(value)
+        return list(json_list)
 
     def as_json(self) -> str:
         """Serialize the CoreDataSequence to a JSON string.
@@ -322,66 +357,6 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
             if _common.rich_compare_value(item) == comparison_value:
                 count += 1
         return count
-
-    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
-        """Prepare the object's state for pickling.
-
-        Because the internal data is stored as python built-in types (tuples,
-        dicts, sets and other python primitive types), the pickled size
-        is minimized.
-
-        Future versions of SimpleBench may change the pickling format, so
-        pickled data should not be considered stable across versions.
-
-        A version number is included in the pickled state to allow for
-        potential future migrations if the internal structure changes.
-
-        It is always in the 0th index of the state tuple.
-
-        :return: A state tuple for pickling.
-        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
-        """
-        slot_values: list[Any] = []
-        for slot in self.__slots__:
-            slot_values.append(getattr(self, slot))
-
-        # Build the state tuple for a __slots__ class. The first element is for
-        # __dict__ (None in our case) and the second is a tuple of the slotted values.
-        state = tuple(slot_values)
-        return (None, state)
-
-    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
-        """Restore the object's state from a pickled representation.
-
-        This method is the counterpart to `__getstate__`. It takes the state
-        tuple and repopulates the instance's `__slots__`.
-
-        .. note::
-            This method bypasses `__init__`, which is standard for unpickling.
-
-        :param state: The state tuple from unpickling.
-        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
-        """
-        # The first element of the state tuple is for __dict__, which is None for this class.
-        # The second element is a tuple of values for the __slots__.
-        slots_by_version = {1: ('_version', '_data', '_hash_cache', '_content_hash_cache')}
-        slot_values = state[1]
-        version = slot_values[0]
-        slots = slots_by_version.get(version)
-        if slots is None:
-            raise SimpleBenchTypeError(
-                f'Unsupported CoreDataSequence pickled version: {version!r}.',
-                tag=_CoreDataErrorTag.CORE_DATA_SEQUENCE_UNSUPPORTED_PICKLE_VERSION)
-
-        match version:
-            case 1:
-                for slot, value in zip(slots, slot_values, strict=True):
-                    # Use object.__setattr__ to bypass our immutable setters.
-                    object.__setattr__(self, slot, value)
-            case _:
-                raise SimpleBenchTypeError(
-                    f'Unsupported CoreDataSequence pickled version: {version!r}.',
-                    tag=_CoreDataErrorTag.CORE_DATA_SEQUENCE_UNSUPPORTED_PICKLE_VERSION)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'CoreDataSequence':
         """Return the same CoreDataSequence.

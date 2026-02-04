@@ -19,8 +19,8 @@ from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.validators import validate_filename, validate_string, validate_type
 
 if TYPE_CHECKING:
-    from simplebench.metadata import Metadata
     from simplebench.case import Case
+    from simplebench.metadata import Metadata
     from simplebench.session import Session
 
 
@@ -81,6 +81,8 @@ class _ReporterTargetMixin:
         :raises SimpleBenchValueError: If both append and unique are True. Or if the output file
             already exists and neither append nor unique options were specified.
         """
+        from simplebench.metadata import Metadata
+
         validate_type(
             log_metadata, Metadata, 'log_metadata', _ReporterErrorTag.TARGET_FILESYSTEM_INVALID_LOG_METADATA_ARG_TYPE
         )

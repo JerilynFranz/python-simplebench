@@ -19,6 +19,7 @@ Allowed types are:
 """
 import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
+from types import NoneType
 from typing import TYPE_CHECKING, Any
 
 import simplejson
@@ -26,12 +27,12 @@ from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchAssertionError, SimpleBenchTypeError
 
-from .._element_collection import ElementCollection, is_element_collection
+from .._element_collection import ElementCollection
 from . import _common
 from ._error_tags import _CoreDataErrorTag
 
 if TYPE_CHECKING:
-    from ._types import CoreDataTypes, ImmutableCoreDataTypes
+    from ._types import CoreDataMapping, CoreDataTypes, ImmutableCoreDataTypes
 
 
 class CoreDataSet(Set['ImmutableCoreDataTypes'],
@@ -53,11 +54,46 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
     """
     __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
-    def __init__(self, __elements: 'ElementCollection[CoreDataTypes] | None' = None) -> None:
+    def __init__(
+            self,
+            __elements: 'Sequence[CoreDataTypes] | Set[CoreDataTypes] | None' = None) -> None:  # noqa: E501
         """Initialize the CoreDataSet.
 
-        If an iterable is provided, it must be an :class:`ElementCollection`
-        containing only elements of type :class:`CoreDataTypes`.
+        The provided iterable must be a Set or Sequence that contains only elements of type :class:`CoreDataTypes`.
+
+        .It accepts str and bytes as a sequence of characters or bytes for
+        compatibility with ordinary sets.
+
+        However, each character or byte will be treated as an individual string
+        or bytes element. This means that initializing with a string like "abc"
+        will result in a set containing 'a', 'b', and 'c' as separate elements
+        NOT 'abc'.
+
+        .. code-block:: python
+            :caption: Examples of string and bytes initialization
+
+            a = CoreDataSet("abc")
+            assert a == CoreDataSet({'a', 'b', 'c'})
+            b = CoreDataSet(b"abc")
+            assert b == CoreDataSet({b'a', b'b', b'c'})
+            c = CoreDataSet(["abc"])
+            assert c == CoreDataSet({'abc'})
+            d = CoreDataSet([b"abc"])
+            assert d == CoreDataSet({b'abc'})
+
+        .. note:: CoreDataSet can process mappings and sequences by converting them
+                  into :class:`CoreDataMapping` and :class:`CoreDataSequence` respectively.
+
+                  This means you can directly pass in nested structures of mutable
+                  mappings and sequences, and they will be safely wrapped.
+
+                  This is not perfectly symmetric with thawing since thawing
+                  a CoreDataSet will always yield a Python :class:`set` which cannot
+                  contain unhashable types such as dicts. When thawed, nested
+                  mappings will remain as :class:`CoreDataMapping` instances.
+
+                  This design choice allows for more convenient construction of
+                  CoreDataSet instances from common Python data structures.
 
         If no iterable is provided, an empty set is created.
 
@@ -76,14 +112,16 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             self._data = set()
             return
 
-        if not is_element_collection(__elements):
+        if not (isinstance(__elements, (Set, Sequence))):
             raise SimpleBenchTypeError(
-                'CoreDataSet must be initialized with an ElementCollection of CoreData.',
+                f'CoreDataSet requires a Set or Sequence to initialize, '
+                f'got {type(__elements)!r}.',
                 tag=_CoreDataErrorTag.CORE_DATA_SET_NOT_ELEMENT_COLLECTION)
+
         data: set[CoreDataTypes] = set()
 
         if all(isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for item in __elements):
-            self._data = set(__elements)
+            self._data = set(__elements)  # type: ignore[arg-type]  # all primitive types are immutable
             return
 
         for item in __elements:
@@ -172,7 +210,6 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             self._content_hash_cache = hasher.hexdigest()
         return self._content_hash_cache
 
-
     def __hash__(self) -> int:
         """Return the hash of the CoreDataSet.
 
@@ -183,36 +220,80 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             self._hash_cache = hash(self.content_hash())
         return self._hash_cache
 
-    def thaw(self) -> set['ImmutableCoreDataTypes']:
-        """Convert the CoreDataSet to a set of immutable CoreDataTypes.
+    def thaw(self,
+             preserve_immutability: bool = False
+             ) -> 'set[str | int | float | bool | frozenset | tuple | NoneType | CoreDataMapping]':
+        """Convert the CoreDataSet to a mutable set of immutable :data:`CoreDataTypes`.
+
+        This method returns a mutable :class:`set` containing
+        the closest available immutable representations of the CoreDataTypes.
 
         We can't recursively thaw to mutable types because set requires its
-        elements to be hashable, and mutable types are not hashable.
+        elements to be hashable, and mutable types are not (or should not be) hashable.
 
+        As there is no immutable built-in Mapping type in Python, nested
+        :class:`CoreDataMapping` instances remain as :class:`CoreDataMapping` instances.
+
+        - For primitive types, they are returned as-is since they are already immutable.
+        - For nested :class:`CoreDataSet`, they are converted to :class:`frozenset`.
+        - For nested :class:`CoreDataMapping` they remain as :class:`CoreDataMapping`.
+        - For nested :class:`CoreDataSequence` they are converted to :class:`tuple`.
+
+        There is a problem with thawing nested mappings since Python sets cannot
+        contain unhashable types like dicts. Therefore, nested mappings remain
+        as :class:`CoreDataMapping` instances to preserve hashability.
+
+        :param preserve_immutability: This parameter is currently unused in this method
+                                      since nested CoreDataMapping instances must remain
+                                      as-is to maintain hashability in the resulting set.
+                                      It is included for API consistency with other thaw methods.
+        :type preserve_immutability: bool
         :returns: A mutable set representation of the CoreDataSet.
         :rtype: set[CoreDataTypes]
         """
-        return set(self._data)
+        from ._core_data_mapping import CoreDataMapping
+        from ._core_data_sequence import CoreDataSequence
 
-    def for_json(self) -> set['ImmutableCoreDataTypes']:
-        """Convert the CoreDataSet to a JSON-serializable set.
+        thaw_set: set[str | int | float | bool | frozenset | tuple | NoneType | CoreDataMapping] = set()
+        for value in self._data:
+            if isinstance(value, CoreDataSet):
+                thaw_set.add(frozenset(value.thaw(preserve_immutability=True)))
+            elif isinstance(value, CoreDataSequence):
+                thaw_set.add(tuple(value.thaw(preserve_immutability=True)))
+            elif isinstance(value, CoreDataMapping):
+                thaw_set.add(value)  # must remain as CoreDataMapping for hashability
+            else:
+                thaw_set.add(value)
+        return set(thaw_set)
 
-        Note that sets are not a standard JSON type, but SimpleJSON supports
-        serializing sets as arrays. This works for our use case since the order
-        of elements in a set is not significant and substituting an array for a set
-        in serialization does not change the meaning of the data.
+    def for_json(self) -> list['CoreDataTypes']:
+        """Convert the CoreDataSet to a JSON-serializable list.
 
-        This method prepares the CoreDataSet for JSON serialization by returning
-        a regular set of its immutable elements. Thus, if the elements are
-        primitive types (str, int, float, bool, None), they are already JSON-serializable,
-        and if they are complex CoreData types (CoreDataMapping, CoreDataSequence, CoreDataSet),
-        they implement their own `for_json` methods to ensure JSON compatibility
-        with :mod:`simplejson`.
+        JSON-serialization inherently loses some type information since JSON
+        does not have a set type, so this method is intended for serialization
+        purposes only and not for general data manipulation.
 
-        :returns: A JSON-serializable set representation of the CoreDataSet.
-        :rtype: set[ImmutableCoreDataTypes]
+        This differs from :meth:`thaw` in that :meth:`thaw` returns mutable types where possible
+        and so cannot unwrap nested `CoreData*` types within sets, while :meth:`for_json`
+        focuses solely on preparing the data for JSON serialization and
+        so converts nested `CoreData*` types appropriately to JSON-serializable forms
+        regardless of Python semantics like sets vs lists or mutability constraints.
+
+        :returns: A JSON-serializable list representation of the CoreDataSet.
+        :rtype: list[CoreDataTypes]
         """
-        return self.thaw()
+        from ._core_data_mapping import CoreDataMapping
+        from ._core_data_sequence import CoreDataSequence
+
+        json_list: list[CoreDataTypes] = []
+        for value in self._data:
+            if isinstance(value, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
+                json_list.append(value.for_json())
+            elif isinstance(value, bytes):  # bytes are converted to data URLs for JSON compatibility
+                json_list.append(_common.data_url(value))
+            else:
+                json_list.append(value)
+        return list(json_list)
 
     def as_json(self) -> str:
         """Serialize the CoreDataSet to a JSON string.
@@ -222,69 +303,6 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         """
         return simplejson.dumps(
             self.for_json(), sort_keys=True, for_json=True, iterable_as_array=True)
-
-    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
-        """Prepare the object's state for pickling, prioritizing size.
-
-        This method ensures that the pickled representation of the CoreDataSet
-        is as compact as possible. It achieves this by excluding any cached
-        attributes that can be recomputed upon unpickling, such as hash caches.
-
-        Because the internal data is stored as python built-in types (tuples,
-        dicts, sets and other python primitive types), the pickled size is minimized.
-
-        Future versions of SimpleBench may change the pickling format, so
-        pickled data should not be considered stable across versions.
-
-        A version number is included in the pickled state to allow for
-        potential future migrations if the internal structure changes.
-
-        It is always in the 0th index of the state tuple.
-
-        :return: A state tuple for pickling.
-        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
-        """
-        slot_values: list[Any] = []
-        for slot in self.__slots__:
-            slot_values.append(getattr(self, slot))
-
-        # Build the state tuple for a __slots__ class. The first element is for
-        # __dict__ (None in our case) and the second is a tuple of the slotted values.
-        state = tuple(slot_values)
-        return (None, state)
-
-    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
-        """Restore the object's state from a pickled representation.
-
-        This method is the counterpart to `__getstate__`. It takes the state
-        tuple and repopulates the instance's `__slots__`.
-
-        .. note::
-            This method bypasses `__init__`, which is standard for unpickling.
-
-        :param state: The state tuple from unpickling.
-        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
-        """
-        # The first element of the state tuple is for __dict__, which is None for this class.
-        # The second element is a tuple of values for the __slots__.
-        slots_by_version = {1: ('_version', '_data', '_hash_cache', '_content_hash_cache')}
-        slot_values = state[1]
-        version = slot_values[0]
-        slots = slots_by_version.get(version)
-        if slots is None:
-            raise SimpleBenchTypeError(
-                f'Unsupported CoreDataSet pickled version: {version!r}.',
-                tag=_CoreDataErrorTag.CORE_DATA_SET_UNSUPPORTED_PICKLE_VERSION)
-
-        match version:
-            case 1:
-                for slot, value in zip(slots, slot_values, strict=True):
-                    # Use object.__setattr__ to bypass our immutable setters.
-                    object.__setattr__(self, slot, value)
-            case _:
-                raise SimpleBenchTypeError(
-                    f'Unsupported CoreDataSet pickled version: {version!r}.',
-                    tag=_CoreDataErrorTag.CORE_DATA_SET_UNSUPPORTED_PICKLE_VERSION)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'CoreDataSet':
         """Return the same CoreDataSet.
@@ -300,6 +318,24 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
 
         :param memo: The memoization dictionary used by `copy.deepcopy`.
                      It is not used in this optimized implementation.
+        :return CoreDataSet: The same CoreDataSet instance.
+        """
+        # because the CoreDataSet is immutable, we return self
+        # instead of performing an actual copy.
+        return self
+
+    def __copy__(self) -> 'CoreDataSet':
+        """Return the same CoreDataSet.
+
+        Since the CoreDataSet instance is immutable and composed of
+        immutable components, there is no need to perform a shallow copy
+        of its contents. Instead, we simply return the instance itself
+        which is a extremely fast O(1) operation.
+
+        If a true shallow copy is required for some reason, the caller
+        can manually create a new instance by passing the thawed contents
+        to the constructor.
+
         :return CoreDataSet: The same CoreDataSet instance.
         """
         # because the CoreDataSet is immutable, we return self
