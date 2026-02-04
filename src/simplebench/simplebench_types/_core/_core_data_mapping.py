@@ -381,7 +381,7 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
         :rtype: str
         """
         return simplejson.dumps(
-            self.for_json(), sort_keys=True, separators=(',', ':'), for_json=True, iterable_as_array=True)
+            self.for_json(), sort_keys=True, for_json=True, iterable_as_array=True)
 
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
         """Prepare the object's state for pickling, prioritizing size.

@@ -51,6 +51,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
     :param __elements: An iterable of CoreData elements to initialize the set or :obj:`None`.
     :type __elements: Iterable[CoreData] | None
     """
+    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
     def __init__(self, __elements: 'ElementCollection[CoreDataTypes] | None' = None) -> None:
         """Initialize the CoreDataSet.
@@ -66,7 +67,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         from ._core_data_mapping import CoreDataMapping
         from ._core_data_sequence import CoreDataSequence
         from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, ImmutableCoreDataTypes
-
+        self._version: int = 1
         self._hash_cache: int | None = None
         self._content_hash_cache: str | None = None
         self._data: set[ImmutableCoreDataTypes]
@@ -102,9 +103,8 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
                     f'Must be a CoreData type: {CORE_DATA_PRIMITIVE_TYPES_TUPLE!r}.',
                     tag=_CoreDataErrorTag.CORE_DATA_SET_INVALID_ITEM_TYPE)
 
-        # Wrap in frozenset to ensure immutability
         # We've already validated all items are ImmutableCoreDataTypes
-        self._data = frozenset(data)  # type: ignore[arg-type]
+        self._data = set(data)  # type: ignore[arg-type]
 
     def __contains__(self, item: object) -> bool:
         """Check if the item is in the CoreDataSet.
@@ -183,29 +183,34 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             self._hash_cache = hash(self.content_hash())
         return self._hash_cache
 
-    def thaw(self) -> set['CoreDataTypes']:
-        """Convert the CoreDataSequence to a standard mutable set.
+    def thaw(self) -> set['ImmutableCoreDataTypes']:
+        """Convert the CoreDataSet to a set of immutable CoreDataTypes.
 
-        :returns: A mutable set representation of the CoreDataSequence.
+        We can't recursively thaw to mutable types because set requires its
+        elements to be hashable, and mutable types are not hashable.
+
+        :returns: A mutable set representation of the CoreDataSet.
         :rtype: set[CoreDataTypes]
         """
-        # Import here to avoid circular imports
-        from ._core_data_mapping import CoreDataMapping
-        from ._core_data_sequence import CoreDataSequence
+        return set(self._data)
 
-        thawed_set: set[CoreDataTypes] = set()
-        for value in self._data:
-            if isinstance(value, (CoreDataSet, CoreDataMapping, CoreDataSequence)):
-                thawed_set.add(value.thaw())
-            else:
-                thawed_set.add(value)
-        return thawed_set
-
-    def for_json(self) -> set['CoreDataTypes']:
+    def for_json(self) -> set['ImmutableCoreDataTypes']:
         """Convert the CoreDataSet to a JSON-serializable set.
 
+        Note that sets are not a standard JSON type, but SimpleJSON supports
+        serializing sets as arrays. This works for our use case since the order
+        of elements in a set is not significant and substituting an array for a set
+        in serialization does not change the meaning of the data.
+
+        This method prepares the CoreDataSet for JSON serialization by returning
+        a regular set of its immutable elements. Thus, if the elements are
+        primitive types (str, int, float, bool, None), they are already JSON-serializable,
+        and if they are complex CoreData types (CoreDataMapping, CoreDataSequence, CoreDataSet),
+        they implement their own `for_json` methods to ensure JSON compatibility
+        with :mod:`simplejson`.
+
         :returns: A JSON-serializable set representation of the CoreDataSet.
-        :rtype: set[CoreDataTypes]
+        :rtype: set[ImmutableCoreDataTypes]
         """
         return self.thaw()
 
@@ -216,7 +221,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         :rtype: str
         """
         return simplejson.dumps(
-            self.for_json(), sort_keys=True, separators=(',', ':'), for_json=True, iterable_as_array=True)
+            self.for_json(), sort_keys=True, for_json=True, iterable_as_array=True)
 
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
         """Prepare the object's state for pickling, prioritizing size.
@@ -241,10 +246,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         """
         slot_values: list[Any] = []
         for slot in self.__slots__:
-            if slot in ('_data', '_version'):
-                slot_values.append(getattr(self, slot))
-            else:
-                slot_values.append(None)
+            slot_values.append(getattr(self, slot))
 
         # Build the state tuple for a __slots__ class. The first element is for
         # __dict__ (None in our case) and the second is a tuple of the slotted values.

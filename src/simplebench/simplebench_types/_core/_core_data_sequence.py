@@ -16,6 +16,8 @@ Allowed types are:
     - Sequences of the above types
     - Mappings of str to the above types
     - Sets of the above types
+
+It does not support sorting or mutation after creation.
 """
 import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
@@ -98,11 +100,10 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
                 data.append(item)
             elif isinstance(item, Mapping):
                 data.append(CoreDataMapping(item))
-            elif isinstance(item, Set):
-                data.append(CoreDataSet(item))
             elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
                 data.append(CoreDataSequence(item))
-
+            elif isinstance(item, Set):
+                data.append(CoreDataSet(item))
             else:
                  raise SimpleBenchTypeError(
                     f'Invalid item type passed to CoreDataSequence: {item!r}. '
@@ -134,9 +135,18 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         :rtype: ImmutableCoreDataTypes or CoreDataSequence
         :raises IndexError: If the index is out of range.
         """
-        if isinstance(index, slice):
-            return CoreDataSequence(self._data[index])
-        return self._data[index]
+        try:
+            if isinstance(index, slice):
+                return CoreDataSequence(self._data[index])
+            return self._data[index]
+        except IndexError as e:
+            raise IndexError(
+                f'Index {index!r} out of range for CoreDataSequence of length {len(self._data)}.'
+            ) from e
+        except TypeError as e:
+            raise SimpleBenchTypeError(
+                f'Invalid index type for CoreDataSequence: {index!r}. Must be int or slice.',
+                tag=_CoreDataErrorTag.CORE_DATA_SEQUENCE_INVALID_INDEX_TYPE) from e
 
     def __setitem__(self, index: int, value: 'ImmutableCoreDataTypes') -> None:
         """Raise an error since CoreDataSequence is immutable.
@@ -258,7 +268,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         :rtype: str
         """
         return simplejson.dumps(
-            self.for_json(), sort_keys=True, separators=(',', ':'), for_json=True, iterable_as_array=True)
+            self.for_json(), sort_keys=True, for_json=True, iterable_as_array=True)
 
     def count(self, value: 'ImmutableCoreDataTypes') -> int:
         """Return the number of occurrences of value in the CoreDataSequence.
@@ -314,14 +324,11 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         return count
 
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
-        """Prepare the object's state for pickling, prioritizing size.
-
-        This method ensures that the pickled representation of the CoreDataSequence
-        is as compact as possible. It achieves this by excluding any cached
-        attributes that can be recomputed upon unpickling, such as hash caches.
+        """Prepare the object's state for pickling.
 
         Because the internal data is stored as python built-in types (tuples,
-        dicts, sets and other python primitive types), the pickled size is minimized.
+        dicts, sets and other python primitive types), the pickled size
+        is minimized.
 
         Future versions of SimpleBench may change the pickling format, so
         pickled data should not be considered stable across versions.
@@ -336,10 +343,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         """
         slot_values: list[Any] = []
         for slot in self.__slots__:
-            if slot in ('_data', '_version'):
-                slot_values.append(getattr(self, slot))
-            else:
-                slot_values.append(None)
+            slot_values.append(getattr(self, slot))
 
         # Build the state tuple for a __slots__ class. The first element is for
         # __dict__ (None in our case) and the second is a tuple of the slotted values.

@@ -11,7 +11,6 @@ from typing import TYPE_CHECKING
 from cpuinfo import get_cpu_info  # type: ignore  # cpuinfo doesn't have type stubs
 from typechecked import Immutable
 
-
 from . import _validate
 
 if TYPE_CHECKING:
@@ -108,10 +107,10 @@ class CPUInfo(Immutable):
 
         It returns a :class:`~simplebench.simplebench_types.CoreDataMappingType`
         object, so it cannot be modified although it functionally behaves like a
-        standard dictionary.
+        standard dictionary in terms of data access.
 
         Because the data is immutable, it is safe to share and pass around
-        without risk of unintended modifications. Because it is typed as a
+        without risk of unintended modifications. Because it is type hinted as a
         :class:`ImmutableCPUInfoData`, static type checkers can verify correct
         usage of the data contained within it by checking for the presence
         and types of specific keys.

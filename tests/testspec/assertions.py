@@ -25,6 +25,8 @@ class Assert(str, Enum):
     :vartype GREATER_THAN_OR_EQUAL: str
     :cvar IN: Checks if a value is contained within another (e.g., a list or set).
     :vartype IN: str
+    :cvar RIN: Checks if a value is contained within another (e.g., a list or set) using reverse membership.
+    :vartype RIN: str
     :cvar NOT_IN: Checks if a value is not contained within another (e.g., a list or set).
     :vartype NOT_IN: str
     :cvar IS: Checks if two references point to the same object.
@@ -49,6 +51,7 @@ class Assert(str, Enum):
     GREATER_THAN = '>'
     GREATER_THAN_OR_EQUAL = '>='
     IN = 'in'
+    REVERSE_IN = 'rin'
     NOT_IN = 'not in'
     IS = 'is'
     IS_NOT = 'is not'
@@ -107,6 +110,9 @@ def validate_assertion(assertion: Assert, expected: Any, found: Any) -> str:
     elif assertion == Assert.IN:
         if not (expected in found):  # noqa: E713  # Keep for readability
             return f'Assert.IN failed: found={found}, expected={expected}'
+    elif assertion == Assert.REVERSE_IN:
+        if not (found in expected):  # noqa: E713  # Keep for readability
+            return f'Assert.REVERSE_IN failed: found={found}, expected={expected}'
     elif assertion == Assert.NOT_IN:
         if not (expected not in found):
             return f'Assert.NOT_IN failed: found={found}, expected={expected}'

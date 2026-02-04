@@ -40,3 +40,7 @@ class _CoreDataErrorTag(ErrorTag):
     """An unsupported pickle version was encountered when unpickling CoreDataSet."""
     CORE_DATA_MAPPING_UNSUPPORTED_PICKLE_VERSION = 'CORE_DATA_MAPPING_UNSUPPORTED_PICKLE_VERSION'
     """An unsupported pickle version was encountered when unpickling CoreDataMapping."""
+    CORE_DATA_SEQUENCE_INVALID_INDEX_SLICE = 'CORE_DATA_SEQUENCE_INVALID_INDEX_SLICE'
+    """An invalid index or slice was used to access CoreDataSequence."""
+    CORE_DATA_SEQUENCE_INVALID_INDEX_TYPE = 'CORE_DATA_SEQUENCE_INVALID_INDEX_TYPE'
+    """An invalid index type was used to access CoreDataSequence."""
