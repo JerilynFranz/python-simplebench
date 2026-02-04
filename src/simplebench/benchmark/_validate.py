@@ -58,12 +58,13 @@ def use_field_for_n(
     :raises SimpleBenchTypeError: If the value is not a string or None.
     :raises SimpleBenchValueError: If the value is not a valid field name in `kwarg_variations`.
     """
-    if use_field_for_n is None:
+    if value is None:
         return None
 
     if not isinstance(value, str):
         raise SimpleBenchTypeError(
-            "The 'use_field_for_n' parameter to the @benchmark decorator must be a string if passed.",
+            "The 'use_field_for_n' parameter to the @benchmark decorator "
+            f"must be a string if passed: got {type(value)!r}.",
             tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE,
         )
 

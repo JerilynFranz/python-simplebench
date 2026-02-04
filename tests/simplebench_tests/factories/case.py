@@ -2,12 +2,12 @@
 
 # pylint: disable=unused-argument
 
-from typing import Any, overload
+from typing import overload
 
 import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
 
-from simplebench.simplebench_types import VariationMarks, ElementCollection
+from simplebench.simplebench_types import VariationMarks
 
 from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from simplebench_tests.factories._primitives import (
@@ -67,7 +67,7 @@ def minimal_case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWA
     :return: A minimally configured CaseKWArgs instance.
     :rtype: CaseKWArgs
     """
-    return CaseKWArgs(action=default_benchcase)
+    return CaseKWArgs(action_wrapper=default_benchcase)
 
 
 def default_minimal_case_kwargs() -> CaseKWArgs:
@@ -116,7 +116,7 @@ def case_kwargs_factory() -> CaseKWArgs:
     :ivar group: `default_case_group()`
     :ivar title: `default_title()`
     :ivar description: `default_description()`
-    :ivar action: `default_benchcase`
+    :ivar action_wrapper: `default_benchcase`
     :ivar iterations: `default_iterations()`
     :ivar warmup_iterations: `default_warmup_iterations()`
     :ivar rounds: `default_rounds()`
@@ -147,7 +147,7 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     :ivar group: `default_case_group()`
     :ivar title: `default_title()`
     :ivar description: `default_description()`
-    :ivar action: `default_benchcase`
+    :ivar action_wrapper: `default_benchcase`
     :ivar iterations: `default_iterations()`
     :ivar warmup_iterations: `default_warmup_iterations()`
     :ivar rounds: `default_rounds()`
@@ -178,7 +178,7 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     :ivar group: `default_case_group()`
     :ivar title: `default_title()`
     :ivar description: `default_description()`
-    :ivar action: `default_benchcase`
+    :ivar action_wrapper: `default_benchcase`
     :ivar iterations: `default_iterations()`
     :ivar warmup_iterations: `default_warmup_iterations()`
     :ivar rounds: `default_rounds()`
@@ -201,7 +201,7 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
         group=default_case_group(),
         title=default_title(),
         description=default_description(),
-        action=default_benchcase,
+        action_wrapper=default_benchcase,
         iterations=default_iterations(),
         warmup_iterations=default_warmup_iterations(),
         rounds=default_rounds(),
@@ -213,39 +213,6 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
         callback=default_reporter_callback,
         options=default_reporter_options_tuple(),
     )
-
-
-from collections.abc import Sequence, Mapping
-a: dict[str, list[int]] = {'param1': [1, 2, 3]}
-b: dict[str, Sequence[int]] = a  # This is invalid
-"""[{
-	"resource": "/Users/snowhare/git/python-simplebench/tests/simplebench_tests/factories/case.py",
-	"owner": "Pylance",
-	"code": {
-		"value": "reportAssignmentType",
-		"target": {
-			"$mid": 1,
-			"path": "/microsoft/pylance-release/blob/main/docs/diagnostics/reportAssignmentType.md",
-			"scheme": "https",
-			"authority": "github.com"
-		}
-	},
-	"severity": 8,
-	"message": "Type \"dict[str, list[int]]\" is not assignable to declared type \"dict[str, Sequence[int]]\"\n  \"dict[str, list[int]]\" is not assignable to \"dict[str, Sequence[int]]\"\n    Type parameter \"_VT@dict\" is invariant, but \"list[int]\" is not the same as \"Sequence[int]\"\n    Consider switching from \"dict\" to \"Mapping\" which is covariant in the value type",
-	"source": "Pylance",
-	"startLineNumber": 220,
-	"startColumn": 31,
-	"endLineNumber": 220,
-	"endColumn": 32,
-	"modelVersionId": 619,
-	"origin": "extHost1"
-}]"""
-c: dict[str, list[int] | Sequence[int]] = a  # This is invalid
-"""
-
-"""
-
-d: Mapping[str, Sequence[int]] = a  # This is valid
 
 # provide overloads for better tooltips and docstrings
 @overload

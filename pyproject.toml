@@ -342,6 +342,9 @@ commands = [
     ["pytest", "documentation/doctest_output", { replace = "posargs", extend = true }],
 ]
 
+[tool.esbonio.sphinx]
+buildArguments = ["sphinx-build", "-M", "html", "docs_source", "${defaultBuildDir}", "--nitpicky", "--verbose"]
+
 [dependency-groups]
 # Dependencies for running the test suite
 test = [

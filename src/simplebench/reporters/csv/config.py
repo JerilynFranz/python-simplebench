@@ -77,7 +77,7 @@ class CSVConfig(ReporterConfig):
         defaults: dict[str, Any] = {
             'name': 'csv',
             'description': 'Outputs benchmark results to CSV files.',
-            'metrics': MetricsCollection(metrics=all_processable_metrics),
+            'metrics': MetricsCollection(all_processable_metrics),
             'targets': allowed_targets,
             'default_targets': {Target.FILESYSTEM},
             'formats': {Format.CSV},
@@ -95,7 +95,7 @@ class CSVConfig(ReporterConfig):
                             'Output all available statistical metrics to CSV (filesystem, console, callback, '
                             'default=filesystem)'
                         ),
-                        metrics=MetricsCollection(metrics=all_processable_metrics),
+                        metrics=MetricsCollection(all_processable_metrics),
                         targets=allowed_targets,
                         output_format=Format.CSV,
                     ),

@@ -3,7 +3,7 @@ import inspect
 from collections.abc import Callable, Mapping
 from typing import Any, get_type_hints
 
-import simplebench.defaults as defaults
+from simplebench import defaults
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.options.reporter.options import ReporterOptions
@@ -197,7 +197,7 @@ def timeout(timeout_value: float | None, max_time_value: float) -> float:
     """
     max_time(max_time_value)
     if timeout_value is None:
-        return defaults.DEFAULT_TIMEOUT_GRACE_PERIOD
+        return max_time_value + defaults.DEFAULT_TIMEOUT_GRACE_PERIOD
 
     timeout_value = validate_positive_float(
         timeout_value, 'timeout', _CaseErrorTag.INVALID_TIMEOUT_TYPE, _CaseErrorTag.INVALID_TIMEOUT_VALUE

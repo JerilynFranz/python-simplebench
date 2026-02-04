@@ -58,7 +58,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
                 Case(group="Group1",
                      title="Case1",
                      description="A test case",
-                     action=benchcase)
+                     action_wrapper=benchcase)
             ],
             verbosity=Verbosity.VERBOSE,
             default_runner=SimpleRunner,

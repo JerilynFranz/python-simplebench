@@ -2,12 +2,13 @@
 from argparse import ArgumentParser
 from typing import overload
 
+from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
+
 from simplebench.enums import Verbosity
 from simplebench.session import Session
 
-from ..cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from ..kwargs import SessionKWArgs
-from . import case_factory, console_factory, output_path_factory, runner_factory
+from . import case_factory, console_factory, default_runners, output_path_factory
 
 # The overloads provide a tooltip assist for the decorated function and IDE tooltips
 # This is necessary because the cache_factory decorators create a function
@@ -56,7 +57,8 @@ def session_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> Session:
     :return: A Session instance.
     :rtype: Session
     """
-    return Session(cases=[case_factory(cache_id=cache_id)], verbosity=Verbosity.QUIET)
+    case = case_factory(cache_id=cache_id)
+    return Session(cases=[case], verbosity=Verbosity.QUIET)
 
 
 # The overloads provide a tooltip assist for the decorated function and IDE tooltips
@@ -118,7 +120,7 @@ def session_kwargs_factory(cache_id: CacheId = None) -> SessionKWArgs:
     :rtype: SessionKWArgs
     """
     return SessionKWArgs(cases=tuple([case_factory(cache_id=cache_id)]),
-                         default_runner=runner_factory(cache_id=cache_id),
+                         default_runners=default_runners(),
                          args_parser=ArgumentParser(prog='simplebench'),
                          verbosity=Verbosity.QUIET,
                          show_progress=False,  # NOT the 'Progress' instance

@@ -18,7 +18,7 @@ from simplebench.validators import validate_type
 from simplebench.vcs import GitInfo
 
 from ..reporters.log.base.report_log_entry import ReportLogEntry
-from ..reporters.log.versions import json_class
+from ..reporters.log.versions import v1 as json_log
 from ._error_tags import _MetadataErrorTag
 
 
@@ -185,13 +185,9 @@ class Metadata:
 
         :return: Log entry instance.
         """
-        version = self.__class__.VERSION
-        log_entry_class = json_class(
-            version, ReportLogEntry, _MetadataErrorTag.INVALID_VERSION_TYPE, _MetadataErrorTag.UNSUPPORTED_VERSION
-        )
         git_info = self.case.git_info.to_dict() if isinstance(self.case.git_info, GitInfo) else None
 
-        return log_entry_class(
+        return json_log.ReportLogEntry(
             reports_log_path=self.reports_log_path,  # may be None
             filepath=self.filepath,  # may be None
             # uri=self.uri_reference, # may be None

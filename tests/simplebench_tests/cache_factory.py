@@ -131,7 +131,6 @@ Raises:
                CacheDefault, or None).
 """
 # --- Imports ---
-from __future__ import annotations
 
 import inspect
 import threading
@@ -159,7 +158,7 @@ class CachedFactory(Protocol[R_co]):
 
     It can be called with arbitrary arguments, plus the `cache_id` keyword.
     """
-    def __call__(self, *args: Any, cache_id: CacheId = ..., **kwargs: Any) -> R_co:
+    def __call__(self, *args: Any, cache_id: 'CacheId' = ..., **kwargs: Any) -> R_co:
         ...
 
     # Also provide the __signature__ attribute for type checkers
@@ -261,8 +260,8 @@ class FactoryDecorator:
                 # Caching is disabled. Call the original function with its arguments.
                 return func(*bound_args.args, **bound_args.kwargs)
 
-            if not isinstance(cache_id, (str, CacheDefault)):
-                raise TypeError("cache_id must be a string, None, or CacheDefault")
+            if not (isinstance(cache_id, (str, CacheDefault)) or cache_id is CACHE_DEFAULT):
+                raise TypeError(f"cache_id must be a string, None, or CacheDefault: got {type(cache_id)!r}")
 
             # Hash the actual arguments that will be passed to the function.
             try:

@@ -31,7 +31,7 @@ class CaseKWArgs(KWArgs):
         *,
         benchmark_id: str | NoDefaultValue = NO_DEFAULT_VALUE,
         vcs_info: vcs.VCSInfo | NoDefaultValue = NO_DEFAULT_VALUE,
-        action: FunctionRunner | NoDefaultValue = NO_DEFAULT_VALUE,
+        action_wrapper: FunctionRunner | NoDefaultValue = NO_DEFAULT_VALUE,
         group: str | NoDefaultValue = NO_DEFAULT_VALUE,
         title: str | NoDefaultValue = NO_DEFAULT_VALUE,
         description: str | NoDefaultValue = NO_DEFAULT_VALUE,
@@ -68,7 +68,7 @@ class CaseKWArgs(KWArgs):
 
             If not provided, the vcs.VCSInfo will be automatically retrieved from the current
             context of the caller if the code is part of a VCS repository.
-        :param action: The function to perform the benchmark.
+        :param action_wrapper: The wrapper function to perform the benchmark.
 
             This function must accept a `bench` instance of type BenchmarkRunner and
             arbitrary keyword arguments ('**kwargs'). See the ``FunctionRunner``
@@ -156,7 +156,7 @@ class CaseKWArgs(KWArgs):
 
 
                 case = Case(
-                    action=my_benchmark_action, kwargs_variations={'mode': [Mark('ModeA', 1), Mark('ModeB', 2)]}
+                    action_wrapper=my_benchmark_action, kwargs_variations={'mode': [Mark('ModeA', 1), Mark('ModeB', 2)]}
                 )
 
         :param runners: A list of runners for the benchmark.

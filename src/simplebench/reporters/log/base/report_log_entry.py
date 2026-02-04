@@ -1,13 +1,12 @@
 """Data structures for logging."""
 
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from json import JSONEncoder
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from simplebench.environment import MachineInfo
+import simplejson
+
+from simplebench import environment
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies import is_case, is_choice
 from simplebench.utils import timestamp_to_iso8601
@@ -39,14 +38,15 @@ class ReportLogEntry(ABC):
 
     @classmethod
     @abstractmethod
-    def from_dict(cls, data: dict) -> ReportLogEntry:
+    def from_dict(cls, data: dict) -> 'ReportLogEntry':
         """Create a JSONReport instance from a dictionary.
 
         :param data: Dictionary containing the JSON report data.
         :return: JSONReport instance.
         """
         raise SimpleBenchNotImplementedError(
-            'from_dict must be implemented in subclasses.', tag=_ReportLogEntryErrorTag.MISSING_FROM_DICT_IMPLEMENTATION
+            'from_dict must be implemented in subclasses.',
+            tag=_ReportLogEntryErrorTag.MISSING_FROM_DICT_IMPLEMENTATION
         )
 
     @classmethod
@@ -118,8 +118,8 @@ class ReportLogEntry(ABC):
         reports_log_path: Path | None = None,
         filepath: Path | None = None,
         timestamp: float,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
     ) -> None:
         """Initialize ReportLogMetadata.
 
@@ -217,12 +217,12 @@ class ReportLogEntry(ABC):
             )
 
     @property
-    def case(self) -> Case:
+    def case(self) -> 'Case':
         """The Case instance containing benchmark results."""
         return self._case
 
     @case.setter
-    def case(self, value: Case) -> None:
+    def case(self, value: 'Case') -> None:
         """Set the Case instance containing benchmark results.
 
         :param value: The new Case instance.
@@ -237,12 +237,12 @@ class ReportLogEntry(ABC):
         self._case: Case = value
 
     @property
-    def choice(self) -> Choice:
+    def choice(self) -> 'Choice':
         """The Choice instance specifying the report configuration."""
         return self._choice
 
     @choice.setter
-    def choice(self, value: Choice) -> None:
+    def choice(self, value: 'Choice') -> None:
         """Set the Choice instance specifying the report configuration.
 
         :param value: The new Choice instance.
@@ -263,7 +263,7 @@ class ReportLogEntry(ABC):
                 "Cannot save to log: 'reports_log_path' is not set.",
                 tag=_ReportLogEntryErrorTag.REPORTS_LOG_PATH_NOT_SET,
             )
-        json_log_entry = self.to_json()
+        json_log_entry = self.as_json()
         reports_log_path = self.reports_log_path
         if not reports_log_path.parent.exists():
             reports_log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -289,19 +289,19 @@ class ReportLogEntry(ABC):
             'output_format': self.choice.output_format.name,
             'benchmark_title': self.case.title,
             'vcs': vcs_info,
-            'machine_info': MachineInfo(),
+            # 'machine_info': MachineInfo(),
         }
         if self.uri is not None:
             output['uri'] = self.uri
         return output
 
-    def to_json(self) -> str:
+    def as_json(self) -> str:
         """Convert metadata to a one line JSON string.
 
         :return: A JSON string representation of the metadata.
         :rtype: str
         """
-        return self._one_line_string(JSONEncoder(indent=None).encode(self.to_dict()))
+        return self._one_line_string(simplejson.dumps(self, indent=None, iterable_as_array=True))
 
     def _one_line_string(self, string: str) -> str:
         """Convert a multi-line string into a single line by replacing newlines with spaces.
@@ -311,3 +311,11 @@ class ReportLogEntry(ABC):
         :return: The single-line string.
         """
         return ' '.join(string.splitlines())
+
+
+    def for_json(self) -> Any:
+        """Custom JSON serialization method for simplejson.
+
+        :return: A JSON-serializable representation of the ReportLogEntry.
+        """
+        return self.to_dict()

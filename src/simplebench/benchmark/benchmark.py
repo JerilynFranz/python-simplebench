@@ -197,7 +197,7 @@ def benchmark(  # noqa: C901
     min_time = case_validate.min_time(min_time)
     max_time = case_validate.max_time(max_time)
     case_validate.max_greater_than_min(min_time, max_time)
-    timeout = case_validate.timeout(timeout, max_time)
+    timeout = case_validate.timeout(timeout_value=timeout, max_time_value=max_time)
     n = case_validate.n(n)
     validated_kwargs_variations = case_validate.kwargs_variations(kwargs_variations)
     validated_variation_cols = case_validate.variation_cols(
@@ -217,7 +217,9 @@ def benchmark(  # noqa: C901
             It calls the user's decorated function inside `runner.run()`.
 
             :param bench: The benchmark runner executing the benchmark.
-            :param variation_marks: Keyword arguments from `kwargs_variations` as Marks.
+            :type bench: BenchmarkRunner
+            :param variation_marks: Keyword arguments from `kwargs_variations` as Marks
+            :type variation_marks: VariationMarks
             """
             # The designated use_field_for_n field will always be present
             # in variation_marks if specified due to prior validation.
@@ -255,7 +257,7 @@ def benchmark(  # noqa: C901
             vcs_info=vcs_info,
             title=inferred_title,
             benchmark_id=final_benchmark_id,
-            action=case_action_wrapper,
+            action_wrapper=case_action_wrapper,
             description=inferred_description,
             runners=runners,
             iterations=iterations,

@@ -266,7 +266,7 @@ class BenchmarkRegistrar:
 
         # Create a simplebench Case, passing the explicit arguments from the signature.
         case = Case(
-            action=benchmark_action_wrapper,
+            action_wrapper=benchmark_action_wrapper,
             benchmark_id=benchmark_id,
             vcs_info=vcs_info,
             group=group,

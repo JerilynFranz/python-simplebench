@@ -93,7 +93,7 @@ class RichTableConfig(ReporterConfig):
         defaults: dict[str, Any] = {
             'name': 'rich-table',
             'description': 'Displays benchmark results as a rich text table on the console.',
-            'metrics': MetricsCollection(metrics=all_processable_metrics),
+            'metrics': MetricsCollection(all_processable_metrics),
             'targets': allowed_targets,
             'default_targets': {Target.CONSOLE},
             'formats': {Format.RICH_TEXT},
@@ -108,7 +108,7 @@ class RichTableConfig(ReporterConfig):
                         flag_type=FlagType.TARGET_LIST,
                         name='rich-table',
                         description='All results as rich text tables (filesystem, console, callback, default=console)',
-                        metrics=MetricsCollection(metrics=all_processable_metrics),
+                        metrics=MetricsCollection(all_processable_metrics),
                         targets=allowed_targets,
                         output_format=Format.RICH_TEXT,
                     ),

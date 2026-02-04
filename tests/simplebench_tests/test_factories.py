@@ -4,6 +4,8 @@ from argparse import Namespace
 from pathlib import Path
 
 import pytest
+from simplebench_tests import factories
+from simplebench_tests.kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterConfigKWArgs
 from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench import utils
@@ -16,9 +18,6 @@ from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
-
-from . import factories
-from .kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterConfigKWArgs
 
 
 @pytest.mark.parametrize("testspec", [
@@ -94,7 +93,7 @@ from .kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterCon
         expected=str)),
     idspec('FACTORY_015', TestAction(
         name="metrics_factory produces a tuple of Metric instances",
-        action=factories.metrics_factory,
+        action=factories.default_metrics,
         assertion=Assert.ISINSTANCE,
         validate_result=lambda result: isinstance(result, tuple) and all(isinstance(item, Metric) for item in result),
         expected=tuple)),

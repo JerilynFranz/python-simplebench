@@ -37,7 +37,7 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable, Hashable):
     :raises SimpleBenchValueError: If the provided metrics are an empty collection.
     """
 
-    def __init__(self, *args: ElementCollection[Metric] | Metrics | Metric) -> None:
+    def __init__(self, *args: Metrics | Metric | ElementCollection[Metric]) -> None:
         """Constructor for MetricsCollection.
 
         Only one of the two ways to provide metrics should be used: either positional arguments
@@ -66,14 +66,18 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable, Hashable):
             all_metrics.append(source)
 
         elif is_element_collection(source):
-            if all(isinstance(item, Metric) for item in source):
-                # Handle an ElementCollection of Metric instances
-                all_metrics.extend(cast(ElementCollection[Metric], source))
-            else:
-                raise SimpleBenchTypeError(
-                    'All items in the ElementCollection must be of type Metric (some are not).',
-                    tag=_MetricSelectionErrorTag.METRICS_NOT_METRIC,
-                )
+            for item in source:
+                if isinstance(item, Metrics):
+                    all_metrics.extend(item.values())
+                elif isinstance(item, Metric):
+                    all_metrics.append(item)
+                else:
+                    raise SimpleBenchTypeError(
+                        'All items in the ElementCollection must be of type Metric or Metrics '
+                        f'(some are not): {source!r} : item = {item!r}',
+                        tag=_MetricSelectionErrorTag.METRICS_NOT_METRIC,
+                    )
+
         else:
             raise SimpleBenchTypeError(
                 f'Input must be Metric, Metrics, or ElementCollection of Metric instances. Found: {type(source)}',

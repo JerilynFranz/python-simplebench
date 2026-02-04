@@ -14,16 +14,16 @@ from simplebench.case.results import Results
 from simplebench.defaults import DEFAULT_INTERVAL_SCALE
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import Metric
-from simplebench.reporters.reporter import Reporter
+from simplebench.options import CSVField, CSVOptions
 from simplebench.options.reporter.options import ReporterOptions
+from simplebench.reporters.reporter import Reporter
 from simplebench.si_units import si_scale_for_smallest
 from simplebench.type_proxies import is_case
 from simplebench.utils import sigfigs
 from simplebench.validators import validate_type
 
-from ._error_tags import _CSVReporterErrorTag
 from ..config import CSVConfig
-from simplebench.options import CSVField, CSVOptions
+from ._error_tags import _CSVReporterErrorTag
 
 Options: TypeAlias = CSVOptions
 
@@ -119,7 +119,7 @@ class CSVReporter(Reporter):
         included_fields = options.fields
 
         base_unit: str = metric.metric_type.unit
-        results: list[Results] = case.results
+        results: tuple[Results, ...] = case.results
 
         # Determine a common SI scale for the output values to improve readability
         all_numbers: list[float] = self.get_all_stats_values(results=results, metric=metric)

@@ -4,7 +4,7 @@ import itertools
 from collections.abc import Callable, Mapping
 from datetime import datetime
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import simplebench.defaults as defaults
 import simplebench.vcs as vcs
@@ -205,7 +205,7 @@ class Case:
         *,
         benchmark_id: str | None = None,
         vcs_info: vcs.VCSInfo | None = None,
-        action: FunctionRunner,
+        action_wrapper: FunctionRunner,
         group: str = 'default',
         title: str | None = None,
         description: str | None = None,
@@ -425,7 +425,7 @@ class Case:
         # kwargs_variations processed first so it can be used for cross-validation of action signature
         self._kwargs_variations: KWArgsVariations = validate.kwargs_variations(kwargs_variations)
         self._group: str = validate.group(group)
-        self._action: FunctionRunner = validate.action_signature(action)
+        self._action: FunctionRunner = validate.action_signature(action_wrapper)
         self._title: str = validate.title(self._action, title)
         self._description: str = validate.description(self._action, description)
         self._iterations: int = validate.iterations(iterations)
@@ -437,7 +437,7 @@ class Case:
         self._max_time: float = validate.max_time(max_time)
         validate.time_range(self.min_time, self.max_time)
         self._timeout: float = validate.timeout(timeout, self.max_time)
-        self._benchmark_id = validate.benchmark_id(benchmark_id or generate_benchmark_id(self, action))
+        self._benchmark_id = validate.benchmark_id(benchmark_id or generate_benchmark_id(self, action_wrapper))
         self._variation_cols: VariationCols = validate.variation_cols(
             variation_cols, self.kwargs_variations)
         self._runners: tuple[type[BenchmarkRunner], ...] = validate.runners(runners)
