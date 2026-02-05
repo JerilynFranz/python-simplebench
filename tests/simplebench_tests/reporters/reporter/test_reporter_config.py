@@ -1,16 +1,13 @@
 """Test simplebench/reporters/reporter/reporter.py module"""
-from __future__ import annotations
-
+import autopypath  # noqa: F401
 import pytest
-from simplebench_tests.factories import reporter_config_kwargs_factory
 from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics import metric_types_registry
-from simplebench.reporters.reporter import ReporterConfig
-from simplebench.reporters.reporter._error_tags import _ReporterConfigErrorTag
+from simplebench.reporters.reporter import ReporterConfig, _ReporterConfigErrorTag
 from simplebench.validators._error_tags import _ValidatorsErrorTag
+from simplebench_tests.factories import reporter_config_kwargs_factory
 
 
 @pytest.mark.parametrize('testspec', [
@@ -25,9 +22,9 @@ from simplebench.validators._error_tags import _ValidatorsErrorTag
         kwargs=reporter_config_kwargs_factory() - ['description'],
         exception=TypeError)),
     idspec('INIT_003', TestAction(
-        name="Init of ReporterConfig with missing sections raises TypeError",
+        name="Init of ReporterConfig with missing metrics raises TypeError",
         action=ReporterConfig,
-        kwargs=reporter_config_kwargs_factory() - ['sections'],
+        kwargs=reporter_config_kwargs_factory() - ['metrics'],
         exception=TypeError)),
     idspec('INIT_004', TestAction(
         name=("Init of ReporterConfig with empty targets raises "
@@ -60,8 +57,7 @@ from simplebench.validators._error_tags import _ValidatorsErrorTag
         name=("Init of ReporterConfig with sections containing a non-Metric enum raises "
               "SimpleBenchTypeError/SECTION_INVALID_ENTRY_TYPE"),
         action=ReporterConfig,
-        kwargs=reporter_config_kwargs_factory(sections={
-            metric_types_registry.OPS, "not_a_section_enum"}),  # type: ignore[arg-type]
+        kwargs=reporter_config_kwargs_factory(metrics="not_a_section_enum"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterConfigErrorTag.INVALID_METRICS_TYPE)),
     idspec('INIT_009', TestAction(
@@ -71,7 +67,7 @@ from simplebench.validators._error_tags import _ValidatorsErrorTag
         kwargs=reporter_config_kwargs_factory(targets={
             Target.CONSOLE, "not_a_target_enum"}),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_ReporterConfigErrorTag.INVALID_TARGETS_TYPE)),
+        exception_tag=_ReporterConfigErrorTag.INVALID_TARGETS_ELEMENT_TYPE)),
     idspec('INIT_010', TestAction(
         name=("Init of ReporterConfig with formats set to a non-Format enum raises "
               "SimpleBenchTypeError/FORMATS_INVALID_ARG_TYPE"),
@@ -79,7 +75,7 @@ from simplebench.validators._error_tags import _ValidatorsErrorTag
         kwargs=reporter_config_kwargs_factory(formats={
             Format.JSON, "not_a_format_enum"}),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_ReporterConfigErrorTag.INVALID_FORMATS_TYPE)),
+        exception_tag=_ReporterConfigErrorTag.INVALID_FORMATS_ELEMENT_TYPE)),
     idspec('INIT_011', TestAction(
         name=("Init of ReporterConfig with empty name raises "
               "SimpleBenchValueError/NAME_INVALID_ARG_VALUE"),
@@ -109,18 +105,19 @@ from simplebench.validators._error_tags import _ValidatorsErrorTag
         exception=SimpleBenchValueError,
         exception_tag=_ReporterConfigErrorTag.INVALID_DESCRIPTION_VALUE)),
     idspec('INIT_015', TestAction(
-        name="Init of ReporterConfig with a subdir path element longer than 64 characters raises SimpleBenchValueError",
+        name=("Init of ReporterConfig with a subdir path element longer than "
+              "64 characters raises SimpleBenchValueError"),
         action=ReporterConfig,
         kwargs=reporter_config_kwargs_factory(subdir='a' * 65),
         exception=SimpleBenchValueError,
-        exception_tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_ELEMENT_TOO_LONG)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_TOO_LONG)),
     idspec('INIT_016', TestAction(
         name=("Init of ReporterConfig with subdir name containing "
               "non-alphanumeric characters raises SimpleBenchValueError"),
         action=ReporterConfig,
         kwargs=reporter_config_kwargs_factory().replace(subdir='invalid subdir!'),
         exception=SimpleBenchValueError,
-        exception_tag=_ValidatorsErrorTag.VALIDATE_DIRPATH_INVALID_CHARACTERS)),
+        exception_tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_INVALID_CHARACTERS)),
     idspec('INIT_017', TestAction(
         name="Init of ReporterConfig with file_suffix as non-string raises SimpleBenchTypeError",
         action=ReporterConfig,
@@ -184,3 +181,7 @@ def test_reporter_config_init(testspec: TestSpec) -> None:
     :type testspec: TestSpec
     """
     testspec.run()
+
+
+if __name__ == '__main__':
+    pytest.main([__file__])

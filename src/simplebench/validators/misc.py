@@ -704,7 +704,7 @@ def validate_dirname(dirname: Any, *, allow_empty: bool = False) -> str:
         - The directory name does not start or end with an underscore or dash.
         - If allow_empty is False, that the directory name is not an empty string. If
           allow_empty is True, an empty string is considered to be a valid dirname (default is
-        - The total directory name length does not exceed 255 characters.
+        - The total directory name length does not exceed 64 characters.
 
     :param dirname: The directory name to validate.
     :type dirname: str
@@ -738,9 +738,9 @@ def validate_dirname(dirname: Any, *, allow_empty: bool = False) -> str:
             tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_INVALID_CHARACTERS,
         )
 
-    if len(dirname) > 255:
+    if len(dirname) > 64:
         raise SimpleBenchValueError(
-            f"Directory name cannot be longer than 255 characters (passed directory name was '{dirname}')",
+            f"Directory name cannot be longer than 64 characters (passed directory name was '{dirname}')",
             tag=_ValidatorsErrorTag.VALIDATE_DIRNAME_TOO_LONG,
         )
     return dirname

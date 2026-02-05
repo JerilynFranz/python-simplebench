@@ -80,7 +80,7 @@ def targets(value: ElementCollection[Target]) -> frozenset[Target]:
             f'Invalid type for targets: expected ElementCollection[Target], got {type(value).__name__}.',
             tag=_ReporterConfigErrorTag.INVALID_TARGETS_TYPE)
     if len(value) == 0:
-        raise SimpleBenchTypeError(
+        raise SimpleBenchValueError(
             'Invalid value for targets: iterable is empty.',
             tag=_ReporterConfigErrorTag.INVALID_TARGETS_VALUE)
     if not all(isinstance(item, Target) for item in value):
@@ -135,7 +135,7 @@ def formats(value: ElementCollection[Format]) -> frozenset[Format]:
             f'Invalid type for formats: expected ElementCollection[Format], got {type(value).__name__}.',
             tag=_ReporterConfigErrorTag.INVALID_FORMATS_TYPE)
     if len(value) == 0:
-        raise SimpleBenchTypeError(
+        raise SimpleBenchValueError(
             'Invalid value for formats: iterable is empty.',
             tag=_ReporterConfigErrorTag.INVALID_FORMATS_ELEMENT_TYPE)
     if not all(isinstance(item, Format) for item in value):
@@ -182,7 +182,7 @@ def file_suffix(value: str) -> str:
         alphanumeric_only=True,
     )
     if len(validated_suffix) > 10:
-        raise SimpleBenchTypeError(
+        raise SimpleBenchValueError(
             'Invalid value for file_suffix: exceeds maximum length of 10 characters.',
             tag=_ReporterConfigErrorTag.INVALID_FILE_SUFFIX_VALUE_TOO_LONG)
     return validated_suffix
