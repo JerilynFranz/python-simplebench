@@ -29,13 +29,19 @@ class VariationCols(Mapping[str, str], Immutable):
     """
     __slots__ = ("_cols",)
 
-    def __init__(self, cols: Mapping[str, str]) -> None:
+    def __init__(self, cols: Mapping[str, str] | None = None) -> None:
         """Construct a VariationCols instance.
 
-        :param Mapping[str, str] cols: The mapping of variation field names to their Cols.
+        If cols is None, creates an empty VariationCols.
+
+        :param cols: The mapping of variation field names to their Cols.
+        :type cols: Mapping[str, str] | None
         :raises SimpleBenchTypeError: If the cols argument is not a mapping of strings to strings, or
             if any keys are not valid identifiers.
         """
+        self._cols: dict[str, str] = {}
+        if cols is None:
+            return
         if not isinstance(cols, Mapping):
             raise SimpleBenchTypeError(
                 f"Invalid cols: {cols}. Must be a mapping of strings to Cols.",
@@ -56,7 +62,7 @@ class VariationCols(Mapping[str, str], Immutable):
                 "All values in cols must be of type str.",
                 tag=_VariationColsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE,
             )
-        self._cols: dict[str, str] = dict(cols)
+        self._cols = dict(cols)
 
     def __getitem__(self, key: str) -> str:
         """Get the col for the given variation field name.

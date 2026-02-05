@@ -2,12 +2,11 @@
 from argparse import ArgumentParser
 from typing import overload
 
-from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
-
 from simplebench.enums import Verbosity
 from simplebench.session import Session
+from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
+from simplebench_tests.kwargs import SessionKWArgs
 
-from ..kwargs import SessionKWArgs
 from . import case_factory, console_factory, default_runners, output_path_factory
 
 # The overloads provide a tooltip assist for the decorated function and IDE tooltips

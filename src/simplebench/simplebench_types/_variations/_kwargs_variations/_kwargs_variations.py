@@ -30,15 +30,19 @@ class KWArgsVariations(Mapping[str, ElementCollection[Mark]], Immutable):
     """
     __slots__ = ("_kwarg_variations",)
 
-    def __init__(self, marks: Mapping[str, ElementCollection[Mark]]) -> None:
+    def __init__(self, marks: Mapping[str, ElementCollection[Mark]] | None = None) -> None:
         """Construct a KWArgsVariations instance.
 
         :param marks: The mapping of variation field names to their Mark collections.
-        :type marks: Mapping[str, ElementCollection[Mark]]
+        :type marks: Mapping[str, ElementCollection[Mark]] | None
         :raises SimpleBenchTypeError: If the marks argument is not a mapping of strings
             to :class:`ElementCollection` of :class:`Mark`
         :raises SimpleBenchValueError: If any keys are not valid identifiers.
         """
+        self._kwarg_variations: dict[str, tuple[Mark, ...]] = {}
+        if marks is None:
+            return
+
         if not isinstance(marks, Mapping):
             raise SimpleBenchTypeError(
                 f"Invalid marks: {marks}. Must be a mapping of strings to ElementCollection of Mark.",
@@ -65,7 +69,7 @@ class KWArgsVariations(Mapping[str, ElementCollection[Mark]], Immutable):
                     "All items in the ElementCollection of marks must be of type Mark.",
                     tag=_KWArgsVariationsErrorTag.KWARGS_VARIATIONS_INVALID_ARG_VALUE_ITEM_TYPE,
                 )
-        self._kwarg_variations: dict[str, tuple[Mark, ...]] = {k: tuple(sorted(v)) for k, v in marks.items()}
+        self._kwarg_variations = {k: tuple(sorted(v)) for k, v in marks.items()}
 
     def __getitem__(self, key: str) -> tuple[Mark, ...]:
         """Get the mark for the given variation field name.

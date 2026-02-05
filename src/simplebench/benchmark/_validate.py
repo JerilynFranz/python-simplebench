@@ -68,17 +68,23 @@ def use_field_for_n(
             tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_TYPE,
         )
 
-    if isinstance(value, str) and isinstance(kwargs_variations_value, dict):
-        if value not in kwargs_variations_value:
-            raise SimpleBenchValueError(
-                "The 'use_field_for_n' parameter to the @benchmark decorator must "
-                f'match one of the kwargs_variations keys: {list(kwargs_variations_value.keys())!r}',
-                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS,
-            )
-        if not all(isinstance(v, int | float) and v > 0 for v in kwargs_variations_value[value]):
-            raise SimpleBenchValueError(
-                f"The values for the '{value}' entry in 'kwargs_variations' "
-                "must all be positive integers or floats when used with 'use_field_for_n'.",
-                tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE,
-            )
+    if not isinstance(kwargs_variations_value, KWArgsVariations):
+        raise SimpleBenchValueError(
+            "The 'kwargs_variations' parameter to the @benchmark decorator "
+            "must be provided and valid when using 'use_field_for_n'.",
+            tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS,
+        )
+
+    if value not in kwargs_variations_value:
+        raise SimpleBenchValueError(
+            "The 'use_field_for_n' parameter to the @benchmark decorator must "
+            f'match one of the kwargs_variations keys: {list(kwargs_variations_value.keys())!r}',
+            tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_KWARGS_VARIATIONS,
+        )
+    if not all(isinstance(v.value, (int, float)) and v.value > 0 for v in kwargs_variations_value[value]):
+        raise SimpleBenchValueError(
+            f"The values for the '{value}' entry  ({kwargs_variations_value!r})in 'kwargs_variations' "
+            "must all be positive integers or floats when used with 'use_field_for_n'.",
+            tag=_BenchmarkErrorTag.BENCHMARK_USE_FIELD_FOR_N_INVALID_VALUE,
+        )
     return value
