@@ -78,12 +78,11 @@ def metric(value: Metric) -> Metric:
     if not isinstance(value, Metric):
         raise SimpleBenchTypeError(
             f'metric is not a Metric instance: {type(value)}',
-            _StatsErrorTag.INVALID_METRIC_ARG_TYPE
+            tag=_StatsErrorTag.INVALID_METRIC_ARG_TYPE
         )
     metric_category = value.metric_type.category
-    if  metric_category != MetricCategory.STATISTICAL:
+    if metric_category != MetricCategory.STATISTICAL:
         raise SimpleBenchValueError(
             f'Invalid metric_category: {metric_category._name_}. Must be a MetricCategory.STATISTICAL instance.',
-            tag=_StatsErrorTag.INVALID_METRIC_CATEGORY,
-        )
+            tag=_StatsErrorTag.INVALID_METRIC_CATEGORY)
     return value

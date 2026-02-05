@@ -7,21 +7,20 @@ factories in other modules.
 # pylint: disable=unused-argument
 
 from pathlib import Path
-from typing import Any, TypeAlias, overload
+from typing import TypeAlias, overload
 
 import autopypath  # noqa: F401 - imported to setup sys.path for test imports when run directly
 import pytest
 from rich.table import Table
 from rich.text import Text
 
+from simplebench.enums import FlagType, Format, Target
+from simplebench.metrics import Metric, MetricsCollection, MetricsSelection, metrics_registry
 from simplebench.simplebench_types import ElementCollection
 
 # from simplebench.metrics import Metric, metric_types_registry
 from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory
 from simplebench_tests.factories.path import path_factory
-
-from simplebench.enums import FlagType, Format, Target
-from simplebench.metrics import Metric, MetricsCollection, MetricsSelection, metrics_registry
 
 Output: TypeAlias = str | bytes | Text | Table
 
@@ -64,6 +63,9 @@ def default_format_plain() -> Format:
 
 def default_metric() -> Metric:
     """Return a single default Metric for testing purposes.
+
+    The default metric is `metrics_registry['STD_OPS_STATS']`,
+    which is a standard operations per second stats metric.
 
     :return: Metric
     :rtype: Metric
@@ -757,11 +759,9 @@ def kwargs_variations_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str,
                      If None, caching is disabled for this call.
     :type cache_id: CacheId, optional
     :return: `{}`
-    :rtype: dict[str, list[Any]]
+    :rtype: dict[str, ElementCollection]
     """
-    a: dict[str, list[Any]] = {}
-    b: dict[str, ElementCollection[Any]] = a  # This is valid
-    return b
+    return {'arg1': [1, 2, 3], 'arg2': ['x', 'y', 'z']}
 
 
 @cached_factory

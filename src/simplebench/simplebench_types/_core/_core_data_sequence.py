@@ -358,6 +358,14 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
                 count += 1
         return count
 
+    def as_tuple(self) -> tuple['ImmutableCoreDataTypes', ...]:
+        """Return the contents of the CoreDataSequence as a tuple.
+
+        :returns: The contents of the sequence as a tuple.
+        :rtype: tuple[ImmutableCoreDataTypes, ...]
+        """
+        return self._data
+
     def __deepcopy__(self, memo: dict[int, Any]) -> 'CoreDataSequence':
         """Return the same CoreDataSequence.
 

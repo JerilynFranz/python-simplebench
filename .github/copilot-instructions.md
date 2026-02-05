@@ -11,4 +11,4 @@ Your job is to act as a coding assistant not the primary developer.
 - Do not rename exception tags unless explicitly requested.
 - Do not change logging messages unless explicitly requested.
 - The preferred quote style is single quotes for strings and double quotes for docstrings.
-- The preferred way to write tests is using the TestSpec/TestAction style rather than bare 'assert' statements.
+- The preferred way to write tests is using the PyTestAction/PytestGet/PytestSet/TestSpec/TestAction style rather than bare 'assert' statements.

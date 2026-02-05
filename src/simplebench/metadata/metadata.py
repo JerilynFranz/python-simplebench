@@ -9,15 +9,12 @@ from pathlib import Path
 from typing import Any
 
 from simplebench.case import Case
-from simplebench.environment import MachineInfo
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choice.choice import Choice
 from simplebench.type_proxies import is_case, is_choice
 from simplebench.utils import timestamp_to_iso8601
 from simplebench.validators import validate_type
-from simplebench.vcs import GitInfo
 
-from ..reporters.log.base.report_log_entry import ReportLogEntry
 from ..reporters.log.versions import v1 as json_log
 from ._error_tags import _MetadataErrorTag
 
@@ -185,7 +182,8 @@ class Metadata:
 
         :return: Log entry instance.
         """
-        git_info = self.case.git_info.to_dict() if isinstance(self.case.git_info, GitInfo) else None
+        vcs_info = self.case.vcs_info.to_dict() if self.case.vcs_info else None
+        machine_info = self.case.machine_info.to_dict() if self.case.machine_info else None
 
         return json_log.ReportLogEntry(
             reports_log_path=self.reports_log_path,  # may be None
@@ -200,8 +198,8 @@ class Metadata:
             reporter_schema_version=self.choice.reporter.schema_version,
             output_format=self.choice.output_format.name,
             benchmark_title=self.case.title,
-            git=git_info,
-            machine_info=MachineInfo(),
+            vcs=vcs_info,
+            machine_info=machine_info
         )
 
     def as_json(self) -> str:

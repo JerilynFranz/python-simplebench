@@ -162,6 +162,13 @@ class Values(CoreDataSequence):
         """Return a string representation of the Values object."""
         return f'Values({self._data!r})'
 
+    def as_tuple(self) -> tuple[float, ...]:
+        """Return the contents of the Values as a tuple.
+
+        :returns: The contents of the Values as a tuple.
+        :rtype: tuple[float, ...]
+        """
+        return self._data
 
 if __name__ == '__main__':
    pytest.main([__file__])

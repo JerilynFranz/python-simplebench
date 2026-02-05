@@ -7,7 +7,7 @@ from simplebench.case import Case
 from simplebench.metadata import Metadata
 
 from ...factories import case_factory, default_timestamp, output_path_factory, reports_log_path_factory
-from ...kwargs import NoDefaultValue
+from ...kwargs import NoDefaultValue, NO_DEFAULT_VALUE
 
 _DEFERRED_IMPORTED = False
 if TYPE_CHECKING:
@@ -20,7 +20,7 @@ else:
     Choice = None  # pylint: disable=invalid-name
 
 
-def deferred_imports():
+def deferred_imports() -> None:
     """Perform deferred imports to avoid circular dependencies."""
     global Choice, choice_factory, _DEFERRED_IMPORTED  # pylint: disable=global-statement
     if not _DEFERRED_IMPORTED:
@@ -41,11 +41,11 @@ def report_log_filepath_factory() -> Path:
 
 def report_log_metadata_factory(  # pylint: disable=unused-argument
     *,
-    filepath: Path | NoDefaultValue = NoDefaultValue(),
-    timestamp: float | NoDefaultValue = NoDefaultValue(),
-    reports_log_path: Path | NoDefaultValue = NoDefaultValue(),
-    case: Case | NoDefaultValue = NoDefaultValue(),
-    choice: Choice | NoDefaultValue = NoDefaultValue(),
+    filepath: Path | NoDefaultValue = NO_DEFAULT_VALUE,
+    timestamp: float | NoDefaultValue = NO_DEFAULT_VALUE,
+    reports_log_path: Path | NoDefaultValue = NO_DEFAULT_VALUE,
+    case: Case | NoDefaultValue = NO_DEFAULT_VALUE,
+    choice: Choice | NoDefaultValue = NO_DEFAULT_VALUE,
 ) -> Metadata:
     """Create a ReportLogMetadata instance for testing.
 

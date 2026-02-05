@@ -78,5 +78,11 @@
     "python.testing.pytestArgs": [
       "tests"
     ],
+    "coverage-gutters.showLineCoverage": false,
+    "coverage-gutters.watchOnActivate": true,
+    "coverage-gutters.coverageReportFileName": "coverage_html_report/index.html",
+    "coverage-gutters.showRulerCoverage": false,
+    "coverage-gutters.ignoredPathGlobs": "**/{node_modules,venv,.venv,.tox,vendor}/**",
+    "coverage-gutters.showGutterCoverage": false,
 }
 

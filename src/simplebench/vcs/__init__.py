@@ -20,6 +20,7 @@ def get_vcs_info(cwd: str | None = None) -> VCSInfo | None:
 
     :param cwd: The path to the repository. If None, uses the current working directory.
     :return: VCSInfo object containing information about the repository.
+    :rtype: VCSInfo | None
     :raises RuntimeError: If no supported VCS is found in the specified directory.
     """
     start_path = resolve_vcs_path(Path(cwd) if cwd else None)

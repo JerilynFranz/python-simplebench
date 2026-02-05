@@ -1,5 +1,6 @@
 """KWArgs for SimpleBench tests."""
 
+from .case import StatsKWArgs
 from .case_kwargs import CaseKWArgs
 from .kwargs import (
     NO_DEFAULT_VALUE,
@@ -39,4 +40,5 @@ __all__ = [
     'SessionKWArgs',
     'CaseKWArgs',
     'ResultsKWArgs',
+    'StatsKWArgs',
 ]

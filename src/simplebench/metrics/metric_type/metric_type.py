@@ -114,7 +114,7 @@ class MetricType:
             allow_empty=True,
         )
 
-    def _validate_unit(self):
+    def _validate_unit(self) -> None:
         """Validate the unit of the metric
 
         The unit must be a non-empty string that starts with a letter

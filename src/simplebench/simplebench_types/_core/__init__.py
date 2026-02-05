@@ -1,4 +1,26 @@
-"""Core types for SimpleBench"""
+"""Core types for SimpleBench
+
+.. code-block:: mermaid
+
+    classDiagram
+        class CoreDataMapping
+        class CoreDataSequence
+        class CoreDataSet
+
+        class CoreDataPrimitiveTypes
+        class CoreDataTypes
+        class ImmutableCoreDataTypes
+
+        CoreDataMapping <|-- CoreDataTypes
+        CoreDataSequence <|-- CoreDataTypes
+        CoreDataSet <|-- CoreDataTypes
+        CoreDataPrimitiveTypes <|-- CoreDataTypes
+        ImmutableCoreDataTypes <|-- CoreDataTypes
+
+        CoreDataMappingType <|-- CoreDataMapping
+        CoreDataSequenceType <|-- CoreDataSequence
+        CoreDataSetType <|-- CoreDataSet
+"""
 # ruff: noqa: F401
 
 from ._core_data_mapping import CoreDataMapping
@@ -18,3 +40,4 @@ from ._types import (
 
 # No * imports at this level
 __all__: list[str] = []
+

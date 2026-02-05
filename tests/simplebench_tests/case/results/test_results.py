@@ -19,7 +19,7 @@ from simplebench.defaults import (
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
 from simplebench.metrics import Metric, metric_types_registry
 
-from .kwargs import ResultsKWArgs
+from ...kwargs import ResultsKWArgs
 
 
 class Nonsense(str, Enum):

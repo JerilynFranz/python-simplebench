@@ -103,8 +103,8 @@ class FactoryReporter(Reporter):
 
         :param case: The case to render.
         :type case: Case
-        :param section: The section to render.
-        :type section: Metric
+        :param metric: The metric to render.
+        :type metric: Metric
         :param options: The options for rendering.
         :type options: ReporterOptions
         :return: The rendered report.

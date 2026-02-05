@@ -27,6 +27,11 @@
 		},
 		"terminal.integrated.env.windows": {
 			"PYTHONPATH": "${workspaceFolder}\\src;${workspaceFolder}\\tests"
-		}
+		},
+		"testing.coverageToolbarEnabled": false,
+		"coverage-gutters.coverageReportFileName": "coverage_html_report/index.html",
+		"coverage-gutters.showLineCoverage": false,
+		"coverage-gutters.watchOnActivate": true,
+		"coverage-gutters.showGutterCoverage": false
 	}
 }
