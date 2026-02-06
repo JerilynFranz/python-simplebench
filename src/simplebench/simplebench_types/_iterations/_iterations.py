@@ -101,7 +101,7 @@ class Iterations(Mapping['Metric', 'Values'], Immutable):
 
         :returns Iterator[Metric]: An iterator over the :class:`Metric` keys
         """
-        return self._iterations.__iter__()
+        return iter(self._iterations)
 
     def __len__(self) -> int:
         """Get the number of metrics.
@@ -117,7 +117,7 @@ class Iterations(Mapping['Metric', 'Values'], Immutable):
 
         :returns str: The string representation.
         """
-        return f"Iterations({dict(self._iterations)!r})"
+        return f"Iterations({self._iterations!r})"
 
     def __hash__(self) -> int:
         """Get the hash of the Iterations instance.

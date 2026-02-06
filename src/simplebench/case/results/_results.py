@@ -1,5 +1,4 @@
 """Container for the results of a single benchmark test."""
-from copy import copy
 from typing import Any
 
 import simplebench.report.versions.v1 as reports
@@ -182,7 +181,7 @@ class Results:
         :return float: The cumulative sum of the benchmark results.
         """
         _validate.belongs_to_metric_category(metric, MetricCategory.CUMULATIVE)
-        return sum(self.iterations[metric])
+        return sum(self.iterations[metric].as_tuple())
 
     def raw(self, metric: Metric) -> Values:
         """Returns the raw data point values of the benchmark results for the given metric.
@@ -357,17 +356,27 @@ class Results:
             object.__setattr__(self, slot, value)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'Results':
-        """Return a shallow copy of the instance as an optimized deep copy.
+        """Return the instance as an optimized deep copy.
 
         Since the ResultsInfo instance is immutable and composed of immutable components,
-        a shallow copy is functionally identical to a deep copy. This method overrides
-        the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.
+        a copy of the instance is effectively the same as a deep copy. Therefore, we can bypass
+        the default `copy.deepcopy` behavior to avoid unnecessary overhead.
 
         :param memo: The memoization dictionary used by `copy.deepcopy`.
                      It is not used in this optimized implementation.
-        :return ResultsInfo: A new, shallow-copied instance of the ResultsInfo.
+        :return ResultsInfo: The same instance of the ResultsInfo.
         """
         # because the ResultsInfo is immutable, we can return a copy of self
         # instead of performing a full deep copy.
-        return copy(self)
+        return self
 
+    def __copy__(self) -> 'Results':
+        """Return the instance as a shallow copy.
+
+        Since the ResultsInfo instance is immutable, a shallow copy is effectively the same as the original instance.
+        Therefore, we can bypass the default `copy.copy` behavior to avoid unnecessary overhead.
+        :return ResultsInfo: The same instance of the ResultsInfo.
+        """
+        # because the ResultsInfo is immutable, we can return a copy of self
+        # instead of performing a full shallow copy.
+        return self

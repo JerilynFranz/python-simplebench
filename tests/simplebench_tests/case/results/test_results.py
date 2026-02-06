@@ -1,22 +1,19 @@
 """Tests for the simplebench/results.py module."""
-from __future__ import annotations
 
 from enum import Enum
 from functools import cache
 
 import pytest
-from simplebench.stats import MemoryUsage, OperationsPerInterval, OperationTimings, PeakMemoryUsage, Stats
-from testspec import Assert, TestAction, TestGet, idspec
+from simplebench.case.results import Results, _ResultsErrorTag
+from testspec import Assert, TestAction, TestGet, idspec, PytestAction, PytestGet
 
-from simplebench.case import Results
-from simplebench.case.results import Iteration
 from simplebench.defaults import (
     DEFAULT_INTERVAL_SCALE,
     DEFAULT_INTERVAL_UNIT,
     DEFAULT_MEMORY_SCALE,
     DEFAULT_MEMORY_UNIT,
 )
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError, _ResultsErrorTag
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric, metric_types_registry
 
 from ...kwargs import ResultsKWArgs
