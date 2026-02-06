@@ -2,552 +2,82 @@
 # ruff: noqa: F401
 
 from enum import Enum
-from functools import cache
 
 import pytest
+from testspec import Assert, PytestAction, TestAction
+
 from simplebench.case.results import Results, _ResultsErrorTag
-from testspec import Assert, TestAction, TestGet, idspec, PytestAction, PytestGet
-
-from simplebench.defaults import (
-    DEFAULT_INTERVAL_SCALE,
-    DEFAULT_INTERVAL_UNIT,
-    DEFAULT_MEMORY_SCALE,
-    DEFAULT_MEMORY_UNIT,
-)
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics import Metric, metric_types_registry
-from simplebench.simplebench_types import Iterations
-
-from ...kwargs import ResultsKWArgs
-
-
-class Nonsense(str, Enum):
-    """A nonsense enum value for testing."""
-    NONSENSE = 'nonsense'
-
-
-@cache
-def base_iterations() -> list[Iteration]:
-    """Create a base list of Iteration instances for testing.
-
-    :return: A list of Iteration instances.
-    :rtype: list[Iteration]
-    """
-    return [
-        Iteration(n=1, unit='s', elapsed=1.0, scale=1.0, memory=100, peak_memory=150)
-    ]
+from simplebench_tests import factories
+from simplebench_tests.kwargs import ResultsKWArgs
 
 
 @pytest.mark.parametrize("testspec", [
-    idspec("RESULTS_000", TestAction(
-        name="Minimal Args",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group',
-            title='default_title',
-            description='default_description',
-            n=1,
-            rounds=1,
-            total_elapsed=1.0,
-            iterations=base_iterations()),
+    PytestAction("INIT_001",
+        name="Full valid args",
+        action=Results, kwargs=factories.results_kwargs_factory(),
         assertion=Assert.ISINSTANCE,
-        expected=Results,
-    )),
-    idspec("RESULTS_001", TestAction(
-        name="Default Values",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group',
-            title='default_title',
-            description='default_description',
-            n=1,
-            rounds=1,
-            total_elapsed=1.0,
-            iterations=base_iterations()),
-        validate_result=lambda result: (result.group == 'default_group' and
-                                        result.title == 'default_title' and
-                                        result.description == 'default_description' and
-                                        result.n == 1 and
-                                        result.rounds == 1 and
-                                        result.variation_cols == {} and
-                                        result.interval_unit == DEFAULT_INTERVAL_UNIT and
-                                        result.interval_scale == DEFAULT_INTERVAL_SCALE and
-                                        len(result.iterations) == 1 and
-                                        isinstance(result.ops_per_second, OperationsPerInterval) and
-                                        result.ops_per_second.data == (1.0,) and
-                                        isinstance(result.per_round_timings, OperationTimings) and
-                                        result.per_round_timings.data == (1.0,) and
-                                        isinstance(result.memory, MemoryUsage) and
-                                        result.memory.data == (100,) and
-                                        isinstance(result.peak_memory, PeakMemoryUsage) and
-                                        result.peak_memory.data == (150,) and
-                                        result.ops_per_interval_unit == DEFAULT_INTERVAL_UNIT and
-                                        result.ops_per_interval_scale == DEFAULT_INTERVAL_SCALE and
-                                        result.memory_unit == DEFAULT_MEMORY_UNIT and
-                                        result.memory_scale == DEFAULT_MEMORY_SCALE and
-                                        result.total_elapsed == 1.0 and
-                                        result.variation_marks == {} and
-                                        result.extra_info == {} and
-                                        isinstance(result, Results)))),
-    idspec("RESULTS_002", TestAction(
+        expected=Results),
+    PytestAction("INIT_002",
         name="negative n",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group',
-            title='default_title',
-            description='default_description',
-            n=-1,
-            rounds=1,
-            total_elapsed=1.0,
-            iterations=base_iterations()
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(n=-1),
         exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.N_INVALID_ARG_VALUE)),
-    idspec("RESULTS_004", TestAction(
+        exception_tag=_ResultsErrorTag.N_INVALID_ARG_VALUE),
+    PytestAction("INIT_003",
         name="non-string group",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group=123,  # type: ignore[arg-type]
-            title='default_title',
-            description='default_description',
-            n=1,
-            rounds=1,
-            total_elapsed=1.0,
-            iterations=base_iterations()
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(group=123),
         exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.GROUP_INVALID_ARG_TYPE)),
-    idspec("RESULTS_005", TestAction(
+        exception_tag=_ResultsErrorTag.GROUP_INVALID_ARG_TYPE),
+    PytestAction("INIT_004",
         name="non-string title",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group',
-            title=123,  # type: ignore[arg-type]
-            description='default_description',
-            n=1,
-            rounds=1,
-            total_elapsed=1.0,
-            iterations=base_iterations()
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(title=123),
         exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.TITLE_INVALID_ARG_TYPE)),
-    idspec("RESULTS_006", TestAction(
+        exception_tag=_ResultsErrorTag.TITLE_INVALID_ARG_TYPE),
+    PytestAction("INIT_005",
         name="non-string description",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group',
-            title='default_title',
-            description=123,  # type: ignore[arg-type]
-            n=1,
-            rounds=1,
-            total_elapsed=1.0,
-            iterations=base_iterations()
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(description=123),
         exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE)),
-    idspec("RESULTS_007", TestAction(
-        name="non-dict variation_cols",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_cols=[]  # type: ignore[arg-type]
-        ),
+        exception_tag=_ResultsErrorTag.DESCRIPTION_INVALID_ARG_TYPE),
+    PytestAction("INIT_006",
+        name="non-VariationMarks variation_marks argument",
+        action=Results, kwargs=factories.results_kwargs_factory().replace(variation_marks=[]),
         exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_008", TestAction(
-        name="non-string variation_cols key",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_cols={1: 'value'}  # type: ignore[dict-item]
-        ),
+        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE),
+    PytestAction("INIT_007",
+        name="non-Iteration iterations with dict",
+        action=Results, kwargs=factories.results_kwargs_factory().replace(iterations={'not': 'Interations'}),
         exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_TYPE)),
-    idspec("RESULTS_009", TestAction(
-        name="non-string variation_cols value",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_cols={'key': 1}  # type: ignore[dict-item]
-        ),
+        exception_tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE),
+    PytestAction("INIT_008",
+        name="non-Extras extra_info",
+        action=Results, kwargs=factories.results_kwargs_factory().replace(extra_info='not an Extras instance'),
         exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_VALUE_TYPE)),
-    idspec("RESULTS_010", TestAction(
-        name="non-string interval_unit",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            interval_unit=123  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_TYPE)),
-    idspec("RESULTS_011", TestAction(
-        name="non-float interval_scale",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            interval_scale='large'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_TYPE)),
-    idspec("RESULTS_012", TestAction(
-        name="non-list iterations with dict",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0,
-            iterations={}  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_013", TestAction(
-        name="non-list iterations with string",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0,
-            iterations='not_a_list'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE)),
-    idspec("RESULTS_014", TestAction(
-        name="non-Iteration iterations elements",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0,
-            iterations=[1.0, 3.0]  # type: ignore[list-item]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.ITERATIONS_INVALID_ARG_IN_SEQUENCE)),
-    idspec("RESULTS_015", TestAction(
-        name="non-OperationsPerInterval ops_per_second",
-        action=Results,
-        args=[],
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_second={}  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.OPS_PER_SECOND_INVALID_ARG_TYPE)),
-    idspec("RESULTS_016", TestAction(
-        name="non-OperationTimings per_round_timings",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            per_round_timings=[]  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.PER_ROUND_TIMINGS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_017", TestAction(
-        name="non-string ops_per_interval_unit",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_interval_unit=123  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE)),
-    idspec("RESULTS_018", TestAction(
-        name="non-number ops_per_interval_scale",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_interval_scale='large'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE)),
-    idspec("RESULTS_019", TestAction(
-        name="non-number total_elapsed",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, iterations=base_iterations(),
-            total_elapsed='fast'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_TYPE)),
-    idspec("RESULTS_020", TestAction(
-        name="non-dict variation_marks",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_marks=[]  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_021", TestAction(
-        name="non-string variation_marks key",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_marks={1: 'value'}  # type: ignore[dict-item]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_TYPE)),
-    idspec("RESULTS_022", TestAction(
-        name="non-dict variation_marks value",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_marks=[('key', 1)]  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_023", TestAction(
-        name="non-dict extra_info",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            extra_info=[]  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE)),
-    idspec("RESULTS_024", TestAction(
+        exception_tag=_ResultsErrorTag.EXTRA_INFO_INVALID_ARG_TYPE),
+    PytestAction("INIT_009",
         name="empty string group",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            group=''  # invalid empty string
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(group=''),
         exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.GROUP_INVALID_ARG_VALUE)),
-    idspec("RESULTS_025", TestAction(
+        exception_tag=_ResultsErrorTag.GROUP_INVALID_ARG_VALUE),
+    PytestAction("INIT_010",
         name="empty string title",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            title='',  # invalid empty string
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(title=''),
         exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.TITLE_INVALID_ARG_VALUE)),
-    idspec("RESULTS_026", TestAction(
-        name="empty string variation_cols key",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_cols={'': 'value'}  # invalid empty string key
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.VARIATION_COLS_INVALID_ARG_KEY_VALUE)),
-    idspec("RESULTS_027", TestAction(
-        name="empty string interval_unit",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            interval_unit=''  # invalid empty string
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.INTERVAL_UNIT_INVALID_ARG_VALUE)),
-    idspec("RESULTS_028", TestAction(
-        name="empty string ops_per_interval_unit",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_interval_unit=''  # invalid empty string
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE)),
-    idspec("RESULTS_029", TestAction(
-        name="negative interval_scale",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            interval_scale=-1.0  # invalid negative value
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_VALUE)),
-    idspec("RESULTS_030", TestAction(
-        name="zero interval_scale",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            interval_scale=0.0  # invalid zero value
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.INTERVAL_SCALE_INVALID_ARG_VALUE)),
-    idspec("RESULTS_031", TestAction(
-        name="negative ops_per_interval_scale",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_interval_scale=-1.0  # invalid negative value
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)),
-    idspec("RESULTS_032", TestAction(
-        name="zero ops_per_interval_scale",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_interval_scale=0.0  # invalid zero value
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE)),
-    idspec("RESULTS_033", TestAction(
-        name="negative total_elapsed",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, iterations=base_iterations(),
-            total_elapsed=-1.0  # invalid negative value
-        ),
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.TOTAL_ELAPSED_INVALID_ARG_VALUE)),
-    idspec("RESULTS_034", TestAction(
-        name="blank string variation_marks key",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            variation_marks={' ': 'value'}),  # invalid blank string key
-        exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.VARIATION_MARKS_INVALID_ARG_KEY_VALUE)),
-    idspec("RESULTS_035", TestAction(
-        name="Wrong type for peak_memory argument (str instead of PeakMemoryUsage)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            peak_memory='invalid_type'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.PEAK_MEMORY_INVALID_ARG_TYPE)),
-    idspec("RESULTS_036", TestAction(
-        name="Correct type for peak_memory argument (PeakMemoryUsage)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            peak_memory=PeakMemoryUsage(unit='bytes', scale=1.0, data=[150])),
-        assertion=Assert.ISINSTANCE,
-        expected=Results)),
-    idspec("RESULTS_037", TestAction(
-        name="Wrong type for memory argument (str instead of MemoryUsage)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            memory='invalid_type'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.MEMORY_INVALID_ARG_TYPE)),
-    idspec("RESULTS_038", TestAction(
-        name="Correct type for memory argument (MemoryUsage)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            memory=MemoryUsage(unit='bytes', scale=1.0, data=[150])
-        ),
-        assertion=Assert.ISINSTANCE,
-        expected=Results)),
-    idspec("RESULTS_039", TestAction(
-        name="Wrong type for per_round_timings argument (str instead of OperationTimings)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            per_round_timings='invalid_type'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.PER_ROUND_TIMINGS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_040", TestAction(
-        name="Correct type for per_round_timings argument (OperationTimings)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            per_round_timings=OperationTimings(unit='s', scale=1.0, data=[1.0])
-        ),
-        assertion=Assert.ISINSTANCE,
-        expected=Results)),
-    idspec("RESULTS_041", TestAction(
-        name="Wrong type for ops_per_second argument (str instead of OperationsPerInterval)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_second='invalid_type'  # type: ignore[arg-type]
-        ),
-        exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.OPS_PER_SECOND_INVALID_ARG_TYPE)),
-    idspec("RESULTS_042", TestAction(
-        name="Correct type for ops_per_second argument (OperationsPerInterval)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations(),
-            ops_per_second=OperationsPerInterval(unit='ops/s', scale=1.0, data=[1.0])
-        ),
-        assertion=Assert.ISINSTANCE,
-        expected=Results)),
-    idspec("RESULTS_043", TestAction(
-        name="Correct type for rounds argument (int)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=1, total_elapsed=1.0, iterations=base_iterations()
-        ),
-        assertion=Assert.ISINSTANCE,
-        expected=Results)),
-    idspec("RESULTS_044", TestAction(
+        exception_tag=_ResultsErrorTag.TITLE_INVALID_ARG_VALUE),
+    PytestAction("INIT_011",
         name="Wrong type for rounds argument (str instead of int)",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds='invalid_type', total_elapsed=1.0, iterations=base_iterations()  # type: ignore[arg-type]
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(rounds='invalid_type'),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE)),
-    idspec("RESULTS_045", TestAction(
+        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE),
+    PytestAction("INIT_012",
         name="Negative value for rounds argument",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=-1, total_elapsed=1.0, iterations=base_iterations()
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(rounds=-1),
         exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
-    idspec("RESULTS_046", TestAction(
+        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE),
+    PytestAction("INIT_013",
         name="Zero value for rounds argument",
-        action=Results,
-        kwargs=ResultsKWArgs(
-            group='default_group', title='default_title', description='default_description',
-            n=1, rounds=0, total_elapsed=1.0, iterations=base_iterations()
-        ),
+        action=Results, kwargs=factories.results_kwargs_factory().replace(rounds=0),
         exception=SimpleBenchValueError,
-        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE)),
+        exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_VALUE),
 ])
 def test_results_init(testspec: TestAction) -> None:
     """Test Results initialization.
@@ -558,231 +88,63 @@ def test_results_init(testspec: TestAction) -> None:
     testspec.run()
 
 
-@cache
-def base_results() -> Results:
-    """Create a base Results instance for testing.
-
-    :return: A Results instance.
-    :rtype: Results
-    """
-    return Results(
-        group='test_group',
-        title='test_title',
-        description='test_description',
-        n=1,
-        rounds=1,
-        total_elapsed=1.0,
-        iterations=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
-    )
-
-
-@cache
-def getattribute_results() -> Results:
-    """Create a Results instance for testing getting attributes.
-
-    :return: A Results instance.
-    :rtype: Results
-    """
-    return Results(
-        group='test_group',
-        title='test_title',
-        description='test_description',
-        n=1,
-        rounds=1,
-        total_elapsed=1.0,
-        iterations=[Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)],
-        variation_cols={'size': 'N', 'type': 'test'},
-        variation_marks={'size': 1, 'type': 'A'},
-    )
-
-
 @pytest.mark.parametrize("testspec", [
-    idspec("GET_001", TestGet(
+    PytestAction("PROP_001",
         name="Get non-existent attribute",
-        attribute='non_existent_attr',
-        obj=getattribute_results(),
-        exception=AttributeError)),
-    idspec("GET_002", TestGet(
+        action=lambda: factories.results_factory(),
+        validate_attr='non_existent_attr',
+        exception=AttributeError),
+    PytestAction("PROP_002",
         name="Get 'group' attribute",
-        attribute='group',
+        action=lambda: factories.results_factory(),
+        validate_attr='group',
         assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected='test_group')),
-    idspec("GET_003", TestGet(
+        expected=factories.results_kwargs_factory()['group']),
+    PytestAction("PROP_003",
         name="Get 'title' attribute",
-        attribute='title',
+        action=lambda: factories.results_factory(),
+        validate_attr='title',
         assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected='test_title')),
-    idspec("GET_004", TestGet(
+        expected=factories.results_kwargs_factory()['title']),
+    PytestAction("PROP_004",
         name="Get 'description' attribute",
-        attribute='description',
+        action=lambda: factories.results_factory(),
+        validate_attr='description',
         assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected='test_description')),
-    idspec("GET_005", TestGet(
+        expected=factories.results_kwargs_factory()['description']),
+    PytestAction("PROP_005",
         name="Get 'n' attribute",
-        attribute='n',
+        action=lambda: factories.results_factory(),
+        validate_attr='n',
         assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=1)),
-    idspec("GET_006", TestGet(
-        name="Get 'total_elapsed' attribute",
-        attribute='total_elapsed',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=1.0)),
-    idspec("GET_007", TestGet(
+        expected=factories.results_kwargs_factory()['n']),
+    PytestAction("PROP_006",
         name="Get 'iterations' attribute",
-        attribute='iterations',
+        action=lambda: factories.results_factory(),
+        validate_attr='iterations',
         assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=(Iteration(n=1, elapsed=0.1), Iteration(n=2, elapsed=0.2), Iteration(n=3, elapsed=0.3)))),
-    idspec("GET_008", TestGet(
-        name="Get 'variation_cols' attribute",
-        attribute='variation_cols',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected={'size': 'N', 'type': 'test'})),
-    idspec("GET_009", TestGet(
+        expected=factories.results_kwargs_factory()['iterations']),
+    PytestAction("PROP_007",
         name="Get 'variation_marks' attribute",
-        attribute='variation_marks',
+        action=lambda: factories.results_factory(),
+        validate_attr='variation_marks',
         assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected={'size': 1, 'type': 'A'})),
-    idspec("GET_010", TestGet(
-        name="Get 'interval_unit' attribute",
-        attribute='interval_unit',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=DEFAULT_INTERVAL_UNIT)),
-    idspec("GET_011", TestGet(
-        name="Get 'interval_scale' attribute",
-        attribute='interval_scale',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=DEFAULT_INTERVAL_SCALE)),
-    idspec("GET_012", TestGet(
-        name="Get 'ops_per_second' attribute",
-        attribute='ops_per_second',
-        assertion=Assert.ISINSTANCE,
-        obj=getattribute_results(),
-        expected=OperationsPerInterval)),
-    idspec("GET_013", TestGet(
-        name="Get 'per_round_timings' attribute",
-        attribute='per_round_timings',
-        assertion=Assert.ISINSTANCE,
-        obj=getattribute_results(),
-        expected=OperationTimings)),
-    idspec("GET_014", TestGet(
-        name="Get 'memory' attribute",
-        attribute='memory',
-        assertion=Assert.ISINSTANCE,
-        obj=getattribute_results(),
-        expected=MemoryUsage)),
-    idspec("GET_015", TestGet(
-        name="Get 'peak_memory' attribute",
-        attribute='peak_memory',
-        assertion=Assert.ISINSTANCE,
-        obj=getattribute_results(),
-        expected=PeakMemoryUsage)),
-    idspec("GET_016", TestGet(
-        name="Get 'ops_per_interval_unit' attribute",
-        attribute='ops_per_interval_unit',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=DEFAULT_INTERVAL_UNIT)),
-    idspec("GET_017", TestGet(
-        name="Get 'ops_per_interval_scale' attribute",
-        attribute='ops_per_interval_scale',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=DEFAULT_INTERVAL_SCALE)),
-    idspec("GET_018", TestGet(
-        name="Get 'memory_unit' attribute",
-        attribute='memory_unit',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=DEFAULT_MEMORY_UNIT)),
-    idspec("GET_019", TestGet(
-        name="Get 'memory_scale' attribute",
-        attribute='memory_scale',
-        assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected=DEFAULT_MEMORY_SCALE)),
-    idspec("GET_020", TestGet(
+        expected=factories.results_kwargs_factory()['variation_marks']),
+    PytestAction("PROP_008",
         name="Get 'extra_info' attribute",
-        attribute='extra_info',
+        action=lambda: factories.results_factory(),
+        validate_attr='extra_info',
         assertion=Assert.EQUAL,
-        obj=getattribute_results(),
-        expected={})),
+        expected=factories.results_kwargs_factory()['extra_info']),
 ])
-def test_getattribute(testspec: TestGet) -> None:
+def test_get_property(testspec: TestAction) -> None:
     """Test getting attributes from Results.
 
     :param testspec: The test specification to run.
-    :type testspec: TestGet
+    :type testspec: TestAction
     """
     testspec.run()
 
 
-@cache
-def base_operations_per_interval() -> OperationsPerInterval:
-    """Create a base OperationsPerInterval instance for testing.
-
-    :return: An OperationsPerInterval instance.
-    :rtype: OperationsPerInterval
-    """
-    return OperationsPerInterval(
-        unit='ops/second',
-        scale=1.0,
-        data=[100.0, 200.0, 300.0]
-    )
-
-
-@cache
-def base_per_round_timings() -> OperationTimings:
-    """Create a base OperationTimings instance for testing.
-
-    :return: An OperationTimings instance.
-    :rtype: OperationTimings
-    """
-    return OperationTimings(
-        unit='seconds',
-        scale=1.0,
-        data=[0.01, 0.02, 0.03]
-    )
-
-
-@pytest.mark.parametrize("metric", [
-    pytest.param(metric_types_registry.OPS, id="Metric.OPS"),
-    pytest.param(metric_types_registry.TIMING, id="Metric.TIMING"),
-    pytest.param(metric_types_registry.MEMORY, id="Metric.MEMORY"),
-    pytest.param(metric_types_registry.PEAK_MEMORY, id="Metric.PEAK_MEMORY"),
-])
-def test_results_metrics(metric: Metric) -> None:
-    """Test Results metrics property.
-
-    :param metric: The metric to test.
-    :type metric: Metric
-    """
-    results = base_results()
-    metric_value = results.results_metric(metric)
-    assert isinstance(metric_value, Stats), (
-        f"results_metric({metric}) should be type Stats not {type(metric_value)}")
-
-
-def test_results_metrics_invalid() -> None:
-    """Test Results metrics property with unsupported or invalid metrics."""
-    results = base_results()
-    with pytest.raises(SimpleBenchValueError) as excinfo:
-        results.results_metric(metric_types_registry.NULL)
-    assert excinfo.value.tag_code == _ResultsErrorTag.RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE, (
-        f"Expected SimpleBenchValueError for unsupported metric {metric_types_registry.NULL}"
-    )
-
-    with pytest.raises(SimpleBenchTypeError) as excinfo1:
-        results.results_metric(Nonsense.NONSENSE)  # type: ignore[arg-type]
-    assert excinfo1.value.tag_code == _ResultsErrorTag.RESULTS_SECTION_INVALID_SECTION_ARG_TYPE, (
-        f"Expected SimpleBenchTypeError for invalid metric type {type(Nonsense.NONSENSE)}"
-    )
+if __name__ == "__main__":
+    pytest.main([__file__])

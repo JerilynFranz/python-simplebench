@@ -1,28 +1,29 @@
 """Factories for creating Results, Iteration, and Stats test objects."""
-from __future__ import annotations
 
-from collections.abc import Sequence
-from typing import Any
-
-
+from simplebench.case import Results
+from simplebench.metrics import metrics_registry
+from simplebench.simplebench_types import Extras, Iterations, MetricsTimers, Values
 from simplebench_tests.kwargs import ResultsKWArgs
+
 from ._primitives import (
     case_group_factory,
     description_factory,
-    interval_scale_factory,
-    interval_unit_factory,
-    memory_scale_factory,
-    memory_unit_factory,
     n_factory,
-    ops_per_interval_scale_factory,
-    ops_per_interval_unit_factory,
     rounds_factory,
     title_factory,
-    total_elapsed_factory,
-    variation_cols_factory,
     variation_marks_factory,
 )
 
+def results_factory() -> Results:
+    """Return a default Results instance for testing purposes.
+
+    It creates a Results instance with default test parameters by calling the
+    results_kwargs_factory to get the necessary keyword arguments.
+
+    :return: A Results instance with default test parameters.
+    :rtype: Results
+    """
+    return Results(**results_kwargs_factory())
 
 def results_kwargs_factory() -> ResultsKWArgs:
     """Returns a configured ResultsKWArgs instance for testing purposes.
@@ -40,34 +41,13 @@ def results_kwargs_factory() -> ResultsKWArgs:
     :vartype n: int
     :ivar rounds: The number of rounds.
     :vartype rounds: int
-    :ivar total_elapsed: The total elapsed time.
-    :vartype total_elapsed: float
-    :ivar iterations: A sequence of Iteration instances.
-    :vartype iterations: Sequence[Iteration]
-    :ivar variation_cols: The variation columns.
-    :vartype variation_cols: Sequence[str]
+    :ivar iterations: An Iterations instance containing the metrics and their corresponding values.
+    :vartype iterations: Iterations
+    :ivar metrics_timers: A mapping of Metrics to their timing information.
+    :vartype metrics_timers: MetricsTimers
     :ivar variation_marks: The variation marks.
-    :vartype variation_marks: Sequence[str]
-    :ivar interval_unit: The interval unit.
-    :vartype interval_unit: str
-    :ivar interval_scale: The interval scale.
-    :vartype interval_scale: float
-    :ivar ops_per_interval_unit: The ops per interval unit.
-    :vartype ops_per_interval_unit: str
-    :ivar ops_per_interval_scale: The ops per interval scale.
-    :vartype ops_per_interval_scale: float
-    :ivar memory_unit: The memory unit.
-    :vartype memory_unit: str
-    :ivar memory_scale: The memory scale.
-    :vartype memory_scale: float
-    :ivar ops_per_second: The ops per second.
-    :vartype ops_per_second: OperationsPerInterval
-    :ivar per_round_timings: The per-round timings.
-    :vartype per_round_timings: OperationTimings
-    :ivar memory: The memory usage.
-    :vartype memory: MemoryUsage
-    :ivar peak_memory: The peak memory usage.
-    :vartype peak_memory: PeakMemoryUsage
+    :vartype variation_marks: VariationMarks
+
     :ivar extra_info: Extra information.
     :vartype extra_info: dict[str, Any]
     :return: A ResultsKWArgs instance with default test parameters.
@@ -78,134 +58,62 @@ def results_kwargs_factory() -> ResultsKWArgs:
                          description=description_factory(),
                          n=n_factory(),
                          rounds=rounds_factory(),
-                         total_elapsed=total_elapsed_factory(),
-                         iterations=iterations_sequence_factory(),
-                         variation_cols=variation_cols_factory(),
+                         iterations=iterations_factory(),
+                         metrics_timers=metrics_timers_factory(),
                          variation_marks=variation_marks_factory(),
-                         interval_unit=interval_unit_factory(),
-                         interval_scale=interval_scale_factory(),
-                         ops_per_interval_unit=ops_per_interval_unit_factory(),
-                         ops_per_interval_scale=ops_per_interval_scale_factory(),
-                         memory_unit=memory_unit_factory(),
-                         memory_scale=memory_scale_factory(),
-                         ops_per_second=ops_per_interval_factory(),
-                         per_round_timings=per_round_timings_factory(),
-                         memory=memory_factory(),
-                         peak_memory=peak_memory_factory(),
                          extra_info=results_extra_info_factory())
 
 
-def results_extra_info_factory() -> dict[str, Any]:
+def results_extra_info_factory() -> Extras:
     """Return a default dictionary of extra info for testing purposes.
 
     :return: A dictionary with extra info.
     :rtype: dict[str, Any]
     """
-    return {'info_key': 'info_value'}
+    return Extras()
 
 
-def iterations_sequence_factory() -> Sequence[Iteration]:
+def iterations_factory() -> Iterations:
     """Return a default sequence of Iteration instances for testing purposes.
 
-    :return: A sequence containing a single Iteration instance.
-    :rtype: Sequence[Iteration]
+    It creates an Iterations instance with default test parameters by using the
+    metrics_registry to get the standard timing and operations stats metrics, and
+    assigning them Values instances with a range of values.
+
+    - `STD_TIMING_STATS` :class:`Metric` is assigned :class:`Values` with integers from 1 to 9.
+    - `STD_OPS_STATS` :class:`Metric` is assigned :class:`Values` with the reciprocals of integers from 1 to 9.
+
+    :return: An Iterations instance with default test parameters.
+    :rtype: Iterations
     """
-    return [
-        Iteration(
-            n=n_factory(),
-            rounds=rounds_factory(),
-            elapsed=total_elapsed_factory(),
-            scale=interval_scale_factory(),
-            unit=interval_unit_factory(),
-            memory=1400,
-            peak_memory=2400,
-        )
-    ]
 
+    timing_stats_metric = metrics_registry['STD_TIMING_STATS']
+    timing_stats_values = Values(tuple(value for value in range(1,10)))
+    ops_stats_metric = metrics_registry['STD_OPS_STATS']
+    ops_stats_values = Values(tuple(1/value for value in range(1,10)))
+    return Iterations({
+        timing_stats_metric: timing_stats_values,
+        ops_stats_metric: ops_stats_values,
+    })
 
-def peak_memory_factory() -> PeakMemoryUsage:
-    """Return a default PeakMemoryUsage instance for testing purposes.
+def metrics_timers_factory() -> MetricsTimers:
+    """Return a default MetricsTimers instance for testing purposes.
 
-    :return: Container for peak memory usage data.
-    :rtype: PeakMemoryUsage
+    It creates a MetricsTimers instance with default test parameters by using the
+    metrics_registry to get the standard timing and operations stats metrics, and
+    assigning them string timer names.
+
+    - `STD_TIMING_STATS` :class:`Metric` is assigned the timer name "timing.perf_counter_ns".
+    - `STD_OPS_STATS` :class:`Metric` is assigned the timer name "timing.perf_counter_ns".
+
+    :return: A MetricsTimers instance with default test parameters.
+    :rtype: MetricsTimers
     """
-    return PeakMemoryUsage(
-        unit=memory_unit_factory(),
-        scale=memory_scale_factory(),
-        data=[2200, 2250, 2150, 2300, 2100],
-        iterations=[
-            Iteration(n=n_factory(),
-                      rounds=rounds_factory(),
-                      elapsed=total_elapsed_factory(),
-                      scale=memory_scale_factory(),
-                      unit=memory_unit_factory(),
-                      memory=1300,
-                      peak_memory=2300)
-        ],
-    )
-
-
-def memory_factory() -> MemoryUsage:
-    """Return a default MemoryUsage instance for testing purposes.
-
-    :return: Container for memory usage data.
-    :rtype: MemoryUsage
-    """
-    return MemoryUsage(
-        unit=memory_unit_factory(),
-        scale=memory_scale_factory(),
-        data=[1200, 1300, 1100, 1250, 1150],
-        iterations=[
-            Iteration(n=n_factory(),
-                      rounds=rounds_factory(),
-                      elapsed=total_elapsed_factory(),
-                      scale=memory_scale_factory(),
-                      unit=memory_unit_factory(),
-                      memory=1200,
-                      peak_memory=2200)
-        ],
-    )
-
-
-def per_round_timings_factory() -> OperationTimings:
-    """Return a default OperationTimings instance for testing purposes.
-
-    :return: Container for per-round timing data.
-    :rtype: OperationTimings
-    """
-    return OperationTimings(
-        unit=interval_unit_factory(),
-        scale=interval_scale_factory(),
-        data=[0.05, 0.06, 0.04, 0.07, 0.05],
-        iterations=[
-            Iteration(n=n_factory(),
-                      rounds=rounds_factory(),
-                      elapsed=total_elapsed_factory(),
-                      scale=interval_scale_factory(),
-                      unit=interval_unit_factory(),
-                      memory=1500,
-                      peak_memory=2500)
-        ],
-    )
-
-
-def ops_per_interval_factory() -> OperationsPerInterval:
-    """Return a default ops per second value for testing purposes.
-
-    :return: Container for ops per interval data.
-    :rtype: OperationsPerInterval
-    """
-    return OperationsPerInterval(
-        unit=ops_per_interval_unit_factory(),
-        scale=ops_per_interval_scale_factory(),
-        data=[100, 110, 90, 105, 95],
-        iterations=[
-            Iteration(n=n_factory(),
-                      rounds=rounds_factory(),
-                      elapsed=total_elapsed_factory(),
-                      scale=ops_per_interval_scale_factory(),
-                      unit=ops_per_interval_unit_factory(),
-                      memory=2000,
-                      peak_memory=3000)
-        ],
-    )
+    timing_stats_metric = metrics_registry['STD_TIMING_STATS']
+    timing_name = 'timing.perf_counter_ns'
+    ops_stats_metric = metrics_registry['STD_OPS_STATS']
+    ops_name = 'timing.perf_counter_ns'
+    return MetricsTimers({
+        timing_stats_metric: timing_name,
+        ops_stats_metric: ops_name,
+    })

@@ -59,7 +59,6 @@ from ._primitives import (
     formats_factory,
     interval_scale_factory,
     interval_unit_factory,
-    iterations_factory,
     kwargs_variations_factory,
     max_time_factory,
     memory_scale_factory,
@@ -132,15 +131,7 @@ from .reporter_options import (
     reporter_options_tuple_factory,
     reporter_options_type_factory,
 )
-from .results import (
-    iterations_sequence_factory,
-    memory_factory,
-    ops_per_interval_factory,
-    peak_memory_factory,
-    per_round_timings_factory,
-    results_extra_info_factory,
-    results_kwargs_factory,
-)
+from .results import iterations_factory, results_extra_info_factory, results_factory, results_kwargs_factory
 from .session import session_factory, session_kwargs_factory
 
 __all__ = [
@@ -267,13 +258,10 @@ __all__ = [
     'report_log_filepath_factory',
     'report_log_metadata_factory',
     # Results factories
+    'iterations_factory',
     'results_kwargs_factory',
     'results_extra_info_factory',
-    'iterations_sequence_factory',
-    'peak_memory_factory',
-    'memory_factory',
-    'per_round_timings_factory',
-    'ops_per_interval_factory',
+    'results_factory',
     # Session factories
     'session_kwargs_factory',
     'session_factory',

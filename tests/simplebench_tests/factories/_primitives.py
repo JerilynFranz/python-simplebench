@@ -16,7 +16,7 @@ from rich.text import Text
 
 from simplebench.enums import FlagType, Format, Target
 from simplebench.metrics import Metric, MetricsCollection, MetricsSelection, metrics_registry
-from simplebench.simplebench_types import ElementCollection
+from simplebench.simplebench_types import ElementCollection, VariationMarks
 
 # from simplebench.metrics import Metric, metric_types_registry
 from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory
@@ -835,13 +835,13 @@ def memory_scale_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> float:
 
 
 @cached_factory
-def variation_marks_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> dict[str, str]:
+def variation_marks_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> VariationMarks:
     """Return a default dictionary of variation marks for testing purposes.
 
-    :return: `{}`
-    :rtype: dict[str, str]
+    :return: variation marks dictionary with no variation marks, i.e. `{}`
+    :rtype: VariationMarks
     """
-    return {}
+    return VariationMarks({})
 
 
 @cached_factory

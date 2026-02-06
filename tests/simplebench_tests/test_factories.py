@@ -4,8 +4,6 @@ from argparse import Namespace
 from pathlib import Path
 
 import pytest
-from simplebench_tests import factories
-from simplebench_tests.kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterConfigKWArgs
 from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench import utils
@@ -18,6 +16,9 @@ from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
+from simplebench.simplebench_types import Iterations
+from simplebench_tests import factories
+from simplebench_tests.kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterConfigKWArgs
 
 
 @pytest.mark.parametrize("testspec", [
@@ -172,10 +173,10 @@ from simplebench.session import Session
         expected=CaseKWArgs)
     ),
     idspec('FACTORY_030', TestAction(
-        name="iterations_factory produces a valid int instance",
+        name="iterations_factory produces a valid Iterations instance",
         action=factories.iterations_factory,
         assertion=Assert.ISINSTANCE,
-        expected=int),
+        expected=Iterations),
     ),
     idspec('FACTORY_031', TestAction(
         name="warmup_iterations_factory produces a valid int instance",

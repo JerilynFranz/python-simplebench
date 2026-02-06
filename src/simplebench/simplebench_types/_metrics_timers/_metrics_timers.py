@@ -19,7 +19,7 @@ from ._error_tags import _MetricsTimersErrorTag
 
 class MetricsTimers(Mapping['Metric', str | None], Immutable):
     """Mapping container for Values collections of iteration results used in SimpleBench.
-    Maps Metrics to their corresponding collections of Values for a specific iteration.
+    Maps Metrics to their corresponding timer names or None if no timer is associated.
     """
     __slots__ = ("_metrics_timers",)
 

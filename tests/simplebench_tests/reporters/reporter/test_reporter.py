@@ -1,4 +1,5 @@
 """Test simplebench/reporters/reporter/reporter.py module"""
+# ruff: noqa: F401
 
 import sys
 from argparse import Namespace
@@ -6,6 +7,7 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 import pytest
+from testspec import NO_EXPECTED_VALUE, Assert, PytestAction, TestAction, TestGet, TestSet, TestSpec, idspec
 
 from simplebench.benchmark_runner import SimpleRunner
 from simplebench.case import Case, Results
@@ -13,37 +15,20 @@ from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
 from simplebench.metrics import metric_types_registry
+from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
 from simplebench.reporters.protocols import ReporterCallback
-from simplebench.reporters.reporter import Reporter, ReporterOptions
+from simplebench.reporters.reporter import Reporter
 from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.session import Session
+from simplebench.simplebench_types import VariationMarks
 
-from simplebench_tests.factories import (
-    FactoryReporter,
-    FactoryReporterOptions,
-    case_factory,
-    choice_conf_factory,
-    choice_conf_kwargs_factory,
-    choice_factory,
-    choices_factory,
-    default_description,
-    default_reporter_callback,
-    default_reporter_name,
-    namespace_factory,
-    path_factory,
-    report_log_metadata_factory,
-    report_parameters_factory,
-    reporter_config_factory,
-    reporter_factory,
-    session_factory,
-)
-from testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSet, TestSpec, idspec
+from simplebench_tests import factories
 
 
-def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
+def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
     """A broken benchmark case function that is missing the required 'bench' parameter.
 
     The function signature is intentionally incorrect for testing purposes.
@@ -55,11 +40,7 @@ def broken_benchcase_missing_bench(**kwargs: Any) -> Results:  # pylint: disable
     """
     # Nothing inside this actually runs since it's just for testing Reporter's
     # error handling for an invalid function type signature.
-    return Results(  # made-up results for testing purposes
-            group='test_case', title='Test Case',
-            description='A test case for testing.',
-            n=10, rounds=1, total_elapsed=3.0,
-            iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0)])
+    return factories.results_factory()  # made-up results for testing purposes
 
 
 def broken_benchcase_missing_kwargs(
@@ -96,7 +77,7 @@ class GoodReporter(Reporter):
     """Keyword arguments for constructing a GoodReporterOptions hardcoded default instance: `{}`"""
 
     def __init__(self) -> None:
-        super().__init__(reporter_config_factory())
+        super().__init__(factories.reporter_config_factory())
 
     def run_report(self,  # pylint: disable=useless-parent-delegation
                    *,
@@ -133,27 +114,27 @@ def test_good_reporter_subclassing() -> None:
     assert isinstance(reporter, Reporter)
     # Call run_report with minimal valid parameters
     reporter.run_report(
-        args=namespace_factory(),
-        log_metadata=report_log_metadata_factory(),
-        case=case_factory(),
-        choice=choice_factory()
+        args=factories.namespace_factory(),
+        log_metadata=factories.report_log_metadata_factory(),
+        case=factories.case_factory(),
+        choice=factories.choice_factory()
     )  # Should not raise any exceptions
 
 
 def test_factory_reporter_subclassing() -> None:
-    """Test that FactoryReporter subclass can be instantiated and run_report works."""
-    reporter = FactoryReporter(reporter_config_factory())
+    """Test that factories.FactoryReporter subclass can be instantiated and run_report works."""
+    reporter = factories.FactoryReporter(factories.reporter_config_factory())
     if not isinstance(reporter, ReporterProtocol):  # type: ignore[reportGeneralTypeIssue]
-        raise AssertionError("FactoryReporter does not conform to ReporterProtocol")
+        raise AssertionError("factories.FactoryReporter does not conform to ReporterProtocol")
 
     assert isinstance(reporter, Reporter)
     # Call run_report with minimal valid parameters
     reporter.run_report(
-        args=namespace_factory(),
-        log_metadata=report_log_metadata_factory(),
-        case=case_factory(),
-        choice=choice_factory(),
-        path=path_factory()
+        args=factories.namespace_factory(),
+        log_metadata=factories.report_log_metadata_factory(),
+        case=factories.case_factory(),
+        choice=factories.choice_factory(),
+        path=factories.path_factory()
     )  # Should not raise any exceptions
 
 
@@ -163,30 +144,30 @@ def test_factory_reporter_subclassing() -> None:
         action=Reporter,
         exception=TypeError)),
     idspec('REPORTER_002', TestAction(
-        name="reporter_factory() is creating valid FactoryReporter instances",
-        action=reporter_factory,
+        name="factories.reporter_factory() is creating valid factories.FactoryReporter instances",
+        action=factories.reporter_factory,
         assertion=Assert.ISINSTANCE,
-        expected=FactoryReporter)),
+        expected=factories.FactoryReporter)),
     idspec('REPORTER_003', TestAction(
         name="Correctly configured subclass of Reporter() can call report() successfully",
-        action=reporter_factory().report,
-        kwargs=report_parameters_factory(),
+        action=factories.reporter_factory().report,
+        kwargs=factories.report_parameters_factory(),
         validate_result=lambda result: result is None)),
     idspec('REPORTER_004', TestAction(
-        name="FactoryReporter() can be instantiated with parameters from reporter_config_factory()",
-        action=FactoryReporter,
-        args=[reporter_config_factory()],
+        name="factories.FactoryReporter() can be instantiated with parameters from factories.reporter_config_factory()",
+        action=factories.FactoryReporter,
+        args=[factories.reporter_config_factory()],
         assertion=Assert.ISINSTANCE,
-        expected=FactoryReporter)),
+        expected=factories.FactoryReporter)),
     idspec('REPORTER_005', TestAction(
         name="Correctly configured Reporter() can call report() successfully",
-        action=FactoryReporter(reporter_config_factory()).report,
-        kwargs=report_parameters_factory(),
+        action=factories.FactoryReporter(factories.reporter_config_factory()).report,
+        kwargs=factories.report_parameters_factory(),
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORTER_006', TestAction(
         name="Attempt to directly instantiate Reporter raises TypeError",
         action=Reporter,
-        args=[reporter_config_factory()],
+        args=[factories.reporter_config_factory()],
         exception=TypeError)),
 ])
 def test_reporter_init(testspec: TestSpec) -> None:
@@ -202,186 +183,186 @@ def test_reporter_init(testspec: TestSpec) -> None:
     idspec('REPORT_001', TestAction(
         name=("report() with non-Case arg raises "
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CASE_ARG"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
                 'case': "not_a_case_instance",
-                'choice': choice_conf_factory()},
+                'choice': factories.choice_conf_factory()},
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_CASE_ARG)),
     idspec('REPORT_002', TestAction(
         name=("report() with non-Choice arg raises "
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
                 'choice': "not_a_choice_conf_instance"},
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_003', TestAction(
         name=("report() with non-Choice choice arg raises "
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CHOICE_ARG"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
                 'choice': Choices()},  # passing Choices instead of Choice
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_004', TestAction(
         name=("report() with Metric not in Reporter's sections raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
                 'choice': Choice(
-                    reporter=reporter_factory(),
+                    reporter=factories.reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))},
+                        **factories.choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))},
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_METRICS)),
     idspec('REPORT_005', TestAction(
         name=("report() with Target not in Reporter's targets raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_TARGET"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
                 'choice': Choice(
-                    reporter=reporter_factory(),
+                    reporter=factories.reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **choice_conf_kwargs_factory().replace(targets=[Target.CUSTOM])))},
+                        **factories.choice_conf_kwargs_factory().replace(targets=[Target.CUSTOM])))},
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_TARGET)),
     idspec('REPORT_006', TestAction(
         name=("report() with output_format not in Reporter's formats raises "
               "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_FORMAT"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
                 'choice': Choice(
-                    reporter=reporter_factory(),
+                    reporter=factories.reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **choice_conf_kwargs_factory().replace(output_format=Format.CUSTOM)))},
+                        **factories.choice_conf_kwargs_factory().replace(output_format=Format.CUSTOM)))},
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_FORMAT)),
     idspec('REPORT_007', TestAction(
         name="report() with valid Case and Choice runs successfully",
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory()},
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory()},
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORT_008', TestAction(
         name="report() with valid callback runs successfully",
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
                 'choice': Choice(
-                    reporter=reporter_factory(),
+                    reporter=factories.reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **choice_conf_kwargs_factory().replace(targets=[Target.CALLBACK]))),
-                'callback': default_reporter_callback},
+                        **factories.choice_conf_kwargs_factory().replace(targets=[Target.CALLBACK]))),
+                'callback': factories.default_reporter_callback},
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORT_009', TestAction(
         name=("report() with invalid callback raises"
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_CALLBACK_ARG"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
                 'choice': Choice(
-                    reporter=reporter_factory(),
+                    reporter=factories.reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **choice_conf_kwargs_factory().replace(targets=[Target.CALLBACK]))),
+                        **factories.choice_conf_kwargs_factory().replace(targets=[Target.CALLBACK]))),
                 'callback': "not_a_callback"},
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_CALLBACK_ARG)),
     idspec('REPORT_010', TestAction(
         name="report() with valid path runs successfully",
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory()},
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory()},
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORT_011', TestAction(
         name=("report() with invalid path raises "
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_PATH_ARG"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
                 'path': "not_a_path"},
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_PATH_ARG)),
     idspec('REPORT_012', TestAction(
         name=("report() with valid session runs successfully"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory(),
-                'session': session_factory()},
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory(),
+                'session': factories.session_factory()},
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORT_013', TestAction(
         name=("report() with invalid session raises "
               "SimpleBenchTypeError/REPORTER_REPORT_INVALID_SESSION_ARG"),
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory(),
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory(),
                 'session': "not_a_session"},
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_SESSION_ARG)),
     idspec('REPORT_014', TestAction(
         name="report() invalid args type raises SimpleBenchTypeError/REPORT_INVALID_ARGS_ARG_TYPE",
-        action=reporter_factory().report,
+        action=factories.reporter_factory().report,
         kwargs={'args': "not_a_namespace",
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory(),
-                'session': session_factory()},
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory(),
+                'session': factories.session_factory()},
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_ARGS_ARG_TYPE)),
     idspec('REPORT_015', TestAction(
         name="report() with missing args raises TypeError",
-        action=reporter_factory().report,
-        kwargs={'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory(),
-                'session': session_factory()},
+        action=factories.reporter_factory().report,
+        kwargs={'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory(),
+                'session': factories.session_factory()},
         exception=TypeError)),
     idspec('REPORT_016', TestAction(
         name="report() with missing case raises TypeError",
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'choice': choice_factory(),
-                'path': path_factory(),
-                'session': session_factory()},
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory(),
+                'session': factories.session_factory()},
         exception=TypeError)),
     idspec('REPORT_017', TestAction(
         name="report() with missing choice raises TypeError",
-        action=reporter_factory().report,
-        kwargs={'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'path': path_factory(),
-                'session': session_factory()},
+        action=factories.reporter_factory().report,
+        kwargs={'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'path': factories.path_factory(),
+                'session': factories.session_factory()},
         exception=TypeError)),
 ])
 def test_report(testspec: TestSpec) -> None:
@@ -396,47 +377,47 @@ def test_report(testspec: TestSpec) -> None:
 @pytest.mark.parametrize('testspec', [
     idspec('REPORTER_ADD_CHOICE_001', TestAction(
         name="Adding a valid Choice to a Reporter works",
-        action=reporter_factory().add_choice,
+        action=factories.reporter_factory().add_choice,
         args=[Choice(
-            reporter=reporter_factory(),
+            reporter=factories.reporter_factory(),
             choice_conf=ChoiceConf(
-                **choice_conf_kwargs_factory().replace(name='new_choice', flags=['--new-choice'])))],
+                **factories.choice_conf_kwargs_factory().replace(name='new_choice', flags=['--new-choice'])))],
         expected=NO_EXPECTED_VALUE)),
     idspec('REPORTER_ADD_CHOICE_002', TestAction(
         name=("Passing wrong type object to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_CHOICE_ARG"),
-        action=reporter_factory().add_choice,
+        action=factories.reporter_factory().add_choice,
         args=["not_a_choice_conf_instance"],
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.ADD_CHOICE_INVALID_ARG_TYPE)),
     idspec('REPORTER_ADD_CHOICE_003', TestAction(
         name=("Passing Choice with a section not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_SECTION_ARG"),
-        action=reporter_factory().add_choice,
+        action=factories.reporter_factory().add_choice,
         args=[Choice(
-                reporter=reporter_factory(),
+                reporter=factories.reporter_factory(),
                 choice_conf=ChoiceConf(
-                    **choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))],
+                    **factories.choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))],
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
     idspec('REPORTER_ADD_CHOICE_004', TestAction(
         name=("Passing Choice with a target not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/REPORTER_ADD_CHOICE_INVALID_TARGET_ARG"),
-        action=reporter_factory().add_choice,
+        action=factories.reporter_factory().add_choice,
         args=[Choice(
-            reporter=reporter_factory(),
+            reporter=factories.reporter_factory(),
             choice_conf=ChoiceConf(
-                **choice_conf_kwargs_factory().replace(targets=[Target.CUSTOM])))],
+                **factories.choice_conf_kwargs_factory().replace(targets=[Target.CUSTOM])))],
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_TARGET)),
     idspec('REPORTER_ADD_CHOICE_005', TestAction(
         name=("Passing Choice with a output_format not supported by the Reporter to add_choice() raises "
               "SimpleBenchTypeError/ADD_FORMAT_UNSUPPORTED_FORMAT"),
-        action=reporter_factory().add_choice,
+        action=factories.reporter_factory().add_choice,
         args=[Choice(
-            reporter=reporter_factory(),
+            reporter=factories.reporter_factory(),
             choice_conf=ChoiceConf(
-                **choice_conf_kwargs_factory().replace(output_format=Format.CUSTOM)))],
+                **factories.choice_conf_kwargs_factory().replace(output_format=Format.CUSTOM)))],
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_FORMAT)),
 ])
@@ -452,39 +433,39 @@ def test_add_choice(testspec: TestSpec) -> None:
 @pytest.mark.parametrize('testspec', [
     idspec('INSTANCE_ATTRIBUTES_001', TestGet(
         name="Reporter().name attribute has the expected default value",
-        obj=reporter_factory(),
+        obj=factories.reporter_factory(),
         attribute='name',
         assertion=Assert.EQUAL,
-        expected=default_reporter_name())),
+        expected=factories.default_reporter_name())),
     idspec('INSTANCE_ATTRIBUTES_002', TestSet(
         name="Reporter().name attribute is immutable",
-        obj=reporter_factory(),
+        obj=factories.reporter_factory(),
         attribute='name',
         value='new_name',
         exception=AttributeError)),
     idspec('INSTANCE_ATTRIBUTES_003', TestGet(
         name="Reporter().description attribute has the expected default value",
-        obj=reporter_factory(),
+        obj=factories.reporter_factory(),
         attribute='description',
         assertion=Assert.EQUAL,
-        expected=default_description())),
+        expected=factories.default_description())),
     idspec('INSTANCE_ATTRIBUTES_004', TestSet(
         name="Reporter().description attribute is immutable",
-        obj=reporter_factory(),
+        obj=factories.reporter_factory(),
         attribute='description',
         value='new_description',
         exception=AttributeError)),
     idspec('INSTANCE_ATTRIBUTES_005', TestGet(
         name="Reporter().choices attribute is a Choices instance",
-        obj=reporter_factory(),
+        obj=factories.reporter_factory(),
         attribute='choices',
         assertion=Assert.ISINSTANCE,
         expected=Choices)),
     idspec('INSTANCE_ATTRIBUTES_006', TestSet(
         name="Reporter().choices attribute is immutable",
-        obj=reporter_factory(),
+        obj=factories.reporter_factory(),
         attribute='choices',
-        value=choices_factory(),
+        value=factories.choices_factory(),
         exception=AttributeError)),
 ])
 def test_reporter_instance_attributes(testspec: TestSpec) -> None:
@@ -505,23 +486,23 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
     testspec: list[TestSpec] = [
         idspec('CLASS_METHODS_001', TestAction(
             name="Reporter.get_hardcoded_default_options() class method returns expected value with expected type",
-            action=FactoryReporter.get_hardcoded_default_options,
+            action=factories.FactoryReporter.get_hardcoded_default_options,
             assertion=Assert.ISINSTANCE,
-            expected=FactoryReporterOptions)),
+            expected=factories.FactoryReporterOptions)),
         idspec('CLASS_METHODS_002', TestAction(
             name="Reporter.get_default_options() class method returns ReporterOptions with expected type",
-            action=FactoryReporter.get_default_options,
+            action=factories.FactoryReporter.get_default_options,
             assertion=Assert.ISINSTANCE,
-            expected=FactoryReporterOptions)),
+            expected=factories.FactoryReporterOptions)),
         idspec('CLASS_METHODS_003', TestAction(
             name="Reporter.set_default_options() sets default options",
-            action=FactoryReporter.set_default_options,
-            args=[FactoryReporterOptions()],
+            action=factories.FactoryReporter.set_default_options,
+            args=[factories.FactoryReporterOptions()],
             expected=NO_EXPECTED_VALUE)),
         idspec('CLASS_METHODS_004', TestAction(
             name=("Reporter.set_default_options() with bad type raises "
                   "SimpleBenchTypeError/SET_DEFAULT_OPTIONS_INVALID_ARG_TYPE"),
-            action=FactoryReporter.set_default_options,
+            action=factories.FactoryReporter.set_default_options,
             args=["not_a_reporter_options_instance"],
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.SET_DEFAULT_OPTIONS_INVALID_OPTIONS_ARG_TYPE)),
@@ -537,9 +518,9 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         :return: None
         :raises AssertionError: if the test fails.
         """
-        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
-        hard_coded_options = FactoryReporter.get_hardcoded_default_options()
-        original_default_options = FactoryReporter.get_default_options()
+        factories.FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        hard_coded_options = factories.FactoryReporter.get_hardcoded_default_options()
+        original_default_options = factories.FactoryReporter.get_default_options()
         assert hard_coded_options is original_default_options, (
             "get_default_options() does not return the hard coded instance after reset with None")
     testspec.append(idspec(
@@ -560,11 +541,11 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         :return: None
         :raises AssertionError: if the test fails.
         """
-        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
-        hardcoded_options = FactoryReporter.get_default_options()
-        new_options = FactoryReporterOptions()
-        FactoryReporter.set_default_options(new_options)
-        post_set_options = FactoryReporter.get_default_options()
+        factories.FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        hardcoded_options = factories.FactoryReporter.get_default_options()
+        new_options = factories.FactoryReporterOptions()
+        factories.FactoryReporter.set_default_options(new_options)
+        post_set_options = factories.FactoryReporter.get_default_options()
 
         assert hardcoded_options is not post_set_options, (
             "get_default_options() did not return a different instance after set_default_options()")
@@ -586,18 +567,18 @@ def reporter_class_methods_testspecs() -> list[TestSpec]:
         :return: None
         :raises AssertionError: if the test fails.
         """
-        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
-        hardcoded_options: FactoryReporterOptions = FactoryReporter.get_hardcoded_default_options()
-        new_options = FactoryReporterOptions()
-        FactoryReporter.set_default_options(new_options)
-        post_set_options = FactoryReporter.get_default_options()
+        factories.FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        hardcoded_options: factories.FactoryReporterOptions = factories.FactoryReporter.get_hardcoded_default_options()
+        new_options = factories.FactoryReporterOptions()
+        factories.FactoryReporter.set_default_options(new_options)
+        post_set_options = factories.FactoryReporter.get_default_options()
         assert hardcoded_options is not post_set_options, (
             "get_default_options() did not return a different instance after set_default_options()")
         assert new_options is post_set_options, (
             "get_default_options() does not return the new ReporterOptions instance after set_default_options()")
 
-        FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
-        reset_options = FactoryReporter.get_default_options()
+        factories.FactoryReporter.set_default_options(None)  # Reset to hard coded defaults
+        reset_options = factories.FactoryReporter.get_default_options()
         assert hardcoded_options is reset_options, (
             "get_default_options() does not return the hard coded instance after reset with None")
     testspec.append(idspec(
@@ -636,7 +617,7 @@ def find_options_by_type_testspecs() -> list[TestSpec]:
     empty_options_list: list[ReporterOptions] = []
     options_two_only_list: list[ReporterOptions] = [options_two]
     fully_populated_options_list: list[ReporterOptions] = [options_one, options_two]
-    reporter = reporter_factory()
+    reporter = factories.reporter_factory()
 
     testspecs: list[TestSpec] = [
         idspec('FIND_OPTIONS_BY_TYPE_001', TestAction(
@@ -711,26 +692,26 @@ def run_report_testspecs() -> list[TestSpec]:
     testspecs: list[TestSpec] = [
         idspec('RUN_REPORT_001', TestAction(
             name="run_report() with all valid args runs successfully",
-            action=reporter_factory().run_report,
+            action=factories.reporter_factory().run_report,
             kwargs={
-                'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory(),
-                'session': session_factory(),
-                'callback': default_reporter_callback,
+                'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory(),
+                'session': factories.session_factory(),
+                'callback': factories.default_reporter_callback,
             },
             expected=NO_EXPECTED_VALUE)),
         idspec('RUN_REPORT_002', TestAction(
             name="run_report() with minimal args runs successfully",
-            action=reporter_factory().run_report,
+            action=factories.reporter_factory().run_report,
             kwargs={
-                'args': namespace_factory(),
-                'log_metadata': report_log_metadata_factory(),
-                'case': case_factory(),
-                'choice': choice_factory(),
-                'path': path_factory(),
+                'args': factories.namespace_factory(),
+                'log_metadata': factories.report_log_metadata_factory(),
+                'case': factories.case_factory(),
+                'choice': factories.choice_factory(),
+                'path': factories.path_factory(),
             })),
     ]
     return testspecs
