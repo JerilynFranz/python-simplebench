@@ -24,8 +24,7 @@ import platform
 import sys
 from collections.abc import Callable
 from types import MappingProxyType
-from typing import Any, Final, Literal, cast, TYPE_CHECKING
-
+from typing import TYPE_CHECKING, Any, Final, Literal, cast
 
 if TYPE_CHECKING:
     from simplebench.report.versions import v1 as report

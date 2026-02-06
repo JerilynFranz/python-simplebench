@@ -15,7 +15,7 @@ from simplebench.simplebench_types import (
     VariationMarks,
     is_element_collection,
 )
-from simplebench.validators import validate_positive_float, validate_positive_int, validate_string, validate_type
+from simplebench.validators import validate_positive_float, validate_positive_int, validate_string
 from simplebench.vcs import VCSInfo
 
 from ._error_tags import _CaseErrorTag
@@ -561,11 +561,13 @@ def vcs_info(vcs_info_value: VCSInfo | None) -> VCSInfo | None:
     :return VCSInfo | None: The validated vcs_info or `None` if not provided.
     :raises SimpleBenchTypeError: If vcs_info is not of type VCSInfo.
     """
-    return (
-        None
-        if vcs_info_value is None
-        else validate_type(vcs_info_value, VCSInfo, 'vcs_info', _CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE)
-    )
+    if vcs_info_value is None:
+        return None
+    if not isinstance(vcs_info_value, VCSInfo):
+        raise SimpleBenchTypeError(
+            f'Invalid vcs_info: {vcs_info_value}. Must be of type VCSInfo.',
+            tag=_CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE,
+        )
 
 def max_greater_than_min(min_time: float, max_time: float) -> None:
     """Validate that max_time is greater than or equal to min_time.

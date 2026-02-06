@@ -59,7 +59,8 @@ class MachineInfo:
                 }
             ),
         )
-        object.__setattr__(self, '_report_machine_info', report.MachineInfo.from_dict(self._to_dict()))
+        object.__setattr__(self, '_report_machine_info',
+                           report.MachineInfo.from_dict(self._to_dict()))
 
     @property
     def as_report_machine_info(self) -> 'report.MachineInfo':

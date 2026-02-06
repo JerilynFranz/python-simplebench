@@ -188,7 +188,7 @@ class Hydrator:
         # Regular class logic (Python 3.10+)
         try:
             type_hints = get_type_hints(
-                target_cls.__init__,
+                target_cls.__init__,  # type: ignore[misc]
                 globalns=vars(inspect.getmodule(target_cls)),
                 localns=dict(vars(target_cls))
             )

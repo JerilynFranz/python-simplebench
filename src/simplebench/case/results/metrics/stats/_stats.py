@@ -74,6 +74,7 @@ class Stats(Immutable):
         self._standard_deviation: float | None = None
         self._relative_standard_deviation: float | None = None
         self._percentiles: Values | None = None
+        self._cached_stats_block: reports.StatsBlock | None = None
 
     @property
     def metric(self) -> Metric:

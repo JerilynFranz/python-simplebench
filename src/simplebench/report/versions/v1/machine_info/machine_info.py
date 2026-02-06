@@ -20,7 +20,7 @@ from simplebench.report.base import BaseMachineInfo, JSONSchema
 
 from . import _validate
 from .machine_info_schema import MachineInfoSchema
-from .typeddict_types import ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
+from .typeddict_types import ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict, ImmutableMachineInfoData
 
 if TYPE_CHECKING:
     from simplebench.report.versions.v1 import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
@@ -73,7 +73,7 @@ class MachineInfo(BaseMachineInfo):
         self._to_dict: ImmutableMachineInfoDict | None = None
 
     @classmethod
-    def from_dict(cls, data: MachineInfoData) -> 'MachineInfo':
+    def from_dict(cls, data: MachineInfoData | ImmutableMachineInfoData) -> 'MachineInfo':
         """Create a MachineInfo instance from a dictionary.
 
         .. code-block:: python

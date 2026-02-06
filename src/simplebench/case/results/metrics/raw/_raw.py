@@ -5,6 +5,7 @@ from simplebench.simplebench_types import Values
 
 from . import _validate
 
+
 class Raw:
     """Generic container for raw data from a benchmark.
 
@@ -43,6 +44,7 @@ class Raw:
         self._rounds: int = _validate.rounds(rounds)
         self._timer: str | None = _validate.timer(timer)
         self._data: Values = _validate.data(data)
+        self._raw_data_block: reports.RawDataBlock | None = None
 
     @property
     def metric(self) -> Metric:
