@@ -134,5 +134,77 @@ def test_iteration(testspec: TestSpec) -> None:
     testspec.run()
 
 
+@pytest.mark.parametrize('testspec', [
+    PytestAction('LEN_001',
+        name="Test length of Iterations with 2 metrics",
+        action=lambda: DEFAULT_ITERATIONS,
+        assertion=Assert.LEN,
+        expected=2),
+    PytestAction('LEN_002',
+        name="Test length of Iterations with no metrics",
+        action=Iterations, args=[{}],
+        assertion=Assert.LEN,
+        expected=0),
+    PytestAction('LEN_003',
+        name="Test length of Iterations with one metric",
+        action=Iterations, args=[{TIMING_STATS_METRIC: TIMING_STATS_VALUES}],
+        assertion=Assert.LEN,
+        expected=1),
+])
+def test_length(testspec: TestSpec) -> None:
+    """Test the length of the Iterations class."""
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    PytestAction('EQUALS_001',
+        name="Test equality of Iterations with same metrics and values",
+        action=lambda: DEFAULT_ITERATIONS,
+        assertion=Assert.EQUAL,
+        expected=Iterations({
+            TIMING_STATS_METRIC: TIMING_STATS_VALUES,
+            OPS_STATS_METRIC: OPS_STATS_VALUES,
+        })),
+    PytestAction('EQUALS_002',
+        name="Test equality of Iterations with different metrics",
+        action=lambda: DEFAULT_ITERATIONS,
+        assertion=Assert.NOT_EQUAL,
+        expected=Iterations({
+            TIMING_STATS_METRIC: TIMING_STATS_VALUES,
+        })),
+    PytestAction('EQUALS_003',
+        name="Test equality of Iterations with different values",
+        action=lambda: DEFAULT_ITERATIONS,
+        assertion=Assert.NOT_EQUAL,
+        expected=Iterations({
+            TIMING_STATS_METRIC: Values((1,2,3)),
+            OPS_STATS_METRIC: OPS_STATS_VALUES,
+        })),
+    PytestAction('EQUALS_004',
+        name="Test equality of with non-Iterations object",
+        action=lambda: DEFAULT_ITERATIONS,
+        assertion=Assert.NOT_EQUAL,
+        expected="Not an Iterations object"),
+])
+def test_equality(testspec: TestSpec) -> None:
+    """Test the equality of the Iterations class."""
+    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    PytestAction('HASH_001',
+        name="Test hash of Iterations with same metrics and values",
+        action=hash, args=[DEFAULT_ITERATIONS],
+        assertion=Assert.EQUAL,
+        expected=hash(Iterations({
+            TIMING_STATS_METRIC: TIMING_STATS_VALUES,
+            OPS_STATS_METRIC: OPS_STATS_VALUES,
+        }))),
+])
+def test_hash(testspec: TestSpec) -> None:
+    """Test the __hash__ method of the Iterations class."""
+    testspec.run()
+
+
 if __name__ == "__main__":
     pytest.main([__file__])

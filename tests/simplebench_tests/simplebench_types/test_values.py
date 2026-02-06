@@ -7,27 +7,6 @@
 import autopypath  # noqa: F401 # autopypath adjusts sys.path on import when run as script
 import pytest
 
-# TODO: Think about adding a function to autopypath to load modules directly from file paths,
-# bypassing the normal import system __init__.py files loading
-# --- Definitive Workaround for circular import ---
-# We cannot use `from simplebench...` as it loads the broken package.
-# Instead, we load the `values.py` module directly from its file path.
-## 1. Define the path to the module file.
-#MODULE_PATH = Path(__file__).parent.parent.parent.parent / 'src' / 'simplebench' / 'simplebench_types' / '_values' / '_values.py'
-#MODULE_NAME = 'simplebench.simplebench_types._values.values'
-#
-## 2. Use importlib to load the module from the path.
-#spec = importlib.util.spec_from_file_location(MODULE_NAME, MODULE_PATH)
-#if not spec or not spec.loader:
-#    raise ImportError(f'Could not load spec for module at {MODULE_PATH}')
-#
-#values_module = importlib.util.module_from_spec(spec)
-#sys.modules[MODULE_NAME] = values_module  # Add to sys.modules to make it discoverable
-#spec.loader.exec_module(values_module)
-## -----------------------------------------
-#
-## 3. Get the Values class from the dynamically loaded module.
-#Values = values_module.Values
 from testspec import Assert, TestSpec, PytestAction
 
 from simplebench.exceptions import SimpleBenchTypeError
@@ -69,6 +48,20 @@ def test_values(testspec: TestSpec) -> None:
     :param testspec: The test specification to run.
     :type testspec: TestSpec
     """
+    testspec.run()
+
+
+@pytest.mark.parametrize(
+    'testspec', [
+        PytestAction('HASH_001',
+            name='Values instance is immutable and hashable',
+            action=hash,
+            args=[Values([1, 2.5, 3])],
+            assertion=Assert.ISINSTANCE,
+            expected=int),
+    ],
+)
+def test_hash(testspec: TestSpec) -> None:
     testspec.run()
 
 

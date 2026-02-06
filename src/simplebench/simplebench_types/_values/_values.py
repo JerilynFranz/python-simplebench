@@ -22,9 +22,6 @@ Example usage:
 
 from collections.abc import Iterator, Sequence
 
-import autopypath  # noqa: F401
-import pytest
-
 from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.simplebench_types import CoreDataSequence
@@ -60,7 +57,6 @@ class Values(CoreDataSequence):
     :param iterable: An iterable of float or int numbers.
     :raises SimpleBenchTypeError: If not an Iterable or contains non-numeric types.
     """
-
     def __init__(self, __values: CoreDataSequence | ElementCollection[int | float] | None = None) -> None:
         """
         Create a new Values instance from an elementcollection of int or float numbers,
@@ -85,6 +81,8 @@ class Values(CoreDataSequence):
         :param iterable: An iterable of float or int numbers.
         :raises SimpleBenchTypeError: If not an Iterable or contains non-numeric types.
         """
+        super().__init__()
+
         if __values is None:
             self._data = tuple()
             _log.debug('Created empty Values instance')
@@ -162,6 +160,13 @@ class Values(CoreDataSequence):
         """Return a string representation of the Values object."""
         return f'Values({self._data!r})'
 
+    # Python disables automatic inheritance of __hash__ when __eq__ is overridden.
+    # To ensure Values remains hashable (using the base implementation), we must
+    # explicitly define __hash__ and delegate to the superclass.
+    def __hash__(self) -> int:
+        """Return the hash of the Values object."""
+        return super().__hash__()
+
     def as_tuple(self) -> tuple[float, ...]:
         """Return the contents of the Values as a tuple.
 
@@ -169,6 +174,3 @@ class Values(CoreDataSequence):
         :rtype: tuple[float, ...]
         """
         return self._data
-
-if __name__ == '__main__':
-   pytest.main([__file__])

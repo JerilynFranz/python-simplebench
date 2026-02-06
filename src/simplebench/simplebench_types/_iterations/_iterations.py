@@ -113,7 +113,9 @@ class Iterations(Mapping['Metric', 'Values'], Immutable):
     def __repr__(self) -> str:
         """Get the string representation of the Iterations.
 
-        .. warning:: THIS IS FOR DEBUGGING AND TESTING PURPOSES ONLY AND WILL PROBABLY BE HUGE.
+        .. warning:: THIS IS FOR DEBUGGING AND TESTING PURPOSES
+            ONLY AND WILL PROBABLY BE HUGE FOR REAL BENCHMARKS.
+            DO NOT USE THIS FOR DISPLAYING ITERATIONS TO USERS.
 
         :returns str: The string representation.
         """
