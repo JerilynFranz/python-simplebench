@@ -90,8 +90,9 @@ def pytest_configure(config: Config) -> None:
     sb_session.parse_args(args)
     sb_session.output_path = Path('.benchmarks')  # Ensure output path is set
 
-    config._simplebench_session: Session = sb_session  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
-    config._simplebench_pytest_reporter: PytestReporter = pytest_reporter  # pylint: disable=protected-access,line-too-long  # type: ignore[reportAttributeAccessIssue]  # noqa: E501
+    # Standard practice for attaching custom attributes to pytest's config object
+    config._simplebench_session: Session = sb_session  # type: ignore[assignment]
+    config._simplebench_pytest_reporter: PytestReporter = pytest_reporter  # type: ignore[assignment]
     log.debug('simplebench configured with session %r and reporter %r', sb_session, pytest_reporter)
 
 

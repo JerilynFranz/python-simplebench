@@ -59,18 +59,17 @@ class Results:
     )
 
     def __init__(
-        self,
-        *,
-        group: str,
-        title: str,
-        description: str,
-        n: float,
-        rounds: int,
-        iterations: Iterations,
-        metrics_timers: MetricsTimers,
-        variation_marks: VariationMarks | None = None,
-        extra_info: Extras,
-    ) -> None:
+            self,
+            *,
+            group: str,
+            title: str,
+            description: str,
+            n: float,
+            rounds: int,
+            iterations: Iterations,
+            metrics_timers: MetricsTimers,
+            variation_marks: VariationMarks | None = None,
+            extra_info: Extras) -> None:
         """Initialize a Results object.
 
         :param group: The reporting group to which the benchmark case belongs.
@@ -105,6 +104,7 @@ class Results:
         self._variation_marks: VariationMarks = _validate.variation_marks(variation_marks)
         self._extra_info = _validate.extra_info(extra_info)
         self._repr_cache: str | None = None  # cache for __repr__
+        self._results_info_cache: reports.ResultsInfo | None = None  # cache for results_info
 
     @property
     def group(self) -> str:

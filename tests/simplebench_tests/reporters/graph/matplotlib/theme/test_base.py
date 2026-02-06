@@ -1,7 +1,7 @@
 """Tests for the Matplotlib Theme base class."""
 import pytest
 
-from tests.testspec import TestSpec, TestAction, idspec, Assert
+from testspec import TestSpec, TestAction, idspec, Assert
 
 from simplebench.reporters.graph.matplotlib.theme.base import Theme
 

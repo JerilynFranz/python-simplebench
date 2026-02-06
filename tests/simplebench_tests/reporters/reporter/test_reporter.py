@@ -56,11 +56,7 @@ def broken_benchcase_missing_kwargs(
     """
     # Nothing inside this actually runs since it's just for testing Reporter's
     # error handling for an invalid function type signature.
-    return Results(  # made-up results for testing purposes
-            group='test_case', title='Test Case',
-            description='A test case for testing.',
-            n=10, rounds=1, total_elapsed=3.0,
-            iterations=[Iteration(elapsed=1.0), Iteration(elapsed=2.0)])
+    return factories.results_factory()
 
 
 class GoodReporterOptions(ReporterOptions):

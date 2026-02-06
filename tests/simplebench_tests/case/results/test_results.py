@@ -1,7 +1,4 @@
 """Tests for the simplebench/results.py module."""
-# ruff: noqa: F401
-
-from enum import Enum
 
 import pytest
 from testspec import Assert, PytestAction, TestAction
@@ -9,7 +6,6 @@ from testspec import Assert, PytestAction, TestAction
 from simplebench.case.results import Results, _ResultsErrorTag
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench_tests import factories
-from simplebench_tests.kwargs import ResultsKWArgs
 
 
 @pytest.mark.parametrize("testspec", [
@@ -65,7 +61,7 @@ from simplebench_tests.kwargs import ResultsKWArgs
         exception_tag=_ResultsErrorTag.TITLE_INVALID_ARG_VALUE),
     PytestAction("INIT_011",
         name="Wrong type for rounds argument (str instead of int)",
-        action=Results, kwargs=factories.results_kwargs_factory().replace(rounds='invalid_type'),  # type: ignore[arg-type]
+        action=Results, kwargs=factories.results_kwargs_factory().replace(rounds='invalid_type'),
         exception=SimpleBenchTypeError,
         exception_tag=_ResultsErrorTag.ROUNDS_INVALID_ARG_TYPE),
     PytestAction("INIT_012",

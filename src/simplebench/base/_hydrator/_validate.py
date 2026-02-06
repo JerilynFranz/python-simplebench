@@ -5,7 +5,7 @@ from collections.abc import Callable, Iterable, Mapping, Sequence, Set
 from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.validators import validate_iterable_of_type, validate_type
+from simplebench.validators import validate_iterable_of_type
 
 from .._typed_dict_key_info import TypedDictKeyInfo
 from ._error_tags import _HydratorErrorTag
@@ -42,12 +42,15 @@ def allowed(allowed_fields: Mapping[str, Any]) -> Mapping[str, Any]:
     :raises: SimpleBenchTypeError if the allowed parameters dictionary is invalid.
     :raises: SimpleBenchValueError if the allowed parameters dictionary is empty.
     """
-    validate_type(allowed_fields, Mapping, 'allowed', _HydratorErrorTag.INVALID_ALLOWED_TYPE)
+    if not isinstance(allowed_fields, Mapping):
+        raise SimpleBenchTypeError(
+            'The `allowed` parameter must be of type `Mapping`',
+            tag=_HydratorErrorTag.INVALID_ALLOWED_TYPE)
 
     if len(allowed_fields) == 0:
         raise SimpleBenchValueError(
-            'The `allowed` dictionary cannot be empty', tag=_HydratorErrorTag.INVALID_ALLOWED_EMPTY
-        )
+            'The `allowed` dictionary cannot be empty',
+            tag=_HydratorErrorTag.INVALID_ALLOWED_EMPTY)
 
     for field in allowed_fields.values():
         # A valid type annotation is either a simple type (like `int`)

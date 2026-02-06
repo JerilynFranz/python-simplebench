@@ -39,7 +39,7 @@ def benchmark_cases_list_factory() -> list[Case]:
     return [
         Case(group='example_without_decorator',
              title='benchcase two',
-             action=benchcase_two,
+             action_wrapper=benchcase_two,
              description='A simple benchmark case function without decorators.',
              variation_cols={},
              kwargs_variations={},
