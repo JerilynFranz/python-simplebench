@@ -15,7 +15,7 @@ from simplebench.simplebench_types import ElementCollection, Extras
 from . import _validate
 
 
-class ChoiceConf(Hashable, ChoiceProtocol, Immutable):
+class ChoiceConf(ChoiceProtocol, Immutable, Hashable):
     """Definition of a :class:`~.Choice` configuration for reporters.
 
     A :class:`~.ChoiceConf` represents a specific configuration of an implied :class:`~.Choice`

@@ -1,12 +1,12 @@
 """Validation functions for simplebench.reporters.choice package."""
-from collections.abc import Hashable
+from collections.abc import Hashable, Sequence
 from typing import Any
 
 from typechecked import is_immutable
 
 from simplebench._log import _log
 from simplebench.enums import FlagType, Format, Target
-from simplebench.exceptions import SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics.metrics_selection import MetricsSelection
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.validators import (
@@ -29,6 +29,11 @@ def flags(value: Any) -> frozenset[str]:
     :raises SimpleBenchValueError: If one or more items in the flags argument is an empty string,
         blank string, or whitespace-only string.
     """
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+        raise SimpleBenchTypeError(
+            'The flags argument is not a Sequence of strings.',
+            tag=_ChoiceConfErrorTag.FLAGS_INVALID_ARG_TYPE,
+        )
     _log.debug('Validating flags: %r', value)
     return frozenset(
             validate_sequence_of_str(

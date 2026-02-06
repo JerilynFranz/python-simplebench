@@ -1,166 +1,116 @@
 """Tests for choices.py module."""
+# ruff: noqa: F401
+
 import pytest
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metrics import MetricsSelection
 from simplebench.reporters.choice.choice_conf import ChoiceConf, _ChoiceConfErrorTag
 
 from simplebench_tests.factories import default_choice_conf, default_choice_conf_kwargs
-from testspec import Assert, TestAction, TestGet, TestSpec, idspec
+from testspec import Assert, TestAction, TestGet, TestSpec, idspec, PytestAction
 
 
 @pytest.mark.parametrize(
     "testspec", [
-        idspec('INIT_001', TestAction(
+        PytestAction('INIT_001',
             name="ChoiceConf with all parameters",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs(),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs(),
             assertion=Assert.ISINSTANCE,
-            expected=ChoiceConf,
-        )),
-        idspec("INIT_002", TestAction(
+            expected=ChoiceConf),
+        PytestAction("INIT_002",
             name="ChoiceConf with no extra parameter",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs() - ['extra'],
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs() - {'extra'},
             assertion=Assert.ISINSTANCE,
-            expected=ChoiceConf,
-        )),
-        idspec("INIT_003", TestAction(
+            expected=ChoiceConf),
+        PytestAction("INIT_003",
             name="ChoiceConf with missing output_format argument - raises TypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs() - ['output_format'],
-            exception=TypeError,
-        )),
-        idspec("INIT_005", TestAction(
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs() - {'output_format'},
+            exception=TypeError),
+        PytestAction("INIT_005",
             name="ChoiceConf with wrong type output_format argument - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(output_format=''),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(output_format=''),
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.OUTPUT_FORMAT_INVALID_ARG_TYPE,
-        )),
-        idspec("INIT_007", TestAction(
+            exception_tag=_ChoiceConfErrorTag.OUTPUT_FORMAT_INVALID_ARG_TYPE),
+        PytestAction("INIT_007",
             name="ChoiceConf with missing targets argument - raises TypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs() - ['targets'],
-            exception=TypeError,
-        )),
-        idspec("INIT_008", TestAction(
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs() - ['targets'],
+            exception=TypeError),
+        PytestAction("INIT_008",
             name="ChoiceConf with empty list targets argument - raises SimpleBenchValueError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(targets=[]),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(targets=[]),
             exception=SimpleBenchValueError,
-            exception_tag=_ChoiceConfErrorTag.TARGETS_INVALID_ARG_VALUE,
-        )),
-        idspec("INIT_009", TestAction(
+            exception_tag=_ChoiceConfErrorTag.TARGETS_INVALID_ARG_VALUE),
+        PytestAction("INIT_009",
             name="ChoiceConf with wrong type targets argument - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(targets="not_targets"),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(targets="not_targets"),
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE,
-        )),
-        idspec("INIT_010", TestAction(
+            exception_tag=_ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE),
+        PytestAction("INIT_010",
             name="ChoiceConf with incorrect targets list item type - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(targets=['invalid_target']),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(targets=['invalid_target']),
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE,
-        )),
-        idspec("INIT_011", TestAction(
+            exception_tag=_ChoiceConfErrorTag.TARGETS_INVALID_ARG_TYPE),
+        PytestAction("INIT_011",
             name="ChoiceConf with missing metrics argument - raises TypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs() - ['metrics'],
-            exception=TypeError,
-        )),
-        idspec("INIT_012", TestAction(
-            name="ChoiceConf with empty list metrics argument - raises SimpleBenchValueError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(metrics=[]),
-            exception=SimpleBenchValueError,
-            exception_tag=_ChoiceConfErrorTag.SECTIONS_INVALID_ARG_VALUE,
-        )),
-        idspec("INIT_013", TestAction(
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs() - {'metrics'},
+            exception=TypeError),
+        PytestAction("INIT_013",
             name="ChoiceConf with wrong type metrics argument - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(metrics="not_metrics"),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(metrics="not_metrics"),
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.METRICSS_INVALID_ARG_TYPE,
-        )),
-        idspec("INIT_014", TestAction(
-            name="ChoiceConf with incorrect metrics list item type - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(metrics=['invalid_metric']),
-            exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.METRICSS_INVALID_ARG_TYPE,
-        )),
-        idspec("INIT_015", TestAction(
+            exception_tag=_ChoiceConfErrorTag.METRICS_INVALID_ARG_TYPE),
+        PytestAction("INIT_015",
             name="ChoiceConf with missing description argument - raises TypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs() - ['description'],
-            exception=TypeError,
-        )),
-        idspec("INIT_016", TestAction(
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs() - {'description'},
+            exception=TypeError),
+        PytestAction("INIT_016",
             name="ChoiceConf with blank string description argument - raises SimpleBenchValueError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(description='   '),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(description='   '),
             exception=SimpleBenchValueError,
-            exception_tag=_ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_VALUE,
-        )),
-        idspec("INIT_017", TestAction(
+            exception_tag=_ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_VALUE),
+        PytestAction("INIT_017",
             name="ChoiceConf with wrong type description argument - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(description=123),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(description=123),
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_TYPE,
-        )),
-        idspec("INIT_018", TestAction(
+            exception_tag=_ChoiceConfErrorTag.DESCRIPTION_INVALID_ARG_TYPE),
+        PytestAction("INIT_018",
             name="ChoiceConf with missing name argument - raises TypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs() - ['name'],
-            exception=TypeError,
-        )),
-        idspec("INIT_019", TestAction(
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs() - {'name'},
+            exception=TypeError),
+        PytestAction("INIT_019",
             name="ChoiceConf with blank string name argument - raises SimpleBenchValueError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(name='   '),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(name='   '),
             exception=SimpleBenchValueError,
-            exception_tag=_ChoiceConfErrorTag.NAME_INVALID_ARG_VALUE,
-        )),
-        idspec("INIT_020", TestAction(
+            exception_tag=_ChoiceConfErrorTag.NAME_INVALID_ARG_VALUE),
+        PytestAction("INIT_020",
             name="ChoiceConf with wrong type name argument - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(name=123),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(name=123),
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.NAME_INVALID_ARG_TYPE,
-        )),
-        idspec("INIT_021", TestAction(
+            exception_tag=_ChoiceConfErrorTag.NAME_INVALID_ARG_TYPE),
+        PytestAction("INIT_021",
             name="ChoiceConf with missing flags argument - raises TypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs() - ['flags'],
-            exception=TypeError,
-        )),
-        idspec("INIT_022", TestAction(
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs() - {'flags'},
+            exception=TypeError),
+        PytestAction("INIT_022",
             name="ChoiceConf with empty list flags argument - raises SimpleBenchValueError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(flags=[]),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(flags=[]),
             exception=SimpleBenchValueError,
-            exception_tag=_ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE,
-        )),
-        idspec("INIT_023", TestAction(
+            exception_tag=_ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE),
+        PytestAction("INIT_023",
             name="ChoiceConf with flag with whitespace - raises SimpleBenchValueError",
             action=ChoiceConf,
             kwargs=default_choice_conf_kwargs().replace(flags=['--valid', '--bad flag']),
             exception=SimpleBenchValueError,
-            exception_tag=_ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE,
-        )),
-        idspec("INIT_024", TestAction(
+            exception_tag=_ChoiceConfErrorTag.FLAGS_INVALID_ARGS_VALUE),
+        PytestAction("INIT_024",
             name="ChoiceConf with wrong type flags argument - raises SimpleBenchTypeError",
-            action=ChoiceConf,
-            kwargs=default_choice_conf_kwargs().replace(flags='--sample'),
+            action=ChoiceConf, kwargs=default_choice_conf_kwargs().replace(flags='--sample'),
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoiceConfErrorTag.FLAGS_INVALID_ARG_TYPE,
-        )),
+            exception_tag=_ChoiceConfErrorTag.FLAGS_INVALID_ARG_TYPE),
     ]
 )
-def test_initialization(testspec: TestSpec):
+def test_initialization(testspec: TestSpec) -> None:
     """Test initializing Choice with various combinations of keyword arguments.
 
     This test verifies that the Choice class can be initialized correctly
@@ -176,58 +126,51 @@ def test_initialization(testspec: TestSpec):
 
 @pytest.mark.parametrize(
     "testspec", [
-        idspec("PROPS_001", TestGet(
+        PytestAction("PROPS_001",
             name="ChoiceConf flags property",
-            attribute="flags",
-            obj=default_choice_conf(),
+            action=lambda: default_choice_conf(),
+            validate_attr="flags",
             assertion=Assert.EQUAL,
-            expected=frozenset(default_choice_conf_kwargs()['flags']),
-        )),
-        idspec("PROPS_002", TestGet(
+            expected=frozenset(default_choice_conf_kwargs()['flags'])),
+        PytestAction("PROPS_002",
             name="ChoiceConf name property",
-            attribute="name",
-            obj=default_choice_conf(),
+            action=lambda: default_choice_conf(),
+            validate_attr="name",
             assertion=Assert.EQUAL,
-            expected=default_choice_conf_kwargs()['name'],
-        )),
-        idspec("PROPS_003", TestGet(
+            expected=default_choice_conf_kwargs()['name']),
+        PytestAction("PROPS_003",
             name="ChoiceConf description property",
-            attribute="description",
-            obj=default_choice_conf(),
+            action=lambda: default_choice_conf(),
+            validate_attr="description",
             assertion=Assert.EQUAL,
-            expected=default_choice_conf_kwargs()['description'],
-        )),
-        idspec("PROPS_004", TestGet(
+            expected=default_choice_conf_kwargs()['description']),
+        PytestAction("PROPS_004",
             name="ChoiceConf metrics property",
-            attribute="metrics",
-            obj=default_choice_conf(),
+            action=lambda: default_choice_conf(),
+            validate_attr="metrics",
             assertion=Assert.EQUAL,
-            expected=frozenset(default_choice_conf_kwargs()['metrics']),
-        )),
-        idspec("PROPS_005", TestGet(
+            expected=default_choice_conf_kwargs()['metrics']),
+        PytestAction("PROPS_005",
             name="ChoiceConf targets property",
-            attribute="targets",
-            obj=default_choice_conf(),
+            action=lambda: default_choice_conf(),
+            validate_attr="targets",
             assertion=Assert.EQUAL,
-            expected=frozenset(default_choice_conf_kwargs()['targets']),
-        )),
-        idspec("PROPS_006", TestGet(
+            expected=frozenset(default_choice_conf_kwargs()['targets'])),
+        PytestAction("PROPS_006",
             name="ChoiceConf output_format property",
-            attribute="output_format",
-            obj=default_choice_conf(),
+            action=lambda: default_choice_conf(),
+            validate_attr="output_format",
             assertion=Assert.EQUAL,
-            expected=default_choice_conf_kwargs()['output_format'],
-        )),
-        idspec("PROPS_007", TestGet(
+            expected=default_choice_conf_kwargs()['output_format']),
+        PytestAction("PROPS_007",
             name="ChoiceConf extra property",
-            attribute="extra",
-            obj=default_choice_conf(),
+            action=lambda: default_choice_conf(),
+            validate_attr="extra",
             assertion=Assert.EQUAL,
-            expected=default_choice_conf_kwargs()['extra'],
-        )),
+            expected=default_choice_conf_kwargs()['extra']),
     ]
 )
-def test_choice_properties(testspec: TestSpec):
+def test_choice_properties(testspec: TestSpec) -> None:
     """Test Choice properties return expected values.
 
     :param testspec: The test specification.

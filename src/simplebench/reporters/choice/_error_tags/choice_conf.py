@@ -27,6 +27,8 @@ class _ChoiceConfErrorTag(ErrorTag):
     """The description argument is an empty string or blank string."""
     METRICS_INVALID_ARG_TYPE = 'METRICS_INVALID_ARG_TYPE'
     """The metrics argument is not a MetricsSelection instance."""
+    METRICS_INVALID_ARG_VALUE = 'METRICS_INVALID_ARG_VALUE'
+    """Empty MetricsSelection instance provided for metrics argument."""
     TARGETS_INVALID_ARG_TYPE = 'TARGETS_INVALID_ARG_TYPE'
     """The targets argument is not a Sequence of Target enum values."""
     TARGETS_INVALID_ARG_VALUE = 'TARGETS_INVALID_ARG_VALUE'
