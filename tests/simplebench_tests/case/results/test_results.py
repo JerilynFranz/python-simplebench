@@ -1,4 +1,5 @@
 """Tests for the simplebench/results.py module."""
+# ruff: noqa: F401
 
 from enum import Enum
 from functools import cache
@@ -15,6 +16,7 @@ from simplebench.defaults import (
 )
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric, metric_types_registry
+from simplebench.simplebench_types import Iterations
 
 from ...kwargs import ResultsKWArgs
 

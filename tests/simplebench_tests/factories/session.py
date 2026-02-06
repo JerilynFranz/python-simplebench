@@ -105,7 +105,7 @@ def session_kwargs_factory(cache_id: CacheId = None) -> SessionKWArgs:
 
     Defaults:
         - cases: A list containing a single case created by `case_factory()`.
-        - default_runner: A runner created by `runner_factory()`.
+        - default_runners: A runners tuple created by `default_runners()`.
         - args_parser: An ArgumentParser instance with program name 'simplebench'.
         - verbosity: Verbosity.QUIET
         - progress: A rich Progress instance created by `progress_factory()`.

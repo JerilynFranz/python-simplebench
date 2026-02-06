@@ -1,5 +1,5 @@
 """Tests for the session.py module."""
-from __future__ import annotations
+# ruff: noqa: F401
 
 import sys
 from argparse import ArgumentParser
@@ -10,16 +10,18 @@ from typing import Any
 import pytest
 from rich.console import Console
 from rich.progress import Progress
-from testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, idspec
+from testspec import NO_EXPECTED_VALUE, Assert, TestAction, TestGet, TestSpec, idspec, PytestAction, PytestGet
 
-from simplebench import Case, Results, Session, Verbosity
-from simplebench.benchmark_runner import SimpleRunner
+from simplebench import Case, Results, Verbosity
+from simplebench.benchmark_runner import SimpleRunner, BenchmarkRunner
 from simplebench.display.rich_progress_tasks import RichProgressTasks
-from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError, _SessionErrorTag
+from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError
 from simplebench.reporters.choice import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
 from simplebench.reporters.csv import CSVConfig
 from simplebench.reporters.reporter_manager import ReporterManager
+from simplebench.session import Session, _SessionErrorTag
+from simplebench.simplebench_types import VariationMarks
 from simplebench.utils import collect_arg_list, flag_to_arg
 
 from .factories import session_factory, session_kwargs_factory
@@ -29,28 +31,30 @@ _SAVED_ARGV = sys.argv.copy()
 """Saved copy of sys.argv for restoring after tests."""
 
 
-def benchcase(bench: SimpleRunner, **kwargs) -> Results:
+def benchcase(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
     """A simple benchmark case function.
 
     :param bench: The benchmark runner.
-    :param kwargs: Keyword arguments for the benchmark.
+    :type bench: BenchmarkRunner
+    :param variation_marks: Variation marks for the benchmark.
+    :type variation_marks: VariationMarks
     :return: The benchmark results.
     """
 
     def action() -> None:
         """A simple benchmark case function."""
         sum(range(1000))  # Example operation to benchmark
-    return bench.run(n=1000, action=action, **kwargs)
+    return bench.run(n=1000, action=action, variation_marks=variation_marks)
 
 
 @pytest.mark.parametrize("testspec", [
-    idspec("INIT_001", TestAction(
+    PytestAction("INIT_001",
         name="No parameters - all defaults",
         action=Session,
         assertion=Assert.ISINSTANCE,
         expected=Session,
-    )),
-    idspec("INIT_002", TestAction(
+    ),
+    PytestAction("INIT_002",
         name="All Session parameters set to valid values",
         action=Session,
         kwargs=SessionKWArgs(
@@ -61,7 +65,7 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
                      action_wrapper=benchcase)
             ],
             verbosity=Verbosity.VERBOSE,
-            default_runner=SimpleRunner,
+            default_runners=[SimpleRunner],
             args_parser=ArgumentParser(prog="testprog"),
             show_progress=True,
             output_path=Path("/tmp/output"),
@@ -69,82 +73,65 @@ def benchcase(bench: SimpleRunner, **kwargs) -> Results:
         ),
         assertion=Assert.ISINSTANCE,
         expected=Session,
-    )),
-    idspec("INIT_003", TestAction(
+    ),
+    PytestAction("INIT_003",
         name="Invalid type for 'cases' parameter (string instead of Sequence[Case])",
-        action=Session,
-        kwargs=SessionKWArgs(
-            # Invalid type for 'cases' parameter (str instead of Sequence[Case])
-            cases="not a sequence of cases",  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-        ),
+        action=Session, kwargs=SessionKWArgs(cases="not a sequence of cases"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_CASE_ARG_IN_SEQUENCE
-    )),
-    idspec("INIT_004", TestAction(
+    ),
+    PytestAction("INIT_004",
         name="Invalid type for 'cases' parameter (not a sequence)",
-        action=Session,
-        kwargs=SessionKWArgs(
-            # Invalid type for 'cases' parameter (not a sequence)
-            cases=12345,  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-        ),
+        action=Session, kwargs=SessionKWArgs(cases=12345),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_CASES_ARG
-    )),
-    idspec("INIT_005", TestAction(
+    ),
+    PytestAction("INIT_005",
         name="Invalid type for 'verbosity' parameter (string instead of Verbosity)",
-        action=Session,
-        kwargs=SessionKWArgs(
-            verbosity="not a Verbosity instance"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        action=Session, kwargs=SessionKWArgs(verbosity="not a Verbosity instance"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_VERBOSITY_ARG
-    )),
-    idspec("INIT_006", TestAction(
+    ),
+    PytestAction("INIT_006",
         name="Invalid type for 'default_runner' parameter (string instead of type[SimpleRunner])",
-        action=Session,
-        kwargs=SessionKWArgs(
-            default_runner="not a runner class"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        action=Session, kwargs=SessionKWArgs(default_runners="not a runner class"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
-    )),
-    idspec("INIT_007", TestAction(
+    ),
+    PytestAction("INIT_007",
         name="Invalid type for 'default_runner' parameter (not a SimpleRunner subclass type but is a type)",
-        action=Session,
-        kwargs=SessionKWArgs(default_runner=Case),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        action=Session, kwargs=SessionKWArgs(default_runners=Case),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_DEFAULT_RUNNER_ARG
-    )),
-    idspec("INIT_008", TestAction(
+    ),
+    PytestAction("INIT_008",
         name="Invalid type for 'args_parser' parameter (string instead of ArgumentParser)",
         action=Session,
-        kwargs=SessionKWArgs(
-            args_parser="not an ArgumentParser"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        kwargs=SessionKWArgs(args_parser="not an ArgumentParser"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_ARGSPARSER_ARG
-    )),
-    idspec("INIT_009", TestAction(
+    ),
+    PytestAction("INIT_009",
         name="Invalid type for 'progress' parameter (string instead of bool)",
         action=Session,
-        kwargs=SessionKWArgs(
-            show_progress="not a bool"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        kwargs=SessionKWArgs(show_progress="not a bool"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_PROGRESS_ARG
-    )),
-    idspec("INIT_010", TestAction(
+    ),
+    PytestAction("INIT_010",
         name="Invalid type for 'output_path' parameter (string instead of Path)",
         action=Session,
-        kwargs=SessionKWArgs(
-            output_path="not a Path"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        kwargs=SessionKWArgs(output_path="not a Path"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_OUTPUT_PATH_ARG
-    )),
-    idspec("INIT_011", TestAction(
+    ),
+    PytestAction("INIT_011",
         name="Invalid type for 'console' parameter (string instead of Console)",
         action=Session,
-        kwargs=SessionKWArgs(
-            console="not a Console"),  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        kwargs=SessionKWArgs(console="not a Console"),  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PROPERTY_INVALID_CONSOLE_ARG
-    )),
+    ),
 ])
 def test_session_init(testspec: TestSpec) -> None:
     """Tests the initialization of the Session class with various combinations of parameters.
@@ -159,26 +146,32 @@ def test_session_init(testspec: TestSpec) -> None:
     testspec.run()
 
 
-def pre_action(extras: dict[str, Any]) -> None:
-    """Helper function to perform pre-action tasks.
+def setup(extras: dict[str, Any]) -> None:
+    """Helper function to perform setup tasks.
+
+    It checks for a "setup" key in the extras dictionary
+    and calls the associated function with any provided "setup_args".
 
     :param extras: A dictionary of extra arguments.
     :type extras: dict[str, Any]
     """
-    if extras and "pre_action" in extras:
-        pre_args = extras.get("pre_action_args", [])
-        extras["pre_action"](*pre_args)
+    if extras and "setup" in extras:
+        setup_args = extras.get("setup_args", [])
+        extras["setup"](*setup_args)
 
 
-def post_action(extras: dict[str, Any]) -> None:
-    """Helper function to perform post-action tasks.
+def teardown(extras: dict[str, Any]) -> None:
+    """Helper function to perform teardown tasks.
+
+    It checks for a "teardown" key in the extras dictionary
+    and calls the associated function with any provided "teardown_args".
 
     :param extras: A dictionary of extra arguments.
     :type extras: dict[str, Any]
     """
-    if extras and "post_action" in extras:
-        post_args = extras.get("post_action_args", [])
-        extras["post_action"](*post_args)
+    if extras and "teardown" in extras:
+        teardown_args = extras.get("teardown_args", [])
+        extras["teardown"](*teardown_args)
 
 
 def restore_argv() -> None:
@@ -207,18 +200,18 @@ def set_argv(args: list[str]) -> None:
 def parseargs_helper(args: list[str]) -> dict[str, Any]:
     """Helper function to configure extra args for argparse testing.
 
-    This function returns a dictionary with pre_action and post_action keys
+    This function returns a dictionary with setup and teardown keys
     to set and restore sys.argv around a test action.
 
     :param args: A list of strings to set as sys.argv.
     :type args: list[str]
-    :return: A dictionary with pre_action and post_action keys.
+    :return: A dictionary with setup and teardown keys.
     :rtype: dict[str, Any]
     """
     if not isinstance(args, list) or not all(isinstance(arg, str) for arg in args):
         raise ValueError("args must be a list of strings")
-    return {"pre_action": set_argv, "pre_action_args": [args],
-            "post_action": restore_argv, "post_action_args": []}
+    return {"setup": set_argv, "setup_args": [args],
+            "teardown": restore_argv, "teardown_args": []}
 
 
 @cache
@@ -232,38 +225,34 @@ def session_instance() -> Session:
 
 
 @pytest.mark.parametrize("testspec", [
-    idspec("PARSE_ARGS_UNINIT_001", TestAction(
+    PytestAction("PARSE_ARGS_UNINIT_001",
         name="Parse sys.argv --help with uninitialized argparser",
         action=Session().parse_args,
         exception=SystemExit,  # argparse throws SystemExit on --help
-        extra=parseargs_helper(["--help"]))),
-    idspec("PARSE_ARGS_UNINIT_002", TestAction(
+        extra=parseargs_helper(["--help"])),
+    PytestAction("PARSE_ARGS_UNINIT_002",
         name="Parse passed args with uninitialized argparser",
-        action=Session().parse_args,
-        kwargs={"args": ["--help"]},
-        exception=SystemExit)),  # argparse throws SystemExit on --help
-    idspec("PARSE_ARGS_UNINT_003", TestAction(
+        action=Session().parse_args, kwargs={"args": ["--help"]},
+        exception=SystemExit),  # argparse throws SystemExit on --help
+    PytestAction("PARSE_ARGS_UNINT_003",
         name="Parse empty args with uninitialized argparser",
-        action=Session().parse_args,
-        kwargs={"args": []},
-        expected=NO_EXPECTED_VALUE)),
-    idspec("PARSE_ARGS_UNINIT_004", TestAction(
+        action=Session().parse_args, kwargs={"args": []},
+        expected=NO_EXPECTED_VALUE),
+    PytestAction("PARSE_ARGS_UNINIT_004",
         name="Parse sys.argv '--quiet' with uninitialized argparser",
         action=Session().parse_args,
         exception=SystemExit,   # With no options set, argparse should error on unknown args
-        extra=parseargs_helper(["--quiet"]))),
-    idspec("PARSE_ARGS_UNINIT_005", TestAction(
+        extra=parseargs_helper(["--quiet"])),
+    PytestAction("PARSE_ARGS_UNINIT_005",
         name="Parse args - invalid type (int) with uninitialized argparser",
-        action=Session().parse_args,
-        kwargs={"args": 123},  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        action=Session().parse_args, kwargs={"args": 123},  # type: ignore[arg-type]
         exception=SimpleBenchTypeError,
-        exception_tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)),
-    idspec("PARSE_ARGS_UNINIT_006", TestAction(
+        exception_tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE),
+    PytestAction("PARSE_ARGS_UNINIT_006",
         name="Parse args - invalid type (list with non-str) with uninitialized argparser",
-        action=Session().parse_args,
-        kwargs={"args": ["--json", 123]},  # type: ignore[list-item]  # pyright: ignore[reportArgumentType]
+        action=Session().parse_args, kwargs={"args": ["--json", 123]},  # type: ignore[list-item]
         exception=SimpleBenchTypeError,
-        exception_tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE)),
+        exception_tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE),
 ])
 def test_uninitialized_parse_args(testspec: TestAction) -> None:
     """Tests the parse_args method of the Session class.
@@ -271,9 +260,9 @@ def test_uninitialized_parse_args(testspec: TestAction) -> None:
     :param testspec: The test specification to run.
     :type testspec: TestAction
     """
-    pre_action(testspec.extra)
+    setup(testspec.extra)
     testspec.run()
-    post_action(testspec.extra)
+    teardown(testspec.extra)
 
 
 @cache
@@ -294,25 +283,22 @@ NO_ATTRIBUTE = object()
 def parse_args_testspecs() -> list[TestAction]:
     """Generate testspecs for the parse_args method of a Session instance with reporters loaded."""
     testspecs: list[TestAction] = [
-        idspec("PARSE_ARGS_001", TestAction(
+        PytestAction("PARSE_ARGS_001",
             name="Parse '--help' with initialized argparser",
-            action=session_factory(cache_id='PARSE_ARGS_001').parse_args,
-            args=[["--help"]],
-            exception=SystemExit)),  # argparse throws SystemExit on --help
-        idspec("PARSE_ARGS_002", TestAction(
+            action=session_factory(cache_id='PARSE_ARGS_001').parse_args, args=[["--help"]],
+            exception=SystemExit),  # argparse throws SystemExit on --help
+        PytestAction("PARSE_ARGS_002",
             name="Parse '--json' with initialized argparser (.json should be [['console']])",
-            action=session_factory(cache_id='PARSE_ARGS_002').parse_args,
+            action=session_factory(cache_id='PARSE_ARGS_002').parse_args, args=[["--json", "console"]],
             obj=session_factory(cache_id='PARSE_ARGS_002'),
-            args=[["--json", "console"]],
             validate_obj=lambda obj: collect_arg_list(args=obj.args, flag="--json") == ["console"],
-            expected=NO_EXPECTED_VALUE)),
-        idspec("PARSE_ARGS_003", TestAction(
+            expected=NO_EXPECTED_VALUE),
+        PytestAction("PARSE_ARGS_003",
             name="Parse no arguments with initialized argparser (.json should be False)",
-            action=session_factory(cache_id='PARSE_ARGS_003').parse_args,
+            action=session_factory(cache_id='PARSE_ARGS_003').parse_args, args=[[]],
             obj=session_factory(cache_id='PARSE_ARGS_003'),
-            args=[[]],
             validate_obj=lambda obj: not obj.args.json,
-            expected=NO_EXPECTED_VALUE)),
+            expected=NO_EXPECTED_VALUE),
     ]
     return testspecs
 
@@ -324,86 +310,90 @@ def test_parse_args(testspec: TestAction) -> None:
     :param testspec: The test specification to run.
     :type testspec: TestAction
     """
-    pre_action(testspec.extra)
+    setup(testspec.extra)
     testspec.run()
-    post_action(testspec.extra)
+    teardown(testspec.extra)
 
 
-def reading_properties_testspec() -> list[TestAction]:
-    """Generate testspecs for reading Session properties."""
+def reading_properties_testspec() -> list[TestSpec]:
+    """Generate testspecs for reading Session properties.
+
+    :return: A list of TestSpecs for testing Session properties.
+    :rtype: list[TestSpec]
+    """
     session_kwargs = session_kwargs_factory()
-    session = Session(**session_kwargs)
-    testspecs: list[TestAction] = [
-        idspec("READ_PROP_001", TestGet(
+
+    testspecs: list[TestSpec] = [
+        PytestAction("READ_PROP_001",
             name="Read 'cases' property",
-            obj=session,
-            attribute="cases",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="cases",
             assertion=Assert.EQUAL,
-            expected=tuple(session_kwargs['cases']),
-        )),
-        idspec("READ_PROP_002", TestGet(
-            name="Read 'default_runner' property",
-            obj=session,
-            attribute="default_runner",
+            expected=session_kwargs['cases'],
+        ),
+        PytestAction("READ_PROP_002",
+            name="Read 'default_runners' property",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="default_runners",
             assertion=Assert.IS,
-            expected=session_kwargs['default_runner'],
-        )),
-        idspec("READ_PROP_003", TestGet(
+            expected=session_kwargs['default_runners'],
+        ),
+        PytestAction("READ_PROP_003",
             name="Read 'args_parser' property",
-            obj=session,
-            attribute="args_parser",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="args_parser",
             assertion=Assert.IS,
             expected=session_kwargs['args_parser'],
-        )),
-        idspec("READ_PROP_004", TestGet(
+        ),
+        PytestAction("READ_PROP_004",
             name="Read 'verbosity' property",
-            obj=session,
-            attribute="verbosity",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="verbosity",
             assertion=Assert.EQUAL,
             expected=session_kwargs['verbosity'],
-        )),
-        idspec("READ_PROP_005", TestGet(
+        ),
+        PytestAction("READ_PROP_005",
             name="Read 'progress' property",
-            obj=session,
-            attribute="progress",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="progress",
             assertion=Assert.ISINSTANCE,
             expected=Progress,
-        )),
-        idspec("READ_PROP_006", TestGet(
+        ),
+        PytestAction("READ_PROP_006",
             name="Read 'output_path' property",
-            obj=session,
-            attribute="output_path",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="output_path",
             assertion=Assert.IS,
             expected=session_kwargs['output_path'],
-        )),
-        idspec("READ_PROP_007", TestGet(
+        ),
+        PytestAction("READ_PROP_007",
             name="Read 'console' property",
-            obj=session,
-            attribute="console",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="console",
             assertion=Assert.IS,
             expected=session_kwargs['console'],
-        )),
-        idspec("READ_PROP_008", TestGet(
+        ),
+        PytestAction("READ_PROP_008",
             name="Read 'show_progress' property",
-            obj=session,
-            attribute="show_progress",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="show_progress",
             assertion=Assert.EQUAL,
             expected=session_kwargs['show_progress'],
-        )),
-        idspec("READ_PROP_009", TestGet(
+        ),
+        PytestAction("READ_PROP_009",
             name="Read 'reporter_manager' property",
-            obj=session,
-            attribute="reporter_manager",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="reporter_manager",
             assertion=Assert.ISINSTANCE,
             expected=ReporterManager,
-        )),
-        idspec("READ_PROP_010", TestGet(
+        ),
+        PytestAction("READ_PROP_010",
             name="Read 'tasks' property",
-            obj=session,
-            attribute="tasks",
+            action=Session, kwargs=session_kwargs,
+            validate_attr="tasks",
             assertion=Assert.ISINSTANCE,
             expected=RichProgressTasks,
-        )),
+        ),
     ]
 
     return testspecs
