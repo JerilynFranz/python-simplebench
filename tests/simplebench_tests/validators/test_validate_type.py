@@ -61,7 +61,7 @@ TEST_STRING: str = 'asbc'
         exception=SimpleBenchTypeError,
         exception_tag=_ValidatorsErrorTag.VALIDATE_TYPE_INVALID_ERROR_TAG_TYPE)),
 ])
-def test_param(testspec: TestSpec):
+def test_param(testspec: TestSpec) -> None:
     """Tests for validate_string parameters validation.
 
     :param testspec: The test specification.
@@ -127,7 +127,7 @@ def test_param(testspec: TestSpec):
         assertion=Assert.IS,
         expected=TEST_STRING)),
 ])
-def test_validate_type(testspec: TestSpec):
+def test_validate_type(testspec: TestSpec) -> None:
     """Tests for validate_type validation.
 
     :param testspec: The test specification.

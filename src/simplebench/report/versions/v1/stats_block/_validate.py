@@ -271,7 +271,7 @@ def percentiles(value: Values | Sequence[float | int] | None, measurements_value
             _StatsBlockErrorTag.INVALID_PERCENTILES_CONTENT_TYPE,
             allow_empty=False,
         )
-        validated_values = Values(float(x) for x in validated_list)
+        validated_values = Values(tuple(float(x) for x in validated_list))
 
     else:
         validated_values = value
@@ -283,7 +283,7 @@ def percentiles(value: Values | Sequence[float | int] | None, measurements_value
         )
 
     # Verify that the percentiles are sorted in ascending order
-    if Values(sorted(validated_values)) != validated_values:
+    if Values(sorted(validated_values.as_tuple())) != validated_values.as_tuple():
         raise SimpleBenchValueError(
             'percentiles must be sorted in ascending order', tag=_StatsBlockErrorTag.INVALID_PERCENTILES_ORDER
         )

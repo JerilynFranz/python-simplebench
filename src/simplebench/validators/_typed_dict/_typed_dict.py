@@ -15,7 +15,7 @@ from ._error_tags import _TypedDictErrorTag
 
 _CACHE = ValidationCache(min_cache_size=100, max_cache_size=16384)
 
-T = TypeVar('T', bound=TypedDict)  # type: ignore[invalidTypeForm]
+T = TypeVar('T', bound=TypedDict)  # type: ignore[invalidTypeForm,valid-type]
 
 
 def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
@@ -106,7 +106,7 @@ def is_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> TypeGuard[T
 
 def _validate_and_check_immutability_of_mimic(
     data: Mapping[str, Any],
-    td_cls: type[TypedDict],  # type: ignore[invalidTypeForm]
+    td_cls: type[TypedDict],  # type: ignore
     parents: set[int] | None = None,
     raise_on_error: bool = True,
 ) -> tuple[bool, bool]:

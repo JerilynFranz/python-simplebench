@@ -91,7 +91,7 @@ class ReportElement(Hydrator, Immutable, ABC):
             that is type cast to the requested ReportElementTypedDict subclass.
         :raises SimpleBenchTypeError: If any attribute cannot be converted to a dictionary.
         """
-        property_keys = self.init_params(dict_type).keys()
+        property_keys = self.init_params(dict_type).keys()  # type: ignore
         data: dict[str, Any] = {}
 
         # This loop handles calling to_dict on any properties that

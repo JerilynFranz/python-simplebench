@@ -668,12 +668,12 @@ class Session:
     def epoch_timestamp(self) -> float:
         """The timestamp in seconds since epoch for the session."""
         if not self._epoch_timestamp:
-            self._epoch_timestamp: float = datetime.now().timestamp()
+            self._epoch_timestamp = datetime.now().timestamp()
         return self._epoch_timestamp
 
     @property
     def timestamp(self) -> str:
         """The ISO 8601 formatted timestamp string in UTC for the session."""
         if not self._timestamp:
-            self._timestamp: str = timestamp_to_iso8601(self.epoch_timestamp)
+            self._timestamp = timestamp_to_iso8601(self.epoch_timestamp)
         return self._timestamp

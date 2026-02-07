@@ -54,4 +54,4 @@ def kwargs_variations(kwargs: dict[str, Sequence[Any]]) -> list[dict[str, Any]]:
     if not keys:
         return [{}]
     values = [kwargs[key] for key in keys]
-    return [dict(zip(keys, v)) for v in itertools.product(*values)]
+    return [dict(zip(keys, v, strict=True)) for v in itertools.product(*values)]

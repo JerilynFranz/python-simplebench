@@ -21,7 +21,7 @@ from simplebench.session import Session
 from simplebench.simplebench_types import KWArgsVariations, VariationCols, VariationMarks
 
 
-def mock_action(*arg, **kwargs) -> None:  # pylint: disable=unused-argument
+def mock_action(*arg, **kwargs) -> None:  # noqa: ANN002,ANN003
     """A mock action that does nothing.
 
     :param arg: Positional arguments.
@@ -163,7 +163,7 @@ def test_decorator_invalid_title_type() -> None:
     # Invalid title type (not a string)
     with pytest.raises(SimpleBenchTypeError) as excinfo:
         @benchmark('test', title=123)  # type: ignore
-        def invalid_title_type():  # pragma: no cover
+        def invalid_title_type() -> None:  # pragma: no cover
             pass
     assert excinfo.value.tag_code == _BenchmarkErrorTag.BENCHMARK_TITLE_TYPE, (
         f"Wrong tag code: Expected {_BenchmarkErrorTag.BENCHMARK_TITLE_TYPE.name}, "
@@ -177,7 +177,7 @@ def test_decorator_blank_title() -> None:
     # Empty title value (only whitespace)
     with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
         @benchmark('test', title='   ')
-        def empty_title_value():  # pragma: no cover
+        def empty_title_value() -> None:  # pragma: no cover
             pass
     assert excinfo.value.tag_code == _BenchmarkErrorTag.BENCHMARK_TITLE_VALUE, (
         f"Wrong tag code: Expected {_BenchmarkErrorTag.BENCHMARK_TITLE_VALUE.name}, "
@@ -191,7 +191,7 @@ def test_decorator_invalid_description_type() -> None:
     # Invalid description type (not a string)
     with pytest.raises(SimpleBenchTypeError) as excinfo:
         @benchmark('test', title='Valid Title', description=456)  # type: ignore
-        def invalid_description_type():    # pragma: no cover
+        def invalid_description_type() -> None:    # pragma: no cover
             pass
     assert excinfo.value.tag_code == _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_TYPE, (
         f"Wrong tag code: Expected {_BenchmarkErrorTag.BENCHMARK_DESCRIPTION_TYPE.name}, "
@@ -205,7 +205,7 @@ def test_decorator_blank_description() -> None:
     # Empty description value (only whitespace)
     with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
         @benchmark('test', title='Valid Title', description='   ')
-        def empty_description_value():  # pragma: no cover
+        def empty_description_value() -> None:  # pragma: no cover
             pass
     assert excinfo.value.tag_code == _BenchmarkErrorTag.BENCHMARK_DESCRIPTION_VALUE, (
         f"Wrong tag code: Expected {_BenchmarkErrorTag.BENCHMARK_DESCRIPTION_VALUE.name}, "
@@ -489,7 +489,7 @@ def test_decorator_invalid_kwargs_variations_key_value() -> None:
     # Invalid kwargs_variations key (blank string)
     with pytest.raises(SimpleBenchValueError) as excinfo:  # type: ignore[assignment]
         @benchmark('test', title='Valid Title', kwargs_variations={' ': [1, 2, 3]})
-        def empty_kwargs_variations_key_value():  # pragma: no cover
+        def empty_kwargs_variations_key_value() -> None:  # pragma: no cover
             pass
     assert excinfo.value.tag_code == _CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER, (
         f"Expected {_CaseErrorTag.INVALID_KWARGS_VARIATIONS_ENTRY_KEY_NOT_IDENTIFIER.name}, "

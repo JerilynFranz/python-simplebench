@@ -1,12 +1,17 @@
 """Tests for simplebench.reporters.choices_conf module."""
 import pytest
+from testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.reporters.choices import Choices, _ChoicesErrorTag
-
-from simplebench_tests.factories import choice_conf_factory, choice_factory, choices_factory, default_choice_name, reporter_factory
+from simplebench_tests.factories import (
+    choice_conf_factory,
+    choice_factory,
+    choices_factory,
+    default_choice_name,
+    reporter_factory,
+)
 from simplebench_tests.kwargs import ChoicesKWArgs
-from testspec import Assert, TestAction, TestGet, TestSpec, idspec
 
 
 @pytest.mark.parametrize(
@@ -56,7 +61,7 @@ from testspec import Assert, TestAction, TestGet, TestSpec, idspec
         )),
     ]
 )
-def test_choices_init(testspec: TestSpec):
+def test_choices_init(testspec: TestSpec) -> None:
     """Test initializing Choices with various combinations of keyword arguments.
 
     This test verifies that the Choices class can be initialized correctly

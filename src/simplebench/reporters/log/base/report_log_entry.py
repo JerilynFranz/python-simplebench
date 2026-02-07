@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any
 
 import simplejson
 
-from simplebench import environment
 from simplebench.exceptions import SimpleBenchNotImplementedError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.type_proxies import is_case, is_choice
 from simplebench.utils import timestamp_to_iso8601

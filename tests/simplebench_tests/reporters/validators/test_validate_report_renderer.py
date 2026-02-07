@@ -37,7 +37,7 @@ class MockReporter(Reporter):
     _OPTIONS_KWARGS: ClassVar[dict[str, Any]] = {}
     """The default keyword arguments for the MockReporterOptions subclass."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(reporter_config_factory())
 
     def run_report(self,
@@ -120,7 +120,7 @@ class MockReporter(Reporter):
         return "Invalid Mock Report render method that has options parameter of wrong type"  # pragma: no cover
 
     def invalid_render_options_missing_type_hint(
-            self, *, case: Case, metric: Metric, options) -> str:  # pylint: disable=unused-argument  # noqa: E501
+            self, *, case: Case, metric: Metric, options) -> str:  # noqa: ANN001,E501
         """An invalid render method for testing purposes.
 
         :param case: The benchmark case.
@@ -162,7 +162,7 @@ class MockReporter(Reporter):
         return "Invalid Mock Report render method that has metric parameter of wrong type"  # pragma: no cover
 
     def invalid_render_metric_missing_type_hint(
-            self, *, case: Case, metric, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
+            self, *, case: Case, metric, options: ReporterOptions) -> str:  # noqa: ANN001,E501
         """An invalid render method for testing purposes.
 
         :param case: The benchmark case.
@@ -204,7 +204,7 @@ class MockReporter(Reporter):
         return "Invalid Mock Report render method that has case parameter of wrong type"  # pragma: no cover
 
     def invalid_render_case_missing_type_hint(
-            self, *, case, metric: Metric, options: ReporterOptions) -> str:  # pylint: disable=unused-argument,line-too-long  # noqa: E501
+            self, *, case, metric: Metric, options: ReporterOptions) -> str:  # noqa: ANN001,E501
         """An invalid render method for testing purposes.
 
         :param case: The benchmark case.
@@ -267,7 +267,7 @@ class MockReporter(Reporter):
         """
         return (42, 3.14)  # Invalid return type (should be str, bytes, Text, or Table) # pragma: no cover
 
-    def invalid_render_missing_return_type(  # pylint: disable=unused-argument
+    def invalid_render_missing_return_type(  # noqa: ANN201
             self, *,
             case: Case,
             metric: Metric,

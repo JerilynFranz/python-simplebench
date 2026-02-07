@@ -17,7 +17,7 @@ class ObjectWrapper:
 
     __slots__ = ('obj', '__weakref__')
 
-    def __init__(self, obj: Any):
+    def __init__(self, obj: Any) -> None:
         """Initialize the ObjectWrapper.
 
         :param Any obj: The object to wrap.

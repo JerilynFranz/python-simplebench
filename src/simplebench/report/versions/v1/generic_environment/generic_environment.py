@@ -21,7 +21,7 @@ from typing import Any
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
 from simplebench.report.base import Environment, JSONSchema
-from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, CoreDataMapping
+from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataMapping, CoreDataTypes
 from simplebench.validators import validate_core_data_mapping
 
 from . import _validate
@@ -122,7 +122,7 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         elif isinstance(data, Set):
             sorted_data = data
             try:
-                sorted_data = sorted(data)
+                sorted_data = sorted(data)  # type: ignore
             except TypeError:
                 # If the set contains unorderable types, we fall back to unsorted processing
                 pass

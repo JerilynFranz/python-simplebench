@@ -172,11 +172,11 @@ class PythonInfo:
         object.__setattr__(self, 'thread_switch_interval', sys.getswitchinterval())
 
         # Cache the created instance for future use
-        cls._cached_proto = self
+        object.__setattr__(cls, '_cached_proto', self)
 
         # Prerender the dict cache
         output: dict[str, object] = {}
-        fields: tuple[dataclasses.Field, ...] = dataclasses.fields(self)
+        fields = dataclasses.fields(self)
         for field in fields:
             name = field.name
             output[name] = getattr(self, name)

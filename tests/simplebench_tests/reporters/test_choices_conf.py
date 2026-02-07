@@ -48,7 +48,7 @@ from testspec import Assert, TestAction, TestSpec, idspec
         )),
     ]
 )
-def test_choices_init(testspec: TestSpec):
+def test_choices_init(testspec: TestSpec) -> None:
     """Test initializing ChoicesCOnf with various combinations paramters.
 
     This test verifies that the ChoicesConf class can be initialized correctly

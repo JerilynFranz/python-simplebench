@@ -140,7 +140,7 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
 
     # override is necessary to for type checker to accept the default parameter
     # in the same way as dict.get() (no restrictions on the return type)
-    def get(self, key: str, default: _T = None) -> 'CoreDataTypes | _T':  # type: ignore[override]
+    def get(self, key: str, default: _T = None) -> 'CoreDataTypes | _T':  # type: ignore[override,assignment]
         """Get the value for the given key, or default if not found.
 
         :param key: The key.

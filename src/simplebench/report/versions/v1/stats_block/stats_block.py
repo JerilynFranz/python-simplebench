@@ -452,8 +452,8 @@ class StatsBlock(BaseStatsBlock):
             its value was not set directly and cannot be calculated because
             `measurements` are not available either.
         """
-        if self._iterations is None:
-            self._iterations = len(self._measurements)  # type: ignore[reportArgumentType]  # validated in __init__
+        if self._iterations is None:  # We have measurements if iterations is None (validated in __init__)
+            self._iterations = len(self._measurements)  # type: ignore
         return self._iterations
 
     @property
@@ -474,7 +474,7 @@ class StatsBlock(BaseStatsBlock):
         :return float: The mean value.
         """
         if self._mean is None:
-            self._mean = float(statistics.mean(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
+            self._mean = float(statistics.mean(self._measurements))  # type: ignore  # validated in __init__
         return self._mean
 
     @property
@@ -614,9 +614,9 @@ class StatsBlock(BaseStatsBlock):
                 tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
             )
         if len(data) == 1:
-            data_value = float(data[0])
+            data_value = float(data[0])  # type: ignore[reportArgumentType]  # validated in __init__
             return Values([data_value] * 101)
-        quantile_values = statistics.quantiles(data, n=102, method='inclusive')
+        quantile_values = statistics.quantiles(data, n=102, method='inclusive')  # type: ignore[reportArgumentType]
         return Values(quantile_values)
 
     def _validate_stats_block_consistency(self) -> None:

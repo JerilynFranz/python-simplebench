@@ -84,5 +84,8 @@
     "coverage-gutters.showRulerCoverage": false,
     "coverage-gutters.ignoredPathGlobs": "**/{node_modules,venv,.venv,.tox,vendor}/**",
     "coverage-gutters.showGutterCoverage": false,
+    "mypy-type-checker.args": [
+      "--no-warn-unused-ignores"
+    ],
 }
 

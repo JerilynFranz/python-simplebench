@@ -125,7 +125,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             return
 
         for item in __elements:
-            if isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
+            if isinstance(item, (str, int, float, bool, NoneType)):
                 data.add(item)
             elif isinstance(item, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
                 data.add(item)
@@ -222,7 +222,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
 
     def thaw(self,
              preserve_immutability: bool = False
-             ) -> 'set[str | int | float | bool | frozenset | tuple | NoneType | CoreDataMapping]':
+             ) -> 'set[str | int | float | bool | frozenset | tuple | None | CoreDataMapping]':
         """Convert the CoreDataSet to a mutable set of immutable :data:`CoreDataTypes`.
 
         This method returns a mutable :class:`set` containing

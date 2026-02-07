@@ -84,7 +84,7 @@ path = "src/simplebench/_meta.py"
 
 [tool.mypy]
 mypy_path = "src,tests"
-warn_unused_ignores = true
+warn_unused_ignores = false
 warn_redundant_casts = true
 
 [tool.pyright]

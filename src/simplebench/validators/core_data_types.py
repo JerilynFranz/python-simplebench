@@ -14,11 +14,8 @@ from typing import Any, TypeGuard
 from simplebench.exceptions import SimpleBenchRecursionError, SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.simplebench_types import (
     CoreDataMapping,
-    CoreDataMappingType,
     CoreDataSequence,
-    CoreDataSequenceType,
     CoreDataSet,
-    CoreDataSetType,
     CoreDataTypes,
 )
 from simplebench.validators import _ValidatorsErrorTag

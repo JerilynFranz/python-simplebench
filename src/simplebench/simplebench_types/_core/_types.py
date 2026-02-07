@@ -23,7 +23,7 @@ from ._core_data_mapping import CoreDataMapping
 from ._core_data_sequence import CoreDataSequence
 from ._core_data_set import CoreDataSet
 
-CoreDataPrimitiveTypes: TypeAlias = (str | int | float | bool | NoneType)
+CoreDataPrimitiveTypes: TypeAlias = (str | int | float | bool | None)
 """Type alias for core data primitive types.
 
 These are all immutable and serializable.

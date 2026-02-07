@@ -568,6 +568,7 @@ def vcs_info(vcs_info_value: VCSInfo | None) -> VCSInfo | None:
             f'Invalid vcs_info: {vcs_info_value}. Must be of type VCSInfo.',
             tag=_CaseErrorTag.INVALID_VCS_INFO_ARG_TYPE,
         )
+    return vcs_info_value
 
 def max_greater_than_min(min_time: float, max_time: float) -> None:
     """Validate that max_time is greater than or equal to min_time.

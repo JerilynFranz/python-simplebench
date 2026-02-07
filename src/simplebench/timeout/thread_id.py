@@ -22,7 +22,7 @@ class ThreadId(int):
         ```
     """
 
-    def __new__(cls, value: int):
+    def __new__(cls, value: int) -> 'ThreadId':
         """Create a new ThreadId instance after validating the value."""
         if not isinstance(value, int):
             raise SimpleBenchTypeError(

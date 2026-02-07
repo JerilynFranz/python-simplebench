@@ -345,7 +345,7 @@ class Git:
                 case 'commit':
                     commit_id = value.strip()
                 case 'date':
-                    epoch_date: float = float(value.strip())
+                    epoch_date = float(value.strip())
                 case _:
                     continue
         date: str = timestamp_to_iso8601(epoch_date)

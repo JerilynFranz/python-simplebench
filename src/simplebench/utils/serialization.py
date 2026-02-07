@@ -4,7 +4,6 @@ import json
 from collections.abc import Callable, Mapping, Sequence, Set
 from dataclasses import asdict, is_dataclass
 from json import JSONEncoder
-from types import NoneType
 from typing import Any, TypeAlias
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -12,7 +11,7 @@ from simplebench.validators import validate_bool, validate_type
 
 from ._error_tags import _UtilsErrorTag
 
-JSONPrimitiveTypes: TypeAlias = str | int | float | bool | NoneType
+JSONPrimitiveTypes: TypeAlias = str | int | float | bool | None
 JSONDictTypes: TypeAlias = dict[str, 'JSONSerializableType']
 JSONListTypes: TypeAlias = list['JSONSerializableType']
 JSONSerializableType: TypeAlias = JSONPrimitiveTypes | JSONDictTypes | JSONListTypes

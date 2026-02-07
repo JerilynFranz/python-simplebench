@@ -18,21 +18,21 @@ LONG_WAIT = 0.5
 class TestTimeout:
     """Test suite for the Timeout runner."""
 
-    def test_timeout_initial_state(self):
+    def test_timeout_initial_state(self) -> None:
         """Test that the initial state of Timeout is PENDING."""
-        timeout = Timeout(timeout_interval=SHORT_WAIT)
+        timeout = Timeout(timeout_interval=SHORT_WAIT)  # type: ignore
         assert timeout.state == TimeoutState.PENDING, f"Initial state should be PENDING not {timeout.state}"
 
-    def test_callable_completes_successfully(self):
+    def test_callable_completes_successfully(self) -> None:
         """Test that a callable shorter than the timeout completes successfully."""
-        timeout = Timeout(timeout_interval=LONG_WAIT)
+        timeout = Timeout(timeout_interval=LONG_WAIT)  # type: ignore
         result = timeout.run(time.sleep, SHORT_WAIT)
         assert timeout.state == TimeoutState.FINISHED, f"State should be FINISHED not {timeout.state}"
         assert result is None  # time.sleep returns None
 
-    def test_callable_times_out_and_raises_exception(self):
+    def test_callable_times_out_and_raises_exception(self) -> None:
         """Test that a timeout raises SimpleBenchTimeoutError."""
-        timeout = Timeout(timeout_interval=SHORT_WAIT)
+        timeout = Timeout(timeout_interval=SHORT_WAIT)  # type: ignore
         errors = []
         successfully_failed = False
         try:
@@ -50,12 +50,12 @@ class TestTimeout:
         if errors:  # pragma: no cover
             pytest.fail(" ; ".join(errors))
 
-    def test_raises_timeout_exception_with_correct_function_name(self):
+    def test_raises_timeout_exception_with_correct_function_name(self) -> None:
         """Test that a timeout raises SimpleBenchTimeoutError."""
-        timeout = Timeout(timeout_interval=SHORT_WAIT)
+        timeout = Timeout(timeout_interval=SHORT_WAIT)  # type: ignore
         errors = []
 
-        def long_running_function():
+        def long_running_function() -> None:
             time.sleep(LONG_WAIT)
 
         expected_func_name = "TestTimeout.test_raises_timeout_exception_with_correct_function_name.<locals>.long_running_function"  # pylint: disable=line-too-long  # noqa: E501
@@ -75,17 +75,17 @@ class TestTimeout:
         if errors:  # pragma: no cover
             pytest.fail(" ; ".join(errors))
 
-    def test_other_exception_is_propagated(self):
+    def test_other_exception_is_propagated(self) -> None:
         """Test that an unrelated exception inside the callable is always propagated."""
-        def func_that_raises():
+        def func_that_raises() -> None:
             raise ValueError("test error")
 
-        timeout = Timeout(timeout_interval=LONG_WAIT)
+        timeout = Timeout(timeout_interval=LONG_WAIT)  # type: ignore
         with pytest.raises(ValueError, match="test error"):
             timeout.run(func_that_raises)
         assert timeout.state == TimeoutState.FAILED, f"State should be FAILED not {timeout.state}"
 
-    def test_invalid_timeout_interval_raises_correct_error(self):
+    def test_invalid_timeout_interval_raises_correct_error(self) -> None:
         """Test that a timeout interval of zero or negative raises a SimpleBenchValueError."""
         successfully_failed = False
         try:
@@ -109,9 +109,9 @@ class TestTimeout:
         if not successfully_failed:  # pragma: no cover
             pytest.fail("Expected SimpleBenchValueError was not raised for negative timeout interval.")
 
-    def test_non_callable_raises_type_error(self):
+    def test_non_callable_raises_type_error(self) -> None:
         """Test that passing a non-callable to run raises SimpleBenchTypeError."""
-        timeout = Timeout(timeout_interval=SHORT_WAIT)
+        timeout = Timeout(timeout_interval=SHORT_WAIT)  # type: ignore
         successfully_failed = False
         try:
             timeout.run("not_a_function")  # type: ignore[arg-type]
@@ -122,46 +122,46 @@ class TestTimeout:
         if not successfully_failed:  # pragma: no cover
             pytest.fail("Expected SimpleBenchTypeError was not raised for non-callable argument.")
 
-    def test_nested_timeouts_inner_fires(self):
+    def test_nested_timeouts_inner_fires(self) -> None:
         """Test that an inner timeout's exception propagates correctly."""
-        def inner_task():
+        def inner_task() -> None:
             # This inner timeout is short and will fire
-            inner_timeout = Timeout(timeout_interval=SHORT_WAIT)
+            inner_timeout = Timeout(timeout_interval=SHORT_WAIT)  # type: ignore
             inner_timeout.run(time.sleep, LONG_WAIT)
 
         # The outer timeout is long and will not fire
-        outer_timeout = Timeout(timeout_interval=LONG_WAIT)
+        outer_timeout = Timeout(timeout_interval=LONG_WAIT)  # type: ignore
         with pytest.raises(SimpleBenchTimeoutError):
             outer_timeout.run(inner_task)
         # The outer timeout itself failed because its task raised an exception
         assert outer_timeout.state == TimeoutState.FAILED
 
-    def test_nested_timeouts_outer_fires(self):
+    def test_nested_timeouts_outer_fires(self) -> None:
         """Test that an outer timeout correctly interrupts a block with an inner timeout."""
-        def inner_task_long():
+        def inner_task_long() -> None:
             # Inner timeout is long and will be interrupted by the outer timeout
-            inner_timeout = Timeout(timeout_interval=LONG_WAIT)
+            inner_timeout = Timeout(timeout_interval=LONG_WAIT)  # type: ignore
             inner_timeout.run(time.sleep, LONG_WAIT)
 
         # Outer timeout is short and will fire
-        outer_timeout = Timeout(timeout_interval=SHORT_WAIT)
+        outer_timeout = Timeout(timeout_interval=SHORT_WAIT)  # type: ignore
         with pytest.raises(SimpleBenchTimeoutError):
             outer_timeout.run(inner_task_long)
         assert outer_timeout.state == TimeoutState.TIMED_OUT
 
-    def test_concurrent_threads_do_not_interfere(self):
+    def test_concurrent_threads_do_not_interfere(self) -> None:
         """
         Test that two concurrent Timeout instances in different threads do not interfere.
         """
         results = {}
         barrier = threading.Barrier(2)
 
-        def thread_a_target():
+        def thread_a_target() -> None:
             """This thread should time out."""
             try:
                 timeout_a = Timeout(timeout_interval=SHORT_WAIT)
 
-                def task_a():
+                def task_a() -> None:
                     barrier.wait()  # Sync with thread B
                     time.sleep(LONG_WAIT)
                 timeout_a.run(task_a)
@@ -171,12 +171,12 @@ class TestTimeout:
             except Exception as e:  # pylint: disable=broad-exception-caught  # pragma: no cover
                 results['a'] = e
 
-        def thread_b_target():
+        def thread_b_target() -> None:
             """This thread should complete successfully."""
             try:
                 timeout_b = Timeout(timeout_interval=LONG_WAIT)
 
-                def task_b():
+                def task_b() -> None:
                     barrier.wait()  # Sync with thread A
                     time.sleep(SHORT_WAIT)
                 timeout_b.run(task_b)

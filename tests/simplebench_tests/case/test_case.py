@@ -107,7 +107,7 @@ def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results: 
         case=Case(
             group='example',
             title='benchcase',
-            action_wrapper=benchcase,  # type: ignore[arg-type]  # expected to be broken
+            action_wrapper=benchcase,
             description='Benchmark case'),
         variation_marks=VariationMarks({}))
 
@@ -286,16 +286,16 @@ def broken_callback_extra_param(  # pylint: disable=unused-argument  # pragma: n
 
 
 def broken_callback_no_type_hints(  # noqa: ANN201  # pragma: no cover
-        case, metric, output_format, output):  # type: ignore[no-untyped-def]  # noqa: ANN001
+        case, metric, output_format, output):  # noqa: ANN001
     """A broken callback function that has no type hints."""
 
 
-def broken_callback_case_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
+def broken_callback_case_allowed_to_be_positional(  # pragma: no cover
         case: Case, *, metric: Metric, output_format: Format, output: Any) -> None:
     """A broken callback function that allows case to be positional."""
 
 
-def broken_callback_metric_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
+def broken_callback_metric_allowed_to_be_positional(  # pragma: no cover
         metric: Metric, *, case: Case, output_format: Format, output: Any) -> None:
     """A broken callback function that allows metric to be positional."""
 
@@ -595,21 +595,21 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         name="Invalid (not a BenchmarkRunner subclass) type for runner option",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action_wrapper=benchcase,
-                          runners=[BadRunner]),  # type: ignore[arg-type]  # Invalid: Not a BenchmarkRunner subclass
+                          runners=[BadRunner]),  # type: ignore # Invalid: Not a BenchmarkRunner subclass
         exception=SimpleBenchTypeError,
         exception_tag=_CaseErrorTag.INVALID_RUNNER_NOT_BENCHMARK_RUNNER_SUBCLASS),
     PytestAction("INIT_027",
         name="Invalid (not a dict) type for variation_cols parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action_wrapper=benchcase,
-                          variation_cols='not_a_VariationCols'),  # type: ignore[arg-type]
+                          variation_cols='not_a_VariationCols'),  # type: ignore
         exception=SimpleBenchTypeError,
         exception_tag=_CaseErrorTag.INVALID_VARIATION_COLS_NOT_MAPPING),
     PytestAction("INIT_028",
         name="Invalid (contains key that is not type str) type for variation_cols parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action_wrapper=benchcase,
-                          variation_cols={123: 'value'}),  # type: ignore[dict-item]  # Invalid key type
+                          variation_cols={123: 'value'}),  # type: ignore
         exception=SimpleBenchValueError,
         exception_tag=_CaseErrorTag.INVALID_VARIATION_COLS_ENTRY_KEY_NOT_IN_KWARGS),
     PytestAction("INIT_029",
@@ -768,21 +768,21 @@ def validate_description(actual: str | None, expected: str | None) -> bool:
         name="Callback function has wrong type for 'output_format' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action_wrapper=benchcase,
-                          callback=broken_callback_wrong_format_type),  # type: ignore[arg-type]
+                          callback=broken_callback_wrong_format_type),  # type: ignore
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE),
     PytestAction("INIT_051",
         name="Callback function has wrong type for 'output' parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action_wrapper=benchcase,
-                          callback=broken_callback_wrong_output_type),  # type: ignore[arg-type]
+                          callback=broken_callback_wrong_output_type),  # type: ignore
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_PARAMETER_TYPE),
     PytestAction("INIT_052",
         name="Callback function has an extra parameter",
         action=Case,
         kwargs=CaseKWArgs(group='example', title='benchcase', description='Benchmark case', action_wrapper=benchcase,
-                          callback=broken_callback_extra_param),  # type: ignore[arg-type]
+                          callback=broken_callback_extra_param),  # type: ignore
         exception=SimpleBenchTypeError,
         exception_tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS),
     PytestAction("INIT_053",

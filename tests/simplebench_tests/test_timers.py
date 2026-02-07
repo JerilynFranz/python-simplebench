@@ -53,7 +53,7 @@ from simplebench.timers.info import fake_timer
         args=["not a function"],
         expected=False)),
     ])
-def test_is_valid_timer(testspec: TestSpec):
+def test_is_valid_timer(testspec: TestSpec) -> None:
     """Test is_valid_timer() function."""
     testspec.run()
 
@@ -84,7 +84,7 @@ def test_is_valid_timer(testspec: TestSpec):
         exception=SimpleBenchTypeError,
         exception_tag=_TimersErrorTag.TIMER_PRECISION_NS_INVALID_TIMER_FUNCTION)),
 ])
-def test_timer_precision_ns(testspec: TestSpec):
+def test_timer_precision_ns(testspec: TestSpec) -> None:
     """Test timer_precision_ns() function."""
     testspec.run()
 
@@ -115,6 +115,6 @@ def test_timer_precision_ns(testspec: TestSpec):
         exception=SimpleBenchTypeError,
         exception_tag=_TimersErrorTag.TIMER_OVERHEAD_NS_INVALID_TIMER_FUNCTION)),
 ])
-def test_timer_overhead_ns(testspec: TestSpec):
+def test_timer_overhead_ns(testspec: TestSpec) -> None:
     """Test timer_overhead_ns() function."""
     testspec.run()

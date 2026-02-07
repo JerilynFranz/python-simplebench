@@ -91,8 +91,8 @@ def pytest_configure(config: Config) -> None:
     sb_session.output_path = Path('.benchmarks')  # Ensure output path is set
 
     # Standard practice for attaching custom attributes to pytest's config object
-    config._simplebench_session: Session = sb_session  # type: ignore[assignment]
-    config._simplebench_pytest_reporter: PytestReporter = pytest_reporter  # type: ignore[assignment]
+    config._simplebench_session: Session = sb_session  # type: ignore
+    config._simplebench_pytest_reporter: PytestReporter = pytest_reporter  # type: ignore
     log.debug('simplebench configured with session %r and reporter %r', sb_session, pytest_reporter)
 
 

@@ -11,8 +11,9 @@ typed set of properties to access system, release, version, machine, and node.
 
 import dataclasses
 import platform
-from types import MappingProxyType
 from typing import TYPE_CHECKING, cast
+
+from simplebench.simplebench_types import CoreDataMapping
 
 
 if TYPE_CHECKING:
@@ -25,7 +26,7 @@ class SystemInfo:
     """Create a SystemInfo facade for the system related :module:`platform` functions.
 
     It is a typed object-oriented representation of the System environment
-    andcleanly exposes the following :module:`platform` functions
+    and cleanly exposes the following :module:`platform` functions
     as properties:
 
     - :func:`platform.system` - name of the operating system.
@@ -75,12 +76,12 @@ class SystemInfo:
             object.__setattr__(self, 'machine', uname.machine)
 
             # Prerender the dict cache
-            output: dict[str, object] = {}
+            output: dict[str, str] = {}
             fields: tuple[dataclasses.Field, ...] = dataclasses.fields(self)
             for field in fields:
                 name = field.name
                 output[name] = getattr(self, name)
-            dict_instance = MappingProxyType(output)
+            dict_instance = CoreDataMapping(output)
             object.__setattr__(self, '_dict_cache', dict_instance)
             cls._singleton_cache = self
 

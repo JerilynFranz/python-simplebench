@@ -46,9 +46,6 @@ class MemoryInfo(BaseMemoryInfo):
     _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
     """Cache for the constructor parameters of the ResultsInfo class."""
 
-    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
-    """Cache for the constructor parameters of the MemoryInfo class."""
-
     @classmethod
     def _data_params(cls) -> MappingProxyType[str, Any]:
         """Get the constructor parameters for the schema data class.

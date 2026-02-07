@@ -531,7 +531,7 @@ def dispatch_to_targets_params_testspecs() -> list[TestSpec]:
 
 
 @pytest.mark.parametrize("testspec", dispatch_to_targets_params_testspecs())
-def test_dispatch_to_targets_params(testspec: TestSpec):
+def test_dispatch_to_targets_params(testspec: TestSpec) -> None:
     """Tests for parameter validation of the dispatch_to_targets method.
 
     :param testspec: The test specification.

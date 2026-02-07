@@ -21,8 +21,8 @@ It does not support sorting or mutation after creation.
 """
 import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
-from typing import TYPE_CHECKING, Any, overload
 from types import NoneType
+from typing import TYPE_CHECKING, Any, overload
 
 import simplejson
 from typechecked import Immutable
@@ -345,8 +345,8 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         from ._core_data_set import CoreDataSet
         from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE
 
-        if not (isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE) or
-              isinstance(value, (CoreDataSequence, CoreDataMapping, CoreDataSet))):
+        if not (isinstance(value,
+                    (str, int, float, bool, NoneType, CoreDataSequence, CoreDataMapping, CoreDataSet))):
               raise SimpleBenchTypeError(
             f'Invalid value type passed to CoreDataSequence.count(): {value!r}. '
             f'Must be a CoreData type: {CORE_DATA_PRIMITIVE_TYPES_TUPLE!r} '

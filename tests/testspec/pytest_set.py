@@ -27,9 +27,11 @@ class PytestSet(TestSet):
     :param str attribute: The name of the attribute to be tested by setting.
     :param Any value: Value to set the attribute to.
     :param Optional[object] obj: The object whose attribute is to be tested. Defaults to NO_OBJ_ASSIGNED.
-    :param Optional[type[BaseException]] exception: Expected exception type (if any) to be raised by setting the attribute.
+    :param Optional[type[BaseException]] exception: Expected exception type (if any) to be
+        raised by setting the attribute.
     :param Optional[str | Enum] exception_tag: Expected tag (if any) to be found in the exception message.
-    :param Optional[Callable[[TestSet, Any], None | NoReturn]] validate: Function to validate obj after setting attribute.
+    :param Optional[Callable[[TestSet, Any], None | NoReturn]] validate: Function to validate obj after
+        setting attribute.
     :param Callable[[str], NoReturn] on_fail: Function to call on test failure.
     :param Any extra: Extra fields for use by test frameworks.
     """
@@ -59,7 +61,8 @@ class PytestSet(TestSet):
         :param Optional[object] obj: The object whose attribute is to be tested.
         :param Optional[type[BaseException]] exception: Expected exception type (if any).
         :param Optional[str | Enum] exception_tag: Expected tag (if any) in the exception message.
-        :param Optional[Callable[[TestSet, Any], None | NoReturn]] validate: Function to validate obj after setting attribute.
+        :param Optional[Callable[[TestSet, Any], None | NoReturn]] validate: Function to validate obj after
+            setting attribute.
         :param Callable[[str], NoReturn] on_fail: Function to call on test failure.
         :param Any extra: Extra fields for use by test frameworks.
         """

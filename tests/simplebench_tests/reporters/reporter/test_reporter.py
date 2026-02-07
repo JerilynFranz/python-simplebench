@@ -7,14 +7,16 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 import pytest
+from rich.table import Table
+from rich.text import Text
 from testspec import NO_EXPECTED_VALUE, Assert, PytestAction, TestAction, TestGet, TestSet, TestSpec, idspec
 
-from simplebench.benchmark_runner import SimpleRunner
+from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case, Results
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metrics import metric_types_registry
+from simplebench.metrics import Metric, metric_types_registry
 from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
@@ -24,7 +26,6 @@ from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench.reporters.reporter.protocols import ReporterProtocol
 from simplebench.session import Session
 from simplebench.simplebench_types import VariationMarks
-
 from simplebench_tests import factories
 
 
@@ -43,14 +44,13 @@ def broken_benchcase_missing_bench(variation_marks: VariationMarks) -> Results: 
     return factories.results_factory()  # made-up results for testing purposes
 
 
-def broken_benchcase_missing_kwargs(
-        bench: SimpleRunner) -> Results:  # pylint: disable=unused-argument  # pragma: no cover
+def broken_benchcase_missing_kwargs(bench: BenchmarkRunner) -> Results:   # pragma: no cover
     """A broken benchmark case function that is missing the required 'kwargs' parameter.
 
     The function signature is intentionally incorrect for testing purposes.
 
     :param bench: The benchmark runner.
-    :type bench: SimpleRunner
+    :type bench: BenchmarkRunner
     :return: A dummy Results instance.
     :rtype: Results
     """
@@ -86,13 +86,16 @@ class GoodReporter(Reporter):
                    callback: ReporterCallback | None = None) -> None:
         return
 
-    def render(self, *, case: Case, section: metric_types_registry, options: ReporterOptions) -> str:
+    def render(self, *,
+               case: 'Case',
+               metric: 'Metric',
+               options: 'ReporterOptions') -> str | bytes | Text | Table:
         """Dummy render method for testing.
 
         :param case: The benchmark case.
         :type case: Case
-        :param section: The report section.
-        :type section: Metric
+        :param metric: The report metric.
+        :type metric: Metric
         :param options: The reporter options.
         :type options: ReporterOptions
         :return: An empty string.

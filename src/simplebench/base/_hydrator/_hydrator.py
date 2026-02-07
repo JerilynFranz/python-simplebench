@@ -197,7 +197,7 @@ class Hydrator:
 
         return {  # __immutable__ is internal marker for Immutable TypedDicts
             name: type_hints[name]
-            for name, param in inspect.signature(target_cls.__init__).parameters.items()
+            for name, param in inspect.signature(target_cls.__init__).parameters.items()  # type: ignore[misc]
             if name != '__immutable__' and param.kind == inspect.Parameter.KEYWORD_ONLY and name in type_hints
         }
 

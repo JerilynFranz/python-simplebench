@@ -1,14 +1,11 @@
 """simplebench.reporters.reporter.Reporter KWArgs package for SimpleBench tests."""
-from collections.abc import Iterable
-
-from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 from simplebench.enums import Format, Target
 from simplebench.metrics import MetricsSelection
-from simplebench.reporters.choice import ChoiceConf
 from simplebench.reporters.choices import ChoicesConf
 from simplebench.reporters.reporter import ReporterConfig
 from simplebench.simplebench_types import ElementCollection
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
 class ReporterConfigKWArgs(KWArgs):

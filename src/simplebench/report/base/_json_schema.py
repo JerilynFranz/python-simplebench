@@ -15,6 +15,15 @@ __all__: list[str] = []
 class JSONSchema(ABC):
     """Abstract Base class representing a JSON schema."""
 
+    TYPE: str = ''  # Must be overridden in subclasses to specify the correct type property value for the schema
+    """The JSON report type property value for version 1 reports."""
+
+    VERSION: int = 0  # Must be overridden in subclasses to specify the correct version number for the schema
+    """The JSON report version number."""
+
+    ID: str = ''  # Must be overridden in subclasses to specify the correct $id property value for the schema
+    """The JSON report ID property value for version 1 reports."""
+
     @classmethod
     @abstractmethod
     def as_dict(cls) -> dict:

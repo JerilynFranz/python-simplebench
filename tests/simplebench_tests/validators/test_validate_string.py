@@ -151,7 +151,7 @@ class GenericErrorTag(ErrorTag):
         exception=SimpleBenchTypeError,
         exception_tag=_ValidatorsErrorTag.INVALID_ALPHANUMERIC_ONLY_ARG_TYPE)),
 ])
-def test_param(testspec: TestSpec):
+def test_param(testspec: TestSpec) -> None:
     """Test validate_string calling parameters.
 
     :param testspec: The test specification.
@@ -429,7 +429,7 @@ def test_param(testspec: TestSpec):
         assertion=Assert.EQUAL,
         expected="")),
 ])
-def test_validate_string(testspec: TestSpec):
+def test_validate_string(testspec: TestSpec) -> None:
     """Test validate_string function.
 
     :param testspec: The test specification.

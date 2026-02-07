@@ -69,7 +69,7 @@ class MachineInfo:
 
         :return report.MachineInfo: The ReportMachineInfo representation of the MachineInfo instance.
         """
-        return cast('report.MachineInfo', self._report_machine_info)
+        return cast('report.MachineInfo', self._report_machine_info)  # type: ignore[attr-defined]
 
     def _to_dict(self) -> 'report.ImmutableMachineInfoData':
         """Convert the MachineInfo instance to a dictionary. The dictionary

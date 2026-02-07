@@ -28,7 +28,7 @@ class CacheKey:
         :param Any obj: The object value.
         """
         if cls_type is None:  # None is a special case, replace with type(None) instead
-            cls_type = type(None)
+            cls_type = type(None)  # type: ignore
         self.obj_type: Hashable = cls_type
         self.instance_id: int = id(obj)
 

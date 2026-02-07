@@ -3,8 +3,8 @@
 from simplebench.exceptions import SimpleBenchValueError
 
 from .base import ReportLogEntry, ReportLogEntrySchema
-from ._error_tags import _ReportLogEntryErrorTag, _ReportLogEntrySchemaErrorTag
-from .versions import json_class
+from ._error_tags import  _ReportLogEntrySchemaErrorTag
+from .versions import v1 as reporters_log
 
 _JSON_SCHEMA_AVAILABLE: bool = False
 try:
@@ -26,21 +26,11 @@ def from_dict(data: dict) -> ReportLogEntry:
     """
     version: int = data.get('version', 0)  # Default to 0 if not present
 
-    report_class: type[ReportLogEntry] = json_class(
-        version,
-        ReportLogEntry,
-        _ReportLogEntryErrorTag.INVALID_VERSION_TYPE,
-        _ReportLogEntryErrorTag.UNSUPPORTED_VERSION,
-    )
+    report_class: type[ReportLogEntry] = reporters_log.ReportLogEntry
 
     # Only perform JSON Schema validation if the jsonschema package is installed
     if _JSON_SCHEMA_AVAILABLE:
-        schema_class: type[ReportLogEntrySchema] = json_class(
-            version,
-            ReportLogEntrySchema,
-            _ReportLogEntrySchemaErrorTag.INVALID_VERSION_TYPE,
-            _ReportLogEntrySchemaErrorTag.UNSUPPORTED_VERSION,
-        )
+        schema_class: type[ReportLogEntrySchema] = reporters_log.ReportLogEntrySchema
 
         try:
             schema = schema_class.json_schema_dict()

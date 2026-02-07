@@ -5,12 +5,11 @@ from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
 from simplebench.metrics import MetricsSelection
+from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters.choice._error_tags import _ChoiceErrorTag
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.protocols import ChoiceProtocol
 from simplebench.reporters.reporter import Reporter
-
-from simplebench.options.reporter import ReporterOptions
 from simplebench.validators import validate_type
 
 
@@ -124,8 +123,8 @@ class Choice(Hashable, ChoiceProtocol):
         # concrete subclasses of Reporter, not the abstract Reporter itself.
         self._reporter: Reporter = validate_type(
             reporter,
-            Reporter,
-            'reporter',  # type: ignore[type-abstract]
+            Reporter,  # type: ignore[type-abstract]
+            'reporter',
             error_tag=_ChoiceErrorTag.REPORTER_INVALID_ARG_TYPE,
         )
         """The Reporter subclass instance associated with the choice

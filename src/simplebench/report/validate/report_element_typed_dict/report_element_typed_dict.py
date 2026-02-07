@@ -352,9 +352,10 @@ def _validate_field_value(value: Any, expected_type: Any, parents: set[int]) -> 
         return results
 
     # Handle ReportElementTypedDicts
-    if isinstance(expected_type, type) and issubclass(expected_type, ReportElementTypedDict):  # type: ignore[reportArgumentType]
+    if isinstance(expected_type, type) and issubclass(expected_type, ReportElementTypedDict):  # type: ignore[reportArgumentType,misc]
         parents.add(id(value))
-        valid, immutable = _validate_and_check_immutability_of_mimic(value, expected_type, parents)
+        valid, immutable = _validate_and_check_immutability_of_mimic(
+            value, expected_type, parents)  # type: ignore[reportArgumentType]
         parents.remove(id(value))
         return (valid, immutable)
 
