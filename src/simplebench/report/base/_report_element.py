@@ -19,10 +19,7 @@ from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBenchTypeError
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.report.validate import report_element_typed_dict_mimic
-from simplebench.simplebench_types import (
-    CORE_DATA_PRIMITIVE_TYPES_TUPLE,
-    CoreDataMapping, CoreDataMappingType
-)
+from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataMapping, CoreDataMappingType
 
 from ._json_schema import JSONSchema
 
@@ -71,7 +68,7 @@ class ReportElement(Hydrator, Immutable, ABC):
     It must be overridden in subclasses to specify the correct $id.
     """
 
-    SCHEMA: type[JSONSchema] = JSONSchema
+    SCHEMA: type[JSONSchema] = None  # type: ignore[assignment]
     """The JSON schema class used to validate the report element class.
 
     It must be overridden in subclasses to specify the correct schema class.
@@ -123,6 +120,8 @@ class ReportElement(Hydrator, Immutable, ABC):
                 raise SimpleBenchAttributeError(
                     f"ReportElement subclass {cls.__name__} is missing expected attribute '{key}'",
                     tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
+                    name=key,
+                    obj=cls
                 )
 
             # Already a CoreDataMapping
@@ -174,6 +173,8 @@ class ReportElement(Hydrator, Immutable, ABC):
                 raise SimpleBenchAttributeError(
                     f"Missing required property '{key}'",
                     tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
+                    obj=self,
+                    name=key
                 )
             value = getattr(self, key)
 
@@ -188,6 +189,8 @@ class ReportElement(Hydrator, Immutable, ABC):
                         f"Missing required 'hash_id' property on sub-object for attribute '{key}' "
                         f'or its class {value.__class__.__name__}',
                         tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
+                        obj=value,
+                        name='hash_id'
                     )
                 hash_items.append(f'{key}:{value_hash_id}')
             else:

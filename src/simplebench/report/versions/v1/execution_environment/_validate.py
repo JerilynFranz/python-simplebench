@@ -7,7 +7,7 @@ from types import MappingProxyType
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.report.base import Environment
-from simplebench.validators import validate_core_data_mapping, validate_type
+from simplebench.validators import validate_core_data_mapping
 
 from ..generic_environment import GenericEnvironment
 from .known_environments import KNOWN_ENVIRONMENTS
@@ -37,7 +37,11 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
     :return MappingProxyType[str, Environment]: The validated execution environments dictionary.
     :raises SimpleBenchTypeError: If the value is not a valid execution environments dictionary.
     """
-    validate_type(value, Mapping, 'Execution environments', _ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENTS_TYPE)
+    if not isinstance(value, Mapping):
+        raise SimpleBenchTypeError(
+            'Execution environments must be a mapping of environment name to environment data',
+            tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENTS_TYPE,
+        )
 
     validated_envs: dict[str, Environment] = {}
     n_environments: int = 0
@@ -68,7 +72,7 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
         elif isinstance(env_value, Environment):
             validated_envs[env_name] = env_value
         else:
-            env_data = validate_core_data_mapping(env_value, f"Environment '{env_name}'", max_depth=5)
+            env_data = validate_core_data_mapping(env_value, f"Environment '{env_name}'")
             validated_envs[env_name] = GenericEnvironment(env_data)
 
         n_environments += 1

@@ -110,7 +110,7 @@ class ResultsInfo(BaseResultsInfo):
         self._extra_info: CoreDataMapping = _validate.extra_info(extra_info)
         self._hash_id: str = _validate.hash_id(hash_id)
         if not self._hash_id:
-            self._hash_id: str = self._hash_id_helper(ResultsInfoData)
+            self._hash_id = self._hash_id_helper(ResultsInfoData)
         self._to_dict_cache: ImmutableResultsInfoDict | None = None
 
     @classmethod

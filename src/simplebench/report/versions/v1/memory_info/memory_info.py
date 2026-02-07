@@ -79,7 +79,7 @@ class MemoryInfo(BaseMemoryInfo):
         self._swap_memory = _validate.swap_memory(swap_memory)
         self._virtual_memory = _validate.virtual_memory(virtual_memory)
         self._dict_cache: ImmutableMemoryInfoDict = self._to_dict_helper(ImmutableMemoryInfoDict)
-        self._hash_id: str = self._hash_id_helper(MemoryInfoDict)
+        self._hash_id  = self._hash_id_helper(MemoryInfoDict)
 
     @classmethod
     def from_dict(cls, data: MemoryInfoData) -> 'MemoryInfo':

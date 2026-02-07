@@ -267,7 +267,7 @@ def gc_thresholds(value: Sequence[int]) -> tuple[int, int, int]:
             tag=_PythonInfoErrorTag.INVALID_GC_THRESHOLD_ITEM_TYPE,
         )
 
-    validated_value: tuple[int, int, int] = tuple(value)  # type: ignore[reportAssignmentType]
+    validated_value: tuple[int, int, int] = tuple(value)  # type: ignore
     return validated_value
 
 

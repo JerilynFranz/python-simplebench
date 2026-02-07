@@ -283,7 +283,7 @@ def _validate_has_required_and_no_extra_keys(data: Mapping[str, Any], td_cls: ty
         )
 
 
-def _validate_field_value(value: Any, expected_type: type, parents: set[int]) -> tuple[bool, bool]:
+def _validate_field_value(value: Any, expected_type: Any, parents: set[int]) -> tuple[bool, bool]:
     """Validate a single field value against its expected type.
 
     The field must be one of:
@@ -304,7 +304,7 @@ def _validate_field_value(value: Any, expected_type: type, parents: set[int]) ->
     validates each element against the specified element type.
 
     :param Any value: The value to validate.
-    :param type expected_type: The expected type to validate against.
+    :param Any expected_type: The expected type to validate against.
     :param set[int] parents: Set of parent object IDs to detect cycles.
     :return tuple[bool, bool]: A tuple (is_valid, is_immutable) indicating validation results.
     """
@@ -511,7 +511,8 @@ def _validate_mapping_field(args: tuple[Any, ...], value: Any, parents: set[int]
     key_type, val_type = args
     if not _is_string_key_type(key_type):
         raise SimpleBenchTypeError(
-            'Mapping key type must be str, Literal of str, or Annotated[str, ...] for ReportElementTypedDict validation',
+            'Mapping key type must be str, Literal of str, or Annotated[str, ...] '
+            'for ReportElementTypedDict validation',
             tag=_ReportElementValidationErrorTag.MAPPING_KEY_NOT_STRING,
         )
     immutable = True

@@ -117,7 +117,7 @@ class PythonInfo(BasePythonInfo):
         self._from_dict: ImmutablePythonInfoDict | None = None
 
     @classmethod
-    def from_dict(cls, data: PythonInfoData) -> 'PythonInfo':
+    def from_dict(cls, data: PythonInfoData) -> 'PythonInfo':  # type: ignore[override]
         """Create a PythonInfo instance from a dictionary.
 
         .. code-block:: python3

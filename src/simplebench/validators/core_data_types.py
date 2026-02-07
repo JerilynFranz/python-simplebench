@@ -25,7 +25,7 @@ from simplebench.validators import _ValidatorsErrorTag
 
 _CORE_PRIMITIVES_SET = {str, int, float, bool, complex, type(None)}
 
-def validate_core_data_mapping(item: CoreDataMappingType, name: str) -> CoreDataMapping:
+def validate_core_data_mapping(item: Any, name: str) -> CoreDataMapping:
     """Validate a CoreDataTypes mapping.
 
     The `value` parameter must be a `Mapping[str, CoreDataTypes]` conformant mapping.
@@ -75,7 +75,7 @@ def validate_core_data_mapping(item: CoreDataMappingType, name: str) -> CoreData
             tag=_ValidatorsErrorTag.RECURSION_LIMIT_REACHED) from exc
 
 
-def validate_core_data_sequence(item: CoreDataSequenceType, name: str) -> CoreDataSequence:
+def validate_core_data_sequence(item: Any, name: str) -> CoreDataSequence:
     """Validate a CoreDataTypes sequence.
     The `value` parameter must be a `Sequence[CoreDataTypes]` conformant sequence.
     It can have arbitrary values but must conform with the :class:`CoreDataTypes` contract.
@@ -120,7 +120,7 @@ def validate_core_data_sequence(item: CoreDataSequenceType, name: str) -> CoreDa
             tag=_ValidatorsErrorTag.RECURSION_LIMIT_REACHED) from exc
 
 
-def validate_core_data_set(item: CoreDataSetType, name: str) -> CoreDataSet:
+def validate_core_data_set(item: Any, name: str) -> CoreDataSet:
     """Validate a CoreDataTypes set.
 
     The `value` parameter must be a `Set[CoreDataTypes]` conformant set.
@@ -142,7 +142,7 @@ def validate_core_data_set(item: CoreDataSetType, name: str) -> CoreDataSet:
         This makes it safe to use in other validators without any risk of creating circular
         dependencies.
 
-    :param CoreDataSetType item: The data set to validate.
+    :param Any item: The data set to validate.
     :param str name: The name of the mapping (used in error messages).
     :param int max_depth: The maximum allowed depth for nested structures. (optional, keyword-only, defaults to 10).
     :return CoreDataSet: An immutable validated data set.

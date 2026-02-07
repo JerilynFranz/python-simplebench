@@ -16,8 +16,7 @@ that does not match other specific environment types.
 import base64
 import hashlib
 from collections.abc import Mapping, Sequence, Set
-from types import MappingProxyType
-from typing import Any, cast
+from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
