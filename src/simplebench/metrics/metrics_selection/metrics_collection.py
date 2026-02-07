@@ -1,7 +1,6 @@
 """Collection of metrics selected from the registered metrics."""
 
 from collections.abc import Hashable, Iterator, Set
-from typing import cast
 
 from typechecked import Immutable
 
@@ -51,6 +50,8 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable, Hashable):
         """
         all_metrics: list[Metric] = []
 
+        self._metrics: Metrics
+
         source = args
         if source is None or (isinstance(source, tuple) and len(source) == 0):
             self._metrics = Metrics()
@@ -83,7 +84,7 @@ class MetricsCollection(MetricsSelection, Set[Metric], Immutable, Hashable):
                 f'Input must be Metric, Metrics, or ElementCollection of Metric instances. Found: {type(source)}',
                 tag=_MetricSelectionErrorTag.METRICS_NOT_ITERABLE)
 
-        self._metrics: Metrics = self._validate_metrics(all_metrics)
+        self._metrics = self._validate_metrics(all_metrics)
         super().__init__(selector_type=MetricsSelectionType.COLLECTION)
 
     def _validate_metrics(self, metrics: ElementCollection[Metric]) -> Metrics:

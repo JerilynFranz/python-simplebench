@@ -46,20 +46,12 @@ benchmark suite that defines them to avoid conflicts with other metrics.
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from simplebench.metrics.metric import Metric
-    from simplebench.metrics.metric_types_registry import metric_types_registry
     from simplebench.metrics.metrics import Metrics
-
-else:
-    Metric = None  # pylint: disable=invalid-name
-    metric_types_registry = None  # pylint: disable=invalid-name
-    Metrics = None  # pylint: disable=invalid-name
-
 
 __all__: list[str] = []
 
 
-_CACHED_METRICS = None
+_CACHED_METRICS: 'Metrics | None' = None
 
 
 def metrics() -> 'Metrics':
@@ -96,16 +88,13 @@ def metrics() -> 'Metrics':
     - `STD_GC_GEN2_UNCOLLECTABLE_STATS`: Generation 2 uncollectable objects statistics.
     - `STD_GC_GEN2_UNCOLLECTABLE_RAW`: Generation 2 uncollectable objects raw values.
     """
-    global _CACHED_METRICS, Metric, metric_types_registry, Metrics  # pylint: disable=global-statement
+    from .metric import Metric  # pylint: disable=import-outside-toplevel
+    from .metric_types_registry import metric_types_registry  # pylint: disable=import-outside-toplevel
+    from .metrics import Metrics  # pylint: disable=import-outside-toplevel
+
+    global _CACHED_METRICS  # pylint: disable=global-statement
     if _CACHED_METRICS is not None:
         return _CACHED_METRICS
-
-    from simplebench.metrics.metric import Metric  # pylint: disable=import-outside-toplevel
-    from simplebench.metrics.metric_types_registry import (
-        metric_types_registry,  # pylint: disable=import-outside-toplevel
-    )
-    from simplebench.metrics.metrics import Metrics  # pylint: disable=import-outside-toplevel
-
     _CACHED_METRICS = Metrics(
         [
             Metric(

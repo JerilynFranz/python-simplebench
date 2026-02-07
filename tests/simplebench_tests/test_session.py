@@ -245,12 +245,12 @@ def session_instance() -> Session:
         extra=parseargs_helper(["--quiet"])),
     PytestAction("PARSE_ARGS_UNINIT_005",
         name="Parse args - invalid type (int) with uninitialized argparser",
-        action=Session().parse_args, kwargs={"args": 123},  # type: ignore[arg-type]
+        action=Session().parse_args, kwargs={"args": 123},
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE),
     PytestAction("PARSE_ARGS_UNINIT_006",
         name="Parse args - invalid type (list with non-str) with uninitialized argparser",
-        action=Session().parse_args, kwargs={"args": ["--json", 123]},  # type: ignore[list-item]
+        action=Session().parse_args, kwargs={"args": ["--json", 123]},
         exception=SimpleBenchTypeError,
         exception_tag=_SessionErrorTag.PARSE_ARGS_INVALID_ARGS_TYPE),
 ])
@@ -280,9 +280,9 @@ def session_with_reporters() -> Session:
 NO_ATTRIBUTE = object()
 
 
-def parse_args_testspecs() -> list[TestAction]:
+def parse_args_testspecs() -> list[TestSpec]:
     """Generate testspecs for the parse_args method of a Session instance with reporters loaded."""
-    testspecs: list[TestAction] = [
+    testspecs: list[TestSpec] = [
         PytestAction("PARSE_ARGS_001",
             name="Parse '--help' with initialized argparser",
             action=session_factory(cache_id='PARSE_ARGS_001').parse_args, args=[["--help"]],

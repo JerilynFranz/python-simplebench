@@ -22,6 +22,7 @@ It does not support sorting or mutation after creation.
 import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
 from typing import TYPE_CHECKING, Any, overload
+from types import NoneType
 
 import simplejson
 from typechecked import Immutable
@@ -96,7 +97,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
             return
 
         for item in __elements:
-            if isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
+            if isinstance(item, (str, int, float, bool, NoneType)):
                 data.append(item)
             elif isinstance(item, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
                 data.append(item)

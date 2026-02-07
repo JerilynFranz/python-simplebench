@@ -66,17 +66,12 @@ in different contexts.
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from simplebench.metrics import MetricCategory, MetricType, MetricTypes
-
-else:
-    MetricCategory = None  # pylint: disable=invalid-name
-    MetricType = None  # pylint: disable=invalid-name
-    MetricTypes = None  # pylint: disable=invalid-name
+    from simplebench.metrics import MetricTypes
 
 __all__: list[str] = []
 
 
-_CACHED_METRIC_TYPES = None
+_CACHED_METRIC_TYPES: 'MetricTypes | None' = None
 
 
 def metric_types() -> 'MetricTypes':
@@ -117,14 +112,13 @@ def metric_types() -> 'MetricTypes':
     - `STD_GC_GEN2_UNCOLLECTABLE_STATS`: Number of uncollectable objects for generation 2
     - `STD_GC_GEN2_UNCOLLECTABLE_RAW`: Number of uncollectable objects for generation 2 (raw values)
     """
-    global _CACHED_METRIC_TYPES, MetricCategory, MetricType, MetricTypes  # pylint: disable=global-statement
+    from .metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
+    from .metric_type import MetricType  # pylint: disable=import-outside-toplevel
+    from .metric_types import MetricTypes  # pylint: disable=import-outside-toplevel
+
+    global _CACHED_METRIC_TYPES  # pylint: disable=global-statement
     if _CACHED_METRIC_TYPES is not None:
         return _CACHED_METRIC_TYPES
-
-    from simplebench.metrics.metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
-    from simplebench.metrics.metric_type import MetricType  # pylint: disable=import-outside-toplevel
-    from simplebench.metrics.metric_types import MetricTypes  # pylint: disable=import-outside-toplevel
-
     _CACHED_METRIC_TYPES = MetricTypes(
         [
             MetricType(

@@ -39,7 +39,7 @@ def is_report_element_typed_dict(obj: Any) -> TypeGuard[ReportElementTypedDict]:
     :param Any obj: The object to check.
     :return bool: True if the object is a ReportElementTypedDict subclass, False otherwise.
     """
-    return bool(isinstance(obj, type) and issubclass(obj, ReportElementTypedDict))  # type: ignore[reportArgumentType]
+    return bool(isinstance(obj, type) and issubclass(obj, ReportElementTypedDict))  # type: ignore[misc]
 
 
 def report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
@@ -283,7 +283,7 @@ def _validate_has_required_and_no_extra_keys(data: Mapping[str, Any], td_cls: ty
         )
 
 
-def _validate_field_value(value, expected_type, parents: set[int]) -> tuple[bool, bool]:
+def _validate_field_value(value: Any, expected_type: type, parents: set[int]) -> tuple[bool, bool]:
     """Validate a single field value against its expected type.
 
     The field must be one of:
@@ -416,7 +416,7 @@ def _validate_sequence_field(origin: Any, args: tuple[Any, ...], value: Any, par
         if len(value) != len(args):
             return (False, False)
         immutable = True
-        for v, elem_type in zip(value, args):
+        for v, elem_type in zip(value, args, strict=True):
             parents.add(id(v))
             v_valid, v_immutable = _validate_field_value(v, elem_type, parents)
             parents.remove(id(v))

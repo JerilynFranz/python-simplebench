@@ -22,7 +22,7 @@ __all__: list[str] = []
 class Metrics(ReportElement, ABC):
     """Abstract class representing the metrics property for a results info object in a JSON report."""
 
-    MetricItem: TypeAlias
+    MetricItem: TypeAlias = None # type: ignore[assignment]
     """Type alias for allowed metric items in the metrics property.
 
     Must be overridden by subclasses to specify the actual types allowed for metric items.

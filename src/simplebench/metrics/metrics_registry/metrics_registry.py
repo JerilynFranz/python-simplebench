@@ -15,9 +15,6 @@ and can be extended or modified using the provided functions.
 The registry itself is a global variable named `registry`
 and is an instance of :class:`simplebench.metric.Metrics`.
 """
-
-from collections.abc import Iterable
-
 import simplebench.metrics.standard_metrics as standard_metrics
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics.metric import Metric
@@ -25,14 +22,16 @@ from simplebench.metrics.metric_category import MetricCategory
 from simplebench.metrics.metric_type import MetricType
 from simplebench.metrics.metric_types import MetricTypes
 from simplebench.metrics.metrics import Metrics
+from simplebench.simplebench_types import ElementCollection, is_element_collection
 from simplebench.validators import validate_iterable_of_type
+
 
 from ._error_tags import _MetricsRegistryErrorTag
 
 __all__: list[str] = []
 
 
-def register_metrics(metrics: Metric | Iterable[Metric] | Metric) -> None:
+def register_metrics(metrics: Metric | ElementCollection[Metric] | Metrics) -> None:
     """Register one or more new metrics in the registry.
 
     :param metrics: A single metric or an iterable of metrics to register.
@@ -58,7 +57,7 @@ def register_metrics(metrics: Metric | Iterable[Metric] | Metric) -> None:
     metrics_registry.extend(validated_metrics)
 
 
-def unregister_metrics(metrics: str | Iterable[str] | Metric | Metrics) -> None:
+def unregister_metrics(metrics: str | ElementCollection[str] | Metric | Metrics) -> None:
     """Unregister one or more metrics from the registry.
 
     :param metrics: A single metric label, a Metric, an iterable of metric labels,
@@ -72,7 +71,7 @@ def unregister_metrics(metrics: str | Iterable[str] | Metric | Metrics) -> None:
         del metrics_registry[metrics.label]
 
     # This handles an iterable of strings or a Metrics object (which iterates its keys)
-    elif isinstance(metrics, Iterable):
+    elif isinstance(metrics, ElementCollection):
         for metric_label in metrics:
             del metrics_registry[metric_label]
     else:
@@ -102,16 +101,18 @@ reset_metrics()  # Initialize with default metrics
 
 def filtered_metrics(
     *,
-    metric_types: Iterable[MetricType] | MetricTypes | MetricType | None = None,
-    metric_categories: Iterable[MetricCategory] | MetricCategory | None = None,
-) -> Metrics:
+    metric_types: ElementCollection[MetricType] | MetricTypes | MetricType | None = None,
+    metric_categories: ElementCollection[MetricCategory] | MetricCategory | None = None) -> Metrics:
     """Create a Metrics object by filtering the metrics registry based on metric types and/or metric categories.
 
     If given both metric_types and metric_categories, the resulting Metrics object
     will include only metrics that match both criteria.
 
-    :param metric_types: A single MetricType, an iterable of MetricType, or a MetricTypes object to filter the metrics.
-    :param metric_categories: A single MetricCategory or an iterable of MetricCategory to filter the metrics.
+    :param metric_types: A single MetricType, an ElementCollection of MetricType, or a MetricTypes object to filter
+        the metrics.
+    :type metric_types: MetricType | ElementCollection[MetricType] | MetricTypes | None
+    :param metric_categories: A single MetricCategory or an ElementCollection of MetricCategory to filter the metrics.
+    :type metric_categories: MetricCategory | ElementCollection[MetricCategory] | None
     :return: A new Metrics object containing the filtered metrics.
     """
     filtered: Metrics = _filtered_metrics_by_category(metrics=metrics_registry, metric_categories=metric_categories)
@@ -122,7 +123,7 @@ def filtered_metrics(
 
 
 def _filtered_metrics_by_type(
-    *, metrics: Metrics, metric_types: Iterable[MetricType] | MetricTypes | MetricType | None = None
+    *, metrics: Metrics, metric_types: ElementCollection[MetricType] | MetricTypes | MetricType | None = None
 ) -> Metrics:
     """Create a Metrics object by filtering the metrics registry based on metric types.
 
@@ -142,11 +143,11 @@ def _filtered_metrics_by_type(
         filter_types = metric_types
     elif isinstance(metric_types, MetricType):
         filter_types = MetricTypes([metric_types])
-    elif isinstance(metric_types, Iterable):
+    elif is_element_collection(metric_types) and all(isinstance(mt, MetricType) for mt in metric_types):
         filter_types = MetricTypes(metric_types)
     else:
         raise SimpleBenchTypeError(
-            'metric_types must be a MetricType, an iterable of MetricType, or a MetricTypes instance.',
+            'metric_types must be a MetricType, an ElementCollection of MetricType, or a MetricTypes instance.',
             tag=_MetricsRegistryErrorTag.INVALID_FILTER_TYPE,
         )
 
@@ -155,7 +156,7 @@ def _filtered_metrics_by_type(
 
 
 def _filtered_metrics_by_category(
-    *, metrics: Metrics, metric_categories: Iterable[MetricCategory] | MetricCategory | None
+    *, metrics: Metrics, metric_categories: ElementCollection[MetricCategory] | MetricCategory | None
 ) -> Metrics:
     """Create a Metrics object by filtering the metrics registry based on metric categories.
 
@@ -173,7 +174,8 @@ def _filtered_metrics_by_category(
     filter_categories: set[MetricCategory]
     if isinstance(metric_categories, MetricCategory):
         filter_categories = {metric_categories}
-    elif isinstance(metric_categories, Iterable):
+
+    elif is_element_collection(metric_categories) and all(isinstance(mc, MetricCategory) for mc in metric_categories):
         filter_categories = set(metric_categories)
         if not all(isinstance(cat, MetricCategory) for cat in filter_categories):
             raise SimpleBenchTypeError(
