@@ -368,7 +368,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def render(self, *, case: 'Case', metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
+    def render(self, *, case: 'Case', metric: Metric | None, options: ReporterOptions) -> str | bytes | Text | Table:
         """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.
@@ -652,7 +652,7 @@ class ReporterProtocol(Protocol):
         args: Namespace,
         choice: 'Choice',
         case: 'Case',
-        metric: 'Metric',
+        metric: 'Metric | None',
         path: Path | None = None,
         session: 'Session | None' = None,
         callback: 'ReporterCallback | None' = None,
@@ -675,7 +675,7 @@ class ReporterProtocol(Protocol):
         :param case: The :class:`~simplebench.case.Case` instance for the report.
         :type case: :class:`~simplebench.case.Case`
         :param metric: The :class:`~simplebench.metric.Metric` of the report.
-        :type metric: :class:`~simplebench.metric.Metric`
+        :type metric: :class:`~simplebench.metric.Metric` | None
         :param path: The output path for filesystem targets. Defaults to ``None``.
         :type path: :class:`~pathlib.Path` | None, optional
         :param session: The :class:`~simplebench.session.Session` instance for the report. Defaults to ``None``.

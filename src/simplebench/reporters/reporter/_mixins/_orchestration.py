@@ -13,7 +13,7 @@ from rich.text import Text
 
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics import Metric
 from simplebench.metrics.metrics_selection import MetricsCollection
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter import Prioritized, ReporterProtocol, _ReporterErrorTag
@@ -85,6 +85,7 @@ class _ReporterOrchestrationMixin:
                 'renderer must be a callable ReportRenderer or None',
                 tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE,
             )
+        from simplebench.metadata import Metadata
 
         validate_type(
             log_metadata,
@@ -231,13 +232,13 @@ class _ReporterOrchestrationMixin:
 
         prioritized = Prioritized(reporter=self, choice=choice, case=case)
         self.dispatch_to_targets(
-            output=actual_renderer(case=case, metric=metric_types_registry.NULL, options=prioritized.options),
+            output=actual_renderer(case=case, metric=None, options=prioritized.options),
             filename_base=case.title,
             log_metadata=log_metadata,
             args=args,
             choice=choice,
             case=case,
-            metric=metric_types_registry.NULL,
+            metric=None,
             path=path,
             session=session,
             callback=callback,
@@ -342,10 +343,11 @@ class _ReporterOrchestrationMixin:
         log_metadata.choice = choice
         for metric in metrics:
             output = actual_renderer(case=case, metric=metric, options=prioritized.options)
+            metric_value = getattr(metric, 'value', str(metric))
             self.dispatch_to_targets(
                 output=output,
                 log_metadata=log_metadata,
-                filename_base=f'{case.title}-{metric.value}',
+                filename_base=f'{case.title}-{metric_value}',
                 args=args,
                 choice=choice,
                 case=case,
@@ -392,6 +394,8 @@ class _ReporterOrchestrationMixin:
         :param callback: A callback function for additional processing of the report.
         :raises SimpleBenchValueError: If an unsupported target is specified in the choice.
         """
+        from simplebench.metadata import Metadata
+
         output = validate_type(
             output, (str, bytes, Text, Table), 'output', _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_OUTPUT_ARG_TYPE
         )
@@ -426,7 +430,12 @@ class _ReporterOrchestrationMixin:
                 'session must be a Session instance if provided',
                 tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE,
             )
-        metric = validate_type(metric, Metric, 'metric', _ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE)
+
+        if metric is not None and not isinstance(metric, Metric):
+            raise SimpleBenchTypeError(
+                f'metric must be a Metric instance or None for dispatch_to_targets: found type {type(metric)}',
+                tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_INVALID_METIC_ARG_TYPE)
+
         if callback is not None and not isinstance(callback, ReporterCallback):
             raise SimpleBenchTypeError(
                 'callback must be a callable ReporterCallback if provided',

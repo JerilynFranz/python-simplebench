@@ -14,9 +14,9 @@ from simplebench.session import Session
 
 
 class RenderByMetricMethodKWArgs(KWArgs):
-    """A class to hold keyword arguments for calling the Reporter().render_by_section() method.
+    """A class to hold keyword arguments for calling the Reporter().render_by_metric() method.
 
-    This class is primarily used to facilitate testing of the Reporter render_by_section()
+    This class is primarily used to facilitate testing of the Reporter render_by_metric()
     instance method with various combinations of parameters.
     """
     def __init__(  # pylint: disable=unused-argument
@@ -32,7 +32,7 @@ class RenderByMetricMethodKWArgs(KWArgs):
             callback: ReporterCallback | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Constructs a RenderByMetricMethodKWArgs instance.
 
-        This class is used to hold keyword arguments for calling the Reporter().render_by_section()
+        This class is used to hold keyword arguments for calling the Reporter().render_by_metric()
         instance method in tests.
         """
         super().__init__(

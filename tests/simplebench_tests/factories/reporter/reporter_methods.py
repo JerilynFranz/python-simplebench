@@ -433,7 +433,7 @@ class ConsoleCall:
     :ivar output: The content to be output to the console.
     :vartype output: Output
     """
-    session: Session | None
+    session: 'Session | None'
     output: Output
 
 
@@ -451,7 +451,7 @@ class ConsoleSpy:
         self.calls: list[ConsoleCall] = []
 
     def __call__(self, *,
-                 session: Session | None,
+                 session: 'Session | None',
                  output: Output) -> None:
         self.calls.append(
             ConsoleCall(
@@ -477,16 +477,16 @@ class CallbackCall:
     :vartype callback: ReporterCallback
     :ivar case: The Case instance.
     :vartype case: Case
-    :ivar section: The Metric of the report.
-    :vartype section: Metric
+    :ivar metric: The Metric of the report.
+    :vartype metric: Metric | None
     :ivar output_format: The Format of the report.
     :vartype output_format: Format
     :ivar output: The report data sent to the callback.
     :vartype output: Any
     """
     callback: ReporterCallback
-    case: Case
-    metric: Metric
+    case: 'Case'
+    metric: Metric | None
     output_format: Format
     output: Any
 
@@ -506,8 +506,8 @@ class CallbackSpy:
     # typed as a method to match the ReporterCallback signature
     def __call__(self, *,
                  callback: ReporterCallback,
-                 case: Case,
-                 metric: Metric,
+                 case: 'Case',
+                 metric: Metric | None,
                  output_format: Format,
                  output: Any) -> None:
         self.calls.append(
@@ -535,14 +535,14 @@ class RenderCall:
 
     :ivar case: The Case instance.
     :vartype case: Case
-    :ivar section: The Metric of the report.
-    :vartype section: Metric
+    :ivar metric: The Metric of the report.
+    :vartype metric: Metric | None
     :ivar options: The ReporterOptions used for rendering.
     :vartype options: ReporterOptions
     """
-    case: Case
-    metric: Metric
-    options: ReporterOptions
+    case: 'Case'
+    metric: Metric | None
+    options: 'ReporterOptions'
 
 
 class RenderSpy(ReportRenderer):
@@ -555,9 +555,9 @@ class RenderSpy(ReportRenderer):
         self.calls: list[RenderCall] = []
 
     def __call__(self, *,
-                 case: Case,
-                 metric: Metric,
-                 options: ReporterOptions) -> Output:
+                 case: 'Case',
+                 metric: Metric | None,
+                 options: 'ReporterOptions') -> Output:
         self.calls.append(
             RenderCall(
                 case=case,

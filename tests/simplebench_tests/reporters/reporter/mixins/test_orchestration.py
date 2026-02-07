@@ -4,6 +4,16 @@ from typing import TypeAlias, TypeVar
 import pytest
 from rich.table import Table
 from rich.text import Text
+from testspec import Assert, TestAction, TestGet, TestSpec, idspec
+
+from simplebench.case import Case
+from simplebench.enums import Target
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.metrics import Metric, MetricsCollection, MetricsSelection, metrics_registry
+from simplebench.options.reporter.options import ReporterOptions
+from simplebench.reporters.choice.choice_conf import ChoiceConf
+from simplebench.reporters.choices.choices_conf import ChoicesConf
+from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
 from simplebench_tests.factories import (
     FactoryReporter,
     FactoryReporterOptions,
@@ -27,19 +37,22 @@ from simplebench_tests.factories.reporter.reporter_methods import (
     render_by_section_kwargs_factory,
 )
 from simplebench_tests.kwargs.reporters.reporter import RenderByCaseMethodKWArgs, RenderByMetricMethodKWArgs
-from testspec import Assert, TestAction, TestGet, TestSpec, idspec
-
-from simplebench.case import Case
-from simplebench.enums import Target
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics import Metric, metric_types_registry
-from simplebench.reporters.choice.choice_conf import ChoiceConf
-from simplebench.reporters.choices.choices_conf import ChoicesConf
-from simplebench.reporters.reporter._error_tags import _ReporterErrorTag
-from simplebench.options.reporter.options import ReporterOptions
 
 Output: TypeAlias = str | bytes | Text | Table
 
+
+def metrics_collection() -> MetricsCollection:
+    """Helper to create a metrics collection for testing.
+
+    :param metrics: A set of Metric instances to include in the collection.
+    :type metrics: set[Metric]
+    :return: A set of Metric instances representing the metrics collection.
+    :rtype: set[Metric]
+    """
+    return MetricsCollection(
+        metrics_registry['STD_TIMING_STATS'],
+        metrics_registry['STD_OPS_STATS'],
+    )
 
 class RenderOrchestrationReporterFactoryOptions(FactoryReporterOptions):
     """Factory reporter options for orchestration tests."""
@@ -75,7 +88,7 @@ class FactoryReporterForOrchestration(FactoryReporter):
         self.target_filesystem = FileSystemSpy()  # type: ignore[method-assign,assignment,reporterAttributeAccessIssue]
         """Spy for filesystem target method calls."""
 
-    def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> Output:
+    def render(self, *, case: Case, metric: Metric | None, options: ReporterOptions) -> Output:
         """Render the report for the given case, metric, and options.
 
         Unlike the base FactoryReporter, this method uses a RenderSpy
@@ -94,15 +107,15 @@ class FactoryReporterForOrchestration(FactoryReporter):
 
 
 def _orchestration_reporter_factory(choice_name: str,
-                                    sections: set[metric_types_registry] | None = None,
+                                    metrics: MetricsSelection | None = None,
                                     targets: set[Target] | None = None,
                                     default_targets: set[Target] | None = None) -> FactoryReporterForOrchestration:
     """Generate a FactoryReporterForOrchestration testing instance.
 
     :param choice_name: The name of the choice.
     :type choice_name: str
-    :param sections: The sections to include.
-    :type sections: set[Metric] | None
+    :param metrics: The metrics to include.
+    :type metrics: MetricsCollection | None
     :param targets: The targets to include.
     :type targets: set[Target] | None
     :param default_targets: The default targets.
@@ -110,15 +123,12 @@ def _orchestration_reporter_factory(choice_name: str,
     :return: A factory reporter for orchestration.
     :rtype: FactoryReporterForOrchestration
     """
-    sections = sections or {metric_types_registry.MEMORY,
-                            metric_types_registry.OPS,
-                            metric_types_registry.TIMING,
-                            metric_types_registry.PEAK_MEMORY}
+    metrics = metrics or metrics_collection()
     default_targets = default_targets or {Target.CONSOLE}
     targets = targets or {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
     choice_conf_kwargs = choice_conf_kwargs_factory(cache_id=None).replace(
         name=choice_name,
-        sections=sections,
+        metrics=metrics,
         targets=targets,
         default_targets=default_targets,
         options=RenderOrchestrationReporterFactoryOptions(),
@@ -134,7 +144,7 @@ T = TypeVar("T", RenderByCaseMethodKWArgs, RenderByMetricMethodKWArgs)
 def _setup_good_path(
     kwargs_class: type[T],
     choice_name: str,
-    sections: set[metric_types_registry] | None = None
+    metrics: MetricsSelection | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
     """Generic helper to arrange a 'good path' test scenario.
 
@@ -142,12 +152,12 @@ def _setup_good_path(
     :type kwargs_class: type[T]
     :param choice_name: The name of the choice.
     :type choice_name: str
-    :param sections: The sections to include.
-    :type sections: set[Metric] | None
+    :param metrics: The metrics to include.
+    :type metrics: MetricsCollection | None
     :return: A tuple containing the reporter and the kwargs.
     :rtype: tuple[FactoryReporterForOrchestration, T]
     """
-    reporter = _orchestration_reporter_factory(choice_name=choice_name, sections=sections)
+    reporter = _orchestration_reporter_factory(choice_name=choice_name, metrics=metrics)
     choice = reporter.choices[choice_name]
     flag_name: str = next(iter(choice.flags))
     target_values: list[str] = [Target.CONSOLE.value, Target.FILESYSTEM.value, Target.CALLBACK.value]
@@ -170,7 +180,7 @@ def _setup_good_path(
 def _setup_bad_target_path(
     kwargs_class: type[T],
     choice_name: str,
-    sections: set[metric_types_registry] | None = None
+    metrics: MetricsSelection | None = None
 ) -> tuple[FactoryReporterForOrchestration, T]:
     """Generic helper to arrange a 'bad target' test scenario.
 
@@ -178,14 +188,14 @@ def _setup_bad_target_path(
     :type kwargs_class: type[T]
     :param choice_name: The name of the choice.
     :type choice_name: str
-    :param sections: The sections to include.
-    :type sections: set[Metric] | None
+    :param metrics: The metrics to include.
+    :type metrics: MetricsSelection | None
     :return: A tuple containing the reporter and the kwargs.
     :rtype: tuple[FactoryReporterForOrchestration, T]
     """
     reporter = _orchestration_reporter_factory(
         choice_name=choice_name,
-        sections=sections,
+        metrics=metrics,
         targets={Target.INVALID, Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK},
         default_targets={Target.INVALID}
     )
@@ -229,7 +239,7 @@ def _setup_render_by_section_good_path() -> tuple[FactoryReporterForOrchestratio
     return _setup_good_path(  # type: ignore[return-value]
         kwargs_class=RenderByMetricMethodKWArgs,
         choice_name="test_choice_by_section",
-        sections={metric_types_registry.MEMORY, metric_types_registry.OPS, metric_types_registry.TIMING}
+        metrics=metrics_collection()
     )
 
 
@@ -354,8 +364,8 @@ def render_by_section_testspecs() -> list[TestSpec]:
     # --- Good Path Test Group ---
     good_reporter, good_kwargs = _setup_render_by_section_good_path()
     # The number of sections determines how many times the spies should be called.
-    num_sections = len(good_kwargs['choice'].sections)
-    good_reporter.render_by_section(**good_kwargs)
+    num_sections = len(good_kwargs['choice'].metrics)
+    good_reporter.render_by_metric(**good_kwargs)
 
     testspecs.extend([
         idspec("BY_SECTION_001", TestGet(
@@ -389,7 +399,7 @@ def render_by_section_testspecs() -> list[TestSpec]:
     testspecs.append(idspec("BY_SECTION_005", TestAction(
         name=("Verify that specifying an unsupported target raises "
               "a SimpleBenchValueError/RENDER_BY_SECTION_UNSUPPORTED_TARGET"),
-        action=bad_target_reporter.render_by_section,
+        action=bad_target_reporter.render_by_metric,
         kwargs=bad_target_kwargs,
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.DISPATCH_TO_TARGETS_UNSUPPORTED_TARGET)))
@@ -399,43 +409,43 @@ def render_by_section_testspecs() -> list[TestSpec]:
     testspecs.extend([
         idspec("BY_SECTION_006", TestAction(
             name="Verify that invalid 'renderer' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_section,
+            action=good_reporter.render_by_metric,
             kwargs=render_by_section_kwargs.replace(renderer="invalid_renderer"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_RENDERER_ARG_TYPE)),
         idspec("BY_SECTION_007", TestAction(
             name="Verify that invalid 'args' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_section,
+            action=good_reporter.render_by_metric,
             kwargs=render_by_section_kwargs.replace(args="invalid_args"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_ARGS_ARG_TYPE)),
         idspec("BY_SECTION_008", TestAction(
             name="Verify that invalid 'case' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_section,
+            action=good_reporter.render_by_metric,
             kwargs=render_by_section_kwargs.replace(case="invalid_case"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CASE_ARG_TYPE)),
         idspec("BY_SECTION_009", TestAction(
             name="Verify that invalid 'choice' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_section,
+            action=good_reporter.render_by_metric,
             kwargs=render_by_section_kwargs.replace(choice="invalid_choice"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CHOICE_ARG_TYPE)),
         idspec("BY_SECTION_010", TestAction(
             name="Verify that invalid 'path' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_section,
+            action=good_reporter.render_by_metric,
             kwargs=render_by_section_kwargs.replace(path="invalid_path"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_PATH_ARG_TYPE)),
         idspec("BY_SECTION_011", TestAction(
             name="Verify that invalid 'session' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_section,
+            action=good_reporter.render_by_metric,
             kwargs=render_by_section_kwargs.replace(session="invalid_session"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_SESSION_ARG_TYPE)),
         idspec("BY_SECTION_012", TestAction(
             name="Verify that invalid 'callback' argument raises SimpleBenchTypeError",
-            action=good_reporter.render_by_section,
+            action=good_reporter.render_by_metric,
             kwargs=render_by_section_kwargs.replace(callback="invalid_callback"),
             exception=SimpleBenchTypeError,
             exception_tag=_ReporterErrorTag.VALIDATE_RENDER_BY_ARGS_INVALID_CALLBACK_ARG_TYPE)),
@@ -545,3 +555,7 @@ def test_dispatch_to_targets_params(testspec: TestSpec) -> None:
 # We don't need to explicitly test the individual targets for dispatch_to_targets
 # because they are already implicitly tested as part of the render_by_case and
 # render_by_section tests.
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

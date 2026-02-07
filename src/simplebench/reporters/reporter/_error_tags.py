@@ -127,7 +127,7 @@ class _ReporterErrorTag(ErrorTag):
     DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE = 'DISPATCH_TO_TARGETS_INVALID_CHOICE_ARG_TYPE'
     """Invalid type for ``choice`` argument in
     :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
-    DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE = 'DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE'
+    DISPATCH_TO_TARGETS_INVALID_METIC_ARG_TYPE = 'DISPATCH_TO_TARGETS_INVALID_SECTION_ARG_TYPE'
     """Invalid type for ``metric`` argument in
     :meth:`~simplebench.reporters.reporter.mixins._orchestration.OrchestrationMixin.dispatch_to_targets`"""
     DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE = 'DISPATCH_TO_TARGETS_INVALID_SESSION_ARG_TYPE'

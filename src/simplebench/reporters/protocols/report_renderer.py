@@ -31,7 +31,7 @@ class ReportRenderer(Protocol):
     reporters.
     """
 
-    def __call__(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
+    def __call__(self, *, case: Case, metric: Metric | None, options: ReporterOptions) -> str | bytes | Text | Table:
         """Renders the benchmark results for one metric and returns the result.
 
         The result can be a :class:`str`, :class:`bytes`, :class:`~rich.text.Text`, or
@@ -39,14 +39,16 @@ class ReportRenderer(Protocol):
 
         While required in the protocol, the value of the ``metric`` argument should be
         ignored by reporters that do not render reports by metric. It will be set to
-        :attr:`~simplebench.metric.Metric.NULL` by the
-        :meth:`~simplebench.reporters.reporter.Reporter.render_by_case` method.
+        ``None`` by the :meth:`~simplebench.reporters.reporter.Reporter.render_by_case` method.
 
         :param case: The :class:`~simplebench.case.Case` instance representing the
             benchmarked code.
+        :type case: Case
         :param metric: The :class:`~simplebench.metric.Metric` of the report to render
             (ignore value if not applicable to reporter).
+        :type metric: Metric | None
         :param options: The reporter-specific options.
+        :type options: ReporterOptions
         :return: The rendered report data as a :class:`str`, :class:`bytes`,
             :class:`~rich.text.Text`, or :class:`~rich.table.Table`.
         """

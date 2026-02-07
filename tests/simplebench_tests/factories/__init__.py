@@ -101,6 +101,7 @@ from .case import (
 )
 from .console import console_factory
 from .path import path_factory, reports_log_path_factory, temp_dir
+from .report.cpu_info_data import report_cpu_info_data
 from .reporter import (
     FactoryReporter,
     choice_conf_factory,
@@ -230,6 +231,8 @@ __all__ = [
     'minimal_case_kwargs_factory',
     'default_minimal_case_kwargs',
     'default_benchcase',
+    # Report factories
+    'report_cpu_info_data',
     # Reporter factories
     'reporter_factory',
     'choice_factory',

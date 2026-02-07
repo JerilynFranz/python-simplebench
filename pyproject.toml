@@ -143,7 +143,6 @@ minversion = "8.0.0"
 testpaths = ["tests"]
 norecursedirs = [".git", ".tox", ".vscode", "venv*", ".venv", ".*_cache", "build", "dist", "testplan.py"]
 addopts = """
---doctest-modules \
 --cov=src \
 --cov-append \
 --cov-report html:coverage_html_report \
