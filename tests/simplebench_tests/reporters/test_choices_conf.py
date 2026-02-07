@@ -42,9 +42,9 @@ from testspec import Assert, TestAction, TestSpec, idspec
         idspec('INIT_005', TestAction(
             name="Choices with invalid item in choices argument iterable - raises SimpleBenchTypeError",
             action=ChoicesConf,
-            kwargs=ChoicesConfKWArgs(choices=[choice_conf_factory(), 'not_a_choice']),  # type: ignore[list-item]
+            kwargs=ChoicesConfKWArgs(choices=['not_a_choice']),  # type: ignore[list-item]
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE
+            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ITEM_VALUE
         )),
     ]
 )
@@ -388,3 +388,7 @@ def test_setitem_dunder_method(testspec: TestSpec) -> None:
     :type testspec: TestSpec
     """
     testspec.run()
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

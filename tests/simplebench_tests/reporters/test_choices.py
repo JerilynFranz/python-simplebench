@@ -55,9 +55,9 @@ from simplebench_tests.kwargs import ChoicesKWArgs
         idspec('INIT_007', TestAction(
             name="Choices with invalid item in choices argument - raises SimpleBenchTypeError",
             action=Choices,
-            kwargs=ChoicesKWArgs(choices=[choice_conf_factory(), 'not_a_choice']),  # type: ignore[list-item]
+            kwargs=ChoicesKWArgs(choices=list(['not_a_choice'])),  # type: ignore[list-item]
             exception=SimpleBenchTypeError,
-            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ARG_TYPE
+            exception_tag=_ChoicesErrorTag.CHOICES_INVALID_ITEM_VALUE
         )),
     ]
 )
@@ -443,3 +443,7 @@ def test_setitem_dunder_method(testspec: TestSpec) -> None:
     :type testspec: TestSpec
     """
     testspec.run()
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

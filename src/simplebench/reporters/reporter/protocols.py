@@ -77,20 +77,20 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    _config: ReporterConfig
+    _config: 'ReporterConfig'
     """The configuration object for the reporter (private backing field)."""
-    _choices: Choices
+    _choices: 'Choices'
     """An instance of `Choices` containing the `Choice` instances for the `Reporter`.
 
         This is constructed from an iterable of `Choice` instances (private backing field)"""
 
     @property
-    def config(self) -> ReporterConfig:
+    def config(self) -> 'ReporterConfig':
         """The configuration object for the reporter."""
         ...
 
     @property
-    def choices(self) -> Choices:
+    def choices(self) -> 'Choices':
         """The :class:`~simplebench.reporters.choices.choices.Choices` for the reporter.
 
         The :class:`~simplebench.reporters.choices.choices.Choices` instance contains one or more
@@ -291,7 +291,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def get_prioritized_options(self, case: Case, choice: 'Choice') -> ReporterOptions:
+    def get_prioritized_options(self, case: 'Case', choice: 'Choice') -> 'ReporterOptions':
         """Get the prioritized :class:`~.ReporterOptions` for the given case and choice.
 
         :param case: The case to get the prioritized options for.
