@@ -9,7 +9,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.report.base import BaseExecutionEnvironment, Environment
 from simplebench.report.versions.v1.python_info import PythonInfo
-from simplebench.simplebench_types import CoreDataMappingType, CoreDataMapping
+from simplebench.simplebench_types import CoreDataMappingType
 from simplebench.validators import validate_core_data_mapping
 
 from . import _validate

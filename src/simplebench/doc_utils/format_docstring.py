@@ -24,7 +24,7 @@ special characters commonly used in RST documentation.
 # Overload 1: Called as @format_docstring(key='value')
 # It receives no positional object and returns a decorator.
 @overload
-def format_docstring(cls_or_func: None = None, /, **kwargs) -> Callable[[T], T]: ...
+def format_docstring(cls_or_func: None = None, /, **kwargs: object) -> Callable[[T], T]: ...
 
 
 # Overload 2: Called as @format_docstring
@@ -33,7 +33,7 @@ def format_docstring(cls_or_func: None = None, /, **kwargs) -> Callable[[T], T]:
 def format_docstring(cls_or_func: T, /) -> T: ...
 
 
-def format_docstring(cls_or_func: T | None = None, /, **kwargs) -> T | Callable[[T], T]:
+def format_docstring(cls_or_func: T | None = None, /, **kwargs: object) -> T | Callable[[T], T]:
     """A decorator to format the docstring of a class or function.
 
     Can be used with or without arguments on both classes and functions.

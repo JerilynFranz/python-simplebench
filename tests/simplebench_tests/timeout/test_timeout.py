@@ -159,7 +159,7 @@ class TestTimeout:
         def thread_a_target() -> None:
             """This thread should time out."""
             try:
-                timeout_a = Timeout(timeout_interval=SHORT_WAIT)
+                timeout_a = Timeout(timeout_interval=SHORT_WAIT)  # type: ignore
 
                 def task_a() -> None:
                     barrier.wait()  # Sync with thread B
@@ -168,21 +168,21 @@ class TestTimeout:
                 results['a'] = 'completed'  # Should not be reached  # pragma: no cover
             except SimpleBenchTimeoutError:
                 results['a'] = 'timed_out'
-            except Exception as e:  # pylint: disable=broad-exception-caught  # pragma: no cover
-                results['a'] = e
+            except Exception as e:  # pragma: no cover
+                results['a'] = str(e)
 
         def thread_b_target() -> None:
             """This thread should complete successfully."""
             try:
-                timeout_b = Timeout(timeout_interval=LONG_WAIT)
+                timeout_b = Timeout(timeout_interval=LONG_WAIT)  # type: ignore
 
                 def task_b() -> None:
                     barrier.wait()  # Sync with thread A
                     time.sleep(SHORT_WAIT)
                 timeout_b.run(task_b)
                 results['b'] = 'completed'
-            except Exception as e:  # pylint: disable=broad-exception-caught  # pragma: no cover
-                results['b'] = e
+            except Exception as e:  # pragma: no cover
+                results['b'] = str(e)
 
         thread_a = threading.Thread(target=thread_a_target)
         thread_b = threading.Thread(target=thread_b_target)

@@ -15,7 +15,8 @@ efficient validation of report data structures.
 It does not need to solve the general TypedDict mimic validation problem,
 only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 """
-
+# TODO: Hoist TypedDict mimic validation logic to a more general utility module if it
+# can be made generic and reusable outside of ReportElementTypedDicts.
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_origin, get_type_hints
 
@@ -143,6 +144,18 @@ def _validate_and_check_immutability_of_mimic(
         data consists only of fully immutable core data types.
     :raise SimpleBenchTypeError: If the TypedDict subclass is misconfigured.
     """
+    if not isinstance(data, Mapping):
+        return (False, False)  # Not a mapping, cannot be a valid ReportElementTypedDict mimic
+    if not isinstance(td_cls, type) or not issubclass(td_cls, ReportElementTypedDict):  # type: ignore
+        raise SimpleBenchTypeError(
+            f'Expected a ReportElementTypedDict subclass for validation, got {td_cls}',
+            tag=_ReportElementValidationErrorTag.INVALID_TYPED_DICT_CLASS,
+        )
+    if not isinstance(parents, (set, type(None))):
+        raise SimpleBenchTypeError(
+            f'Parents must be a set or None, got {type(parents)}',
+            tag=_ReportElementValidationErrorTag.NOT_A_SET,
+        )
     cached_state: bool | None = _cache.valid_in_cache(td_cls, data)
     if cached_state is not None:
         # Cached results are always immutable core data types and thus safe to reuse.

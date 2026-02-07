@@ -1,6 +1,6 @@
 """FunctionRunner protocol for SimpleBench."""
 
-from typing import Protocol, runtime_checkable, overload
+from typing import Protocol, runtime_checkable
 
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results

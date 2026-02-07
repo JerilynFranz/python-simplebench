@@ -14,7 +14,7 @@ class _ValueBlockErrorTag(ErrorTag):
     """The hash_id value is not a string."""
     INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'
     """The hash_id value is invalid.
-    
+
     Must be a 64-character hexadecimal string or an empty string.
     """
     INVALID_HASH_ID_STRUCTURE = 'INVALID_HASH_ID_STRUCTURE'

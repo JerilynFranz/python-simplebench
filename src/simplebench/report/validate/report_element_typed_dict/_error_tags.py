@@ -10,6 +10,8 @@ from simplebench.exceptions import ErrorTag
 class _ReportElementValidationErrorTag(ErrorTag):
     """Error tags for report element validation errors."""
 
+    INVALID_TYPED_DICT_CLASS = 'INVALID_TYPED_DICT_CLASS'
+    """The provided class is not a valid TypedDict."""
     NOT_A_SET = 'NOT_A_SET'
     """The provided value is not a set."""
     INVALID_MAPPING_TYPE_ARGUMENTS = 'INVALID_MAPPING_TYPE_ARGUMENTS'

@@ -1,10 +1,7 @@
 """Protocols for the Reporter class and its mixins."""
 
-# pylint: disable=unnecessary-ellipsis,line-too-long
 # noqa: E501
-from __future__ import annotations
 
-from collections.abc import Iterable
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Protocol, TypeVar, runtime_checkable
@@ -14,17 +11,17 @@ from rich.text import Text
 
 from simplebench.enums import Format, Target
 from simplebench.metrics import Metric, MetricsSelection
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter._config import ReporterConfig
+from simplebench.simplebench_types import ElementCollection
 
 if TYPE_CHECKING:
-    from simplebench.metadata import Metadata
     from simplebench.case import Case
+    from simplebench.metadata import Metadata
     from simplebench.reporters.choice.choice import Choice
     from simplebench.reporters.choices.choices import Choices
-    from simplebench.options.reporter.options import ReporterOptions
     from simplebench.session import Session
-    from simplebench.simplebench_types import ElementCollection
 
 T = TypeVar('T')
 
@@ -203,7 +200,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def add_choice(self, choice: Choice) -> None:
+    def add_choice(self, choice: 'Choice') -> None:
         """Add a :class:`~simplebench.reporters.choice.choice.Choice` to the reporter's choices.
 
         :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` instance to add.
@@ -226,7 +223,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def add_list_of_targets_flags_to_argparse(self, parser: ArgumentParser, choice: Choice) -> None:
+    def add_list_of_targets_flags_to_argparse(self, parser: ArgumentParser, choice: 'Choice') -> None:
         """Add a list of target flags for a :class:`~simplebench.reporters.choice.choice.Choice` \
             to an :class:`~argparse.ArgumentParser`.
 
@@ -240,7 +237,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def add_boolean_flags_to_argparse(self, parser: ArgumentParser, choice: Choice) -> None:
+    def add_boolean_flags_to_argparse(self, parser: ArgumentParser, choice: 'Choice') -> None:
         """Add boolean flags for a :class:`~simplebench.reporters.choice.choice.Choice` to an \
             :class:`~argparse.ArgumentParser`.
 
@@ -255,7 +252,7 @@ class ReporterProtocol(Protocol):
         ...
 
     def select_targets_from_args(
-        self, *, args: Namespace, choice: Choice, default_targets: Iterable[Target]
+        self, *, args: Namespace, choice: 'Choice', default_targets: ElementCollection[Target]
     ) -> set[Target]:
         """Select output targets based on command-line arguments and \
             :class:`~simplebench.reporters.choice.choice.Choice` configuration.
@@ -268,13 +265,13 @@ class ReporterProtocol(Protocol):
         :param choice: The :class:`~simplebench.reporters.choice.choice.Choice` to select targets for.
         :type choice: :class:`~simplebench.reporters.choice.choice.Choice`
         :param default_targets: The default targets to use if no command-line arguments are provided.
-        :type default_targets: Iterable[:class:`~simplebench.enums.Target`]
+        :type default_targets: ElementCollection[:class:`~simplebench.enums.Target`]
         :return: A set of the selected output targets.
         :rtype: set[:class:`~simplebench.enums.Target`]
         """
         ...
 
-    def get_prioritized_default_targets(self, choice: Choice) -> frozenset[Target]:
+    def get_prioritized_default_targets(self, choice: 'Choice') -> frozenset[Target]:
         """Get the prioritized default targets from the choice or reporter defaults.
 
         :param choice: The choice to get the prioritized default targets for.
@@ -284,7 +281,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def get_prioritized_subdir(self, choice: Choice) -> str:
+    def get_prioritized_subdir(self, choice: 'Choice') -> str:
         """Get the prioritized subdirectory from the choice or reporter defaults.
 
         :param choice: The choice to get the prioritized subdirectory for.
@@ -294,7 +291,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def get_prioritized_options(self, case: Case, choice: Choice) -> ReporterOptions:
+    def get_prioritized_options(self, case: Case, choice: 'Choice') -> ReporterOptions:
         """Get the prioritized :class:`~.ReporterOptions` for the given case and choice.
 
         :param case: The case to get the prioritized options for.
@@ -306,7 +303,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def get_prioritized_file_suffix(self, choice: Choice) -> str:
+    def get_prioritized_file_suffix(self, choice: 'Choice') -> str:
         """Get the prioritized file suffix from the choice or reporter.
 
         :param choice: The choice to get the prioritized file suffix for.
@@ -316,7 +313,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def get_prioritized_file_unique(self, choice: Choice) -> bool:
+    def get_prioritized_file_unique(self, choice: 'Choice') -> bool:
         """Get the prioritized file unique flag from the choice or reporter.
 
         :param choice: The choice to get the prioritized file unique flag for.
@@ -326,7 +323,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def get_prioritized_file_append(self, choice: Choice) -> bool:
+    def get_prioritized_file_append(self, choice: 'Choice') -> bool:
         """Get the prioritized file append flag from the choice or reporter.
 
         :param choice: The choice to get the prioritized file append flag for.
@@ -341,11 +338,11 @@ class ReporterProtocol(Protocol):
         *,
         args: Namespace,
         log_metadata: 'Metadata',
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
-        callback: ReporterCallback | None = None,
+        session: 'Session | None' = None,
+        callback: 'ReporterCallback | None' = None,
     ) -> None:
         """Generate a report based on the benchmark results.
 
@@ -371,7 +368,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
+    def render(self, *, case: 'Case', metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
         """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.
@@ -397,12 +394,12 @@ class ReporterProtocol(Protocol):
         self,
         *,
         args: Namespace,
-        log_metadata: Metadata,
-        case: Case,
-        choice: Choice,
+        log_metadata: 'Metadata',
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
-        callback: ReporterCallback | None = None,
+        session: 'Session | None' = None,
+        callback: 'ReporterCallback | None' = None,
     ) -> None:
         """Orchestration hook for report generation.
 
@@ -441,14 +438,14 @@ class ReporterProtocol(Protocol):
     def render_by_metric(
         self,
         *,
-        renderer: ReportRenderer,
-        log_metadata: Metadata,
+        renderer: 'ReportRenderer',
+        log_metadata: 'Metadata',
         args: Namespace,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
-        callback: ReporterCallback | None = None,
+        session: 'Session | None' = None,
+        callback: 'ReporterCallback | None' = None,
     ) -> None:
         """Render a report by iterating through each metric specified in the choice.
 
@@ -477,14 +474,14 @@ class ReporterProtocol(Protocol):
     def render_by_case(
         self,
         *,
-        renderer: ReportRenderer,
-        log_metadata: Metadata,
+        renderer: 'ReportRenderer',
+        log_metadata: 'Metadata',
         args: Namespace,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
-        callback: ReporterCallback | None = None,
+        session: 'Session | None' = None,
+        callback: 'ReporterCallback | None' = None,
     ) -> None:
         """Render a single report for the entire case.
 
@@ -514,7 +511,7 @@ class ReporterProtocol(Protocol):
     def target_filesystem(
         self,
         *,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         path: Path | None,
         subdir: str,
         filename: str,
@@ -546,8 +543,8 @@ class ReporterProtocol(Protocol):
 
     def target_callback(
         self,
-        callback: ReporterCallback | None,
-        case: Case,
+        callback: 'ReporterCallback | None',
+        case: 'Case',
         metric: Metric,
         output_format: Format,
         output: str | bytes | Text | Table,
@@ -567,7 +564,7 @@ class ReporterProtocol(Protocol):
         """
         ...
 
-    def target_console(self, session: Session | None, output: str | bytes | Text | Table) -> None:
+    def target_console(self, session: 'Session | None', output: str | bytes | Text | Table) -> None:
         """Output report data to the console.
 
         This method uses the console associated with the :class:`~simplebench.session.Session`
@@ -616,14 +613,14 @@ class ReporterProtocol(Protocol):
     def _validate_render_by_args(
         self,
         *,
-        renderer: ReportRenderer,
-        log_metadata: Metadata,
+        renderer: 'ReportRenderer',
+        log_metadata: 'Metadata',
         args: Namespace,
-        case: Case,
-        choice: Choice,
+        case: 'Case',
+        choice: 'Choice',
         path: Path | None = None,
-        session: Session | None = None,
-        callback: ReporterCallback | None = None,
+        session: 'Session | None' = None,
+        callback: 'ReporterCallback | None' = None,
     ) -> None:
         """Validate common arguments for render_by_case and render_by_metric methods.
 
@@ -650,15 +647,15 @@ class ReporterProtocol(Protocol):
         self,
         *,
         output: str | bytes | Text | Table,
-        log_metadata: Metadata,
+        log_metadata: 'Metadata',
         filename_base: str,
         args: Namespace,
-        choice: Choice,
-        case: Case,
-        metric: Metric,
+        choice: 'Choice',
+        case: 'Case',
+        metric: 'Metric',
         path: Path | None = None,
-        session: Session | None = None,
-        callback: ReporterCallback | None = None,
+        session: 'Session | None' = None,
+        callback: 'ReporterCallback | None' = None,
     ) -> None:
         """Deliver the rendered output to the specified targets.
 

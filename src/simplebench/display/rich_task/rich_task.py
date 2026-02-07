@@ -189,7 +189,7 @@ class RichTask:
                 return task
         return None
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the task."""
         return (
             f"RichTask(name='{self._name}', description='{self._description}', "

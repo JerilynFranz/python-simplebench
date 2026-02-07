@@ -54,7 +54,7 @@ class LazyProperty(Generic[_T]):
         # The computation function is only called once.
     """
 
-    def __init__(self, func: Callable[[object], _T]):
+    def __init__(self, func: Callable[[object], _T]) -> None:
         """Initialize the descriptor.
 
         :param func: The function that computes the property's value.

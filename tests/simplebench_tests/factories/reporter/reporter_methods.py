@@ -6,7 +6,6 @@ the filesystem, outputting to the console, and invoking callbacks.
 This is useful for testing the behavior of reporter classes without
 performing actual I/O operations.
 """
-from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -201,7 +200,7 @@ def dispatch_to_targets_kwargs_factory(
         path=path_factory(cache_id=cache_id),
         log_metadata=report_log_metadata_factory(),
         session=session_factory(cache_id=cache_id),
-        section=default_metric(),
+        metric=default_metric(),
         callback=default_reporter_callback,
         output=default_output(),
         filename_base=default_filename_base(),
@@ -515,7 +514,7 @@ class CallbackSpy:
             CallbackCall(
                 callback=callback,
                 case=case,
-                section=section,
+                metric=metric,
                 output_format=output_format,
                 output=output,
             ))
@@ -562,10 +561,10 @@ class RenderSpy(ReportRenderer):
         self.calls.append(
             RenderCall(
                 case=case,
-                section=section,
+                metric=metric,
                 options=options,
             ))
-        return Text(f"Rendered report for case {case} in section {section}")
+        return Text(f"Rendered report for case {case} in metric {metric}")
 
     @property
     def count(self) -> int:

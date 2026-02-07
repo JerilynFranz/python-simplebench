@@ -3,7 +3,6 @@
 import logging
 import threading
 from collections import OrderedDict
-from collections.abc import Hashable
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
@@ -57,7 +56,7 @@ class ValidationCache:
         object id and class it can be reused directly from the cache without re-validation of the subtree.
         """
 
-    def valid_in_cache(self, td_cls: Hashable, obj: object) -> bool | None:
+    def valid_in_cache(self, td_cls: Any, obj: object) -> bool | None:
         """
         Check if a reference validity is cached and return its validity if found.
 
@@ -71,10 +70,16 @@ class ValidationCache:
         Access is optimized for performance with optimistic lock-free read access and
         thread-safe locking if a cache modification is needed.
 
-        :param Hashable td_cls: The type hint of the value reference to check.
+        :param Any td_cls: The type hint of the value reference to check.
         :param object obj: The object reference to check.
         :return bool | None: The cached validity if found, or None if not found in cache.
         """
+        try:
+            hash(td_cls) # There is no absolute way to guarantee that a type is hashable except by trying to hash it
+        except TypeError:
+            # If the type is not hashable, we cannot cache it, so we return None to indicate no cache hit.
+            log.debug("valid_in_cache: Type '%s' is not hashable, cannot check cache", td_cls)
+            return None
         log.debug("valid_in_cache: Checking cache for object of type '%s' with id %d", td_cls, id(obj))
         key: CacheKey = CacheKey(td_cls, obj)
         if key in self._cache:
@@ -94,11 +99,11 @@ class ValidationCache:
         return None
 
     def add_cache_entry(
-        self, td_cls: Hashable, obj: object, is_valid: bool, noncachable_types: set[type[Any]] | None = None
+        self, td_cls: Any, obj: object, is_valid: bool, noncachable_types: set[type[Any]] | None = None
     ) -> None:
         """Cache a CacheEntry
 
-        :param Hashable td_cls: The type hint of the object.
+        :param Any td_cls: The type hint of the object.
         :param object obj: The object to cache.
         :param bool is_valid: The validity of the object.
         """
@@ -106,6 +111,15 @@ class ValidationCache:
         if noncachable_types is not None and type(obj) in noncachable_types:
             log.debug("add_cache_entry: Not caching object of type '%s' as it is in noncachable_types", td_cls)
             return
+
+        # There is no absolute way to guarantee that a type hint is hashable except by trying to hash it
+        try:
+            hash(td_cls)
+        except TypeError:
+            # If the type is not hashable, we cannot cache it
+            log.debug("add_cache_entry: Type '%s' is not hashable, cannot add to cache", td_cls)
+            return
+
         item = CacheEntry(td_cls, obj, is_valid, self._cache, self._cache_lock)
         with self._cache_lock:
             self._cache.setdefault(item.cache_key, item)

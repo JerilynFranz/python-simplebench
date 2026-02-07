@@ -33,7 +33,7 @@ class ReportLogEntry(BaseReportLogEntry):
         BaseReportLogEntry.validate_schema_uri(data.get('$schema'))
         BaseReportLogEntry.validate_version(data.get('version'))
         BaseReportLogEntry.validate_type(data.get('type'), 'ReportLogEntry')
-        file_uri = data.get('uri')
+        #file_uri = data.get('uri')
 
         report = cls(filepath=data.get('filepath'), timestamp=data.get('timestamp'))
         return report

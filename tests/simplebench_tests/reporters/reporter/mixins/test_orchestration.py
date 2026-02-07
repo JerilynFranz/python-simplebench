@@ -110,7 +110,10 @@ def _orchestration_reporter_factory(choice_name: str,
     :return: A factory reporter for orchestration.
     :rtype: FactoryReporterForOrchestration
     """
-    sections = sections or {metric_types_registry.MEMORY, metric_types_registry.OPS, metric_types_registry.TIMING, metric_types_registry.PEAK_MEMORY}
+    sections = sections or {metric_types_registry.MEMORY,
+                            metric_types_registry.OPS,
+                            metric_types_registry.TIMING,
+                            metric_types_registry.PEAK_MEMORY}
     default_targets = default_targets or {Target.CONSOLE}
     targets = targets or {Target.CONSOLE, Target.FILESYSTEM, Target.CALLBACK}
     choice_conf_kwargs = choice_conf_kwargs_factory(cache_id=None).replace(

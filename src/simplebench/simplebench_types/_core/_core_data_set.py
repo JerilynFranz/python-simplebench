@@ -254,7 +254,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         from ._core_data_mapping import CoreDataMapping
         from ._core_data_sequence import CoreDataSequence
 
-        thaw_set: set[str | int | float | bool | frozenset | tuple | NoneType | CoreDataMapping] = set()
+        thaw_set: set[str | int | float | bool | frozenset | tuple | None | CoreDataMapping] = set()
         for value in self._data:
             if isinstance(value, CoreDataSet):
                 thaw_set.add(frozenset(value.thaw(preserve_immutability=True)))

@@ -487,7 +487,7 @@ class StatsBlock(BaseStatsBlock):
         :return float: The median value.
         """
         if self._median is None:
-            self._median = float(statistics.median(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
+            self._median = float(statistics.median(self._measurements))  # type: ignore  # validated in __init__
         return self._median
 
     @property
@@ -500,7 +500,7 @@ class StatsBlock(BaseStatsBlock):
         :return: The minimum value.
         """
         if self._minimum is None:
-            self._minimum = float(min(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
+            self._minimum = float(min(self._measurements))  # type: ignore  # validated in __init__
         return self._minimum
 
     @property
@@ -513,7 +513,7 @@ class StatsBlock(BaseStatsBlock):
         :return: The maximum value.
         """
         if self._maximum is None:
-            self._maximum = float(max(self._measurements))  # type: ignore[reportArgumentType]  # validated in __init__
+            self._maximum = float(max(self._measurements))  # type: ignore  # validated in __init__
         return self._maximum
 
     @property
@@ -536,9 +536,9 @@ class StatsBlock(BaseStatsBlock):
         :return: The standard deviation.
         """
         if self._stdev is None:
-            if len(self._measurements) > 1:  # type: ignore[reportArgumentType]  # validated in __init__
+            if len(self._measurements) > 1:  # type: ignore  # validated in __init__
                 self._stdev = float(
-                    statistics.stdev(self._measurements)  # type: ignore[reportArgumentType]  # validated in __init__
+                    statistics.stdev(self._measurements)  # type: ignore  # validated in __init__
                     * sqrt(self.rounds)
                 )
             else:
@@ -614,9 +614,9 @@ class StatsBlock(BaseStatsBlock):
                 tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
             )
         if len(data) == 1:
-            data_value = float(data[0])  # type: ignore[reportArgumentType]  # validated in __init__
+            data_value = float(data[0])  # type: ignore  # validated in __init__
             return Values([data_value] * 101)
-        quantile_values = statistics.quantiles(data, n=102, method='inclusive')  # type: ignore[reportArgumentType]
+        quantile_values = statistics.quantiles(data, n=102, method='inclusive')  # type: ignore
         return Values(quantile_values)
 
     def _validate_stats_block_consistency(self) -> None:

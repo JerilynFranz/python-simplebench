@@ -129,7 +129,8 @@ class RichTableConfig(ReporterConfig):
                         flags=['--rich-table.timing'],
                         flag_type=FlagType.TARGET_LIST,
                         name='rich-table-timing',
-                        description='Timing results as rich text tables (filesystem, console, callback, default=console)',
+                        description=('Timing results as rich text tables '
+                                     '(filesystem, console, callback, default=console)'),
                         metrics=MetricsCollection(
                             metrics_registry['STD_TIMING_STATS'], metrics_registry['STD_TOTAL_ELAPSED_TIME']
                         ),
@@ -140,7 +141,8 @@ class RichTableConfig(ReporterConfig):
                         flags=['--rich-table.memory'],
                         flag_type=FlagType.TARGET_LIST,
                         name='rich-table-memory',
-                        description='Memory results as rich text tables (filesystem, console, callback, default=console)',
+                        description=('Memory results as rich text tables '
+                                     '(filesystem, console, callback, default=console)'),
                         metrics=MetricsCollection(
                             metrics_registry['STD_MEMORY_STATS'],
                             metrics_registry['STD_PEAK_MEMORY_STATS'],

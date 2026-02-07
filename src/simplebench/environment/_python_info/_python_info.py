@@ -229,7 +229,7 @@ class PythonInfo:
                 # Special cases like -v and -O that depend on the flag's value.
                 active_flags.add(arg(flag_value))
             else:
-                active_flags.add(arg)
+                active_flags.add(str(arg))
 
         return ' '.join(sorted(list(active_flags)))
 

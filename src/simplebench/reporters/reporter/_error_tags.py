@@ -21,7 +21,8 @@ class _ReporterErrorTag(ErrorTag):
     """Invalid type for ``path`` argument when validating filesystem path."""
     VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_TYPE = 'VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_TYPE'
     """Invalid type for ``value`` argument when validating callback in targets."""
-    VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_VALUE_TYPE = 'VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_VALUE_TYPE'
+    VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_VALUE_TYPE = (
+        'VALIDATE_CALLBACK_IN_TARGETS_INVALID_TARGETS_ARG_VALUE_TYPE')
     """Non-Target enum values in ``value`` argument when validating callback in targets."""
     VALIDATE_NONE_CALLBACK_WITH_CALLBACK_TARGET = 'VALIDATE_NONE_CALLBACK_WITH_CALLBACK_TARGET'
     """Cannot have Target.CALLBACK in targets when ``callback`` argument is None."""

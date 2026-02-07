@@ -193,7 +193,7 @@ def _validate_and_check_immutability_of_mimic(
     return (True, immutable_children)  # All keys validated successfully, propagate immutability status
 
 
-def _validate_typed_dict_subclass(td_cls: type[TypedDict], raise_on_error: bool = True) -> bool:  # type: ignore[invalidTypeForm]
+def _validate_typed_dict_subclass(td_cls: type[TypedDict], raise_on_error: bool = True) -> bool:  # type: ignore
     """Validate a TypedDict subclass schema.
 
     This is not a runtime instance validation, but a static schema validation.

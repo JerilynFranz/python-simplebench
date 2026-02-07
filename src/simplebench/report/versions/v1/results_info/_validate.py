@@ -1,8 +1,6 @@
 """Validation functions for ResultsInfo v1."""
 
 import re
-from collections.abc import Mapping
-from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
