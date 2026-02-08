@@ -28,10 +28,13 @@
 		"terminal.integrated.env.windows": {
 			"PYTHONPATH": "${workspaceFolder}\\src;${workspaceFolder}\\tests"
 		},
-		"testing.coverageToolbarEnabled": false,
+		"testing.coverageToolbarEnabled": true,
 		"coverage-gutters.coverageReportFileName": "coverage_html_report/index.html",
-		"coverage-gutters.showLineCoverage": false,
+		"coverage-gutters.showLineCoverage": true,
 		"coverage-gutters.watchOnActivate": true,
-		"coverage-gutters.showGutterCoverage": false
+		"coverage-gutters.showGutterCoverage": true,
+		"testing.showCoverageInExplorer": false,
+		"coverage-gutters.showRulerCoverage": true,
+		"coverage-gutters.coverageFileNames": ["coverage.xml"]
 	}
 }

@@ -78,14 +78,16 @@
     "python.testing.pytestArgs": [
       "tests"
     ],
-    "coverage-gutters.showLineCoverage": false,
+    "coverage-gutters.ignoredPathGlobs": "**/{node_modules,venv,.venv,vendor}/**",
+    "coverage-gutters.showGutterCoverage": true,
     "coverage-gutters.watchOnActivate": true,
+    "coverage-gutters.showLineCoverage": true,
+    "coverage-gutters.showRulerCoverage": true,
     "coverage-gutters.coverageReportFileName": "coverage_html_report/index.html",
-    "coverage-gutters.showRulerCoverage": false,
-    "coverage-gutters.ignoredPathGlobs": "**/{node_modules,venv,.venv,.tox,vendor}/**",
-    "coverage-gutters.showGutterCoverage": false,
+    "coverage-gutters.coverageFileNames": ["coverage.xml"],
     "mypy-type-checker.args": [
       "--no-warn-unused-ignores"
     ],
+    
 }
 

@@ -136,17 +136,13 @@ Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGE
 minversion = "9.0.0"
 testpaths = ["tests"]
 norecursedirs = [".git", ".tox", ".vscode", "venv*", ".venv", ".*_cache", "build", "dist", "testplan.py"]
-addopts = ["--cov=src", "--cov-report=term-missing", "--cov-report=xml", "--continue-on-collection-errors"]
+addopts = ["--continue-on-collection-errors"]
 
 [tool.pytest.ini_options]
 minversion = "8.0.0"
 testpaths = ["tests"]
 norecursedirs = [".git", ".tox", ".vscode", "venv*", ".venv", ".*_cache", "build", "dist", "testplan.py"]
 addopts = """
---cov=src \
---cov-append \
---cov-report html:coverage_html_report \
---cov-report xml:coverage.xml \
 --ignore=docs_source/ \
 --continue-on-collection-errors
 """
@@ -265,11 +261,9 @@ description = "Run test under {base_python}"
 allowlist_externals = ["pytest", "ruff", "mypy", "sphinx-build"]
 dependency_groups = ["test", "lint", "tools", "types"]
 extras = ["all"]
+ignore_outcome = true
 commands = [
     ["mypy", "src", "tests"],
-    ["coverage", "run", "-m", "pytest", "--continue-on-collection-errors", { replace = "posargs", extend = true }],
-    ["coverage", "report"],
-    ["coverage", "xml", "-o", "coverage.xml"]
 ]
 
 # --- Concrete Test Environments ---
@@ -279,8 +273,11 @@ commands = [
 description = "Run tests and generate HTML coverage report"
 base_python = ["python3.12", "python3.13", "python3.14"]
 dependency_groups = ["test", "tools"]
+ignore_outcome = true
 commands = [
     ["coverage", "run", "-m", "pytest", "--continue-on-collection-errors", {replace = "posargs", extend = true}],
+]
+commands_post = [
     ["coverage", "html", "-d", "coverage_html_report"],
     ["coverage", "xml"],
     ["coverage", "report"],

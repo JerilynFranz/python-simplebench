@@ -1,19 +1,26 @@
 """Registry for metric defintions and their corresponding functions.
 
-The registry is a global dictionary that maps metric labels to their corresponding functions.
-This allows for easy addition, removal, and lookup of metrics by their labels.
+The registry is a globally available :class:`simplebench.metrics.Metrics` object that
+maps metric labels to their corresponding functions.
 
-Functions:
-- `register(metrics)`: Register one or more new metrics in the registry.
-- `unregister(metrics)`: Unregister one or more metrics from the registry.
-- `clear()`: Clear all registered metrics from the registry.
+This allows for easy addition, removal, and lookup of metrics by their labels,
+as well as filtering of metrics based on their types and categories.
+
+Available Functions:
+
+- :func:`register`: Register one or more new metrics in the registry.
+- :func:`unregister`: Unregister one or more metrics from the registry.
+- :func:`clear`: Clear all registered metrics from the registry.
+- :func:`reset`: Clear all metrics and initialize with the default standard metrics.
+- :func:`filtered_metrics`: Return a Metrics object created by filtering
+        the metrics registry based on metric types and/or metric categories.
 
 The registry is initialized with the default metrics defined in
-`simplebench.metric.meta_metrics` and in `simplebench.metric.standard_metrics`
+:mod:`simplebench.metrics.standard_metrics`
 and can be extended or modified using the provided functions.
 
-The registry itself is a global variable named `registry`
-and is an instance of :class:`simplebench.metric.Metrics`.
+The registry itself is store in the :obj:`simplebench.metrics.metrics_registry`
+and is an instance of :class:`simplebench.metrics.Metrics`.
 """
 import simplebench.metrics.standard_metrics as standard_metrics
 from simplebench.exceptions import SimpleBenchTypeError
@@ -91,12 +98,6 @@ def clear_metrics() -> None:
     """Clear all registered metrics from the registry."""
     metrics_registry.clear()
 
-
-metrics_registry: Metrics = Metrics()  # pylint: disable=invalid-name
-"""Registry for metrics and their corresponding functions.
-
-This is a global variable that maps metric labels to their corresponding functions."""
-reset_metrics()  # Initialize with default metrics
 
 
 def filtered_metrics(
@@ -193,3 +194,10 @@ def _filtered_metrics_by_category(
         [metric for metric in metrics.values() if metric.metric_type.category in filter_categories]
     )
     return filtered_items
+
+
+metrics_registry: Metrics = Metrics()
+"""Registry for metrics and their corresponding functions.
+
+This is a global variable that maps metric labels to their corresponding functions."""
+reset_metrics()  # Initialize with default metrics

@@ -1,7 +1,6 @@
 """Utility functions to get machine information."""
 
 import platform
-from dataclasses import dataclass
 from types import MappingProxyType
 from typing import TYPE_CHECKING, ClassVar, cast
 
@@ -15,24 +14,13 @@ from . import _validate
 if TYPE_CHECKING:
     from simplebench.report.versions import v1 as report
 
-@dataclass(frozen=True, kw_only=True)
 class MachineInfo:
     """Data class holding information about the current machine and execution environment."""
 
-    node: str
-    """The node name of the machine."""
-    cpu: CPUInfo
-    """CPU information."""
-    python: PythonInfo
-    """Python interpreter information."""
-    system: SystemInfo
-    """System information."""
-    memory: MemoryInfo
-    """Memory information."""
+    __slots__ = ('_node', '_cpu', '_python', '_system', '_memory', '_dict_cache', '_report_machine_info')
 
-    __slots__ = ('node', 'cpu', 'python', 'system', 'memory', '_dict_cache', '_report_machine_info')
-
-    def __post_init__(self) -> None:
+    def __init__(self, *,
+                 node: str | None, cpu: CPUInfo, python: PythonInfo, system: SystemInfo, memory: MemoryInfo) -> None:
         """Post-initialization to validate the object's fields.
 
         The 'execution_environment' field is constructed from the 'python' field for
@@ -41,26 +29,70 @@ class MachineInfo:
         """
         from simplebench.report.versions import v1 as report
 
-        _validate.node(self.node)
-        _validate.cpu_info(self.cpu)
-        _validate.python_info(self.python)
-        _validate.system_info(self.system)
-        _validate.memory_info(self.memory)
-        object.__setattr__(
-            self,
-            '_dict_cache',
-            MappingProxyType(
-                {
-                    'node': self.node,
-                    'cpu': self.cpu.to_dict(),
-                    'execution_environment': MappingProxyType({'python': self.python.to_dict()}),
-                    'system': self.system.to_dict(),
-                    'memory': self.memory.to_dict(),
-                }
-            ),
-        )
-        object.__setattr__(self, '_report_machine_info',
-                           report.MachineInfo.from_dict(self._to_dict()))
+        self._node: str | None = _validate.node(node)
+        self._cpu: CPUInfo = _validate.cpu_info(cpu)
+        self._python: PythonInfo = _validate.python_info(python)
+        self._system: SystemInfo = _validate.system_info(system)
+        self._memory: MemoryInfo = _validate.memory_info(memory)
+        self._dict_cache: MappingProxyType[str, object] = MappingProxyType({
+            'node': self.node,
+            'cpu': self.cpu.to_dict(),
+            'execution_environment': MappingProxyType({'python': self.python.to_dict()}),
+            'system': self.system.to_dict(),
+            'memory': self.memory.to_dict(),
+        })
+        self._report_machine_info: report.MachineInfo = report.MachineInfo.from_dict(self._to_dict())
+
+    @property
+    def node(self) -> str | None:
+        """The node name of the machine.
+
+        :return str | None: The node name.
+        """
+        return self._node
+
+    @property
+    def cpu(self) -> CPUInfo:
+        """The CPU information of the machine.
+
+        :return CPUInfo: The CPU information.
+        """
+        return self._cpu
+
+    @property
+    def python(self) -> PythonInfo:
+        """The Python environment information of the machine.
+
+        :return PythonInfo: The Python environment information.
+        """
+        return self._python
+
+    @property
+    def system(self) -> SystemInfo:
+        """The system information of the machine.
+
+        :return SystemInfo: The system information.
+        """
+        return self._system
+
+    @property
+    def memory(self) -> MemoryInfo:
+        """The memory information of the machine.
+
+        :return MemoryInfo: The memory information.
+        """
+        return self._memory
+
+    @property
+    def execution_environment(self) -> dict[str, object]:
+        """The execution environment information of the machine.
+
+        This is a dictionary containing the Python environment
+        information, structured for compatibility with report MachineInfo.
+
+        :return dict: The execution environment information.
+        """
+        return self._dict_cache['execution_environment']  # type: ignore[return-value]
 
     @property
     def as_report_machine_info(self) -> 'report.MachineInfo':
@@ -69,7 +101,7 @@ class MachineInfo:
 
         :return report.MachineInfo: The ReportMachineInfo representation of the MachineInfo instance.
         """
-        return cast('report.MachineInfo', self._report_machine_info)  # type: ignore[attr-defined]
+        return self._report_machine_info
 
     def _to_dict(self) -> 'report.ImmutableMachineInfoData':
         """Convert the MachineInfo instance to a dictionary. The dictionary

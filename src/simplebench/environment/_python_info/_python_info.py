@@ -15,9 +15,23 @@ Python-specific environment variables that are set.
 
 It also gathers information about the garbage collector settings
 using the :module:`gc` module.
+
+Exposed properties include:
+- `version` - version number of the Python interpreter.
+- `implementation` - name of the Python implementation.
+- `implementation_version` - version of the Python implementation.
+- `compiler` - compiler used to build the Python interpreter.
+- `revision` - revision of the Python implementation.
+- `buildno` - build number of the Python interpreter.
+- `builddate` - build date of the Python interpreter.
+- `command_line_flags` - command line flags used to start the interpreter.
+- `environment_variables` - Python-specific environment variables that are set.
+- `gc_is_enabled` - whether the garbage collector is enabled.
+- `gc_thresholds` - the garbage collection thresholds.
+- `thread_switch_interval` - the thread switch interval in seconds.
+
 """
 
-import dataclasses
 import gc
 import os
 import platform
@@ -48,7 +62,6 @@ _NO_FLAG_SET = _NonExistentFlag()
 """Marker instance for non-existent sys.flags attributes."""
 
 
-@dataclasses.dataclass(frozen=True)
 class PythonInfo:
     """Create a PythonInfo facade for the Python :module:`platform` functions.
 
@@ -84,104 +97,145 @@ class PythonInfo:
     in other parts of the application or reporting tools and makes it possible to
     serialize (such as by pickling) this information if needed.
     """
-
-    python_version: str
-    """The Python version string."""
-    implementation: str
-    """The Python implementation name."""
-    implementation_version: str
-    """The Python implementation version string."""
-    compiler: str
-    """The Python compiler string."""
-    revision: str
-    """The Python implementation revision string."""
-    buildno: str
-    """The Python build number."""
-    builddate: str
-    """The Python build date."""
-    command_line_flags: str
-    """The command line flags used to start the interpreter."""
-    environment_variables: MappingProxyType[str, str]
-    """A read-only dictionary of set Python-specific environment variables."""
-    gc_is_enabled: bool
-    """A boolean indicating if the garbage collector is enabled."""
-    gc_thresholds: tuple[int, int, int]
-    """A tuple of the garbage collection thresholds."""
-    thread_switch_interval: float
-    """The thread switch interval in seconds."""
-    architecture_bits: str
-    """A string containing the architecture bits."""
-    architecture_linkage: str
-    """A string containing the architecture linkage format."""
+    _cached_proto: 'PythonInfo | None' = None
+    """A cached instance of PythonInfo for reuse in future instances to optimize performance."""
 
     __slots__ = (
-        'python_version',
-        'implementation',
-        'implementation_version',
-        'compiler',
-        'revision',
-        'buildno',
-        'builddate',
-        'command_line_flags',
-        'environment_variables',
-        'gc_is_enabled',
-        'gc_thresholds',
-        'thread_switch_interval',
-        'architecture_bits',
-        'architecture_linkage',
+        '_python_version',
+        '_implementation',
+        '_implementation_version',
+        '_compiler',
+        '_revision',
+        '_buildno',
+        '_builddate',
+        '_command_line_flags',
+        '_environment_variables',
+        '_gc_is_enabled',
+        '_gc_thresholds',
+        '_thread_switch_interval',
+        '_architecture_bits',
+        '_architecture_linkage',
         '_dict_cache',
-        '_cached_proto',
     )
 
     def __init__(self) -> None:
         """Create a PythonInfo facade for the Python :module:`platform` functions.
 
         This is used to gather information about the current Python version, implementation,
-        compiler, revision, and build details. This constructor accepts no arguments
-        and always reflects the environment in which it was originally created.
+        compiler, revision, and build details.
+
+        It caches information that would not change during a run (like version, implementation,
+        compiler, etc.) in a class-level variable for future instances to reuse and optimize
+        performance, while still re-evaluating fields that could change during a run
+        (like garbage collector settings, thread switch interval, and environment variables)
         """
         cls = self.__class__
-        cached_proto = getattr(cls, '_cached_proto', None)
-        if cached_proto is not None:
-            fields = dataclasses.fields(self)
-            for field in fields:
-                object.__setattr__(self, field.name, getattr(cached_proto, field.name))
-            # Only fields that could change during a run are re-evaluated
-            object.__setattr__(self, 'gc_is_enabled', gc.isenabled())
-            object.__setattr__(self, 'gc_thresholds', gc.get_threshold())
-            object.__setattr__(self, 'thread_switch_interval', sys.getswitchinterval())
-            object.__setattr__(self, 'environment_variables', self._environment_variables())
-            return
+        if cls._cached_proto is None:
+            architecture = platform.architecture()
+            self._architecture_bits = architecture[_BITS]
+            self._architecture_linkage = architecture[_LINKAGE]
+            self._python_version = str(platform.python_version())
+            self._implementation = platform.python_implementation()
+            self._compiler = platform.python_compiler()
+            self._implementation_version = self._python_implementation_version()
+            self._revision = platform.python_revision()
+            build_info = platform.python_build()
+            self._buildno = build_info[_BUILDNO]
+            self._builddate = build_info[_BUILDDATE]
+            self._command_line_flags = self._python_command_line_flags()
+            self._environment_variables = self._current_environment_variables()
+            self._gc_is_enabled = gc.isenabled()
+            self._gc_thresholds = gc.get_threshold()
+            self._thread_switch_interval = sys.getswitchinterval()
+            cls._cached_proto = self
 
-        # Uses object.__setattr__ because the class is frozen
-        architecture = platform.architecture()
-        object.__setattr__(self, 'architecture_bits', architecture[_BITS])
-        object.__setattr__(self, 'architecture_linkage', architecture[_LINKAGE])
-        object.__setattr__(self, 'python_version', str(platform.python_version()))
-        object.__setattr__(self, 'implementation', platform.python_implementation())
-        object.__setattr__(self, 'compiler', platform.python_compiler())
-        object.__setattr__(self, 'implementation_version', self._python_implementation_version())
-        object.__setattr__(self, 'revision', platform.python_revision())
-        build_info = platform.python_build()
-        object.__setattr__(self, 'buildno', build_info[_BUILDNO])
-        object.__setattr__(self, 'builddate', build_info[_BUILDDATE])
-        object.__setattr__(self, 'command_line_flags', self._command_line_flags())
-        object.__setattr__(self, 'environment_variables', self._environment_variables())
-        object.__setattr__(self, 'gc_is_enabled', gc.isenabled())
-        object.__setattr__(self, 'gc_thresholds', gc.get_threshold())
-        object.__setattr__(self, 'thread_switch_interval', sys.getswitchinterval())
+        for field in cls.__slots__:
+            self.__setattr__(field, getattr(cls._cached_proto, field))
 
-        # Cache the created instance for future use
-        object.__setattr__(cls, '_cached_proto', self)
+        # Only fields that could change during a run are re-evaluated
+        self._gc_is_enabled = gc.isenabled()
+        self._gc_thresholds = gc.get_threshold()
+        self._thread_switch_interval = sys.getswitchinterval()
+        self._environment_variables = self._current_environment_variables()
 
         # Prerender the dict cache
         output: dict[str, object] = {}
-        fields = dataclasses.fields(self)
+        fields = cls.__slots__
         for field in fields:
-            name = field.name
-            output[name] = getattr(self, name)
-        dict_instance = MappingProxyType(output)
-        object.__setattr__(self, '_dict_cache', dict_instance)
+            name = field.lstrip('_')
+            output[name] = getattr(self, field)
+        self._dict_cache = MappingProxyType(output)
+        return
+
+    @property
+    def python_version(self) -> str:
+        """Return the Python version string."""
+        return self._python_version
+
+    @property
+    def implementation(self) -> str:
+        """Return the Python implementation name."""
+        return self._implementation
+
+    @property
+    def implementation_version(self) -> str:
+        """Return the Python implementation version string."""
+        return self._implementation_version
+
+    @property
+    def compiler(self) -> str:
+        """Return the Python compiler string."""
+        return self._compiler
+
+    @property
+    def revision(self) -> str:
+        """Return the Python implementation revision string."""
+        return self._revision
+
+    @property
+    def buildno(self) -> str:
+        """Return the Python build number."""
+        return self._buildno
+
+    @property
+    def builddate(self) -> str:
+        """Return the Python build date."""
+        return self._builddate
+
+    @property
+    def command_line_flags(self) -> str:
+        """Return the command line flags used to start the interpreter."""
+        return self._command_line_flags
+
+    @property
+    def environment_variables(self) -> MappingProxyType[str, str]:
+        """Return a read-only dictionary of set Python-specific environment variables."""
+        return self._environment_variables
+
+    @property
+    def gc_is_enabled(self) -> bool:
+        """Return a boolean indicating if the garbage collector is enabled."""
+        return self._gc_is_enabled
+
+    @property
+    def gc_thresholds(self) -> tuple[int, int, int]:
+        """Return a tuple of the garbage collection thresholds."""
+        return self._gc_thresholds
+
+    @property
+    def thread_switch_interval(self) -> float:
+        """Return the thread switch interval in seconds."""
+        return self._thread_switch_interval
+
+    @property
+    def architecture_bits(self) -> str:
+        """Return a string containing the architecture bits."""
+        return self._architecture_bits
+
+    @property
+    def architecture_linkage(self) -> str:
+        """Return a string containing the architecture linkage format."""
+        return self._architecture_linkage
 
     def _python_implementation_version(self) -> str:
         """Return the Python implementation revision.
@@ -206,7 +260,7 @@ class PythonInfo:
                 py_implementation_version = 'unknown'
         return py_implementation_version
 
-    def _command_line_flags(self) -> str:
+    def _python_command_line_flags(self) -> str:
         """Return the Python command line flags used to start the interpreter.
 
         This inspects :attr:`sys.flags` and constructs a string representation
@@ -264,7 +318,7 @@ class PythonInfo:
         }
         return flag_map
 
-    def _environment_variables(self) -> MappingProxyType[str, str]:
+    def _current_environment_variables(self) -> MappingProxyType[str, str]:
         """Return a read-only dictionary of set Python environment variables.
 
         This inspects :attr:`os.environ` for a predefined list of variables
