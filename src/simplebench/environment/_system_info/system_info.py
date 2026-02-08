@@ -9,7 +9,6 @@ typed set of properties to access system, release, version, machine, and node.
 
 """
 
-import dataclasses
 import platform
 from typing import TYPE_CHECKING, cast
 
@@ -21,7 +20,6 @@ if TYPE_CHECKING:
     from simplebench.report.versions import v1 as report
 
 
-@dataclasses.dataclass(frozen=True)
 class SystemInfo:
     """Create a SystemInfo facade for the system related :module:`platform` functions.
 
@@ -40,24 +38,10 @@ class SystemInfo:
     serialize (such as by pickling) this information if needed.
     """
 
-    system: str
-    """The System OS identifier string.
-
-    Examples include 'Linux', 'Windows', 'Darwin' (for macOS), etc.
-
-    May be blank or empty if the system could not be identified.
-    """
-    release: str
-    """The System release string."""
-    system_version: str
-    """The System version string."""
-    machine: str
-    """The machine type, e.g. 'x86_64' or 'arm64'."""
-
     _singleton_cache: 'ClassVar[SystemInfo | None]' = None
     """The cached singleton of the SystemInfo instance."""
 
-    __slots__ = ('system', 'release', 'system_version', 'machine', '_dict_cache')
+    __slots__ = ('_system', '_release', '_system_version', '_machine', '_dict_cache')
 
     def __init__(self) -> None:
         """Create a SystemInfo facade for the System :module:`platform` functions.
@@ -67,30 +51,30 @@ class SystemInfo:
         and always reflects the environment in which it was originally created.
         """
         cls = self.__class__
+        self._system: str
+        self._release: str
+        self._system_version: str
+        self._machine: str
+        self._dict_cache: report.ImmutableSystemInfoData
+
         if cls._singleton_cache is None:
-            # Uses object.__setattr__ because the class is frozen
             uname = platform.uname()
-            object.__setattr__(self, 'system', uname.system)
-            object.__setattr__(self, 'release', uname.release)
-            object.__setattr__(self, 'system_version', uname.version)
-            object.__setattr__(self, 'machine', uname.machine)
+            self._system = uname.system
+            self._release = uname.release
+            self._system_version = uname.version
+            self._machine = uname.machine
 
             # Prerender the dict cache
             output: dict[str, str] = {}
-            fields: tuple[dataclasses.Field, ...] = dataclasses.fields(self)
-            for field in fields:
-                name = field.name
-                output[name] = getattr(self, name)
-            dict_instance = CoreDataMapping(output)
-            object.__setattr__(self, '_dict_cache', dict_instance)
+            for field in cls.__slots__:
+                name = field.lstrip('_')
+                output[name] = getattr(self, field)
+            self._dict_cache = cast('report.ImmutableSystemInfoData', CoreDataMapping(output))
             cls._singleton_cache = self
 
-        else:
-            object.__setattr__(self, 'system', cls._singleton_cache.system)
-            object.__setattr__(self, 'release', cls._singleton_cache.release)
-            object.__setattr__(self, 'system_version', cls._singleton_cache.system_version)
-            object.__setattr__(self, 'machine', cls._singleton_cache.machine)
-            object.__setattr__(self, '_dict_cache', cls._singleton_cache._dict_cache)
+        for field in cls.__slots__:
+            name = field.lstrip('_')
+            setattr(self, field, getattr(cls._singleton_cache, field))
 
     def to_dict(self) -> 'report.ImmutableSystemInfoData':
         """Convert the SystemInfo to an immutable dictionary representation.
@@ -99,4 +83,4 @@ class SystemInfo:
 
         :return report.ImmutableSystemInfoData: An immutable dictionary representation of the SystemInfo.
         """
-        return cast('report.ImmutableSystemInfoData', self._dict_cache)
+        return self._dict_cache
