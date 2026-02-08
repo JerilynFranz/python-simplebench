@@ -328,7 +328,7 @@ def pytest_sessionfinish(session: pytest.Session) -> None:
     :param session: The pytest Session object.
     """
     log.debug('pytest_sessionfinish hook called.')
-    sb_session: Session = session.config._simplebench_session  # type: ignore
+    sb_session: Session = getattr(session.config, '_simplebench_session', None)  # type: ignore
 
     if not sb_session or not sb_session.cases:
         log.debug('No simplebench cases found, skipping run.')

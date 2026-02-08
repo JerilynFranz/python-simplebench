@@ -35,6 +35,8 @@
 		"coverage-gutters.showGutterCoverage": true,
 		"testing.showCoverageInExplorer": false,
 		"coverage-gutters.showRulerCoverage": true,
-		"coverage-gutters.coverageFileNames": ["coverage.xml"]
+		"coverage-gutters.coverageFileNames": [
+			"coverage.xml"
+		],
 	}
 }
