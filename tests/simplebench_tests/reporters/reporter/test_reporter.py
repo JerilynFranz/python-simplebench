@@ -16,7 +16,7 @@ from simplebench.case import Case, Results
 from simplebench.enums import Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metadata import Metadata
-from simplebench.metrics import Metric, metric_types_registry
+from simplebench.metrics import Metric, MetricsCollection, metric_types_registry, metrics_registry
 from simplebench.options.reporter import ReporterOptions
 from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices
@@ -210,8 +210,8 @@ def test_reporter_init(testspec: TestSpec) -> None:
         exception=SimpleBenchTypeError,
         exception_tag=_ReporterErrorTag.REPORT_INVALID_CHOICE_ARG)),
     idspec('REPORT_004', TestAction(
-        name=("report() with Metric not in Reporter's sections raises "
-              "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_SECTION"),
+        name=("report() with Metric not in Reporter's metrics raises "
+              "SimpleBenchValueError/REPORTER_REPORT_UNSUPPORTED_METRICS"),
         action=factories.reporter_factory().report,
         kwargs={'args': factories.namespace_factory(),
                 'log_metadata': factories.report_log_metadata_factory(),
@@ -219,7 +219,7 @@ def test_reporter_init(testspec: TestSpec) -> None:
                 'choice': Choice(
                     reporter=factories.reporter_factory(),
                     choice_conf=ChoiceConf(
-                        **factories.choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))},
+                        **factories.choice_conf_kwargs_factory().replace(metrics=MetricsCollection(metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']))))},
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.REPORT_UNSUPPORTED_METRICS)),
     idspec('REPORT_005', TestAction(
@@ -396,7 +396,7 @@ def test_report(testspec: TestSpec) -> None:
         args=[Choice(
                 reporter=factories.reporter_factory(),
                 choice_conf=ChoiceConf(
-                    **factories.choice_conf_kwargs_factory().replace(sections=[metric_types_registry.NULL])))],
+                    **factories.choice_conf_kwargs_factory().replace(metrics=MetricsCollection(metrics_registry['STD_GC_GEN2_UNCOLLECTABLE_RAW']))))],
         exception=SimpleBenchValueError,
         exception_tag=_ReporterErrorTag.ADD_CHOICE_UNSUPPORTED_SECTION)),
     idspec('REPORTER_ADD_CHOICE_004', TestAction(
