@@ -189,7 +189,7 @@ def test_contains(testspec: TestSpec) -> None:
         expected=4),
     PytestAction('LEN_004',
         name='Get length of CoreDataSet with nested CoreDataTypes',
-        action=CoreDataSet({CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}), CoreDataSet({4, 5})}).__len__,
+        action=CoreDataSet({CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}), CoreDataSet({4, 5})}).__len__,  # type: ignore
         expected=3),
 ])
 def test_len(testspec: TestSpec) -> None:
@@ -202,7 +202,7 @@ def test_len(testspec: TestSpec) -> None:
         expected={1, 'two', 3.0, None}),
     PytestAction('THAW_002',
         name='Test thaw method of nested CoreDataSet',
-        action=CoreDataSet({CoreDataSet({1, 2}), CoreDataSet({'a', 'b'})}).thaw,
+        action=CoreDataSet({CoreDataSet({1, 2}), CoreDataSet({'a', 'b'})}).thaw,  # type: ignore
         expected={frozenset({1, 2}), frozenset({'a', 'b'})}),
     PytestAction('THAW_003',
         name='Test thaw method of CoreDataSet with CoreDataMapping',
@@ -218,11 +218,8 @@ def test_len(testspec: TestSpec) -> None:
         expected=set()),
     PytestAction('THAW_006',
         name='Test thaw method of CoreDataSet with mixed CoreDataTypes',
-        action=CoreDataSet({
-            CoreDataSequence([1, 2]),
-            CoreDataMapping({'a': 3}),
-            CoreDataSet({4, 5})
-        }).thaw,
+        action=CoreDataSet(
+            {CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}), CoreDataSet({4, 5}) }).thaw,  # type: ignore
         expected={
             tuple([1, 2]),
             CoreDataMapping({'a': 3}),
@@ -230,7 +227,7 @@ def test_len(testspec: TestSpec) -> None:
         }),
     PytestAction('THAW_007',
         name='Test round-trip thawing and re-creation of CoreDataSet',
-        action=lambda: CoreDataSet(CoreDataSet({1, 'two', CoreDataSet({3, 4})}).thaw()),
+        action=lambda: CoreDataSet(CoreDataSet({1, 'two', CoreDataSet({3, 4})}).thaw()),  # type: ignore
         assertion=Assert.EQUAL,
         expected=CoreDataSet({1, 'two', CoreDataSet({3, 4})})),
 ])
@@ -285,7 +282,7 @@ def hash_testspec() -> list[TestSpec]:
         PytestAction('HASH_003',
             name='Test hashing of CoreDataSet different content',
             action=hash,
-            args=[CoreDataSet({1, 2, frozenset({3})})],
+            args=[CoreDataSet({1, 2, frozenset({3})})],  # type: ignore
             assertion=Assert.NOT_EQUAL,
             expected=hash(core_set)),
     ]

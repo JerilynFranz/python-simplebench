@@ -18,7 +18,7 @@ Allowed types are:
     - Sets of the above types
 """
 import hashlib
-from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
+from collections.abc import Hashable, Iterable, Iterator, Mapping, Sequence, Set
 from types import NoneType
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
@@ -62,12 +62,12 @@ class CoreDataSet(Set[T],
 
     def __init__(
             self,
-            __elements: 'ElementCollection[T] | None' = None) -> None:
+            __elements: 'Iterable[T] | None' = None) -> None:
         """Initialize the CoreDataSet.
 
         The provided iterable must be a Set or Sequence that contains only elements of type :class:`CoreDataTypes`.
 
-        .It accepts str and bytes as a sequence of characters or bytes for
+        It accepts str and bytes as a sequence of characters or bytes for
         compatibility with ordinary sets.
 
         However, each character or byte will be treated as an individual string

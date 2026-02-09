@@ -141,7 +141,7 @@ def test_equality(testspec: TestSpec) -> None:
 
 
 def copy_testspecs() -> list[TestSpec]:
-    core_map = CoreDataMapping({'a': 1})
+    core_map: CoreDataMapping = CoreDataMapping({'a': 1})
     return [
         PytestAction('COPY_001',
             name='Copy returns self',
@@ -238,7 +238,7 @@ def test_pickling(testspec: TestSpec) -> None:
 
 
 def deepcopy_testspecs() -> list[TestSpec]:
-    core_map = CoreDataMapping({'a': 1})
+    core_map: CoreDataMapping = CoreDataMapping({'a': 1})
     return [
         PytestAction('DEEPCOPY_001',
             name='Deepcopy returns self',

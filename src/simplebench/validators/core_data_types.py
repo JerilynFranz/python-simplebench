@@ -209,7 +209,7 @@ def _internal_validate_core_data(item: CoreDataTypes, name: str) -> CoreDataType
         return item
 
     elif isinstance(item, Set):
-        return item if isinstance(item, CoreDataSet) else CoreDataSet(item)
+        return item if isinstance(item, CoreDataSet) else CoreDataSet(item)  # type: ignore
 
     elif isinstance(item, Mapping):
         return item if isinstance(item, CoreDataMapping) else CoreDataMapping(item)

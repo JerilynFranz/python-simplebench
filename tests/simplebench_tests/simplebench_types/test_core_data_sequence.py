@@ -208,7 +208,7 @@ def test_contains(testspec: TestSpec) -> None:
         expected=5),
     PytestAction('LEN_004',
         name='Get length of CoreDataSequence with nested CoreDataTypes',
-        action=CoreDataSequence([CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}), CoreDataSet({4, 5})]).__len__,
+        action=CoreDataSequence([CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}), CoreDataSet({4, 5})]).__len__,  # type: ignore
         expected=3),
 ])
 def test_len(testspec: TestSpec) -> None:
@@ -549,11 +549,8 @@ def test_equal(testspec: TestSpec) -> None:
         expected=[]),
     PytestAction('THAW_006',
         name='Test thaw method of CoreDataSequence with mixed CoreDataTypes',
-        action=CoreDataSequence([
-            CoreDataSequence([1, 2]),
-            CoreDataMapping({'a': 3}),
-            CoreDataSet({4, 5})
-        ]).thaw,
+        action=CoreDataSequence(
+            [CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}),CoreDataSet({4, 5})]).thaw,  # type: ignore
         expected=[
             [1, 2],
             {'a': 3},
@@ -593,10 +590,8 @@ def test_thaw(testspec: TestSpec) -> None:
         expected=simplejson.dumps([], sort_keys=True, for_json=True, iterable_as_array=True)),
     PytestAction('AS_JSON_006',
         name='Test as_json method of CoreDataSequence with mixed CoreDataTypes',
-        action=CoreDataSequence([
-            CoreDataSequence([1, 2]),
-            CoreDataMapping({'a': 3}),
-            CoreDataSet({4, 5})]).as_json,
+        action=CoreDataSequence(
+            [CoreDataSequence([1, 2]), CoreDataMapping({'a': 3}), CoreDataSet({4, 5})]).as_json,  # type: ignore
         expected=simplejson.dumps([
             [1, 2],
             {'a': 3},
