@@ -9,7 +9,8 @@ from functools import cache
 from typing import TYPE_CHECKING
 
 from cpuinfo import get_cpu_info  # type: ignore  # cpuinfo doesn't have type stubs
-from typechecked import Immutable
+
+from simplebench.simplebench_types import Immutable
 
 from . import _validate
 
@@ -115,7 +116,7 @@ class CPUInfo(Immutable):
         usage of the data contained within it by checking for the presence
         and types of specific keys.
 
-        The :func:`typechecked.is_immutable` function will recognize this
+        The :func:`~simplebench.simplebench_types.is_immutable` function will recognize this
         dictionary as immutable.
 
         :return ImmutableCPUInfoData: The CPU information dictionary.

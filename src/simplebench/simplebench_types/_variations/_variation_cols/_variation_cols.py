@@ -6,9 +6,8 @@ for a specific variation.
 
 from collections.abc import Iterator, Mapping
 
-from typechecked import Immutable
-
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.simplebench_types import Immutable
 
 from ._error_tags import _VariationColsErrorTag
 

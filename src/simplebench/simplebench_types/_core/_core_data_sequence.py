@@ -25,7 +25,6 @@ from types import NoneType
 from typing import TYPE_CHECKING, Any, overload
 
 import simplejson
-from typechecked import Immutable
 
 from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
@@ -42,7 +41,6 @@ if TYPE_CHECKING:
 
 class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
                        ElementCollection['ImmutableCoreDataTypes'],
-                       Immutable,
                        Hashable):
     """Deep-immutable Sequence container for CoreData types used in SimpleBench.
 
@@ -57,6 +55,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
     :param __elements: A collection of CoreDataTypes elements to initialize the sequence or :obj:`None`.
     :type __elements: Iterable[CoreDataTypes] | None
     """
+    __immutable__: bool = True  # Marker for Immutable protocol
     __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
     def __init__(self, __elements: 'ElementCollection[CoreDataTypes] | None' = None) -> None:

@@ -2,13 +2,12 @@
 from collections.abc import Hashable, Sequence
 from typing import Any
 
-from typechecked import is_immutable
-
 from simplebench._log import _log
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics.metrics_selection import MetricsSelection
 from simplebench.options.reporter.options import ReporterOptions
+from simplebench.simplebench_types import is_immutable
 from simplebench.validators import (
     validate_iterable_of_type,
     validate_sequence_of_str,

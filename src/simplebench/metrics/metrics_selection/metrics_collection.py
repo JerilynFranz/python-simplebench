@@ -2,13 +2,11 @@
 
 from collections.abc import Hashable, Iterator, Set
 
-from typechecked import Immutable
-
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric
 from simplebench.metrics.metrics import Metrics
 from simplebench.metrics.metrics_registry import metrics_registry
-from simplebench.simplebench_types import ElementCollection, is_element_collection
+from simplebench.simplebench_types import ElementCollection, Immutable, is_element_collection
 
 from ._error_tags import _MetricSelectionErrorTag
 from .metrics_selection import MetricsSelection

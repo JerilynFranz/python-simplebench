@@ -39,7 +39,6 @@ dependencies = [
     "py-cpuinfo>=9.0.0",
     "simplejson>=3.20.2",
     "rich>=14.1.0",
-    "typechecked>=0.11.1",
     "typing-extensions>=4.10.0",
     "typeguard>=4.4.4",
 ]
@@ -402,7 +401,6 @@ default = [
     "py-cpuinfo>=9.0.0",
     "rich>=14.1.0",
     "simplejson>=3.20.2",
-    "typechecked>=0.11.1",
     "typing-extensions>=4.10.0",
     "typeguard>=4.4.4",
     "matplotlib>=3.10.6",
@@ -425,7 +423,6 @@ dev = [
     "tox-uv>=1.13.1",
     "uv>=0.9.18",
     "typing-extensions >= 3.10.0.0",
-    "typechecked>=0.11.1",
 ]
 
 # Type stubs for development and type checking

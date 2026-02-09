@@ -56,8 +56,8 @@ class ImmutableCPUInfoData(CPUInfoData, total=False):
     This marks the dictionary as immutable for type-checking purposes. During runtime,
     it should be constructed so as to enforce immutability.
 
-    The :func:`typechecked.is_immutable` function will recognize this marker
-    and treat instances of this type as :class:`~typechecked.Immutable`.
+    The :func:`~simplebench.simplebench_types.is_immutable` function will recognize this marker
+    and treat instances of this type as :class:`~simplebench.simplebench_types.Immutable`.
 
     Because it inherits from `CPUInfoData`, all fields are the same and it
     can be used interchangeably where immutability is not a concern.
@@ -105,8 +105,8 @@ class ImmutableCPUInfoDict(CPUInfoDict, total=False):
     This marks the dictionary as immutable for type-checking purposes. During runtime,
     it should be constructed so as to enforce immutability.
 
-    The :func:`typechecked.is_immutable` function will recognize this marker
-    and treat instances of this type as :class:`~typechecked.Immutable`.
+    The :func:`~simplebench.simplebench_types.is_immutable` function will recognize this marker
+    and treat instances of this type as :class:`~simplebench.simplebench_types.Immutable`.
 
     Because it inherits from `CPUInfoDict`, all fields are the same and it
     can be used interchangeably where immutability is not a concern.

@@ -1,15 +1,15 @@
-"""simplebench.reporters.choice.choice_conf.ChoiceConf KWArgs package for SimpleBench tests."""
+"""Tests for SwapMemoryKWArgs package for SimpleBench tests."""
 import sys
 
 import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
 
-from simplebench.case.results.metrics.stats._stats import Stats
+from simplebench.report.versions.v1.memory_info import SwapMemoryObject
 from simplebench_tests.kwargs import kwargs_class_matches_modeled_call
-from simplebench_tests.kwargs.case.results import StatsKWArgs
+from simplebench_tests.kwargs.report.v1.memory_info.swap_memory_kwargs import SwapMemoryObjectKWArgs
 
-_KWARGS_CLASS = StatsKWArgs
-_MODELED_CLASS = Stats
+_KWARGS_CLASS = SwapMemoryObjectKWArgs
+_MODELED_CLASS = SwapMemoryObject
 _MODELED_CALL = _MODELED_CLASS.__init__
 
 

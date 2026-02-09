@@ -30,7 +30,7 @@ from simplebench.report.base._report_element_typed_dict import ReportElementType
 from simplebench.validators import is_core_data_primitive, is_core_data_primitive_type
 
 from . import _cache
-from ._error_tags import _ReportElementValidationErrorTag
+from ._error_tags import _StructuralTypedDictErrorTag
 
 T = TypeVar('T', bound=ReportElementTypedDict)
 
@@ -79,7 +79,7 @@ def report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) ->
     if not is_report_element_typed_dict_mimic(data, td_cls):
         raise SimpleBenchTypeError(
             f'Data does not conform to ReportElementTypedDict {td_cls.__name__}',
-            tag=_ReportElementValidationErrorTag.NOT_A_REPORT_ELEMENT_TYPED_DICT,
+            tag=_StructuralTypedDictErrorTag.NOT_A_REPORT_ELEMENT_TYPED_DICT,
         )
     return data
 
@@ -152,12 +152,12 @@ def _validate_and_check_immutability_of_mimic(
     if not isinstance(td_cls, type) or not issubclass(td_cls, ReportElementTypedDict):  # type: ignore
         raise SimpleBenchTypeError(
             f'Expected a ReportElementTypedDict subclass for validation, got {td_cls}',
-            tag=_ReportElementValidationErrorTag.INVALID_TYPED_DICT_CLASS,
+            tag=_StructuralTypedDictErrorTag.INVALID_TYPED_DICT_CLASS,
         )
     if not isinstance(parents, (set, type(None))):
         raise SimpleBenchTypeError(
             f'Parents must be a set or None, got {type(parents)}',
-            tag=_ReportElementValidationErrorTag.NOT_A_SET,
+            tag=_StructuralTypedDictErrorTag.NOT_A_SET,
         )
     cached_state: bool | None = _cache.valid_in_cache(td_cls, data)
     if cached_state is not None:
@@ -169,13 +169,13 @@ def _validate_and_check_immutability_of_mimic(
     if id(data) in parents:
         raise SimpleBenchTypeError(
             'Cyclic reference detected in data structure during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED,
+            tag=_StructuralTypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
         )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
             'Maximum core data depth exceeded during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+            tag=_StructuralTypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
         )
     _validate_report_element_typed_dict_subclass(td_cls)
     _validate_is_mapping_of_string_to_any(data)
@@ -232,7 +232,7 @@ def _validate_report_element_typed_dict_subclass(td_cls: type) -> None:
     except Exception as exc:
         raise SimpleBenchTypeError(
             f'Failed to resolve type hints for {td_cls.__name__}: {exc}',
-            tag=_ReportElementValidationErrorTag.UNABLE_TO_RESOLVE_TYPE_HINT,
+            tag=_StructuralTypedDictErrorTag.UNABLE_TO_RESOLVE_TYPE_HINT,
         ) from exc
     required: set[str] = getattr(td_cls, '__required_keys__', set(annotations))
     optional: set[str] = getattr(td_cls, '__optional_keys__', set())
@@ -254,7 +254,7 @@ def _validate_report_element_typed_dict_subclass(td_cls: type) -> None:
             )
         message = '; '.join(output)
         raise SimpleBenchTypeError(
-            message, tag=_ReportElementValidationErrorTag.MISCONFIGURED_REPORT_ELEMENT_TYPED_DICT
+            message, tag=_StructuralTypedDictErrorTag.MISCONFIGURED_REPORT_ELEMENT_TYPED_DICT
         )
 
 
@@ -266,13 +266,13 @@ def _validate_is_mapping_of_string_to_any(data: Mapping[str, Any]) -> None:
     """
     if not isinstance(data, Mapping):
         raise SimpleBenchTypeError(
-            f'Data must be a Mapping, got {type(data)}', tag=_ReportElementValidationErrorTag.NOT_A_MAPPING
+            f'Data must be a Mapping, got {type(data)}', tag=_StructuralTypedDictErrorTag.NOT_A_MAPPING
         )
     for key in data.keys():
         if not isinstance(key, str):
             raise SimpleBenchTypeError(
                 f'All keys in data must be strings, found key of type {type(key)}',
-                tag=_ReportElementValidationErrorTag.MAPPING_KEY_NOT_STRING,
+                tag=_StructuralTypedDictErrorTag.MAPPING_KEY_NOT_STRING,
             )
 
 
@@ -289,13 +289,13 @@ def _validate_has_required_and_no_extra_keys(data: Mapping[str, Any], td_cls: ty
     missing = required - data.keys()
     if missing:
         raise SimpleBenchTypeError(
-            f'Missing required keys: {missing}', tag=_ReportElementValidationErrorTag.MISSING_REQUIRED_KEYS
+            f'Missing required keys: {missing}', tag=_StructuralTypedDictErrorTag.MISSING_REQUIRED_KEYS
         )
 
     extra = data.keys() - annotations.keys()
     if extra:
         raise SimpleBenchTypeError(
-            f'Extra keys not allowed: {extra}', tag=_ReportElementValidationErrorTag.EXTRA_KEYS_PRESENT
+            f'Extra keys not allowed: {extra}', tag=_StructuralTypedDictErrorTag.EXTRA_KEYS_PRESENT
         )
 
 
@@ -328,13 +328,13 @@ def _validate_field_value(value: Any, expected_type: Any, parents: set[int]) -> 
     if id(value) in parents:
         raise SimpleBenchTypeError(
             'Cyclic reference detected in data structure during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED,
+            tag=_StructuralTypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
         )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
             'Maximum core data depth exceeded during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+            tag=_StructuralTypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
         )
 
     origin = get_origin(expected_type)
@@ -401,13 +401,13 @@ def _validate_sequence_field(origin: Any, args: tuple[Any, ...], value: Any, par
     if id(value) in parents:
         raise SimpleBenchTypeError(
             'Cyclic reference detected in data structure during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED,
+            tag=_StructuralTypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
         )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
             'Maximum core data depth exceeded during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+            tag=_StructuralTypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
         )
 
     # Handle Sequences (str/bytes are excluded earlier)
@@ -469,18 +469,18 @@ def _validate_set_field(args: tuple[Any, ...], value: Any, parents: set[int]) ->
     if id(value) in parents:
         raise SimpleBenchTypeError(
             'Cyclic reference detected in data structure during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED,
+            tag=_StructuralTypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
         )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
             'Maximum core data depth exceeded during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+            tag=_StructuralTypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
         )
 
     if not isinstance(value, Set):
         raise SimpleBenchTypeError(
-            f'Expected a Set type for value, got {type(value)}', tag=_ReportElementValidationErrorTag.NOT_A_SET
+            f'Expected a Set type for value, got {type(value)}', tag=_StructuralTypedDictErrorTag.NOT_A_SET
         )
     elem_type = args[0] if args else object
     immutable = True
@@ -507,30 +507,30 @@ def _validate_mapping_field(args: tuple[Any, ...], value: Any, parents: set[int]
     if id(value) in parents:
         raise SimpleBenchTypeError(
             'Cyclic reference detected in data structure during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.CYCLIC_REFERENCE_DETECTED,
+            tag=_StructuralTypedDictErrorTag.CYCLIC_REFERENCE_DETECTED,
         )
 
     if len(parents) > DEFAULT_MAX_CORE_DATA_DEPTH:
         raise SimpleBenchTypeError(
             'Maximum core data depth exceeded during ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
+            tag=_StructuralTypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
         )
 
     if not isinstance(value, Mapping):
         raise SimpleBenchTypeError(
-            f'Expected a Mapping type for value, got {type(value)}', tag=_ReportElementValidationErrorTag.NOT_A_MAPPING
+            f'Expected a Mapping type for value, got {type(value)}', tag=_StructuralTypedDictErrorTag.NOT_A_MAPPING
         )
     if len(args) != 2:
         raise SimpleBenchTypeError(
             'Mapping type must have exactly two type arguments (key and value types)',
-            tag=_ReportElementValidationErrorTag.INVALID_MAPPING_TYPE_ARGUMENTS,
+            tag=_StructuralTypedDictErrorTag.INVALID_MAPPING_TYPE_ARGUMENTS,
         )
     key_type, val_type = args
     if not _is_string_key_type(key_type):
         raise SimpleBenchTypeError(
             'Mapping key type must be str, Literal of str, or Annotated[str, ...] '
             'for ReportElementTypedDict validation',
-            tag=_ReportElementValidationErrorTag.MAPPING_KEY_NOT_STRING,
+            tag=_StructuralTypedDictErrorTag.MAPPING_KEY_NOT_STRING,
         )
     immutable = True
     parents.add(id(value))
@@ -538,7 +538,7 @@ def _validate_mapping_field(args: tuple[Any, ...], value: Any, parents: set[int]
         if not isinstance(k, str):
             raise SimpleBenchTypeError(
                 f'Mapping key must be str for ReportElementTypedDict validation, got {type(k)}',
-                tag=_ReportElementValidationErrorTag.MAPPING_KEY_NOT_STRING,
+                tag=_StructuralTypedDictErrorTag.MAPPING_KEY_NOT_STRING,
             )
         valid, v_immutable = _validate_field_value(v, val_type, parents)
         if not valid:

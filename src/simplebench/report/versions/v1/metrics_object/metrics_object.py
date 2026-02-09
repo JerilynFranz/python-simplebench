@@ -20,8 +20,6 @@ from collections.abc import Iterable, Iterator, Mapping
 from types import MappingProxyType
 from typing import Any, TypeAlias, cast
 
-from typechecked import Immutable
-
 from simplebench.exceptions import (
     SimpleBenchAttributeError,
     SimpleBenchKeyError,
@@ -29,6 +27,7 @@ from simplebench.exceptions import (
     SimpleBenchValueError,
 )
 from simplebench.report._error_tags import _MetricsErrorTag
+from simplebench.simplebench_types import Immutable
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
 from ..raw_data_block import RawDataBlock

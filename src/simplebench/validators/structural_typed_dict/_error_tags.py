@@ -7,7 +7,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class _ReportElementValidationErrorTag(ErrorTag):
+class _StructuralTypedDictErrorTag(ErrorTag):
     """Error tags for report element validation errors."""
 
     INVALID_TYPED_DICT_CLASS = 'INVALID_TYPED_DICT_CLASS'

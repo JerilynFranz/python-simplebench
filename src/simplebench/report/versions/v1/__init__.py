@@ -38,7 +38,9 @@ from .memory_info import (
     MemoryInfoData,
     MemoryInfoDict,
     MemoryInfoSchema,
+    SwapMemoryObject,
     SwapMemoryObjectDict,
+    VirtualMemoryObject,
     VirtualMemoryObjectDict,
 )
 from .metrics_object import (
@@ -118,7 +120,9 @@ __all__ = [
     'ImmutableMemoryInfoDict',
     'ImmutableSwapMemoryObjectDict',
     'ImmutableVirtualMemoryObjectDict',
+    'SwapMemoryObject',
     'SwapMemoryObjectDict',
+    'VirtualMemoryObject',
     'VirtualMemoryObjectDict',
     'MetricsObject',
     'MetricsObjectData',

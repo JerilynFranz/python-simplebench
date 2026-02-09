@@ -2,15 +2,13 @@
 from collections.abc import Hashable, Sequence
 from typing import Any
 
-from typechecked import Immutable
-
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics.metrics_selection import MetricsSelection
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol
-from simplebench.options.reporter.options import ReporterOptions
-from simplebench.simplebench_types import ElementCollection, Extras
+from simplebench.simplebench_types import ElementCollection, Extras, Immutable
 
 from . import _validate
 

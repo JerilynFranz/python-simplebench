@@ -9,17 +9,19 @@ for a JSON Schema version.
 import hashlib
 from abc import ABC
 from collections.abc import Callable
-from types import MappingProxyType
 from typing import Any, TypeVar
-
-from typechecked import Immutable
 
 from simplebench.base._hydrator import Hydrator
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBenchTypeError
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
-from simplebench.report.validate import report_element_typed_dict_mimic
-from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataMapping, CoreDataMappingType
+from simplebench.simplebench_types import (
+    CORE_DATA_PRIMITIVE_TYPES_TUPLE,
+    CoreDataMapping,
+    CoreDataMappingType,
+    Immutable,
+)
+from simplebench.validators.structural_typed_dict import report_element_typed_dict_mimic
 
 from ._json_schema import JSONSchema
 
@@ -99,7 +101,7 @@ class ReportElement(Hydrator, Immutable, ABC):
         # known or unknown, are properly serialized in the future as needed.
         cls = self.__class__
         for key in property_keys:
-            if key == '__immutable__':  # class variable for typechecked.ImmutableTypedDict
+            if key == '__immutable__':  # class variable for ImmutableTypedDict
                 continue
             match key:
                 case 'type':
@@ -116,13 +118,16 @@ class ReportElement(Hydrator, Immutable, ABC):
             to_dict_fn: Callable[[], CoreDataMappingType] | None = getattr(value, 'to_dict', None)
 
             # Attribute doesn't exist on instance
-            if isinstance(value, _NoMatch):
+            if value is _NO_MATCH:
                 raise SimpleBenchAttributeError(
                     f"ReportElement subclass {cls.__name__} is missing expected attribute '{key}'",
                     tag=_ReportElementErrorTag.INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING,
                     name=key,
                     obj=cls
                 )
+            # Attribute value is a core data primitive type that can be directly included in the output dict
+            elif isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
+                data[key] = value
 
             # Already a CoreDataMapping
             elif isinstance(value, CoreDataMapping):
@@ -151,7 +156,7 @@ class ReportElement(Hydrator, Immutable, ABC):
             )
 
         # Return validated immutable mapping that mimics the requested ReportElementTypedDict subclass
-        return report_element_typed_dict_mimic(MappingProxyType(data), dict_type)
+        return report_element_typed_dict_mimic(CoreDataMapping(data), dict_type)
 
     def _hash_id_helper(self, cls_type: type) -> str:
         """Helper method to compute the hash_id property for ReportElement subclasses.

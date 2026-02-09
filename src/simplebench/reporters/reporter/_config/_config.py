@@ -1,12 +1,10 @@
 """Base reporter configuration class."""
 from collections.abc import Hashable
 
-from typechecked import Immutable
-
 from simplebench.enums import Format, Target
 from simplebench.metrics import MetricsSelection
 from simplebench.reporters.choices import ChoicesConf
-from simplebench.simplebench_types import ElementCollection
+from simplebench.simplebench_types import ElementCollection, Immutable
 
 from . import _validate
 

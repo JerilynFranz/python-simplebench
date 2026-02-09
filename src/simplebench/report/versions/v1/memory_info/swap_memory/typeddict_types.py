@@ -7,8 +7,8 @@ version 1: :class:`~simplebench.report.versions.v1.MemoryInfoSchema`.
 - :class:`SwapMemoryObjectDict`: A mutable typed dictionary for general use.§
 - :class:`ImmutableSwapMemoryObjectDict`: An immutable typed dictionary variant.
   This type is marked to be treated as immutable by the
-  :func:`typechecked.is_immutable` function and recognized as
-  a subclass of :class:`~typechecked.Immutable`. by :func:`issubclass` checks.
+  :func:`~simplebench.simplebench_types.is_immutable` function and recognized as
+  a subclass of :class:`~simplebench.simplebench_types.Immutable`. by :func:`issubclass` checks.
 
     These types ensure proper validation and serialization of MemoryInfo data
 """
@@ -58,8 +58,8 @@ class ImmutableSwapMemoryObjectDict(_RequiredSwapMemoryObject, total=False):
     This marks the dictionary as immutable for type-checking purposes. During runtime,
     it should be constructed so as to enforce immutability.
 
-    The :func:`typechecked.is_immutable` function will recognize this marker
-    and treat instances of this type as :class:`~typechecked.Immutable`.
+    The :func:`~simplebench.simplebench_types.is_immutable` function will recognize this marker
+    and treat instances of this type as :class:`~simplebench.simplebench_types.Immutable`.
 
     Because it inherits from `SwapMemoryData`, all fields are the same and it
     can be used interchangeably where immutability is not a concern.

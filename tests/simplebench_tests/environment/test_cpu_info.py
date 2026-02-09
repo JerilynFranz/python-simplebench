@@ -4,11 +4,11 @@ import pickle
 import autopypath  # noqa: F401
 import pytest
 from testspec import Assert, PytestAction, TestSpec
-from typechecked import Immutable
 
 from simplebench.environment import CPUInfo
 from simplebench.environment._cpu_info import _CPUInfoErrorTag
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.simplebench_types import Immutable
 
 
 @pytest.mark.parametrize("testspec", [

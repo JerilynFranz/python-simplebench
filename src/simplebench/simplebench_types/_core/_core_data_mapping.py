@@ -40,7 +40,6 @@ from collections.abc import Hashable, ItemsView, Iterator, KeysView, Mapping, Se
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import simplejson
-from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 
@@ -50,11 +49,12 @@ from ._error_tags import _CoreDataErrorTag
 if TYPE_CHECKING:
     from ._types import CoreDataTypes, ImmutableCoreDataTypes
 
+
 _T = TypeVar('_T', bound=None)
 
 # TODO: Update to handle bytes and str inputs
 
-class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashable):
+class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
     """Deep-immutable Mapping container for CoreData types used in SimpleBench.
 
     This represents a mapping where all keys are strings and all values are of
@@ -71,6 +71,7 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Immutable, Hashabl
     :param __mapping: A Mapping of str to CoreDataTypes elements to initialize the mapping or :obj:`None`.
     :type __mapping: Mapping[str, CoreDataTypes] | None
     """
+    __immutable__: bool = True  # Marker for Immutable protocol
     __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
     def __init__(self, __mapping: Mapping[str, 'CoreDataTypes'] | None = None) -> None:

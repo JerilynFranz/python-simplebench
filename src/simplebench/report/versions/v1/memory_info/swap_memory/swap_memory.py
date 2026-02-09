@@ -42,7 +42,13 @@ class SwapMemoryObject(BaseSwapMemoryObject):
 
     __slots__ = ('_total', '_used', '_free', '_percent', '_swap_in', '_swap_out', '_hash_id', '_dict_cache')
 
-    def __init__(self, *, total: int, used: int, free: int, percent: float, swap_in: int, swap_out: int) -> None:
+    def __init__(self, *,
+            total: int,
+            used: int,
+            free: int,
+            percent: float,
+            swap_in: int,
+            swap_out: int) -> None:
         """Initialize MemoryInfo.
 
         :param total: Total swap memory in bytes.

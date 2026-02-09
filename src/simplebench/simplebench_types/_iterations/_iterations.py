@@ -7,9 +7,8 @@ defining multiple variations.
 from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING
 
-from typechecked import Immutable
-
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
+from simplebench.simplebench_types import Immutable
 
 from ._error_tags import _IterationsErrorTag
 

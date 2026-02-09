@@ -31,7 +31,7 @@ from simplebench.simplebench_types._element_collection import ElementCollection,
 from ._error_tags import _ValuesErrorTag
 
 
-class Values(CoreDataSequence):
+class Values(CoreDataSequence[float]):
     """
     An immutable tuple of float numbers that validates its contents upon creation.
 

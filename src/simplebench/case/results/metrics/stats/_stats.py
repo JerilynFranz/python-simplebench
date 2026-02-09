@@ -3,7 +3,7 @@
 import statistics
 from math import isclose, sqrt
 
-from typechecked import Immutable
+from simplebench.simplebench_types import Immutable
 
 from simplebench.metrics import Metric
 from simplebench.report.versions import v1 as reports

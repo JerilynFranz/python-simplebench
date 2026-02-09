@@ -86,6 +86,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the hash_id property.
 
         :return: The hash_id string.
+        :rtype: str
         """
         return self._hash_id
 
@@ -94,6 +95,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the total swap memory in bytes.
 
         :return: The total swap memory in bytes.
+        :rtype: int
         """
         return self._total
 
@@ -102,6 +104,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the available swap memory in bytes.
 
         :return: The available swap memory in bytes.
+        :rtype: int
         """
         return self._available
 
@@ -110,6 +113,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the percentage of virtual memory used.
 
         :return: The percentage of virtual memory used.
+        :rtype: float
         """
         return self._percent
 
@@ -118,6 +122,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the used swap memory in bytes.
 
         :return: The used swap memory in bytes.
+        :rtype: int
         """
         return self._used
 
@@ -126,6 +131,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the free swap memory in bytes.
 
         :return: The free swap memory in bytes.
+        :rtype: int
         """
         return self._free
 
@@ -133,6 +139,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the string representation of the VirtualMemoryObject instance.
 
         :return: The string representation of the VirtualMemoryObject.
+        :rtype: str
         """
         # Get the init parameters excluding 'type' and 'version'
         init_params = dict(self._data_params())
@@ -146,6 +153,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Get the hash of the VirtualMemoryObject instance.
 
         :return: The hash value.
+        :rtype: int
         """
         return hash(self.hash_id)
 
@@ -153,7 +161,8 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """Check equality between two VirtualMemoryObject instances.
 
         :param other: The other object to compare.
-        :return: True if equal, False otherwise.
+        :return: :obj:`True` if equal, :obj:`False` otherwise.
+        :rtype: bool
         """
         if not isinstance(other, VirtualMemoryObject):
             return NotImplemented

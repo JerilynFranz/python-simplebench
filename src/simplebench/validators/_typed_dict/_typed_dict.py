@@ -1,62 +1,38 @@
 """Validation functions for type hints and instances against those type hints."""
 
 from collections.abc import Mapping, Sequence, Set
-from typing import Annotated, Any, Literal, TypedDict, TypeGuard, TypeVar, cast, get_args, get_origin, get_type_hints
+from typing import (
+    Annotated,
+    Any,
+    Literal,
+    TypedDict,
+    TypeGuard,
+    TypeVar,
+    cast,
+    get_args,
+    get_origin,
+    get_type_hints,
+    is_typeddict,
+)
+from types import MappingProxyType
 
-from typeguard import check_type
-
+from simplebench._log import _log
 from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, CoreDataSet
 from simplebench.validators._cache import ValidationCache
 from simplebench.validators.core_data_types import is_core_data_primitive, is_core_data_primitive_type
 
 from ._error_tags import _TypedDictErrorTag
+from . import _validate
 
 _CACHE = ValidationCache(min_cache_size=100, max_cache_size=16384)
 
+_RECURSABLE_GENERIC_TYPES = (
+    list, tuple, set, frozenset, dict, MappingProxyType, CoreDataMapping, CoreDataSequence, CoreDataSet)
+
 T = TypeVar('T', bound=TypedDict)  # type: ignore[invalidTypeForm,valid-type]
-
-
-def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
-    """Validate a mapping against the TypedDict.
-
-    Raises an error if validation fails.
-
-    This is a mimic function that behaves like a type cast to TypedDict.
-
-    Because it performs structural validation, the returned value is guaranteed to conform
-    to the specified TypedDict structure if no error is raised.
-
-    This is a structural check and does not require an actual instance of TypedDict.
-
-    It validates that:
-    - All required keys are present and of the correct type.
-    - All optional keys, if present, are of the correct type.
-    - No extra keys are present.
-
-    Cyclic references are detected and raise an error to prevent infinite recursion.
-
-    :param Mapping[str, Any] data: The dictionary to validate.
-    :param type[TypedDict] td_cls: The TypedDict subclass type to validate against.
-    :return TypedDict: The validated TypedDict.
-    :raise SimpleBenchTypeError: If any value has an incorrect type.
-    """
-    try:
-        valid = check_type(data, td_cls)
-    except SimpleBenchTypeError as exc:
-        raise SimpleBenchTypeError(
-            f'Data does not conform to TypedDict {td_cls.__name__}: {exc} {data}',
-            tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
-        ) from exc
-
-    if not valid:
-        raise SimpleBenchTypeError(
-            f'Data does not conform to TypedDict {td_cls.__name__} : {data}',
-            tag=_TypedDictErrorTag.NOT_A_TYPED_DICT
-        )
-
-    return cast(T, data)
 
 
 def is_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> TypeGuard[T]:
@@ -97,6 +73,11 @@ def is_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> TypeGuard[T
     :param type[TypedDict] td_cls: The TypedDict subclass type to check against.
     :return bool: True if the dictionary conforms to the TypedDict subclass, False otherwise.
     """
+    if not isinstance(data, Mapping):   # Fast path check to avoid unnecessary validation for non-mapping types
+        return False
+    if not isinstance(td_cls, type) or not is_typeddict(td_cls):  # Fast path check for valid TypedDict class
+        return False
+
     try:
         valid, _ = _validate_and_check_immutability_of_mimic(data, td_cls)
         return valid
@@ -132,7 +113,7 @@ def _validate_and_check_immutability_of_mimic(
     if cached_state is not None:
         # Cached results are always immutable core data types and thus safe to reuse.
         # Mutable structures can be validated but they are not cached because their
-        # state can change after validation.
+        # state may change after validation.
         return (cached_state, cached_state)
     parents = parents or set()
     if id(data) in parents:
@@ -146,11 +127,11 @@ def _validate_and_check_immutability_of_mimic(
             'Maximum core data depth exceeded during TypedDict validation',
             tag=_TypedDictErrorTag.MAX_CORE_DATA_DEPTH_EXCEEDED,
         )
-    if not _validate_typed_dict_subclass(td_cls, raise_on_error):
+    if not _validate.typed_dict_subclass(td_cls, raise_on_error):
         return (False, False)
-    if not _validate_is_mapping_of_string_to_any(data, raise_on_error):
+    if not _validate.is_mapping_of_string_to_any(data, raise_on_error):
         return (False, False)
-    if not _validate_has_required_and_no_extra_keys(data, td_cls, raise_on_error):
+    if not _validate.has_required_and_no_extra_keys(data, td_cls, raise_on_error):
         return (False, False)
 
     keys_to_check: set[str] = set(data.keys())
@@ -191,117 +172,6 @@ def _validate_and_check_immutability_of_mimic(
     if immutable_children:  # All children are immutable core data types and so we can cache positively
         _CACHE.add_cache_entry(td_cls, data, True)
     return (True, immutable_children)  # All keys validated successfully, propagate immutability status
-
-
-def _validate_typed_dict_subclass(td_cls: type[TypedDict], raise_on_error: bool = True) -> bool:  # type: ignore
-    """Validate a TypedDict subclass schema.
-
-    This is not a runtime instance validation, but a static schema validation.
-
-    This function checks that the provided TypedDict subclass is declared correctly
-    and consistently. It ensures that all keys in the TypedDict's annotations
-    are accounted for in either the `__required_keys__` or `__optional_keys__` sets.
-    It raises an error if there are any discrepancies.
-
-    It ALWAYS raises an error if the TypedDict subclass is misconfigured
-    as this is a structural code validation error and not dependent on instance data.
-
-    Uses typing.get_type_hints to resolve forward references and type aliases.
-
-    :param TypedDict td_cls: The TypedDict subclass to validate
-    :param bool raise_on_error: If True, raise an error on validation failure.
-    :return bool: True if the TypedDict subclass is valid, False otherwise.
-    :raise SimpleBenchTypeError: If raise_on_error is True and the TypedDict subclass is misconfigured or
-        type hints cannot be resolved
-    """
-    try:
-        annotations = get_type_hints(td_cls)
-    except Exception as exc:  # always raise because this is a code misconfiguration
-        raise SimpleBenchTypeError(
-            f'Failed to resolve type hints for {td_cls.__name__}: {exc}',
-            tag=_TypedDictErrorTag.UNABLE_TO_RESOLVE_TYPE_HINT,
-        ) from exc
-    required: set[str] = getattr(td_cls, '__required_keys__', set(annotations))
-    optional: set[str] = getattr(td_cls, '__optional_keys__', set())
-    annotation_set = set(annotations.keys())
-
-    if annotation_set != required.union(optional):
-        missing_from_annotations = (required.union(optional)) - annotation_set
-        extra_in_annotations = annotation_set - (required.union(optional))
-        output = []
-        if extra_in_annotations:
-            output.append(
-                f'Keys {extra_in_annotations} are in annotations but not marked as required/optional '
-                f'for class {td_cls.__name__}'
-            )
-        if missing_from_annotations:
-            output.append(
-                f'Keys {missing_from_annotations} are marked as required/optional but '
-                f'missing from annotations for class {td_cls.__name__}'
-            )
-        message = '; '.join(output)
-        if raise_on_error:
-            raise SimpleBenchTypeError(message, tag=_TypedDictErrorTag.MISCONFIGURED_TYPED_DICT)
-        return False
-    return True
-
-
-def _validate_is_mapping_of_string_to_any(data: Mapping[str, Any], raise_on_error: bool = True) -> bool:
-    """Validate that data is a Mapping[str, Any].
-
-    :param Mapping[str, Any] data: The data to validate.
-    :param bool raise_on_error: If True, raise an error on validation failure.
-    :return bool: True if data is a Mapping[str, Any], False otherwise.
-    :raise SimpleBenchTypeError: If data is not a Mapping[str, Any] and raise_on_error is True.
-    """
-    if not isinstance(data, Mapping):
-        if raise_on_error:
-            raise SimpleBenchTypeError(
-                f'Data must be a Mapping, got {type(data)}', tag=_TypedDictErrorTag.NOT_A_MAPPING
-            )
-        return False
-
-    for key in data.keys():
-        if not isinstance(key, str):
-            if raise_on_error:
-                raise SimpleBenchTypeError(
-                    f'All keys in data must be strings, found key of type {type(key)}',
-                    tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING,
-                )
-            return False
-    return True
-
-
-def _validate_has_required_and_no_extra_keys(
-    data: Mapping[str, Any],
-    td_cls: type,
-    raise_on_error: bool = True,
-) -> bool:
-    """Validate that data has all required keys and no extra keys.
-
-    :param Mapping[str, Any] data: The data to validate.
-    :param type[TypedDict] td_cls: The TypedDict subclass to validate against.
-    :param bool raise_on_error: If True, raise an error on validation failure.
-    :return bool: True if data has all required keys and no extra keys, False otherwise.
-    :raise SimpleBenchTypeError: If raise_on_error is True and required keys are missing or extra keys are present.
-    """
-    annotations = td_cls.__annotations__
-    required: set[str] = getattr(td_cls, '__required_keys__', set(annotations))
-
-    missing = required - data.keys()
-    if missing:
-        if raise_on_error:
-            raise SimpleBenchTypeError(
-                f'Missing required keys: {missing}', tag=_TypedDictErrorTag.MISSING_REQUIRED_KEYS
-            )
-        return False
-
-    extra = data.keys() - annotations.keys()
-    if extra:
-        if raise_on_error:
-            raise SimpleBenchTypeError(f'Extra keys not allowed: {extra}', tag=_TypedDictErrorTag.EXTRA_KEYS_PRESENT)
-        return False
-    return True
 
 
 def _validate_field_value(
@@ -562,7 +432,7 @@ def _validate_mapping_field(args: tuple[Any, ...], value: Any, parents: set[int]
                 'Mapping type must have zero, one, or two type arguments',
                 tag=_TypedDictErrorTag.INVALID_MAPPING_TYPE_ARGS,
             )
-    if not _is_string_key_type(key_type):
+    if not _validate.is_string_key_type(key_type):
         raise SimpleBenchTypeError(
             'Mapping key type must be str, Literal of str, or Annotated[str, ...] for TypedDict validation',
             tag=_TypedDictErrorTag.MAPPING_KEY_NOT_STRING,
@@ -584,20 +454,34 @@ def _validate_mapping_field(args: tuple[Any, ...], value: Any, parents: set[int]
     return (True, immutable)
 
 
-def _is_string_key_type(key_type: Any) -> bool:
-    """Check if a type is a valid string key type for Mappings.
+def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
+    """Validate a mapping against the TypedDict.
 
-    :param Any key_type: The type to check.
-    :return bool: True if the type is a valid string key type, False otherwise.
+    Raises an error if validation fails.
+
+    This is a mimic function that behaves like a type cast to TypedDict.
+
+    Because it performs structural validation, the returned value is guaranteed to conform
+    to the specified TypedDict structure if no error is raised.
+
+    This is a structural check and does not require an actual instance of TypedDict.
+
+    It validates that:
+    - All required keys are present and of the correct type.
+    - All optional keys, if present, are of the correct type.
+    - No extra keys are present.
+
+    Cyclic references are detected and raise an error to prevent infinite recursion.
+
+    :param Mapping[str, Any] data: The dictionary to validate.
+    :param type[TypedDict] td_cls: The TypedDict subclass type to validate against.
+    :return TypedDict: The validated TypedDict.
+    :raise SimpleBenchTypeError: If any value has an incorrect type.
     """
-    if key_type is str:
-        return True
-    origin = get_origin(key_type)
-    if origin is Literal:
-        return all(isinstance(arg, str) for arg in get_args(key_type))
-    if origin is Annotated and get_args(key_type) and get_args(key_type)[0] is str:
-        return True
-    try:
-        return issubclass(key_type, str)
-    except TypeError:
-        return False
+    if is_typed_dict_mimic(data, td_cls):
+        # Cast is safe because is_typed_dict_mimic ensures the structure conforms to td_cls
+        return cast(T, data)
+
+    raise SimpleBenchTypeError(
+        f'Data does not conform to the structure of {td_cls.__name__}',
+        tag=_TypedDictErrorTag.DATA_DOES_NOT_CONFORM_TO_TYPEDDICT)

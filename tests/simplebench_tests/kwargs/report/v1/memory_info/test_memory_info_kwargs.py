@@ -1,15 +1,16 @@
-"""simplebench.reporters.choice.choice_conf.ChoiceConf KWArgs package for SimpleBench tests."""
+"""Tests for MemoryInfoKWArgs package for SimpleBench tests."""
 import sys
 
 import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
 
-from simplebench.case.results.metrics.stats._stats import Stats
+from simplebench.report.versions.v1.memory_info import MemoryInfo
 from simplebench_tests.kwargs import kwargs_class_matches_modeled_call
-from simplebench_tests.kwargs.case.results import StatsKWArgs
 
-_KWARGS_CLASS = StatsKWArgs
-_MODELED_CLASS = Stats
+from simplebench_tests.kwargs.report.v1.memory_info.memory_info_kwargs import MemoryInfoKWArgs
+
+_KWARGS_CLASS = MemoryInfoKWArgs
+_MODELED_CLASS = MemoryInfo
 _MODELED_CALL = _MODELED_CLASS.__init__
 
 

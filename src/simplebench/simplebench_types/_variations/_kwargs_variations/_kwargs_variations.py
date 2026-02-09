@@ -6,10 +6,8 @@ defining multiple variations.
 
 from collections.abc import Iterator, Mapping
 
-from typechecked import Immutable
-
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.simplebench_types import ElementCollection, Mark, is_element_collection
+from simplebench.simplebench_types import ElementCollection, Immutable, Mark, is_element_collection
 
 from ._error_tags import _KWArgsVariationsErrorTag
 

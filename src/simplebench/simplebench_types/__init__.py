@@ -1,5 +1,6 @@
 """Types used by SimpleBench."""
 
+
 from ._compatibility_types import (
     Never,
     NotRequired,
@@ -23,6 +24,14 @@ from ._core import (
 )
 from ._element_collection import ElementCollection, is_element_collection
 from ._extras import Extras
+from ._immutable import (
+    Immutable,
+    ImmutableTypedDict,
+    is_immutable,
+    is_immutable_data_typehint,
+    is_immutable_typeddict_typehint,
+    validate_immutable,
+)
 from ._iterations import Iterations
 from ._mark import Mark
 from ._metrics_timers import MetricsTimers
@@ -34,6 +43,13 @@ from ._variations import (
 )
 
 __all__ = [
+    # Immutable types and functions
+    'validate_immutable',
+    'is_immutable',
+    'is_immutable_typeddict_typehint',
+    'is_immutable_data_typehint',
+    'Immutable',
+    'ImmutableTypedDict',
     'MetricsTimers',
     'Extras',
     'ElementCollection',

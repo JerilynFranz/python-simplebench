@@ -6,9 +6,8 @@ This is an immutable mapping of Metrics to the names of their timers or None.
 from collections.abc import Iterator, Mapping
 from typing import TYPE_CHECKING
 
-from typechecked import Immutable
-
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
+from simplebench.simplebench_types import Immutable
 
 if TYPE_CHECKING:
     from simplebench.metrics import Metric

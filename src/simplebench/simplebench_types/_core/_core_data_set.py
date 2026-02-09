@@ -23,7 +23,6 @@ from types import NoneType
 from typing import TYPE_CHECKING, Any
 
 import simplejson
-from typechecked import Immutable
 
 from simplebench.exceptions import SimpleBenchAssertionError, SimpleBenchTypeError
 
@@ -37,7 +36,6 @@ if TYPE_CHECKING:
 
 class CoreDataSet(Set['ImmutableCoreDataTypes'],
                   ElementCollection['ImmutableCoreDataTypes'],
-                  Immutable,
                   Hashable):
     """Deep-immutable Set container for CoreData types used in SimpleBench.
 
@@ -52,6 +50,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
     :param __elements: An iterable of CoreData elements to initialize the set or :obj:`None`.
     :type __elements: Iterable[CoreData] | None
     """
+    __immutable__: bool = True  # Marker for Immutable protocol
     __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
     def __init__(
