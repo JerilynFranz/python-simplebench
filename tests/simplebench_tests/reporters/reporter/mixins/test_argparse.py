@@ -414,3 +414,7 @@ def test_add_boolean_flags_to_argparse(testspec: TestSpec) -> None:
     :type testspec: TestSpec
     """
     testspec.run()
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

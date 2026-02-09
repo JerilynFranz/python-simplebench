@@ -7,6 +7,14 @@ import autopypath  # noqa: F401 # ensure sys.path setup when running tests direc
 import pytest
 from rich.table import Table
 from rich.text import Text
+
+from simplebench.case import Case
+from simplebench.metrics import Metric
+from simplebench.options.reporter import ReporterOptions
+from simplebench.reporters.choice import Choice, ChoiceConf
+from simplebench.reporters.choices import Choices, ChoicesConf
+from simplebench.reporters.reporter import Reporter, ReporterConfig
+from simplebench.simplebench_types import Extras
 from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from simplebench_tests.factories._primitives import (
     default_choice_flags,
@@ -23,7 +31,6 @@ from simplebench_tests.factories._primitives import (
     default_subdir,
     default_targets,
 )
-from simplebench_tests.factories._utils import default_extra
 from simplebench_tests.factories.argparsing import namespace_factory
 from simplebench_tests.factories.case import case_factory
 from simplebench_tests.factories.path import path_factory
@@ -33,13 +40,6 @@ from simplebench_tests.factories.reporter_callback import default_reporter_callb
 from simplebench_tests.factories.reporter_options import FactoryReporterOptions, default_reporter_options
 from simplebench_tests.factories.session import session_factory
 from simplebench_tests.kwargs import ChoiceConfKWArgs, ChoicesConfKWArgs
-
-from simplebench.case import Case
-from simplebench.metrics import Metric
-from simplebench.options.reporter import ReporterOptions
-from simplebench.reporters.choice import Choice, ChoiceConf
-from simplebench.reporters.choices import Choices, ChoicesConf
-from simplebench.reporters.reporter import Reporter, ReporterConfig
 
 
 @uncached_factory
@@ -234,7 +234,7 @@ def choice_conf_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> ChoiceCo
         file_unique=default_file_unique(),
         file_append=default_file_append(),
         options=default_reporter_options(),
-        extra=default_extra(),
+        extra=Extras(),
     )
 
 
@@ -416,7 +416,7 @@ def choice_conf_factory(
         file_unique=default_file_unique(),
         file_append=default_file_append(),
         options=default_reporter_options(),
-        extra=default_extra(),
+        extra=Extras(),
     )
 
 

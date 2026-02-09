@@ -343,7 +343,7 @@ def extra(value: Any) -> Hashable | None:
         ) from None
 
     try:
-        if is_immutable(value):
+        if not is_immutable(value):
             raise SimpleBenchValueError(
                 'The extra argument is not immutable.',
                 tag=_ChoiceConfErrorTag.OPTIONS_INVALID_ARG_VALUE_NOT_IMMUTABLE)

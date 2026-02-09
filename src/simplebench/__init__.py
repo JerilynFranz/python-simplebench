@@ -9,6 +9,7 @@ Available imports:
 - :class:`~simplebench.Case`: Benchmark Case
 - :class:`~simplebench.case.Results`: Benchmark Results
 - :class:`~simplebench.options`: Options module
+- :class:`~simplebench.Extras`: Extras class for optional data
 - :class:`~simplebench.CSVOptions`: CSV reporter options
 - :class:`~simplebench.JSONOptions`: JSON reporter options
 - :class:`~simplebench.RichTableOptions`: Rich Table reporter options
@@ -42,7 +43,7 @@ from simplebench.cli import main
 from simplebench.enums import Verbosity
 from simplebench.reporters.reporter_manager.decorators.register_reporter import register_reporter
 from simplebench.session import Session
-from simplebench.simplebench_types import Mark, VariationMarks
+from simplebench.simplebench_types import Mark, VariationMarks, Extras
 
 try:
     from simplebench._pytest import BenchmarkRegistrar

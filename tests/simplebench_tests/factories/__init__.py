@@ -82,7 +82,6 @@ from ._primitives import (
     variation_marks_factory,
     warmup_iterations_factory,
 )
-from ._utils import DefaultExtra, default_extra, extra_factory
 from .argparsing import (
     argument_parser_factory,
     boolean_flag_factory,
@@ -207,9 +206,7 @@ __all__ = [
     'timestamp_factory',
     'default_timestamp',
     # Utils factories
-    'DefaultExtra',
-    'extra_factory',
-    'default_extra',
+
     # Argparse factories
     'namespace_factory',
     'argument_parser_factory',

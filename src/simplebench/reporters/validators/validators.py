@@ -11,8 +11,8 @@ from rich.text import Text
 from simplebench.enums import Format
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import Metric
-from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.options.reporter.options import ReporterOptions
+from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 
 # Deferred imports to avoid circular dependencies. This pattern is required for any
@@ -96,7 +96,7 @@ def validate_call_parameter(call: Callable, expected_type: type | Any, param_nam
             tag=_ReportersValidatorsErrorTag.INVALID_CALL_INCORRECT_SIGNATURE_MISSING_PARAMETER_TYPE_HINT,
         )
     param_type = resolved_hints.get(param_name)
-    if param_type is not expected_type:
+    if param_type != expected_type:
         raise SimpleBenchTypeError(
             f"Invalid callback: {call}. '{param_name}' parameter must be of type "
             f"'{expected_type}', not '{param_type}'.",
@@ -139,7 +139,7 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
     A callback function must accept the following four keyword-only parameters:
 
     * ``case: Case``
-    * ``metric: Metric``
+    * ``metric: Metric | None``
     * ``output_format: Format``
     * ``output: Any``
 
@@ -159,14 +159,14 @@ def validate_reporter_callback(callback: Any, *, allow_none: bool = False) -> Re
         )
     callback_signature = inspect.signature(callback)
     validate_call_parameter(callback, Case, 'case')
-    validate_call_parameter(callback, Metric, 'metric')
+    validate_call_parameter(callback, Metric | None, 'metric')
     validate_call_parameter(callback, Format, 'output_format')
     validate_call_parameter(callback, Any, 'output')
     params = list(callback_signature.parameters.values())
     if len(params) != 4:
         raise SimpleBenchTypeError(
             'Invalid callback: {callback}. Must accept exactly four keyword-only parameters '
-            'with the following names and types: case: Case, metric: Metric, '
+            'with the following names and types: case: Case, metric: Metric | None, '
             'output_format: Format, output: Any',
             tag=_ReportersValidatorsErrorTag.REPORTER_CALLBACK_INCORRECT_NUMBER_OF_PARAMETERS,
         )
@@ -200,7 +200,7 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
     A renderer function must accept the following three keyword-only parameters:
 
     * ``case: Case``
-    * ``metric: Metric``
+    * ``metric: Metric | None``
     * ``options: ReporterOptions``
 
     :param renderer: The renderer function to validate.
@@ -215,13 +215,13 @@ def validate_report_renderer(renderer: ReportRenderer) -> ReportRenderer:
         )
     signature = inspect.signature(renderer)
     validate_call_parameter(renderer, Case, 'case')
-    validate_call_parameter(renderer, Metric, 'metric')
+    validate_call_parameter(renderer, Metric | None, 'metric')
     validate_call_parameter(renderer, ReporterOptions, 'options')
     params = list(signature.parameters.values())
     if len(params) != 3:
         raise SimpleBenchTypeError(
             'Invalid renderer: {renderer}. Must accept exactly three keyword-only '
-            'parameters with the following names and types: case: Case, metric: Metric, '
+            'parameters with the following names and types: case: Case, metric: Metric | None, '
             'options: ReporterOptions',
             tag=_ReportersValidatorsErrorTag.REPORT_RENDERER_INCORRECT_NUMBER_OF_PARAMETERS,
         )

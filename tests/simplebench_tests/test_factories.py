@@ -16,7 +16,7 @@ from simplebench.reporters.choice import Choice, ChoiceConf
 from simplebench.reporters.choices import Choices, ChoicesConf
 from simplebench.reporters.reporter import Reporter
 from simplebench.session import Session
-from simplebench.simplebench_types import Iterations
+from simplebench.simplebench_types import Iterations, Extras
 from simplebench_tests import factories
 from simplebench_tests.kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKWArgs, ReporterConfigKWArgs
 
@@ -62,11 +62,6 @@ from simplebench_tests.kwargs import CaseKWArgs, ChoiceConfKWArgs, ChoicesConfKW
         action=factories.case_factory,
         assertion=Assert.ISINSTANCE,
         expected=Case)),
-    idspec('FACTORY_009', TestAction(
-        name="extra_factory produces a valid DefaultExtra instance",
-        action=factories.extra_factory,
-        assertion=Assert.ISINSTANCE,
-        expected=factories.DefaultExtra)),
     idspec('FACTORY_010', TestAction(
         name="path_factory produces a valid Path instance",
         action=factories.path_factory,
