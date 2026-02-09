@@ -96,7 +96,7 @@ class CSVReporter(Reporter):
         super().__init__(config)
 
     def render(  # noqa: C901
-        self, *, case: Case, metric: Metric, options: ReporterOptions
+        self, *, case: Case, metric: Metric | None, options: ReporterOptions
     ) -> str:
         """Renders the benchmark results for the specified metric as tagged CSV data and returns it as a string.
 

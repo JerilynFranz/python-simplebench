@@ -209,7 +209,7 @@ def _validate_and_check_immutability_of_mimic(
     return (True, immutable_children)  # All keys validated successfully, propagate immutability status
 
 
-def _validate_report_element_typed_dict_subclass(td_cls: type[ReportElementTypedDict]) -> None:
+def _validate_report_element_typed_dict_subclass(td_cls: type) -> None:
     """Validate a ReportElementTypedDict subclass schema.
 
     This is not a runtime instance validation, but a static schema validation.

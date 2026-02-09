@@ -90,3 +90,11 @@ class _UtilsErrorTag(ErrorTag):
     """The include_comma_separated argument was not a bool"""
     COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE = 'COLLECT_ARG_LIST_INVALID_FLAG_ARG_VALUE'
     """The flag argument contained invalid characters for a command-line flag"""
+
+
+@enum_docstrings
+class _MathErrorTag(ErrorTag):
+    """ErrorTags for simplebench.utils.math in SimpleBench."""
+
+    EMPTY_SEQUENCE = 'EMPTY_SEQUENCE'
+    """The input sequence was empty"""

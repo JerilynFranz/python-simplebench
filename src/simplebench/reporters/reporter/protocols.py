@@ -545,7 +545,7 @@ class ReporterProtocol(Protocol):
         self,
         callback: 'ReporterCallback | None',
         case: 'Case',
-        metric: Metric,
+        metric: Metric | None,
         output_format: Format,
         output: str | bytes | Text | Table,
     ) -> None:

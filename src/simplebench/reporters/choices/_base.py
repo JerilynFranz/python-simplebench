@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import UserDict
-from collections.abc import Hashable, Iterable
+from collections.abc import Hashable
 from typing import Generic, TypeVar
 
 from simplebench.exceptions import ErrorTag, SimpleBenchKeyError, SimpleBenchTypeError, SimpleBenchValueError
@@ -97,15 +97,15 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
 
         self[choice.name] = choice
 
-    def extend(self, choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error]) -> None:
+    def extend(self, choices: ElementCollection[T_Item] | _BaseChoices[T_Item, T_Error]) -> None:
         """Add instances to the container. It does so by adding each instance in the
         provided ``Iterable`` of ``T_Item`` instances or by adding the instances from the
         provided :class:`~._BaseChoices` subclass instance.
 
-        :param choices: An ``Iterable`` of instances or an instance of a ``Choices``-like
+        :param choices: An ``ElementCollection`` of instances or an instance of a ``Choices``-like
                         container.
-        :type choices: Iterable[T_Item] | _BaseChoices[T_Item, T_Error]
-        :raises SimpleBenchTypeError: If the ``choices`` argument is not an ``Iterable`` of
+        :type choices: ElementCollection[T_Item] | _BaseChoices[T_Item, T_Error]
+        :raises SimpleBenchTypeError: If the ``choices`` argument is not an ``ElementCollection`` of
                                      :class:`~simplebench.reporters.choice.ChoiceConf`
                                      instances or a
                                      :class:`~simplebench.reporters.choices.ChoicesConf`
@@ -119,6 +119,7 @@ class _BaseChoices(Hashable, UserDict[str, T_Item], Generic[T_Item, T_Error]):
             for choice in choices.values():
                 self.add(choice)
         else:
+
             choices_list = validate_iterable_of_type(
                 choices,
                 self._item_type,

@@ -347,7 +347,7 @@ def pytest_terminal_summary(terminalreporter: Any, config: Config) -> None:
     :param config: The pytest Config object.
     """
     log.debug('pytest_terminal_summary hook called.')
-    pytest_reporter: PytestReporter = getattr(config, '_simplebench_pytest_reporter', None)  # pylint: disable=line-too-long  # type: ignore[reportAssignmentType]  # noqa: E501
+    pytest_reporter: PytestReporter | None = getattr(config, '_simplebench_pytest_reporter', None)  # pylint: disable=line-too-long  # type: ignore[reportAssignmentType]  # noqa: E501
     if not pytest_reporter or not pytest_reporter.rendered_tables:
         log.debug('No rendered tables found in PytestReporter, skipping summary.')
         return

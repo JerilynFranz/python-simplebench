@@ -8,6 +8,10 @@ from simplebench.exceptions.error_tag import ErrorTag
 class _RichTableReporterErrorTag(ErrorTag):
     """ErrorTags for exceptions in the rich_table reporter."""
 
+    RENDER_METRIC_NONE = 'RENDER_METRIC_NONE'
+    """The ``metric`` argument passed to :meth:`~.RichTableReporter.render` is None,
+    but a specific metric is required to render the report.
+    """
     RENDER_INVALID_CASE = 'RENDER_INVALID_CASE'
     """The ``case`` argument passed to :meth:`~.RichTableReporter.render` is not a
     :class:`~simplebench.case.Case` instance.

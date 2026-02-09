@@ -274,7 +274,7 @@ def _validate_is_mapping_of_string_to_any(data: Mapping[str, Any], raise_on_erro
 
 def _validate_has_required_and_no_extra_keys(
     data: Mapping[str, Any],
-    td_cls: type[TypedDict],  # type: ignore[invalidTypeForm]
+    td_cls: type,
     raise_on_error: bool = True,
 ) -> bool:
     """Validate that data has all required keys and no extra keys.

@@ -539,7 +539,7 @@ class StatsBlock(BaseStatsBlock):
             if len(self._measurements) > 1:  # type: ignore  # validated in __init__
                 self._stdev = float(
                     statistics.stdev(self._measurements)  # type: ignore  # validated in __init__
-                    * sqrt(self.rounds)
+                    * sqrt(float(self.rounds))
                 )
             else:
                 self._stdev = 0.0  # Standard deviation is 0 if only one measurement

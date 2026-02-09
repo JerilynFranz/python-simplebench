@@ -17,6 +17,7 @@ Reporters can produce reports in various formats and output them to different ta
 
 from abc import ABC, abstractmethod
 from argparse import Namespace
+from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar
 
@@ -279,7 +280,8 @@ class Reporter(
         )
 
     @abstractmethod
-    def render(self, *, case: 'Case', metric: 'Metric', options: 'ReporterOptions') -> str | bytes | Text | Table:
+    def render(self, *,
+               case: 'Case', metric: 'Metric | None', options: 'ReporterOptions') -> str | bytes | Text | Table:
         """Render the report for a specific case and metric.
 
         This abstract method must be implemented by all :class:`~.Reporter` subclasses.
@@ -292,7 +294,7 @@ class Reporter(
         :param case: The :class:`~simplebench.case.Case` instance containing the benchmark results.
         :type case: :class:`~simplebench.case.Case`
         :param metric: The specific :class:`~simplebench.metric.Metric` of the results to render.
-        :type metric: :class:`~simplebench.metric.Metric`
+        :type metric: :class:`~simplebench.metric.Metric` | None
         :param options: The reporter-specific :class:`~.ReporterOptions` for rendering.
         :type options: :class:`~.ReporterOptions`
         :return: The rendered report content.
@@ -471,7 +473,7 @@ class Reporter(
         """
         return self.config.formats
 
-    def get_all_stats_values(self, results: list[Results], metric: Metric) -> list[float]:
+    def get_all_stats_values(self, results: Sequence[Results], metric: Metric) -> list[float]:
         """Gathers all primary statistical values for a given metric across multiple results.
 
         It collects mean, median, minimum, maximum, 5th percentile, and 95th percentile,

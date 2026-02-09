@@ -366,7 +366,7 @@ class _ReporterOrchestrationMixin:
         args: Namespace,
         choice: 'Choice',
         case: 'Case',
-        metric: Metric,
+        metric: Metric | None,
         path: Path | None = None,
         session: 'Session | None' = None,
         callback: ReporterCallback | None = None,
