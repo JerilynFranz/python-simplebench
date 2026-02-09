@@ -58,6 +58,14 @@ class Values(CoreDataSequence[float]):
     :param iterable: An iterable of float or int numbers.
     :raises SimpleBenchTypeError: If not an Iterable or contains non-numeric types.
     """
+    # Because we enforce all items to be floats BEFORE passing them to the CoreDataSequence constructor,
+    # we do NOT set _generic_type to float here. This is for performance since Values usually contain
+    # many elements and allows us to skip the generic type check in the CoreDataSequence constructor, which would be
+    # redundant and much more expensive than just validating the contents once in the Values constructor.
+    _generic_type: type | None = None
+    """Marker for generic type parameter for runtime checking purposes by CoreDataSequence.
+    Not set to float here for performance reasons since we efficiently pre-validate contents in Values constructor."""
+
     def __init__(self, __values: CoreDataSequence | ElementCollection[int | float] | None = None) -> None:
         """
         Create a new Values instance from an elementcollection of int or float numbers,

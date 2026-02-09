@@ -22,9 +22,10 @@ It does not support sorting or mutation after creation.
 import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
 from types import NoneType
-from typing import TYPE_CHECKING, Any, overload
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, overload
 
 import simplejson
+from typeguard import TypeCheckError, check_type
 
 from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
@@ -36,12 +37,13 @@ from ._error_tags import _CoreDataErrorTag
 if TYPE_CHECKING:
     from ._types import CoreDataTypes, ImmutableCoreDataTypes
 
+# TypeVar restricted to ImmutableCoreDataTypes for static type checking
+T = TypeVar('T', bound='CoreDataTypes')
 
-# TODO: Add support for initializing from bytes or str
-
-class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
-                       ElementCollection['ImmutableCoreDataTypes'],
-                       Hashable):
+class CoreDataSequence(Sequence[T],
+                       ElementCollection[T],
+                       Hashable,
+                       Generic[T]):
     """Deep-immutable Sequence container for CoreData types used in SimpleBench.
 
     This represents a sequence where all elements are of type :class:`CoreData`.
@@ -55,10 +57,20 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
     :param __elements: A collection of CoreDataTypes elements to initialize the sequence or :obj:`None`.
     :type __elements: Iterable[CoreDataTypes] | None
     """
+    _generic_type: type | None = None
+    """Marker for generic type parameter for runtime checking purposes.
+
+    This is used by subclasses to specify a particular type constraint for the elements of the sequence,
+    such as in the case of the :class:`Values` subclass which sets this to `float` to indicate that all elements
+    must be floats. The CoreDataSequence base class itself enforces the generic type constraint if this attribute
+    is set, allowing for flexible yet type-safe subclasses that can represent specific kinds of sequences with
+    additional validation on their contents.
+    """
+
     __immutable__: bool = True  # Marker for Immutable protocol
     __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
-    def __init__(self, __elements: 'ElementCollection[CoreDataTypes] | None' = None) -> None:
+    def __init__(self, __elements: 'ElementCollection[T] | None' = None) -> None:
         """Initialize the CoreDataSequence.
 
         If a collection is provided, it must be an :class:`ElementCollection`
@@ -80,7 +92,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         self._hash_cache: int | None = None
         self._content_hash_cache: str | None = None
 
-        self._data: tuple[ImmutableCoreDataTypes, ...]
+        self._data: tuple[T, ...]
         if __elements is None:
             self._data = ()
             return
@@ -90,22 +102,33 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
                 'CoreDataSequence must be initialized with an ElementCollection of CoreData.',
                 tag=_CoreDataErrorTag.CORE_DATA_SEQUENCE_NOT_ELEMENT_COLLECTION)
 
-        data: list[ImmutableCoreDataTypes] = []
+        data: list[T] = []
+        # The following import is kept for runtime type checks
+
         if all(isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for item in __elements):
             self._data = tuple(__elements)
             return
 
+        cls = self.__class__
+        generic_type: type | None = getattr(cls, '_generic_type', None)
         for item in __elements:
+            if generic_type is not None:
+                try:
+                    check_type(item, generic_type)
+                except TypeCheckError as exc:
+                    raise SimpleBenchTypeError(
+                        f'Item {item!r} is not of the expected generic type {generic_type}.',
+                        tag=_CoreDataErrorTag.CORE_DATA_SEQUENCE_INVALID_ITEM_TYPE) from exc
             if isinstance(item, (str, int, float, bool, NoneType)):
-                data.append(item)
+                data.append(item)  # type: ignore[list-item]
             elif isinstance(item, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
-                data.append(item)
+                data.append(item)  # type: ignore[list-item]
             elif isinstance(item, Mapping):
-                data.append(CoreDataMapping(item))
+                data.append(CoreDataMapping(item))  # type: ignore[list-item]
             elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
-                data.append(CoreDataSequence(item))
+                data.append(CoreDataSequence(item))  # type: ignore[list-item]
             elif isinstance(item, Set):
-                data.append(CoreDataSet(item))
+                data.append(CoreDataSet(item))  # type: ignore[list-item]
             else:
                  raise SimpleBenchTypeError(
                     f'Invalid item type passed to CoreDataSequence: {item!r}. '
@@ -116,12 +139,12 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
 
 
     @overload
-    def __getitem__(self, index: int) -> 'ImmutableCoreDataTypes': ...
+    def __getitem__(self, index: int) -> T: ...
 
     @overload
-    def __getitem__(self, index: slice) -> 'CoreDataSequence': ...
+    def __getitem__(self, index: slice) -> 'CoreDataSequence[T]': ...
 
-    def __getitem__(self, index: int | slice) -> 'ImmutableCoreDataTypes':
+    def __getitem__(self, index: int | slice) -> T | 'CoreDataSequence[T]':
         """Get the item or slice at the specified index.
 
         If an integer index is provided, returns the element at that position,
@@ -139,7 +162,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         """
         try:
             if isinstance(index, slice):
-                return CoreDataSequence(self._data[index])
+                return self.__class__(self._data[index])
             return self._data[index]
         except IndexError as e:
             raise IndexError(
@@ -173,7 +196,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         """
         return item in self._data
 
-    def __iter__(self) -> Iterator['ImmutableCoreDataTypes']:
+    def __iter__(self) -> Iterator[T]:
         """Return an iterator over the CoreDataSequence.
 
         :returns: An iterator over the elements in the sequence.
@@ -262,7 +285,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
             if isinstance(value, (CoreDataSet, CoreDataMapping, CoreDataSequence)):
                 thawed_list.append(value.thaw(preserve_immutability=preserve_immutability))
             else:
-                thawed_list.append(value)
+                thawed_list.append(value) # type: ignore[list-item]
         if preserve_immutability:
             return tuple(thawed_list)
         return thawed_list
@@ -293,7 +316,7 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
             elif isinstance(value, bytes):  # bytes are converted to data URLs for JSON compatibility
                 json_list.append(_common.data_url(value))
             else:
-                json_list.append(value)
+                json_list.append(value)  # type: ignore[list-item]
         return list(json_list)
 
     def as_json(self) -> str:
@@ -354,11 +377,11 @@ class CoreDataSequence(Sequence['ImmutableCoreDataTypes'],
         comparison_value = _common.rich_compare_value(value)
         count = 0
         for item in self._data:
-            if _common.rich_compare_value(item) == comparison_value:
+            if _common.rich_compare_value(item) == comparison_value:  # type: ignore[comparison-overlap]
                 count += 1
         return count
 
-    def as_tuple(self) -> tuple['ImmutableCoreDataTypes', ...]:
+    def as_tuple(self) -> tuple[T, ...]:
         """Return the contents of the CoreDataSequence as a tuple.
 
         :returns: The contents of the sequence as a tuple.
