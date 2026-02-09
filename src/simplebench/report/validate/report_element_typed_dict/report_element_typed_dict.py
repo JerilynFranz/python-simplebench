@@ -125,7 +125,7 @@ def is_report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T])
 
 
 def _validate_and_check_immutability_of_mimic(
-    data: Mapping[str, Any], td_cls: type[ReportElementTypedDict], parents: set[int] | None = None
+    data: Mapping[str, Any], td_cls: Any, parents: set[int] | None = None
 ) -> tuple[bool, bool]:
     """Validate a mapping against a ReportElementTypedDict subclass
     and check if it consists only of fully immutable core data types.
