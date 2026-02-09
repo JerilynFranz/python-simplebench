@@ -26,7 +26,7 @@ def register_lazy_proxy(proxy_class: type, real_type_name: str, module_path: str
     :param str real_type_name: The name of the real type being proxied.
     :param str module_path: The module path where the real type can be imported from.
     """
-    proxy_class.__real_type_name__ = real_type_name
+    proxy_class.__real_type_name__ = real_type_name  # type: ignore
     if real_type_name not in _TYPE_IMPORT_MAP:
         _TYPE_IMPORT_MAP[real_type_name] = module_path
 

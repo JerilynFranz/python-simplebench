@@ -7,7 +7,6 @@ from typing import Any, ClassVar
 import pytest
 from rich.table import Table
 from rich.text import Text
-from simplebench_tests import factories
 
 from simplebench.case import Case
 from simplebench.metadata import Metadata
@@ -23,6 +22,7 @@ from simplebench.reporters.reporter_manager.decorators import (
     register_reporter,
 )
 from simplebench.session import Session
+from simplebench_tests import factories
 
 
 class MockReporterOptions(ReporterOptions):
@@ -78,7 +78,8 @@ class MockReporter(Reporter):
             session=session,
             callback=callback)
 
-    def render(self, *, case: 'Case', metric: 'Metric', options: 'ReporterOptions') -> str | bytes | Text | Table:
+    def render(self, *,
+            case: 'Case', metric: 'Metric | None', options: 'ReporterOptions') -> str | bytes | Text | Table:
         """A mock render method.
 
         :param case: The benchmark case.
@@ -144,7 +145,7 @@ def test_register_reporter() -> None:
                 session=session,
                 callback=callback)
 
-        def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
+        def render(self, *, case: Case, metric: Metric | None, options: ReporterOptions) -> str | bytes | Text | Table:
             """A mock render method.
 
             :param case: The benchmark case.

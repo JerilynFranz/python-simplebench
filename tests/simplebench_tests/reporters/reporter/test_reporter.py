@@ -88,14 +88,14 @@ class GoodReporter(Reporter):
 
     def render(self, *,
                case: 'Case',
-               metric: 'Metric',
+               metric: 'Metric | None',
                options: 'ReporterOptions') -> str | bytes | Text | Table:
         """Dummy render method for testing.
 
         :param case: The benchmark case.
         :type case: Case
         :param metric: The report metric.
-        :type metric: Metric
+        :type metric: Metric | None
         :param options: The reporter options.
         :type options: ReporterOptions
         :return: An empty string.

@@ -398,7 +398,7 @@ def _validate_field_value(
         return results
 
     # Handle TypedDicts
-    if isinstance(expected_type, type) and issubclass(expected_type, TypedDict):  # type: ignore[reportArgumentType]
+    if isinstance(expected_type, type) and issubclass(expected_type, TypedDict):  # type: ignore
         parents.add(id(value))
         valid, immutable = _validate_and_check_immutability_of_mimic(value, expected_type, parents)
         parents.remove(id(value))

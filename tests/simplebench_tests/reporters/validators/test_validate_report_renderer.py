@@ -6,21 +6,20 @@ from typing import Any, ClassVar, TypeVar
 import pytest
 from rich.table import Table
 from rich.text import Text
+from testspec import Assert, TestAction, TestSpec, idspec
 
 from simplebench.case import Case
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metadata import Metadata
 from simplebench.metrics import Metric
+from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choice import Choice
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.reporters.reporter import Reporter
-from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.validators import validate_report_renderer
 from simplebench.reporters.validators.exceptions import _ReportersValidatorsErrorTag
 from simplebench.session import Session
-
 from simplebench_tests.factories import reporter_config_factory
-from testspec import Assert, TestAction, TestSpec, idspec
 
 T = TypeVar('T')
 
@@ -77,7 +76,7 @@ class MockReporter(Reporter):
             callback=callback)
 
     def render(
-            self, *, case: Case, metric: Metric, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
+            self, *, case: Case,  metric: Metric | None, options: ReporterOptions) -> str:  # pylint: disable=unused-argument  # noqa: E501
         """A mock render method.
 
         :param case: The benchmark case.

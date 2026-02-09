@@ -24,7 +24,7 @@ class ReporterCallback(Protocol):
         def method_name(self, *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
     """
 
-    def __call__(self, *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
+    def __call__(self, *, case: Case, metric: Metric | None, output_format: Format, output: Any) -> None:
         """A callback function to handle benchmark results from a Reporter.
 
         This function is called with the results of a benchmark run, and is responsible for

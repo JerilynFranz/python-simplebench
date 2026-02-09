@@ -17,6 +17,9 @@ only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 """
 # TODO: Hoist TypedDict mimic validation logic to a more general utility module if it
 # can be made generic and reusable outside of ReportElementTypedDicts.
+
+# TODO: Determine if this module should be deleted
+
 from collections.abc import Mapping, Sequence, Set
 from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_origin, get_type_hints
 
@@ -273,11 +276,11 @@ def _validate_is_mapping_of_string_to_any(data: Mapping[str, Any]) -> None:
             )
 
 
-def _validate_has_required_and_no_extra_keys(data: Mapping[str, Any], td_cls: type[ReportElementTypedDict]) -> None:
+def _validate_has_required_and_no_extra_keys(data: Mapping[str, Any], td_cls: type) -> None:
     """Validate that data has all required keys and no extra keys.
 
     :param Mapping[str, Any] data: The data to validate.
-    :param ReportElementTypedDict td_cls: The TypedDict subclass to validate against.
+    :param type td_cls: The TypedDict subclass to validate against.
     :raise SimpleBenchTypeError: If required keys are missing or extra keys are present.
     """
     annotations = td_cls.__annotations__

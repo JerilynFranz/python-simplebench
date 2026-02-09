@@ -3,13 +3,13 @@
 from collections.abc import Mapping, Sequence
 from copy import copy
 from types import MappingProxyType
-from typing import Any
+from typing import Any, cast
 
 from simplebench.report.base import BaseRawDataBlock, JSONSchema
 from simplebench.simplebench_types import CoreDataMapping, Values
 
 from . import _validate
-from .raw_data_block_dict import RawDataBlockData
+from .raw_data_block_dict import ImmutableRawDataBlockDict, RawDataBlockData
 from .raw_data_block_schema import RawDataBlockSchema
 
 
@@ -101,7 +101,7 @@ class RawDataBlock(BaseRawDataBlock):
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(RawDataBlockData)
 
-        self._to_dict_cache: CoreDataMapping | None = None  # Cache for to_dict output
+        self._to_dict_cache: ImmutableRawDataBlockDict | None = None  # Cache for to_dict output
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> 'RawDataBlock':
@@ -123,16 +123,30 @@ class RawDataBlock(BaseRawDataBlock):
         )
         return cls(**kwargs)
 
-    def to_dict(self) -> CoreDataMapping:
+    def to_dict(self) -> ImmutableRawDataBlockDict:
         """Convert the RawDataBlock instance to a dictionary.
 
         The returned dictionary conforms to the 'shape' of the :class:`RawDataBlockDict` type,
         is immutable, and can be serialized to JSON.
 
-        :return CoreDataMapping: Dictionary representation of the RawDataBlock instance.
+        It is a type cast instance of CoreDataMapping.
+
+        It is type cast to ImmutableRawDataBlockDict (a TypedDict type) for static type checking purposes
+        and IDE support, but at runtime it is actually a CoreDataMapping which is a lightweight,
+        immutable mapping type that is optimized for performance and memory efficiency.
+
+        The 'shape' of the dictionary is defined by the RawDataBlockSchema and includes all the fields
+        of the RawDataBlock instance, as well as the 'type' and 'version' fields required by the schema.
+
+        This is a case where we want the performance and immutability of CoreDataMapping at runtime, but
+        also want the static type checking and IDE support of a TypedDict. By using a type cast, we can
+        achieve both goals without sacrificing performance or type safety.
+
+        :return: Dictionary representation of the RawDataBlock instance.
+        :rtype: ImmutableRawDataBlockDict
         """
         if self._to_dict_cache is None:
-            self._to_dict_cache = CoreDataMapping({
+            self._to_dict_cache = cast(ImmutableRawDataBlockDict, CoreDataMapping({
                 'version': self.VERSION,
                 'type': self.TYPE,
                 'hash_id': self.hash_id,
@@ -145,7 +159,7 @@ class RawDataBlock(BaseRawDataBlock):
                 'iterations': self.iterations,
                 'timer': self.timer,
                 'data': self.data,
-            })
+            }))
         return self._to_dict_cache
 
     @property

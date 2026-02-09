@@ -98,7 +98,7 @@ class FactoryReporter(Reporter):
         config = reporter_config_factory() if reporter_config is None else reporter_config
         super().__init__(config)
 
-    def render(self, *, case: Case, metric: Metric, options: ReporterOptions) -> str | bytes | Text | Table:
+    def render(self, *, case: Case, metric: Metric | None, options: ReporterOptions) -> str | bytes | Text | Table:
         """Render the report for the given case, section, and options.
 
         :param case: The case to render.

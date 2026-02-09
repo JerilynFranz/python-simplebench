@@ -89,7 +89,7 @@ class RichTableReporter(Reporter):
         super().__init__(config)
 
     def render(  # pylint: disable=too-many-locals,too-many-statements  # noqa: C901
-        self, *, case: Case, metric: Metric, options: ReporterOptions
+        self, *, case: Case, metric: Metric | None, options: ReporterOptions
     ) -> Table:
         """Prints the benchmark results in a rich table format if available.
 

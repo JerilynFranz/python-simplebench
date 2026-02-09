@@ -10,13 +10,13 @@ from simplebench.metrics import Metric
 
 
 def default_reporter_callback(  # pylint: disable=unused-argument
-        *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
+        *, case: Case, metric: Metric | None, output_format: Format, output: Any) -> None:
     """A default ReporterCallback conformant callback function for testing purposes.
 
     .. code-block:: python
 
         def default_reporter_callback(
-                *, case: Case, section: Metric, output_format: Format, output: Any) -> None:
+                *, case: Case, metric: Metric | None, output_format: Format, output: Any) -> None:
             return None
     """
     return None  # pragma: no cover

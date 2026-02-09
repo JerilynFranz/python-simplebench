@@ -21,6 +21,7 @@ Example usage:
 """
 
 from collections.abc import Iterator, Sequence
+from typing import overload
 
 from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
@@ -121,6 +122,12 @@ class Values(CoreDataSequence):
         self._data: tuple[float, ...] = tuple(float(item) for item in working_copy)  # type: ignore[arg-type]
         _log.debug('Values instance created successfully')
         return
+
+    @overload
+    def __getitem__(self, index: int) -> float: ...
+
+    @overload
+    def __getitem__(self, index: slice) -> 'Values': ...
 
     def __getitem__(self, index: int | slice) -> 'float | Values':  # type: ignore[override]
         """Get the item or slice at the specified index.

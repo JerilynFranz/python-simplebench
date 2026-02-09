@@ -239,7 +239,7 @@ def postrun_benchmark_case() -> Case:
 
 
 def broken_callback_missing_case(  # pragma: no cover  # pylint: disable=unused-argument
-        *, metric: Metric, output_format: Format, output: Any) -> None:
+        *, metric: Metric | None, output_format: Format, output: Any) -> None:
     """A broken callback function that is missing the required 'case' parameter."""
 
 
@@ -249,17 +249,17 @@ def broken_callback_missing_metric(  # pragma: no cover  # pylint: disable=unuse
 
 
 def broken_callback_missing_format(  # pragma: no cover  # pylint: disable=unused-argument
-        *, metric: Metric, case: Case, output: Any) -> None:
+        *, metric: Metric | None, case: Case, output: Any) -> None:
     """A broken callback function that is missing the required 'output_format' parameter."""
 
 
 def broken_callback_missing_output(  # pragma: no cover  # pylint: disable=unused-argument
-        *, metric: Metric, output_format: Format, case: Case) -> None:
+        *, metric: Metric | None, output_format: Format, case: Case) -> None:
     """A broken callback function that is missing the required 'output' parameter."""
 
 
 def broken_callback_wrong_case_type(  # pylint: disable=unused-argument  # pragma: no cover
-        *, case: str, metric: Metric, output_format: Format, output: Any) -> None:
+        *, case: str, metric: Metric | None, output_format: Format, output: Any) -> None:
     """A broken callback function that has the wrong type of 'case' parameter (should be 'case: Case')."""
 
 
@@ -269,18 +269,18 @@ def broken_callback_wrong_metric_type(  # pylint: disable=unused-argument  # pra
 
 
 def broken_callback_wrong_format_type(    # pylint: disable=unused-argument  # pragma: no cover
-        *, case: Case, metric: Metric, output_format: str, output: Any) -> None:
+        *, case: Case, metric: Metric | None, output_format: str, output: Any) -> None:
     """A broken callback function that has the wrong type of 'output_format' parameter
     (should be 'output_format: Format')."""
 
 
 def broken_callback_wrong_output_type(  # pylint: disable=unused-argument  # pragma: no cover
-        *, case: Case, metric: Metric, output_format: Format, output: str) -> None:
+        *, case: Case, metric: Metric | None, output_format: Format, output: str) -> None:
     """A broken callback function that has the wrong type of 'output' parameter (should be 'output: Any')."""
 
 
 def broken_callback_extra_param(  # pylint: disable=unused-argument  # pragma: no cover
-        *, case: Case, metric: Metric, output_format: Format, output: Any, extra_param: Any) -> None:
+        *, case: Case, metric: Metric | None, output_format: Format, output: Any, extra_param: Any) -> None:
     """A broken callback function that has an extra parameter
     (should only have 'case', 'metric', 'output_format', and 'output')."""
 
@@ -291,34 +291,34 @@ def broken_callback_no_type_hints(  # noqa: ANN201  # pragma: no cover
 
 
 def broken_callback_case_allowed_to_be_positional(  # pragma: no cover
-        case: Case, *, metric: Metric, output_format: Format, output: Any) -> None:
+        case: Case, *, metric: Metric | None, output_format: Format, output: Any) -> None:
     """A broken callback function that allows case to be positional."""
 
 
 def broken_callback_metric_allowed_to_be_positional(  # pragma: no cover
-        metric: Metric, *, case: Case, output_format: Format, output: Any) -> None:
+        metric: Metric | None, *, case: Case, output_format: Format, output: Any) -> None:
     """A broken callback function that allows metric to be positional."""
 
 
 def broken_callback_output_format_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
-        output_format: Format, *, case: Case, metric: Metric, output: Any) -> None:
+        output_format: Format, *, case: Case, metric: Metric | None, output: Any) -> None:
     """A broken callback function that allows output_format to be positional."""
 
 
 def broken_callback_output_allowed_to_be_positional(  # pylint: disable=unused-argument  # pragma: no cover
-        output: Any, *, case: Case, metric: Metric, output_format: Format) -> None:
+        output: Any, *, case: Case, metric: Metric | None, output_format: Format) -> None:
     """A broken callback function that allows output to be positional."""
 
 
 def broken_callback_not_keyword_only(  # pylint: disable=unused-argument  # pragma: no cover
-        case: Case, metric: Metric, output_format: Format, output: Any) -> None:
+        case: Case, metric: Metric | None, output_format: Format, output: Any) -> None:
     """A broken callback function that is not keyword-only."""
 
 
 def broken_callback_invalid_case_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
         *,
         case: 'ThisClassDoesNotExist',  # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
-        metric: str,
+        metric: str | None,
         output_format: float,
         output: list) -> None:
     """A broken callback function that has a type hint for case that points to a non-existent class."""
@@ -336,7 +336,7 @@ def broken_callback_invalid_metric_type_hint(  # pylint: disable=unused-argument
 def broken_callback_invalid_format_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
         *,
         case: Case,
-        metric: Metric,
+        metric: Metric | None,
         output_format: 'ThisClassDoesNotExist',  # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
         output: list) -> None:
     """A broken callback function that has a type hint for output_format that points to a non-existent class."""
@@ -345,7 +345,7 @@ def broken_callback_invalid_format_type_hint(  # pylint: disable=unused-argument
 def broken_callback_invalid_output_type_hint(  # pylint: disable=unused-argument,undefined-variable  # pragma: no cover
         *,
         case: Case,
-        metric: Metric,
+        metric: Metric | None,
         output_format: Format,
         output: 'ThisClassDoesNotExist'   # type: ignore[name-defined]  # pyright: ignore[reportUndefinedVariable]  # pylint: disable=line-too-long  # noqa: F821,E501
         ) -> None:
@@ -353,7 +353,7 @@ def broken_callback_invalid_output_type_hint(  # pylint: disable=unused-argument
 
 
 def good_callback(  # pylint: disable=unused-argument
-        *, case: Case, metric: Metric, output_format: Format, output: Any) -> None:
+        *, case: Case, metric: Metric | None, output_format: Format, output: Any) -> None:
     """A good callback function that has the correct parameters and types."""
 
 
