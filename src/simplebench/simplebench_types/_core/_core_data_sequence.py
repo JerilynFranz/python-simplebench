@@ -120,15 +120,15 @@ class CoreDataSequence(Sequence[T],
                         f'Item {item!r} is not of the expected generic type {generic_type}.',
                         tag=_CoreDataErrorTag.CORE_DATA_SEQUENCE_INVALID_ITEM_TYPE) from exc
             if isinstance(item, (str, int, float, bool, NoneType)):
-                data.append(item)  # type: ignore[list-item]
+                data.append(item)  # type: ignore
             elif isinstance(item, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
-                data.append(item)  # type: ignore[list-item]
+                data.append(item)  # type: ignore
             elif isinstance(item, Mapping):
-                data.append(CoreDataMapping(item))  # type: ignore[list-item]
+                data.append(CoreDataMapping(item))  # type: ignore
             elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
-                data.append(CoreDataSequence(item))  # type: ignore[list-item]
+                data.append(CoreDataSequence(item))  # type: ignore
             elif isinstance(item, Set):
-                data.append(CoreDataSet(item))  # type: ignore[list-item]
+                data.append(CoreDataSet(item))  # type: ignore
             else:
                  raise SimpleBenchTypeError(
                     f'Invalid item type passed to CoreDataSequence: {item!r}. '
@@ -377,7 +377,7 @@ class CoreDataSequence(Sequence[T],
         comparison_value = _common.rich_compare_value(value)
         count = 0
         for item in self._data:
-            if _common.rich_compare_value(item) == comparison_value:  # type: ignore[comparison-overlap]
+            if _common.rich_compare_value(item) == comparison_value:  # type: ignore
                 count += 1
         return count
 

@@ -7,7 +7,7 @@ import pytest
 import simplejson
 from testspec import Assert, PytestAction, TestSpec
 
-from simplebench.exceptions import SimpleBenchAssertionError, SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, CoreDataSet
 from simplebench.simplebench_types._core._error_tags import _CoreDataErrorTag
 
@@ -45,9 +45,9 @@ from simplebench.simplebench_types._core._error_tags import _CoreDataErrorTag
     PytestAction('INIT_006',
         name='Init with invalid type (should raise error)',
         action=CoreDataSet,
-        args=[{object()}],
-        exception=SimpleBenchAssertionError,
-        exception_tag=_CoreDataErrorTag.CORE_DATA_SET_INVALID_ITEM_TYPE),
+        args=[{'a': 1}],
+        exception=SimpleBenchTypeError,
+        exception_tag=_CoreDataErrorTag.CORE_DATA_SET_NOT_ELEMENT_COLLECTION),
     PytestAction('INIT_007',
         name='Init with non-iterable (should raise error)',
         action=CoreDataSet,

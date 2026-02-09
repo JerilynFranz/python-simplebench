@@ -20,11 +20,12 @@ Allowed types are:
 import hashlib
 from collections.abc import Hashable, Iterator, Mapping, Sequence, Set
 from types import NoneType
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import simplejson
+from typeguard import TypeCheckError, check_type
 
-from simplebench.exceptions import SimpleBenchAssertionError, SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchTypeError
 
 from .._element_collection import ElementCollection
 from . import _common
@@ -33,10 +34,13 @@ from ._error_tags import _CoreDataErrorTag
 if TYPE_CHECKING:
     from ._types import CoreDataMapping, CoreDataTypes, ImmutableCoreDataTypes
 
+T = TypeVar('T', bound='ImmutableCoreDataTypes')
+_T = TypeVar('_T')  # <-- Add this line for the default value in get()
 
-class CoreDataSet(Set['ImmutableCoreDataTypes'],
-                  ElementCollection['ImmutableCoreDataTypes'],
-                  Hashable):
+class CoreDataSet(Set[T],
+                  ElementCollection[T],
+                  Hashable,
+                  Generic[T]):
     """Deep-immutable Set container for CoreData types used in SimpleBench.
 
     This represents a set where all elements are of type :class:`CoreData`.
@@ -48,14 +52,17 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
     and converted to their respective immutable CoreData wrappers as needed.
 
     :param __elements: An iterable of CoreData elements to initialize the set or :obj:`None`.
-    :type __elements: Iterable[CoreData] | None
+    :type __elements: ElementCollection[CoreDataTypes] | None
     """
+    _generic_type: type | None = None
+    """Generic type for the elements in the set, if specified. This is used for type validation when a generic type is
+    defined for the set."""
     __immutable__: bool = True  # Marker for Immutable protocol
     __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
     def __init__(
             self,
-            __elements: 'Sequence[CoreDataTypes] | Set[CoreDataTypes] | None' = None) -> None:  # noqa: E501
+            __elements: 'ElementCollection[T] | None' = None) -> None:
         """Initialize the CoreDataSet.
 
         The provided iterable must be a Set or Sequence that contains only elements of type :class:`CoreDataTypes`.
@@ -97,47 +104,57 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         If no iterable is provided, an empty set is created.
 
         :param __elements: An iterable of CoreData elements to initialize the set or :obj:`None`.
-        :type __elements: Iterable[CoreData] | None
+        :type __elements: ElementCollection[CoreDataTypes] | None
         """
         from ._core_data_mapping import CoreDataMapping
         from ._core_data_sequence import CoreDataSequence
-        from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataTypes, ImmutableCoreDataTypes
+        from ._types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CORE_DATA_TYPES_TUPLE
+
         self._version: int = 1
         self._hash_cache: int | None = None
         self._content_hash_cache: str | None = None
-        self._data: set[ImmutableCoreDataTypes]
+        self._data: set[T]
 
         if __elements is None:
             self._data = set()
             return
 
-        if not (isinstance(__elements, (Set, Sequence))):
+        if not isinstance(__elements, (Set, Sequence)):
             raise SimpleBenchTypeError(
                 f'CoreDataSet requires a Set or Sequence to initialize, '
                 f'got {type(__elements)!r}.',
                 tag=_CoreDataErrorTag.CORE_DATA_SET_NOT_ELEMENT_COLLECTION)
 
-        data: set[CoreDataTypes] = set()
+        data: set[T] = set()
 
         if all(isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for item in __elements):
             self._data = set(__elements)  # type: ignore[arg-type]  # all primitive types are immutable
             return
 
+        cls = self.__class__
         for item in __elements:
+            if cls._generic_type is not None:
+                try:
+                    check_type(item, cls._generic_type)
+                except TypeCheckError as exc:
+                    raise SimpleBenchTypeError(
+                        f'Item {item!r} does not match the expected generic type '
+                        f'{cls._generic_type!r} for this CoreDataSet.',
+                        tag=_CoreDataErrorTag.CORE_DATA_SET_GENERIC_TYPE_MISMATCH) from exc
             if isinstance(item, (str, int, float, bool, NoneType)):
-                data.add(item)
+                data.add(item)  # type: ignore
             elif isinstance(item, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
-                data.add(item)
+                data.add(item)  # type: ignore
             elif isinstance(item, Mapping):
-                data.add(CoreDataMapping(item))
+                data.add(CoreDataMapping(item))  # type: ignore
             elif isinstance(item, Set):
-                data.add(CoreDataSet(item))
+                data.add(CoreDataSet(item))  # type: ignore
             elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
-                data.add(CoreDataSequence(item))
+                data.add(CoreDataSequence(item))  # type: ignore
             else: # Invalid type of data passed
-                 raise SimpleBenchAssertionError(
+                 raise SimpleBenchTypeError(
                     f'Invalid item type passed to CoreDataSet: {item!r}. '
-                    f'Must be a CoreData type: {CORE_DATA_PRIMITIVE_TYPES_TUPLE!r}.',
+                    f'Must be a CoreData type: {CORE_DATA_TYPES_TUPLE!r}.',
                     tag=_CoreDataErrorTag.CORE_DATA_SET_INVALID_ITEM_TYPE)
 
         # We've already validated all items are ImmutableCoreDataTypes
@@ -153,13 +170,13 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         """
         return item in self._data
 
-    def __iter__(self) -> Iterator['ImmutableCoreDataTypes']:
+    def __iter__(self) -> Iterator['ImmutableCoreDataTypes']:  # type: ignore[override]
         """Return an iterator over the CoreDataSet.
 
         :returns: An iterator over the elements in the set.
         :rtype: Iterator[CoreDataTypes]
         """
-        return iter(self._data)
+        return iter(self._data)  # type: ignore[return-value]
 
     def __len__(self) -> int:
         """Return the number of elements in the CoreDataSet.
@@ -200,7 +217,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
         if self._content_hash_cache is None:
             hasher = hashlib.sha256()
             # We don't care what the order is, just that it is consistent
-            values = sorted(self._data, key=_common.rich_compare_value)
+            values = sorted(self._data, key=_common.rich_compare_value)  # type: ignore
             for item in values:
                 if isinstance(item, (CoreDataSequence, CoreDataMapping, CoreDataSet)):
                     hasher.update(item.content_hash().encode('utf-8'))
@@ -262,7 +279,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             elif isinstance(value, CoreDataMapping):
                 thaw_set.add(value)  # must remain as CoreDataMapping for hashability
             else:
-                thaw_set.add(value)
+                thaw_set.add(value) # type: ignore  # primitive types are returned as-is
         return set(thaw_set)
 
     def for_json(self) -> list['CoreDataTypes']:
@@ -291,7 +308,7 @@ class CoreDataSet(Set['ImmutableCoreDataTypes'],
             elif isinstance(value, bytes):  # bytes are converted to data URLs for JSON compatibility
                 json_list.append(_common.data_url(value))
             else:
-                json_list.append(value)
+                json_list.append(value)  # type: ignore  # primitive types are JSON-serializable as-is
         return list(json_list)
 
     def as_json(self) -> str:

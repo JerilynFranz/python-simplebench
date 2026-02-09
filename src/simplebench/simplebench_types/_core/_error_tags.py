@@ -8,6 +8,10 @@ from simplebench.exceptions import ErrorTag
 class _CoreDataErrorTag(ErrorTag):
     """Error tags for core type errors."""
 
+    CORE_DATA_SET_GENERIC_TYPE_MISMATCH = 'CORE_DATA_SET_GENERIC_TYPE_MISMATCH'
+    """A value in a CoreDataSet does not match the expected generic type for that set."""
+    CORE_DATA_MAPPING_GENERIC_TYPE_MISMATCH = 'CORE_DATA_MAPPING_GENERIC_TYPE_MISMATCH'
+    """A value in a CoreDataMapping does not match the expected generic type for that mapping."""
     CORE_DATA_SET_INVALID_BYTES = 'CORE_DATA_SET_INVALID_BYTES'
     """Bytes were provided to CoreDataSet, which does not support bytes."""
     INVALID_CACHE_TYPE = 'INVALID_CACHE_TYPE'

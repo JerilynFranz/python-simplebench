@@ -37,9 +37,10 @@ operations like hashing, comparison, or serialization.
 """
 import hashlib
 from collections.abc import Hashable, ItemsView, Iterator, KeysView, Mapping, Sequence, Set, ValuesView
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import simplejson
+from typeguard import TypeCheckError, check_type
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 
@@ -49,12 +50,10 @@ from ._error_tags import _CoreDataErrorTag
 if TYPE_CHECKING:
     from ._types import CoreDataTypes, ImmutableCoreDataTypes
 
+T = TypeVar('T', bound='CoreDataTypes')
+_T = TypeVar('_T')  # <-- Add this line for the default value in get()
 
-_T = TypeVar('_T', bound=None)
-
-# TODO: Update to handle bytes and str inputs
-
-class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
+class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
     """Deep-immutable Mapping container for CoreData types used in SimpleBench.
 
     This represents a mapping where all keys are strings and all values are of
@@ -71,6 +70,9 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
     :param __mapping: A Mapping of str to CoreDataTypes elements to initialize the mapping or :obj:`None`.
     :type __mapping: Mapping[str, CoreDataTypes] | None
     """
+    _generic_type: type | None = None
+    """Marker for generic type parameter for runtime checking purposes by CoreDataMapping."""
+
     __immutable__: bool = True  # Marker for Immutable protocol
     __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
 
@@ -94,9 +96,9 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
         self._hash_cache: int | None = None
         self._content_hash_cache: str | None = None
 
-        self._data: dict[str, ImmutableCoreDataTypes]
+        self._data: dict[str, T]
         if __mapping is None:
-            self._data  = {}
+            self._data = {}
             return
 
         if not isinstance(__mapping, Mapping):
@@ -114,25 +116,34 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
                 'All keys in CoreDataMapping must be non-empty, non-blank strings and valid identifiers.',
                 tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_KEY_VALUE)
 
-        data: dict[str, ImmutableCoreDataTypes] = {}
+        data: dict[str, T] = {}
 
         if all(isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE) for value in __mapping.values()):
             self._data = dict(__mapping)  # type: ignore  # all values are immutable primitives
             return
 
+        cls = self.__class__
         for key, value in __mapping.items():
+            if cls._generic_type is not None:
+                try:
+                    check_type(value, cls._generic_type)
+                except TypeCheckError as exc:
+                    raise SimpleBenchTypeError(
+                        f'Value for key {key!r} does not match the expected type '
+                        f'{cls._generic_type!r} for this CoreDataMapping.',
+                        tag=_CoreDataErrorTag.CORE_DATA_MAPPING_GENERIC_TYPE_MISMATCH) from exc
             if isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
                 data[key] = value  # type: ignore  # value is an immutable primitive
             elif isinstance(value, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
-                data[key] = value
+                data[key] = value  # type: ignore  # value is already a CoreData type, so we can use it directly without conversion
             elif isinstance(value, Mapping):
-                data[key] = CoreDataMapping(value)
+                data[key] = CoreDataMapping(value)  # type: ignore
             elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
-                data[key] = CoreDataSequence(value)
+                data[key] = CoreDataSequence(value)  # type: ignore
             elif isinstance(value, Set):
-                data[key] = CoreDataSet(value)
+                data[key] = CoreDataSet(value)  # type: ignore
             else:
-                 raise SimpleBenchTypeError(
+                raise SimpleBenchTypeError(
                     f'Invalid value type passed to CoreDataMapping for key {key!r}: {value!r}. '
                     f'Must be a CoreData type: {CORE_DATA_TYPES_TUPLE!r}.',
                     tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_VALUE_TYPE)
@@ -153,7 +164,7 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
         :raises KeyError: If the key is not found and no default is provided.
         """
         try:
-            return self._data.get(key, default)
+            return self._data.get(key, default)  # type: ignore[return-value]
         except KeyError as exc:
             raise SimpleBenchKeyError(
                 f'Key {key!r} not found in CoreDataMapping.',
@@ -167,21 +178,21 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
         """
         return self._data.keys()
 
-    def values(self) -> ValuesView['ImmutableCoreDataTypes']:
+    def values(self) -> ValuesView['ImmutableCoreDataTypes']:  # type: ignore[return-value,override]
         """Return an iterator over the values in the CoreDataMapping.
 
         :returns: An iterator over the values.
         :rtype: ValuesView['ImmutableCoreDataTypes']
         """
-        return self._data.values()
+        return self._data.values()  # type: ignore[return-value]
 
-    def items(self) -> ItemsView[str, 'ImmutableCoreDataTypes']:
+    def items(self) -> ItemsView[str, 'ImmutableCoreDataTypes']:  # type: ignore[return-value,override]
         """Return an iterator over the items in the CoreDataMapping.
 
         :returns: An iterator over the items.
         :rtype: ItemsView[str, 'ImmutableCoreDataTypes']
         """
-        return self._data.items()
+        return self._data.items()  # type: ignore[return-value]
 
     def copy(self) -> 'CoreDataMapping':
         """Because CoreDataMapping is immutable, returns self.
@@ -197,7 +208,7 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
         """
         return self
 
-    def __getitem__(self, key: str) -> 'ImmutableCoreDataTypes':
+    def __getitem__(self, key: str) -> 'ImmutableCoreDataTypes':  # type: ignore[override]
         """Get the value for the given key.
 
         :param key: The key.
@@ -207,7 +218,7 @@ class CoreDataMapping(Mapping[str, 'ImmutableCoreDataTypes'], Hashable):
         :raises SimpleBenchKeyError: If the key is not found.
         """
         try:
-            return self._data[key]
+            return self._data[key]  # type: ignore[return-value]
         except KeyError as exc:
             raise SimpleBenchKeyError(
                 f'Key {key!r} not found in CoreDataMapping.',
