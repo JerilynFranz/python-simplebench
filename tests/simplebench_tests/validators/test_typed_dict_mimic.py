@@ -3,7 +3,7 @@
 from typing import Optional, TypedDict, Union
 
 import pytest
-from testspec import PytestAction, TestSpec
+from testspec import Assert, PytestAction, TestSpec
 
 from simplebench._log import _log
 from simplebench.simplebench_types import (
@@ -80,21 +80,21 @@ class TypedDictWithRequiredAndDefaultRequiredFields(TypedDict, total=True):
     required_field: Required[int]
 
 class TypedDictWithNeverField(TypedDict):
-    name: str
-    value: int
-    never_field: Never
+    name: Required[str]
+    value: Required[int]
+    never_field: NotRequired[Never]
 
 
 @pytest.mark.parametrize('testspec', [
     PytestAction('MIMIC_001',
         name='dict conforming to SimpleTypedDict is recognized as a TypedDict mimic',
         action=is_typed_dict_mimic, args=[{'name': 'test', 'value': 42}, SimpleTypedDict],
-        expected=True
+        assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_002',
         name='dict with wrong type primitive value is NOT recognized as a TypedDict mimic',
         action=is_typed_dict_mimic, args=[{'name': 2, 'value': 42}, SimpleTypedDict],
-        expected=False
+        assertion=Assert.FALSE
     ),
     PytestAction('MIMIC_003',
         name='dict conforming to TypedDictWithNestedTypedDict is recognized as a TypedDict mimic',
@@ -105,7 +105,7 @@ class TypedDictWithNeverField(TypedDict):
                  'name': 'nested',
                  'value': 99}},
             TypedDictWithNestedTypedDict],
-        expected=True
+        assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_004',
         name='dict with CoreDataSequence',
@@ -113,7 +113,7 @@ class TypedDictWithNeverField(TypedDict):
             {'name': 'test',
              'values_list': CoreDataSequence([1, 2, 3])},
             TypedDictWithCoreSequenceType],
-        expected=True
+        assertion=Assert.TRUE
     ),
      PytestAction('MIMIC_005',
         name='dict with CoreDataSet',
@@ -121,7 +121,7 @@ class TypedDictWithNeverField(TypedDict):
             {'name': 'test',
              'values_set': CoreDataSet({4, 5, 6})},
             TypedDictWithCoreSetType],
-        expected=True
+        assertion=Assert.TRUE
     ),
      PytestAction('MIMIC_006',
         name='dict with CoreDataMapping',
@@ -129,7 +129,7 @@ class TypedDictWithNeverField(TypedDict):
             {'name': 'test',
              'values_mapping': CoreDataMapping({'a': 7, 'b': 8, 'c': 9})},
             TypedDictWithCoreMappingType],
-        expected=True
+        assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_007',
         name='dict with CoreDataSequence with wrong element type is NOT recognized as a TypedDict mimic',
@@ -137,44 +137,56 @@ class TypedDictWithNeverField(TypedDict):
             {'name': 'test',
              'values_list': CoreDataSequence([1, 2, 'a'])},
             TypedDictWithCoreSequenceType],
-        expected=False
+        assertion=Assert.FALSE
     ),
     PytestAction('MIMIC_008',
         name='dict with modern union type is recognized as a TypedDict mimic',
         action=is_typed_dict_mimic,
         args=[{'name': 'test', 'value': 42}, TypedDictWithModernUnionType],
-        expected=True
+        assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_009',
         name='dict with old union type is recognized as a TypedDict mimic',
         action=is_typed_dict_mimic,
         args=[{'name': 'test', 'value': 42}, TypedDictWithOldUnionType],
-        expected=True
+        assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_010',
         name='dict with Optional field set to None is recognized as a TypedDict mimic',
         action=is_typed_dict_mimic,
         args=[{'name': 'test', 'value': 42, 'optional_field': None}, TypedDictWithOptionalField],
-        expected=True
+        assertion=Assert.TRUE
     ),
      PytestAction('MIMIC_011',
         name='dict with Optional field set to value is recognized as a TypedDict mimic',
         action=is_typed_dict_mimic,
         args=[{'name': 'test', 'value': 42, 'optional_field': 'optional'}, TypedDictWithOptionalField],
-        expected=True
+        assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_012',
         name='dict with missing default not-required fields is recognized as a TypedDict mimic',
         action=is_typed_dict_mimic,
         args=[{'required_field': 42}, TypedDictWithRequiredAndDefaultNotRequiredFields],
-        expected=True
+        assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_013',
         name='dict with missing default required fields is NOT recognized as a TypedDict mimic',
         action=is_typed_dict_mimic,
         args=[{'optional_field': 'optional', 'required_field': 42},
               TypedDictWithRequiredAndDefaultRequiredFields],
-        expected=False
+        assertion=Assert.FALSE
+    ),
+    PytestAction('MIMIC_014',
+        name='dict with Never field set is NOT recognized as a TypedDict mimic',
+        action=is_typed_dict_mimic,
+        args=[{'name': 'test', 'value': 42, 'never_field': 'impossible'}, TypedDictWithNeverField],
+        assertion=Assert.FALSE
+    ),
+    PytestAction('MIMIC_015',
+        name='dict with Never field missing is recognized as a TypedDict mimic',
+        action=is_typed_dict_mimic,
+        args=[{'name': 'test', 'value': 42}, TypedDictWithNeverField],
+        assertion=Assert.TRUE
     ),
 ])
 def test_typed_dict_mimic(testspec: TestSpec) -> None:

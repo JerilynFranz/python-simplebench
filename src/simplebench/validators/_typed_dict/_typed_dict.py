@@ -25,7 +25,7 @@ from simplebench._log import _log
 from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.simplebench_types import CoreDataMapping
+from simplebench.simplebench_types import CoreDataMapping, Never
 from simplebench.validators._cache import ValidationCache
 from simplebench.validators.core_data_types import is_core_data_primitive, is_core_data_primitive_type
 
@@ -300,11 +300,21 @@ def _validate_field_value(
         results = _validate_union_type_field(origin, args, value, parents)
         return results
 
+    # Never say Never.
+    # If the expected type is Never, then no value can conform to it.
+    if expected_type is Never or origin is Never:
+        if raise_on_error:
+            raise SimpleBenchTypeError(
+                f'Expected type is Never, but got value: {value!r}', tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE
+            )
+        _log.debug(f'Expected type is Never, but got value: {value!r}')
+        return (False, False)
+
     # Direct type check (non-Generic, non-TypedDict, non-core data primitive)
     _log.debug(f'B: Validating field value: {value!r} against expected non-generic, non-TypedDict type: {expected_type}')
     if isinstance(expected_type, type):
         return (isinstance(value, expected_type), True)
-
+    _log.debug(f'Expected type {expected_type!r} is not a recognized type for validation, treating as Any')
     return (True, True)  # If expected_type is Any or not a type
 
 
