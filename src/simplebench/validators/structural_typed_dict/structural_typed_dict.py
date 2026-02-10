@@ -21,8 +21,9 @@ only the specific case of ReportElementTypedDicts used in SimpleBench reports.
 # TODO: Determine if this module should be deleted
 
 from collections.abc import Mapping, Sequence, Set
-from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_origin, get_type_hints
+from typing import Annotated, Any, Literal, TypeGuard, TypeVar, get_args, get_origin, get_type_hints, is_typeddict
 
+from simplebench._log import _log
 from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
@@ -37,7 +38,7 @@ T = TypeVar('T', bound=ReportElementTypedDict)
 """Set of core data primitive types for quick membership testing."""
 
 
-def is_report_element_typed_dict(obj: Any) -> TypeGuard[ReportElementTypedDict]:
+def _is_report_element_typed_dict(obj: Any) -> TypeGuard[ReportElementTypedDict]:
     """TypeGuard function. Check if an object is actually a :class:`ReportElementTypedDict` subclass.
 
     :param Any obj: The object to check.
@@ -46,7 +47,7 @@ def is_report_element_typed_dict(obj: Any) -> TypeGuard[ReportElementTypedDict]:
     return bool(isinstance(obj, type) and issubclass(obj, ReportElementTypedDict))  # type: ignore[misc]
 
 
-def report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
+def _report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
     """Validate a mapping against the ReportElementTypedDict.
 
     Raises an error if validation fails.
@@ -84,7 +85,7 @@ def report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) ->
     return data
 
 
-def is_report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> TypeGuard[T]:
+def _is_report_element_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> TypeGuard[T]:
     """TypeGuard function. Check if a mapping conforms to a ReportElementTypedDict subclass.
 
     It acts as a structural isinstance() check for mappings against the TypedDict subclass.
@@ -147,9 +148,12 @@ def _validate_and_check_immutability_of_mimic(
         data consists only of fully immutable core data types.
     :raise SimpleBenchTypeError: If the TypedDict subclass is misconfigured.
     """
+    _log.debug(f'Validating data against ReportElementTypedDict {td_cls.__name__} with data: {data}')
     if not isinstance(data, Mapping):
         return (False, False)  # Not a mapping, cannot be a valid ReportElementTypedDict mimic
-    if not isinstance(td_cls, type) or not issubclass(td_cls, ReportElementTypedDict):  # type: ignore
+
+    #if not isinstance(td_cls, type) or not issubclass(td_cls, ReportElementTypedDict):  # type: ignore
+    if not is_typeddict(td_cls):  # type: ignore
         raise SimpleBenchTypeError(
             f'Expected a ReportElementTypedDict subclass for validation, got {td_cls}',
             tag=_StructuralTypedDictErrorTag.INVALID_TYPED_DICT_CLASS,

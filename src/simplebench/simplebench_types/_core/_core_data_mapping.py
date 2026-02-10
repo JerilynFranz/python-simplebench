@@ -74,7 +74,7 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
     """Marker for generic type parameter for runtime checking purposes by CoreDataMapping."""
 
     __immutable__: bool = True  # Marker for Immutable protocol
-    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
+    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache', '__weakref__')
 
     def __init__(self, __mapping: Mapping[str, 'CoreDataTypes'] | None = None) -> None:
         """Initialize the CoreDataMapping.

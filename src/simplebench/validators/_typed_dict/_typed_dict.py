@@ -1,20 +1,17 @@
 """Validation functions for type hints and instances against those type hints."""
 
 from collections.abc import Mapping, Sequence, Set
+from types import MappingProxyType
 from typing import (
-    Annotated,
     Any,
-    Literal,
     TypedDict,
     TypeGuard,
     TypeVar,
     cast,
     get_args,
     get_origin,
-    get_type_hints,
     is_typeddict,
 )
-from types import MappingProxyType
 
 from simplebench._log import _log
 from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
@@ -24,8 +21,8 @@ from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, Cor
 from simplebench.validators._cache import ValidationCache
 from simplebench.validators.core_data_types import is_core_data_primitive, is_core_data_primitive_type
 
-from ._error_tags import _TypedDictErrorTag
 from . import _validate
+from ._error_tags import _TypedDictErrorTag
 
 _CACHE = ValidationCache(min_cache_size=100, max_cache_size=16384)
 
@@ -73,9 +70,8 @@ def is_typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> TypeGuard[T
     :param type[TypedDict] td_cls: The TypedDict subclass type to check against.
     :return bool: True if the dictionary conforms to the TypedDict subclass, False otherwise.
     """
-    if not isinstance(data, Mapping):   # Fast path check to avoid unnecessary validation for non-mapping types
-        return False
-    if not isinstance(td_cls, type) or not is_typeddict(td_cls):  # Fast path check for valid TypedDict class
+    # fast path for clearly non-conforming types to avoid unnecessary validation overhead
+    if not isinstance(data, Mapping) or not isinstance(td_cls, type) or not is_typeddict(td_cls):
         return False
 
     try:
@@ -109,6 +105,7 @@ def _validate_and_check_immutability_of_mimic(
         data consists only of fully immutable core data types.
     :raise SimpleBenchTypeError: If there is a validation error and raise_on_error is True.
     """
+    _log.debug(f'Validating TypedDict mimic for data: {data} against TypedDict: {td_cls.__name__}')
     cached_state: bool | None = _CACHE.valid_in_cache(td_cls, data)
     if cached_state is not None:
         # Cached results are always immutable core data types and thus safe to reuse.
@@ -136,14 +133,16 @@ def _validate_and_check_immutability_of_mimic(
 
     keys_to_check: set[str] = set(data.keys())
 
-    # Check value types
+    # Check value types for all keys in the data against the expected types defined in the TypedDict subclass.
     immutable_children: bool = True
+    checked_keys: set[str] = set()
     while keys_to_check:
         key = keys_to_check.pop()
+        _log.debug(f'Validating key: {key!r} of TypedDict: {td_cls.__name__}')
         value = data[key]
         key_info = TypedDictKeyInfo(key, td_cls)
         expected_type_hint = key_info.value_type
-
+        _log.debug(f'Expected type hint for key {key!r}: {expected_type_hint}')
         if is_core_data_primitive_type(expected_type_hint):
             if not is_core_data_primitive(value):
                 if raise_on_error:
@@ -153,7 +152,15 @@ def _validate_and_check_immutability_of_mimic(
                         tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE,
                     )
                 return (False, False)  # Value type mismatch and we don't know immutability
-            continue
+            if not isinstance(value, expected_type_hint):
+                if raise_on_error:
+                    raise SimpleBenchTypeError(
+                        f"Value for key '{key}' has invalid type {type(value)}, expected type {expected_type_hint}",
+                        tag=_TypedDictErrorTag.INVALID_TYPEDDICT_KEY_VALUE_TYPE,
+                    )
+                return (False, False)  # Value type mismatch and we don't know immutability
+            checked_keys.add(key)
+            continue  # Valid core data primitive, move to next key
 
         # Validate nested TypedDict or generic container types
         parents.add(id(data))
@@ -168,6 +175,17 @@ def _validate_and_check_immutability_of_mimic(
             return (False, False)  # Value type mismatch and we cannot determine immutability
         if not is_immutable:
             immutable_children = False
+        checked_keys.add(key)
+
+    # Now check for required keys in the TypedDict that were missing from the data.
+    skipped_keys = TypedDictKeyInfo.get_all_keys(td_cls) - checked_keys
+    for key in skipped_keys:
+        _log.debug(f'Validating skipped key: {key!r} of TypedDict: {td_cls.__name__}')
+        key_info = TypedDictKeyInfo(key, td_cls)
+        if not key_info.is_required:
+            checked_keys.add(key)
+            continue
+        return (False, False)  # Missing required key and we cannot determine immutability
 
     if immutable_children:  # All children are immutable core data types and so we can cache positively
         _CACHE.add_cache_entry(td_cls, data, True)

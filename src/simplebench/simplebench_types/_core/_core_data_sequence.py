@@ -68,7 +68,7 @@ class CoreDataSequence(Sequence[T],
     """
 
     __immutable__: bool = True  # Marker for Immutable protocol
-    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
+    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache', '__weakref__')
 
     def __init__(self, __elements: 'ElementCollection[T] | None' = None) -> None:
         """Initialize the CoreDataSequence.

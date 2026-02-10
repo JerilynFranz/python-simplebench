@@ -5,8 +5,10 @@ from typing import TypedDict
 import pytest
 from testspec import PytestAction, TestSpec
 
+from simplebench._log import _log
 from simplebench.validators import is_typed_dict_mimic
 
+_log.setLevel('DEBUG')
 
 class SimpleTypedDict(TypedDict):
     name: str

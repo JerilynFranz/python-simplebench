@@ -21,7 +21,7 @@ from simplebench.simplebench_types import (
     CoreDataMappingType,
     Immutable,
 )
-from simplebench.validators.structural_typed_dict import report_element_typed_dict_mimic
+from simplebench.validators import typed_dict_mimic
 
 from ._json_schema import JSONSchema
 
@@ -156,7 +156,7 @@ class ReportElement(Hydrator, Immutable, ABC):
             )
 
         # Return validated immutable mapping that mimics the requested ReportElementTypedDict subclass
-        return report_element_typed_dict_mimic(CoreDataMapping(data), dict_type)
+        return typed_dict_mimic(CoreDataMapping(data), dict_type)
 
     def _hash_id_helper(self, cls_type: type) -> str:
         """Helper method to compute the hash_id property for ReportElement subclasses.

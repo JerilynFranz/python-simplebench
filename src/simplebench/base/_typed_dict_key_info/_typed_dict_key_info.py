@@ -124,3 +124,24 @@ class TypedDictKeyInfo:
                         or the original value type if neither.
         """
         return self._value_type
+
+    @classmethod
+    def get_all_keys(cls, td_cls: type) -> set[str]:
+        """Get all keys defined in the TypedDict subclass.
+
+        .. code-block:: python
+
+            class MyTypedDict(TypedDict):
+                a: int
+                b: NotRequired[str]
+                c: ReadOnly[float]
+
+            keys_info = TypedDictKeyInfo.get_all_keys(MyTypedDict)
+            # keys_info will be a set containing 'a', 'b', 'c'.
+
+        :param td_cls: The TypedDict subclass to extract keys from.
+        :type td_cls: type
+        :return: A set of all defined keys.
+        :rtype: set[str]
+        """
+        return set(td_cls.__annotations__.keys())

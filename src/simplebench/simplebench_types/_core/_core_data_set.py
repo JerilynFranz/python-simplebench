@@ -58,7 +58,7 @@ class CoreDataSet(Set[T],
     """Generic type for the elements in the set, if specified. This is used for type validation when a generic type is
     defined for the set."""
     __immutable__: bool = True  # Marker for Immutable protocol
-    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache')
+    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache', '__weakref__')
 
     def __init__(
             self,
