@@ -1,8 +1,29 @@
-"""Factories for creating report CPUInfoData instances with dummy data for testing."""
+"""Factories for report.v1.cpu_info."""
 
 from typeguard import check_type
 
 from simplebench.report.versions import v1 as report
+from simplebench_tests.kwargs.report.v1 import CPUInfoKWArgs
+
+
+def report_cpu_info_kwargs() -> CPUInfoKWArgs:
+    """CPUInfoKwargs factory for testing purposes.
+
+    :return: A CPUInfoKwargs instance with dummy data.
+    :rtype: CPUInfoWArgs
+    """
+    return CPUInfoKWArgs(data=report_cpu_info_data())
+
+
+def report_cpu_info() -> report.CPUInfo:
+    """CPUInfo factory for testing purposes.
+
+    :return: A CPUInfo instance with dummy data.
+    :rtype: report.CPUInfo
+    """
+    return report.CPUInfo(**report_cpu_info_kwargs())
+
+"""Factories for creating report CPUInfoData instances with dummy data for testing."""
 
 
 def report_cpu_info_data() -> report.CPUInfoData:
@@ -38,3 +59,4 @@ def report_cpu_info_data() -> report.CPUInfoData:
     )
     check_type(info, report.CPUInfoData)
     return info
+

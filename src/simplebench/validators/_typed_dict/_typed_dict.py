@@ -485,9 +485,11 @@ def _validate_generic_mapping_field(args: tuple[Any, ...], value: Any, parents: 
                 pass
             case 1:
                 val_type = args[0]
+            case 2:
+                val_type = args[1]
             case _:
                 raise SimpleBenchTypeError(
-                    'CoreDataMapping type must have zero or one type argument for value type',
+                    f'CoreDataMapping type must have zero or one type argument for value type: Found args: {args!r}',
                     tag=_TypedDictErrorTag.INVALID_CORE_DATA_MAPPING_TYPE_ARGS)
     else:
         match len(args):

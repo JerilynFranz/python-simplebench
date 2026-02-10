@@ -1,5 +1,6 @@
 """Validation tests for TypedDict mimic functions."""
 # ruff: noqa: F401,UP007,UP045
+from collections.abc import Mapping, Sequence, Set
 from typing import Optional, TypedDict, Union
 
 import pytest
@@ -12,7 +13,6 @@ from simplebench.simplebench_types import (
     CoreDataSet,
     Never,
     NotRequired,
-    ReadOnly,
     Required,
 )
 from simplebench.validators import is_typed_dict_mimic
@@ -23,7 +23,7 @@ class SimpleTypedDict(TypedDict):
     value: int
 
 
-class TypedDictWithNestedTypedDict(TypedDict):
+class SimpleTypedDictWithNestedTypedDict(TypedDict):
     name: str
     value: int
     nested: SimpleTypedDict
@@ -67,17 +67,29 @@ class TypedDictWithOptionalField(TypedDict):
     optional_field: Optional[str]
 
 
+class TypedDictWithSequenceOfInt(TypedDict):
+    name: str
+    values: Sequence[int]
+
+
+class TypedDictWithNestedTypedDict(TypedDict):
+    name: str
+    nested_typed_dict: TypedDictWithSequenceOfInt
+
+
 class TypedDictWithRequiredAndDefaultNotRequiredFields(TypedDict, total=False):
     name: str  # optional by default due to total=False
     value: int  # optional by default due to total=False
     optional_field: NotRequired[str]
     required_field: Required[int]
 
+
 class TypedDictWithRequiredAndDefaultRequiredFields(TypedDict, total=True):
     name: str  # required by default due to total=True
     value: int  # required by default due to total=True
     optional_field: NotRequired[str]
     required_field: Required[int]
+
 
 class TypedDictWithNeverField(TypedDict):
     name: Required[str]
@@ -88,12 +100,14 @@ class TypedDictWithNeverField(TypedDict):
 @pytest.mark.parametrize('testspec', [
     PytestAction('MIMIC_001',
         name='dict conforming to SimpleTypedDict is recognized as a TypedDict mimic',
-        action=is_typed_dict_mimic, args=[{'name': 'test', 'value': 42}, SimpleTypedDict],
+        action=is_typed_dict_mimic,
+        args=[{'name': 'test', 'value': 42}, SimpleTypedDict],
         assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_002',
         name='dict with wrong type primitive value is NOT recognized as a TypedDict mimic',
-        action=is_typed_dict_mimic, args=[{'name': 2, 'value': 42}, SimpleTypedDict],
+        action=is_typed_dict_mimic,
+        args=[{'name': 2, 'value': 42}, SimpleTypedDict],
         assertion=Assert.FALSE
     ),
     PytestAction('MIMIC_003',
@@ -104,7 +118,7 @@ class TypedDictWithNeverField(TypedDict):
              'nested': {
                  'name': 'nested',
                  'value': 99}},
-            TypedDictWithNestedTypedDict],
+            SimpleTypedDictWithNestedTypedDict],
         assertion=Assert.TRUE
     ),
     PytestAction('MIMIC_004',
@@ -186,6 +200,27 @@ class TypedDictWithNeverField(TypedDict):
         name='dict with Never field missing is recognized as a TypedDict mimic',
         action=is_typed_dict_mimic,
         args=[{'name': 'test', 'value': 42}, TypedDictWithNeverField],
+        assertion=Assert.TRUE
+    ),
+    PytestAction('MIMIC_016',
+        name='dict with Sequence of int is recognized as a TypedDict mimic',
+        action=is_typed_dict_mimic,
+        args=[{'name': 'test', 'values': [1, 2, 3]},
+              TypedDictWithSequenceOfInt],
+        assertion=Assert.TRUE
+    ),
+     PytestAction('MIMIC_017',
+        name='dict with nested TypedDict with Sequence of int is recognized as a TypedDict mimic',
+        action=is_typed_dict_mimic,
+        args=[
+            {
+                'name': 'test',
+                'nested_typed_dict': {
+                    'name': 'nested',
+                    'values': [4, 5, 6]
+                }
+            },
+            TypedDictWithNestedTypedDict],
         assertion=Assert.TRUE
     ),
 ])

@@ -15,26 +15,22 @@ type-checking purposes.
 
 These types ensure proper validation and serialization of CPUInfo data
 """
-# ruff: noqa: F401
 
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
-from simplebench.simplebench_types import CoreDataMappingType, CoreDataTypes, Never, NotRequired, Required
+from simplebench.simplebench_types import (
+    CoreDataMapping,
+    CoreDataMappingType,
+    CoreDataTypes,  # noqa: F401  # Load bearing import for type annotations
+    Never,
+    NotRequired,
+    Required,
+)
 
 __all__ = ['CPUInfoData', 'CPUInfoDict', 'ImmutableCPUInfoData', 'ImmutableCPUInfoDict']
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-
-class _RequiredCPUInfoData(ReportElementTypedDict, total=True):
-    """Required fields for V1 CPUInfo data used as INPUT.
-
-    :param CoreDataMappingType data: The CPU information data.
-    """
-
-    data: Required[CoreDataMappingType]
-
-
-class CPUInfoData(_RequiredCPUInfoData, total=False):
+class CPUInfoData(ReportElementTypedDict):
     """Typed dictionary for V1 CPUInfo data used as INPUT.
 
     All fields except `type`, `version`, and `hash_id` are required (`total=False`).
@@ -44,13 +40,13 @@ class CPUInfoData(_RequiredCPUInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
-
+    data: Required[CoreDataMappingType]
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
 
 
-class ImmutableCPUInfoData(CPUInfoData, total=False):
+class ImmutableCPUInfoData(ReportElementTypedDict):
     """Immutable typed dictionary for V1 CPUInfo data used as INPUT.
 
     This marks the dictionary as immutable for type-checking purposes. During runtime,
@@ -59,37 +55,20 @@ class ImmutableCPUInfoData(CPUInfoData, total=False):
     The :func:`~simplebench.simplebench_types.is_immutable` function will recognize this marker
     and treat instances of this type as :class:`~simplebench.simplebench_types.Immutable`.
 
-    Because it inherits from `CPUInfoData`, all fields are the same and it
-    can be used interchangeably where immutability is not a concern.
-
-    :param Required[CoreDataMappingType] data: The CPU information data.
+    :param Required[CoreDataMapping] data: The CPU information data.
     :param NotRequired[str] hash_id: The unique hash identifier for the CPU information.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
-
-    __immutable__: NotRequired[Never]  # Marker to indicate immutability
-
+    data: Required[CoreDataMapping]
+    hash_id: NotRequired[str]
+    type: NotRequired[str]
+    version: NotRequired[int]
+    __immutable__: NotRequired[Never]  # Class marker to indicate immutability
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-
-class _RequiredCPUInfoDict(ReportElementTypedDict, total=True):
-    """Required fields for V1 CPUInfo data used as OUTPUT.
-
-    :param CoreDataMappingType data: The CPU information data.
-    :param str hash_id: The unique hash identifier for the CPU information.
-    :param str type: The type identifier for the block.
-    :param int version: The version of the block's data structure.
-    """
-
-    data: Required[CoreDataMappingType]
-    hash_id: Required[str]
-    type: Required[str]
-    version: Required[int]
-
-
-class CPUInfoDict(_RequiredCPUInfoDict, total=True):
+class CPUInfoDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 CPUInfo (OUTPUT).
 
     :param Required[CoreDataMappingType] data: The CPU information data.
@@ -97,24 +76,32 @@ class CPUInfoDict(_RequiredCPUInfoDict, total=True):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
+    data: Required[CoreDataMappingType]
+    hash_id: Required[str]
+    type: Required[str]
+    version: Required[int]
 
 
-class ImmutableCPUInfoDict(CPUInfoDict, total=False):
+class ImmutableCPUInfoDict(ReportElementTypedDict):
     """Immutable typed dictionary for the JSON representation of a V1 CPUInfo (OUTPUT).
 
     This marks the dictionary as immutable for type-checking purposes. During runtime,
     it should be constructed so as to enforce immutability.
 
+    It is a stricter version of `CPUInfoDict` that guarantees the
+    presence of `type`, `version`, and `hash_id` and requires
+    `data` to be a `CoreDataMapping` (not just a `CoreDataMappingType`).
+
     The :func:`~simplebench.simplebench_types.is_immutable` function will recognize this marker
     and treat instances of this type as :class:`~simplebench.simplebench_types.Immutable`.
 
-    Because it inherits from `CPUInfoDict`, all fields are the same and it
-    can be used interchangeably where immutability is not a concern.
-
-    :param Required[CoreDataMappingType] data: The CPU information data.
+    :param Required[CoreDataMapping] data: The CPU information data.
     :param Required[str] hash_id: The unique hash identifier for the CPU information.
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
-
+    data: Required[CoreDataMapping]
+    hash_id: Required[str]
+    type: Required[str]
+    version: Required[int]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

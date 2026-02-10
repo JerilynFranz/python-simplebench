@@ -11,14 +11,14 @@ from simplebench_tests.factories.report import v1 as report_factories
     PytestAction('INIT_001',
         name="Test good all argument SwapMemoryObject initialization",
         action=report.SwapMemoryObject,
-        kwargs=report_factories.swap_memory_kwargs_factory(),
+        kwargs=report_factories.swap_memory_kwargs(),
         assertion=Assert.ISINSTANCE,
         expected=report.SwapMemoryObject
     ),
     PytestAction('INIT_002',
         name="Test missing total argument SwapMemoryObject initialization",
         action=report.SwapMemoryObject,
-        kwargs=report_factories.swap_memory_kwargs_factory() - {"total"},
+        kwargs=report_factories.swap_memory_kwargs() - {"total"},
         exception=TypeError),
 ])
 def test_init(testspec: TestSpec) -> None:

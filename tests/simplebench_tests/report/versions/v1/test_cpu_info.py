@@ -7,16 +7,18 @@ import pytest
 from testspec import Assert, PytestAction, TestSpec
 
 from simplebench import environment
+from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.report.versions import v1 as report
 from simplebench.simplebench_types import CoreDataTypes
-from simplebench_tests import factories
+from simplebench.validators import is_typed_dict_mimic
+from simplebench_tests.factories.report import v1 as report_factories
 
 
 def no_hash_id_dummy_cpu_info() -> report.CPUInfoData:
     """Dummy CPU info without hash_id for testing hash_id generation."""
-    info = factories.report_cpu_info_data()
+    info = report_factories.report_cpu_info_data()
     del info["hash_id"]
     return info
 
@@ -26,7 +28,7 @@ def no_hash_id_dummy_cpu_info() -> report.CPUInfoData:
     [
        PytestAction("INIT_001",
            name="Initialize CPUInfo with dummy data",
-           action=report.CPUInfo.from_dict, args=[factories.report_cpu_info_data()],
+           action=report.CPUInfo.from_dict, args=[report_factories.report_cpu_info_data()],
            assertion=Assert.ISINSTANCE,
            expected=report.CPUInfo),
         PytestAction("INIT_002",
@@ -41,17 +43,17 @@ def no_hash_id_dummy_cpu_info() -> report.CPUInfoData:
            expected=report.CPUInfo),
         PytestAction("INIT_004",
            name="Initialize CPUInfo with forced hash_id",
-           action=report.CPUInfo, kwargs={"data": factories.report_cpu_info_data(), "hash_id": "a"*64},
+           action=report.CPUInfo, kwargs={"data": report_factories.report_cpu_info_data(), "hash_id": "a"*64},
            validate_attr="hash_id",
            expected="a"*64),
         PytestAction("INIT_005",
            name="Initialize CPUInfo with invalid hash_id type",
-           action=report.CPUInfo, kwargs={"data": factories.report_cpu_info_data(), "hash_id": 12345},
+           action=report.CPUInfo, kwargs={"data": report_factories.report_cpu_info_data(), "hash_id": 12345},
            exception=SimpleBenchTypeError,
            exception_tag=_CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_TYPE),
         PytestAction("INIT_006",
            name="Initialize CPUInfo with invalid hash_id value",
-           action=report.CPUInfo, kwargs={"data": factories.report_cpu_info_data(), "hash_id": "invalid_hash"},
+           action=report.CPUInfo, kwargs={"data": report_factories.report_cpu_info_data(), "hash_id": "invalid_hash"},
            exception=SimpleBenchValueError,
            exception_tag=_CPUInfoErrorTag.INVALID_HASH_ID_PROPERTY_VALUE),
         PytestAction("INIT_007",
@@ -72,23 +74,23 @@ def test_init(testspec: TestSpec) -> None:
         PytestAction(
             "PICKLE_001",
             name="Pickle and unpickle CPUInfo instance preserves equality",
-            action=lambda: pickle.loads(pickle.dumps(report.CPUInfo.from_dict(factories.report_cpu_info_data()))),
+            action=lambda: pickle.loads(pickle.dumps(report.CPUInfo.from_dict(report_factories.report_cpu_info_data()))),
             assertion=Assert.EQUAL,
-            expected=report.CPUInfo.from_dict(factories.report_cpu_info_data()),
+            expected=report.CPUInfo.from_dict(report_factories.report_cpu_info_data()),
         ),
         PytestAction(
             "PICKLE_002",
             name="Pickle and unpickle CPUInfo preserves hash_id",
-            action=lambda: pickle.loads(pickle.dumps(report.CPUInfo.from_dict(factories.report_cpu_info_data()))).hash_id,
+            action=lambda: pickle.loads(pickle.dumps(report.CPUInfo.from_dict(report_factories.report_cpu_info_data()))).hash_id,
             assertion=Assert.EQUAL,
-            expected=report.CPUInfo.from_dict(factories.report_cpu_info_data()).hash_id,
+            expected=report.CPUInfo.from_dict(report_factories.report_cpu_info_data()).hash_id,
         ),
         PytestAction(
             "PICKLE_003",
             name="Pickle and unpickle CPUInfo preserves data",
-            action=lambda: pickle.loads(pickle.dumps(report.CPUInfo.from_dict(factories.report_cpu_info_data()))).data,
+            action=lambda: pickle.loads(pickle.dumps(report.CPUInfo.from_dict(report_factories.report_cpu_info_data()))).data,
             assertion=Assert.EQUAL,
-            expected=report.CPUInfo.from_dict(factories.report_cpu_info_data()).data,
+            expected=report.CPUInfo.from_dict(report_factories.report_cpu_info_data()).data,
         ),
     ]
 )
@@ -103,17 +105,17 @@ def test_pickle(testspec: TestSpec) -> None:
         PytestAction(
             "EQUALITY_001",
             name="CPUInfo instances with same data are equal",
-            action=lambda: report.CPUInfo.from_dict(factories.report_cpu_info_data()) == report.CPUInfo.from_dict(
-                factories.report_cpu_info_data()),
+            action=lambda: report.CPUInfo.from_dict(report_factories.report_cpu_info_data()) == report.CPUInfo.from_dict(
+                report_factories.report_cpu_info_data()),
             assertion=Assert.TRUE,
         ),
         PytestAction(
             "EQUALITY_002",
             name="CPUInfo instances with different hash_id are not equal",
-            action=lambda: report.CPUInfo.from_dict(factories.report_cpu_info_data()) != report.CPUInfo.from_dict(
+            action=lambda: report.CPUInfo.from_dict(report_factories.report_cpu_info_data()) != report.CPUInfo.from_dict(
                 report.CPUInfoData(
                     hash_id='c' * 64,
-                    data=factories.report_cpu_info_data()["data"]
+                    data=report_factories.report_cpu_info_data()["data"]
                 )
             ),
             assertion=Assert.FALSE,
@@ -121,7 +123,7 @@ def test_pickle(testspec: TestSpec) -> None:
         PytestAction(
             "EQUALITY_003",
             name="CPUInfo instances with different data are not equal",
-            action=lambda: report.CPUInfo.from_dict(factories.report_cpu_info_data()) != report.CPUInfo.from_dict(
+            action=lambda: report.CPUInfo.from_dict(report_factories.report_cpu_info_data()) != report.CPUInfo.from_dict(
                 report.CPUInfoData(
                     hash_id='a' * 64,
                     data={
@@ -138,15 +140,14 @@ def test_equality(testspec: TestSpec) -> None:
     testspec.run()
 
 
-
 @pytest.mark.parametrize(
       "testspec",
       [
          PytestAction("HASH_ID_001",
             name="Test valid hash_id value through from_dict",
-            action=report.CPUInfo.from_dict, args=[factories.report_cpu_info_data()],
+            action=report.CPUInfo.from_dict, args=[report_factories.report_cpu_info_data()],
             validate_attr="hash_id",
-            expected=factories.report_cpu_info_data()["hash_id"]),  # type: ignore[index]
+            expected=report_factories.report_cpu_info_data()["hash_id"]),  # type: ignore[index]
          PytestAction("HASH_ID_002",
             name="Test generated hash_id when not provided through from_dict",
             action=report.CPUInfo.from_dict, args=[no_hash_id_dummy_cpu_info()],
@@ -164,6 +165,26 @@ def test_equality(testspec: TestSpec) -> None:
 def test_hash_id(testspec: TestSpec) -> None:
    """Test CPUInfo hash_id property."""
    testspec.run()
+
+
+@pytest.mark.parametrize('testspec', [
+    PytestAction('TO_DICT_001',
+        name='CPUInfo to_dict returns a report.CPUInfoDict TypedDict mimic',
+        action=is_typed_dict_mimic,
+        args=[report_factories.report_cpu_info().to_dict(), report.CPUInfoDict],
+        assertion=Assert.TRUE
+    ),
+    PytestAction('TO_DICT_002',
+        name='CPUInfo to_dict returns a report.ImmutableCPUInfoDict TypedDict mimic',
+        action=is_typed_dict_mimic,
+        args=[report_factories.report_cpu_info().to_dict(), report.ImmutableCPUInfoDict],
+        assertion=Assert.TRUE
+    ),
+])
+def test_to_dict(testspec: TestSpec) -> None:
+    """Test CPUInfo to_dict method."""
+    testspec.run()
+
 
 if __name__ == "__main__": # pragma: no cover
     pytest.main([__file__])
