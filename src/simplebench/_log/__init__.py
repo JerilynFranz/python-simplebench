@@ -3,4 +3,3 @@
 import logging
 
 _log = logging.getLogger('simplebench')
-_log.setLevel(logging.DEBUG)

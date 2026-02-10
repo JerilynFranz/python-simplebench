@@ -8,6 +8,8 @@ from simplebench.exceptions import ErrorTag
 class _TypedDictErrorTag(ErrorTag):
     """Error tags for type hints validation errors."""
 
+    INVALID_CORE_DATA_MAPPING_TYPE_ARGS = 'INVALID_CORE_DATA_MAPPING_TYPE_ARGS'
+    """The CoreDataMapping type does not have exactly one type argument."""
     DATA_DOES_NOT_CONFORM_TO_TYPEDDICT = 'DATA_DOES_NOT_CONFORM_TO_TYPEDDICT'
     """The provided data does not conform to the expected TypedDict structure."""
     NOT_A_SET = 'NOT_A_SET'
