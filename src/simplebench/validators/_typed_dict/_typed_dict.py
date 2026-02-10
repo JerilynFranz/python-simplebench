@@ -4,7 +4,6 @@ Follows spec at https://typing.python.org/en/latest/spec/typeddict.html
 except it allows non-dict Mappings that conform to the structure of the
 TypedDict subclass to be recognized as mimics.
 """
-# ruff: noqa: F401
 
 from collections.abc import Mapping, Sequence, Set
 from types import UnionType
