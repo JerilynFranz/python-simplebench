@@ -24,7 +24,7 @@ from simplebench._log import _log
 from simplebench.base._typed_dict_key_info import TypedDictKeyInfo
 from simplebench.defaults import DEFAULT_MAX_CORE_DATA_DEPTH
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.simplebench_types import CoreDataMapping, Never
+from simplebench.simplebench_types import CoreDataMapping, Immutable, Never, is_immutable_typeddict_typehint
 from simplebench.validators._cache import ValidationCache
 from simplebench.validators.core_data_types import is_core_data_primitive, is_core_data_primitive_type
 
@@ -140,6 +140,14 @@ def _validate_and_check_immutability_of_mimic(
         return (False, False)
     if not _validate.has_required_and_no_extra_keys(data, td_cls, raise_on_error):
         _log.debug(f'Data does not have required keys or has extra keys for TypedDict {td_cls.__name__}')
+        return (False, False)
+
+    # Check if the TypedDict is expected to be fully immutable based on its type hint and if the data conforms to the
+    # Immutable protocol. If the TypedDict is expected to be immutable but the data does not conform to Immutable,
+    # we can skip the detailed validation and return False immediately since it cannot be a valid immutable TypedDict
+    # mimic.
+    if is_immutable_typeddict_typehint(td_cls) and not isinstance(data, Immutable):
+        _log.debug(f'Data does not conform to Immutable protocol for immutable TypedDict {td_cls.__name__}: {data!r}')
         return (False, False)
 
     keys_to_check: set[str] = set(data.keys())

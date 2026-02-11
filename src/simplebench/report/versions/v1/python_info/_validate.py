@@ -2,10 +2,10 @@
 
 import re
 from collections.abc import Mapping, Sequence
-from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _PythonInfoErrorTag
+from simplebench.simplebench_types import CoreDataMapping
 from simplebench.validators import validate_bool, validate_string, validate_string_with_regex
 
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
@@ -36,9 +36,7 @@ def hash_id(value: str) -> str:
         return ''
 
     return validate_string_with_regex(
-        hash_string,
-        'hash_id',
-        _HASH_RE,
+        hash_string, 'hash_id', _HASH_RE,
         _PythonInfoErrorTag.INVALID_HASH_ID_TYPE,
         _PythonInfoErrorTag.INVALID_HASH_ID_VALUE,
         message='{name} must be 64-character hexadecimal string. Found: {value}',
@@ -153,13 +151,12 @@ def builddate(value: str) -> str:
     :param str value: The build string to validate.
     :return str: The validated build string.
     :raises SimpleBenchTypeError: If value is not a string.
-    :raises SimpleBenchValueError: If value is empty.
     """
     return validate_string(
         value,
         'build',
-        _PythonInfoErrorTag.INVALID_BUILD_TYPE,
-        _PythonInfoErrorTag.EMPTY_BUILD_VALUE,
+        _PythonInfoErrorTag.INVALID_BUILDDATE,
+        _PythonInfoErrorTag.INVALID_BUILDDATE,
         allow_empty=True,
         strip=True,
     )
@@ -203,13 +200,13 @@ def command_line_flags(value: str) -> str:
     )
 
 
-def environment_variables(value: Mapping[str, str]) -> MappingProxyType[str, str]:
+def environment_variables(value: Mapping[str, str]) ->CoreDataMapping[str]:
     """Validate environment_variables property.
 
     May be an empty mapping.
 
     :param Mapping[str, str] value: The environment_variables mapping to validate.
-    :return MappingProxyType[str, str]: The validated environment_variables mapping.
+    :return CoreDataMapping[str]: The validated environment_variables mapping.
     :raises SimpleBenchTypeError: If value is not a mapping of strings to strings.
     """
     if not isinstance(value, Mapping):
@@ -224,10 +221,10 @@ def environment_variables(value: Mapping[str, str]) -> MappingProxyType[str, str
             tag=_PythonInfoErrorTag.INVALID_ENVIRONMENT_VARIABLES_ITEM_TYPE,
         )
 
-    if isinstance(value, MappingProxyType):
+    if isinstance(value, CoreDataMapping):
         return value
 
-    return MappingProxyType(value)
+    return CoreDataMapping(value)
 
 
 def gc_is_enabled(value: bool) -> bool:

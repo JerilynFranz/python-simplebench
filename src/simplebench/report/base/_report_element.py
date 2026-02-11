@@ -8,7 +8,7 @@ for a JSON Schema version.
 
 import hashlib
 from abc import ABC
-from collections.abc import Callable
+from collections.abc import Callable, Mapping, Sequence, Set
 from typing import Any, TypeVar
 
 from simplebench.base._hydrator import Hydrator
@@ -17,8 +17,11 @@ from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBe
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.simplebench_types import (
     CORE_DATA_PRIMITIVE_TYPES_TUPLE,
+    IMMUTABLE_CORE_DATA_TYPES_TUPLE,
     CoreDataMapping,
     CoreDataMappingType,
+    CoreDataSequence,
+    CoreDataSet,
     Immutable,
 )
 from simplebench.validators import typed_dict_mimic
@@ -129,13 +132,25 @@ class ReportElement(Hydrator, Immutable, ABC):
             elif isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
                 data[key] = value
 
-            # Already a CoreDataMapping
-            elif isinstance(value, CoreDataMapping):
+            # Already a CoreData* type that can be directly included in the output dict
+            elif isinstance(value, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
                 data[key] = value
 
             # Has a callable to_dict method
             elif callable(to_dict_fn):
                 data[key] = to_dict_fn()
+
+            # Is a Mapping - convert to CoreDataMapping for output dict
+            elif isinstance(value, Mapping):
+                data[key] = CoreDataMapping(value)
+
+            # Is a Sequence - convert to CoreDataSequence for output dict
+            elif isinstance(value, Sequence):
+                data[key] = CoreDataSequence(value)
+
+            # Is a Set - convert to CoreDataSet for output dict
+            elif isinstance(value, Set):
+                data[key] = CoreDataSet(value)
 
             # Invalid type for to_dict conversion
             else:
@@ -147,7 +162,7 @@ class ReportElement(Hydrator, Immutable, ABC):
                 )
 
         for key, value in data.items():
-            if isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
+            if isinstance(value, IMMUTABLE_CORE_DATA_TYPES_TUPLE):
                 continue
             raise SimpleBenchTypeError(
                 f"ReportElement._to_dict_helper produced invalid data for key '{key}': "

@@ -17,6 +17,7 @@ from types import MappingProxyType
 from typing import Any
 
 from simplebench.report.base import BasePythonInfo, JSONSchema
+from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
 from .python_info_schema import PythonInfoSchema
@@ -60,10 +61,29 @@ class PythonInfo(BasePythonInfo):
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
+    __slots__ = (
+        '_hash_id',
+        '_python_version',
+        '_implementation',
+        '_implementation_version',
+        '_compiler',
+        '_revision',
+        '_buildno',
+        '_builddate',
+        '_command_line_flags',
+        '_environment_variables',
+        '_gc_is_enabled',
+        '_gc_thresholds',
+        '_thread_switch_interval',
+        '_architecture_bits',
+        '_architecture_linkage',
+        '_dict_cache',
+    )
+
     def __init__(
         self,
         *,
-        hash_id: str,
+        hash_id: str = '',
         python_version: str,
         implementation: str,
         implementation_version: str,
@@ -81,9 +101,10 @@ class PythonInfo(BasePythonInfo):
     ) -> None:
         """Initialize a PythonInfo instance.
 
-        :param str hash_id: The unique hash identifier for this PythonInfo. If an
+        :param hash_id: (default = '') The unique hash identifier for this PythonInfo. If an
             empty string is provided, a value will be automatically computed based on
             the other properties.
+        :type hash_id: str
         :param str python_version: The Python version string.
         :param str implementation: The Python implementation name.
         :param str implementation_version: The Python implementation version string.
@@ -114,7 +135,7 @@ class PythonInfo(BasePythonInfo):
         self._thread_switch_interval = _validate.thread_switch_interval(thread_switch_interval)
         self._architecture_bits = _validate.architecture_bits(architecture_bits)
         self._architecture_linkage = _validate.architecture_linkage(architecture_linkage)
-        self._from_dict: ImmutablePythonInfoDict | None = None
+        self._dict_cache: ImmutablePythonInfoDict | None = None
 
     @classmethod
     def from_dict(cls, data: PythonInfoData) -> 'PythonInfo':  # type: ignore[override]
@@ -144,7 +165,8 @@ class PythonInfo(BasePythonInfo):
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutablePythonInfoDict:
-        """Returns the PythonInfo as an immutable MappingProxyType dictionary suitable for JSON serialization.
+        """Returns the PythonInfo as an immutable CoreDataMapping dictionary
+        suitable for JSON serialization.
 
         This includes all properties defined in the :class:`PythonInfoSchema`
         for the version 1 PythonInfo as mirrored by :class:`ImmutablePythonInfoDict`.
@@ -156,7 +178,7 @@ class PythonInfo(BasePythonInfo):
         This method will raise an AttributeError if any required property
         is missing from the instance.
 
-        The returned instance is of type :class:`MappingProxyType` to ensure immutability
+        The returned instance is of type :class:`CoreDataMapping` to ensure immutability
         and will always reflect the state of the instance at the time of the first call.
 
         The exact same instance is returned on subsequent calls to ensure consistency
@@ -165,13 +187,13 @@ class PythonInfo(BasePythonInfo):
         :return ImmutablePythonInfoDict: A dictionary representation of the PythonInfo.
         :raises AttributeError: If any required property is missing.
         """
-        if self._from_dict is None:
+        if self._dict_cache is None:
             with _LOCK:
                 # Double-checked in case another thread populated while waiting for the lock.
-                if self._from_dict is not None:
-                    return self._from_dict
-                self._from_dict = self._to_dict_helper(ImmutablePythonInfoDict)
-        return self._from_dict
+                if self._dict_cache is not None:
+                    return self._dict_cache
+                self._dict_cache = self._to_dict_helper(ImmutablePythonInfoDict)
+        return self._dict_cache
 
     @property
     def compiler(self) -> str:
@@ -230,12 +252,12 @@ class PythonInfo(BasePythonInfo):
         return self._command_line_flags
 
     @property
-    def environment_variables(self) -> MappingProxyType[str, str]:
+    def environment_variables(self) -> CoreDataMapping[str]:
         """Get the environment_variables property.
 
         :return: The environment_variables mapping.
         """
-        return MappingProxyType(self._environment_variables)
+        return self._environment_variables
 
     @property
     def gc_is_enabled(self) -> bool:

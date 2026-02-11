@@ -36,9 +36,8 @@ class _PythonInfoErrorTag(ErrorTag):
     """Invalid buildno type - must be a string"""
     EMPTY_BUILDNO_VALUE = 'EMPTY_BUILDNO_VALUE'
     """Empty buildno value - must be a non-empty string"""
-    INVALID_BUILD_TYPE = 'INVALID_BUILD_TYPE'
+    INVALID_BUILDDATE = 'INVALID_BUILDATE'
     """Invalid build type - must be a string"""
-    EMPTY_BUILD_VALUE = 'EMPTY_BUILD_VALUE'
     """Empty build value - must be a non-empty string"""
     INVALID_REVISION = 'INVALID_REVISION'
     """Invalid revision type - must be a string"""
