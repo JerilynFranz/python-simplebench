@@ -1,4 +1,4 @@
-"""KWArgs subclass for VirtualMemoryObject()."""
+"""KWArgs subclass for CPUInfo()."""
 
 from simplebench import environment
 from simplebench.report.versions.v1 import CPUInfo, CPUInfoData

@@ -147,6 +147,7 @@ class PythonInfo:
             self._gc_is_enabled = gc.isenabled()
             self._gc_thresholds = gc.get_threshold()
             self._thread_switch_interval = sys.getswitchinterval()
+            self._dict_cache: None | MappingProxyType[str, object] = None
             cls._cached_proto = self
 
         for field in cls.__slots__:
@@ -162,6 +163,8 @@ class PythonInfo:
         output: dict[str, object] = {}
         fields = cls.__slots__
         for field in fields:
+            if field == '_dict_cache':
+                continue
             name = field.lstrip('_')
             output[name] = getattr(self, field)
         self._dict_cache = MappingProxyType(output)

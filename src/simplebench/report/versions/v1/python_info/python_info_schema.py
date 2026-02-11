@@ -81,6 +81,7 @@ class PythonInfoSchema(JSONSchema):
                 'title': 'Environment Variables',
                 'description': 'Python-specific environment variables',
                 'type': 'object',
+                'pattern': r'^PYTHON[A-Z0-9_]*$',
                 'additionalProperties': {'type': 'string'},
             },
             'gc_is_enabled': {

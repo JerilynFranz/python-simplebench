@@ -3,5 +3,6 @@
 
 from .cpu_info import CPUInfoKWArgs
 from .memory_info import MemoryInfoKWArgs, SwapMemoryObjectKWArgs, VirtualMemoryObjectKWArgs
+from .python_info import PythonInfoKWArgs
 
 __all__: list[str] = []

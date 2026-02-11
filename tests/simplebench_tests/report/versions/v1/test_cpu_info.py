@@ -24,8 +24,7 @@ def no_hash_id_dummy_cpu_info() -> report.CPUInfoData:
 
 
 @pytest.mark.parametrize(
-    "testspec",
-    [
+    "testspec", [
        PytestAction("INIT_001",
            name="Initialize CPUInfo with dummy data",
            action=report.CPUInfo.from_dict, args=[report_factories.report_cpu_info_data()],
@@ -69,8 +68,7 @@ def test_init(testspec: TestSpec) -> None:
 
 
 @pytest.mark.parametrize(
-    "testspec",
-    [
+    "testspec", [
         PytestAction(
             "PICKLE_001",
             name="Pickle and unpickle CPUInfo instance preserves equality",
@@ -100,8 +98,7 @@ def test_pickle(testspec: TestSpec) -> None:
 
 
 @pytest.mark.parametrize(
-    "testspec",
-    [
+    "testspec", [
         PytestAction(
             "EQUALITY_001",
             name="CPUInfo instances with same data are equal",
@@ -141,8 +138,7 @@ def test_equality(testspec: TestSpec) -> None:
 
 
 @pytest.mark.parametrize(
-      "testspec",
-      [
+      "testspec", [
          PytestAction("HASH_ID_001",
             name="Test valid hash_id value through from_dict",
             action=report.CPUInfo.from_dict, args=[report_factories.report_cpu_info_data()],
