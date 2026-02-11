@@ -10,7 +10,7 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _PythonInfoErrorTag
 from simplebench.report.versions import v1 as report
 from simplebench.simplebench_types import CoreDataMapping, is_immutable
-from simplebench.validators._typed_dict._typed_dict import is_typed_dict_mimic
+from simplebench.validators import is_typed_dict_mimic
 from simplebench_tests.factories.report import v1 as report_factories
 
 PythonInfo: TypeAlias = report.PythonInfo
@@ -498,3 +498,7 @@ def test_json_schema(testspec: TestSpec) -> None:
     """Test that the JSON schema for PythonInfo is valid and can be
     used to validate a PythonInfo instance's to_dict() output."""
     testspec.run()
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])
