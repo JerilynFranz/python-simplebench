@@ -4,6 +4,7 @@ import pickle
 
 import autopypath  # noqa: F401
 import pytest
+from jsonschema import validate
 from testspec import Assert, PytestAction, TestSpec
 
 from simplebench import environment
@@ -181,6 +182,21 @@ def test_to_dict(testspec: TestSpec) -> None:
     """Test CPUInfo to_dict method."""
     testspec.run()
 
+
+@pytest.mark.parametrize('testspec', [
+    PytestAction('SCHEMA_001',
+        name='CPUInfo JSON schema is valid and can validate to_dict() output',
+        action=validate,
+        kwargs={
+            'instance': report_factories.report_cpu_info().to_dict().thaw(),  # type: ignore
+            'schema': report.CPUInfo.SCHEMA.as_dict()
+        }
+    ),
+])
+def test_json_schema(testspec: TestSpec) -> None:
+    """Test that the JSON schema for CPUInfo is valid and can be
+    used to validate a CPUInfo instance's to_dict() output."""
+    testspec.run()
 
 if __name__ == "__main__": # pragma: no cover
     pytest.main([__file__])

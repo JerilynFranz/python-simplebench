@@ -19,7 +19,7 @@ from typeguard import check_type
 
 from simplebench._log import _log
 from simplebench.report.base import BaseCPUInfo, JSONSchema
-from simplebench.simplebench_types import CoreDataMappingType
+from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
 from .cpu_info_schema import CPUInfoSchema
@@ -195,15 +195,12 @@ class CPUInfo(BaseCPUInfo):
             cls = self.__class__
             self._to_dict_cache = cast(
                 ImmutableCPUInfoDict,
-                MappingProxyType(
-                    {
-                        'type': cls.TYPE,
-                        'version': cls.VERSION,
-                        'hash_id': self.hash_id,
-                        'data': cast(CoreDataMappingType, self.data),
-                    }
-                ),
-            )
+                CoreDataMapping({
+                    'type': cls.TYPE,
+                    'version': cls.VERSION,
+                    'hash_id': self.hash_id,
+                    'data': self.data['data'],
+                    }))
         return self._to_dict_cache
 
     def __eq__(self, other: object) -> bool:
