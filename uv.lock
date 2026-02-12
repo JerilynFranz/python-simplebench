@@ -2748,7 +2748,6 @@ dependencies = [
     { name = "py-cpuinfo" },
     { name = "rich" },
     { name = "simplejson" },
-    { name = "typechecked" },
     { name = "typeguard" },
     { name = "typing-extensions" },
 ]
@@ -2791,7 +2790,6 @@ default = [
     { name = "rich" },
     { name = "seaborn" },
     { name = "simplejson" },
-    { name = "typechecked" },
     { name = "typeguard" },
     { name = "typing-extensions" },
 ]
@@ -2805,7 +2803,6 @@ dev = [
     { name = "ruff", marker = "python_full_version >= '3.12'" },
     { name = "tox", marker = "python_full_version >= '3.12'" },
     { name = "tox-uv", marker = "python_full_version >= '3.12'" },
-    { name = "typechecked", marker = "python_full_version >= '3.12'" },
     { name = "typing-extensions", marker = "python_full_version >= '3.12'" },
     { name = "uv", marker = "python_full_version >= '3.12'" },
 ]
@@ -2864,7 +2861,6 @@ requires-dist = [
     { name = "seaborn", marker = "extra == 'all'", specifier = ">=0.13.2" },
     { name = "seaborn", marker = "extra == 'graphs'", specifier = ">=0.13.2" },
     { name = "simplejson", specifier = ">=3.20.2" },
-    { name = "typechecked", specifier = ">=0.11.1" },
     { name = "typeguard", specifier = ">=4.4.4" },
     { name = "typing-extensions", specifier = ">=4.10.0" },
 ]
@@ -2882,7 +2878,6 @@ default = [
     { name = "rich", specifier = ">=14.1.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "simplejson", specifier = ">=3.20.2" },
-    { name = "typechecked", specifier = ">=0.11.1" },
     { name = "typeguard", specifier = ">=4.4.4" },
     { name = "typing-extensions", specifier = ">=4.10.0" },
 ]
@@ -2896,7 +2891,6 @@ dev = [
     { name = "ruff", marker = "python_full_version >= '3.12'", specifier = ">=0.14.11" },
     { name = "tox", marker = "python_full_version >= '3.12'", specifier = ">=4.22.0" },
     { name = "tox-uv", marker = "python_full_version >= '3.12'", specifier = ">=1.13.1" },
-    { name = "typechecked", marker = "python_full_version >= '3.12'", specifier = ">=0.11.1" },
     { name = "typing-extensions", marker = "python_full_version >= '3.12'", specifier = ">=3.10.0.0" },
     { name = "uv", marker = "python_full_version >= '3.12'", specifier = ">=0.9.18" },
 ]
@@ -3332,18 +3326,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/ca/9a/778622bc06632529817c3c524c82749a112603ae2bbcf72ee3eb33a2c4f1/trove_classifiers-2025.9.11.17.tar.gz", hash = "sha256:931ca9841a5e9c9408bc2ae67b50d28acf85bef56219b56860876dd1f2d024dd", size = 16975, upload-time = "2025-09-11T17:07:50.97Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e1/85/a4ff8758c66f1fc32aa5e9a145908394bf9cf1c79ffd1113cfdeb77e74e4/trove_classifiers-2025.9.11.17-py3-none-any.whl", hash = "sha256:5d392f2d244deb1866556457d6f3516792124a23d1c3a463a2e8668a5d1c15dd", size = 14158, upload-time = "2025-09-11T17:07:49.886Z" },
-]
-
-[[package]]
-name = "typechecked"
-version = "0.11.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/35/e9/5fa81b10992cc7c4e8f523b02a06d206b996ba219ce82bc5d9dcfe0ded55/typechecked-0.11.1.tar.gz", hash = "sha256:036dcb4680c424f79c8904a629bc0e45efb43a1021771ef2a74bdcad8afd7135", size = 692369, upload-time = "2026-02-01T02:06:21.027Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b7/e0/4779a58e7ce68f8b74fe7228d1ce034949a5c2f6abb1d0434da30c5f48f1/typechecked-0.11.1-py3-none-any.whl", hash = "sha256:e78bb963705f869960ac44b9c6197fda68e997910c812a37d2074e3833d50bf1", size = 58207, upload-time = "2026-02-01T02:06:19.456Z" },
 ]
 
 [[package]]
