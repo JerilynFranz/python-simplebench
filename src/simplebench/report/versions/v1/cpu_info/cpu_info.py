@@ -253,63 +253,21 @@ class CPUInfo(BaseCPUInfo):
         calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
         return f'{self.__class__.__name__}({calling_args})'
 
-    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
-        """Prepare the object's state for pickling, prioritizing size.
+    def __copy__(self) -> 'CPUInfo':
+        """Return self as a copy for shallow copy operations.
 
-        This method ensures that the pickled representation of the instance
-        is compact. It achieves this by forcing the calculation of any lazy-evaluated
-        statistical properties and then excluding any attributes that are not part of the
-        public interface of the RawDataBlock from the pickled state. Those excluded attributes
-        can be recalculated upon unpickling on demand and do not need to be stored.
+        Since the CPUInfo instance is immutable and composed of immutable components,
+        this is functionally identical to a shallow copy. This method overrides
+        the default `copy.copy` behavior to perform a more efficient shallow copy instead.
 
-        This prioritizes a smaller pickled size and fast subsequent unpickling over
-        preserving the lazy-evaluation state across serialization.
+        If a true deep copy is required, the caller should manually create a new instance
+        from the dictionary representation using `CPUInfo.from_dict(self.to_dict().thaw())`.
 
-        :return: A state tuple for pickling.
-        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        :return CPUInfo: A new, shallow-copied instance of the CPUInfo.
         """
-        # Sweep all slot attributes to force calculation of any lazy properties.
-        # and collect any public attribute values for pickling. The non-public
-        # attributes will be excluded from the pickled state and can be
-        # recalculated on demand after unpickling. This keeps the pickled
-        # representation minimal and about 50% smaller. Which is significant
-        # for large datasets.
-        # 'version' and 'type' are excluded as they are class constants not
-        # instance attributes and can be inferred.
-        public_attrs = dict(self._data_params())
-        public_attrs.pop('type', None)
-        public_attrs.pop('version', None)
-        slot_values: list[Any] = []
-        for slot in self.__slots__:
-            attr_name = slot.lstrip('_')
-            if attr_name in public_attrs:
-                slot_values.append(getattr(self, attr_name))
-            else:
-                slot_values.append(None)
-
-        # Build the state tuple for a __slots__ class. The first element is for
-        # __dict__ (None in our case) and the second is a tuple of the slotted values.
-        state = tuple(slot_values)
-        return (None, state)
-
-    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
-        """Restore the object's state from a pickled representation.
-
-        This method is the counterpart to `__getstate__`. It takes the state
-        tuple and repopulates the instance's `__slots__`.
-
-        .. note::
-            This method bypasses `__init__`, which is standard for unpickling.
-
-        :param state: The state tuple from unpickling.
-        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
-        """
-        # The first element of the state tuple is for __dict__, which is None for this class.
-        # The second element is a tuple of values for the __slots__.
-        slot_values = state[1]
-        for slot, value in zip(self.__slots__, slot_values, strict=True):
-            # Use object.__setattr__ to bypass our immutable setters.
-            object.__setattr__(self, slot, value)
+        # because the CPUInfo is immutable, we can return self
+        # instead of performing a full shallow copy.
+        return self
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'CPUInfo':
         """Return self as a copy for deep copy operations.
