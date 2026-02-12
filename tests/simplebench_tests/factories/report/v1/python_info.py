@@ -33,6 +33,7 @@ def report_python_info_kwargs() -> PythonInfoKWArgs:
     )
 
 
+@cache
 def report_python_info() -> report.PythonInfo:
     """PythonInfo factory for testing purposes.
 

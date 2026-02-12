@@ -1,4 +1,5 @@
 """Factories for report.v1.cpu_info."""
+from functools import cache
 
 from typeguard import check_type
 
@@ -10,13 +11,16 @@ def report_cpu_info_kwargs() -> CPUInfoKWArgs:
     """CPUInfoKwargs factory for testing purposes.
 
     :return: A CPUInfoKwargs instance with dummy data.
-    :rtype: CPUInfoWArgs
+    :rtype: CPUInfoKWArgs
     """
     return CPUInfoKWArgs(data=report_cpu_info_data())
 
 
+@cache
 def report_cpu_info() -> report.CPUInfo:
     """CPUInfo factory for testing purposes.
+
+    The same instance is returned on subsequent calls since CPUInfo is immutable.
 
     :return: A CPUInfo instance with dummy data.
     :rtype: report.CPUInfo

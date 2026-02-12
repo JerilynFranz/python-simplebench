@@ -408,7 +408,6 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
                 json_dict[key] = value
         return json_dict
 
-
     def as_json(self) -> str:
         """Serialize the CoreDataMapping to a JSON string.
 

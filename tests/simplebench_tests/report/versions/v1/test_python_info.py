@@ -1,5 +1,6 @@
 """Tests for PythonInfo() report for SimpleBench tests."""
 import pickle
+from copy import copy, deepcopy
 from typing import TypeAlias
 
 import pytest
@@ -499,6 +500,26 @@ def test_json_schema(testspec: TestSpec) -> None:
     used to validate a PythonInfo instance's to_dict() output."""
     testspec.run()
 
+
+@pytest.mark.parametrize('testspec', [
+    PytestAction('COPY_001',
+        name='Copying a PythonInfo instance returns the same instance (since it is immutable)',
+        action=copy,
+        args=[report_factories.report_python_info()],
+        assertion=Assert.IS,
+        expected=report_factories.report_python_info()
+    ),
+    PytestAction('DEEP_COPY_001',
+        name='Deep copying a PythonInfo instance returns the same instance (since it is immutable)',
+        action=deepcopy,
+        args=[report_factories.report_python_info()],
+        assertion=Assert.IS,
+        expected=report_factories.report_python_info()
+    ),
+])
+def test_copy(testspec: TestSpec) -> None:
+    """Test that copying a PythonInfo instance returns the same instance (since it is immutable)."""
+    testspec.run()
 
 if __name__ == "__main__":
     pytest.main([__file__])

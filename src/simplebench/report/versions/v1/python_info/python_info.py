@@ -351,3 +351,11 @@ class PythonInfo(BasePythonInfo):
         if not isinstance(other, PythonInfo):
             return NotImplemented
         return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'PythonInfo':
+        """Return the same instance since PythonInfo is immutable."""
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'PythonInfo':
+        """Return the same instance since PythonInfo is immutable."""
+        return self
