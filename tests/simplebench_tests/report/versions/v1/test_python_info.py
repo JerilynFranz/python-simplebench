@@ -3,6 +3,8 @@ import pickle
 from copy import copy, deepcopy
 from typing import TypeAlias
 
+import simplejson
+import json
 import pytest
 from jsonschema import validate
 from testspec import Assert, PytestAction, TestSpec
@@ -521,13 +523,27 @@ def test_copy(testspec: TestSpec) -> None:
     """Test that copying a PythonInfo instance returns the same instance (since it is immutable)."""
     testspec.run()
 
-# TODO: Add test for round-trip JSON serialization and deserialization of PythonInfo once a from_json method is implemented.
+# TODO: Add test for round-trip JSON serialization and deserialization of PythonInfo once a from_json method is
+# implemented.
 @pytest.mark.parametrize('testspec', [
      PytestAction('JSON_SERIALIZATION_001',
          name='PythonInfo can be serialized to JSON',
          action=report_factories.report_python_info().as_json,
          assertion=Assert.ISINSTANCE,
-         expected=str)
+         expected=str),
+    PytestAction('JSON_SERIALIZATION_002',
+        name='PythonInfo can be directly serialized to a JSON compatible dictionary by simplejson',
+        action=simplejson.dumps,
+        kwargs={"obj": report_factories.report_python_info(),
+                "sort_keys": True, "for_json": True, "iterable_as_array": True},
+        assertion=Assert.ISINSTANCE,
+        expected=str),
+    PytestAction('JSON_SERIALIZATION_003',
+            name='PythonInfo.for_json() can serialized to a JSON string by json.dumps',
+            action=json.dumps,
+            kwargs={"obj": report_factories.report_python_info().for_json(), "sort_keys": True},
+            assertion=Assert.ISINSTANCE,
+            expected=str),
  ])
 def test_json_serialization(testspec: TestSpec) -> None:
     """Test that PythonInfo can be serialized to JSON."""

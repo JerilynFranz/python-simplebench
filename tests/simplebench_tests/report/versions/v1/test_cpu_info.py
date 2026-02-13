@@ -1,10 +1,11 @@
 """Tests for simplebench.report.versions.v1.cpu_info.CPUInfo class."""
+import json
 import pickle
 from copy import copy, deepcopy
 
 import pytest
-from jsonschema import validate
 import simplejson
+from jsonschema import validate
 from testspec import Assert, PytestAction, TestSpec
 
 from simplebench import environment
@@ -250,22 +251,30 @@ def test_hash(testspec: TestSpec) -> None:
     """Test CPUInfo __hash__ method."""
     testspec.run()
 
-# TODO: Add test for round-trip JSON serialization and deserialization of CPUInfo once a from_json method is implemented.
+# TODO: Add test for round-trip JSON serialization and deserialization of CPUInfo once a from_json method is
+# implemented.
 @pytest.mark.parametrize('testspec', [
      PytestAction('JSON_SERIALIZATION_001',
-         name='CPUInfo can be serialized to JSON',
+         name='CPUInfo can be serialized to JSON string by report_cpu_info().as_json method',
          action=report_factories.report_cpu_info().as_json,
          assertion=Assert.ISINSTANCE,
-         expected=str)
+         expected=str),
+    PytestAction('JSON_SERIALIZATION_002',
+        name='CPUInfo can be directly serialized to a JSON compatible dictionary by simplejson',
+        action=simplejson.dumps,
+        kwargs={"obj": report_factories.report_cpu_info(),
+                "sort_keys": True, "for_json": True, "iterable_as_array": True},
+        assertion=Assert.ISINSTANCE,
+        expected=str),
+    PytestAction('JSON_SERIALIZATION_003',
+            name='CPUInfo.for_json() can serialized to a JSON string by json.dumps',
+            action=json.dumps,
+            kwargs={"obj": report_factories.report_cpu_info().for_json(), "sort_keys": True},
+            assertion=Assert.ISINSTANCE,
+            expected=str),
  ])
 def test_json_serialization(testspec: TestSpec) -> None:
     """Test that CPUInfo can be serialized to JSON."""
-    testspec.run()
-
-
-def test_for_json_serialization(testspec: TestSpec) -> None:
-    """Test that CPUInfo can be serialized to a JSON compatible dictionary and deserialized
-    back to an equivalent instance."""
     testspec.run()
 
 

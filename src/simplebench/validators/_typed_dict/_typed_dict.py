@@ -346,7 +346,8 @@ def _validate_union_type_field(
             return (True, immutable)
     return (False, False)  # Value does not conform to any of the Union types
 
-def _validate_generic_sequence_field(origin: Any, args: tuple[Any, ...], value: Any, parents: set[int]) -> tuple[bool, bool]:
+def _validate_generic_sequence_field(
+        origin: Any, args: tuple[Any, ...], value: Any, parents: set[int]) -> tuple[bool, bool]:
     """Validate a sequence field value against its expected type.
 
     This is called by _validate_field_value to handle sequence types specifically
