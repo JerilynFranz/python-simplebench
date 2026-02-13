@@ -521,5 +521,17 @@ def test_copy(testspec: TestSpec) -> None:
     """Test that copying a PythonInfo instance returns the same instance (since it is immutable)."""
     testspec.run()
 
+# TODO: Add test for round-trip JSON serialization and deserialization of PythonInfo once a from_json method is implemented.
+@pytest.mark.parametrize('testspec', [
+     PytestAction('JSON_SERIALIZATION_001',
+         name='PythonInfo can be serialized to JSON',
+         action=report_factories.report_python_info().as_json,
+         assertion=Assert.ISINSTANCE,
+         expected=str)
+ ])
+def test_json_serialization(testspec: TestSpec) -> None:
+    """Test that PythonInfo can be serialized to JSON."""
+    testspec.run()
+
 if __name__ == "__main__":
     pytest.main([__file__])

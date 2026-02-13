@@ -15,7 +15,6 @@ will not be changed.
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, cast
 
-import simplejson
 from typeguard import check_type
 
 from simplebench._log import _log
@@ -134,8 +133,7 @@ class CPUInfo(BaseCPUInfo):
         :return: A JSON string representation of the CPUInfo.
         :rtype: str
         """
-        return simplejson.dumps(
-            self.for_json(), sort_keys=True, for_json=True, iterable_as_array=True)
+        return self.to_dict().as_json()  # type: ignore[attr-defined]
 
     @property
     def data(self) -> ImmutableCPUInfoData:

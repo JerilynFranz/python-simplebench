@@ -11,7 +11,6 @@ will inherit from this class to extend its functionality, but this implementatio
 will not be changed.
 """
 
-import threading
 from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import Any
@@ -22,8 +21,6 @@ from simplebench.simplebench_types import CoreDataMapping
 from . import _validate
 from .python_info_schema import PythonInfoSchema
 from .typeddict_types import ImmutablePythonInfoDict, PythonInfoData
-
-_LOCK = threading.Lock()
 
 __all__: list[str] = []
 
@@ -135,7 +132,8 @@ class PythonInfo(BasePythonInfo):
         self._thread_switch_interval = _validate.thread_switch_interval(thread_switch_interval)
         self._architecture_bits = _validate.architecture_bits(architecture_bits)
         self._architecture_linkage = _validate.architecture_linkage(architecture_linkage)
-        self._dict_cache: ImmutablePythonInfoDict | None = None
+        self._dict_cache: ImmutablePythonInfoDict = self._to_dict_helper(ImmutablePythonInfoDict)
+
 
     @classmethod
     def from_dict(cls, data: PythonInfoData) -> 'PythonInfo':  # type: ignore[override]
@@ -171,28 +169,14 @@ class PythonInfo(BasePythonInfo):
         This includes all properties defined in the :class:`PythonInfoSchema`
         for the version 1 PythonInfo as mirrored by :class:`ImmutablePythonInfoDict`.
 
-        The dictionary is cached after the first call to avoid redundant
-        serialization work on subsequent calls. In effect, this makes the method
-        idempotent and a lazy property of the instance.
-
-        This method will raise an AttributeError if any required property
-        is missing from the instance.
-
         The returned instance is of type :class:`CoreDataMapping` to ensure immutability
         and will always reflect the state of the instance at the time of the first call.
 
-        The exact same instance is returned on subsequent calls to ensure consistency
-        and this is true even in multi-threaded scenarios.
+        The exact same instance is returned on all calls.
 
         :return ImmutablePythonInfoDict: A dictionary representation of the PythonInfo.
         :raises AttributeError: If any required property is missing.
         """
-        if self._dict_cache is None:
-            with _LOCK:
-                # Double-checked in case another thread populated while waiting for the lock.
-                if self._dict_cache is not None:
-                    return self._dict_cache
-                self._dict_cache = self._to_dict_helper(ImmutablePythonInfoDict)
         return self._dict_cache
 
     @property
@@ -319,6 +303,28 @@ class PythonInfo(BasePythonInfo):
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(ImmutablePythonInfoDict)
         return self._hash_id
+
+    def for_json(self) -> ImmutablePythonInfoDict:
+        """Get the JSON-serializable dictionary representation of this PythonInfo.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this PythonInfo.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this PythonInfo.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this PythonInfo.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     def __repr__(self) -> str:
         """Get the string representation of the PythonInfo instance.

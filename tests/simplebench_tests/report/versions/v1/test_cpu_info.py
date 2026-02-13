@@ -4,6 +4,7 @@ from copy import copy, deepcopy
 
 import pytest
 from jsonschema import validate
+import simplejson
 from testspec import Assert, PytestAction, TestSpec
 
 from simplebench import environment
@@ -259,6 +260,12 @@ def test_hash(testspec: TestSpec) -> None:
  ])
 def test_json_serialization(testspec: TestSpec) -> None:
     """Test that CPUInfo can be serialized to JSON."""
+    testspec.run()
+
+
+def test_for_json_serialization(testspec: TestSpec) -> None:
+    """Test that CPUInfo can be serialized to a JSON compatible dictionary and deserialized
+    back to an equivalent instance."""
     testspec.run()
 
 
