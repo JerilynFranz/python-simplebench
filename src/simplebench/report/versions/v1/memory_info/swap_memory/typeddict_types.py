@@ -19,22 +19,7 @@ from simplebench.simplebench_types import Never, NotRequired, Required
 __all__: list[str] = []
 
 
-class _RequiredSwapMemoryObject(ReportElementTypedDict, total=True):
-    """Required fields for V1 SwapMemory data used as INPUT.
-
-    :param Required[int] total: Total swap memory in bytes.
-    :param Required[int] used: Used swap memory in bytes.
-    """
-
-    total: Required[int]
-    used: Required[int]
-    free: Required[int]
-    percent: Required[float]
-    swap_in: Required[int]
-    swap_out: Required[int]
-
-
-class SwapMemoryObjectDict(_RequiredSwapMemoryObject, total=True):
+class SwapMemoryObjectDict(ReportElementTypedDict):
     """Typed dictionary for V1 SwapMemory data used as INPUT or OUTPUT.
 
     All fields are required (`total=True`).
@@ -50,9 +35,15 @@ class SwapMemoryObjectDict(_RequiredSwapMemoryObject, total=True):
     :param Required[int] swap_in: Swap memory sent to disk in bytes.
     :param Required[int] swap_out: Swap memory received from disk in bytes.
     """
+    total: Required[int]
+    used: Required[int]
+    free: Required[int]
+    percent: Required[float]
+    swap_in: Required[int]
+    swap_out: Required[int]
 
 
-class ImmutableSwapMemoryObjectDict(_RequiredSwapMemoryObject, total=False):
+class ImmutableSwapMemoryObjectDict(ReportElementTypedDict):
     """Typed dictionary for V1 SwapMemory data used as INPUT or OUTPUT (Immutable).
 
     This marks the dictionary as immutable for type-checking purposes. During runtime,
@@ -71,5 +62,11 @@ class ImmutableSwapMemoryObjectDict(_RequiredSwapMemoryObject, total=False):
     :param Required[int] swap_in: Swap memory sent to disk in bytes.
     :param Required[int] swap_out: Swap memory received from disk in bytes.
     """
+    total: Required[int]
+    used: Required[int]
+    free: Required[int]
+    percent: Required[float]
+    swap_in: Required[int]
+    swap_out: Required[int]
 
     __immutable__: NotRequired[Never]

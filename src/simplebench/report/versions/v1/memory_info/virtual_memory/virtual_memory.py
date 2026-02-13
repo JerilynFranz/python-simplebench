@@ -81,7 +81,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         """
         return self._dict_cache
 
-    def for_json(self) -> ImmutableVirtualMemoryObjectDict:
+    def for_json(self) -> VirtualMemoryObjectDict:
         """Get the JSON-serializable dictionary representation of this VirtualMemoryObject.
 
         This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`

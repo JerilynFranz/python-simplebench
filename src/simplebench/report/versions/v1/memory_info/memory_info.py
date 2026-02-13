@@ -57,14 +57,17 @@ class MemoryInfo(BaseMemoryInfo):
         :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
         """
         if not cls._init_params_cache:
-            params = cls.init_params(MemoryInfoData)
+            params = cls.init_params()
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
     __slots__ = ('_hash_id', '_swap_memory', '_virtual_memory', '_dict_cache')
 
     def __init__(
-        self, *, hash_id: str = '', swap_memory: SwapMemoryObject, virtual_memory: VirtualMemoryObject
+        self, *,
+        hash_id: str = '',
+        swap_memory: SwapMemoryObject,
+        virtual_memory: VirtualMemoryObject
     ) -> None:
         """Initialize MemoryInfo.
 
@@ -90,7 +93,8 @@ class MemoryInfo(BaseMemoryInfo):
         :param data: The dictionary containing the MemoryInfo data.
         :return MemoryInfo: A MemoryInfo instance.
         """
-        allowed_keys = cls._data_params()
+        allowed_keys = dict(cls._data_params())
+        allowed_keys.update({'type': str, 'version': str})
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
@@ -98,7 +102,8 @@ class MemoryInfo(BaseMemoryInfo):
             optional_fields={'hash_id', 'version', 'type'},
             defaults={'hash_id': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={},
+            process_as={'swap_memory': SwapMemoryObject.from_dict,
+                        'virtual_memory': VirtualMemoryObject.from_dict},
         )
         return cls(**kwargs)
 
@@ -108,6 +113,28 @@ class MemoryInfo(BaseMemoryInfo):
         :return MemoryInfoDict: A dictionary representation of the MemoryInfo.
         """
         return self._dict_cache
+
+    def for_json(self) -> MemoryInfoDict:
+        """Get the JSON-serializable dictionary representation of this MemoryInfo.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this MemoryInfo.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this MemoryInfo.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this MemoryInfo.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def hash_id(self) -> str:
@@ -162,3 +189,11 @@ class MemoryInfo(BaseMemoryInfo):
         if not isinstance(other, MemoryInfo):
             return NotImplemented
         return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'MemoryInfo':
+        """Return the same instance since MemoryInfo is immutable."""
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'MemoryInfo':
+        """Return the same instance since MemoryInfo is immutable."""
+        return self

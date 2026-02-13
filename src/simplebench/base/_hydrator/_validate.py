@@ -254,7 +254,8 @@ def data_types(output: dict[str, Any], allowed_fields_map: Mapping[str, Any]) ->
     for field, value in output.items():
         if not is_instance_of_generic(value, allowed_fields_map[field]):
             raise SimpleBenchTypeError(
-                f"The value of '{field}' does not match the expected type '{allowed_fields_map[field]}'",
+                f"The value of '{field}' does not match the expected type "
+                f"'{allowed_fields_map[field]}' - got type '{type(value)}'",
                 tag=_HydratorErrorTag.INVALID_DATA_VALUE_TYPE,
             )
 

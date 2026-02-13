@@ -146,7 +146,7 @@ class SwapMemoryObject(BaseSwapMemoryObject):
         """
         return self._swap_out
 
-    def for_json(self) -> ImmutableSwapMemoryObjectDict:
+    def for_json(self) -> SwapMemoryObjectDict:
         """Get the JSON-serializable dictionary representation of this SwapMemoryObject.
 
         This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`

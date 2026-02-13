@@ -4,10 +4,13 @@ from .cpu_info import report_cpu_info, report_cpu_info_data, report_cpu_info_kwa
 from .memory_info import (
     memory_info,
     memory_info_kwargs,
+    memory_info_data,
     swap_memory_kwargs,
     swap_memory_object,
+    swap_memory_object_dict,
     virtual_memory_kwargs,
     virtual_memory_object,
+    virtual_memory_object_dict,
 )
 from .python_info import (
     no_hash_id_report_python_info_data,
@@ -24,8 +27,11 @@ __all__: list[str] = [
     "memory_info_kwargs",
     "swap_memory_kwargs",
     "swap_memory_object",
+    "swap_memory_object_dict",
     "virtual_memory_kwargs",
     "virtual_memory_object",
+    "virtual_memory_object_dict",
+    "memory_info_data",
     "report_python_info",
     "report_python_info_data",
     "report_python_info_kwargs",
