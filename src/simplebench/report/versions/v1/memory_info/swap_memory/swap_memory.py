@@ -146,6 +146,28 @@ class SwapMemoryObject(BaseSwapMemoryObject):
         """
         return self._swap_out
 
+    def for_json(self) -> ImmutableSwapMemoryObjectDict:
+        """Get the JSON-serializable dictionary representation of this SwapMemoryObject.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this SwapMemoryObject.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this SwapMemoryObject.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this SwapMemoryObject.
+        """
+        return self.to_dict().as_json()  # type: ignore
+
     def __repr__(self) -> str:
         """Get the string representation of the SwapMemoryObject instance.
 
@@ -175,3 +197,11 @@ class SwapMemoryObject(BaseSwapMemoryObject):
         if not isinstance(other, SwapMemoryObject):
             return NotImplemented
         return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'SwapMemoryObject':
+        """Return the same instance since SwapMemoryObject is immutable."""
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'SwapMemoryObject':
+        """Return the same instance since SwapMemoryObject is immutable."""
+        return self

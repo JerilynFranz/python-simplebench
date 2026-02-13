@@ -13,6 +13,8 @@ from types import MappingProxyType
 from typing import Any
 
 from simplebench.report.base import BaseVirtualMemoryObject
+from simplebench.report.versions.v1.memory_info.swap_memory.swap_memory import SwapMemoryObject
+from simplebench.report.versions.v1.memory_info.swap_memory.typeddict_types import ImmutableSwapMemoryObjectDict
 
 from . import _validate
 from .typeddict_types import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
@@ -70,7 +72,7 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         :param data: The dictionary containing the VirtualMemoryObject data.
         :return VirtualMemoryObject: A VirtualMemoryObject instance.
         """
-        allowed_keys = cls.init_params()
+        allowed_keys = cls._data_params()
         kwargs = cls.import_data(data=data, allowed_fields=allowed_keys, process_as={})
         return cls(**kwargs)
 
@@ -80,6 +82,28 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         :return ImmutableVirtualMemoryObjectDict: A dictionary representation of the VirtualMemoryObject.
         """
         return self._dict_cache
+
+    def for_json(self) -> ImmutableVirtualMemoryObjectDict:
+        """Get the JSON-serializable dictionary representation of this VirtualMemoryObject.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this VirtualMemoryObject.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this VirtualMemoryObject.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this VirtualMemoryObject.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def hash_id(self) -> str:
@@ -167,3 +191,11 @@ class VirtualMemoryObject(BaseVirtualMemoryObject):
         if not isinstance(other, VirtualMemoryObject):
             return NotImplemented
         return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'VirtualMemoryObject':
+        """Return the same instance since VirtualMemoryObject is immutable."""
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'VirtualMemoryObject':
+        """Return the same instance since VirtualMemoryObject is immutable."""
+        return self
