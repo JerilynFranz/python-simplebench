@@ -160,7 +160,8 @@ def test_pickle(testspec: TestSpec) -> None:
             "EQUALITY_002",
             name="VirtualMemoryObject instances with different data are not equal",
             action=report.VirtualMemoryObject,
-            kwargs=report_factories.virtual_memory_kwargs().replace(used=report_factories.virtual_memory_object().used + 1),
+            kwargs=report_factories.virtual_memory_kwargs().replace(
+                used=report_factories.virtual_memory_object().used + 1),
             assertion=Assert.NOT_EQUAL,
             expected=report_factories.virtual_memory_object()),
         PytestAction(
@@ -192,7 +193,8 @@ def test_equality(testspec: TestSpec) -> None:
         PytestAction("HASH_ID_003",
             name="Test hash_id value is different for instances with different data",
             action=report.VirtualMemoryObject,
-            kwargs=report_factories.virtual_memory_kwargs().replace(used=report_factories.virtual_memory_object().used + 1),
+            kwargs=report_factories.virtual_memory_kwargs().replace(
+                used=report_factories.virtual_memory_object().used + 1),
             validate_attr="hash_id",
             assertion=Assert.NOT_EQUAL,
             expected=report_factories.virtual_memory_object().hash_id),

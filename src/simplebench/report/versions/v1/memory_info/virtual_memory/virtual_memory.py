@@ -13,8 +13,6 @@ from types import MappingProxyType
 from typing import Any
 
 from simplebench.report.base import BaseVirtualMemoryObject
-from simplebench.report.versions.v1.memory_info.swap_memory.swap_memory import SwapMemoryObject
-from simplebench.report.versions.v1.memory_info.swap_memory.typeddict_types import ImmutableSwapMemoryObjectDict
 
 from . import _validate
 from .typeddict_types import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
