@@ -20,7 +20,7 @@ from .execution_environment import (
     ImmutableExecutionEnvironmentData,
     ImmutableExecutionEnvironmentDict,
 )
-from .generic_environment import GenericEnvironment, GenericEnvironmentSchema
+from .environment import EnvironmentSchema, Environment
 from .machine_info import (
     ImmutableMachineInfoData,
     ImmutableMachineInfoDict,
@@ -102,8 +102,8 @@ __all__ = [
     'ExecutionEnvironment',
     'ExecutionEnvironmentData',
     'ExecutionEnvironmentDict',
-    'GenericEnvironment',
-    'GenericEnvironmentSchema',
+    'Environment',
+    'EnvironmentSchema',
     'ImmutableExecutionEnvironmentData',
     'ImmutableExecutionEnvironmentDict',
     'MachineInfo',

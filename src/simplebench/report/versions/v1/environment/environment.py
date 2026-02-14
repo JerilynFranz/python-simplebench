@@ -20,17 +20,17 @@ from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _GenericEnvironmentErrorTag
-from simplebench.report.base import Environment, JSONSchema
+from simplebench.report import base
 from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataMapping, CoreDataTypes
 from simplebench.validators import validate_core_data_mapping
 
 from . import _validate
-from .generic_environment_schema import GenericEnvironmentSchema
+from .environment_schema import EnvironmentSchema
 
 __all__: list[str] = []
 
 
-class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
+class Environment(base.Environment, Mapping[str, CoreDataTypes]):
     """Immutable class representing a benchmark execution environment in a report (V1).
 
     It provides methods to convert to and from dictionary representations and
@@ -40,20 +40,20 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
     with string keys and core data type values for convenience.
     """
 
-    SCHEMA: type[JSONSchema] = GenericEnvironmentSchema
+    SCHEMA: type[base.JSONSchema] = EnvironmentSchema
     """The JSON schema class for version 1 reports."""
 
     TYPE: str = SCHEMA.TYPE
-    """The JSON GenericEnvironment type property value for version 1 reports."""
+    """The JSON Environment type property value for version 1 reports."""
 
     VERSION: int = SCHEMA.VERSION
-    """The JSON GenericEnvironment version number."""
+    """The JSON Environment version number."""
 
     ID: str = SCHEMA.ID
-    """The JSON GenericEnvironment identifier property value for version 1 reports."""
+    """The JSON Environment identifier property value for version 1 reports."""
 
     def __init__(self, data: Mapping[str, Any]) -> None:
-        """Initialize a GenericEnvironment instance.
+        """Initialize an Environment instance.
 
         If a 'hash_id' key is present in the input data mapping, its value is validated
         and used as the hash_id property. If not present, the hash_id is computed from the
@@ -70,11 +70,9 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
             raise SimpleBenchTypeError('data must be a mapping type', tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
 
         local_data = dict(data)  # Make a shallow local copy to avoid modifying the input
-
         self._hash_id: str = ''
         if 'hash_id' in local_data:
             self._hash_id = _validate.hash_id(local_data.pop('hash_id'))
-
         self._from_dict: CoreDataMapping = _validate.data_as_core_data_mapping(local_data, 'data')
         validated_data = validate_core_data_mapping(local_data, 'data')
         thawed_data = dict(validated_data)  # Make a mutable copy for internal use
@@ -166,8 +164,8 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         return hashlib.sha256(hash_input).hexdigest()
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> 'GenericEnvironment':
-        """Create a GenericEnvironment instance from a dictionary.
+    def from_dict(cls, data: Mapping[str, Any]) -> 'Environment':
+        """Create an Environment instance from a dictionary.
 
         Because the data has no predefined structure, this method just
         passes the input data to the constructor.
@@ -175,15 +173,15 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         .. code-block:: python3
            :caption: Example
 
-            generic_environment = GenericEnvironment.from_dict(data)
+            environment = Environment.from_dict(data)
 
-        :param data: The dictionary containing the GenericEnvironment data.
-        :return: A GenericEnvironment instance.
+        :param data: The dictionary containing the Environment data.
+        :return: An Environment instance.
         """
         return cls(data)
 
     def to_dict(self) -> CoreDataMapping:
-        """Returns the GenericEnvironment as an immutable MappingProxyType dictionary suitable for JSON serialization.
+        """Returns the Environment as an immutable MappingProxyType dictionary suitable for JSON serialization.
 
         The returned instance is of type :class:`CoreDataMapping` to ensure immutability
         and will always reflect the state of the instance at the time of the first call.
@@ -191,7 +189,7 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         The exact same instance is returned on subsequent calls to ensure consistency
         and this is true even in multi-threaded scenarios.
 
-        :return CoreDataMapping: A dictionary representation of the GenericEnvironment.
+        :return CoreDataMapping: A dictionary representation of the Environment.
         """
         return self._from_dict
 
@@ -220,7 +218,7 @@ class GenericEnvironment(Environment, Mapping[str, CoreDataTypes]):
         return f'{self.__class__.__name__}({dict(self._from_dict)!r})'
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, GenericEnvironment):
+        if not isinstance(other, Environment):
             return NotImplemented
         return self.hash_id == other.hash_id
 

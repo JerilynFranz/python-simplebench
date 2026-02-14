@@ -34,6 +34,9 @@ class PythonInfoData(ReportElementTypedDict):
     :type type: NotRequired[str]
     :param version: The version of the block's data structure.
     :type version: NotRequired[int]
+    :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
+        This dictates how the data should be interpreted. Users can define custom types using their own namespace
+    :type semantic_type: NotRequired[str]
     :param python_version: The python_version string.
     :type python_version: Required[str]
     :param implementation: The implementation string.
@@ -66,6 +69,7 @@ class PythonInfoData(ReportElementTypedDict):
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
+    semantic_type: NotRequired[str]
     python_version: Required[str]
     implementation: Required[str]
     implementation_version: Required[str]
@@ -100,6 +104,9 @@ class ImmutablePythonInfoData(ReportElementTypedDict):
     :type type: NotRequired[str]
     :param version: The version of the block's data structure.
     :type version: NotRequired[int]
+    :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
+        This dictates how the data should be interpreted. Users can define custom types using their own namespace
+    :type semantic_type: NotRequired[str]
     :param python_version: The python_version string.
     :type python_version: Required[str]
     :param implementation: The implementation string.
@@ -132,6 +139,7 @@ class ImmutablePythonInfoData(ReportElementTypedDict):
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
+    semantic_type: NotRequired[str]
     python_version: Required[str]
     implementation: Required[str]
     implementation_version: Required[str]
@@ -161,6 +169,9 @@ class PythonInfoDict(ReportElementTypedDict):
     :type type: Required[str]
     :param version: The version of the block's data structure.
     :type version: Required[int]
+    :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
+        This dictates how the data should be interpreted. Users can define custom types using their own namespace
+    :type semantic_type: Required[str]
     :param python_version: The python_version string.
     :type python_version: Required[str]
     :param implementation: The implementation string.
@@ -193,6 +204,7 @@ class PythonInfoDict(ReportElementTypedDict):
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
+    semantic_type: Required[str]
     python_version: Required[str]
     implementation: Required[str]
     implementation_version: Required[str]
@@ -227,6 +239,9 @@ class ImmutablePythonInfoDict(ReportElementTypedDict):
     :type type: Required[str]
     :param version: The version of the block's data structure.
     :type version: Required[int]
+    :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
+        This dictates how the data should be interpreted. Users can define custom types using their own namespace
+    :type semantic_type: Required[str]
     :param python_version: The python_version string.
     :type python_version: Required[str]
     :param implementation: The implementation string.
@@ -259,6 +274,7 @@ class ImmutablePythonInfoDict(ReportElementTypedDict):
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
+    semantic_type: Required[str]
     python_version: Required[str]
     implementation: Required[str]
     implementation_version: Required[str]

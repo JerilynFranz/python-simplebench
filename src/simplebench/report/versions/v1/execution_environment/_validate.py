@@ -6,10 +6,9 @@ from types import MappingProxyType
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
-from simplebench.report.base import Environment
 from simplebench.validators import validate_core_data_mapping
 
-from ..generic_environment import GenericEnvironment
+from ..environment import Environment
 from .known_environments import KNOWN_ENVIRONMENTS
 
 __all__: list[str] = []
@@ -28,7 +27,7 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
 
     Environments that have a name that is recognized as a known environment (e.g. 'python')
     will be validated as their known type. Environments that are not recognized will be
-    converted to a :class:`GenericEnvironment` if they are provided as a :class:`CoreDataMappingType`
+    converted to a :class:`Environment` if they are provided as a :class:`CoreDataMappingType`
     compatible data structure.
 
     The returned dictionary of environments is deeply immutable.
@@ -73,7 +72,7 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
             validated_envs[env_name] = env_value
         else:
             env_data = validate_core_data_mapping(env_value, f"Environment '{env_name}'")
-            validated_envs[env_name] = GenericEnvironment(env_data)
+            validated_envs[env_name] = Environment(env_data)
 
         n_environments += 1
     if n_environments == 0:

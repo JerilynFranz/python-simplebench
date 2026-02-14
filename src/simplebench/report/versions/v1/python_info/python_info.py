@@ -34,6 +34,9 @@ class PythonInfo(BasePythonInfo):
     TYPE: str = SCHEMA.TYPE
     """The JSON PythonInfo type property value for version 1 reports."""
 
+    SEMANTIC_TYPE: str = SCHEMA.SEMANTIC_TYPE
+    """The semantic type of the python environment information, formatted as 'namespace::type_name'."""
+
     VERSION: int = SCHEMA.VERSION
     """The JSON PythonInfo version number."""
 
@@ -60,6 +63,7 @@ class PythonInfo(BasePythonInfo):
 
     __slots__ = (
         '_hash_id',
+        '_semantic_type',
         '_python_version',
         '_implementation',
         '_implementation_version',
@@ -132,6 +136,7 @@ class PythonInfo(BasePythonInfo):
         self._thread_switch_interval = _validate.thread_switch_interval(thread_switch_interval)
         self._architecture_bits = _validate.architecture_bits(architecture_bits)
         self._architecture_linkage = _validate.architecture_linkage(architecture_linkage)
+        self._semantic_type: str = self.__class__.SEMANTIC_TYPE
         self._dict_cache: ImmutablePythonInfoDict = self._to_dict_helper(ImmutablePythonInfoDict)
 
 
@@ -155,10 +160,10 @@ class PythonInfo(BasePythonInfo):
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
-            skip_fields={'version', 'type'},
-            optional_fields={'hash_id', 'version', 'type'},
-            defaults={'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+            skip_fields={'version', 'type', 'semantic_type'},
+            optional_fields={'hash_id', 'version', 'type', 'semantic_type'},
+            defaults={'version': cls.VERSION, 'type': cls.TYPE, 'semantic_type': cls.SEMANTIC_TYPE},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE, 'semantic_type': cls.SEMANTIC_TYPE},
         )
         return cls(**kwargs)
 
@@ -301,8 +306,16 @@ class PythonInfo(BasePythonInfo):
         :raises SimpleBenchAttributeError: If any required property is missing.
         """
         if self._hash_id == '':
-            self._hash_id = self._hash_id_helper(ImmutablePythonInfoDict)
+            self._hash_id = self._hash_id_helper(self.__class__)
         return self._hash_id
+
+    @property
+    def semantic_type(self) -> str:
+        """Get the semantic_type property.
+
+        :return: The semantic_type string.
+        """
+        return self._semantic_type
 
     def for_json(self) -> ImmutablePythonInfoDict:
         """Get the JSON-serializable dictionary representation of this PythonInfo.
@@ -331,10 +344,11 @@ class PythonInfo(BasePythonInfo):
 
         :return: The string representation of the PythonInfo.
         """
-        # Get the init parameters excluding 'type' and 'version'
+        # Get the init parameters excluding 'type', 'version', and 'semantic_type' since they are fixed for this class
         init_params = dict(self._data_params())
         init_params.pop('type', None)
         init_params.pop('version', None)
+        init_params.pop('semantic_type', None)
 
         # Build the key-value argument string. Accessing the properties via getattr
         # will trigger their lazy calculation if they haven't been computed yet.

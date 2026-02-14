@@ -11,23 +11,35 @@ __all__: list[str] = []
 
 
 class PythonInfoSchema(JSONSchema):
-    """Schema for the JSON PythonInfo output (V1)"""
+    """Schema for the JSON PythonInfo output (V1)
+
+    This is a more specific instantiation of the more general EnvironmentSchema for Python interpreter information.
+    It defines the expected structure and constraints for the JSON representation of PythonInfo data
+
+    It specifically includes fields relevant to Python interpreter information, such as python_version, implementation, compiler, etc.
+    while also adhering to the general structure of an Environment schema with version, type, hash_id, and semantic_type fields.
+
+    Essentially, this schema is a compatible specialization of the Environment schema for the specific case of Python interpreter information.
+    """
 
     VERSION: int = 1
     """The JSON PythonInfo schema version number."""
 
-    TYPE: str = 'SimpleBenchPythonInfo::V1'
-    """The JSON PythonInfo schema type property value for version 1 reports."""
+    TYPE: str = 'SimpleBenchEnvironment::V1'
+    """The JSON Environment schema type property value for version 1 reports."""
 
     ID: str = 'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json'
     """The JSON PythonInfo schema $id value for version 1 reports."""
+
+    SEMANTIC_TYPE: str = 'simplebench::python_info'
+    """The semantic type of the python information, formatted as 'namespace::type_name'."""
 
     _JSON_SCHEMA_DICT: dict[str, object] = {
         '$schema': 'https://json-schema.org/draft/2020-12/schema',
         '$id': ID,
         'title': 'Python Info (V1)',
         'type': 'object',
-        'description': 'Python interpreter information (V1)',
+        'description': 'Python interpreter information (V1) environment information.',
         'properties': {
             'version': {
                 'title': 'Version',
@@ -46,6 +58,12 @@ class PythonInfoSchema(JSONSchema):
                 'description': 'Unique 64 byte hexadecimal hash identifier for the python-info data.',
                 'type': 'string',
                 'pattern': '^[a-f0-9]{64}$',
+            },
+            'semantic_type': {
+                'title': 'Semantic Type',
+                'description': "The semantic type of the environment, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Users can define custom types using their own namespace.",
+                'type': 'string',
+                'const': SEMANTIC_TYPE,
             },
             'python_version': {
                 'title': 'Python Version',

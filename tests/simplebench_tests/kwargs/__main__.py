@@ -81,9 +81,8 @@ def get_type_imports(params: list[inspect.Parameter]) -> set[str]:
 
 def generate_kwargs_class(callable_obj: Any, class_name: str, func_name: str) -> str:
     """Generate a KWArgs subclass for the given callable or class."""
-    sig = inspect.signature(callable_obj.__init__ if func_name == '__init__' else callable_obj)
-    callable_doc = inspect.getdoc(callable_obj.__init__ if func_name == '__init__' else callable_obj)
-
+    sig = inspect.signature(callable_obj)
+    callable_doc = inspect.getdoc(callable_obj)
     params = [p for p in sig.parameters.values() if p.name != 'self']
 
     # Collect imports for parameter types
@@ -182,13 +181,10 @@ def main() -> None:
     module_name, attr_name = target.rsplit('.', 1)
 
     if _is_class_name(attr_name):
-        print("# *********CLASS**********")
         class_name = attr_name
         func_name = '__init__'
 
     elif _is_function_name(attr_name):
-        print("# *********FUNCTION**********")
-
         module_name, class_name, func_name = target.rsplit('.', 2)
 
     else:
@@ -196,6 +192,8 @@ def main() -> None:
               'Ensure the name follows Python naming conventions.')
         sys.exit(1)
 
+
+    # print(f'# Generating KWArgs for {module_name}.{class_name}.{func_name}...')
     try:
         module = importlib.import_module(module_name)
         cls = getattr(module, class_name)

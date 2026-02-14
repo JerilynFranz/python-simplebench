@@ -496,6 +496,14 @@ def test_immutability(testspec: TestSpec) -> None:
             'schema': report.PythonInfo.SCHEMA.as_dict()
         }
     ),
+    PytestAction('SCHEMA_002',
+        name='Environment JSON schema validation also passes (since PythonInfo is an implementation of Environment)',
+        action=validate,
+        kwargs={
+            'instance': report_factories.report_python_info().to_dict().thaw(),  # type: ignore
+            'schema': report.Environment.SCHEMA.as_dict()
+        },
+    ),
 ])
 def test_json_schema(testspec: TestSpec) -> None:
     """Test that the JSON schema for PythonInfo is valid and can be

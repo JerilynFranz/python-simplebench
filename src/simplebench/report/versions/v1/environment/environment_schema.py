@@ -1,4 +1,4 @@
-"""Schema for JSON GenericEnvironment v1 validation."""
+"""Schema for JSON Environment v1 validation."""
 # ruff: noqa: E501
 
 from copy import deepcopy
@@ -8,61 +8,83 @@ from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report.base import JSONSchema
 
 
-class GenericEnvironmentSchema(JSONSchema):
-    """Schema for the JSON GenericEnvironment output (V1)"""
+class EnvironmentSchema(JSONSchema):
+    """Schema for the JSON Environment output (V1)"""
 
     VERSION: int = 1
-    """The JSON GenericEnvironment schema version number."""
+    """The JSON Environment schema version number."""
 
-    TYPE: str = 'SimpleBenchGenericEnvironment::V1'
-    """The JSON GenericEnvironment schema type property value for version 1 reports."""
+    TYPE: str = 'SimpleBenchEnvironment::V1'
+    """The JSON Environment schema type property value for version 1 reports."""
 
     ID: str = (
-        'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/generic-environment.json'
+        'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/environment.json'
     )
-    """The JSON GenericEnvironment schema $id value for version 1 reports."""
+    """The JSON Environment schema $id value for version 1 reports."""
 
     _JSON_SCHEMA_DICT: dict[str, object] = {
         '$schema': 'https://json-schema.org/draft/2020-12/schema',
         '$id': ID,
-        'title': 'Generic Environment (V1)',
-        'description': 'Generic Environment information (V1)',
+        'title': 'Environment (V1)',
+        'description': 'Environment information (V1)',
         'type': 'object',
         'properties': {
             'version': {
-                'description': 'The version of the Generic Environment schema',
+                'description': 'The version of the Environment schema',
                 'type': 'integer',
                 'const': VERSION,
             },
             'type': {
                 'title': 'Type',
-                'description': 'Type of the Generic Environment schema',
+                'description': 'Type of the Environment schema',
                 'type': 'string',
                 'const': TYPE,
             },
             'hash_id': {
                 'title': 'Hash ID',
-                'description': 'Unique 64 byte hexadecimal hash identifier for the Generic Environment data. This can be used to identify the generator and uniqueness of the data.',
+                'description': 'Unique 64 byte hexadecimal hash identifier for the Environment data. This can be used to identify the generator and uniqueness of the data.',
                 'type': 'string',
                 'pattern': '^[a-f0-9]{64}$',
             },
-            'data': {
-                'title': 'Generic Environment Data',
-                'description': 'Raw Generic Environment data collected from the system.',
-                'type': 'object',
-                'additionalProperties': True,
+            'semantic_type': {
+                'title': 'Semantic Type',
+                'description': "The semantic type of the environment, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Users can define custom types using their own namespace.",
+                'type': 'string',
+                'pattern': '^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$',
+                'examples': [
+                    'language::python',
+                ],
             },
         },
-        'required': ['hash_id', 'type', 'version', 'data'],
-        'additionalProperties': False,
+        'required': ['hash_id', 'type', 'version', 'semantic_type'],
+        'additionalProperties': {
+            'oneOf': [
+                {'$ref': '#/$defs/data'},
+                {'type': ['string', 'number', 'boolean', 'null', 'array']},
+            ],
+        },
+        '$defs': {
+            'data': {
+                'type': 'object',
+                'title': 'Environment data element',
+                'propertyNames': {'pattern': r'^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$'},
+                'additionalProperties': {
+                    'oneOf': [
+                        {'$ref': '#/$defs/data'},
+                        {'type': ['string', 'number', 'boolean', 'null', 'array']},
+                    ]
+                },
+            },
+        },
     }
+    """The JSON schema as a dictionary."""
 
     _JSON_SCHEMA_TEXT: str = JSONEncoder(indent=2).encode(_JSON_SCHEMA_DICT)
     """The JSON schema as a pretty-printed JSON string."""
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption='JSON Schema for ValueBlock V1',
+        caption='JSON Schema for Environment V1',
         intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""
