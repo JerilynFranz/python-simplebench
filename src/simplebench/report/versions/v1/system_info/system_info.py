@@ -1,4 +1,6 @@
 """V1 SystemInfo implementation."""
+from types import MappingProxyType
+from typing import Any
 
 from simplebench.report.base import BaseSystemInfo, JSONSchema
 
@@ -24,7 +26,26 @@ class SystemInfo(BaseSystemInfo):
     ID: str = SCHEMA.ID
     """The JSON SystemInfo identifier property value for version 1 reports."""
 
-    def __init__(self, *, hash_id: str, system: str, system_version: str, release: str, machine: str) -> None:
+    _init_params_cache: MappingProxyType[str, Any] | None = None
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(SystemInfoData)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
+
+    __slots__ = ('_hash_id', '_system', '_system_version', '_release', '_machine', '_dict_cache')
+
+    def __init__(self, *, hash_id: str = '', system: str, system_version: str, release: str, machine: str) -> None:
         """Initialize the SystemInfo instance.
 
         :param str hash_id: The unique hash identifier for the system info.
@@ -33,12 +54,13 @@ class SystemInfo(BaseSystemInfo):
         :param str release: The system release string.
         :param str machine: The machine type string.
         """
-        self._hash_id: str = _validate.hash_id(hash_id)
         self._system: str = _validate.system(system)
         self._system_version: str = _validate.system_version(system_version)
         self._release: str = _validate.release(release)
         self._machine: str = _validate.machine(machine)
-        self._dict_cache: ImmutableSystemInfoDict | None = None
+        self._hash_id: str = _validate.hash_id(hash_id) or self._hash_id_helper(SystemInfoDict)
+        self._dict_cache: ImmutableSystemInfoDict = self._to_dict_helper(ImmutableSystemInfoDict)
+
 
     @classmethod
     def from_dict(cls, data: SystemInfoData) -> 'SystemInfo':
@@ -56,7 +78,7 @@ class SystemInfo(BaseSystemInfo):
         :param data: The dictionary containing SystemInfo information.
         :return: A SystemInfo instance.
         """
-        allowed_keys = cls.init_params()
+        allowed_keys = dict(cls._data_params())
         allowed_keys['version'] = int
         allowed_keys['type'] = str
         kwargs = cls.import_data(
@@ -77,8 +99,6 @@ class SystemInfo(BaseSystemInfo):
 
         :return ImmutableSystemInfoDict: A dictionary representation of the SystemInfo.
         """
-        if self._dict_cache is None:
-            self._dict_cache = self._to_dict_helper(ImmutableSystemInfoDict)
         return self._dict_cache
 
     @property
@@ -87,8 +107,6 @@ class SystemInfo(BaseSystemInfo):
 
         :return: The hash_id string.
         """
-        if not self._hash_id:
-            self._hash_id = self._hash_id_helper(SystemInfoDict)
         return self._hash_id
 
     @property
@@ -122,3 +140,65 @@ class SystemInfo(BaseSystemInfo):
         :return: The machine string.
         """
         return self._machine
+
+    def for_json(self) -> ImmutableSystemInfoDict:
+        """Get the JSON-serializable dictionary representation of this SystemInfo.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this SystemInfo.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this SystemInfo.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this SystemInfo.
+        """
+        return self.to_dict().as_json()  # type: ignore
+
+    def __repr__(self) -> str:
+        """Get the string representation of the SystemInfo instance.
+
+        :return: The string representation of the SystemInfo.
+        """
+        # Get the init parameters excluding 'type' and'version' since they are fixed for this class
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
+    def __hash__(self) -> int:
+        """Get the hash of the SystemInfo instance.
+
+        :return: The hash value.
+        """
+        return hash(self.hash_id)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two SystemInfo instances.
+
+        :param other: The other object to compare.
+        :return: True if equal, False otherwise.
+        """
+        if not isinstance(other, SystemInfo):
+            return NotImplemented
+        return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'SystemInfo':
+        """Return the same instance since SystemInfo is immutable."""
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'SystemInfo':
+        """Return the same instance since SystemInfo is immutable."""
+        return self

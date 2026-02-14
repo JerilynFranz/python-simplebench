@@ -7,13 +7,13 @@ from simplebench_tests.kwargs.report.v1 import PythonInfoKWArgs
 
 
 @cache
-def report_python_info_kwargs() -> PythonInfoKWArgs:
+def python_info_kwargs() -> PythonInfoKWArgs:
     """PythonInfoKwargs factory for testing purposes.
 
     :return: A PythonInfoKwargs instance with dummy data.
     :rtype: PythonInfoWArgs
     """
-    data = report_python_info_data()
+    data = python_info_data()
     return PythonInfoKWArgs(
         hash_id=data['hash_id'],  # type: ignore[call-arg]
         python_version=data['python_version'],
@@ -34,17 +34,17 @@ def report_python_info_kwargs() -> PythonInfoKWArgs:
 
 
 @cache
-def report_python_info() -> report.PythonInfo:
+def python_info() -> report.PythonInfo:
     """PythonInfo factory for testing purposes.
 
     :return: A PythonInfo instance with dummy data.
     :rtype: report.PythonInfo
     """
-    return report.PythonInfo(**report_python_info_kwargs())
+    return report.PythonInfo(**python_info_kwargs())
 
 """Factories for creating report PythonInfoData instances with dummy data for testing."""
 
-def report_python_info_data() -> report.PythonInfoData:
+def python_info_data() -> report.PythonInfoData:
     """PythonInfoData factory for testing purposes.
 
     :return: A PythonInfoData instance with dummy data.
@@ -76,13 +76,13 @@ def report_python_info_data() -> report.PythonInfoData:
         raise TypeError(f'Generated info does not conform to PythonInfoData TypedDict: {info!r}')
     return info
 
-def no_hash_id_report_python_info_data() -> report.PythonInfoData:
+def no_hash_id_python_info_data() -> report.PythonInfoData:
     """PythonInfoData factory for testing purposes.
 
     :return: A PythonInfoData instance with dummy data.
     :rtype: report.PythonInfoData
     """
-    info = report_python_info_data()
+    info = python_info_data()
     del info['hash_id']  # type: ignore[typeddict-item]
     if not is_typed_dict_mimic(info, report.PythonInfoData):
         raise TypeError(f'Generated info does not conform to PythonInfoData TypedDict: {info!r}')

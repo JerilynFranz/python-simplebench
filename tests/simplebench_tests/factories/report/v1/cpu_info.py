@@ -7,17 +7,17 @@ from simplebench.report.versions import v1 as report
 from simplebench_tests.kwargs.report.v1 import CPUInfoKWArgs
 
 
-def report_cpu_info_kwargs() -> CPUInfoKWArgs:
+def cpu_info_kwargs() -> CPUInfoKWArgs:
     """CPUInfoKwargs factory for testing purposes.
 
     :return: A CPUInfoKwargs instance with dummy data.
     :rtype: CPUInfoKWArgs
     """
-    return CPUInfoKWArgs(data=report_cpu_info_data())
+    return CPUInfoKWArgs(data=cpu_info_data())
 
 
 @cache
-def report_cpu_info() -> report.CPUInfo:
+def cpu_info() -> report.CPUInfo:
     """CPUInfo factory for testing purposes.
 
     The same instance is returned on subsequent calls since CPUInfo is immutable.
@@ -25,12 +25,12 @@ def report_cpu_info() -> report.CPUInfo:
     :return: A CPUInfo instance with dummy data.
     :rtype: report.CPUInfo
     """
-    return report.CPUInfo(**report_cpu_info_kwargs())
+    return report.CPUInfo(**cpu_info_kwargs())
 
 """Factories for creating report CPUInfoData instances with dummy data for testing."""
 
 
-def report_cpu_info_data() -> report.CPUInfoData:
+def cpu_info_data() -> report.CPUInfoData:
     """CPUInfoData factory for testing purposes.
 
     :return: A CPUInfoData instance with dummy data.
