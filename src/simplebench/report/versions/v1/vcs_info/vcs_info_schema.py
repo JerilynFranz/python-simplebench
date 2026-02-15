@@ -51,7 +51,7 @@ class VCSInfoSchema(JSONSchema):
                 'title': 'VCS Type',
                 'description': 'The type of version control system',
                 'type': 'string',
-                'enum': ['git', 'hg', 'svn', 'perforce', 'tfvc'],
+                'examples': ['git', 'hg', 'svn', 'perforce', 'tfvc', 'cvs', 'fossil', 'bazaar', 'darcs', 'monotone', 'veracity', 'plastic', 'vss', 'clearcase', 'other']
             },
             'commit_id': {
                 'title': 'Commit ID',
@@ -90,7 +90,8 @@ class VCSInfoSchema(JSONSchema):
             'vcs',
             'repository_url',
             'commit_id',
-            'commit_datetimebranch',
+            'commit_datetime',
+            'branch',
             'is_dirty',
         ],
         'additionalProperties': False,

@@ -25,5 +25,6 @@ def validate_iso8601_datetime(dt_str: str, field_name: str, type_tag: ErrorTag, 
         dt = datetime.fromisoformat(dt_str)
         dt = dt.replace(tzinfo=timezone.utc)
         return dt.isoformat()
+
     except ValueError as e:
         raise SimpleBenchValueError(f'Invalid {field_name} ISO 8601 datetime string: {dt_str}', tag=value_tag) from e

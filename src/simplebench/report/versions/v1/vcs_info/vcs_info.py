@@ -13,6 +13,8 @@ This makes the implementations of VCSInfo backwards compatible with future versi
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base VCSInfo representation at the time of the V1 schema release.
 """
+from typing import Any
+from types import MappingProxyType
 
 from simplebench.report.base import BaseVCSInfo, JSONSchema
 
@@ -38,9 +40,38 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
     SCHEMA: type[JSONSchema] = VCSInfoSchema
     """The JSON schema class for version 1 reports."""
 
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the ResultsInfo class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(VCSInfoData)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
+
+    __slots__ = (
+        '_vcs',
+        '_commit_id',
+        '_commit_datetime',
+        '_branch',
+        '_repository_url',
+        '_is_dirty',
+        '_hash_id',
+        '_dict_cache',
+    )
+
     def __init__(
         self,
-        *,  # pylint: disable=too-many-arguments
+        *,
         hash_id: str = '',
         vcs: str,
         commit_id: str,
@@ -69,7 +100,7 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
         self._hash_id: str = _validate.hash_id(hash_id)
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(VCSInfoData)
-        self._dict_cache: ImmutableVCSInfoDict | None = None
+        self._dict_cache: ImmutableVCSInfoDict = self._to_dict_helper(ImmutableVCSInfoDict)
 
     @classmethod
     def from_dict(cls, data: VCSInfoData) -> 'VCSInfo':
@@ -106,8 +137,6 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
 
         :return: A dictionary representation of the VCSInfo.
         """
-        if self._dict_cache is None:
-            self._dict_cache = self._to_dict_helper(ImmutableVCSInfoDict)
         return self._dict_cache
 
     @property
@@ -165,3 +194,65 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
         :return: The is_dirty boolean value.
         """
         return self._is_dirty
+
+    def for_json(self) -> ImmutableVCSInfoDict:
+        """Get the JSON-serializable dictionary representation of this VCSInfo.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this VCSInfo.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this VCSInfo.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this VCSInfo.
+        """
+        return self.to_dict().as_json()  # type: ignore
+
+    def __repr__(self) -> str:
+        """Get the string representation of the VCSInfo instance.
+
+        :return: The string representation of the VCSInfo.
+        """
+        # Get the init parameters excluding 'type', 'version', and 'semantic_type' since they are fixed for this class
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
+    def __hash__(self) -> int:
+        """Get the hash of the VCSInfo instance.
+
+        :return: The hash value.
+        """
+        return hash(self.hash_id)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two VCSInfo instances.
+
+        :param other: The other object to compare.
+        :return: True if equal, False otherwise.
+        """
+        if not isinstance(other, VCSInfo):
+            return NotImplemented
+        return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'VCSInfo':
+        """Return the same instance since VCSInfo is immutable."""
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'VCSInfo':
+        """Return the same instance since VCSInfo is immutable."""
+        return self

@@ -21,32 +21,9 @@ from simplebench.simplebench_types import Never, NotRequired, Required
 
 __all__: list[str] = []
 
-
-# A base for fields that are always required and have the same type.
-class _VCSInfoCore(ReportElementTypedDict, total=True):
-    """
-    Typed dictionary base required fields for V1 VCSInfo data structure.
-
-    :param Required[str] vcs: The version control system string.
-    :param Required[str] commit_id: The unique identifier of the current revision.
-    :param Required[str] branch: The current branch name.
-    :param Required[str] repository_url: The URL of the primary remote repository or empty string.
-    :param Required[bool] is_dirty: Whether there are uncommitted changes.
-    :param Required[str] commit_datetime: The datetime of the commit in ISO 8601 format.
-    """
-
-    vcs: Required[str]
-    commit_id: Required[str]
-    commit_datetime: Required[str]
-    branch: Required[str]
-    repository_url: Required[str]
-    is_dirty: Required[bool]
-
-
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-
-class VCSInfoData(_VCSInfoCore, total=False):
+class VCSInfoData(ReportElementTypedDict):
     """Typed dictionary for V1 VCSInfo data used as INPUT.
 
     This type is lenient, allowing `type`, `version`, and `hash_id` to be
@@ -62,13 +39,18 @@ class VCSInfoData(_VCSInfoCore, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
-
-    hash_id: NotRequired[str]
+    vcs: Required[str]
+    commit_id: Required[str]
+    commit_datetime: Required[str]
+    branch: Required[str]
+    repository_url: Required[str]
+    is_dirty: Required[bool]
     type: NotRequired[str]
     version: NotRequired[int]
+    hash_id: NotRequired[str]
 
 
-class ImmutableVCSInfoData(VCSInfoData, total=False):
+class ImmutableVCSInfoData(ReportElementTypedDict):
     """Immutable version of :class:`VCSInfoData` (INPUT).
 
     This marks the dictionary as immutable for type-checking purposes. During runtime,
@@ -76,9 +58,6 @@ class ImmutableVCSInfoData(VCSInfoData, total=False):
 
     The ``__immutable__`` field is a class marker to indicate immutability
     for type-checking purposes. It should not be set or used at runtime.
-
-    Because it inherits from `VCSInfoData`, all fields are the same and it
-    can be used interchangeably where immutability is not a concern.
 
     :param Required[str] vcs: The version control system string.
     :param Required[str] commit_id: The unique identifier of the current revision.
@@ -90,14 +69,22 @@ class ImmutableVCSInfoData(VCSInfoData, total=False):
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
-
+    vcs: Required[str]
+    commit_id: Required[str]
+    commit_datetime: Required[str]
+    branch: Required[str]
+    repository_url: Required[str]
+    is_dirty: Required[bool]
+    type: NotRequired[str]
+    version: NotRequired[int]
+    hash_id: NotRequired[str]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
 
-class VCSInfoDict(_VCSInfoCore, total=True):
+class VCSInfoDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 VCSInfo (OUTPUT).
 
     This type is strict, requiring `type`, `version`, and `hash_id` to be present.
@@ -113,19 +100,21 @@ class VCSInfoDict(_VCSInfoCore, total=True):
     :param Required[int] version: The version of the block's data structure.
     """
 
+    vcs: Required[str]
+    commit_id: Required[str]
+    commit_datetime: Required[str]
+    branch: Required[str]
+    repository_url: Required[str]
+    is_dirty: Required[bool]
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
 
-
-class ImmutableVCSInfoDict(VCSInfoDict, total=False):
+class ImmutableVCSInfoDict(ReportElementTypedDict):
     """Immutable version of :class:`VCSInfoDict` (OUTPUT).
 
     This marks the dictionary as immutable for type-checking purposes. During runtime,
     it should be constructed so as to enforce immutability.
-
-    Because it inherits from `VCSInfoDict`, all fields are the same and it
-    can be used interchangeably where immutability is not a concern.
 
     The ``__immutable__`` field is a class marker to indicate immutability
     for type-checking purposes. It should not be set or used at runtime.
@@ -140,5 +129,13 @@ class ImmutableVCSInfoDict(VCSInfoDict, total=False):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     """
-
+    vcs: Required[str]
+    commit_id: Required[str]
+    commit_datetime: Required[str]
+    branch: Required[str]
+    repository_url: Required[str]
+    is_dirty: Required[bool]
+    type: Required[str]
+    version: Required[int]
+    hash_id: Required[str]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

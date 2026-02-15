@@ -141,6 +141,8 @@ def _kwargs_class_name(class_name: str, func_name: str) -> str:
     :type func_name: str
     :return: A string representing the KWArgs class name.
     """
+    if func_name == '__init__':
+        return f'{class_name}KWArgs'
     func_elements = func_name.split('_')
     func_elements = [elem.capitalize() for elem in func_elements]
     func_part = ''.join(func_elements)

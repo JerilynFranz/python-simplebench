@@ -29,6 +29,8 @@ class _VCSInfoErrorTag(ErrorTag):
     """The commit_datetime param value must be a valid ISO 8601 datetime string."""
     INVALID_BRANCH_TYPE = 'INVALID_BRANCH_TYPE'
     """The branch param type must be a string."""
+    INVALID_BRANCH_VALUE = 'INVALID_BRANCH_VALUE'
+    """The branch param value cannot be a blank or empty string."""
     INVALID_REPOSITORY_URL_TYPE = 'INVALID_REPOSITORY_URL_TYPE'
     """The repository_url param type must be a string."""
     INVALID_IS_DIRTY_TYPE = 'INVALID_IS_DIRTY_TYPE'

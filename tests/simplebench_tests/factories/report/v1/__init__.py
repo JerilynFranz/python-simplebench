@@ -19,6 +19,7 @@ from .python_info import (
     python_info_kwargs,
 )
 from .system_info import no_hash_id_system_info_data, system_info, system_info_data, system_info_kwargs
+from .vcs_info import no_hash_id_vcs_info_data, vcs_info, vcs_info_data, vcs_info_kwargs
 
 __all__: list[str] = [
     "cpu_info",
@@ -41,4 +42,8 @@ __all__: list[str] = [
     "system_info_data",
     "system_info_kwargs",
     "no_hash_id_system_info_data",
+    "vcs_info",
+    "vcs_info_data",
+    "vcs_info_kwargs",
+    "no_hash_id_vcs_info_data",
 ]

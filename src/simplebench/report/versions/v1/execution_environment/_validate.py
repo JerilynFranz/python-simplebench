@@ -9,7 +9,7 @@ from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.validators import validate_core_data_mapping
 
 from ..environment import Environment
-from .known_environments import KNOWN_ENVIRONMENTS
+from .known_environments import known_environments
 
 __all__: list[str] = []
 
@@ -44,6 +44,7 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
 
     validated_envs: dict[str, Environment] = {}
     n_environments: int = 0
+    known_envs = known_environments()
     for env_name, env_value in value.items():
         if not isinstance(env_name, str):
             raise SimpleBenchTypeError(
@@ -55,13 +56,13 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
                 f"Environment name '{env_name}' is invalid; must match regex {_ENV_NAME_REGEX.pattern!r}",
                 tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_NAME_VALUE,
             )
-        if env_name in KNOWN_ENVIRONMENTS:
+        if env_name in known_envs:
             if not isinstance(env_value, Environment):  # Verify known envs are Environment instances
                 raise SimpleBenchTypeError(
                     f"Known environment '{env_name}' must be of type Environment",
                     tag=_ExecutionEnvironmentErrorTag.BAD_KNOWN_ENVIRONMENT_TYPE,
                 )
-            expected_type = KNOWN_ENVIRONMENTS[env_name]
+            expected_type = known_envs[env_name]
             if not isinstance(env_value, expected_type):
                 raise SimpleBenchTypeError(
                     f"Environment '{env_name}' must be of type {expected_type.__name__}",

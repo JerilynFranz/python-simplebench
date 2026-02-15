@@ -13,7 +13,7 @@ from simplebench.simplebench_types import CoreDataMappingType
 from simplebench.validators import validate_core_data_mapping
 
 from . import _validate
-from .known_environments import KNOWN_ENVIRONMENTS
+from .known_environments import known_environments
 from .typeddict_types import ExecutionEnvironmentDict
 
 __all__: list[str] = []
@@ -68,9 +68,10 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
         :return: A ExecutionEnvironment instance.
         """
         imported_environments: dict[str, CoreDataMappingType | Environment] = {}
+        known_envs = known_environments()
         for env_name, env_value in data.items():
-            if env_name in KNOWN_ENVIRONMENTS:
-                environment: type[Environment] = KNOWN_ENVIRONMENTS[env_name]
+            if env_name in known_envs:
+                environment: type[Environment] = known_envs[env_name]
                 imported_instance = environment.from_dict(env_value)
                 imported_environments[env_name] = imported_instance
             else:

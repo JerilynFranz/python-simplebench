@@ -37,6 +37,8 @@ def hash_id(value: str) -> str:
         allow_empty=True,
         strip=True,
     )
+    if value == '':
+        return value
 
     return validate_string_with_regex(
         value,
@@ -111,12 +113,13 @@ def branch(value: str) -> str:
     :param value: The current branch name.
     :return: The validated branch name string. It cannot be blank or empty.
     :raises SimpleBenchTypeError: If the branch name is not a string.
+    :raises SimpleBenchValueError: If the branch name is blank or empty.
     """
     return validate_string(
         value,
         'branch',
         _VCSInfoErrorTag.INVALID_BRANCH_TYPE,
-        _VCSInfoErrorTag.INVALID_BRANCH_TYPE,  # can't trigger value error here
+        _VCSInfoErrorTag.INVALID_BRANCH_VALUE,
         strip=True,
         allow_empty=False,
     )
