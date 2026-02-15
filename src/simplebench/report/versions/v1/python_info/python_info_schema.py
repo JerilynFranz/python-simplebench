@@ -31,7 +31,7 @@ class PythonInfoSchema(JSONSchema):
     ID: str = 'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/python-info.json'
     """The JSON PythonInfo schema $id value for version 1 reports."""
 
-    SEMANTIC_TYPE: str = 'simplebench::python_info'
+    SEMANTIC_TYPE: str = 'simplebench::python'
     """The semantic type of the python information, formatted as 'namespace::type_name'."""
 
     _JSON_SCHEMA_DICT: dict[str, object] = {

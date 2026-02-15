@@ -51,8 +51,9 @@ class EnvironmentSchema(JSONSchema):
                 'description': "The semantic type of the environment, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Users can define custom types using their own namespace.",
                 'type': 'string',
                 'pattern': '^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$',
+                'default': 'simplebench::generic',
                 'examples': [
-                    'language::python',
+                    'simplebench::python',
                 ],
             },
         },
