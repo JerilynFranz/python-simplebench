@@ -13,8 +13,8 @@ This makes the implementations of VCSInfo backwards compatible with future versi
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base VCSInfo representation at the time of the V1 schema release.
 """
-from typing import Any
 from types import MappingProxyType
+from typing import Any
 
 from simplebench.report.base import BaseVCSInfo, JSONSchema
 
@@ -114,7 +114,7 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
         :param data: The dictionary containing vcs information.
         :return: A VCSInfo instance.
         """
-        allowed_keys = cls.init_params()
+        allowed_keys = dict(cls._data_params())
         allowed_keys['version'] = int
         allowed_keys['type'] = str
 
