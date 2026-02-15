@@ -23,25 +23,7 @@ __all__: list[str] = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-
-class _RequiredValueBlockData(ReportElementTypedDict, total=True):
-    """Required fields for V1 ValueBlock data used as INPUT.
-
-    The input type allows `value` to be either `int` or `float`.
-
-    :param Required[str] semantic_type: The semantic type of the value.
-    :param Required[str] unit: The unit of the value.
-    :param Required[float] scale: The scaling factor for the value.
-    :param Required[float | int] value: The numeric value of the block.
-    """
-
-    semantic_type: Required[str]
-    unit: Required[str]
-    scale: Required[float]
-    value: Required[float | int]
-
-
-class ValueBlockData(_RequiredValueBlockData, total=False):
+class ValueBlockData(ReportElementTypedDict):
     """Typed dictionary for V1 ValueBlock data used as INPUT.
 
     This type is lenient, allowing `type`, `version`, and `timer` to be
@@ -55,53 +37,35 @@ class ValueBlockData(_RequiredValueBlockData, total=False):
     :param NotRequired[int] version: The version of the block's data structure.
     :param NotRequired[str] timer: The name of the timer associated with this value.
     """
-
+    semantic_type: Required[str]
+    unit: Required[str]
+    scale: Required[float]
+    value: Required[float | int]  # Allow int or float for input
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
     timer: NotRequired[str]
 
 
-class ImmutableValueBlockData(ValueBlockData, total=False):
+class ImmutableValueBlockData(ReportElementTypedDict):
     """Immutable typed dictionary for V1 ValueBlock data used as INPUT.
 
     This type is identical to :class:`ValueBlockData` but is immutable
     (all fields are read-only) for type-checking purposes.
     """
-
-    __immutable__: NotRequired[Never]  # Marker for immutability
-
-
-# --- For data used as OUTPUT (e.g., from `to_dict`) ---
-
-
-class _RequiredValueBlockDict(ReportElementTypedDict, total=True):
-    """Required fields for V1 ValueBlock data used as OUTPUT.
-
-    `value` is guaranteed to be a `float`.
-
-    All fields are required (`total=True`), and their values are immutable.
-
-    :param Required[str] type: The type identifier for the block.
-    :param Required[int] version: The version of the block's data structure.
-    :param Required[str] hash_id: The unique hash identifier for the value block.
-    :param Required[str] semantic_type: The semantic type of the value.
-    :param Required[str] unit: The unit of the value.
-    :param Required[float] scale: The scaling factor for the value.
-    :param Required[float] value: The numeric value of the block (guaranteed to be float).
-
-    """
-
-    hash_id: Required[str]
-    type: Required[str]
-    version: Required[int]
     semantic_type: Required[str]
     unit: Required[str]
     scale: Required[float]
-    value: Required[float]  # Guaranteed to be float rather than int | float
+    value: Required[float | int]  # Allow int or float for input
+    hash_id: NotRequired[str]
+    type: NotRequired[str]
+    version: NotRequired[int]
+    timer: NotRequired[str]
+    __immutable__: NotRequired[Never]  # Marker for immutability
 
+# --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class ValueBlockDict(_RequiredValueBlockDict, total=False):
+class ValueBlockDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 ValueBlock (OUTPUT).
 
     This type is strict, requiring `type` and`version`` to be present.
@@ -117,11 +81,17 @@ class ValueBlockDict(_RequiredValueBlockDict, total=False):
     :param Required[int] version: The version of the block's data structure.
     :param NotRequired[str] timer: The name of the timer associated with this value.
     """
-
+    semantic_type: Required[str]
+    unit: Required[str]
+    scale: Required[float]
+    value: Required[float]  # Guaranteed to be float rather than int | float
+    hash_id: Required[str]
+    type: Required[str]
+    version: Required[int]
     timer: NotRequired[str]
 
 
-class ImmutableValueBlockDict(ValueBlockDict, total=False):
+class ImmutableValueBlockDict(ReportElementTypedDict):
     """Immutable version of :class:`ValueBlockDict` (OUTPUT).
 
     This marks the dictionary as immutable for type-checking purposes. During runtime,
@@ -129,9 +99,13 @@ class ImmutableValueBlockDict(ValueBlockDict, total=False):
 
     The ``__immutable__`` field is a class marker to indicate immutability
     for type-checking purposes. It should not be set or used at runtime.
-
-    Because it inherits from `ValueBlockDict`, all fields are the same and it
-    can be used interchangeably where immutability is not a concern.
     """
-
+    semantic_type: Required[str]
+    unit: Required[str]
+    scale: Required[float]
+    value: Required[float]  # Guaranteed to be float rather than int | float
+    hash_id: Required[str]
+    type: Required[str]
+    version: Required[int]
+    timer: NotRequired[str]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

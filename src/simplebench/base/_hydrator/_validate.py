@@ -1,13 +1,14 @@
 """Validation functions for Hydrator parameters."""
 
 import inspect
-from collections.abc import Callable, Iterable, Mapping, Sequence, Set
-from typing import Any, Union, get_args, get_origin, get_type_hints, is_typeddict
+from collections.abc import Callable, Iterable, Mapping
+from typing import Any
+
+from typeguard import TypeCheckError, check_type
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.validators import validate_iterable_of_type
 
-from .._typed_dict_key_info import TypedDictKeyInfo
 from ._error_tags import _HydratorErrorTag
 
 
@@ -51,17 +52,6 @@ def allowed(allowed_fields: Mapping[str, Any]) -> Mapping[str, Any]:
         raise SimpleBenchValueError(
             'The `allowed` dictionary cannot be empty',
             tag=_HydratorErrorTag.INVALID_ALLOWED_EMPTY)
-
-    for field in allowed_fields.values():
-        # A valid type annotation is either a simple type (like `int`)
-        # or a generic from the typing module (like `list[str]`, which has an __origin__).
-        is_simple_type = isinstance(field, type)
-        is_generic_type = hasattr(field, '__origin__')
-        if not (is_simple_type or is_generic_type):
-            raise SimpleBenchTypeError(
-                f'All values in `allowed` must be a valid type annotation, but got {allowed_fields}',
-                tag=_HydratorErrorTag.INVALID_ALLOWED_VALUE_TYPE,
-            )
 
     return allowed_fields
 
@@ -252,56 +242,14 @@ def data_types(output: dict[str, Any], allowed_fields_map: Mapping[str, Any]) ->
     :raises: SimpleBenchTypeError if any value does not match the allowed type.
     """
     for field, value in output.items():
-        if not is_instance_of_generic(value, allowed_fields_map[field]):
+        expected_type = allowed_fields_map[field]
+        try:
+            check_type(value, expected_type)
+        except TypeCheckError as e:
             raise SimpleBenchTypeError(
-                f"The value of '{field}' does not match the expected type "
-                f"'{allowed_fields_map[field]}' - got type '{type(value)}'",
+                f"The value of '{field}' does not match the expected type '{expected_type}' - got type '{type(value)}'",
                 tag=_HydratorErrorTag.INVALID_DATA_VALUE_TYPE,
-            )
-
-
-def is_instance_of_generic(obj: Any, type_hint: Any) -> bool:
-    """
-    Check if an object is an instance of a generic type hint.
-    Handles simple types, lists, sequences, and dictionaries.
-
-    :param obj: The object to check.
-    :param type_hint: The type hint to check against.
-    :return: True if the object matches the type hint, False otherwise.
-    """
-    origin = get_origin(type_hint)
-    args = get_args(type_hint)
-
-    # Case 1: Simple type (e.g., int, str)
-    if origin is None:
-        if isinstance(type_hint, type):
-            return isinstance(obj, type_hint)
-        return False  # Should not happen with valid type hints
-
-    # Case 2: Dictionary or Mapping
-    if inspect.isclass(origin) and issubclass(origin, Mapping):
-        if not isinstance(obj, Mapping):
-            return False
-        key_type, value_type = args
-        return all(
-            is_instance_of_generic(k, key_type) and is_instance_of_generic(v, value_type) for k, v in obj.items()
-        )
-
-    # Case 3: Iterable (but not a Mapping)
-    if inspect.isclass(origin) and issubclass(origin, Iterable):
-        # If the object is a string/bytes but the type hint is a different kind of iterable (e.g. list[str]),
-        # it's a mismatch. We should not iterate over the string's characters.
-        if isinstance(obj, (str, bytes)):
-            return issubclass(origin, (str, bytes))
-
-        if not isinstance(obj, Iterable):
-            return False
-
-        item_type = args[0]
-        return all(is_instance_of_generic(item, item_type) for item in obj)
-
-    # Fallback for other types (like Union, etc., which can be added here)
-    return isinstance(obj, origin)
+        ) from e
 
 
 def match_on_values(data_values: dict[str, Any], match_on_fields: Mapping[str, Any]) -> None:
@@ -316,148 +264,3 @@ def match_on_values(data_values: dict[str, Any], match_on_fields: Mapping[str, A
             raise SimpleBenchValueError(
                 f"The value of '{field}' must be '{expected_value}'", tag=_HydratorErrorTag.INVALID_MATCH_ON_VALUE
             )
-
-
-def _is_basetype(typeddict_cls: type) -> dict[str, Any]:
-    """Return a dictionary of the parameters and their types for a TypedDict class.
-
-    It takes a TypedDict class as input and returns a dictionary mapping
-    parameter names to their types based on the TypedDict's annotations
-    in a form suitable for isinstance checks.
-
-    :param type typeddict_cls: The TypedDict class to inspect.
-    :return dict[str, Any]: A dictionary mapping parameter names for the TypedDict to their types.
-    """
-    output: dict[str, Any] = {}
-    annotations = get_type_hints(typeddict_cls)
-    for key in annotations:
-        value_info = TypedDictKeyInfo(key, typeddict_cls)
-        value_type = value_info.value_type
-        annotations[key] = _unwrap_typeddict_type(value_type)
-    return output
-
-
-def _unwrap_typeddict_type(tp: Any) -> Any:
-    """Unwrap a type annotation to its base type for isinstance checks.
-
-    - For generics (e.g., list[str]), returns the base type (list, dict, set, tuple, etc.).
-    - For TypedDict, returns dict.
-    - For primitives, returns the primitive type.
-    - For unions, returns a tuple of the base types.
-    - For Literal, returns a tuple of the literal values.
-    - Otherwise, returns the type itself.
-
-    :param Any tp: The type annotation to unwrap.
-    :return Any: The base type suitable for isinstance checks.
-    """
-    if is_typeddict(tp):
-        return dict
-
-    origin = get_origin(tp)
-    if origin is not None:
-        # Handle Union types
-        if (
-            origin is getattr(__import__('typing'), 'Union', None)
-            or origin is getattr(__import__('types'), 'UnionType', None)
-            or origin is Union
-        ):
-            args = get_args(tp)
-            return tuple(_unwrap_typeddict_type(arg) for arg in args)
-        # Handle Literal types
-        if origin is getattr(__import__('typing'), 'Literal', None):
-            return get_args(tp)
-        return origin
-
-    return tp  # Fallback: return the type itself
-
-
-def is_instance_of_typehint(obj: Any, type_hint: Any, recurse: bool = False) -> bool:
-    """
-    Enhanced wrapper for is_instance_of_generic that handles unions, literals,
-    TypedDict, Mapping, Iterable, Set, Sequence, and other special cases.
-    Returns True if obj matches any type in the union, any value in a Literal,
-    or matches the type_hint directly.
-    If recurse=True, performs deep validation of nested structures.
-    """
-    origin = get_origin(type_hint)
-    args = get_args(type_hint)
-
-    # Handle TypedDict as Mapping
-    if is_typeddict(type_hint):
-        if not isinstance(obj, dict):
-            return False
-        if not all(isinstance(k, str) for k in obj.keys()):
-            return False
-        if recurse:
-            annotations = get_type_hints(type_hint)
-            for key, value_type in annotations.items():
-                if key in obj:
-                    if not is_instance_of_typehint(obj[key], value_type, recurse=True):
-                        return False
-        return True
-
-    # Handle Union types
-    if (
-        origin is getattr(__import__('typing'), 'Union', None)
-        or origin is getattr(__import__('types'), 'UnionType', None)
-        or origin is Union
-    ):
-        return any(is_instance_of_typehint(obj, arg, recurse=recurse) for arg in args)
-
-    # Handle Literal types
-    if origin is getattr(__import__('typing'), 'Literal', None):
-        return obj in args
-
-    # Handle Mapping types
-    if origin and issubclass(origin, Mapping):
-        if not isinstance(obj, Mapping):
-            return False
-        if recurse and len(args) == 2:
-            key_type, value_type = args
-            for k, v in obj.items():
-                if not is_instance_of_typehint(k, key_type, recurse=True):
-                    return False
-                if not is_instance_of_typehint(v, value_type, recurse=True):
-                    return False
-            return True
-        return True  # Shallow: just check Mapping
-
-    # Handle Set types
-    if origin and issubclass(origin, Set) and not issubclass(origin, (str, bytes)):
-        if not isinstance(obj, Set) or isinstance(obj, (str, bytes)):
-            return False
-        if recurse and args:
-            item_type = args[0]
-            for item in obj:
-                if not is_instance_of_typehint(item, item_type, recurse=True):
-                    return False
-            return True
-        return True  # Shallow: just check Set
-
-    # Handle Sequence types (excluding str/bytes)
-    if origin and issubclass(origin, Sequence) and not issubclass(origin, (str, bytes)):
-        if not isinstance(obj, Sequence) or isinstance(obj, (str, bytes)):
-            return False
-        if recurse and args:
-            item_type = args[0]
-            for item in obj:
-                if not is_instance_of_typehint(item, item_type, recurse=True):
-                    return False
-            return True
-        return True  # Shallow: just check Sequence
-
-    # Handle Iterable types (excluding str/bytes)
-    if origin and issubclass(origin, Iterable) and not issubclass(origin, (str, bytes)):
-        if not isinstance(obj, Iterable) or isinstance(obj, (str, bytes)):
-            return False
-        if recurse and args:
-            item_type = args[0]
-            for item in obj:
-                if not is_instance_of_typehint(item, item_type, recurse=True):
-                    return False
-            return True
-        return True  # Shallow: just check Iterable
-
-    # Fallback to original logic
-    return is_instance_of_generic(obj, type_hint)
-    return is_instance_of_generic(obj, type_hint)

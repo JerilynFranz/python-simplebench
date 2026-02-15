@@ -33,6 +33,7 @@ def hash_id(val: str) -> str:
     :param value: The unique hash identifier for the vcs information.
     :return: The validated hash_id string.
     :raises SimpleBenchTypeError: If the hash_id value is not a string.
+    :raises SimpleBenchValueError: If the hash_id string is not a valid 64-character hexadecimal string (when not empty).
     """
     val = validate_string(
         val,
@@ -42,6 +43,8 @@ def hash_id(val: str) -> str:
         allow_empty=True,
         strip=True,
     )
+    if val == '':
+        return val  # Allow empty string for automatic hash_id generation
 
     return validate_string_with_regex(
         val,
@@ -70,16 +73,16 @@ def semantic_type(val: str) -> str:
     )
 
 
-def timer(val: str | None) -> str | None:
+def timer(val: str | None) -> str:
     """Validate the timer.
 
-    :param str | None value: The timer string to validate.
-    :return str | None: The validated timer string or None.
+    :param str | None val: The timer string to validate.
+    :return str: The validated timer string.
     :raise SimpleBenchTypeError: If the timer is not a string or None.
     :raises SimpleBenchValueError: If the timer string is invalid.
     """
-    if value is None:
-        return None
+    if val is None:
+        return ''
 
     timer_name: str = validate_string(
         val,
@@ -87,6 +90,7 @@ def timer(val: str | None) -> str | None:
         _ValueBlockErrorTag.INVALID_TIMER_TYPE,
         _ValueBlockErrorTag.INVALID_TIMER_VALUE,
         allow_blank=False,
+        allow_empty=True,
         strip=True,
     )
 
@@ -107,6 +111,7 @@ def unit(val: str) -> str:
         _ValueBlockErrorTag.INVALID_UNIT_TYPE,
         _ValueBlockErrorTag.INVALID_UNIT_VALUE,
         allow_blank=False,
+        allow_empty=False,
         strip=True,
     )
 
@@ -122,7 +127,9 @@ def scale(val: float) -> float:
     :raises SimpleBenchValueError: If the scale factor is not a positive number.
     """
     return validate_positive_float(
-        val, 'scale', _ValueBlockErrorTag.INVALID_SCALE_TYPE, _ValueBlockErrorTag.INVALID_SCALE_VALUE
+        val, 'scale',
+        _ValueBlockErrorTag.INVALID_SCALE_TYPE,
+        _ValueBlockErrorTag.INVALID_SCALE_VALUE
     )
 
 

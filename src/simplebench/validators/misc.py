@@ -133,11 +133,16 @@ def validate_float(value: Any, name: str, type_tag: ErrorTag) -> float:
     :param ErrorTag type_tag: The error tag to use for type errors.
     :return: The validated float.
     :rtype: float
-    :raises SimpleBenchTypeError: If the value is not a float.
+    :raises SimpleBenchTypeError: If the value is not a float or int.
+    :raises SimpleBenchValueError: If the value is NaN or infinite.
     """
     if not isinstance(value, (float, int)):  # Allow ints as valid floats
         raise SimpleBenchTypeError(f'Invalid {name} type: {type(value)}. Must be a float or int.', tag=type_tag)
-    return float(value)
+    value = float(value)
+    if value != value or value == float('inf') or value == float('-inf'):
+        raise SimpleBenchValueError(f'Invalid {name} value: {value}. Must be a finite number.',
+                                    tag=type_tag)
+    return value
 
 
 def validate_positive_int(value: Any, field_name: str, type_tag: ErrorTag, value_tag: ErrorTag) -> int:

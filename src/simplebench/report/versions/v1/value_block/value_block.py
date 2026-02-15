@@ -23,7 +23,7 @@ comparison, use in hash-based collections, and efficient copying.
 
 from collections.abc import Mapping
 from types import MappingProxyType
-from typing import Any, cast
+from typing import Any
 
 from simplebench.report.base import BaseValueBlock, JSONSchema
 
@@ -59,6 +59,24 @@ class ValueBlock(BaseValueBlock):
     ID: str = SCHEMA.ID
     """ID of the value block schema."""
 
+    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    """Cache for the constructor parameters of the ValueBlock class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(ValueBlockData)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
+
     __slots__ = ('_hash_id', '_semantic_type', '_timer', '_unit', '_scale', '_value', '_dict_cache')
     """Slots for immutable attributes and cached dictionary representation."""
 
@@ -67,17 +85,17 @@ class ValueBlock(BaseValueBlock):
         *,
         hash_id: str = '',
         semantic_type: str,
-        timer: str | None = None,
+        timer: str = '',
         unit: str,
         scale: float,
         value: float | int,
     ) -> None:
-        """Initialize JSONStatsSummary base class.
+        """Initialize ValueBlock instance.
 
         :param str hash_id: The unique hash identifier for the value block.
             If not provided, it defaults to an empty string and will be computed automatically.
         :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
-        :param (str | None) timer: The timer string or None.
+        :param str timer: The timer string.
         :param str unit: The unit of measurement.
         :param float scale: The scale factor.
         :param float | int value: The value of the block.
@@ -85,15 +103,14 @@ class ValueBlock(BaseValueBlock):
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
         self._semantic_type: str = _validate.semantic_type(semantic_type)
-        self._timer: str | None = _validate.timer(timer)
+        self._timer: str = _validate.timer(timer)
         self._unit: str = _validate.unit(unit)
         self._scale: float = _validate.scale(scale)
         self._value: float = _validate.value(value)
-
         self._hash_id: str = _validate.hash_id(hash_id)
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(ValueBlockData)
-        self._dict_cache: ImmutableValueBlockDict | None = None
+        self._dict_cache: ImmutableValueBlockDict = self._to_dict_helper(ImmutableValueBlockDict)
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> 'ValueBlock':  # type: ignore[override]
@@ -107,14 +124,14 @@ class ValueBlock(BaseValueBlock):
         :param ValueBlockData data: Dictionary containing the JSON results data.
         :return ValueBlock: A ValueBlock instance.
         """
-        init_params = cls.init_params()
+        init_params = dict(cls._data_params())
         init_params['type'] = str
         init_params['version'] = int
         kwargs = cls.import_data(
             data=data,
             allowed_fields=init_params,
             skip_fields={'type', 'version'},
-            optional_fields={'timer', 'type', 'version'},
+            optional_fields={'timer', 'type', 'version', 'hash_id'},
             defaults={'type': cls.TYPE, 'version': cls.VERSION},
             match_on={'type': cls.TYPE, 'version': cls.VERSION},
         )
@@ -132,21 +149,29 @@ class ValueBlock(BaseValueBlock):
 
         :return ImmutableValueBlockDict: Dictionary representation of the ValueBlock instance.
         """
-        if self._dict_cache is None:
-            output = {
-                'type': self.TYPE,
-                'version': self.VERSION,
-                'hash_id': self.hash_id,
-                'semantic_type': self.semantic_type,
-                'unit': self.unit,
-                'scale': self.scale,
-                'value': self.value,
-            }
-            if self.timer is not None:
-                output['timer'] = self.timer
-            self._dict_cache = cast(ImmutableValueBlockDict, MappingProxyType(output))
-
         return self._dict_cache
+
+    def for_json(self) -> ImmutableValueBlockDict:
+        """Get the JSON-serializable dictionary representation of this ValueBlock.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this ValueBlock.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this ValueBlock.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this ValueBlock.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def semantic_type(self) -> str:
@@ -197,6 +222,21 @@ class ValueBlock(BaseValueBlock):
         """
         return self._hash_id
 
+    def __repr__(self) -> str:
+        """Get the string representation of the ValueBlock instance.
+
+        :return: The string representation of the ValueBlock.
+        """
+        # Get the init parameters excluding 'type' and 'version' since they are fixed for this class
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
     def __hash__(self) -> int:
         """Get the hash of the ValueBlock instance.
 
@@ -207,28 +247,17 @@ class ValueBlock(BaseValueBlock):
     def __eq__(self, other: object) -> bool:
         """Check equality between two ValueBlock instances.
 
-        :param other: The other ValueBlock instance to compare.
+        :param other: The other object to compare.
         :return: True if equal, False otherwise.
         """
         if not isinstance(other, ValueBlock):
             return NotImplemented
         return self.hash_id == other.hash_id
 
-    def __repr__(self) -> str:
-        """Get the string representation of the ValueBlock instance.
+    def __copy__(self) -> 'ValueBlock':
+        """Return the same instance since ValueBlock is immutable."""
+        return self
 
-        :return: The string representation.
-        """
-        params: dict[str, str | float | None] = {
-            'hash_id': self.hash_id,
-            'semantic_type': self.semantic_type,
-            'timer': self.timer,
-            'unit': self.unit,
-            'scale': self.scale,
-            'value': self.value,
-        }
-        if self.timer is None:  # deletion instead of addition preserves ordering
-            del params['timer']
-        formatted_params = ', '.join(f'{key}={value!r}' for key, value in params.items())
-
-        return f'ValueBlock({formatted_params})'
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'ValueBlock':
+        """Return the same instance since ValueBlock is immutable."""
+        return self
