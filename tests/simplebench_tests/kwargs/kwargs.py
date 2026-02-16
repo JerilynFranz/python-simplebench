@@ -238,6 +238,8 @@ class KWArgs(dict[str, Any], Hashable):
         updated_kwargs: dict[str, Any] = {}
         for key in params:
             if key not in self:  # type: ignore[operator]
+                if key in kwargs:
+                    updated_kwargs[key] = kwargs[key]
                 continue
             if key in kwargs:
                 updated_kwargs[key] = kwargs[key]

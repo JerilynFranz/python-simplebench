@@ -13,9 +13,9 @@ class _StatsBlockErrorTag(ErrorTag):
     INVALID_HASH_ID_TYPE = 'INVALID_HASH_ID_TYPE'
     """The hash_id is not a string."""
     INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'
-    """The hash_id has an invalid value.
-
-    Must either be a 64-character hexadecimal string or an empty string."""
+    """The hash_id has an invalid value."""
+    INVALID_HASH_ID_STRUCTURE = 'INVALID_HASH_ID_STRUCTURE'
+    """The hash_id has an invalid structure. It must be a 64-character hexadecimal string or empty."""
     INVALID_TIMER_TYPE = 'INVALID_TIMER_TYPE'
     """The timer is not a string or None."""
     INVALID_TIMER_VALUE = 'INVALID_TIMER_VALUE'

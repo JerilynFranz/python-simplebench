@@ -5,6 +5,7 @@ from .cpu_info import CPUInfoKWArgs
 from .environment import EnvironmentKWArgs
 from .memory_info import MemoryInfoKWArgs, SwapMemoryObjectKWArgs, VirtualMemoryObjectKWArgs
 from .python_info import PythonInfoKWArgs
+from .stats_block import StatsBlockKWArgs
 from .system_info import SystemInfoKWArgs
 from .value_block import ValueBlockKWArgs
 from .vcs_info import VCSInfoKWArgs
@@ -16,6 +17,7 @@ __all__: list[str] = [
     'SwapMemoryObjectKWArgs',
     'VirtualMemoryObjectKWArgs',
     'PythonInfoKWArgs',
+    'StatsBlockKWArgs',
     'SystemInfoKWArgs',
     'ValueBlockKWArgs',
     'VCSInfoKWArgs',

@@ -18,6 +18,14 @@ from .python_info import (
     python_info_data,
     python_info_kwargs,
 )
+from .stats_block import (
+    no_hash_id_stats_block_data,
+    stats_block,
+    stats_block_data,
+    stats_block_kwargs,
+    stats_block_measurements,
+    stats_block_measurements_kwargs,
+)
 from .system_info import no_hash_id_system_info_data, system_info, system_info_data, system_info_kwargs
 from .value_block import no_hash_id_value_block_data, value_block, value_block_data, value_block_kwargs
 from .vcs_info import no_hash_id_vcs_info_data, vcs_info, vcs_info_data, vcs_info_kwargs
@@ -39,6 +47,12 @@ __all__: list[str] = [
     "python_info_data",
     "python_info_kwargs",
     "no_hash_id_python_info_data",
+    "stats_block",
+    "stats_block_data",
+    "stats_block_kwargs",
+    "stats_block_measurements",
+    "no_hash_id_stats_block_data",
+    "stats_block_measurements_kwargs",
     "system_info",
     "system_info_data",
     "system_info_kwargs",

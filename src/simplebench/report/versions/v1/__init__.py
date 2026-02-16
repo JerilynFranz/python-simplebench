@@ -13,6 +13,7 @@ of V1 report data.
 """
 
 from .cpu_info import CPUInfo, CPUInfoData, CPUInfoDict, CPUInfoSchema, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from .environment import Environment, EnvironmentSchema
 from .execution_environment import (
     ExecutionEnvironment,
     ExecutionEnvironmentData,
@@ -20,7 +21,6 @@ from .execution_environment import (
     ImmutableExecutionEnvironmentData,
     ImmutableExecutionEnvironmentDict,
 )
-from .environment import EnvironmentSchema, Environment
 from .machine_info import (
     ImmutableMachineInfoData,
     ImmutableMachineInfoDict,
@@ -73,7 +73,14 @@ from .raw_data_block import (
 )
 from .report import Report, ReportSchema
 from .results_info import ResultsInfo, ResultsInfoSchema
-from .stats_block import StatsBlock, StatsBlockSchema
+from .stats_block import (
+    ImmutableStatsBlockData,
+    ImmutableStatsBlockDict,
+    StatsBlock,
+    StatsBlockData,
+    StatsBlockDict,
+    StatsBlockSchema,
+)
 from .system_info import (
     ImmutableSystemInfoData,
     ImmutableSystemInfoDict,
@@ -152,6 +159,10 @@ __all__ = [
     'ResultsInfoSchema',
     'StatsBlock',
     'StatsBlockSchema',
+    'StatsBlockData',
+    'StatsBlockDict',
+    'ImmutableStatsBlockData',
+    'ImmutableStatsBlockDict',
     'SystemInfo',
     'SystemInfoData',
     'SystemInfoDict',

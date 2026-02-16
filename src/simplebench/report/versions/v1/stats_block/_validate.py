@@ -47,6 +47,9 @@ def hash_id(value: str) -> str:
         strip=True,
     )
 
+    if value == '':
+        return value
+
     return validate_string_with_regex(
         value,
         'hash_id',
@@ -56,25 +59,24 @@ def hash_id(value: str) -> str:
     )
 
 
-def timer(value: str | None) -> str | None:
+def timer(value: str) -> str:
     """Validate the timer.
 
-    It can be either a non-blank string or ``None``.
+    It must be a string, but it can be empty. If it is not empty,
+    it will be stripped of leading and trailing whitespace.
 
-    :param str | None value: The timer string to validate.
-    :return str | None: The validated timer string or None.
-    :raise SimpleBenchTypeError: If the timer is not a string or None.
+    :param str value: The timer string to validate.
+    :return str: The validated timer string.
+    :raise SimpleBenchTypeError: If the timer is not a string.
     :raises SimpleBenchValueError: If the timer string is invalid.
     """
-    if value is None:
-        return None
-
     return validate_string(
         value,
         'timer',
         _StatsBlockErrorTag.INVALID_TIMER_TYPE,
         _StatsBlockErrorTag.INVALID_TIMER_VALUE,
-        allow_blank=False,
+        allow_blank=True,
+        allow_empty=True,
         strip=True,
     )
 
@@ -107,13 +109,18 @@ def mean(value: float | None, measurements_value: Values | None) -> float | None
     :return float | None: The validated floating point value.
     :raise SimpleBenchTypeError: If the value is not a float.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'mean cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.MEAN_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'mean cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
     return validate_float(value, 'mean', _StatsBlockErrorTag.INVALID_MEAN_TYPE)
 
 
@@ -123,14 +130,21 @@ def median(value: float | None, measurements_value: Values | None) -> float | No
     :param float | None value: The value to validate.
     :return float | None: The validated floating point value.
     :raise SimpleBenchTypeError: If the value is not a float.
+    :raise SimpleBenchValueError: If the value is provided when measurements are provided,
+    or if the value is None when measurements is None.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'median cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.MEDIAN_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'median cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
     return validate_float(value, 'median', _StatsBlockErrorTag.INVALID_MEDIAN_TYPE)
 
 
@@ -140,14 +154,21 @@ def minimum(value: float | None, measurements_value: Values | None) -> float | N
     :param float | None value: The value to validate.
     :return float | None: The validated floating point value.
     :raise SimpleBenchTypeError: If the value is not a float.
+    :raise SimpleBenchValueError: If the value is provided when measurements
+        are provided, or if the value is None when measurements is None.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'minimum cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.MINIMUM_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'minimum cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
     return validate_float(value, 'minimum', _StatsBlockErrorTag.INVALID_MINIMUM_TYPE)
 
 
@@ -157,14 +178,21 @@ def maximum(value: float | None, measurements_value: Values | None) -> float | N
     :param float | None value: The value to validate.
     :return float | None: The validated floating point value.
     :raise SimpleBenchTypeError: If the value is not a float.
+    :raise SimpleBenchValueError: If the value is provided when measurements are provided,
+    or if the value is None when measurements is None.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'maximum cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.MAXIMUM_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'maximum cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
     return validate_float(value, 'maximum', _StatsBlockErrorTag.INVALID_MAXIMUM_TYPE)
 
 
@@ -176,6 +204,9 @@ def measurements(value: Sequence[float] | Values | None) -> Values | None:
     :raise SimpleBenchTypeError: If the value is not None or a sequence of floats.
     :raise SimpleBenchValueError: If the value is a sequence with fewer than 3 items.
     """
+    if value is None:
+        return None
+
     if not isinstance(value, (Sequence, Values)):
         raise SimpleBenchTypeError(
             f'measurements must be a Sequence of float, a Values instance, or None, got {type(value)}',
@@ -208,7 +239,12 @@ def name(value: str) -> str:
     :raise SimpleBenchValueError: If the value is blank.
     """
     return validate_string(
-        value, 'name', _StatsBlockErrorTag.INVALID_NAME_TYPE, _StatsBlockErrorTag.INVALID_NAME_VALUE, allow_blank=False
+        value, 'name',
+        _StatsBlockErrorTag.INVALID_NAME_TYPE,
+        _StatsBlockErrorTag.INVALID_NAME_VALUE,
+        allow_blank=False,
+        allow_empty=False,
+        strip=True,
     )
 
 
@@ -232,14 +268,21 @@ def iterations(value: int | None, measurements_value: Values | None) -> int | No
     :return int | None: The validated positive integer value.
     :raise SimpleBenchTypeError: If the value is not an integer.
     :raise SimpleBenchValueError: If the value is not positive.
+    :raise SimpleBenchValueError: If the value is provided when measurements are provided,
+        or if the value is None when measurements is None.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'iterations cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.ITERATIONS_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'iterations cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
     return validate_positive_int(
         value, 'iterations', _StatsBlockErrorTag.INVALID_ITERATIONS_TYPE, _StatsBlockErrorTag.INVALID_ITERATIONS_VALUE
     )
@@ -252,14 +295,21 @@ def percentiles(value: Values | Sequence[float | int] | None, measurements_value
     :return Values | None: None, or a validated Values object containing floats.
     :raise SimpleBenchTypeError: If the value is not None or a sequence of floats or ints.
     :raise SimpleBenchValueError: If the value is not a sequence of 101 numbers or not sorted in ascending order.
+    :raise SimpleBenchValueError: If the value is provided when measurements are provided,
+        or if the value is None when measurements is None.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'percentiles cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.PERCENTILES_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'percentiles cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
 
     # If the value is not already a Values object, validate it as a sequence of numbers
     # and convert it to a Values object containing floats
@@ -285,7 +335,8 @@ def percentiles(value: Values | Sequence[float | int] | None, measurements_value
     # Verify that the percentiles are sorted in ascending order
     if Values(sorted(validated_values.as_tuple())) != validated_values.as_tuple():
         raise SimpleBenchValueError(
-            'percentiles must be sorted in ascending order', tag=_StatsBlockErrorTag.INVALID_PERCENTILES_ORDER
+            'percentiles must be sorted in ascending order',
+            tag=_StatsBlockErrorTag.INVALID_PERCENTILES_ORDER
         )
 
     return validated_values
@@ -300,14 +351,21 @@ def relative_stdev(value: float | None, measurements_value: Values | None) -> fl
     :return float | None: The validated float value or None.
     :raise SimpleBenchTypeError: If the value is not a float.
     :raise SimpleBenchValueError: If the value is negative.
+    :raise SimpleBenchValueError: If the value is provided when measurements are provided,
+        or if the value is None when measurements is None.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'relative_stdev cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.RELATIVE_STDEV_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'relative_stdev cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
     return validate_non_negative_float(
         value,
         'relative_stdev',
@@ -359,14 +417,21 @@ def stdev(value: float | None, measurements_value: Values | None) -> float | Non
     :return float | None: The validated float value or None.
     :raise SimpleBenchTypeError: If the value is not a float.
     :raise SimpleBenchValueError: If the value is negative.
+    :raise SimpleBenchValueError: If the value is provided when measurements are provided,
+        or if the value is None when measurements is None.
     """
-    if value is None:
-        return None
-    if measurements_value is not None:
-        raise SimpleBenchTypeError(
+    if value is not None and measurements_value is not None:
+        raise SimpleBenchValueError(
             'stdev cannot be provided when measurements are provided',
             tag=_StatsBlockErrorTag.STDEV_AND_MEASUREMENTS_PROVIDED,
         )
+    if value is None and measurements_value is None:
+        raise SimpleBenchValueError(
+            'stdev cannot be None when measurements is None because statistics cannot be computed',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+        )
+    if value is None:
+        return None
     return validate_non_negative_float(
         value,
         'stdev',
@@ -381,8 +446,10 @@ def unit(value: str) -> str:
     :param str value: The value to validate.
     :return str: The validated string value.
     :raise SimpleBenchTypeError: If the value is not a string.
-    :raise SimpleBenchValueError: If the value is blank.
+    :raise SimpleBenchValueError: If the value is blank or empty.
     """
     return validate_string(
-        value, 'unit', _StatsBlockErrorTag.INVALID_UNIT_TYPE, _StatsBlockErrorTag.INVALID_UNIT_VALUE, allow_blank=False
-    )
+        value, 'unit',
+        _StatsBlockErrorTag.INVALID_UNIT_TYPE,
+        _StatsBlockErrorTag.INVALID_UNIT_VALUE,
+        allow_blank=False, allow_empty=False, strip=True)

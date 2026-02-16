@@ -35,10 +35,11 @@ and can be used for JSON serialization and deserialization.
 
 import statistics
 from collections.abc import Mapping, Sequence
-from copy import copy
 from math import sqrt
 from types import MappingProxyType
 from typing import Any, overload
+
+from matplotlib.category import _log
 
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
@@ -154,7 +155,7 @@ class StatsBlock(BaseStatsBlock):
         unit: str,
         scale: float,
         rounds: int,
-        timer: str | None = None,
+        timer: str = '',
         measurements: Sequence[float] | Values,
     ) -> None:
         """Initialize a StatsBlock by calculating statistics from raw measurements.
@@ -182,7 +183,7 @@ class StatsBlock(BaseStatsBlock):
         scale: float,
         iterations: int,
         rounds: int,
-        timer: str | None = None,
+        timer: str = '',
         mean: float,
         median: float,
         minimum: float,
@@ -221,7 +222,7 @@ class StatsBlock(BaseStatsBlock):
         scale: float,
         iterations: int | None = None,
         rounds: int,
-        timer: str | None = None,
+        timer: str = '',
         mean: float | None = None,
         median: float | None = None,
         minimum: float | None = None,
@@ -276,6 +277,9 @@ class StatsBlock(BaseStatsBlock):
         # measurements are blocked from being set directly as they can be inferred as needed.
         # This prevents setting properties that can be derived from measurements
         # and possibly causing inconsistencies.
+        _log.setLevel('DEBUG')
+        _log.debug("Initializing StatsBlock with name: %s, semantic_type: %s, unit: %s, scale: %s, iterations: %s, rounds: %s, timer: %s, mean: %s, median: %s, minimum: %s, maximum: %s, stdev: %s, relative_stdev: %s, percentiles: %s, measurements provided: %s",
+                   name, semantic_type, unit, scale, iterations, rounds, timer, mean, median, minimum, maximum, stdev, relative_stdev, percentiles, measurements is not None)
         self._measurements: Values | None = _validate.measurements(measurements)
         """The raw measurements for the stats block as a Values instance or None.
 
@@ -295,7 +299,7 @@ class StatsBlock(BaseStatsBlock):
         """The scale factor."""
         self._rounds: int = _validate.rounds(rounds)
         """The number of rounds per iteration."""
-        self._timer: str | None = _validate.timer(timer)
+        self._timer: str = _validate.timer(timer)
         """The timer used for measurements."""
         self._hash_id: str = _validate.hash_id(hash_id)
         """The hash identifier for the stats block."""
@@ -344,7 +348,7 @@ class StatsBlock(BaseStatsBlock):
             data=data,
             allowed_fields=allowed_keys,
             skip_fields={'version', 'type'},
-            optional_fields={'description', 'version', 'type'},
+            optional_fields={'description', 'version', 'type', 'hash_id', 'timer'},
             defaults={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={'percentiles': Values},
@@ -366,13 +370,35 @@ class StatsBlock(BaseStatsBlock):
             self._to_dict_cache = self._to_dict_helper(ImmutableStatsBlockDict)
         return self._to_dict_cache
 
+    def for_json(self) -> ImmutableStatsBlockDict:
+        """Get the JSON-serializable dictionary representation of this StatsBlock.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this StatsBlock.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this StatsBlock.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this StatsBlock.
+        """
+        return self.to_dict().as_json()  # type: ignore
+
     @property
     def hash_id(self) -> str:
         """Get the hash identifier of the stats block.
 
         :return: The hash identifier of the stats block.
         """
-        if self._hash_id is None:
+        if self._hash_id == '':
             self._hash_id = self._hash_id_helper(StatsBlockData)
         return self._hash_id
 
@@ -570,7 +596,7 @@ class StatsBlock(BaseStatsBlock):
             if self.mean == 0.0:
                 self._relative_stdev = 1e9 if self.stdev else 0.0
             else:
-                self._relative_stdev = abs(self.stdev / self.mean * 100)
+                self._relative_stdev = 100 * abs(self.stdev / self.mean)
         return self._relative_stdev
 
     @property
@@ -590,6 +616,14 @@ class StatsBlock(BaseStatsBlock):
         if self._percentiles is None:
             self._percentiles = self._calculate_percentiles()
         return self._percentiles
+
+    @property
+    def timer(self) -> str:
+        """Get the timer used for measurements.
+
+        :return: The timer used for measurements.
+        """
+        return self._timer
 
     def _calculate_percentiles(self) -> Values:
         """Helper to calculate percentiles from the measurements.
@@ -646,61 +680,6 @@ class StatsBlock(BaseStatsBlock):
                 tag=_StatsBlockErrorTag.INVALID_STATS_BLOCK_ARGUMENTS,
             )
 
-    def __eq__(self, other: object) -> bool:
-        """Check equality between two StatsBlock instances.
-
-        .. note::
-            Triggers the lazy eval properties to be evaluated if they have not been already.
-            This ensures that comparisons are made based on the actual values of the properties.
-
-            This can be expensive the first time it is called if many properties
-            need to be calculated from many measurements.
-
-            This is unavoidable since equality must reflect the actual state of the object.
-
-        :param other: The other StatsBlock instance to compare with.
-        :return bool: True if the two StatsBlock instances are equal, False otherwise.
-        """
-        if not isinstance(other, StatsBlock):
-            return NotImplemented
-
-        return hash(self) == hash(other)
-
-    def __hash__(self) -> int:
-        """Compute the hash of the StatsBlock instance.
-
-        The hash is computed from the hash_id.
-
-        .. note::
-            Triggers the lazy eval properties to be evaluated if they have not been already.
-            This ensures that the hash is based on the actual values of the properties.
-
-            This can be expensive the first time it is called if many properties
-            need to be calculated from many measurements. This is unavoidable
-            since the hash must reflect the actual state of the object.
-
-        :return int: The hash value of the StatsBlock instance.
-        """
-        return hash(self.hash_id)
-
-    def __repr__(self) -> str:
-        """Get the string representation of the StatsBlock instance.
-
-        The representation is a string that can be used to recreate the object.
-        It triggers the lazy evaluation of any properties that have not been calculated yet.
-
-        :return str: The string representation of the StatsBlock.
-        """
-        # Get the init parameters excluding 'type' and 'version'
-        init_params = dict(self._data_params())
-        init_params.pop('type', None)
-        init_params.pop('version', None)
-
-        # Build the key-value argument string. Accessing the properties via getattr
-        # will trigger their lazy calculation if they haven't been computed yet.
-        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
-        return f'{self.__class__.__name__}({calling_args})'
-
     def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
         """Prepare the object's state for pickling, prioritizing size.
 
@@ -755,16 +734,42 @@ class StatsBlock(BaseStatsBlock):
             # Use object.__setattr__ to bypass our immutable setters.
             object.__setattr__(self, slot, value)
 
-    def __deepcopy__(self, memo: dict[int, Any]) -> 'StatsBlock':
-        """Return a shallow copy of the instance as an optimized deep copy.
+    def __repr__(self) -> str:
+        """Get the string representation of the StatsBlock instance.
 
-        Since the StatsBlock instance is immutable and composed of immutable components,
-        a shallow copy is functionally identical to a deep copy. This method overrides
-        the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.
-
-        :param memo: The memoization dictionary used by `copy.deepcopy`.
-                     It is not used in this optimized implementation.
-        :return StatsBlock: A new, shallow-copied instance of the StatsBlock.
+        :return: The string representation of the StatsBlock.
         """
-        # because the StatsBlock is immutable, we can return a copy of self
-        return copy(self)
+        # Get the init parameters excluding 'type' and 'version' since they are fixed for this class
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
+
+    def __hash__(self) -> int:
+        """Get the hash of the StatsBlock instance.
+
+        :return: The hash value.
+        """
+        return hash(self.hash_id)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two StatsBlock instances.
+
+        :param other: The other object to compare.
+        :return: True if equal, False otherwise.
+        """
+        if not isinstance(other, StatsBlock):
+            return NotImplemented
+        return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'StatsBlock':
+        """Return the same instance since StatsBlock is immutable."""
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'StatsBlock':
+        """Return the same instance since StatsBlock is immutable."""
+        return self
