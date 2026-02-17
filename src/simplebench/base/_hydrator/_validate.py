@@ -91,6 +91,7 @@ def optional(optional_fields: Iterable[str], allowed_fields: Mapping[str, Any]) 
     :raises: SimpleBenchTypeError if the optional iterable is invalid.
     :raises: SimpleBenchValueError if the optional iterable contains invalid values.
     """
+
     optional_set = set(
         validate_iterable_of_type(
             optional_fields,

@@ -1,12 +1,11 @@
 """Class for JSON raw data block representation."""
 
 from collections.abc import Mapping, Sequence
-from copy import copy
 from types import MappingProxyType
-from typing import Any, cast
+from typing import Any
 
 from simplebench.report.base import BaseRawDataBlock, JSONSchema
-from simplebench.simplebench_types import CoreDataMapping, Values
+from simplebench.simplebench_types import Values
 
 from . import _validate
 from .raw_data_block_dict import ImmutableRawDataBlockDict, RawDataBlockData
@@ -66,11 +65,11 @@ class RawDataBlock(BaseRawDataBlock):
         hash_id: str = '',
         name: str,
         semantic_type: str,
-        description: str,
+        description: str = '',
         unit: str,
         scale: float,
         rounds: int,
-        timer: str | None = None,
+        timer: str = '',
         data: Sequence[int | float] | Values,
     ) -> None:
         """Initialize RawDataBlock class.
@@ -79,12 +78,12 @@ class RawDataBlock(BaseRawDataBlock):
         :param str name: The name string for the raw data block.
         :param str description: The description string for the raw data block.
         :param str semantic_type: The semantic type string for the raw data block.
-        :param (str | None) timer: The timer string or None.
+        :param str timer: The timer string.
         :param str unit: The unit of measurement.
         :param float scale: The scale factor.
         :param int rounds: The number of rounds per data point.
         :param Values data: The raw data values of the block.
-        :param (str | None) timer: The timer string or None.
+        :param str timer: The timer string.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
@@ -100,7 +99,6 @@ class RawDataBlock(BaseRawDataBlock):
         self._scale: float = _validate.scale(scale)
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(RawDataBlockData)
-
         self._to_dict_cache: ImmutableRawDataBlockDict | None = None  # Cache for to_dict output
 
     @classmethod
@@ -146,21 +144,30 @@ class RawDataBlock(BaseRawDataBlock):
         :rtype: ImmutableRawDataBlockDict
         """
         if self._to_dict_cache is None:
-            self._to_dict_cache = cast(ImmutableRawDataBlockDict, CoreDataMapping({
-                'version': self.VERSION,
-                'type': self.TYPE,
-                'hash_id': self.hash_id,
-                'name': self.name,
-                'semantic_type': self.semantic_type,
-                'description': self.description,
-                'unit': self.unit,
-                'scale': self.scale,
-                'rounds': self.rounds,
-                'iterations': self.iterations,
-                'timer': self.timer,
-                'data': self.data,
-            }))
+            self._to_dict_cache = self._to_dict_helper(ImmutableRawDataBlockDict)
         return self._to_dict_cache
+
+    def for_json(self) -> ImmutableRawDataBlockDict:
+        """Get the JSON-serializable dictionary representation of this RawDataBlock.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this RawDataBlock.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this RawDataBlock.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this RawDataBlock.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def hash_id(self) -> str:
@@ -334,15 +341,22 @@ class RawDataBlock(BaseRawDataBlock):
             object.__setattr__(self, slot, value)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'RawDataBlock':
-        """Return a shallow copy of the instance as an optimized deep copy.
+        """Return the RawDataBlock instance itself for deepcopy operations, since it is immutable.
 
-        Since the RawDataBlock instance is immutable and composed of immutable components,
-        a shallow copy is functionally identical to a deep copy. This method overrides
-        the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.
+        This optimization avoids unnecessary copying and preserves memory efficiency.
 
         :param memo: The memoization dictionary used by `copy.deepcopy`.
-                     It is not used in this optimized implementation.
+            It is not used in this optimized implementation.
         :return RawDataBlock: A new, shallow-copied instance of the RawDataBlock.
         """
-        # because the RawDataBlock is immutable, we can return a copy of self
-        return copy(self)
+        return self
+
+    def __copy__(self) -> 'RawDataBlock':
+        """Return the RawDataBlock instance itself for copy operations, since it is immutable.
+
+        This optimization avoids unnecessary copying and preserves memory efficiency.
+
+        :return RawDataBlock: The same instance of the RawDataBlock.
+        """
+        return self
+

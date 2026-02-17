@@ -15,7 +15,7 @@ from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import Any
 
-from simplebench.report.base import BasePythonInfo, JSONSchema
+from simplebench.report.base import BasePythonInfo
 from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
@@ -28,7 +28,7 @@ __all__: list[str] = []
 class PythonInfo(BasePythonInfo):
     """Immutable class representing python execution environment in a report (V1)."""
 
-    SCHEMA: type[JSONSchema] = PythonInfoSchema
+    SCHEMA = PythonInfoSchema
     """The JSON schema class for version 1 reports."""
 
     TYPE: str = SCHEMA.TYPE

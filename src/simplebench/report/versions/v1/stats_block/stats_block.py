@@ -39,8 +39,6 @@ from math import sqrt
 from types import MappingProxyType
 from typing import Any, overload
 
-from matplotlib.category import _log
-
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.report.base import BaseStatsBlock, JSONSchema
@@ -277,9 +275,6 @@ class StatsBlock(BaseStatsBlock):
         # measurements are blocked from being set directly as they can be inferred as needed.
         # This prevents setting properties that can be derived from measurements
         # and possibly causing inconsistencies.
-        _log.setLevel('DEBUG')
-        _log.debug("Initializing StatsBlock with name: %s, semantic_type: %s, unit: %s, scale: %s, iterations: %s, rounds: %s, timer: %s, mean: %s, median: %s, minimum: %s, maximum: %s, stdev: %s, relative_stdev: %s, percentiles: %s, measurements provided: %s",
-                   name, semantic_type, unit, scale, iterations, rounds, timer, mean, median, minimum, maximum, stdev, relative_stdev, percentiles, measurements is not None)
         self._measurements: Values | None = _validate.measurements(measurements)
         """The raw measurements for the stats block as a Values instance or None.
 

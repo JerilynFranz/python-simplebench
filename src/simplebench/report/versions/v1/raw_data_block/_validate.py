@@ -40,6 +40,9 @@ def hash_id(value: str) -> str:
         allow_empty=True,
     )
 
+    if value == '':
+        return value
+
     return validate_string_with_regex(
         value,
         'hash_id',
@@ -82,6 +85,8 @@ def description(value: str) -> str:
         _RawDataBlockErrorTag.INVALID_NAME_TYPE,
         _RawDataBlockErrorTag.INVALID_NAME_VALUE,
         allow_blank=True,
+        allow_empty=True,
+        strip=True,
     )
 
 
@@ -140,25 +145,22 @@ def semantic_type(value: Any) -> str:
     )
 
 
-def timer(value: Any) -> str | None:
+def timer(value: Any) -> str:
     """Validate the timer.
     :param value: The timer string to validate.
-    :return str | None: The validated timer string or None.
-    :raise SimpleBenchTypeError: If the timer is not a string or None.
+    :return str: The validated timer string.
+    :raise SimpleBenchTypeError: If the timer is not a string.
     :raises SimpleBenchValueError: If the timer string is invalid.
     """
-    if value is None:
-        return None
-
-    timer_name: str = validate_string(
+    return validate_string(
         value,
         'timer',
         _RawDataBlockErrorTag.INVALID_TIMER_TYPE,
         _RawDataBlockErrorTag.INVALID_TIMER_VALUE,
-        allow_blank=False,
+        allow_blank=True,
+        allow_empty=True,
+        strip=True,
     )
-
-    return timer_name
 
 
 def unit(value: str) -> str:
@@ -175,4 +177,6 @@ def unit(value: str) -> str:
         _RawDataBlockErrorTag.INVALID_UNIT_TYPE,
         _RawDataBlockErrorTag.INVALID_UNIT_VALUE,
         allow_blank=False,
+        allow_empty=False,
+        strip=True,
     )
