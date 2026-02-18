@@ -111,7 +111,7 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
                 'All keys in CoreDataMapping must be of type str and valid identifiers.',
                 tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_KEY_TYPE)
 
-        if not all(key.isidentifier() for key in __mapping.keys()):
+        if not all(self._valid_key(key) for key in __mapping.keys()):
             raise SimpleBenchTypeError(
                 'All keys in CoreDataMapping must be non-empty, non-blank strings and valid identifiers.',
                 tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_KEY_VALUE)
@@ -169,6 +169,24 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
             raise SimpleBenchKeyError(
                 f'Key {key!r} not found in CoreDataMapping.',
                 tag=_CoreDataErrorTag.CORE_DATA_MAPPING_KEY_ERROR) from exc
+
+    def _valid_key(self, key: str) -> bool:
+        """Check if the key is valid for CoreDataMapping.
+
+        A valid key is a non-empty, non-blank string that is one or more valid Python identifiers separated by '::'
+        (e.g., 'namespace::key').
+
+        :param key: The key to validate.
+        :type key: str
+        :returns: True if the key is valid, False otherwise.
+        :rtype: bool
+        """
+        if not isinstance(key, str):
+            return False
+        if key.strip() == '':
+            return False
+        parts = key.split('::')
+        return all(part.isidentifier() for part in parts)
 
     def keys(self) -> KeysView[str]:
         """Return an iterator over the keys in the CoreDataMapping.
@@ -343,7 +361,7 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
         :raises SimpleBenchTypeError: If the changes argument is not a Mapping
                                       or contains invalid keys or values.
         """
-        if not all(key.isidentifier() for key in changes.keys()):
+        if not all(self._valid_key(key) for key in changes.keys()):
             raise SimpleBenchTypeError(
                 'All keys in CoreDataMapping.replace() must be non-empty, non-blank strings and valid identifiers.',
                 tag=_CoreDataErrorTag.CORE_DATA_MAPPING_INVALID_KEY_VALUE)

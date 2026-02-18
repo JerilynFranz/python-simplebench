@@ -12,6 +12,7 @@ from .memory_info import (
     virtual_memory_object,
     virtual_memory_object_dict,
 )
+from .metrics_object import metrics_object
 from .python_info import (
     no_hash_id_python_info_data,
     python_info,
@@ -44,6 +45,7 @@ __all__: list[str] = [
     "virtual_memory_object",
     "virtual_memory_object_dict",
     "memory_info_data",
+    "metrics_object",
     "python_info",
     "python_info_data",
     "python_info_kwargs",

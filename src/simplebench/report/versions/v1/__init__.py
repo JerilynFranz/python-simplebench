@@ -46,14 +46,14 @@ from .memory_info import (
 from .metrics_object import (
     ImmutableMetricDataTypes,
     ImmutableMetricDictTypes,
-    ImmutableMetricsObjectData,
-    ImmutableMetricsObjectDict,
     MetricDataTypes,
     MetricDictTypes,
     MetricItem,
     MetricsObject,
     MetricsObjectData,
     MetricsObjectDict,
+    ImmutableMetricsObjectData,
+    ImmutableMetricsObjectDict,
 )
 from .python_info import (
     ImmutablePythonInfoData,

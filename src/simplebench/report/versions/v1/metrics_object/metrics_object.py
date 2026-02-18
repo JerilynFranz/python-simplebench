@@ -5,20 +5,16 @@ This class represents Metrics in a report.
 It implements validation and serialization/deserialization methods to and from dictionaries
 for a metrics property object in the following JSON Schema version:
 
-https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/json-report.json
+https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/results-info.json
 
 It is not a standalone JSON schema object, but rather a component of the overall JSON report schema object
 
-It is the base implemention of the JSON a metrics object representation.
-
-This makes the implementations of Metrics backwards compatible with future versions
-of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
-of the results object representation at the time of the V1 schema release."""
+It is the base implemention of a metrics object representation.
+"""
 
 import hashlib
 from collections.abc import Iterable, Iterator, Mapping
-from types import MappingProxyType
-from typing import Any, TypeAlias, cast
+from typing import Any, TypeAlias
 
 from simplebench.exceptions import (
     SimpleBenchAttributeError,
@@ -27,27 +23,24 @@ from simplebench.exceptions import (
     SimpleBenchValueError,
 )
 from simplebench.report._error_tags import _MetricsErrorTag
-from simplebench.simplebench_types import Immutable
+from simplebench.simplebench_types import CoreDataMapping, Immutable
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
 from ..raw_data_block import RawDataBlock
 from ..stats_block import StatsBlock
 from ..value_block import ValueBlock
-from .typeddict_types import ImmutableMetricDictTypes, ImmutableMetricsObjectDict
+from .metrics_object_dict import ImmutableMetricDictTypes
+
+__all__: list[str] = []
 
 MetricItem: TypeAlias = StatsBlock | ValueBlock | RawDataBlock
 """Type alias for the possible types of metric items in the metrics dictionary."""
 
-MetricItemsDict: TypeAlias = MappingProxyType[str, MetricItem]
-"""Type alias for the metrics dictionary type."""
-
 METRIC_ITEM_TYPES: tuple[type, ...] = (StatsBlock, ValueBlock, RawDataBlock)
 """Tuple of the possible types of metric items in the metrics dictionary."""
 
-__all__: list[str] = []
 
-
-class MetricsObject(Mapping, Immutable):
+class MetricsObject(Mapping[str, MetricItem], Immutable):
     """Immutable base class representing the 'metrics' object in a report ResultsInfo object.
 
     This is a dictionary where the keys are metric names (strings) and the values
@@ -58,15 +51,13 @@ class MetricsObject(Mapping, Immutable):
 
     See :class:`~simplebench.report.versions.v1.ResultsInfo` for more details.
 
-    The typing enforcement is done in the __setitem__ method at initialization time.
-
     Currently, the only possible types are
     - :class:`~simplebench.report.versions.v1.StatsBlock`
     - :class:`~simplebench.report.versions.v1.ValueBlock`
     - :class:`~simplebench.report.versions.v1.RawDataBlock`
     """
 
-    __slots__ = ('_metric_items', '_hash', '_hash_id')
+    __slots__ = ('_metric_items', '_hash', '_hash_id', "_dict_cache")
 
     def __init__(self, metrics: Mapping[str, MetricItem]) -> None:
         """Initialize a Metrics v1 instance.
@@ -88,7 +79,8 @@ class MetricsObject(Mapping, Immutable):
                     f'Metric item must be a StatsBlock, ValueBlock, RawDataBlock - got {type(metric_object)}',
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
                 )
-        self._metric_items: MetricItemsDict = cast(MetricItemsDict, MappingProxyType(metrics))
+        # Shallow copy the input dictionary to ensure immutability and prevent external modifications.
+        self._metric_items: dict[str, MetricItem] = dict(metrics)
 
         # Precompute the hash for immutability and fast comparisons
         metric_hashes: list[tuple[str, str]] = []
@@ -96,6 +88,7 @@ class MetricsObject(Mapping, Immutable):
             metric_hashes.append((key, value.hash_id))
         self._hash_id = hashlib.sha256(repr(metric_hashes).encode('utf-8')).hexdigest()
         self._hash = hash(self._hash_id)
+        self._dict_cache: CoreDataMapping | None = None
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Mapping[str, Any]]) -> 'MetricsObject':
@@ -135,19 +128,43 @@ class MetricsObject(Mapping, Immutable):
 
         return cls(metrics)
 
-    def to_dict(self) -> ImmutableMetricsObjectDict:
+    def to_dict(self) -> CoreDataMapping:
         """Convert the Metrics object instance to a dictionary.
 
         The returned dictionary is immutable and suitable for JSON serialization.
         It matches the expected structure of the 'metrics' property in the JSON report schema
-        as mirrored in the :class:`ImmutableMetricsObjectDict` typed dictionary.
+        as mirrored in the :class:`CoreDataMapping` typed dictionary.
 
         :return: Dictionary representation of the Metrics object.
         """
-        result: dict[str, ImmutableMetricDictTypes] = {}
-        for metric_name, metric_item in self._metric_items.items():
-            result[metric_name] = metric_item.to_dict()
-        return cast(ImmutableMetricsObjectDict, result)
+        if self._dict_cache is None:
+            result: dict[str, ImmutableMetricDictTypes] = {}
+            for metric_name, metric_item in self._metric_items.items():
+                result[metric_name] = metric_item.to_dict()
+            self._dict_cache = CoreDataMapping(result)  # type: ignore
+        return self._dict_cache
+
+    def for_json(self) -> CoreDataMapping:
+        """Get the JSON-serializable dictionary representation of this MetricsObject.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this MetricsObject.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this MetricsObject.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this MetricsObject.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def hash_id(self) -> str:
@@ -163,15 +180,7 @@ class MetricsObject(Mapping, Immutable):
     def __setitem__(self, key: str, value: MetricItem) -> None:
         """Set a metric item in the metrics dictionary.
 
-        Disabled after initialization to make the MetricsObject immutable.
-
-        The key must be a valid namespaced identifier and the value must be a MetricItem object
-        (either a StatsBlock or a ValueBlock).
-
-        The identifier must be in the format 'namespace::type_name' where both namespace
-        and type_name start and end with an alphanumeric character and can contain
-        underscores in between. The identifier cannot be blank and MUST
-        have the same value as the `semantic_type` attribute of the metric item value.
+        Disabled because the MetricsObject is immutable. Attempting to set an item will raise an error.
 
         :param key: The metric name.
         :param value: The MetricItem object (either a StatsBlock or a ValueBlock).
@@ -202,12 +211,14 @@ class MetricsObject(Mapping, Immutable):
     def __delitem__(self, key: str) -> None:
         """Delete a metric item from the metrics dictionary.
 
+        Disabled because the MetricsObject is immutable. Attempting to delete an item will raise an error.
+
         :param key: The metric name.
         :raises SimpleBenchAttributeError: Always, since the MetricsObject is immutable.
         """
         raise SimpleBenchAttributeError(
-            f"Metric name '{key}' does not exist in metrics.",
-            tag=_MetricsErrorTag.INVALID_METRIC_NAME_VALUE,
+            f"Metric '{key}' cannot be deleted because the MetricsObject is immutable.",
+            tag=_MetricsErrorTag.METRICS_OBJECT_IMMUTABLE,
             name=key,
             obj=self,
         )
@@ -223,7 +234,10 @@ class MetricsObject(Mapping, Immutable):
         return self.hash_id == other.hash_id
 
     def __hash__(self) -> int:
-        """Get the hash of the MetricsObject based on its hash_id."""
+        """Get the hash of the MetricsObject based on its hash_id.
+
+        :return int: The hash value of the MetricsObject.
+        """
         return self._hash
 
     def __len__(self) -> int:
@@ -241,11 +255,12 @@ class MetricsObject(Mapping, Immutable):
         return iter(self._metric_items)
 
     def __repr__(self) -> str:
-        """Get the string representation of the MetricsObject instance.
+        """Get a string representation of the MetricsObject instance.
 
         :return str: The string representation.
         """
-        entries = dict(self._metric_items)
+        keys = sorted(self._metric_items.keys())
+        entries = {key: self._metric_items[key] for key in keys}
         return f'MetricsObject({entries!r})'
 
     def __or__(self, other: object) -> 'MetricsObject':
@@ -275,22 +290,90 @@ class MetricsObject(Mapping, Immutable):
         return NotImplemented
 
     def __ior__(self, other: object) -> 'MetricsObject':
+        """In-place union of this MetricsObject with another MetricsObject.
+
+        Disabled because the MetricsObject is immutable. Attempting to perform an in-place union will raise an error.
+        """
         return NotImplemented
 
+    def __contains__(self, key: object) -> bool:
+        """Check if a metric name is in the metrics dictionary.
+
+        :param key: The metric name to check for.
+        :return bool: True if the metric name exists, False otherwise.
+        """
+        return key in self._metric_items
+
     def __copy__(self) -> 'MetricsObject':
-        inst = self.__class__.__new__(self.__class__)
-        inst._metric_items = self._metric_items
-        inst._hash = self._hash
-        return inst
+        """Return the same instance since MetricsObject is immutable.
+
+        :return MetricsObject: The same instance of MetricsObject.
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'MetricsObject':
+        """Return a deep copy of the MetricsObject.
+
+        Since MetricsObject is immutable, this method simply returns the same instance.
+
+        :return MetricsObject: The same instance of MetricsObject.
+        """
+        return self
 
     def copy(self) -> 'MetricsObject':
         """Get a copy of the MetricsObject.
 
-        :return MetricsObject: A copy of the MetricsObject instance.
+        It does not create a new instance since MetricsObject is immutable, but it provides
+        a copy method for API consistency.
+
+        :return MetricsObject: The same MetricsObject instance.
         """
-        cls = self.__class__
-        return cls(self._metric_items)
+        return self
 
     @classmethod
     def fromkeys(cls, iterable: Iterable, value: MetricItem | None = None) -> 'MetricsObject':
         return NotImplemented
+
+    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
+        """Prepare the object's state for pickling, prioritizing size.
+
+        This method ensures that the pickled representation of the MetricsObject
+        is compact. It does this by excluding any cached or redundant attributes
+        and only including the essential data needed to reconstruct the object.
+
+        This prioritizes a small pickled size and fast subsequent unpickling over
+        preserving the lazy-evaluation state across serialization.
+
+        :return: A state tuple for pickling.
+        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        excluded_attrs = {'_dict_cache'}
+        slot_values: list[Any] = []
+        for slot in self.__slots__:
+            if slot in excluded_attrs:
+                slot_values.append(None)
+            else:
+                slot_values.append(getattr(self, slot))
+
+        # Build the state tuple for a __slots__ class. The first element is for
+        # __dict__ (None in our case) and the second is a tuple of the slotted values.
+        state = tuple(slot_values)
+        return (None, state)
+
+    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
+        """Restore the object's state from a pickled representation.
+
+        This method is the counterpart to `__getstate__`. It takes the state
+        tuple and repopulates the instance's `__slots__`.
+
+        .. note::
+            This method bypasses `__init__`, which is standard for unpickling.
+
+        :param state: The state tuple from unpickling.
+        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # The first element of the state tuple is for __dict__, which is None for this class.
+        # The second element is a tuple of values for the __slots__.
+        slot_values = state[1]
+        for slot, value in zip(self.__slots__, slot_values, strict=True):
+            self.__setattr__(slot, value)

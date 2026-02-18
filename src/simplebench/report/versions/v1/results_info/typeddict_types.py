@@ -24,7 +24,7 @@ from simplebench.simplebench_types import (
     VariationMarks,
 )
 
-from ..metrics_object import MetricsObjectDict
+from ..metrics_object import MetricsObjectDict, MetricsObjectData
 
 __all__: list[str] = []
 
@@ -40,7 +40,7 @@ class _RequiredResultsInfoData(ReportElementTypedDict, total=True):
     :param Required[str] description: The description of the results.
     :param Required[float] n: The n-complexity value.
     :param Required[VariationMarksType] variation_marks: The variation marks mapping.
-    :param Required[MetricsObjectDict] metrics: The metrics object data.
+    :param Required[MetricsObjectData] metrics: The metrics object data.
     :param Required[extra_info: CoreDataMappingType] extra_info: Additional information.
     """
 
@@ -50,7 +50,7 @@ class _RequiredResultsInfoData(ReportElementTypedDict, total=True):
     description: Required[str]
     n: Required[float]
     variation_marks: Required[VariationMarks]
-    metrics: Required[MetricsObjectDict]
+    metrics: Required[MetricsObjectData]
     extra_info: Required[CoreDataMappingType]
 
 
@@ -63,7 +63,7 @@ class _ImmutableRequiredResultsInfoData(ReportElementTypedDict, total=True):
     :param Required[str] description: The description of the results.
     :param Required[float] n: The n-complexity value.
     :param Required[VariationMarks] variation_marks: The variation marks mapping.
-    :param Required[MetricsObjectDict] metrics: The metrics object data.
+    :param Required[MetricsObjectData] metrics: The metrics object data.
     :param Required[extra_info: CoreDataMapping] extra_info: Additional information.
     """
 
@@ -73,7 +73,7 @@ class _ImmutableRequiredResultsInfoData(ReportElementTypedDict, total=True):
     description: Required[str]
     n: Required[float]
     variation_marks: Required[VariationMarks]
-    metrics: Required[MetricsObjectDict]
+    metrics: Required[MetricsObjectData]
     extra_info: Required[CoreDataMapping]
 
 
