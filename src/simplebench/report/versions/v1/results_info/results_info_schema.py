@@ -64,7 +64,6 @@ class ResultsInfoSchema(JSONSchema):
             'type',
             'version',
             'hash_id',
-            'semantic_type',
             'group',
             'title',
             'description',

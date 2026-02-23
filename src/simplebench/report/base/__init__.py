@@ -18,7 +18,7 @@ from ._system_info import BaseSystemInfo
 from ._value_block import BaseValueBlock
 from ._vcs_info import BaseVCSInfo
 from ._virtual_memory import BaseVirtualMemoryObject
-from .metrics import Metrics
+from ._metrics import Metrics
 from .report import BaseReport
 
 __all__: list[str] = []

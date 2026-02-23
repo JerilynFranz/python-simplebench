@@ -1,23 +1,19 @@
 """Validation functions for ResultsInfo v1."""
-
 import re
+from collections.abc import Mapping
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
-from simplebench.simplebench_types import (
-    CoreDataMappingType,
-    CoreDataMapping,
-    VariationMarks,
-)
+from simplebench.report.versions.v1 import MetricItem, ExtrasObject
+from simplebench.simplebench_types import CoreDataMapping
 from simplebench.validators import (
-    validate_core_data_mapping,
     validate_float,
     validate_string,
     validate_string_with_regex,
     validate_type,
 )
 
-from .. import MetricsObject
+from .. import METRIC_ITEM_TYPES, MetricsObject
 
 __all__: list[str] = []
 
@@ -70,6 +66,8 @@ def group(value: str) -> str:
         _ResultsInfoErrorTag.INVALID_GROUP_TYPE,
         _ResultsInfoErrorTag.INVALID_GROUP_VALUE_EMPTY_STRING,
         allow_empty=False,
+        allow_blank=False,
+        strip=True,
     )
 
 
@@ -87,6 +85,8 @@ def title(value: str) -> str:
         _ResultsInfoErrorTag.INVALID_TITLE_TYPE,
         _ResultsInfoErrorTag.INVALID_TITLE_VALUE_EMPTY_STRING,
         allow_empty=False,
+        allow_blank=False,
+        strip=True,
     )
 
 
@@ -104,6 +104,8 @@ def description(value: str) -> str:
         _ResultsInfoErrorTag.INVALID_DESCRIPTION_TYPE,
         _ResultsInfoErrorTag.INVALID_DESCRIPTION_EMPTY_STRING,
         allow_empty=False,
+        allow_blank=False,
+        strip=True,
     )
 
 
@@ -121,60 +123,64 @@ def n(value: float) -> float:
     return value
 
 
-def variation_marks(value: VariationMarks) -> VariationMarks:
+def variation_marks(value: Mapping[str, str]) -> CoreDataMapping[str]:
     """Validate the variation_marks property.
 
     Validates that `variation_marks` is a mapping of strings to strings
-    and converts it to an immutable MappingProxyType[str, str].
+    and converts it to an CoreDataMapping[str] if it is not already.
 
-    :param VariationMarksType value: The variation_marks values to validate.
-    :return ImmutableVariationMarksType: The validated variation_marks values dictionary
+    :param Mapping[str, str] value: The variation_marks values to validate.
+    :return CoreDataMapping[str]: The validated variation_marks values dictionary
     :raises SimpleBenchTypeError: If variation_marks is not a mapping of strings to strings.
     """
-    validate_type(
-        value,
-        VariationMarks,
-        'variation_marks',
-        _ResultsInfoErrorTag.INVALID_VARIATION_MARKS_TYPE,
-        message=f'variation_marks must be a VariationMarks, got {type(value)}',
-    )
-
-    return value
+    if not isinstance(value, Mapping):
+        raise SimpleBenchTypeError(
+            f'variation_marks must be a mapping of strings to strings, got {type(value)}',
+            tag=_ResultsInfoErrorTag.INVALID_VARIATION_MARKS_TYPE)
+    if not all(isinstance(k, str) and isinstance(v, str) for k, v in value.items()):
+        raise SimpleBenchTypeError(
+            'All keys and values in variation_marks must be strings',
+            tag=_ResultsInfoErrorTag.INVALID_VARIATION_MARKS_CONTENT
+        )
+    return value if isinstance(value, CoreDataMapping) else CoreDataMapping(value)
 
 
 def metrics(value: MetricsObject) -> MetricsObject:
     """Validate the metrics property.
 
-    :param list[dict[str, Any]] value: The metrics value to validate.
-    :return list[dict[str, Any]]: The validated metrics value.
-    :raises SimpleBenchTypeError: If metrics is not a list of dictionaries.
+    :param MetricsObject value: The metrics value to validate.
+    :return MetricsObject: The validated metrics value.
+    :raises SimpleBenchTypeError: If metrics is not a MetricsObject.
     """
     validate_type(
         value,
-        list,
+        MetricsObject,
         'metrics',
         _ResultsInfoErrorTag.INVALID_METRICS_TYPE,
-        message=f'metrics must be a list, got {type(value)}',
+        message=f'metrics must be a MetricsObject, got {type(value)}',
     )
-    if not all(isinstance(item, dict) for item in value):
+    if not all(isinstance(item, METRIC_ITEM_TYPES) for item in value.values()):
+        mismatched_items = [type(item) for item in value.values() if not isinstance(item, METRIC_ITEM_TYPES)]
         raise SimpleBenchTypeError(
-            'All items in metrics must be of type dict', tag=_ResultsInfoErrorTag.INVALID_METRICS_CONTENT
+            f'All items in metrics must be one of {MetricItem!r}. Found mismatched item types: {mismatched_items!r}',
+            tag=_ResultsInfoErrorTag.INVALID_METRICS_CONTENT
         )
 
     return value
 
 
-def extra_info(value: CoreDataMappingType) -> CoreDataMapping:
+def extra_info(value: ExtrasObject) -> ExtrasObject:
     """Validate the extra_info property.
 
-    Validates that `extra_info` is a mapping of strings to CoreDataTypes that
-    has no more than 10 levels of nesting or cyclic references and converts
-    it to a ImmutableCoreDataMappingType.
+    Validates that `extra_info` an ExtrasObject instance, which is a mapping
+    of strings to CoreDataTypes
 
-    :param CoreDataMappingType value: The extra_info value to validate.
-    :return ImmutableCoreDataMappingType: The validated extra_info values dictionary.
-    :raises SimpleBenchTypeError: If extra_info is not a dictionary of strings to :class:`CoreDataTypes`.
-    :raises SimpleBenchValueError: If the nesting depth exceeds 10 levels or if there are cyclic references
-        or has keys that are not strings or are blank or empty strings.
+    :param ExtrasObject value: The extra_info value to validate.
+    :return ExtrasObject: The validated extra_info values dictionary.
+    :raises SimpleBenchTypeError: If extra_info is not an ExtrasObject instance.
     """
-    return validate_core_data_mapping(value, 'extra_info')
+    if not isinstance(value, ExtrasObject):
+        raise SimpleBenchTypeError(
+            f'extra_info must be an ExtrasObject instance, got {type(value)}',
+            tag=_ResultsInfoErrorTag.INVALID_EXTRA_INFO_TYPE)
+    return value

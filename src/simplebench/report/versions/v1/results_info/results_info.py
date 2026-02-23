@@ -3,24 +3,19 @@
 The V1 Results object represents the results metric of a version 1 JSON report.
 
 """
-
-from copy import copy
+from collections.abc import Mapping
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any
 
 from simplebench.report.base import BaseResultsInfo
-from simplebench.simplebench_types import (
-    CoreDataMappingType,
-    CoreDataMapping,
-    VariationMarks,
-)
+from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
 from .results_info_schema import ResultsInfoSchema
 from .typeddict_types import ImmutableResultsInfoDict, ResultsInfoData
 
 if TYPE_CHECKING:
-    from .. import MetricsObject
+    from .. import ExtrasObject, MetricsObject
 
 __all__: list[str] = []
 
@@ -82,9 +77,9 @@ class ResultsInfo(BaseResultsInfo):
         title: str,
         description: str,
         n: float,
-        variation_marks: VariationMarks,
+        variation_marks: Mapping[str, str],
         metrics: 'MetricsObject',
-        extra_info: CoreDataMappingType,
+        extra_info: 'ExtrasObject',
     ) -> None:
         """Initialize a Results v1 instance.
 
@@ -97,17 +92,17 @@ class ResultsInfo(BaseResultsInfo):
         :param str description: The description of the results.
         :param n: The complexity analysis n value.
         :param float n: The n value.
-        :param VariationMarksType variation_marks: The variation marks mapping.
+        :param Mapping[str, str] variation_marks: The variation marks mapping.
         :param MetricsObject metrics: The list of metrics.
-        :param CoreDataMappingType extra_info: Additional information.
+        :param ExtrasObject extra_info: Additional information.
         """
         self._group: str = _validate.group(group)
         self._title: str = _validate.title(title)
         self._description: str = _validate.description(description)
         self._n: float = _validate.n(n)
-        self._variation_marks: VariationMarks = _validate.variation_marks(variation_marks)
+        self._variation_marks: CoreDataMapping[str]= _validate.variation_marks(variation_marks)
         self._metrics: MetricsObject = _validate.metrics(metrics)
-        self._extra_info: CoreDataMapping = _validate.extra_info(extra_info)
+        self._extra_info: ExtrasObject = _validate.extra_info(extra_info)
         self._hash_id: str = _validate.hash_id(hash_id)
         if not self._hash_id:
             self._hash_id = self._hash_id_helper(ResultsInfoData)
@@ -121,17 +116,17 @@ class ResultsInfo(BaseResultsInfo):
         :param ResultsInfoData data: Mapping containing the results-info object data.
         :return ResultsInfo: ResultsInfo instance.
         """
-        from .. import MetricsObject
+        from .. import ExtrasObject, MetricsObject
 
         allowed_keys = cls._data_params()
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
-            skip_fields={'version', 'type'},
-            optional_fields={'version', 'type'},
-            defaults={'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={'metrics': MetricsObject.from_dict},
+            optional_fields={'variation_marks', 'extra_info', 'hash_id'},
+            defaults={'variation_marks': {}, 'extra_info': {}},
+            skip_fields={'type', 'version'},
+            process_as={'metrics': MetricsObject.from_dict,
+                        'extra_info': ExtrasObject.from_dict},
         )
         return cls(**kwargs)
 
@@ -147,6 +142,28 @@ class ResultsInfo(BaseResultsInfo):
         if self._to_dict_cache is None:
             self._to_dict_cache = self._to_dict_helper(ImmutableResultsInfoDict)
         return self._to_dict_cache
+
+    def for_json(self) -> ImmutableResultsInfoDict:
+        """Get the JSON-serializable dictionary representation of this ResultsInfo.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this ResultsInfo.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this ResultsInfo.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this ResultsInfo.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def hash_id(self) -> str:
@@ -179,7 +196,7 @@ class ResultsInfo(BaseResultsInfo):
         return self._n
 
     @property
-    def variation_marks(self) -> VariationMarks:
+    def variation_marks(self) -> CoreDataMapping[str]:
         """Get the variation marks.
 
         :return: The variation marks immutable mapping.
@@ -195,12 +212,12 @@ class ResultsInfo(BaseResultsInfo):
         return self._metrics
 
     @property
-    def extra_info(self) -> CoreDataMapping:
+    def extra_info(self) -> 'ExtrasObject':
         """Get the extra info.
 
         The extra info immutable mapping is returned.
 
-        :return CoreDataMapping: The extra info immutable mapping.
+        :return ExtrasObject: The extra info immutable mapping.
         """
         return self._extra_info
 
@@ -221,8 +238,7 @@ class ResultsInfo(BaseResultsInfo):
         """
         if not isinstance(other, ResultsInfo):
             return NotImplemented
-
-        return hash(self) == hash(other)
+        return self.hash_id == other.hash_id
 
     def __hash__(self) -> int:
         """Compute the hash of the ResultsInfo instance.
@@ -320,16 +336,23 @@ class ResultsInfo(BaseResultsInfo):
             object.__setattr__(self, slot, value)
 
     def __deepcopy__(self, memo: dict[int, Any]) -> 'ResultsInfo':
-        """Return a shallow copy of the instance as an optimized deep copy.
+        """Return the ResultsInfo instance itself for deep copy operations.
 
         Since the ResultsInfo instance is immutable and composed of immutable components,
-        a shallow copy is functionally identical to a deep copy. This method overrides
-        the default `copy.deepcopy` behavior to perform a more efficient shallow copy instead.
+        a deep copy is not materially different from the original instance.
 
         :param memo: The memoization dictionary used by `copy.deepcopy`.
                      It is not used in this optimized implementation.
-        :return ResultsInfo: A new, shallow-copied instance of the ResultsInfo.
+        :return ResultsInfo: The same instance of the ResultsInfo.
         """
-        # because the ResultsInfo is immutable, we can return a copy of self
-        # instead of performing a full deep copy.
-        return copy(self)
+        return self
+
+    def __copy__(self) -> 'ResultsInfo':
+        """Return the ResultsInfo instance itself for shallow copy operations.
+
+        Since the ResultsInfo instance is immutable, a shallow copy is not materially
+        different from the original instance.
+
+        :return ResultsInfo: The same instance of the ResultsInfo.
+        """
+        return self

@@ -13,7 +13,7 @@ version 1: :class:`~simplebench.report.versions.v1.ResultsInfoSchema`.
 
     These types ensure proper validation and serialization of MetricsObject data
 """
-
+from collections.abc import Mapping
 from typing import TypeAlias
 
 from simplebench.simplebench_types import CoreDataMapping
@@ -38,14 +38,14 @@ ImmutableMetricDictTypes: TypeAlias = ImmutableValueBlockDict | ImmutableStatsBl
 MetricDictTypes: TypeAlias = ValueBlockDict | StatsBlockDict | RawDataBlockDict | ImmutableMetricDictTypes
 """Type alias for the possible types of OUTPUT metric items in the metrics dictionary."""
 
-MetricsObjectData: TypeAlias = dict[str, MetricDataTypes]
+MetricsObjectData: TypeAlias = Mapping[str, MetricDataTypes]
 """Type alias for the dictionary type used as INPUT to create a MetricsObject via `from_dict`."""
 
 ImmutableMetricsObjectData: TypeAlias = CoreDataMapping[CoreDataMapping]
 """Type alias for the dictionary type used as INPUT to create a MetricsObject via `from_dict`,
 where all metric items are immutable."""
 
-MetricsObjectDict: TypeAlias = dict[str, MetricDictTypes]
+MetricsObjectDict: TypeAlias = Mapping[str, MetricDictTypes]
 """Type alias for the dictionary type returned by `to_dict` on a MetricsObject, where
 all metric items are of the output dictionary types."""
 

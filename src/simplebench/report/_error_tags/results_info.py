@@ -33,7 +33,7 @@ class _ResultsInfoErrorTag(ErrorTag):
     INVALID_METRICS_TYPE = 'INVALID_METRICS_TYPE'
     """The metrics is not of type list."""
     INVALID_METRICS_CONTENT = 'INVALID_METRICS_CONTENT'
-    """One or more items in metrics are not of type dict."""
+    """One or more items in metrics are not a valid MetricItem type."""
     INVALID_DATA_ARG_EXTRA_KEYS = 'INVALID_DATA_ARG_EXTRA_KEYS'
     """The data argument contains unexpected extra keys."""
     INVALID_DATA_ARG_MISSING_KEYS = 'INVALID_DATA_ARG_MISSING_KEYS'
@@ -84,3 +84,5 @@ class _ResultsInfoErrorTag(ErrorTag):
     """The input data is not of type dictionary."""
     FROM_DICT_INVALID_DATA_KEYS_TYPE = 'FROM_DICT_INVALID_DATA_KEYS_TYPE'
     """One or more keys in the input data are not strings."""
+    INVALID_EXTRA_INFO_TYPE = 'INVALID_EXTRA_INFO_TYPE'
+    """The extra_info is not of type Extras."""
