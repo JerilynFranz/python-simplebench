@@ -20,6 +20,40 @@ from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, Nev
 
 __all__: list[str] = []
 
+
+class PythonInfoEnv(ReportElementTypedDict):
+    python_version: Required[str]
+    implementation: Required[str]
+    implementation_version: Required[str]
+    compiler: Required[str]
+    revision: Required[str]
+    buildno: Required[str]
+    builddate: Required[str]
+    command_line_flags: Required[str]
+    environment_variables: Required[Mapping[str, str]]
+    gc_is_enabled: Required[bool]
+    gc_thresholds: Required[Sequence[int]]
+    thread_switch_interval: Required[float]
+    architecture_bits: Required[str]
+    architecture_linkage: Required[str]
+
+class ImmutablePythonInfoEnv(ReportElementTypedDict):
+    python_version: Required[str]
+    implementation: Required[str]
+    implementation_version: Required[str]
+    compiler: Required[str]
+    revision: Required[str]
+    buildno: Required[str]
+    builddate: Required[str]
+    command_line_flags: Required[str]
+    environment_variables: Required[CoreDataMapping[str]]
+    gc_is_enabled: Required[bool]
+    gc_thresholds: Required[CoreDataSequence[int]]
+    thread_switch_interval: Required[float]
+    architecture_bits: Required[str]
+    architecture_linkage: Required[str]
+    __immutable__: NotRequired[Never]  # Marker to indicate immutability
+
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
 class PythonInfoData(ReportElementTypedDict):
@@ -37,53 +71,20 @@ class PythonInfoData(ReportElementTypedDict):
     :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace
     :type semantic_type: NotRequired[str]
-    :param python_version: The python_version string.
-    :type python_version: Required[str]
-    :param implementation: The implementation string.
-    :type implementation: Required[str]
-    :param implementation_version: The implementation_version string.
-    :type implementation_version: Required[str]
-    :param compiler: The compiler string.
-    :type compiler: Required[str]
-    :param revision: The revision string.
-    :type revision: Required[str]
-    :param buildno: The buildno string.
-    :type buildno: Required[str]
-    :param builddate: The builddate string.
-    :type builddate: Required[str]
-    :param command_line_flags: The command_line_flags string.
-    :type command_line_flags: Required[str]
-    :param environment_variables: The environment_variables mapping.
-    :type environment_variables: Required[Mapping[str, str]]
-    :param gc_is_enabled: Whether garbage collection is enabled.
-    :type gc_is_enabled: Required[bool]
-    :param gc_thresholds: The garbage collection thresholds.
-    :type gc_thresholds: Required[Sequence[int]]
-    :param thread_switch_interval: The thread switch interval in seconds.
-    :type thread_switch_interval: Required[float]
-    :param architecture_bits: The architecture bits string.
-    :type architecture_bits: Required[str]
-    :param architecture_linkage: The architecture linkage string.
-    :type architecture_linkage: Required[str]
+    :param title: A human-readable title for this python information block.
+    :type title: Required[str]
+    :param description: A human-readable description for this python information block.
+    :type description: NotRequired[str]
+    :param data: The raw PythonInfo environment data collected from the system.
+    :type data: Required[PythonInfoEnv]
     """
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
     semantic_type: NotRequired[str]
-    python_version: Required[str]
-    implementation: Required[str]
-    implementation_version: Required[str]
-    compiler: Required[str]
-    revision: Required[str]
-    buildno: Required[str]
-    builddate: Required[str]
-    command_line_flags: Required[str]
-    environment_variables: Required[Mapping[str, str]]
-    gc_is_enabled: Required[bool]
-    gc_thresholds: Required[Sequence[int]]
-    thread_switch_interval: Required[float]
-    architecture_bits: Required[str]
-    architecture_linkage: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
+    data: Required[PythonInfoEnv]
 
 
 class ImmutablePythonInfoData(ReportElementTypedDict):
@@ -107,53 +108,20 @@ class ImmutablePythonInfoData(ReportElementTypedDict):
     :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace
     :type semantic_type: NotRequired[str]
-    :param python_version: The python_version string.
-    :type python_version: Required[str]
-    :param implementation: The implementation string.
-    :type implementation: Required[str]
-    :param implementation_version: The implementation_version string.
-    :type implementation_version: Required[str]
-    :param compiler: The compiler string.
-    :type compiler: Required[str]
-    :param revision: The revision string.
-    :type revision: Required[str]
-    :param buildno: The buildno string.
-    :type buildno: Required[str]
-    :param builddate: The builddate string.
-    :type builddate: Required[str]
-    :param command_line_flags: The command_line_flags string.
-    :type command_line_flags: Required[str]
-    :param environment_variables: The environment_variables mapping.
-    :type environment_variables: Required[CoreDataMapping[str]]
-    :param gc_is_enabled: Whether garbage collection is enabled.
-    :type gc_is_enabled: Required[bool]
-    :param gc_thresholds: The garbage collection thresholds.
-    :type gc_thresholds: Required[CoreDataSequence[int]]
-    :param thread_switch_interval: The thread switch interval in seconds.
-    :type thread_switch_interval: Required[float]
-    :param architecture_bits: The architecture bits string.
-    :type architecture_bits: Required[str]
-    :param architecture_linkage: The architecture linkage string.
-    :type architecture_linkage: Required[str]
+    :param title: A human-readable title for this python information block.
+    :type title: Required[str]
+    :param description: A human-readable description for this python information block.
+    :type description: NotRequired[str]
+    :param data: The raw PythonInfo environment data collected from the system.
+    :type data: Required[ImmutablePythonInfoEnv]
     """
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
     semantic_type: NotRequired[str]
-    python_version: Required[str]
-    implementation: Required[str]
-    implementation_version: Required[str]
-    compiler: Required[str]
-    revision: Required[str]
-    buildno: Required[str]
-    builddate: Required[str]
-    command_line_flags: Required[str]
-    environment_variables: Required[CoreDataMapping[str]]
-    gc_is_enabled: Required[bool]
-    gc_thresholds: Required[CoreDataSequence[int]]
-    thread_switch_interval: Required[float]
-    architecture_bits: Required[str]
-    architecture_linkage: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
+    data: Required[ImmutablePythonInfoEnv]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
@@ -172,53 +140,20 @@ class PythonInfoDict(ReportElementTypedDict):
     :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace
     :type semantic_type: Required[str]
-    :param python_version: The python_version string.
-    :type python_version: Required[str]
-    :param implementation: The implementation string.
-    :type implementation: Required[str]
-    :param implementation_version: The implementation_version string.
-    :type implementation_version: Required[str]
-    :param compiler: The compiler string.
-    :type compiler: Required[str]
-    :param revision: The revision string.
-    :type revision: Required[str]
-    :param buildno: The buildno string.
-    :type buildno: Required[str]
-    :param builddate: The builddate string.
-    :type builddate: Required[str]
-    :param command_line_flags: The command_line_flags string.
-    :type command_line_flags: Required[str]
-    :param environment_variables: The environment_variables mapping.
-    :type environment_variables: Required[Mapping[str, str]]
-    :param gc_is_enabled: Whether garbage collection is enabled.
-    :type gc_is_enabled: Required[bool]
-    :param gc_thresholds: The garbage collection thresholds.
-    :type gc_thresholds: Required[Sequence[int]]
-    :param thread_switch_interval: The thread switch interval in seconds.
-    :type thread_switch_interval: Required[float]
-    :param architecture_bits: The architecture bits string.
-    :type architecture_bits: Required[str]
-    :param architecture_linkage: The architecture linkage string.
-    :type architecture_linkage: Required[str]
+    :param title: A human-readable title for this python information block.
+    :type title: Required[str]
+    :param description: A human-readable description for this python information block.
+    :type description: NotRequired[str]
+    :param data: The raw PythonInfo environment data collected from the system.
+    :type data: Required[PythonInfoEnv]
     """
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
     semantic_type: Required[str]
-    python_version: Required[str]
-    implementation: Required[str]
-    implementation_version: Required[str]
-    compiler: Required[str]
-    revision: Required[str]
-    buildno: Required[str]
-    builddate: Required[str]
-    command_line_flags: Required[str]
-    environment_variables: Required[Mapping[str, str]]
-    gc_is_enabled: Required[bool]
-    gc_thresholds: Required[Sequence[int]]
-    thread_switch_interval: Required[float]
-    architecture_bits: Required[str]
-    architecture_linkage: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
+    data: Required[PythonInfoEnv]
 
 
 class ImmutablePythonInfoDict(ReportElementTypedDict):
@@ -242,51 +177,18 @@ class ImmutablePythonInfoDict(ReportElementTypedDict):
     :param semantic_type: The semantic type of the python information, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace
     :type semantic_type: Required[str]
-    :param python_version: The python_version string.
-    :type python_version: Required[str]
-    :param implementation: The implementation string.
-    :type implementation: Required[str]
-    :param implementation_version: The implementation_version string.
-    :type implementation_version: Required[str]
-    :param compiler: The compiler string.
-    :type compiler: Required[str]
-    :param revision: The revision string.
-    :type revision: Required[str]
-    :param buildno: The buildno string.
-    :type buildno: Required[str]
-    :param builddate: The builddate string.
-    :type builddate: Required[str]
-    :param command_line_flags: The command_line_flags string.
-    :type command_line_flags: Required[str]
-    :param environment_variables: The environment_variables mapping.
-    :type environment_variables: Required[CoreDataMapping[str]]
-    :param gc_is_enabled: Whether garbage collection is enabled.
-    :type gc_is_enabled: Required[bool]
-    :param gc_thresholds: The garbage collection thresholds.
-    :type gc_thresholds: Required[CoreDataSequence[int]]
-    :param thread_switch_interval: The thread switch interval in seconds.
-    :type thread_switch_interval: Required[float]
-    :param architecture_bits: The architecture bits string.
-    :type architecture_bits: Required[str]
-    :param architecture_linkage: The architecture linkage string.
-    :type architecture_linkage: Required[str]
+    :param title: A human-readable title for this python information block.
+    :type title: Required[str]
+    :param description: A human-readable description for this python information block.
+    :type description: NotRequired[str]
+    :param data: The raw PythonInfo environment data collected from the system.
+    :type data: Required[ImmutablePythonInfoEnv]
     """
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
     semantic_type: Required[str]
-    python_version: Required[str]
-    implementation: Required[str]
-    implementation_version: Required[str]
-    compiler: Required[str]
-    revision: Required[str]
-    buildno: Required[str]
-    builddate: Required[str]
-    command_line_flags: Required[str]
-    environment_variables: Required[CoreDataMapping[str]]
-    gc_is_enabled: Required[bool]
-    gc_thresholds: Required[CoreDataSequence[int]]
-    thread_switch_interval: Required[float]
-    architecture_bits: Required[str]
-    architecture_linkage: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
+    data: Required[ImmutablePythonInfoEnv]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

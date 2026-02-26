@@ -151,7 +151,7 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
 
         :return str: The hash ID string.
         """
-        return self._extras.content_hash()
+        return self._extras.hash_id()
 
     def __setitem__(self, key: str, value: Any) -> None:
         """Set a value in the extras dictionary.

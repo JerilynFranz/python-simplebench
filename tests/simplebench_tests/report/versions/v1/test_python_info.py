@@ -12,7 +12,7 @@ from testspec import Assert, PytestAction, TestSpec
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _PythonInfoErrorTag
 from simplebench.report.versions import v1 as report
-from simplebench.simplebench_types import CoreDataMapping, is_immutable
+from simplebench.simplebench_types import CoreDataMapping, is_immutable, CoreDataSequence
 from simplebench.validators import is_typed_dict_mimic
 from simplebench_tests.factories.report import v1 as report_factories
 
@@ -318,7 +318,7 @@ def test_init(testspec: TestSpec) -> None:
         action=report.PythonInfo,
         kwargs=report_factories.python_info_kwargs(),
         validate_attr='gc_thresholds',
-        expected=report_factories.python_info_kwargs()['gc_thresholds']),
+        expected=CoreDataSequence(report_factories.python_info_kwargs()['gc_thresholds'])),
     PytestAction("PROP_013",
         name="thread_switch_interval property set correctly",
         action=report.PythonInfo,

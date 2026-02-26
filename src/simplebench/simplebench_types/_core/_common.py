@@ -46,7 +46,7 @@ def rich_compare_value(value: 'ImmutableCoreDataTypes') -> str:
         if isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
             return repr(value)
         if isinstance(value, (CoreDataSequence, CoreDataMapping, CoreDataSet)):
-            return value.content_hash()
+            return value.hash_id()
 
         raise SimpleBenchAssertionError(
             f'Unsupported CoreData type for rich comparison: {type(value)!r}',

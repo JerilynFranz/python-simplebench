@@ -2,14 +2,12 @@
 
 import re
 from collections.abc import Mapping
-from types import MappingProxyType
 
-from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
-from simplebench.validators import validate_core_data_mapping
+from simplebench.report.versions import v1 as report
 
 from ..environment import Environment
-from .known_environments import known_environments
 
 __all__: list[str] = []
 
@@ -18,7 +16,7 @@ _ENV_NAME_REGEX: re.Pattern[str] = re.compile(r'^[a-zA-Z](?:[a-zA-Z0-9_-]*[a-zA-
 """Regular expression for validating environment names."""
 
 
-def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environment]:
+def environments(value: Mapping[str, object]) -> dict[str, report.Environment]:
     """Validate the execution environments dictionary.
 
     Each key in the dictionary represents an execution environment name,
@@ -30,10 +28,11 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
     converted to a :class:`Environment` if they are provided as a :class:`CoreDataMappingType`
     compatible data structure.
 
-    The returned dictionary of environments is deeply immutable.
+    The returned dictionary of environments is a shallow copy of the input dictionary with all
+    values converted to :class:`Environment` instances as necessary. The input dictionary is not modified.
 
     :param value: The value to validate.
-    :return MappingProxyType[str, Environment]: The validated execution environments dictionary.
+    :return dict[str, report.Environment]: The validated execution environments dictionary.
     :raises SimpleBenchTypeError: If the value is not a valid execution environments dictionary.
     """
     if not isinstance(value, Mapping):
@@ -42,43 +41,23 @@ def environments(value: Mapping[str, object]) -> MappingProxyType[str, Environme
             tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENTS_TYPE,
         )
 
-    validated_envs: dict[str, Environment] = {}
-    n_environments: int = 0
-    known_envs = known_environments()
-    for env_name, env_value in value.items():
+    validated_envs: dict[str, report.Environment] = {}
+    for env_name, env_data in value.items():
         if not isinstance(env_name, str):
             raise SimpleBenchTypeError(
                 f'Environment name {env_name!r} is not a string',
                 tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_NAME_TYPE,
             )
         if not _ENV_NAME_REGEX.match(env_name):
-            raise SimpleBenchValueError(
-                f"Environment name '{env_name}' is invalid; must match regex {_ENV_NAME_REGEX.pattern!r}",
+            raise SimpleBenchTypeError(
+                f'Environment name {env_name!r} is not valid. It must match the regex '
+                f'{_ENV_NAME_REGEX.pattern!r}',
                 tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_NAME_VALUE,
             )
-        if env_name in known_envs:
-            if not isinstance(env_value, Environment):  # Verify known envs are Environment instances
-                raise SimpleBenchTypeError(
-                    f"Known environment '{env_name}' must be of type Environment",
-                    tag=_ExecutionEnvironmentErrorTag.BAD_KNOWN_ENVIRONMENT_TYPE,
-                )
-            expected_type = known_envs[env_name]
-            if not isinstance(env_value, expected_type):
-                raise SimpleBenchTypeError(
-                    f"Environment '{env_name}' must be of type {expected_type.__name__}",
-                    tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_TYPE,
-                )
-            validated_envs[env_name] = env_value
-        elif isinstance(env_value, Environment):
-            validated_envs[env_name] = env_value
-        else:
-            env_data = validate_core_data_mapping(env_value, f"Environment '{env_name}'")
-            validated_envs[env_name] = Environment(env_data)
-
-        n_environments += 1
-    if n_environments == 0:
-        raise SimpleBenchValueError(
-            'At least one execution environment must be provided',
-            tag=_ExecutionEnvironmentErrorTag.NO_ENVIRONMENTS_PROVIDED,
-        )
-    return MappingProxyType(validated_envs)
+        if not isinstance(env_data, Environment):
+           raise SimpleBenchTypeError(
+                f'Data for environment {env_name!r} is not '
+                f'an Environment instance: {type(env_data).__name__!r}',
+                tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_VALUE_TYPE)
+        validated_envs[env_name] = env_data
+    return validated_envs

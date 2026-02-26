@@ -56,14 +56,33 @@ class EnvironmentSchema(JSONSchema):
                     'simplebench::python',
                 ],
             },
+            'title': {
+                'title': 'Title',
+                'description': 'A human-readable title for this environment.',
+                'type': 'string',
+                'pattern': r'^\S.*$',  # Non-empty string that does not start with whitespace
+            },
+            'description': {
+                'title': 'Description',
+                'description': 'A human-readable description for this environment.',
+                'type': 'string',
+                'default': '',
+            },
+            'data': {
+                'description': 'The raw Environment data collected from the system.',
+                'type': 'object',
+                'title': 'Environment data',
+                'propertyNames': {'pattern': r'^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$'},
+                'additionalProperties': {
+                    'oneOf': [
+                        {'$ref': '#/$defs/data'},
+                        {'type': ['string', 'number', 'boolean', 'null', 'array']},
+                    ]
+                }
+            }
         },
-        'required': ['hash_id', 'type', 'version', 'semantic_type'],
-        'additionalProperties': {
-            'oneOf': [
-                {'$ref': '#/$defs/data'},
-                {'type': ['string', 'number', 'boolean', 'null', 'array']},
-            ],
-        },
+        'required': ['hash_id', 'type', 'version', 'semantic_type', 'title', 'data'],
+        'additionalProperties': False,
         '$defs': {
             'data': {
                 'type': 'object',
@@ -76,7 +95,7 @@ class EnvironmentSchema(JSONSchema):
                     ]
                 },
             },
-        },
+        }
     }
     """The JSON schema as a dictionary."""
 

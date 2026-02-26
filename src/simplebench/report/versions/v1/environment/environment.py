@@ -13,24 +13,24 @@ designed to allow importing and storing arbitrary environment data
 that does not match other specific environment types.
 """
 
-import base64
 import hashlib
-from collections.abc import Mapping, Sequence, Set
+from collections.abc import Mapping
+from types import MappingProxyType
 from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.report._error_tags import _GenericEnvironmentErrorTag
 from simplebench.report import base
-from simplebench.simplebench_types import CORE_DATA_PRIMITIVE_TYPES_TUPLE, CoreDataMapping, CoreDataTypes
-from simplebench.validators import validate_core_data_mapping
+from simplebench.report._error_tags import _GenericEnvironmentErrorTag
+from simplebench.simplebench_types import CoreDataMapping, CoreDataTypes
 
 from . import _validate
 from .environment_schema import EnvironmentSchema
+from .typeddict_types import EnvironmentData, ImmutableEnvironmentData
 
 __all__: list[str] = []
 
 
-class Environment(base.Environment, Mapping[str, CoreDataTypes]):
+class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
     """Immutable class representing a benchmark execution environment in a report (V1).
 
     It provides methods to convert to and from dictionary representations and
@@ -52,7 +52,30 @@ class Environment(base.Environment, Mapping[str, CoreDataTypes]):
     ID: str = SCHEMA.ID
     """The JSON Environment identifier property value for version 1 reports."""
 
-    def __init__(self, data: Mapping[str, Any]) -> None:
+    _init_params_cache: MappingProxyType[str, Any] | None = None
+    """Cache for the constructor parameters of the schema data class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        if not cls._init_params_cache:
+            params = cls.init_params(EnvironmentData)
+            cls._init_params_cache = MappingProxyType(params)
+        return cls._init_params_cache
+
+    def __init__(self,
+                 data: Mapping[str, Any],
+                 title: str,
+                 description: str = '',
+                 semantic_type: str = 'simplebench::generic',
+                 hash_id: str = '') -> None:
         """Initialize an Environment instance.
 
         If a 'hash_id' key is present in the input data mapping, its value is validated
@@ -65,102 +88,41 @@ class Environment(base.Environment, Mapping[str, CoreDataTypes]):
         :param data: Keyword arguments representing environment properties.
         Each key-value pair corresponds to a property name and its value.
         The values must be of core data types.
+        :type data: Mapping[str, Any]
+        :param title: A human-readable title for this environment.
+        :type title: str
+        :param description: A human-readable description for this environment.
+        :type description: str
+        :param semantic_type: The semantic type of the environment, formatted as 'namespace::type_name'.
+            This dictates how the data should be interpreted. Users can define custom types using their own namespace.
+        :type semantic_type: str
+        :param hash_id: The hash ID of the environment, a 64-character hexadecimal string.
+        :type hash_id: str
         """
         if not isinstance(data, Mapping):
             raise SimpleBenchTypeError('data must be a mapping type', tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
 
-        local_data = dict(data)  # Make a shallow local copy to avoid modifying the input
-        self._hash_id: str = ''
-        if 'hash_id' in local_data:
-            self._hash_id = _validate.hash_id(local_data.pop('hash_id'))
-        self._from_dict: CoreDataMapping = _validate.data_as_core_data_mapping(local_data, 'data')
-        validated_data = validate_core_data_mapping(local_data, 'data')
-        thawed_data = dict(validated_data)  # Make a mutable copy for internal use
-        self._hash_id = self._generate_hash_id(thawed_data) if self._hash_id == '' else self._hash_id
-        thawed_data['hash_id'] = self._hash_id
-        if 'type' not in thawed_data:
-            thawed_data['type'] = self.TYPE
-        if 'version' not in thawed_data:
-            thawed_data['version'] = self.VERSION
-        validated_data = CoreDataMapping(thawed_data)
-        self._from_dict = validated_data
+        self._title: str = _validate.title(title)
+        self._description: str = _validate.description(description)
+        self._semantic_type: str = _validate.semantic_type(semantic_type)
+        self._data: CoreDataMapping = _validate.data_as_core_data_mapping(data, 'data')
+        self._hash_id: str = _validate.hash_id(hash_id) or self._generate_hash_id()
 
-    def _generate_hash_id(self, data: Any) -> str:
+    def _generate_hash_id(self) -> str:
         """Helper method to compute the hash_id property from the data mapping.
 
-        :param data: The data mapping to compute the hash_id from.
         :return: The hash_id string.
         """
-        hash_items: list[bytes] = []
+        hash_items: list[str] = [
+            f'type:{self.TYPE}',
+            f'version:{self.VERSION}',
+            f'semantic_type:{self._semantic_type}',
+            f'title:{self._title}',
+            f'description:{self._description}',
+            f'data:{self._data.hash_id()}'
+        ]
 
-        # Handle core data primitive types directly - strings, bytes, numbers, booleans, None,
-        if isinstance(data, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-            encoded = base64.b64encode(str(data).encode('utf-8'))
-            return hashlib.sha256(encoded).hexdigest()
-
-        elif isinstance(data, Mapping):
-            for key in sorted(data.keys()):
-                value = data[key]
-                if isinstance(value, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-                    key_enc = base64.b64encode(str(key).encode('utf-8'))
-                    val_enc = base64.b64encode(str(value).encode('utf-8'))
-                    hash_items.append(key_enc + b':' + val_enc)
-
-                elif isinstance(value, (Sequence, Mapping, Set)):
-                    subhash = self._generate_hash_id(value)
-                    key_enc = base64.b64encode(str(key).encode('utf-8'))
-                    hash_items.append(key_enc + b':' + subhash.encode('utf-8'))
-
-                else:
-                    raise SimpleBenchTypeError(
-                        f'Unsupported data type for hash_id generation: {type(value)}',
-                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
-                    )
-
-        elif isinstance(data, Set):
-            sorted_data = data
-            try:
-                sorted_data = sorted(data)  # type: ignore
-            except TypeError:
-                # If the set contains unorderable types, we fall back to unsorted processing
-                pass
-            for item in sorted_data:
-                if isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-                    item_enc = base64.b64encode(str(item).encode('utf-8'))
-                    hash_items.append(item_enc)
-
-                elif isinstance(item, (Sequence, Mapping, Set)):
-                    subhash = self._generate_hash_id(item)
-                    hash_items.append(subhash.encode('utf-8'))
-
-                else:
-                    raise SimpleBenchTypeError(
-                        f'Unsupported data type for hash_id generation: {type(item)}',
-                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
-                    )
-
-        elif isinstance(data, Sequence) and not isinstance(data, (str, bytes, bytearray)):
-            for item in data:
-                if isinstance(item, CORE_DATA_PRIMITIVE_TYPES_TUPLE):
-                    item_enc = base64.b64encode(str(item).encode('utf-8'))
-                    hash_items.append(item_enc)
-
-                elif isinstance(item, (Sequence, Mapping, Set)):
-                    subhash = self._generate_hash_id(item)
-                    hash_items.append(subhash.encode('utf-8'))
-
-                else:
-                    raise SimpleBenchTypeError(
-                        f'Unsupported data type for hash_id generation: {type(item)}',
-                        tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
-                    )
-        else:
-            raise SimpleBenchTypeError(
-                f'Unsupported data type for hash_id generation: {type(data)}',
-                tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE,
-            )
-
-        hash_input = b'\x00'.join(hash_items)
+        hash_input = b'\x00'.join(value.encode('utf-8') for value in hash_items)
         return hashlib.sha256(hash_input).hexdigest()
 
     @classmethod
@@ -178,9 +140,20 @@ class Environment(base.Environment, Mapping[str, CoreDataTypes]):
         :param data: The dictionary containing the Environment data.
         :return: An Environment instance.
         """
-        return cls(data)
+        if not isinstance(data, Mapping):
+            raise SimpleBenchTypeError('data must be a mapping type',
+                                       tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+        if 'title' not in data:
+            raise SimpleBenchTypeError('title is a required property for Environment',
+                                       tag=_GenericEnvironmentErrorTag.INVALID_TITLE_VALUE)
+        data_copy = dict(data)
+        title = data_copy.pop('title')
+        description = data_copy.pop('description', '')
+        semantic_type = data_copy.get('semantic_type', 'generic_environment')
+        hash_id = data_copy.get('hash_id', '')
+        return cls(data=data_copy, title=title, description=description, semantic_type=semantic_type, hash_id=hash_id)
 
-    def to_dict(self) -> CoreDataMapping:
+    def to_dict(self) -> ImmutableEnvironmentData:
         """Returns the Environment as an immutable MappingProxyType dictionary suitable for JSON serialization.
 
         The returned instance is of type :class:`CoreDataMapping` to ensure immutability
@@ -189,9 +162,16 @@ class Environment(base.Environment, Mapping[str, CoreDataTypes]):
         The exact same instance is returned on subsequent calls to ensure consistency
         and this is true even in multi-threaded scenarios.
 
-        :return CoreDataMapping: A dictionary representation of the Environment.
+        :return ImmutableEnvironmentData: A dictionary representation of the Environment.
         """
-        return self._from_dict
+        return CoreDataMapping({
+            'type': self.TYPE,
+            'version': self.VERSION,
+            'hash_id': self.hash_id,
+            'semantic_type': self.semantic_type,
+            'title': self.title,
+            'description': self.description,
+            'data': self.data})  # type: ignore[return-value]
 
     @property
     def hash_id(self) -> str:
@@ -202,20 +182,65 @@ class Environment(base.Environment, Mapping[str, CoreDataTypes]):
         """
         return self._hash_id
 
+    @property
+    def semantic_type(self) -> str:
+        """Get the semantic_type property.
+
+        :return: The semantic_type string.
+        :raises SimpleBenchAttributeError: If any required property is missing.
+        """
+        return self._semantic_type
+
+    @property
+    def title(self) -> str:
+        """Get the title property.
+
+        :return: The title string.
+        :raises SimpleBenchAttributeError: If any required property is missing.
+        """
+        return self._title
+
+    @property
+    def description(self) -> str:
+        """Get the description property.
+
+        :return: The description string.
+        :raises SimpleBenchAttributeError: If any required property is missing.
+        """
+        return self._description
+
+    @property
+    def data(self) -> CoreDataMapping:
+        """Get the data property.
+
+        :return: The data mapping.
+        :raises SimpleBenchAttributeError: If any required property is missing.
+        """
+        return self._data
+
     def __getitem__(self, key: str) -> CoreDataTypes:
-        return self._from_dict[key]
+        return self.data[key]
 
     def __iter__(self) -> Any:
-        return iter(self._from_dict)
+        return iter(self.data)
 
     def __len__(self) -> int:
-        return len(self._from_dict)
+        return len(self.data)
 
     def __contains__(self, key: object) -> bool:
-        return key in self._from_dict
+        return key in self.data
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({dict(self._from_dict)!r})'
+        """Get the string representation of the PythonInfo instance.
+
+        :return: The string representation of the PythonInfo.
+        """
+        # Get the init parameters excluding 'type', 'version' since they are fixed for this class
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Environment):

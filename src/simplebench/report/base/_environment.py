@@ -10,7 +10,7 @@ from ._report_element import ReportElement
 __all__: list[str] = []
 
 
-class Environment(ReportElement, ABC):
+class BaseEnvironment(ReportElement, ABC):
     """Base class for execution environments in reports.
 
     It marks the class as an execution environment for use in
@@ -18,7 +18,7 @@ class Environment(ReportElement, ABC):
     """
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, CoreDataTypes]) -> 'Environment':
+    def from_dict(cls, data: Mapping[str, CoreDataTypes]) -> 'BaseEnvironment':
         """Create an Environment instance from a dictionary.
 
         :param data: The dictionary containing environment information.

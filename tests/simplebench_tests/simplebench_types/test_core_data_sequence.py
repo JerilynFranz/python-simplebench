@@ -486,27 +486,27 @@ def test_hash(testspec: TestSpec) -> None:
 
 
 @pytest.mark.parametrize('testspec', [
-        PytestAction('CONTENT_HASH_001',
+        PytestAction('HASH_ID_001',
             name='Test content hashing of CoreDataSequence',
-            action=CoreDataSequence([1, 2, 3]).content_hash,
+            action=CoreDataSequence([1, 2, 3]).hash_id,
             args=[],
             assertion=Assert.ISINSTANCE,
             expected=str),
-        PytestAction('CONTENT_HASH_002',
+        PytestAction('HASH_ID_002',
             name='Test content hashing of different CoreDataSequence instances with same content',
-            action=CoreDataSequence([1, 2, 3]).content_hash,
+            action=CoreDataSequence([1, 2, 3]).hash_id,
             args=[],
             assertion=Assert.EQUAL,
-            expected=CoreDataSequence([1, 2, 3]).content_hash()),
-        PytestAction('CONTENT_HASH_003',
+            expected=CoreDataSequence([1, 2, 3]).hash_id()),
+        PytestAction('HASH_ID_003',
             name='Test content hashing of CoreDataSequence different content',
-            action=CoreDataSequence([1, 2, 3]).content_hash,
+            action=CoreDataSequence([1, 2, 3]).hash_id,
             args=[],
             assertion=Assert.NOT_EQUAL,
-            expected=CoreDataSequence([1, 2, [3]]).content_hash()),
+            expected=CoreDataSequence([1, 2, [3]]).hash_id()),
     ]
 )
-def test_content_hash(testspec: TestSpec) -> None:
+def test_hash_id(testspec: TestSpec) -> None:
     """Test content hashing of CoreDataSequence."""
     testspec.run()
 

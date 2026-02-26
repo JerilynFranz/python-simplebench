@@ -14,8 +14,14 @@ of V1 report data.
 # ruff: noqa: F401
 
 from .cpu_info import CPUInfo, CPUInfoData, CPUInfoDict, CPUInfoSchema, ImmutableCPUInfoData, ImmutableCPUInfoDict
-from .environment import Environment, EnvironmentSchema
-from .extras_object import ExtrasObject
+from .environment import (
+    Environment,
+    EnvironmentData,
+    EnvironmentDict,
+    EnvironmentSchema,
+    ImmutableEnvironmentData,
+    ImmutableEnvironmentDict,
+)
 from .execution_environment import (
     ExecutionEnvironment,
     ExecutionEnvironmentData,
@@ -23,6 +29,7 @@ from .execution_environment import (
     ImmutableExecutionEnvironmentData,
     ImmutableExecutionEnvironmentDict,
 )
+from .extras_object import ExtrasObject
 from .machine_info import (
     ImmutableMachineInfoData,
     ImmutableMachineInfoDict,
@@ -61,9 +68,11 @@ from .metrics_object import (
 from .python_info import (
     ImmutablePythonInfoData,
     ImmutablePythonInfoDict,
+    ImmutablePythonInfoEnv,
     PythonInfo,
     PythonInfoData,
     PythonInfoDict,
+    PythonInfoEnv,
     PythonInfoSchema,
 )
 from .raw_data_block import (

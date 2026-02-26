@@ -16,3 +16,18 @@ class _GenericEnvironmentErrorTag(ErrorTag):
 
     INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'
     """The provided hash_id is not a valid 64-character hexadecimal string."""
+
+    INVALID_TITLE_TYPE = 'INVALID_TITLE_TYPE'
+    """The provided title is not a string."""
+
+    INVALID_TITLE_VALUE = 'INVALID_TITLE_VALUE'
+    """The provided title is an empty string."""
+
+    INVALID_DESCRIPTION = 'INVALID_DESCRIPTION'
+    """The provided description is not a string."""
+
+    INVALID_SEMANTIC_TYPE_TYPE = 'INVALID_SEMANTIC_TYPE_TYPE'
+    """The provided semantic_type is not a string."""
+
+    INVALID_SEMANTIC_TYPE_VALUE = 'INVALID_SEMANTIC_TYPE_VALUE'
+    """The provided semantic_type does not match the required pattern 'namespace::type_name'."""

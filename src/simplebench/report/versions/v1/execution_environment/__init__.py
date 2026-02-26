@@ -2,7 +2,6 @@
 # ruff: noqa: F401
 
 from .execution_environment import ExecutionEnvironment
-from .known_environments import known_environments
 from .typeddict_types import (
     ExecutionEnvironmentData,
     ExecutionEnvironmentDict,

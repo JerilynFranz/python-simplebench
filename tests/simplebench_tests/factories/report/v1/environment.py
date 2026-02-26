@@ -6,27 +6,26 @@ from simplebench_tests.kwargs.report import v1 as report_kwargs
 
 
 @cache
-def generic_environment_kwargs() -> report_kwargs.EnvironmentKWArgs:
+def environment_kwargs() -> report_kwargs.EnvironmentKWArgs:
     """EnvironmentKWArgs factory for testing purposes.
 
     :return: An EnvironmentKWArgs instance with dummy data.
     :rtype: report_kwargs.EnvironmentKWArgs
     """
-    return report_kwargs.EnvironmentKWArgs(**generic_environment_data())
+    return report_kwargs.EnvironmentKWArgs(**environment_data())  # type: ignore
 
 
-def generic_environment_data() -> report.EnvironmentData:
+def environment_data() -> report.EnvironmentData:
     """EnvironmentData factory for testing purposes.
 
     :return: An EnvironmentData instance with dummy data.
     :rtype: report.EnvironmentData
     """
     return report.EnvironmentData(
-        total=1024,
-        used=512,
-        free=512,
-        percent=50.0,
-        swap_in=100,
-        swap_out=100,
-    )
-
+        hash_id='f' * 64,
+        semantic_type='simplebench::generic',
+        title='Generic Environment',
+        description='A generic environment for testing purposes.',
+        data={
+           'example_key': 'example_value',
+            })

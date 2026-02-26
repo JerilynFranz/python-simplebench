@@ -113,7 +113,7 @@ class CPUInfo(BaseCPUInfo):
         :return str: The hash_id string.
         """
         if self._hash_id == '':
-            self._hash_id = self._data.content_hash()  # type: ignore[attr-defined]
+            self._hash_id = self._data.hash_id()  # type: ignore[attr-defined]
         return self._hash_id
 
     def for_json(self) -> CPUInfoDict:

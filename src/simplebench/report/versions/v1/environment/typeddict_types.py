@@ -25,6 +25,10 @@ class EnvironmentData(ReportElementTypedDict):
     :param semantic_type: The semantic type of the environment, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace.
     :type semantic_type: Required[str]
+    :param title: A human-readable title for this environment.
+    :type title: Required[str]
+    :param description: A human-readable description for this environment.
+    :type description: NotRequired[str]
     :param data: The raw Environment data collected from the system.
     :type data: Required[Mapping[str, CoreDataTypes]]
     """
@@ -32,6 +36,8 @@ class EnvironmentData(ReportElementTypedDict):
     type: NotRequired[str]
     hash_id: NotRequired[str]
     semantic_type: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
     data: Required[Mapping[str, CoreDataTypes]]
 
 
@@ -52,6 +58,10 @@ class ImmutableEnvironmentData(ReportElementTypedDict):
     :param semantic_type: The semantic type of the environment, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace.
     :type semantic_type: Required[str]
+    :param title: A human-readable title for this environment.
+    :type title: Required[str]
+    :param description: A human-readable description for this environment.
+    :type description: NotRequired[str]
     :param data: The raw Environment data collected from the system.
     :type data: Required[CoreDataMapping]
     """
@@ -59,6 +69,8 @@ class ImmutableEnvironmentData(ReportElementTypedDict):
     type: NotRequired[str]
     hash_id: NotRequired[str]
     semantic_type: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
     data: Required[CoreDataMapping]
     __immutable__: NotRequired[Never]  # Class marker to indicate immutability
 
@@ -82,6 +94,10 @@ class EnvironmentDict(ReportElementTypedDict):
     :param semantic_type: The semantic type of the environment, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace.
     :type semantic_type: Required[str]
+    :param title: A human-readable title for this environment.
+    :type title: Required[str]
+    :param description: A human-readable description for this environment.
+    :type description: NotRequired[str]
     :param data: The raw Environment data collected from the system.
     :type data: Required[Mapping[str, CoreDataTypes]]
     """
@@ -89,6 +105,8 @@ class EnvironmentDict(ReportElementTypedDict):
     type: Required[str]
     hash_id: Required[str]
     semantic_type: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
     data: Required[Mapping[str, CoreDataTypes]]
 
 
@@ -110,6 +128,10 @@ class ImmutableEnvironmentDict(ReportElementTypedDict):
     :param semantic_type: The semantic type of the environment, formatted as 'namespace::type_name'.
         This dictates how the data should be interpreted. Users can define custom types using their own namespace.
     :type semantic_type: Required[str]
+    :param title: A human-readable title for this environment.
+    :type title: Required[str]
+    :param description: A human-readable description for this environment.
+    :type description: NotRequired[str]
     :param data: The raw Environment data collected from the system.
     :type data: Required[CoreDataMapping]
     """
@@ -117,5 +139,7 @@ class ImmutableEnvironmentDict(ReportElementTypedDict):
     type: Required[str]
     hash_id: Required[str]
     semantic_type: Required[str]
+    title: Required[str]
+    description: NotRequired[str]
     data: Required[CoreDataMapping]
     __immutable__: NotRequired[Never]  # Class marker to indicate immutability

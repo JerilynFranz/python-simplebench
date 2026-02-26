@@ -13,7 +13,7 @@ from testspec import Assert, PytestAction, TestSpec
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
 from simplebench.report.versions import v1 as report
-from simplebench.report.versions.v1 import (  # noqa: F401
+from simplebench.report.versions.v1 import (  # noqa: F401 -- imported for repr eval test
     ExtrasObject,
     MetricsObject,
     RawDataBlock,

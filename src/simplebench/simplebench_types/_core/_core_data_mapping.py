@@ -43,6 +43,7 @@ import simplejson
 from typeguard import TypeCheckError, check_type
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
+from simplebench.protocols import Thawable
 
 from . import _common
 from ._error_tags import _CoreDataErrorTag
@@ -53,7 +54,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='CoreDataTypes')
 _T = TypeVar('_T')  # <-- Add this line for the default value in get()
 
-class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
+class CoreDataMapping(Mapping[str, T], Hashable, Thawable, Generic[T]):
     """Deep-immutable Mapping container for CoreData types used in SimpleBench.
 
     This represents a mapping where all keys are strings and all values are of
@@ -74,7 +75,7 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
     """Marker for generic type parameter for runtime checking purposes by CoreDataMapping."""
 
     __immutable__: bool = True  # Marker for Immutable protocol
-    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache', '__weakref__')
+    __slots__ = ('_version', '_data', '_hash_cache', '_hash_id_cache', '__weakref__')
 
     def __init__(self, __mapping: Mapping[str, 'CoreDataTypes'] | None = None) -> None:
         """Initialize the CoreDataMapping.
@@ -94,7 +95,7 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
 
         self._version: int = 1
         self._hash_cache: int | None = None
-        self._content_hash_cache: str | None = None
+        self._hash_id_cache: str | None = None
 
         self._data: dict[str, T]
         if __mapping is None:
@@ -301,7 +302,7 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
             return False
         return self._data == other._data
 
-    def content_hash(self) -> str:
+    def hash_id(self) -> str:
         """Return a SHA256 hash of the CoreDataMapping content.
 
         :returns: The SHA256 hash of the sequence content as a hexadecimal string.
@@ -309,17 +310,17 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
         """
         from ._core_data_sequence import CoreDataSequence
         from ._core_data_set import CoreDataSet
-        if self._content_hash_cache is None:
+        if self._hash_id_cache is None:
             hasher = hashlib.sha256()
             for key in sorted(self._data.keys()):
                 hasher.update(key.encode('utf-8'))
                 value = self._data[key]
                 if isinstance(value, (CoreDataMapping, CoreDataSequence, CoreDataSet)):
-                    hasher.update(value.content_hash().encode('utf-8'))
+                    hasher.update(value.hash_id().encode('utf-8'))
                 else:
                     hasher.update(repr(value).encode('utf-8'))
-            self._content_hash_cache = hasher.hexdigest()
-        return self._content_hash_cache
+            self._hash_id_cache = hasher.hexdigest()
+        return self._hash_id_cache
 
     def __hash__(self) -> int:
         """Return the hash of the CoreDataMapping.
@@ -328,7 +329,7 @@ class CoreDataMapping(Mapping[str, T], Hashable, Generic[T]):
         :rtype: int
         """
         if self._hash_cache is None:
-            self._hash_cache = hash(self.content_hash())
+            self._hash_cache = hash(self.hash_id())
         return self._hash_cache
 
     def replace(self, **changes: 'CoreDataTypes') -> 'CoreDataMapping':

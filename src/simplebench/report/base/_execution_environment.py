@@ -17,7 +17,6 @@ of the base EnvironmentInfo representation at the time of the V1 schema release.
 
 from abc import ABC
 
-from ._environment import Environment
 from ._report_element import ReportElement
 
 __all__: list[str] = []
@@ -25,9 +24,3 @@ __all__: list[str] = []
 
 class BaseExecutionEnvironment(ReportElement, ABC):
     """Abstract class representing the execution_environment property for a machine-info object in a JSON report."""
-
-    ALLOWED_ENVIRONMENTS: dict[str, type[Environment]] = {}
-    """Dictionary mapping known execution environment types to their corresponding Environment subclasses.
-
-    This must be overridden by subclasses to include the allowed execution environment types.
-    """

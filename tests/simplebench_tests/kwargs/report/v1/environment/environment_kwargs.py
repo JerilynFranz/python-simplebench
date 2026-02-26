@@ -10,7 +10,13 @@ from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 class EnvironmentKWArgs(KWArgs):
     """KWArgs for GenericEnvironment.__init__"""
 
-    def __init__(self, *, data: Mapping[str, Any] | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
+    def __init__(self,
+                 *,
+                 semantic_type: str | NoDefaultValue = NO_DEFAULT_VALUE,
+                 title: str | NoDefaultValue = NO_DEFAULT_VALUE,
+                 description: str | NoDefaultValue = NO_DEFAULT_VALUE,
+                 hash_id: str | NoDefaultValue = NO_DEFAULT_VALUE,
+                 data: Mapping[str, Any] | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Initialize a GenericEnvironment instance.
 
         If a 'hash_id' key is present in the input data mapping, its value is validated

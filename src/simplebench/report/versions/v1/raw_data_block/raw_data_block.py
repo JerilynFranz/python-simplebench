@@ -359,4 +359,3 @@ class RawDataBlock(BaseRawDataBlock):
         :return RawDataBlock: The same instance of the RawDataBlock.
         """
         return self
-

@@ -29,6 +29,7 @@ from typeguard import TypeCheckError, check_type
 
 from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.protocols import Thawable
 
 from .._element_collection import ElementCollection, is_element_collection
 from . import _common
@@ -43,6 +44,7 @@ T = TypeVar('T', bound='CoreDataTypes')
 class CoreDataSequence(Sequence[T],
                        ElementCollection[T],
                        Hashable,
+                       Thawable,
                        Generic[T]):
     """Deep-immutable Sequence container for CoreData types used in SimpleBench.
 
@@ -68,7 +70,7 @@ class CoreDataSequence(Sequence[T],
     """
 
     __immutable__: bool = True  # Marker for Immutable protocol
-    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache', '__weakref__')
+    __slots__ = ('_version', '_data', '_hash_cache', '_hash_id_cache', '__weakref__')
 
     def __init__(self, __elements: 'ElementCollection[T] | None' = None) -> None:
         """Initialize the CoreDataSequence.
@@ -90,7 +92,7 @@ class CoreDataSequence(Sequence[T],
         _log.debug('Initializing CoreDataSequence with iterable: %r', __elements)
         self._version: int = 1
         self._hash_cache: int | None = None
-        self._content_hash_cache: str | None = None
+        self._hash_id_cache: str | None = None
 
         self._data: tuple[T, ...]
         if __elements is None:
@@ -230,9 +232,9 @@ class CoreDataSequence(Sequence[T],
         """
         if not isinstance(other, CoreDataSequence):
             return False
-        return self.content_hash() == other.content_hash()
+        return self.hash_id() == other.hash_id()
 
-    def content_hash(self) -> str:
+    def hash_id(self) -> str:
         """Return a SHA256 hash of the CoreDataSequence content.
 
         :returns: The SHA256 hash of the sequence content as a hexadecimal string.
@@ -240,15 +242,15 @@ class CoreDataSequence(Sequence[T],
         """
         from ._core_data_mapping import CoreDataMapping
         from ._core_data_set import CoreDataSet
-        if self._content_hash_cache is None:
+        if self._hash_id_cache is None:
             hasher = hashlib.sha256()
             for item in self._data:
                 if isinstance(item, (CoreDataSequence, CoreDataMapping, CoreDataSet)):
-                    hasher.update(item.content_hash().encode('utf-8'))
+                    hasher.update(item.hash_id().encode('utf-8'))
                 else:
                     hasher.update(repr(item).encode('utf-8'))
-            self._content_hash_cache = hasher.hexdigest()
-        return self._content_hash_cache
+            self._hash_id_cache = hasher.hexdigest()
+        return self._hash_id_cache
 
     def __hash__(self) -> int:
         """Return the hash of the CoreDataSequence.
@@ -257,7 +259,7 @@ class CoreDataSequence(Sequence[T],
         :rtype: int
         """
         if self._hash_cache is None:
-            self._hash_cache = hash(self.content_hash())
+            self._hash_cache = hash(self.hash_id())
         return self._hash_cache
 
     def thaw(self, preserve_immutability: bool = False) -> list['CoreDataTypes'] | tuple['CoreDataTypes', ...]:

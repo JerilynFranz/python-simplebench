@@ -16,20 +16,20 @@ def python_info_kwargs() -> PythonInfoKWArgs:
     data = python_info_data()
     return PythonInfoKWArgs(
         hash_id=data['hash_id'],  # type: ignore[call-arg]
-        python_version=data['python_version'],
-        implementation=data['implementation'],
-        implementation_version=data['implementation_version'],
-        compiler=data['compiler'],
-        revision=data['revision'],
-        buildno=data['buildno'],
-        builddate=data['builddate'],
-        command_line_flags=data['command_line_flags'],
-        environment_variables=data['environment_variables'],
-        gc_is_enabled=data['gc_is_enabled'],
-        gc_thresholds=data['gc_thresholds'],
-        thread_switch_interval=data['thread_switch_interval'],
-        architecture_bits=data['architecture_bits'],
-        architecture_linkage=data['architecture_linkage'],
+        python_version=data['data']['python_version'],
+        implementation=data['data']['implementation'],
+        implementation_version=data['data']['implementation_version'],
+        compiler=data['data']['compiler'],
+        revision=data['data']['revision'],
+        buildno=data['data']['buildno'],
+        builddate=data['data']['builddate'],
+        command_line_flags=data['data']['command_line_flags'],
+        environment_variables=data['data']['environment_variables'],
+        gc_is_enabled=data['data']['gc_is_enabled'],
+        gc_thresholds=data['data']['gc_thresholds'],
+        thread_switch_interval=data['data']['thread_switch_interval'],
+        architecture_bits=data['data']['architecture_bits'],
+        architecture_linkage=data['data']['architecture_linkage'],
     )
 
 
@@ -54,22 +54,27 @@ def python_info_data() -> report.PythonInfoData:
         hash_id='c' * 64,
         type=report.PythonInfoSchema.TYPE,
         version=report.PythonInfoSchema.VERSION,
-        python_version='3.12.3',
-        implementation='CPython',
-        implementation_version='3.12.3',
-        compiler='Clang 13.0.0 (clang-1300.0.29.30)',
-        revision='f6650f9ad7',
-        buildno='v3.12.3:f6650f9ad7',
-        builddate='Apr  9 2024 08:18:47',
-        command_line_flags='-R -X int_max_str_digits',
-        environment_variables={
-            'PYTHONPATH': 'src:tests',
-            'PYTHON_BASIC_REPL': '1'},
-        gc_is_enabled=True,
-        gc_thresholds=(700, 10, 10),
-        thread_switch_interval=0.005,
-        architecture_bits='64bit',
-        architecture_linkage='')
+        semantic_type='simplebench::python_info',
+        title='Python Information',
+        description='Detailed information about the Python environment used for benchmarking.',
+        data=report.PythonInfoEnv(
+            python_version='3.12.3',
+            implementation='CPython',
+            implementation_version='3.12.3',
+            compiler='Clang 13.0.0 (clang-1300.0.29.30)',
+            revision='f6650f9ad7',
+            buildno='v3.12.3:f6650f9ad7',
+            builddate='Apr  9 2024 08:18:47',
+            command_line_flags='-R -X int_max_str_digits',
+            environment_variables={
+                'PYTHONPATH': 'src:tests',
+                'PYTHON_BASIC_REPL': '1'},
+            gc_is_enabled=True,
+            gc_thresholds=(700, 10, 10),
+            thread_switch_interval=0.005,
+            architecture_bits='64bit',
+            architecture_linkage='')
+        )
     if 'hash_id' not in info:  # type: ignore[typeddict-item]
         raise TypeError(f'Generated info is missing required hash_id field: {info!r}')
     if not is_typed_dict_mimic(info, report.PythonInfoData):

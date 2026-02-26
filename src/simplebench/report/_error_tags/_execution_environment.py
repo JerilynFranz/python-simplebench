@@ -12,6 +12,8 @@ class _ExecutionEnvironmentErrorTag(ErrorTag):
     """An environment name provided to the execution environment is not a string."""
     INVALID_ENVIRONMENT_NAME_VALUE = 'INVALID_ENVIRONMENT_NAME_VALUE'
     """An environment name provided to the execution environment is not valid."""
+    INVALID_ENVIRONMENT_VALUE_TYPE = 'INVALID_ENVIRONMENT_VALUE_TYPE'
+    """An environment value provided to the execution environment is of an invalid type."""
     BAD_KNOWN_ENVIRONMENT_TYPE = 'BAD_KNOWN_ENVIRONMENT_TYPE'
     """A known environment provided to the execution environment was not of type
     :class:`~simplebench.report.base.Environment`."""

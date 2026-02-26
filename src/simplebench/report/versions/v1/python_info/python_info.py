@@ -15,7 +15,7 @@ from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import Any
 
-from simplebench.report.base import BasePythonInfo
+from simplebench.report.versions import v1 as report
 from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
@@ -25,7 +25,7 @@ from .typeddict_types import ImmutablePythonInfoDict, PythonInfoData
 __all__: list[str] = []
 
 
-class PythonInfo(BasePythonInfo):
+class PythonInfo(report.Environment):
     """Immutable class representing python execution environment in a report (V1)."""
 
     SCHEMA = PythonInfoSchema
@@ -43,7 +43,7 @@ class PythonInfo(BasePythonInfo):
     ID: str = SCHEMA.ID
     """The JSON PythonInfo identifier property value for version 1 reports."""
 
-    _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
+    _init_params_cache: MappingProxyType[str, Any] | None = None
     """Cache for the constructor parameters of the ResultsInfo class."""
 
     @classmethod
@@ -60,26 +60,6 @@ class PythonInfo(BasePythonInfo):
             params = cls.init_params(PythonInfoData)
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
-
-    __slots__ = (
-        '_hash_id',
-        '_semantic_type',
-        '_python_version',
-        '_implementation',
-        '_implementation_version',
-        '_compiler',
-        '_revision',
-        '_buildno',
-        '_builddate',
-        '_command_line_flags',
-        '_environment_variables',
-        '_gc_is_enabled',
-        '_gc_thresholds',
-        '_thread_switch_interval',
-        '_architecture_bits',
-        '_architecture_linkage',
-        '_dict_cache',
-    )
 
     def __init__(
         self,
@@ -121,24 +101,27 @@ class PythonInfo(BasePythonInfo):
         :param str architecture_bits: The architecture bits (e.g., '32bit', '64bit').
         :param str architecture_linkage: The architecture linkage (e.g., 'ELF', 'WindowsPE').
         """
-        self._hash_id = _validate.hash_id(hash_id)
-        self._python_version = _validate.python_version(python_version)
-        self._implementation = _validate.implementation(implementation)
-        self._implementation_version = _validate.implementation_version(implementation_version)
-        self._compiler = _validate.compiler(compiler)
-        self._revision = _validate.revision(revision)
-        self._buildno = _validate.buildno(buildno)
-        self._builddate = _validate.builddate(builddate)
-        self._command_line_flags = _validate.command_line_flags(command_line_flags)
-        self._environment_variables = _validate.environment_variables(environment_variables)
-        self._gc_is_enabled = _validate.gc_is_enabled(gc_is_enabled)
-        self._gc_thresholds = _validate.gc_thresholds(gc_thresholds)
-        self._thread_switch_interval = _validate.thread_switch_interval(thread_switch_interval)
-        self._architecture_bits = _validate.architecture_bits(architecture_bits)
-        self._architecture_linkage = _validate.architecture_linkage(architecture_linkage)
-        self._semantic_type: str = self.__class__.SEMANTIC_TYPE
-        self._dict_cache: ImmutablePythonInfoDict = self._to_dict_helper(ImmutablePythonInfoDict)
-
+        data = {
+            'python_version': _validate.python_version(python_version),
+            'implementation': _validate.implementation(implementation),
+            'implementation_version': _validate.implementation_version(implementation_version),
+            'compiler': _validate.compiler(compiler),
+            'revision': _validate.revision(revision),
+            'buildno': _validate.buildno(buildno),
+            'builddate': _validate.builddate(builddate),
+            'command_line_flags': _validate.command_line_flags(command_line_flags),
+            'environment_variables': _validate.environment_variables(environment_variables),
+            'gc_is_enabled': _validate.gc_is_enabled(gc_is_enabled),
+            'gc_thresholds': _validate.gc_thresholds(gc_thresholds),
+            'thread_switch_interval': _validate.thread_switch_interval(thread_switch_interval),
+            'architecture_bits': _validate.architecture_bits(architecture_bits),
+            'architecture_linkage': _validate.architecture_linkage(architecture_linkage)
+        }
+        super().__init__(data=data,
+                         semantic_type=self.SEMANTIC_TYPE,
+                         hash_id=hash_id,
+                         title='Python Environment',
+                         description='Information about the Python execution environment')
 
     @classmethod
     def from_dict(cls, data: PythonInfoData) -> 'PythonInfo':  # type: ignore[override]
@@ -160,14 +143,16 @@ class PythonInfo(BasePythonInfo):
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
-            skip_fields={'version', 'type', 'semantic_type'},
-            optional_fields={'hash_id', 'version', 'type', 'semantic_type'},
-            defaults={'version': cls.VERSION, 'type': cls.TYPE, 'semantic_type': cls.SEMANTIC_TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE, 'semantic_type': cls.SEMANTIC_TYPE},
+            skip_fields={'version', 'type', 'semantic_type', 'title', 'description'},
+            optional_fields={'hash_id', 'version', 'type', 'semantic_type', 'description'},
+            defaults={'version': cls.VERSION, 'type': cls.TYPE},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE},
         )
+        unwrapped_data = kwargs.pop('data', {})
+        kwargs.update(unwrapped_data)
         return cls(**kwargs)
 
-    def to_dict(self) -> ImmutablePythonInfoDict:
+    def to_dict(self) -> ImmutablePythonInfoDict:  # type: ignore[override]
         """Returns the PythonInfo as an immutable CoreDataMapping dictionary
         suitable for JSON serialization.
 
@@ -182,7 +167,7 @@ class PythonInfo(BasePythonInfo):
         :return ImmutablePythonInfoDict: A dictionary representation of the PythonInfo.
         :raises AttributeError: If any required property is missing.
         """
-        return self._dict_cache
+        return super().to_dict()  # type: ignore[return-value]
 
     @property
     def compiler(self) -> str:
@@ -190,7 +175,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The compiler string.
         """
-        return self._compiler
+        return self.data['compiler']  # type: ignore
 
     @property
     def implementation(self) -> str:
@@ -198,7 +183,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The implementation string.
         """
-        return self._implementation
+        return self.data['implementation']  # type: ignore
 
     @property
     def implementation_version(self) -> str:
@@ -206,7 +191,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The implementation_version string.
         """
-        return self._implementation_version
+        return self.data['implementation_version']  # type: ignore
 
     @property
     def python_version(self) -> str:
@@ -214,7 +199,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The python_version string.
         """
-        return self._python_version
+        return self.data['python_version']  # type: ignore
 
     @property
     def buildno(self) -> str:
@@ -222,7 +207,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The build number string.
         """
-        return self._buildno
+        return self.data['buildno']  # type: ignore
 
     @property
     def builddate(self) -> str:
@@ -230,7 +215,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The build date string.
         """
-        return self._builddate
+        return self.data['builddate']  # type: ignore
 
     @property
     def command_line_flags(self) -> str:
@@ -238,7 +223,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The command_line_flags string.
         """
-        return self._command_line_flags
+        return self.data['command_line_flags']  # type: ignore
 
     @property
     def environment_variables(self) -> CoreDataMapping[str]:
@@ -246,7 +231,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The environment_variables mapping.
         """
-        return self._environment_variables
+        return self.data['environment_variables']  # type: ignore
 
     @property
     def gc_is_enabled(self) -> bool:
@@ -254,7 +239,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The gc_is_enabled boolean.
         """
-        return self._gc_is_enabled
+        return self.data['gc_is_enabled']  # type: ignore
 
     @property
     def gc_thresholds(self) -> tuple[int, int, int]:
@@ -262,7 +247,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The gc_thresholds tuple.
         """
-        return self._gc_thresholds
+        return self.data['gc_thresholds']  # type: ignore
 
     @property
     def thread_switch_interval(self) -> float:
@@ -270,7 +255,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The thread_switch_interval float.
         """
-        return self._thread_switch_interval
+        return self.data['thread_switch_interval']  # type: ignore
 
     @property
     def architecture_bits(self) -> str:
@@ -278,7 +263,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The architecture_bits string.
         """
-        return self._architecture_bits
+        return self.data['architecture_bits']  # type: ignore
 
     @property
     def architecture_linkage(self) -> str:
@@ -286,7 +271,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The architecture_linkage string.
         """
-        return self._architecture_linkage
+        return self.data['architecture_linkage']  # type: ignore
 
     @property
     def revision(self) -> str:
@@ -294,28 +279,7 @@ class PythonInfo(BasePythonInfo):
 
         :return: The revision string.
         """
-        return self._revision
-
-    @property
-    def hash_id(self) -> str:
-        """Get the hash_id property.
-
-        It is lazily computed on first access if not provided during initialization.
-
-        :return: The hash_id string.
-        :raises SimpleBenchAttributeError: If any required property is missing.
-        """
-        if self._hash_id == '':
-            self._hash_id = self._hash_id_helper(self.__class__)
-        return self._hash_id
-
-    @property
-    def semantic_type(self) -> str:
-        """Get the semantic_type property.
-
-        :return: The semantic_type string.
-        """
-        return self._semantic_type
+        return self.data['revision']  # type: ignore
 
     def for_json(self) -> ImmutablePythonInfoDict:
         """Get the JSON-serializable dictionary representation of this PythonInfo.
@@ -344,14 +308,8 @@ class PythonInfo(BasePythonInfo):
 
         :return: The string representation of the PythonInfo.
         """
-        # Get the init parameters excluding 'type', 'version', and 'semantic_type' since they are fixed for this class
-        init_params = dict(self._data_params())
-        init_params.pop('type', None)
-        init_params.pop('version', None)
-        init_params.pop('semantic_type', None)
-
-        # Build the key-value argument string. Accessing the properties via getattr
-        # will trigger their lazy calculation if they haven't been computed yet.
+        init_params = self.data.thaw()
+        init_params['hash_id'] = self.hash_id
         calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
         return f'{self.__class__.__name__}({calling_args})'
 

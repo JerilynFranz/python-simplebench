@@ -1,28 +1,44 @@
 """V1 ExecutionEnvironment implementation."""
 
 import hashlib
-from collections.abc import Iterator, Mapping
-from types import MappingProxyType
-from typing import cast
+from collections.abc import Iterable, Iterator, Mapping
+from typing import TYPE_CHECKING, Any, cast
 
-from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchAttributeError, SimpleBenchKeyError, SimpleBenchTypeError
+from simplebench.report import base
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
-from simplebench.report.base import BaseExecutionEnvironment, Environment
-from simplebench.report.versions.v1.python_info import PythonInfo
-from simplebench.simplebench_types import CoreDataMappingType
-from simplebench.validators import validate_core_data_mapping
+from simplebench.simplebench_types import CoreDataMapping, CoreDataMappingType, CoreDataTypes
 
 from . import _validate
-from .known_environments import known_environments
 from .typeddict_types import ExecutionEnvironmentDict
+
+if TYPE_CHECKING:
+    from simplebench.report.versions import v1 as report
+
 
 __all__: list[str] = []
 
 
-class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
+def environment_type(semantic_type: str) -> type['report.Environment']:
+    """Get the Environment class corresponding to a known environment semantic type.
+
+    If the semantic type is not recognized as a known environment, the base Environment class is returned.
+
+    :param semantic_type: The semantic type of the environment, formatted as 'namespace::type_name'.
+    :return: The Environment class corresponding to the known environment semantic type, or None if not found.
+    """
+    from simplebench.report.versions import v1 as report
+
+    match semantic_type:
+        case 'simplebench::python':
+            return report.PythonInfo
+        case _:
+            return report.Environment
+
+class ExecutionEnvironment(Mapping[str, 'report.Environment'], base.BaseExecutionEnvironment):
     """Implementation of the ExecutionEnvironment interface for V1."""
 
-    def __init__(self, **kwargs: CoreDataMappingType | Environment) -> None:
+    def __init__(self, __environments: 'Mapping[str, report.Environment]') -> None:
         """Initialize the ExecutionEnvironment with environment information.
 
         In the V1 implementation, the python parameter is the only pre-defined
@@ -31,12 +47,10 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
 
         At least one environment must be provided.
 
-        :param PythonInfo python: (optional) The Python info.
-        :param CoreDataMappingType | Environment kwargs: (optional) Other execution
-            environments as keyword arguments.
+        :param __environments: A mapping of environment names to their corresponding Environment instances.
         :raises SimpleBenchTypeError: If a passed environment is of an incorrect type.
         """
-        self._environments: MappingProxyType[str, Environment] = _validate.environments(dict(kwargs))
+        self._environments: dict[str, report.Environment] = _validate.environments(__environments)
         self._hash_id: str = self._compute_hash_id()
 
     def _compute_hash_id(self) -> str:
@@ -56,8 +70,8 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
         return hashlib.sha256('|'.join(hash_tuple).encode('utf-8')).hexdigest()
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, CoreDataMappingType]) -> 'ExecutionEnvironment':
-        """Create an ExecutionEnvironment instance from a dictionary.
+    def from_dict(cls, data: Mapping[str, CoreDataMappingType]) -> 'report.ExecutionEnvironment':
+        """Create an ExecutionEnvironment instance from a dictionary of Environment mappings.
 
         .. code-block:: python
            :caption: Example
@@ -67,72 +81,258 @@ class ExecutionEnvironment(BaseExecutionEnvironment, Mapping[str, Environment]):
         :param data: The dictionary containing execution environment information.
         :return: A ExecutionEnvironment instance.
         """
-        imported_environments: dict[str, CoreDataMappingType | Environment] = {}
-        known_envs = known_environments()
-        for env_name, env_value in data.items():
-            if env_name in known_envs:
-                environment: type[Environment] = known_envs[env_name]
-                imported_instance = environment.from_dict(env_value)
-                imported_environments[env_name] = imported_instance
-            else:
-                imported_environments[env_name] = validate_core_data_mapping(
-                    env_value, f"Environment '{env_name}'")
-        return cls(**imported_environments)
+        if not isinstance(data, Mapping):
+            raise SimpleBenchTypeError(
+                'Execution environment data must be a mapping of environment name to environment data',
+                tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_TYPE,
+            )
+        enviornments: dict[str, report.Environment] = {}
+        for env_name, env_data in data.items():
+            if not isinstance(env_data, Mapping):
+                raise SimpleBenchTypeError(
+                    f'Environment data for {env_name!r} must be a mapping of environment properties',
+                    tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_VALUE_TYPE,
+                )
+            # Validation happens in __init__()/from_dict() for each Environment type, so we just need to determine
+            # the correct type to instantiate
+            env_type = environment_type(env_data.get('semantic_type', ''))  # type: ignore
+            enviornments[env_name] = env_type.from_dict(env_data)
+        return cls(enviornments)
 
     def to_dict(self) -> ExecutionEnvironmentDict:
         """Convert the ExecutionEnvironment to a dictionary.
 
         :return ExecutionEnvironmentDict: A dictionary representation of the ExecutionEnvironment.
         """
-        return cast(ExecutionEnvironmentDict, self._environments)
+        return cast(ExecutionEnvironmentDict, dict(self._environments))
+
+    def thaw(self) -> 'dict[str, CoreDataTypes] | CoreDataMapping':
+        """Get the thawed (mutable) dictionary representation of this ExecutionEnvironment.
+
+        This method delegates to the thaw method of the internal CoreDataMapping of
+        execution_environment, which will return a mutable dictionary representation.
+
+        :return: The thawed (mutable) dictionary representation of this ExecutionEnvironment.
+        :rtype: dict[str, CoreDataTypes] | CoreDataMapping
+        """
+        return self.execution_environment.thaw()
 
     @property
-    def hash_id(self) -> str:
-        """Get the hash_id property.
+    def execution_environment(self) -> dict[str, 'report.Environment']:
+        """Get the execution_environment dictionary.
 
-        :return: A 64-character hexadecimal hash_id string.
+        It returns a shallow copy of the internal execution environments dictionary,
+        which maps environment names to their corresponding Environment instances.
+
+        Because Environment instances are immutable, this shallow copy is sufficient to ensure that
+        the returned dictionary cannot be used to modify the internal state of the ExecutionEnvironment.
+
+        :return: The execution_environment dictionary, mapping environment names to their corresponding
+            Environment instances.
+        :rtype: dict[str, report.Environment]
         """
-        return self._hash_id
-
-    @property
-    def python(self) -> PythonInfo | None:
-        """Get the Python property.
-
-        Returns the :class:`PythonInfo` instance if the 'python'
-        execution environment is present, otherwise returns ``None``.
-
-        :return PythonInfo | None: The Python info.
-        :raises SimpleBenchTypeError: If the 'python' environment is not of type PythonInfo.
-        """
-        if 'python' in self._environments:
-            python_env = self._environments['python']
-            if isinstance(python_env, PythonInfo):
-                return python_env
-            raise SimpleBenchTypeError(
-                "The 'python' environment is not of type PythonInfo",
-                tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_TYPE,
-            )
-        return None
-
-    def __getitem__(self, key: str) -> Environment:
-        return self._environments[key]
-
-    def __iter__(self) -> Iterator[str]:
-        return iter(self._environments)
-
-    def __len__(self) -> int:
-        return len(self._environments)
-
-    def __contains__(self, key: object) -> bool:
-        return key in self._environments
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({dict(self._environments)!r})'
+        return dict(self._environments)
 
     def __eq__(self, other: object) -> bool:
+        """Check equality with another ExecutionEnvironment.
+
+        Two ExecutionEnvironment instances are considered equal if their execution_environment dictionaries are equal.
+
+        :param other: The object to compare with.
+        :return: True if the objects are equal, False otherwise.
+        :rtype: bool
+        """
         if not isinstance(other, ExecutionEnvironment):
             return NotImplemented
-        return self.hash_id == other.hash_id
+        return self.execution_environment == other.execution_environment
 
     def __hash__(self) -> int:
-        return hash(self.hash_id)
+        """Compute the hash of this ExecutionEnvironment.
+
+        The hash is computed based on the hash ID, which is derived from the execution environments.
+        This ensures that the hash is consistent and reflects the immutable state of the ExecutionEnvironment.
+
+        :return: The hash of this ExecutionEnvironment.
+        :rtype: int
+        """
+        return hash(self._hash_id)
+
+    def __repr__(self) -> str:
+        """Get the string representation of this ExecutionEnvironment.
+
+        :return: The string representation of this ExecutionEnvironment.
+        :rtype: str
+        """
+        return f'ExecutionEnvironment({self.execution_environment.thaw()!r})'
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        """Set a value in the execution_environment dictionary.
+
+        Disabled because the ExecutionEnvironment is immutable. Attempting to
+        set an item will raise an error.
+
+        :param key: The metric name.
+        :param value: The CoreDataTypes object (either a StatsBlock or a ValueBlock).
+        :raises SimpleBenchAttributeError: Always, since the ExecutionEnvironment is immutable.
+        """
+        raise SimpleBenchAttributeError(
+            'ExecutionEnvironment is immutable and cannot be modified after initialization.',
+            tag=_ExtrasErrorTag.EXTRAS_OBJECT_IMMUTABLE,
+            name=key,
+            obj=self,
+        )
+
+    def __getitem__(self, key: str) -> 'CoreDataTypes':
+        """Get a metric item from the metrics dictionary.
+
+        :param key: The metric name.
+        :return: The CoreDataTypes object (either a StatsBlock or a ValueBlock).
+        :raises SimpleBenchKeyError: If the metric name does not exist.
+        """
+        try:
+            return self._execution_environment[key]
+        except KeyError as e:
+            raise SimpleBenchKeyError(
+                f"Metric name '{key}' does not exist in metrics.",
+                tag=_ExtrasErrorTag.KEY_ERROR_INVALID_EXTRA_NAME_VALUE,
+            ) from e
+
+    def __delitem__(self, key: str) -> None:
+        """Delete a metric item from the metrics dictionary.
+
+        Disabled because the ExecutionEnvironment is immutable. Attempting to delete an item will raise an error.
+
+        :param key: The metric name.
+        :raises SimpleBenchAttributeError: Always, since the ExecutionEnvironment is immutable.
+        """
+        raise SimpleBenchAttributeError(
+            f"Metric '{key}' cannot be deleted because the ExecutionEnvironment is immutable.",
+            tag=_ExtrasErrorTag.EXTRAS_OBJECT_IMMUTABLE,
+            name=key,
+            obj=self,
+        )
+
+    def __len__(self) -> int:
+        """Get the number of metric items in the metrics dictionary.
+
+        :return int: The number of metric items.
+        """
+        return len(self._execution_environment)
+
+    def __iter__(self) -> Iterator[str]:
+        """Get an iterator over the metric names in the metrics dictionary.
+
+        :return Iterator[str]: An iterator over the metric names.
+        """
+        return iter(self._execution_environment)
+
+    def __or__(self, other: object) -> 'ExecutionEnvironment':
+        """Return a new ExecutionEnvironment that is the union of this and another ExecutionEnvironment.
+
+        .. code-block:: python
+            new_metrics = this_metrics | other_metrics
+
+        :param other: The other ExecutionEnvironment to union with.
+        :return ExecutionEnvironment: A new ExecutionEnvironment that is the union of both.
+        """
+        if isinstance(other, ExecutionEnvironment):
+            return self.__class__(dict(self._execution_environment) | dict(other._execution_environment))
+        return NotImplemented
+
+    def __ror__(self, other: object) -> 'ExecutionEnvironment':
+        """Return a new ExecutionEnvironment that is the union of another ExecutionEnvironment and this one. (reversed)
+
+        .. code-block:: python
+            new_metrics = other_metrics | this_metrics
+
+        :param other: The other ExecutionEnvironment to union with.
+        :return ExecutionEnvironment: A new ExecutionEnvironment that is the union of both.
+        """
+        if isinstance(other, ExecutionEnvironment):
+            return self.__class__(dict(other._execution_environment) | dict(self._execution_environment))
+        return NotImplemented
+
+    def __ior__(self, other: object) -> 'ExecutionEnvironment':
+        """In-place union of this ExecutionEnvironment with another ExecutionEnvironment.
+
+        Disabled because the ExecutionEnvironment is immutable. Attempting to perform an in-place union will raise an error.
+        """
+        return NotImplemented
+
+    def __contains__(self, key: object) -> bool:
+        """Check if a metric name is in the metrics dictionary.
+
+        :param key: The metric name to check for.
+        :return bool: True if the metric name exists, False otherwise.
+        """
+        return key in self._execution_environment
+
+    def __copy__(self) -> 'ExecutionEnvironment':
+        """Return the same instance since ExecutionEnvironment is immutable.
+
+        :return ExecutionEnvironment: The same instance of ExecutionEnvironment.
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'ExecutionEnvironment':
+        """Return a deep copy of the ExecutionEnvironment.
+
+        Since ExecutionEnvironment is immutable, this method simply returns the same instance.
+
+        :return ExecutionEnvironment: The same instance of ExecutionEnvironment.
+        """
+        return self
+
+    def copy(self) -> 'ExecutionEnvironment':
+        """Get a copy of the ExecutionEnvironment.
+
+        It does not create a new instance since ExecutionEnvironment is immutable, but it provides
+        a copy method for API consistency.
+
+        :return ExecutionEnvironment: The same ExecutionEnvironment instance.
+        """
+        return self
+
+    @classmethod
+    def fromkeys(cls, iterable: Iterable, value: CoreDataTypes | None = None) -> 'ExecutionEnvironment':
+        return NotImplemented
+
+    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
+        """Prepare the object's state for pickling, prioritizing size.
+
+        This method ensures that the pickled representation of the ExecutionEnvironment
+        is compact. It does this by excluding any cached or redundant attributes
+        and only including the essential data needed to reconstruct the object.
+
+        This prioritizes a small pickled size and fast subsequent unpickling over
+        preserving the lazy-evaluation state across serialization.
+
+        :return: A state tuple for pickling.
+        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        slot_values: list[Any] = []
+        for slot in self.__slots__:
+            slot_values.append(getattr(self, slot))
+
+        # Build the state tuple for a __slots__ class. The first element is for
+        # __dict__ (None in our case) and the second is a tuple of the slotted values.
+        state = tuple(slot_values)
+        return (None, state)
+
+    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
+        """Restore the object's state from a pickled representation.
+
+        This method is the counterpart to `__getstate__`. It takes the state
+        tuple and repopulates the instance's `__slots__`.
+
+        .. note::
+            This method bypasses `__init__`, which is standard for unpickling.
+
+        :param state: The state tuple from unpickling.
+        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # The first element of the state tuple is for __dict__, which is None for this class.
+        # The second element is a tuple of values for the __slots__.
+        slot_values = state[1]
+        for slot, value in zip(self.__slots__, slot_values, strict=True):
+            self.__setattr__(slot, value)

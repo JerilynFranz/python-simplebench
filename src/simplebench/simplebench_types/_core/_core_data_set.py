@@ -26,6 +26,7 @@ import simplejson
 from typeguard import TypeCheckError, check_type
 
 from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.protocols import Thawable
 
 from .._element_collection import ElementCollection
 from . import _common
@@ -40,6 +41,7 @@ _T = TypeVar('_T')  # <-- Add this line for the default value in get()
 class CoreDataSet(Set[T],
                   ElementCollection[T],
                   Hashable,
+                  Thawable,
                   Generic[T]):
     """Deep-immutable Set container for CoreData types used in SimpleBench.
 
@@ -58,7 +60,7 @@ class CoreDataSet(Set[T],
     """Generic type for the elements in the set, if specified. This is used for type validation when a generic type is
     defined for the set."""
     __immutable__: bool = True  # Marker for Immutable protocol
-    __slots__ = ('_version', '_data', '_hash_cache', '_content_hash_cache', '__weakref__')
+    __slots__ = ('_version', '_data', '_hash_cache', '_hash_id_cache', '__weakref__')
 
     def __init__(
             self,
@@ -112,7 +114,7 @@ class CoreDataSet(Set[T],
 
         self._version: int = 1
         self._hash_cache: int | None = None
-        self._content_hash_cache: str | None = None
+        self._hash_id_cache: str | None = None
         self._data: set[T]
 
         if __elements is None:
@@ -206,7 +208,7 @@ class CoreDataSet(Set[T],
             return False
         return self._data == other._data
 
-    def content_hash(self) -> str:
+    def hash_id(self) -> str:
         """Return a SHA256 hash of the CoreDataSet content.
 
         :returns: The SHA256 hash of the set content as a hexadecimal string.
@@ -214,17 +216,17 @@ class CoreDataSet(Set[T],
         """
         from ._core_data_mapping import CoreDataMapping
         from ._core_data_sequence import CoreDataSequence
-        if self._content_hash_cache is None:
+        if self._hash_id_cache is None:
             hasher = hashlib.sha256()
             # We don't care what the order is, just that it is consistent
             values = sorted(self._data, key=_common.rich_compare_value)  # type: ignore
             for item in values:
                 if isinstance(item, (CoreDataSequence, CoreDataMapping, CoreDataSet)):
-                    hasher.update(item.content_hash().encode('utf-8'))
+                    hasher.update(item.hash_id().encode('utf-8'))
                 else:
                     hasher.update(repr(item).encode('utf-8'))
-            self._content_hash_cache = hasher.hexdigest()
-        return self._content_hash_cache
+            self._hash_id_cache = hasher.hexdigest()
+        return self._hash_id_cache
 
     def __hash__(self) -> int:
         """Return the hash of the CoreDataSet.
@@ -233,7 +235,7 @@ class CoreDataSet(Set[T],
         :rtype: int
         """
         if self._hash_cache is None:
-            self._hash_cache = hash(self.content_hash())
+            self._hash_cache = hash(self.hash_id())
         return self._hash_cache
 
     def thaw(self,
