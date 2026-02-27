@@ -8,7 +8,7 @@ from simplebench.simplebench_types import CoreDataMapping, CoreDataTypes, Never,
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-class EnvironmentData(ReportElementTypedDict):
+class EnvironmentInfoData(ReportElementTypedDict):
     """TypedDict for the Environment data.
 
     This TypedDict represents the structure of the 'data' field in the Environment report.
@@ -16,7 +16,7 @@ class EnvironmentData(ReportElementTypedDict):
     the values can be of various types, including nested dictionaries, strings, numbers, booleans, nulls, or arrays.
 
     :param version: The JSON Environment version number.
-    :type version: NotRequired[str]
+    :type version: NotRequired[int]
     :param type: The JSON Environment type property value for version 1 reports.
     :type type: NotRequired[str]
     :param hash_id: Unique 64 byte hexadecimal hash identifier for the Environment data.
@@ -32,7 +32,7 @@ class EnvironmentData(ReportElementTypedDict):
     :param data: The raw Environment data collected from the system.
     :type data: Required[Mapping[str, CoreDataTypes]]
     """
-    version: NotRequired[str]
+    version: NotRequired[int]
     type: NotRequired[str]
     hash_id: NotRequired[str]
     semantic_type: Required[str]
@@ -41,7 +41,7 @@ class EnvironmentData(ReportElementTypedDict):
     data: Required[Mapping[str, CoreDataTypes]]
 
 
-class ImmutableEnvironmentData(ReportElementTypedDict):
+class ImmutableEnvironmentInfoData(ReportElementTypedDict):
     """Immutable TypedDict for the Environment data.
 
     This TypedDict represents the structure of the 'data' field in the Environment report.
@@ -65,7 +65,7 @@ class ImmutableEnvironmentData(ReportElementTypedDict):
     :param data: The raw Environment data collected from the system.
     :type data: Required[CoreDataMapping]
     """
-    version: NotRequired[str]
+    version: NotRequired[int]
     type: NotRequired[str]
     hash_id: NotRequired[str]
     semantic_type: Required[str]
@@ -76,7 +76,7 @@ class ImmutableEnvironmentData(ReportElementTypedDict):
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-class EnvironmentDict(ReportElementTypedDict):
+class EnvironmentInfoDict(ReportElementTypedDict):
     """TypedDict for the Environment data.
 
     This TypedDict represents the structure of the 'data' field in the Environment report.
@@ -85,7 +85,7 @@ class EnvironmentDict(ReportElementTypedDict):
     nulls, or arrays.
 
     :param version: The JSON Environment version number.
-    :type version: Required[str]
+    :type version: Required[int]
     :param type: The JSON Environment type property value for version 1 reports.
     :type type: Required[str]
     :param hash_id: Unique 64 byte hexadecimal hash identifier for the Environment data.
@@ -101,7 +101,7 @@ class EnvironmentDict(ReportElementTypedDict):
     :param data: The raw Environment data collected from the system.
     :type data: Required[Mapping[str, CoreDataTypes]]
     """
-    version: Required[str]
+    version: Required[int]
     type: Required[str]
     hash_id: Required[str]
     semantic_type: Required[str]
@@ -110,7 +110,7 @@ class EnvironmentDict(ReportElementTypedDict):
     data: Required[Mapping[str, CoreDataTypes]]
 
 
-class ImmutableEnvironmentDict(ReportElementTypedDict):
+class ImmutableEnvironmentInfoDict(ReportElementTypedDict):
     """Immutable TypedDict for the Environment data.
 
     This TypedDict represents the structure of the 'data' field in the Environment report.
@@ -119,7 +119,7 @@ class ImmutableEnvironmentDict(ReportElementTypedDict):
     nulls, or arrays.
 
     :param version: The JSON Environment version number.
-    :type version: Required[str]
+    :type version: Required[int]
     :param type: The JSON Environment type property value for version 1 reports.
     :type type: Required[str]
     :param hash_id: Unique 64 byte hexadecimal hash identifier for the Environment data.
@@ -135,7 +135,7 @@ class ImmutableEnvironmentDict(ReportElementTypedDict):
     :param data: The raw Environment data collected from the system.
     :type data: Required[CoreDataMapping]
     """
-    version: Required[str]
+    version: Required[int]
     type: Required[str]
     hash_id: Required[str]
     semantic_type: Required[str]

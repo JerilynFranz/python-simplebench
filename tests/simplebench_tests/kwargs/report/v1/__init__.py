@@ -2,7 +2,8 @@
 # ruff: noqa: F401
 
 from .cpu_info import CPUInfoKWArgs
-from .environment import EnvironmentKWArgs
+from .environment_info import EnvironmentInfoKWArgs
+from .machine_info import MachineInfoKWArgs
 from .memory_info import MemoryInfoKWArgs, SwapMemoryObjectKWArgs, VirtualMemoryObjectKWArgs
 from .python_info import PythonInfoKWArgs
 from .raw_data_block import RawDataBlockKWArgs

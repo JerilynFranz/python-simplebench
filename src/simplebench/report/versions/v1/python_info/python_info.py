@@ -25,7 +25,7 @@ from .typeddict_types import ImmutablePythonInfoDict, PythonInfoData
 __all__: list[str] = []
 
 
-class PythonInfo(report.Environment):
+class PythonInfo(report.EnvironmentInfo):
     """Immutable class representing python execution environment in a report (V1)."""
 
     SCHEMA = PythonInfoSchema
@@ -281,7 +281,7 @@ class PythonInfo(report.Environment):
         """
         return self.data['revision']  # type: ignore
 
-    def for_json(self) -> ImmutablePythonInfoDict:
+    def for_json(self) -> ImmutablePythonInfoDict:  # type: ignore[override]
         """Get the JSON-serializable dictionary representation of this PythonInfo.
 
         This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`

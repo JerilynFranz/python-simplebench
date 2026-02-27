@@ -8,7 +8,7 @@ from simplebench.doc_utils import format_docstring, format_json_for_docstring
 from simplebench.report.base import JSONSchema
 
 
-class EnvironmentSchema(JSONSchema):
+class EnvironmentInfoSchema(JSONSchema):
     """Schema for the JSON Environment output (V1)"""
 
     VERSION: int = 1
@@ -18,7 +18,7 @@ class EnvironmentSchema(JSONSchema):
     """The JSON Environment schema type property value for version 1 reports."""
 
     ID: str = (
-        'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/environment.json'
+        'https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/environment-info.json'
     )
     """The JSON Environment schema $id value for version 1 reports."""
 

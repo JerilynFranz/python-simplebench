@@ -53,28 +53,27 @@ class MachineInfoSchema(JSONSchema):
                 'type': 'string',
                 'default': '',
             },
-            'execution_environment': {
-                'title': 'Execution Environment',
-                'description': 'Information about the execution environment(s) or runtime(s).',
-                'type': 'object',
-                'properties': {'python': {'$ref': 'python-info.json'}},
-                # By design this is open-ended to allow for future extensions for other
-                # execution environments without breaking the schema. Thus, additionalProperties is True
-                # and there is no required list. 'python' is a pre-defined property,
-                # but others may be added later.
-                # It requires at least one property to be present (the 'python' property or any future ones).
-                'additionalProperties': True,
-                'minProperties': 1,
-                # Each property name must match the environment name regex
-                # They must start with a letter, can contain letters, digits, underscores, hyphens,
-                # and must end with a letter or digit.
-                'propertyNames': {'pattern': '^[a-zA-Z](?:[a-zA-Z0-9_-]*[a-zA-Z0-9])?$'},
+            'environment': {
+                'title': 'Environment Information',
+                'description': 'Array of information about the execution environment(s) or runtime(s).',
+                'type': 'array',
+                'items': {
+                    'type': 'object',
+                    'if': {
+                        'properties': {
+                            'semantic_type': {'const': 'simplebench::python'},
+                        },
+                        'required': ['semantic_type'],
+                    },
+                    'then': {'$ref': 'python-info.json'},
+                    'else': {'$ref': 'environment-info.json'},
+                },
             },
             'cpu': {'$ref': 'cpu-info.json'},
             'memory': {'$ref': 'memory-info.json'},
             'system': {'$ref': 'system-info.json'},
         },
-        'required': ['version', 'type', 'hash_id', 'node', 'execution_environment', 'cpu', 'memory', 'system'],
+        'required': ['version', 'type', 'hash_id', 'node', 'environment', 'cpu', 'memory', 'system'],
         'additionalProperties': False,
     }
 
@@ -83,7 +82,7 @@ class MachineInfoSchema(JSONSchema):
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption='JSON Schema for ValueBlock V1',
+        caption='JSON Schema for MachineInfo V1',
         intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""

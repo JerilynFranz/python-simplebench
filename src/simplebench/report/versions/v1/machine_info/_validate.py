@@ -1,12 +1,13 @@
 """Validation functions for MachineInfo version 1."""
-
+from collections.abc import Sequence
 import re
 
+from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _MachineInfoErrorTag
 from simplebench.validators import validate_string, validate_string_with_regex, validate_type
 
 from ..cpu_info import CPUInfo
-from ..execution_environment import ExecutionEnvironment
+from ..environment_info import EnvironmentInfo
 from ..memory_info import MemoryInfo
 from ..system_info import SystemInfo
 
@@ -94,13 +95,21 @@ def system(value: SystemInfo) -> SystemInfo:
     return validate_type(value, SystemInfo, 'system', _MachineInfoErrorTag.INVALID_SYSTEM_TYPE)
 
 
-def execution_environment(value: ExecutionEnvironment) -> ExecutionEnvironment:
-    """Validate an ExecutionEnvironment instance.
+def environment(value: Sequence[EnvironmentInfo]) -> tuple[EnvironmentInfo, ...]:
+    """Validate a sequence of EnvironmentInfo instances.
 
-    :param value: The ExecutionEnvironment instance to validate.
-    :return: The validated ExecutionEnvironment instance.
-    :raises SimpleBenchTypeError: If value is not of type ExecutionEnvironment.
+    :param value: The sequence of EnvironmentInfo instances to validate.
+    :return: A tuple of the validated EnvironmentInfo instances.
+    :raises SimpleBenchTypeError: If value is not a sequence of EnvironmentInfo instances.
     """
-    return validate_type(
-        value, ExecutionEnvironment, 'execution_environment', _MachineInfoErrorTag.INVALID_EXECUTION_ENVIRONMENT_TYPE
-    )
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+        raise SimpleBenchTypeError(
+            f"The 'environment' property must be a Sequence of EnvironmentInfo instances, got {type(value).__name__}",
+            tag=_MachineInfoErrorTag.INVALID_ENVIRONMENT_PROPERTY_TYPE,
+        )
+    if not all(isinstance(item, EnvironmentInfo) for item in value):
+        raise SimpleBenchTypeError(
+            "All items in the 'environment' property must be of type EnvironmentInfo",
+            tag=_MachineInfoErrorTag.INVALID_ENVIRONMENT_PROPERTY_TYPE,
+        )
+    return value if isinstance(value, tuple) else tuple(value)

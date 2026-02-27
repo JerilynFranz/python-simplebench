@@ -20,17 +20,17 @@ from typing import Any
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report import base
-from simplebench.report._error_tags import _GenericEnvironmentErrorTag
+from simplebench.report._error_tags import _EnvironmentInfoErrorTag
 from simplebench.simplebench_types import CoreDataMapping, CoreDataTypes
 
 from . import _validate
-from .environment_schema import EnvironmentSchema
-from .typeddict_types import EnvironmentData, ImmutableEnvironmentData
+from .environment_info_schema import EnvironmentInfoSchema
+from .typeddict_types import EnvironmentInfoData, ImmutableEnvironmentInfoDict
 
 __all__: list[str] = []
 
 
-class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
+class EnvironmentInfo(Mapping[str, CoreDataTypes], base.BaseEnvironment):
     """Immutable class representing a benchmark execution environment in a report (V1).
 
     It provides methods to convert to and from dictionary representations and
@@ -40,7 +40,7 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
     with string keys and core data type values for convenience.
     """
 
-    SCHEMA: type[base.JSONSchema] = EnvironmentSchema
+    SCHEMA: type[base.JSONSchema] = EnvironmentInfoSchema
     """The JSON schema class for version 1 reports."""
 
     TYPE: str = SCHEMA.TYPE
@@ -66,7 +66,7 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
         """
         if not cls._init_params_cache:
-            params = cls.init_params(EnvironmentData)
+            params = cls.init_params(EnvironmentInfoData)
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
@@ -100,7 +100,7 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         :type hash_id: str
         """
         if not isinstance(data, Mapping):
-            raise SimpleBenchTypeError('data must be a mapping type', tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+            raise SimpleBenchTypeError('data must be a mapping type', tag=_EnvironmentInfoErrorTag.INVALID_DATA_TYPE)
 
         self._title: str = _validate.title(title)
         self._description: str = _validate.description(description)
@@ -126,7 +126,7 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         return hashlib.sha256(hash_input).hexdigest()
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> 'Environment':
+    def from_dict(cls, data: Mapping[str, Any]) -> 'EnvironmentInfo':
         """Create an Environment instance from a dictionary.
 
         Because the data has no predefined structure, this method just
@@ -142,10 +142,10 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         """
         if not isinstance(data, Mapping):
             raise SimpleBenchTypeError('data must be a mapping type',
-                                       tag=_GenericEnvironmentErrorTag.INVALID_DATA_TYPE)
+                                       tag=_EnvironmentInfoErrorTag.INVALID_DATA_TYPE)
         if 'title' not in data:
             raise SimpleBenchTypeError('title is a required property for Environment',
-                                       tag=_GenericEnvironmentErrorTag.INVALID_TITLE_VALUE)
+                                       tag=_EnvironmentInfoErrorTag.INVALID_TITLE_VALUE)
         data_copy = dict(data)
         title = data_copy.pop('title')
         description = data_copy.pop('description', '')
@@ -153,8 +153,8 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         hash_id = data_copy.get('hash_id', '')
         return cls(data=data_copy, title=title, description=description, semantic_type=semantic_type, hash_id=hash_id)
 
-    def to_dict(self) -> ImmutableEnvironmentData:
-        """Returns the Environment as an immutable MappingProxyType dictionary suitable for JSON serialization.
+    def to_dict(self) -> ImmutableEnvironmentInfoDict:
+        """Returns the Environment as an immutable dictionary suitable for JSON serialization.
 
         The returned instance is of type :class:`CoreDataMapping` to ensure immutability
         and will always reflect the state of the instance at the time of the first call.
@@ -162,7 +162,7 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         The exact same instance is returned on subsequent calls to ensure consistency
         and this is true even in multi-threaded scenarios.
 
-        :return ImmutableEnvironmentData: A dictionary representation of the Environment.
+        :return ImmutableEnvironmentInfoDict: A dictionary representation of the Environment.
         """
         return CoreDataMapping({
             'type': self.TYPE,
@@ -172,6 +172,28 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
             'title': self.title,
             'description': self.description,
             'data': self.data})  # type: ignore[return-value]
+
+    def for_json(self) -> ImmutableEnvironmentInfoDict:
+        """Get the JSON-serializable dictionary representation of this EnvironmentInfo.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this EnvironmentInfo.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this EnvironmentInfo.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this EnvironmentInfo.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def hash_id(self) -> str:
@@ -231,9 +253,9 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         return key in self.data
 
     def __repr__(self) -> str:
-        """Get the string representation of the PythonInfo instance.
+        """Get the string representation of the EnvironmentInfo instance.
 
-        :return: The string representation of the PythonInfo.
+        :return: The string representation of the EnvironmentInfo.
         """
         # Get the init parameters excluding 'type', 'version' since they are fixed for this class
         init_params = dict(self._data_params())
@@ -243,9 +265,28 @@ class Environment(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         return f'{self.__class__.__name__}({calling_args})'
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Environment):
+        if not isinstance(other, EnvironmentInfo):
             return NotImplemented
         return self.hash_id == other.hash_id
 
     def __hash__(self) -> int:
         return hash(self.hash_id)
+
+    def __copy__(self) -> 'EnvironmentInfo':
+        """Return a copy of this EnvironmentInfo instance.
+
+        Since the class is immutable, this method just returns self.
+
+        :return: The same instance of EnvironmentInfo.
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'EnvironmentInfo':
+        """Return a deep copy of this EnvironmentInfo instance.
+
+        Since the class is immutable, this method just returns self.
+
+        :param memo: The memoization dictionary for deepcopy.
+        :return: The same instance of EnvironmentInfo.
+        """
+        return self

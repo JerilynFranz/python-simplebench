@@ -5,7 +5,7 @@ from simplebench.exceptions import ErrorTag
 
 
 @enum_docstrings
-class _GenericEnvironmentErrorTag(ErrorTag):
+class _EnvironmentInfoErrorTag(ErrorTag):
     """Error tags for generic environment issues."""
 
     INVALID_DATA_TYPE = 'INVALID_DATA_TYPE'

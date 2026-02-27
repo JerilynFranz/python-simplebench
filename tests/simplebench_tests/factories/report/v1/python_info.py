@@ -54,7 +54,7 @@ def python_info_data() -> report.PythonInfoData:
         hash_id='c' * 64,
         type=report.PythonInfoSchema.TYPE,
         version=report.PythonInfoSchema.VERSION,
-        semantic_type='simplebench::python_info',
+        semantic_type=report.PythonInfo.SEMANTIC_TYPE,
         title='Python Information',
         description='Detailed information about the Python environment used for benchmarking.',
         data=report.PythonInfoEnv(

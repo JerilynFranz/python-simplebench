@@ -3,7 +3,7 @@
 import re
 from typing import Any, Final
 
-from simplebench.report._error_tags import _GenericEnvironmentErrorTag
+from simplebench.report._error_tags import _EnvironmentInfoErrorTag
 from simplebench.simplebench_types import CoreDataMapping
 from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
 
@@ -24,8 +24,8 @@ def title(value: str) -> str:
     return validate_string(
         value,
         'title',
-        _GenericEnvironmentErrorTag.INVALID_TITLE_TYPE,
-        _GenericEnvironmentErrorTag.INVALID_TITLE_VALUE,
+        _EnvironmentInfoErrorTag.INVALID_TITLE_TYPE,
+        _EnvironmentInfoErrorTag.INVALID_TITLE_VALUE,
         allow_empty=False,
         allow_blank=False,
         strip=True,
@@ -44,8 +44,8 @@ def description(value: str) -> str:
     return validate_string(
         value,
         'description',
-        _GenericEnvironmentErrorTag.INVALID_DESCRIPTION,
-        _GenericEnvironmentErrorTag.INVALID_DESCRIPTION,  # No separate value error since all strings are valid
+        _EnvironmentInfoErrorTag.INVALID_DESCRIPTION,
+        _EnvironmentInfoErrorTag.INVALID_DESCRIPTION,  # No separate value error since all strings are valid
         allow_empty=True,
         strip=True,
     )
@@ -70,8 +70,8 @@ def semantic_type(value: str) -> str:
         value,
         'semantic_type',
         _SEMANTIC_TYPE_RE,
-        _GenericEnvironmentErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
-        _GenericEnvironmentErrorTag.INVALID_SEMANTIC_TYPE_VALUE,
+        _EnvironmentInfoErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
+        _EnvironmentInfoErrorTag.INVALID_SEMANTIC_TYPE_VALUE,
         message='{name} must be in the format "namespace::type_name". Found: {value}',
     )
 
@@ -89,8 +89,8 @@ def hash_id(value: str) -> str:
     hash_string = validate_string(
         value,
         'hash_id',
-        _GenericEnvironmentErrorTag.INVALID_HASH_ID_TYPE,
-        _GenericEnvironmentErrorTag.INVALID_HASH_ID_VALUE,
+        _EnvironmentInfoErrorTag.INVALID_HASH_ID_TYPE,
+        _EnvironmentInfoErrorTag.INVALID_HASH_ID_VALUE,
         allow_empty=True,
         strip=True,
     )
@@ -101,8 +101,8 @@ def hash_id(value: str) -> str:
         hash_string,
         'hash_id',
         _HASH_RE,
-        _GenericEnvironmentErrorTag.INVALID_HASH_ID_TYPE,
-        _GenericEnvironmentErrorTag.INVALID_HASH_ID_VALUE,
+        _EnvironmentInfoErrorTag.INVALID_HASH_ID_TYPE,
+        _EnvironmentInfoErrorTag.INVALID_HASH_ID_VALUE,
         message='{name} must be 64-character hexadecimal string. Found: {value}',
     )
 

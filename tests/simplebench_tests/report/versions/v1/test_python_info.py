@@ -12,7 +12,7 @@ from testspec import Assert, PytestAction, TestSpec
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _PythonInfoErrorTag
 from simplebench.report.versions import v1 as report
-from simplebench.simplebench_types import CoreDataMapping, is_immutable, CoreDataSequence
+from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, is_immutable
 from simplebench.validators import is_typed_dict_mimic
 from simplebench_tests.factories.report import v1 as report_factories
 
@@ -501,7 +501,7 @@ def test_immutability(testspec: TestSpec) -> None:
         action=validate,
         kwargs={
             'instance': report_factories.python_info().to_dict().thaw(),  # type: ignore
-            'schema': report.Environment.SCHEMA.as_dict()
+            'schema': report.EnvironmentInfo.SCHEMA.as_dict()
         },
     ),
 ])

@@ -13,22 +13,29 @@ version 1: :class:`~simplebench.report.versions.v1.MachineInfoSchema`.
 
     These types ensure proper validation and serialization of MachineInfo data\
 """
+from collections.abc import Sequence
 
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.simplebench_types import Never, NotRequired, Required
 
 from ..cpu_info.typeddict_types import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
-from ..execution_environment.typeddict_types import (
-    ExecutionEnvironmentData,
-    ExecutionEnvironmentDict,
-    ImmutableExecutionEnvironmentData,
-    ImmutableExecutionEnvironmentDict,
+from ..environment_info.typeddict_types import (
+    EnvironmentInfoData,
+    EnvironmentInfoDict,
+    ImmutableEnvironmentInfoData,
+    ImmutableEnvironmentInfoDict,
 )
 from ..memory_info.typeddict_types import (
     ImmutableMemoryInfoData,
     ImmutableMemoryInfoDict,
     MemoryInfoData,
     MemoryInfoDict,
+)
+from ..python_info.typeddict_types import (
+    ImmutablePythonInfoData,
+    ImmutablePythonInfoDict,
+    PythonInfoData,
+    PythonInfoDict,
 )
 from ..system_info.typeddict_types import (
     ImmutableSystemInfoData,
@@ -43,86 +50,60 @@ __all__: list[str] = []
 
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-
-class _RequiredMachineInfoData(ReportElementTypedDict, total=True):
-    """Required fields for V1 MachineInfo data used as INPUT.
-
-    :param Required[str] node: The node string.
-    :param Required[CPUInfoData] cpu: The CPU information.
-    :param Required[MemoryInfoData] memory: The operating system release.
-    :param Required[SystemInfoData] system: The system name.
-    :param Required[ExecutionEnvironmentData] execution_environment: The execution environment information.
-    """
-
-    node: Required[str]
-    cpu: Required[CPUInfoData]
-    memory: Required[MemoryInfoData]
-    system: Required[SystemInfoData]
-    execution_environment: Required[ExecutionEnvironmentData]
-
-
-class MachineInfoData(_RequiredMachineInfoData, total=False):
+class MachineInfoData(ReportElementTypedDict):
     """Typed dictionary for V1 MachineInfo data used as INPUT.
 
-    All fields except `type`, `version`, and `hash_id` are required (`total=False`).
+    All fields except `type`, `version`, and `hash_id` are required.
 
     .. note::
         No additional fields are allowed beyond those defined here but
         `closed=True` is not being enforced due to Python version limitations
         before Python 3.12.
 
-            :param Required[str] node: The node string.
-
     :param Required[str] node: The node string.
     :param Required[CPUInfoData] cpu: The CPU information.
     :param Required[MemoryInfoData] memory: The operating system release.
     :param Required[SystemInfoData] system: The system name.
-    :param Required[ExecutionEnvironmentData] execution_environment: The execution environment information.
+    :param Required[Sequence[EnvironmentInfoData | PythonInfoData]] environment: The
+        execution environment information.
     :param NotRequired[str] hash_id: The unique hash identifier for the machine information.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
-
+    node: Required[str]
+    cpu: Required[CPUInfoData]
+    memory: Required[MemoryInfoData]
+    system: Required[SystemInfoData]
+    environment: Required[Sequence[EnvironmentInfoData | PythonInfoData]]
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
 
 
-class _RequiredImmutableMachineInfoData(ReportElementTypedDict, total=True):
-    """Required fields for V1 MachineInfo data used as INPUT.
-
-    :param Required[str] node: The node string.
-    :param Required[ImmutableCPUInfoData] cpu: The CPU information.
-    :param Required[ImmutableMemoryInfoData] memory: The operating system release.
-    :param Required[ImmutableSystemInfoData] system: The system name.
-    :param Required[ImmutableExecutionEnvironmentData] execution_environment: The execution environment information.
-    """
-
-    node: Required[str]
-    cpu: Required[ImmutableCPUInfoData]
-    memory: Required[ImmutableMemoryInfoData]
-    system: Required[ImmutableSystemInfoData]
-    execution_environment: Required[ImmutableExecutionEnvironmentData]
-
-
-class ImmutableMachineInfoData(_RequiredImmutableMachineInfoData, total=False):
+class ImmutableMachineInfoData(ReportElementTypedDict):
     """Immutable typed dictionary for V1 MachineInfo data used as INPUT.
 
     :param Required[str] node: The node string.
     :param Required[ImmutableCPUInfoData] cpu: The CPU information.
     :param Required[ImmutableMemoryInfoData] memory: The operating system release.
     :param Required[ImmutableSystemInfoData] system: The system name.
-    :param Required[ImmutableExecutionEnvironmentData] execution_environment: The execution environment information.
+    :param Required[Sequence[ImmutableEnvironmentInfoData | ImmutablePythonInfoData]] environment: The
+        execution environment information.
     :param NotRequired[str] hash_id: The unique hash identifier for the machine information.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
-
+    node: Required[str]
+    cpu: Required[ImmutableCPUInfoData]
+    memory: Required[ImmutableMemoryInfoData]
+    system: Required[ImmutableSystemInfoData]
+    environment: Required[Sequence[ImmutableEnvironmentInfoData | ImmutablePythonInfoData]]
+    hash_id: NotRequired[str]
+    type: NotRequired[str]
+    version: NotRequired[int]
     __immutable__: NotRequired[Never]
 
-
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
-
 
 class MachineInfoDict(ReportElementTypedDict, total=True):
     """Required fields for V1 MachineInfo data used as OUTPUT
@@ -135,68 +116,41 @@ class MachineInfoDict(ReportElementTypedDict, total=True):
     :param Required[CPUInfoDict] cpu: The CPU information.
     :param Required[MemoryInfoDict] memory: The operating system release.
     :param Required[SystemInfoDict] system: The system name.
-    :param Required[ExecutionEnvironmentDict] execution_environment: The execution environment information.
+    :param Required[Sequence[EnvironmentInfoDict | PythonInfoDict]] environment: The
+        execution environment information.
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the machine information.
     """
-
     node: Required[str]
     cpu: Required[CPUInfoDict]
     memory: Required[MemoryInfoDict]
     system: Required[SystemInfoDict]
-    execution_environment: Required[ExecutionEnvironmentDict]
+    environment: Required[Sequence[EnvironmentInfoDict | PythonInfoDict]]
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
 
 
-class _RequiredImmutableMachineInfoDict(ReportElementTypedDict, total=True):
-    """Base Immutable typed dictionary for V1 MachineInfo data used as OUTPUT.
-
-    This marks the dictionary as immutable for type-checking purposes. During runtime,
-    it should be constructed so as to enforce immutability.
-
-    It is structurally identical to `MachineInfoDict` but uses the immutable
-    variants of all sub-objects and is intended to signal immutability
-    of the entire structure.
-
-    The actual enforcement of immutability is the responsibility of the
-    code constructing instances and sub-objects of this type (e.g., using
-    :class:`types.MappingProxyType` and casting to :class:`ImmutableMachineInfoDict`
-    and so on for all sub-objects).
-
-    :param Required[str] node: The node string.
-    :param Required[ImmutableCPUInfoDict] cpu: The CPU information.
-    :param Required[ImmutableMemoryInfoDict] memory: The operating system release.
-    :param Required[ImmutableSystemInfoDict] system: The system name.
-    :param Required[ImmutableExecutionEnvironmentDict] execution_environment: The execution environment information.
-    :param Required[str] type: The type identifier for the block.
-    :param Required[int] version: The version of the block's data structure.
-    :param Required[str] hash_id: The unique hash identifier for the machine information.
-    """
-
-    node: Required[str]
-    cpu: Required[ImmutableCPUInfoDict]
-    memory: Required[ImmutableMemoryInfoDict]
-    system: Required[ImmutableSystemInfoDict]
-    execution_environment: Required[ImmutableExecutionEnvironmentDict]
-    type: Required[str]
-    version: Required[int]
-    hash_id: Required[str]
-
-
-class ImmutableMachineInfoDict(_RequiredImmutableMachineInfoDict, total=False):
+class ImmutableMachineInfoDict(ReportElementTypedDict):
     """Immutable typed dictionary for V1 MachineInfo data used as OUTPUT.
 
     :param Required[str] node: The node string.
     :param Required[ImmutableCPUInfoDict] cpu: The CPU information.
     :param Required[ImmutableMemoryInfoDict] memory: The operating system release.
     :param Required[ImmutableSystemInfoDict] system: The system name.
-    :param Required[ImmutableExecutionEnvironmentDict] execution_environment: The execution environment information.
+    :param Required[Sequence[ImmutableEnvironmentInfoDict | ImmutablePythonInfoDict]] environment: The
+        execution environment information.
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The unique hash identifier for the machine information.
     """
-
+    node: Required[str]
+    cpu: Required[ImmutableCPUInfoDict]
+    memory: Required[ImmutableMemoryInfoDict]
+    system: Required[ImmutableSystemInfoDict]
+    environment: Required[Sequence[ImmutableEnvironmentInfoDict | ImmutablePythonInfoDict]]
+    type: Required[str]
+    version: Required[int]
+    hash_id: Required[str]
     __immutable__: NotRequired[Never]

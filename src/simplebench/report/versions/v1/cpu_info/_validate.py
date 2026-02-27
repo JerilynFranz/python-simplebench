@@ -5,9 +5,9 @@ from typing import Any, cast
 
 from typeguard import TypeCheckError, check_type
 
-from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _CPUInfoErrorTag
+from simplebench.simplebench_types import CoreDataMapping
 from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
 
 from .typeddict_types import CPUInfoData, ImmutableCPUInfoData
@@ -81,7 +81,8 @@ def data(value: Any) -> ImmutableCPUInfoData:
     from simplebench import environment
     if isinstance(value, environment.CPUInfo):
         dict_value = value.to_dict().thaw()  # type: ignore[attr-defined]
-        _log.info('Validating CPUInfo data from environment.CPUInfo instance. %s', dict_value)
+    elif isinstance(value, CoreDataMapping):
+        dict_value = value.thaw()
     else:
         dict_value = value
 

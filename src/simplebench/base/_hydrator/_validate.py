@@ -104,8 +104,11 @@ def optional(optional_fields: Iterable[str], allowed_fields: Mapping[str, Any]) 
         )
     )
     if not all(field in allowed_fields for field in optional_set):
+        allowed_keys = set(allowed_fields.keys())
+        extra_keys = optional_set - allowed_keys
         raise SimpleBenchValueError(
-            'All values in `optional` must match a key in `allowed`', tag=_HydratorErrorTag.INVALID_OPTIONAL_ITEM_VALUE
+            f'All values in `optional` must match a key in `allowed`. Invalid keys: {extra_keys}',
+            tag=_HydratorErrorTag.INVALID_OPTIONAL_ITEM_VALUE
         )
 
     return optional_set
@@ -126,8 +129,12 @@ def defaults(default_values: Mapping[str, Any], optional_fields: set[str]) -> Ma
         )
 
     if not all(field in optional_fields for field in default_values.keys()):
+        default_keys = set(default_values.keys())
+        extra_keys = default_keys - optional_fields
         raise SimpleBenchValueError(
-            'All keys in `default` must match a key in `optional`', tag=_HydratorErrorTag.INVALID_DEFAULT_KEY
+            'All keys in `default` must match a key in `optional`'
+            f'. Invalid keys: {extra_keys}',
+            tag=_HydratorErrorTag.INVALID_DEFAULT_KEY
         )
 
     return default_values

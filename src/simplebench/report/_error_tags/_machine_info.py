@@ -10,6 +10,12 @@ __all__: list[str] = []
 class _MachineInfoErrorTag(ErrorTag):
     """Error tags for JSONMachineInfo exceptions."""
 
+    INVALID_HASH_ID_TYPE = 'INVALID_HASH_ID_TYPE'
+    """Attempted to set the hash_id property to something other than a type str."""
+    INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'
+    """Attempted to set the hash_id property to a value that is not a valid SHA-256 hexadecimal string."""
+    INVALID_ENVIRONMENT_PROPERTY_TYPE = 'INVALID_ENVIRONMENT_PROPERTY_TYPE'
+    """Attempted to set the environment property to something other than a type Sequence of EnvironmentInfo."""
     INVALID_SYSTEM_TYPE = 'INVALID_SYSTEM_INFO_TYPE'
     """Attempted to set the system property to something other than a v1 SystemInfo"""
     INVALID_EXECUTION_ENVIRONMENT_TYPE = 'INVALID_EXECUTION_ENVIRONMENT_INFO_TYPE'
@@ -58,3 +64,6 @@ class _MachineInfoErrorTag(ErrorTag):
     """Attempted to set the processor property to something other than a type str."""
     EMPTY_PROCESSOR_PROPERTY_VALUE = 'EMPTY_PROCESSOR_PROPERTY_VALUE'
     """Attempted to set the processor property to an empty string."""
+    INVALID_DICT_EXPORT_TYPE = 'INVALID_DICT_EXPORT_TYPE'
+    """The dictionary representation of MachineInfo does not conform to the ImmutableMachineInfoDict TypedDict
+    definition."""

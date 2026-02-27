@@ -1,0 +1,12 @@
+"""Generic environment module for report version 1."""
+# ruff: noqa: F401
+
+from .environment_info import EnvironmentInfo, EnvironmentInfoSchema
+from .typeddict_types import (
+    EnvironmentInfoData,
+    EnvironmentInfoDict,
+    ImmutableEnvironmentInfoData,
+    ImmutableEnvironmentInfoDict,
+)
+
+__all__: list[str] = []

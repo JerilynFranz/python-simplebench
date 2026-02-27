@@ -7,7 +7,7 @@ from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _ExecutionEnvironmentErrorTag
 from simplebench.report.versions import v1 as report
 
-from ..environment import Environment
+from ..environment_info import EnvironmentInfo
 
 __all__: list[str] = []
 
@@ -16,7 +16,7 @@ _ENV_NAME_REGEX: re.Pattern[str] = re.compile(r'^[a-zA-Z](?:[a-zA-Z0-9_-]*[a-zA-
 """Regular expression for validating environment names."""
 
 
-def environments(value: Mapping[str, object]) -> dict[str, report.Environment]:
+def environments(value: Mapping[str, object]) -> dict[str, report.EnvironmentInfo]:
     """Validate the execution environments dictionary.
 
     Each key in the dictionary represents an execution environment name,
@@ -41,7 +41,7 @@ def environments(value: Mapping[str, object]) -> dict[str, report.Environment]:
             tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENTS_TYPE,
         )
 
-    validated_envs: dict[str, report.Environment] = {}
+    validated_envs: dict[str, report.EnvironmentInfo] = {}
     for env_name, env_data in value.items():
         if not isinstance(env_name, str):
             raise SimpleBenchTypeError(
@@ -54,7 +54,7 @@ def environments(value: Mapping[str, object]) -> dict[str, report.Environment]:
                 f'{_ENV_NAME_REGEX.pattern!r}',
                 tag=_ExecutionEnvironmentErrorTag.INVALID_ENVIRONMENT_NAME_VALUE,
             )
-        if not isinstance(env_data, Environment):
+        if not isinstance(env_data, EnvironmentInfo):
            raise SimpleBenchTypeError(
                 f'Data for environment {env_name!r} is not '
                 f'an Environment instance: {type(env_data).__name__!r}',

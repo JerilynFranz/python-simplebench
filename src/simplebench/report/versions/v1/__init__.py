@@ -14,13 +14,13 @@ of V1 report data.
 # ruff: noqa: F401
 
 from .cpu_info import CPUInfo, CPUInfoData, CPUInfoDict, CPUInfoSchema, ImmutableCPUInfoData, ImmutableCPUInfoDict
-from .environment import (
-    Environment,
-    EnvironmentData,
-    EnvironmentDict,
-    EnvironmentSchema,
-    ImmutableEnvironmentData,
-    ImmutableEnvironmentDict,
+from .environment_info import (
+    EnvironmentInfo,
+    EnvironmentInfoData,
+    EnvironmentInfoDict,
+    EnvironmentInfoSchema,
+    ImmutableEnvironmentInfoData,
+    ImmutableEnvironmentInfoDict,
 )
 from .execution_environment import (
     ExecutionEnvironment,

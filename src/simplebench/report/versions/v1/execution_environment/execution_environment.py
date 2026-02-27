@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 __all__: list[str] = []
 
 
-def environment_type(semantic_type: str) -> type['report.Environment']:
+def environment_type(semantic_type: str) -> type['report.EnvironmentInfo']:
     """Get the Environment class corresponding to a known environment semantic type.
 
     If the semantic type is not recognized as a known environment, the base Environment class is returned.
@@ -33,12 +33,12 @@ def environment_type(semantic_type: str) -> type['report.Environment']:
         case 'simplebench::python':
             return report.PythonInfo
         case _:
-            return report.Environment
+            return report.EnvironmentInfo
 
-class ExecutionEnvironment(Mapping[str, 'report.Environment'], base.BaseExecutionEnvironment):
+class ExecutionEnvironment(Mapping[str, 'report.EnvironmentInfo'], base.BaseExecutionEnvironment):
     """Implementation of the ExecutionEnvironment interface for V1."""
 
-    def __init__(self, __environments: 'Mapping[str, report.Environment]') -> None:
+    def __init__(self, __environments: 'Mapping[str, report.EnvironmentInfo]') -> None:
         """Initialize the ExecutionEnvironment with environment information.
 
         In the V1 implementation, the python parameter is the only pre-defined
@@ -50,7 +50,7 @@ class ExecutionEnvironment(Mapping[str, 'report.Environment'], base.BaseExecutio
         :param __environments: A mapping of environment names to their corresponding Environment instances.
         :raises SimpleBenchTypeError: If a passed environment is of an incorrect type.
         """
-        self._environments: dict[str, report.Environment] = _validate.environments(__environments)
+        self._environments: dict[str, report.EnvironmentInfo] = _validate.environments(__environments)
         self._hash_id: str = self._compute_hash_id()
 
     def _compute_hash_id(self) -> str:
@@ -86,7 +86,7 @@ class ExecutionEnvironment(Mapping[str, 'report.Environment'], base.BaseExecutio
                 'Execution environment data must be a mapping of environment name to environment data',
                 tag=_ExecutionEnvironmentErrorTag.INVALID_DATA_ARG_TYPE,
             )
-        enviornments: dict[str, report.Environment] = {}
+        enviornments: dict[str, report.EnvironmentInfo] = {}
         for env_name, env_data in data.items():
             if not isinstance(env_data, Mapping):
                 raise SimpleBenchTypeError(
@@ -118,7 +118,7 @@ class ExecutionEnvironment(Mapping[str, 'report.Environment'], base.BaseExecutio
         return self.execution_environment.thaw()
 
     @property
-    def execution_environment(self) -> dict[str, 'report.Environment']:
+    def execution_environment(self) -> dict[str, 'report.EnvironmentInfo']:
         """Get the execution_environment dictionary.
 
         It returns a shallow copy of the internal execution environments dictionary,

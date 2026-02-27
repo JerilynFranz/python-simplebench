@@ -13,17 +13,23 @@ This makes the implementations of JSONMachineInfo backwards compatible with futu
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
 of the base MachineInfo representation at the time of the V1 schema release.
 """
+from collections.abc import Mapping, Sequence
+from types import MappingProxyType
+from typing import TYPE_CHECKING, Any, cast
 
-from typing import TYPE_CHECKING
-
+from simplebench._log import _log
+from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.report._error_tags import _MachineInfoErrorTag
 from simplebench.report.base import BaseMachineInfo, JSONSchema
+from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence
 
+from ..environment_info import EnvironmentInfoData, ImmutableEnvironmentInfoData
 from . import _validate
 from .machine_info_schema import MachineInfoSchema
-from .typeddict_types import ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict, ImmutableMachineInfoData
+from .typeddict_types import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData
 
 if TYPE_CHECKING:
-    from simplebench.report.versions.v1 import CPUInfo, ExecutionEnvironment, MemoryInfo, SystemInfo
+    from simplebench.report.versions.v1 import CPUInfo, EnvironmentInfo, MemoryInfo, SystemInfo
 
 __all__: list[str] = []
 
@@ -43,6 +49,43 @@ class MachineInfo(BaseMachineInfo):
     SCHEMA: type[JSONSchema] = MachineInfoSchema
     """The JSON schema class for version 1 reports."""
 
+    _init_params_cache: MappingProxyType[str, Any] | None = None
+    """Cache for the constructor parameters of the MachineInfo class."""
+
+    @classmethod
+    def _data_params(cls) -> MappingProxyType[str, Any]:
+        """Get the constructor parameters for the schema data class.
+
+        The parameters are cached after the first call for performance.
+
+        It is returned as a read-only mapping and includes 'type' and 'version'.
+
+        :return MappingProxyType[str, Any]: A read-only mapping of constructor parameter names and types.
+        """
+        from simplebench.report.versions.v1 import CPUInfo, EnvironmentInfo, MemoryInfo, SystemInfo
+        if not cls._init_params_cache:
+            cls._init_params_cache = MappingProxyType({
+                'hash_id': str,
+                'node': str,
+                'cpu': CPUInfo,
+                'memory': MemoryInfo,
+                'system': SystemInfo,
+                'environment': Sequence[EnvironmentInfo],
+                'type': str,
+                'version': int,
+            })
+        return cls._init_params_cache
+
+    __slots__ = (
+        '_hash_id',
+        '_node',
+        '_environment',
+        '_cpu',
+        '_memory',
+        '_system',
+        '_to_dict',
+    )
+    """Slots for MachineInfo instance attributes."""
     def __init__(
         self,
         *,
@@ -51,7 +94,7 @@ class MachineInfo(BaseMachineInfo):
         cpu: 'CPUInfo',
         memory: 'MemoryInfo',
         system: 'SystemInfo',
-        execution_environment: 'ExecutionEnvironment',
+        environment: Sequence['EnvironmentInfo'],
     ) -> None:
         """Initialize JSONMachineInfo.
 
@@ -60,7 +103,7 @@ class MachineInfo(BaseMachineInfo):
         :param CPUInfo cpu: The CPU information.
         :param MemoryInfo memory: The memory information.
         :param SystemInfo system: The system information.
-        :param ExecutionEnvironment execution_environment: The execution environment information.
+        :param Sequence[EnvironmentInfo] environment: The execution environment information.
         :raises SimpleBenchTypeError: If any of the parameters are of incorrect type.
         :raises SimpleBenchValueError: If any of the parameters have invalid values.
         """
@@ -69,7 +112,9 @@ class MachineInfo(BaseMachineInfo):
         self._cpu = _validate.cpu(cpu)
         self._memory = _validate.memory(memory)
         self._system = _validate.system(system)
-        self._execution_environment = _validate.execution_environment(execution_environment)
+        self._environment = _validate.environment(environment)
+        if self._hash_id == '':
+            self._hash_id = self._hash_id_helper(ImmutableMachineInfoDict)
         self._to_dict: ImmutableMachineInfoDict | None = None
 
     @classmethod
@@ -86,30 +131,69 @@ class MachineInfo(BaseMachineInfo):
         """
         from simplebench.report.versions.v1 import (  # pylint: disable=import-outside-toplevel
             CPUInfo,
-            ExecutionEnvironment,
             MemoryInfo,
             SystemInfo,
         )
-
-        allowed_keys = cls.init_params()
-        allowed_keys['version'] = int
-        allowed_keys['type'] = str
+        allowed_keys: dict[str, type] = dict(cls._data_params())
 
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
             skip_fields={'version', 'type'},
-            optional_fields={'hash_id', 'node', 'version', 'type'},
-            defaults={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE},
+            optional_fields={'hash_id', 'node', 'version', 'type', 'environment'},
+            defaults={'hash_id': '', 'node': '', 'version': cls.VERSION, 'type': cls.TYPE, 'environment': tuple()},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={
-                'execution_environment': ExecutionEnvironment.from_dict,
                 'cpu': CPUInfo.from_dict,
                 'memory': MemoryInfo.from_dict,
                 'system': SystemInfo.from_dict,
+                'environment': cls._environment_info_from_sequence,
             },
         )
         return cls(**kwargs)
+
+    @classmethod
+    def _environment_info_from_sequence(
+            cls,
+            environment: Sequence[EnvironmentInfoData | ImmutableEnvironmentInfoData]
+        ) -> tuple['EnvironmentInfo', ...]:
+        """Helper method to create a tuple of EnvironmentInfo instances from the environment data
+        in the input dictionary.
+
+        :param environment: The sequence of environment data dictionaries.
+        :return tuple[EnvironmentInfo, ...]: A tuple of EnvironmentInfo instances created from the environment data.
+        :raises SimpleBenchTypeError: If the 'environment' key is present but is not a sequence of dictionaries.
+        """
+        from simplebench.report.versions.v1 import EnvironmentInfo, PythonInfo, PythonInfoData
+
+        python_semantic_type = PythonInfo.SEMANTIC_TYPE
+
+        env_data: list[EnvironmentInfo] = []
+        if not isinstance(environment, Sequence) or isinstance(environment, (str, bytes)):
+            raise SimpleBenchTypeError(
+                f"The 'environment' property must be a Sequence, got {type(environment).__name__}",
+                tag=_MachineInfoErrorTag.INVALID_ENVIRONMENT_PROPERTY_TYPE,
+            )
+        for env in environment:
+            if not isinstance(env, Mapping):
+                raise SimpleBenchTypeError(
+                    f"Each item in the 'environment' property must be a Mapping, got {type(env).__name__}",
+                    tag=_MachineInfoErrorTag.INVALID_ENVIRONMENT_PROPERTY_TYPE,
+                )
+            semantic_type: str = env.get('semantic_type', None)
+            _log.info(f"Processing environment item with semantic_type: {semantic_type}")
+            if semantic_type is None:
+                raise SimpleBenchTypeError(
+                    "Each item in the 'environment' property must have a 'semantic_type' key",
+                    tag=_MachineInfoErrorTag.INVALID_ENVIRONMENT_PROPERTY_TYPE,
+                )
+            elif semantic_type == python_semantic_type:
+                env_data.append(PythonInfo.from_dict(cast(PythonInfoData, env)))
+            else:
+                env_data.append(EnvironmentInfo.from_dict(env))
+        for item in env_data:
+            _log.info(f"Created environment item: {type(item).__name__}, {item}")
+        return tuple(env_data)
 
     def to_dict(self) -> ImmutableMachineInfoDict:
         """Convert the MachineInfo to a dictionary.
@@ -120,8 +204,40 @@ class MachineInfo(BaseMachineInfo):
         :return ImmutableMachineInfoDict: A dictionary representation of the MachineInfo.
         """
         if self._to_dict is None:
-            self._to_dict = self._to_dict_helper(ImmutableMachineInfoDict)
-        return self._to_dict
+            self._to_dict = cast(ImmutableMachineInfoDict,
+                CoreDataMapping({
+                    'hash_id': self.hash_id,
+                    'node': self.node,
+                    'cpu': self.cpu.to_dict(),
+                    'memory': self.memory.to_dict(),
+                    'system': self.system.to_dict(),
+                    'environment': CoreDataSequence(tuple(env.to_dict() for env in self.environment)),  # type: ignore
+                    'type': self.TYPE,
+                    'version': self.VERSION,
+                })) # type: ignore
+        return CoreDataMapping(self._to_dict)  # type: ignore
+
+    def for_json(self) -> ImmutableMachineInfoDict:
+        """Get the JSON-serializable dictionary representation of this MachineInfo.
+
+        This method delegates to the for_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the for_json method to convert to a JSON-serializable dictionary.
+
+        :return: The JSON-serializable dictionary representation of this MachineInfo.
+        """
+        return self.to_dict().for_json()  # type: ignore
+
+    def as_json(self) -> str:
+        """Get the JSON string representation of this MachineInfo.
+
+        This method delegates to the as_json method of the dictionary returned by :meth:`to_dict`
+        because the dictionary is actually an instance of :class:`CoreDataMapping`
+        which has the as_json method to convert to a JSON string.
+
+        :return: The JSON string representation of this MachineInfo.
+        """
+        return self.to_dict().as_json()  # type: ignore
 
     @property
     def hash_id(self) -> str:
@@ -129,8 +245,6 @@ class MachineInfo(BaseMachineInfo):
 
         :return: The hash_id string.
         """
-        if self._hash_id == '':
-            self._hash_id = self._hash_id_helper(MachineInfoDict)
         return self._hash_id
 
     @property
@@ -142,12 +256,12 @@ class MachineInfo(BaseMachineInfo):
         return self._node
 
     @property
-    def execution_environment(self) -> 'ExecutionEnvironment':
-        """Get the execution environment property.
+    def environment(self) -> tuple['EnvironmentInfo', ...]:
+        """Get the environment property.
 
         :return: The execution environment info.
         """
-        return self._execution_environment
+        return self._environment
 
     @property
     def cpu(self) -> 'CPUInfo':
@@ -172,3 +286,48 @@ class MachineInfo(BaseMachineInfo):
         :return: The system info.
         """
         return self._system
+
+    def __repr__(self) -> str:
+        """Get the string representation of this MachineInfo instance.
+
+        :return: The string representation of this MachineInfo instance.
+        """
+        return (f"MachineInfo(hash_id={self.hash_id!r}, node={self.node!r}, "
+                f"cpu={self.cpu!r}, memory={self.memory!r}, system={self.system!r}, "
+                f"environment={self.environment!r})")
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality with another MachineInfo instance.
+
+        Two MachineInfo instances are considered equal if their hash_id properties are equal.
+
+        :param other: The other object to compare with.
+        :return: True if the other object is a MachineInfo instance with the same hash_id, False otherwise.
+        """
+        if not isinstance(other, MachineInfo):
+            return NotImplemented
+        return self.hash_id == other.hash_id
+
+    def __hash__(self) -> int:
+        """Get the hash of this MachineInfo instance.
+
+        The hash is based on the hash_id property which is a unique identifier for the machine information.
+
+        :return: The hash of this MachineInfo instance.
+        """
+        return hash(self._hash_id)
+
+    def __copy__(self) -> 'MachineInfo':
+        """Create a copy of this MachineInfo instance.
+
+        :return: A copy of this MachineInfo instance.
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict[int, object]) -> 'MachineInfo':
+        """Create a deep copy of this MachineInfo instance.
+
+        :param memo: The memoization dictionary for deep copy.
+        :return: A deep copy of this MachineInfo instance.
+        """
+        return self

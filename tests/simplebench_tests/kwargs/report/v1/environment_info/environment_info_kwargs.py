@@ -3,11 +3,11 @@
 from collections.abc import Mapping
 from typing import Any
 
-from simplebench.report.versions.v1 import Environment
+from simplebench.report.versions.v1 import EnvironmentInfo
 from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
 
-class EnvironmentKWArgs(KWArgs):
+class EnvironmentInfoKWArgs(KWArgs):
     """KWArgs for GenericEnvironment.__init__"""
 
     def __init__(self,
@@ -29,4 +29,4 @@ class EnvironmentKWArgs(KWArgs):
         :param data: Keyword arguments representing environment properties.
         Each key-value pair corresponds to a property name and its value.
         The values must be of core data types."""
-        super().__init__(Environment.__init__, kwargs=locals(), globalns=globals())
+        super().__init__(EnvironmentInfo.__init__, kwargs=locals(), globalns=globals())
