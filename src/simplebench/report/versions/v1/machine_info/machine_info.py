@@ -17,7 +17,6 @@ from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, cast
 
-from simplebench._log import _log
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.report._error_tags import _MachineInfoErrorTag
 from simplebench.report.base import BaseMachineInfo, JSONSchema
@@ -180,8 +179,7 @@ class MachineInfo(BaseMachineInfo):
                     f"Each item in the 'environment' property must be a Mapping, got {type(env).__name__}",
                     tag=_MachineInfoErrorTag.INVALID_ENVIRONMENT_PROPERTY_TYPE,
                 )
-            semantic_type: str = env.get('semantic_type', None)
-            _log.info(f"Processing environment item with semantic_type: {semantic_type}")
+            semantic_type: str | None = env.get('semantic_type', None)
             if semantic_type is None:
                 raise SimpleBenchTypeError(
                     "Each item in the 'environment' property must have a 'semantic_type' key",
@@ -191,8 +189,6 @@ class MachineInfo(BaseMachineInfo):
                 env_data.append(PythonInfo.from_dict(cast(PythonInfoData, env)))
             else:
                 env_data.append(EnvironmentInfo.from_dict(env))
-        for item in env_data:
-            _log.info(f"Created environment item: {type(item).__name__}, {item}")
         return tuple(env_data)
 
     def to_dict(self) -> ImmutableMachineInfoDict:
@@ -208,14 +204,14 @@ class MachineInfo(BaseMachineInfo):
                 CoreDataMapping({
                     'hash_id': self.hash_id,
                     'node': self.node,
-                    'cpu': self.cpu.to_dict(),
-                    'memory': self.memory.to_dict(),
-                    'system': self.system.to_dict(),
+                    'cpu': self.cpu.to_dict(),  # type: ignore
+                    'memory': self.memory.to_dict(),  # type: ignore
+                    'system': self.system.to_dict(),  # type: ignore
                     'environment': CoreDataSequence(tuple(env.to_dict() for env in self.environment)),  # type: ignore
                     'type': self.TYPE,
                     'version': self.VERSION,
                 })) # type: ignore
-        return CoreDataMapping(self._to_dict)  # type: ignore
+        return self._to_dict
 
     def for_json(self) -> ImmutableMachineInfoDict:
         """Get the JSON-serializable dictionary representation of this MachineInfo.

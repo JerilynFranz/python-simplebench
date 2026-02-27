@@ -14,7 +14,6 @@ from typing import (
     TypeGuard,
     TypeVar,
     Union,
-    cast,
     get_args,
     get_origin,
     is_typeddict,
@@ -155,7 +154,7 @@ def _validate_and_check_immutability_of_mimic(
     # Check value types for all keys in the data against the expected types defined in the TypedDict subclass.
     immutable_children: bool = True
     checked_keys: set[str] = set()
-    required_keys = td_cls.__required_keys__ if hasattr(td_cls, '__required_keys__') else set()
+    required_keys = td_cls.__required_keys__ if hasattr(td_cls, '__required_keys__') else set()  # type: ignore
     while keys_to_check:
         key = keys_to_check.pop()
         _log.debug(f'Validating key: {key!r} of TypedDict: {td_cls.__name__}')
@@ -562,8 +561,7 @@ def typed_dict_mimic(data: Mapping[str, Any], td_cls: type[T]) -> T:
     :raise SimpleBenchTypeError: If any value has an incorrect type.
     """
     if is_typed_dict_mimic(data, td_cls):
-        # Cast is safe because is_typed_dict_mimic ensures the structure conforms to td_cls
-        return cast(T, data)
+        return data  # type: ignore[return-value]
 
     raise SimpleBenchTypeError(
         f'Data does not conform to the structure of {td_cls.__name__}',

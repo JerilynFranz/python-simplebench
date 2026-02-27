@@ -35,7 +35,7 @@ def validate_iterable_of_type(
 ) -> list[Any]: ...
 
 
-def validate_iterable_of_type(  # noqa: C901
+def validate_iterable_of_type(
     value: Any,
     types: type[T] | tuple[type, ...],
     field_name: str,

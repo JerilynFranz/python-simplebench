@@ -22,13 +22,6 @@ from .environment_info import (
     ImmutableEnvironmentInfoData,
     ImmutableEnvironmentInfoDict,
 )
-from .execution_environment import (
-    ExecutionEnvironment,
-    ExecutionEnvironmentData,
-    ExecutionEnvironmentDict,
-    ImmutableExecutionEnvironmentData,
-    ImmutableExecutionEnvironmentDict,
-)
 from .extras_object import ExtrasObject
 from .machine_info import (
     ImmutableMachineInfoData,
