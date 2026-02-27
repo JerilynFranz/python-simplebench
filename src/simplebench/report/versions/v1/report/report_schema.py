@@ -57,7 +57,7 @@ class ReportSchema(JSONSchema):
                 'title': 'Results',
                 'description': 'Benchmark results',
                 'type': 'array',
-                '$ref': 'results-info.json',
+                'items': {'$ref': 'results-info.json'},
                 'minItems': 1,
             },
             'machine': {'$ref': 'machine-info.json'},

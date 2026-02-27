@@ -60,6 +60,6 @@ def no_hash_id_machine_info_data() -> report.MachineInfoData:
 
 @cache
 def machine_info() -> report.MachineInfo:
-    """Return MachineInfoKWArgs with all fields set."""
+    """Return MachineInfo with all fields set."""
     return report.MachineInfo(**machine_info_kwargs())
 

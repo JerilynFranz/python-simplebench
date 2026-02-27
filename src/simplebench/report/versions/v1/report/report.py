@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.report.base import BaseReport, JSONSchema
 from simplebench.report.versions.v1 import MachineInfo
-from simplebench.simplebench_types import VariationCols
+from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, VariationCols
 from simplebench.validators import validate_sequence_of_type
 
 from . import _validate
@@ -46,7 +46,6 @@ class Report(BaseReport):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
-    _init_params_cache: dict[str, Any] = {}
     """Cache for the constructor parameters of the ResultsInfo class."""
 
     @classmethod
@@ -57,12 +56,17 @@ class Report(BaseReport):
 
         :return dict[str, Any]: A dictionary of constructor parameter names and types.
         """
-        if not cls._init_params_cache:
-            params = cls.init_params(ReportData)
-            params.pop('type', None)
-            params.pop('version', None)
-            cls._init_params_cache = params
-        return cls._init_params_cache
+        from simplebench.report.versions.v1 import ResultsInfo
+        return {
+            'hash_id': str,
+            'timestamp': str,
+            'group': str,
+            'title': str,
+            'description': str,
+            'variation_cols': VariationCols,
+            'results': Sequence[ResultsInfo],
+            'machine': MachineInfo,
+        }
 
     __slots__ = (
         '_timestamp',
@@ -85,7 +89,7 @@ class Report(BaseReport):
         title: str,
         description: str,
         variation_cols: VariationCols,
-        results: 'Sequence[ResultsInfo]',
+        results: Sequence['ResultsInfo'],
         machine: MachineInfo,
     ) -> None:
         """Initialize a Report instance.
@@ -95,7 +99,7 @@ class Report(BaseReport):
         :param str group: Group of the benchmark.
         :param str title: Title of the benchmark.
         :param str description: Description of the benchmark.
-        :param VariationColsType variation_cols: Variation columns dictionary.
+        :param VariationCols variation_cols: Variation columns dictionary.
         :param Sequence[ResultsInfo] results: Sequence of ResultsInfo instances.
         :param MachineInfo machine: MachineInfo instance.
         :raises SimpleBenchTypeError: If any parameter is of incorrect type.
@@ -133,8 +137,9 @@ class Report(BaseReport):
         """
         from simplebench.report.versions.v1 import ResultsInfo
 
-        allowed_keys = cls._data_params()
-
+        allowed_keys = dict(cls._data_params())
+        allowed_keys['type'] = str
+        allowed_keys['version'] = int
         def process_results(value: Any) -> list[ResultsInfo]:
             """Process the results-info objects in the input sequence"""
             validated_list = validate_sequence_of_type(
@@ -151,10 +156,12 @@ class Report(BaseReport):
             data=data,
             allowed_fields=allowed_keys,
             skip_fields={'version', 'type'},
-            optional_fields={'version', 'type'},
-            defaults={'version': cls.VERSION, 'type': cls.TYPE},
+            optional_fields={'version', 'type', 'hash_id'},
+            defaults={'version': cls.VERSION, 'type': cls.TYPE, 'hash_id': ''},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={'results': process_results, 'machine': MachineInfo.from_dict},
+            process_as={'results': process_results,
+                        'machine': MachineInfo.from_dict,
+                        'variation_cols': VariationCols},
         )
         return cls(**kwargs)
 
@@ -169,8 +176,54 @@ class Report(BaseReport):
         :return ImmutableReportDict: Immutable dictionary containing the JSON report data.
         """
         if self._to_dict_cache is None:
-            self._to_dict_cache = self._to_dict_helper(ImmutableReportDict)
-        return self._to_dict_cache
+            self._to_dict_cache = CoreDataMapping({
+                'timestamp': self.timestamp,
+                'group': self.group,
+                'title': self.title,
+                'description': self.description,
+                'variation_cols': self.variation_cols,
+                'results': CoreDataSequence([result.to_dict() for result in self.results]),  # type: ignore
+                'machine': self.machine.to_dict(),  # type: ignore
+                'type': self.TYPE,
+                'version': self.VERSION,
+                'hash_id': self.hash_id,
+            })  # type: ignore
+        return self._to_dict_cache  # type: ignore
+
+    def for_json(self) -> dict[str, Any]:
+        """Convert the Report instance to a JSON-serializable dictionary.
+
+        This method is used for JSON serialization and returns a standard
+        dictionary representation of the report data. It is not cached and is
+        not type cast to :class:`ImmutableReportDict` since it is intended for
+        immediate serialization rather than long-term storage.
+
+        :return dict[str, Any]: A JSON-serializable dictionary representation of the report.
+        """
+
+        return self.to_dict().thaw()  # type: ignore
+
+    def as_json(self) -> str:
+        """Convert the Report instance to a JSON string.
+
+        This method is a convenience for directly obtaining a JSON string
+        representation of the report. It uses the for_json method to get a
+        JSON-serializable dictionary and then serializes it to a JSON string.
+
+        :return str: A JSON string representation of the report.
+        """
+        return self.to_dict().as_json()  # type: ignore
+
+    @property
+    def hash_id(self) -> str:
+        """Get the unique hash identifier for the report.
+
+        The hash_id is a unique identifier derived from the content of the report.
+        It is used for hashing and equality comparisons.
+
+        :return str: The unique hash identifier for the report.
+        """
+        return self._hash_id
 
     @property
     def timestamp(self) -> str:
@@ -213,7 +266,7 @@ class Report(BaseReport):
         return self._variation_cols
 
     @property
-    def results(self) -> 'tuple[ResultsInfo, ...]':
+    def results(self) -> tuple['ResultsInfo', ...]:
         """Get the results property.
 
         The results property is a tuple of ResultsInfo instances.
@@ -226,3 +279,117 @@ class Report(BaseReport):
     def machine(self) -> MachineInfo:
         """Get the machine property."""
         return self._machine
+
+    def __getstate__(self) -> tuple[dict[str, Any] | None, tuple[Any, ...]]:
+        """Prepare the object's state for pickling, prioritizing size.
+
+        This method ensures that the pickled representation of the Report instance
+        is compact. It excludes calculated properties like `_to_dict_cache`.
+        This decreases the pickled size by about 50%, which can significantly improve
+        pickling and unpickling performance, especially for large reports. 
+
+        This prioritizes a smaller pickled size and fast subsequent unpickling over
+        preserving the lazy-evaluation state across serialization.
+
+        :return: A state tuple for pickling.
+        :rtype: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # Sweep all slot attributes to force calculation of any lazy properties.
+        # and collect any public attribute values for pickling. The non-public
+        # attributes will be excluded from the pickled state and can be
+        # recalculated on demand after unpickling. This keeps the pickled
+        # representation minimal and about 50% smaller. Which is significant
+        # for large datasets.
+        # 'version' and 'type' are excluded as they are class constants not
+        # instance attributes and can be inferred.
+        public_attrs = dict(self._data_params())
+        public_attrs.pop('type', None)
+        public_attrs.pop('version', None)
+        slot_values: list[Any] = []
+        for slot in self.__slots__:
+            attr_name = slot.lstrip('_')
+            if attr_name in public_attrs:
+                slot_values.append(getattr(self, attr_name))
+            else:
+                slot_values.append(None)
+
+        # Build the state tuple for a __slots__ class. The first element is for
+        # __dict__ (None in our case) and the second is a tuple of the slotted values.
+        state = tuple(slot_values)
+        return (None, state)
+
+    def __setstate__(self, state: tuple[dict[str, Any] | None, tuple[Any, ...]]) -> None:
+        """Restore the object's state from a pickled representation.
+
+        This method is the counterpart to `__getstate__`. It takes the state
+        tuple and repopulates the instance's `__slots__`.
+
+        .. note::
+            This method bypasses `__init__`, which is standard for unpickling.
+
+        :param state: The state tuple from unpickling.
+        :type state: tuple[dict[str, Any] | None, tuple[Any, ...]]
+        """
+        # The first element of the state tuple is for __dict__, which is None for this class.
+        # The second element is a tuple of values for the __slots__.
+        slot_values = state[1]
+        for slot, value in zip(self.__slots__, slot_values, strict=True):
+            object.__setattr__(self, slot, value)
+
+    def __hash__(self) -> int:
+        """Compute a hash value for the Report instance.
+
+        The hash is based on the unique `hash_id` property, which is derived
+        from the report's content. This ensures that reports with identical
+        content will have the same hash value, while different reports will
+        have different hash values.
+
+        :return int: The hash value of the Report instance.
+        """
+        return hash(self.hash_id)
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality with another Report instance.
+
+        Two Report instances are considered equal if their hash_id properties are equal.
+
+        :param object other: The object to compare with.
+        :return bool: True if the objects are equal, False otherwise.
+        """
+        if not isinstance(other, Report):
+            return NotImplemented
+        return self.hash_id == other.hash_id
+
+    def __copy__(self) -> 'Report':
+        """Create a copy of the Report instance.
+
+        Since the Report class is immutable, this method simply returns the same instance.
+
+        :return Report: The same Report instance (since it's immutable).
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict[int, Any]) -> 'Report':
+        """Create a deep copy of the Report instance.
+
+        Since the Report class is immutable, this method simply returns the same instance.
+
+        :param dict[int, Any] memo: The memoization dictionary for deepcopy (ignored).
+        :return Report: The same Report instance (since it's immutable).
+        """
+        return self
+
+    def __repr__(self) -> str:
+        """Return a string representation of the Report instance.
+
+        :return str: A string representation of the Report instance.
+        """
+         # Get the init parameters excluding 'type' and 'version'
+        init_params = dict(self._data_params())
+        init_params.pop('type', None)
+        init_params.pop('version', None)
+
+        # Build the key-value argument string. Accessing the properties via getattr
+        # will trigger their lazy calculation if they haven't been computed yet.
+        calling_args = ', '.join(f'{key}={getattr(self, key)!r}' for key in init_params)
+        return f'{self.__class__.__name__}({calling_args})'

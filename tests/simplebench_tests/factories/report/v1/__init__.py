@@ -28,6 +28,7 @@ from .python_info import (
     python_info_kwargs,
 )
 from .raw_data_block import no_hash_id_raw_data_block_data, raw_data_block, raw_data_block_data, raw_data_block_kwargs
+from .report import no_hash_id_report_data, report, report_data, report_kwargs
 from .results_info import no_hash_id_results_info_data, results_info, results_info_data, results_info_kwargs
 from .stats_block import (
     no_hash_id_stats_block_data,

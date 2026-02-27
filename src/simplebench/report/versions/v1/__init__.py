@@ -76,7 +76,7 @@ from .raw_data_block import (
     RawDataBlockDict,
     RawDataBlockSchema,
 )
-from .report import Report, ReportSchema
+from .report import ImmutableReportData, ImmutableReportDict, Report, ReportData, ReportDict, ReportSchema
 from .results_info import (
     ImmutableResultsInfoData,
     ImmutableResultsInfoDict,

@@ -1,8 +1,8 @@
 """Exceptions for JSON reports and schemas."""
+# ruff: noqa: F401
 
 from ._cpu_info import _CPUInfoErrorTag
 from ._environment_info import _EnvironmentInfoErrorTag
-from ._execution_environment import _ExecutionEnvironmentErrorTag
 from ._extras_object import _ExtrasErrorTag
 from ._machine_info import _MachineInfoErrorTag
 from ._memory_info import _MemoryInfoErrorTag
@@ -19,23 +19,4 @@ from .json_schema import _JSONSchemaErrorTag
 from .report import _ReportErrorTag
 from .results_info import _ResultsInfoErrorTag
 
-__all__ = [
-    '_CPUInfoErrorTag',
-    '_ExtrasErrorTag',
-    '_ExecutionEnvironmentErrorTag',
-    '_EnvironmentInfoErrorTag',
-    '_JSONSchemaErrorTag',
-    '_MachineInfoErrorTag',
-    '_MemoryInfoErrorTag',
-    '_MetricsErrorTag',
-    '_PythonInfoErrorTag',
-    '_RawDataBlockErrorTag',
-    '_ReportErrorTag',
-    '_ResultsInfoErrorTag',
-    '_StatsBlockErrorTag',
-    '_SwapMemoryErrorTag',
-    '_SystemInfoErrorTag',
-    '_ValueBlockErrorTag',
-    '_VirtualMemoryErrorTag',
-    '_VCSInfoErrorTag',
-]
+__all__: list[str] = []

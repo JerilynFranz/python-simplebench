@@ -3,7 +3,6 @@
 
 from ._cpu_info import BaseCPUInfo
 from ._environment import BaseEnvironment
-from ._execution_environment import BaseExecutionEnvironment
 from ._json_schema import JSONSchema
 from ._machine_info import BaseMachineInfo
 from ._memory_info import BaseMemoryInfo

@@ -26,40 +26,9 @@ from ..results_info import ImmutableResultsInfoData, ImmutableResultsInfoDict, R
 
 __all__: list[str] = []
 
-
-# A base for fields that are always required and have the same type.
-class _ReportBase(ReportElementTypedDict, total=True):
-    """Core required fields for V1 Report data.
-
-    :param Required[str] timestamp: The timestamp of the report.
-    :param Required[str] group: The benchmark reporting group.
-    :param Required[str] title: The title of the benchmark case.
-    :param Required[str] description: A brief description of the benchmark case.
-    """
-
-    timestamp: Required[str]
-    group: Required[str]
-    title: Required[str]
-    description: Required[str]
-
-
 # --- For data used as INPUT (e.g., to `from_dict`) ---
 
-
-class _RequiredReportData(_ReportBase, total=True):
-    """Required fields for V1 Report data used as INPUT.
-
-    :param Required[list[ResultsInfoData]] results: A list of benchmark results.
-    :param Required[MachineInfoData] machine: Information about the machine running the benchmark.
-    :param Required[VariationColsType] variation_cols: Columns for keyword argument variations.
-    """
-
-    results: Required[Sequence[ResultsInfoData]]
-    machine: Required[MachineInfoData]
-    variation_cols: Required[Mapping[str, str]]
-
-
-class ReportData(_RequiredReportData, total=False):
+class ReportData(ReportElementTypedDict):
     """Typed dictionary for V1 Report data used as INPUT.
 
     All fields except `type` and `version` are required (`total=False`).
@@ -68,32 +37,26 @@ class ReportData(_RequiredReportData, total=False):
     :param Required[str] group: The benchmark reporting group.
     :param Required[str] title: The title of the benchmark case.
     :param Required[str] description: A brief description of the benchmark case.
-    :param Required[VariationColsType] variation_cols: Columns for keyword argument variations.
+    :param Required[Mapping[str, str]] variation_cols: Columns for keyword argument variations.
     :param Required[Sequence[ResultsInfoData]] results: A list of benchmark results.
     :param Required[MachineInfoData] machine: Information about the machine running the benchmark.
     :param NotRequired[str] type: The type identifier for the report.
     :param NotRequired[int] version: The version of the report's data structure.
+    :param NotRequired[str] hash_id: The unique hash identifier for the report.
     """
-
+    timestamp: Required[str]
+    group: Required[str]
+    title: Required[str]
+    description: Required[str]
+    variation_cols: Required[Mapping[str, str]]
+    results: Required[Sequence[ResultsInfoData]]
+    machine: Required[MachineInfoData]
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
 
 
-class _RequiredImmutableReportData(_ReportBase, total=True):
-    """Required fields for immutable V1 Report data used as INPUT.
-
-    :param Required[tuple[ImmutableResultsInfoData, ...]] results: A tuple of benchmark results.
-    :param Required[ImmutableMachineInfoData] machine: Information about the machine running the benchmark.
-    :param Required[ImmutableVariationColsType] variation_cols: Columns for keyword argument variations.
-    """
-
-    results: Required[tuple[ImmutableResultsInfoData, ...]]
-    machine: Required[ImmutableMachineInfoData]
-    variation_cols: Required[Mapping[str, str]]
-
-
-class ImmutableReportData(_RequiredImmutableReportData, total=False):
+class ImmutableReportData(ReportElementTypedDict):
     """Typed dictionary for immutable V1 Report data used as INPUT.
 
     All fields except `type`, `version`, and `hash_id` are required (`total=False`).
@@ -107,34 +70,45 @@ class ImmutableReportData(_RequiredImmutableReportData, total=False):
     :param Required[str] group: The benchmark reporting group.
     :param Required[str] title: The title of the benchmark case.
     :param Required[str] description: A brief description of the benchmark case.
-    :param Required[ImmutableVariationColsType] variation_cols: Columns for keyword argument variations.
+    :param Required[VariationCols] variation_cols: Columns for keyword argument variations.
     :param Required[tuple[ImmutableResultsInfoData, ...]] results: A tuple of benchmark results.
     :param Required[ImmutableMachineInfoData] machine: Information about the machine running the benchmark.
     :param NotRequired[str] type: The type identifier for the report.
     :param NotRequired[int] version: The version of the report's data structure.
     :param NotRequired[str] hash_id: The unique hash identifier for the report.
     """
-
+    timestamp: Required[str]
+    group: Required[str]
+    title: Required[str]
+    description: Required[str]
+    variation_cols: Required[VariationCols]
+    results: Required[tuple[ImmutableResultsInfoData, ...]]
+    machine: Required[ImmutableMachineInfoData]
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
     __immutable__: NotRequired[Never]
 
-
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
 
-
-class ReportDict(_ReportBase, total=True):
+class ReportDict(ReportElementTypedDict):
     """Required fields for V1 Report data used as OUTPUT.
 
+    :param Required[str] timestamp: The timestamp of the report.
+    :param Required[str] group: The benchmark reporting group.
+    :param Required[str] title: The title of the benchmark case.
+    :param Required[str] description: A brief description of the benchmark case.
     :param Required[tuple[ResultsInfoDict, ...]] results: A tuple of benchmark results.
     :param Required[MachineInfoDict] machine: Information about the machine running the benchmark.
-    :param Required[VariationColsType] variation_cols: Columns for keyword argument variations.
+    :param Required[VariationCols] variation_cols: Columns for keyword argument variations.
     :param Required[str] type: The type identifier for the report.
     :param Required[int] version: The version of the report's data structure.
     :param Required[str] hash_id: The unique hash identifier for the report.
     """
-
+    timestamp: Required[str]
+    group: Required[str]
+    title: Required[str]
+    description: Required[str]
     results: Required[tuple[ResultsInfoDict, ...]]
     machine: Required[MachineInfoDict]
     variation_cols: Required[VariationCols]
@@ -143,20 +117,27 @@ class ReportDict(_ReportBase, total=True):
     hash_id: Required[str]
 
 
-class ImmutableReportDict(_ReportBase, total=True):
+class ImmutableReportDict(ReportElementTypedDict):
     """Required fields for immutable V1 Report data used as OUTPUT.
 
     The immutable variant ensures that the data cannot be modified after creation.
     The
 
+    :param Required[str] timestamp: The timestamp of the report.
+    :param Required[str] group: The benchmark reporting group.
+    :param Required[str] title: The title of the benchmark case.
+    :param Required[str] description: A brief description of the benchmark case.
     :param Required[tuple[ImmutableResultsInfoDict, ...]] results: A tuple of benchmark results.
     :param Required[ImmutableMachineInfoDict] machine: Information about the machine running the benchmark.
-    :param Required[ImmutableVariationColsType] variation_cols: Columns for keyword argument variations.
+    :param Required[VariationCols] variation_cols: Columns for keyword argument variations.
     :param Required[str] type: The type identifier for the report.
     :param Required[int] version: The version of the report's data structure.
     :param Required[str] hash_id: The unique hash identifier for the report.
     """
-
+    timestamp: Required[str]
+    group: Required[str]
+    title: Required[str]
+    description: Required[str]
     results: Required[tuple[ImmutableResultsInfoDict, ...]]
     machine: Required[ImmutableMachineInfoDict]
     variation_cols: Required[VariationCols]

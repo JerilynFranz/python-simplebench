@@ -288,7 +288,8 @@ class CoreDataMapping(Mapping[str, T], Hashable, Thawable, Generic[T]):
         :returns: The string representation of the mapping.
         :rtype: str
         """
-        return f'CoreDataMapping({self._data!r})'
+        class_name = self.__class__.__name__
+        return f'{class_name}({self._data!r})'
 
     def __eq__(self, other: object) -> bool:
         """Check equality with another CoreDataMapping.
