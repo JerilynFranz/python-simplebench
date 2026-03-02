@@ -139,9 +139,9 @@ def test_pickle(testspec: TestSpec) -> None:
             action=report.MemoryInfo,
             kwargs=report_factories.memory_info_kwargs().replace(
                 swap_memory=report.SwapMemoryObject(
-                    **report_factories.swap_memory_kwargs().replace(swap_in=1))),
+                    **report_factories.swap_memory_kwargs().replace(swap_in=1))) - {"hash_id"},
             assertion=Assert.NOT_EQUAL,
-            expected=report_factories.memory_info()),
+            expected=report.MemoryInfo(**(report_factories.memory_info_kwargs() - {"hash_id"}))),
         PytestAction(
             "EQUALITY_003",
             name="MemoryInfo compared to non-MemoryInfo is not equal",
@@ -176,7 +176,7 @@ def test_equality(testspec: TestSpec) -> None:
                     **report_factories.swap_memory_kwargs().replace(swap_in=1))),
             validate_attr="hash_id",
             assertion=Assert.NOT_EQUAL,
-            expected=report_factories.memory_info().hash_id),
+            expected=report.MemoryInfo(**(report_factories.memory_info_kwargs() - {"hash_id"})).hash_id),
       ]
    )
 def test_hash_id(testspec: TestSpec) -> None:
@@ -240,7 +240,7 @@ def test_copy(testspec: TestSpec) -> None:
         expected=hash(
             report.MemoryInfo(**report_factories.memory_info_kwargs().replace(
                 swap_memory=report.SwapMemoryObject(
-                    **report_factories.swap_memory_kwargs().replace(swap_in=1)))))),
+                    **report_factories.swap_memory_kwargs().replace(swap_in=1))) - {"hash_id"}))),
 ])
 def test_hash(testspec: TestSpec) -> None:
     """Test MemoryInfo __hash__ method."""

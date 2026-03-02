@@ -7,6 +7,7 @@ import simplebench.vcs as vcs
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
 from simplebench.case.function_runner import FunctionRunner
+from simplebench.enums import Calibrate
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.protocols import ReporterCallback
 from simplebench.simplebench_types import ElementCollection
@@ -35,6 +36,7 @@ class CaseKWArgs(KWArgs):
         group: str | NoDefaultValue = NO_DEFAULT_VALUE,
         title: str | NoDefaultValue = NO_DEFAULT_VALUE,
         description: str | NoDefaultValue = NO_DEFAULT_VALUE,
+        calibrate: Calibrate | NoDefaultValue = NO_DEFAULT_VALUE,
         iterations: int | NoDefaultValue = NO_DEFAULT_VALUE,
         warmup_iterations: int | NoDefaultValue = NO_DEFAULT_VALUE,
         rounds: int | NoDefaultValue = NO_DEFAULT_VALUE,

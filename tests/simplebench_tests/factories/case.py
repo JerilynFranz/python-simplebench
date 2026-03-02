@@ -7,8 +7,10 @@ from typing import overload
 import autopypath  # noqa: F401 # ensure sys.path setup when running tests directly
 import pytest
 
+from simplebench.benchmark_runner import BenchmarkRunner, SimpleRunner
+from simplebench.case import Case, Results
+from simplebench.enums import Calibrate
 from simplebench.simplebench_types import VariationMarks
-
 from simplebench_tests.cache_factory import CACHE_DEFAULT, CacheId, cached_factory, uncached_factory
 from simplebench_tests.factories._primitives import (
     default_case_group,
@@ -25,9 +27,6 @@ from simplebench_tests.factories._primitives import (
 from simplebench_tests.factories.reporter_callback import default_reporter_callback
 from simplebench_tests.factories.reporter_options import default_reporter_options_tuple
 from simplebench_tests.kwargs import CaseKWArgs
-
-from simplebench.benchmark_runner import SimpleRunner, BenchmarkRunner
-from simplebench.case import Case, Results
 
 
 def default_benchcase(bench: BenchmarkRunner, variation_marks: VariationMarks) -> Results:
@@ -116,6 +115,7 @@ def case_kwargs_factory() -> CaseKWArgs:
     :ivar group: `default_case_group()`
     :ivar title: `default_title()`
     :ivar description: `default_description()`
+    :ivar calibrate: `Calibrate.CPU`
     :ivar action_wrapper: `default_benchcase`
     :ivar iterations: `default_iterations()`
     :ivar warmup_iterations: `default_warmup_iterations()`
@@ -147,6 +147,7 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     :ivar group: `default_case_group()`
     :ivar title: `default_title()`
     :ivar description: `default_description()`
+    :ivar calibrate: `Calibrate.CPU`
     :ivar action_wrapper: `default_benchcase`
     :ivar iterations: `default_iterations()`
     :ivar warmup_iterations: `default_warmup_iterations()`
@@ -179,6 +180,7 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
     :ivar title: `default_title()`
     :ivar description: `default_description()`
     :ivar action_wrapper: `default_benchcase`
+    :ivar calibrate: `Calibrate.CPU`
     :ivar iterations: `default_iterations()`
     :ivar warmup_iterations: `default_warmup_iterations()`
     :ivar rounds: `default_rounds()`
@@ -201,6 +203,7 @@ def case_kwargs_factory(*, cache_id: CacheId = CACHE_DEFAULT) -> CaseKWArgs:
         group=default_case_group(),
         title=default_title(),
         description=default_description(),
+        calibrate=Calibrate.CPU,
         action_wrapper=default_benchcase,
         iterations=default_iterations(),
         warmup_iterations=default_warmup_iterations(),
