@@ -11,7 +11,7 @@ import simplebench.vcs as vcs
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.doc_utils import format_docstring
-from simplebench.enums import Color
+from simplebench.enums import Calibrate, Color
 from simplebench.exceptions import (
     SimpleBenchAttributeError,
     SimpleBenchBenchmarkError,
@@ -193,6 +193,8 @@ class Case:
         '_epoch_timestamp',
         '_node',
         '_state',
+        '_case_id',
+        '_calibrate',
     )
 
     @format_docstring(
@@ -223,6 +225,7 @@ class Case:
         callback: ReporterCallback | None = None,
         options: ElementCollection[ReporterOptions] | None = None,
         node: str | None = '',
+        calibrate: Calibrate | None = None,
     ) -> None:
         """The only REQUIRED parameter is `action`.
 
@@ -419,6 +422,16 @@ class Case:
             the source of the benchmark data. If not specified, the actual node name
             from the environment will be used. Default is '' for privacy and
             security reasons.
+        :param Optional[Calibrate] calibrate: (default = :obj:`None`) The calibration mode for the benchmark case.
+            This controls how the number of rounds is automatically calibrated when `rounds` is set to `None`.
+            Calibration can be based on wall clock time or CPU time, depending on the precision requirements
+            of the benchmark.
+
+            If :obj:`None`, the default is the value for Session.calibrate if set, or
+            :obj:`~simplebench.enums.Calibrate.CPU` if not. :obj:`~simplebench.enums.Calibrate.CPU` is recommended
+            for most benchmarks as it provides more precise timing for CPU-bound code, while
+            :obj:`~simplebench.enums.Calibrate.WALL` may be more appropriate for benchmarks that involve
+            significant I/O or other wall-clock time effects.
         :raises SimpleBenchTypeError: If any parameter is of incorrect type.
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
@@ -445,6 +458,7 @@ class Case:
         self._options: tuple[ReporterOptions, ...] = validate.options(options)
         self._vcs_info: vcs.VCSInfo | None = validate.vcs_info(vcs_info or vcs.get_vcs_info())
         self._node: str | None = validate.node(node)
+        self._calibrate: Calibrate | None = validate.calibrate(calibrate)
 
         # internal state
         self._report_cache: reports.Report | None = None
@@ -796,6 +810,19 @@ class Case:
         :rtype: str | None
         """
         return self._node
+
+    @property
+    def calibrate(self) -> Calibrate:
+        """The calibration mode for the benchmark case.
+
+        This controls how the number of rounds is automatically calibrated when `rounds` is set to `None`.
+        Calibration can be based on wall clock time or CPU time, depending on the precision requirements
+        of the benchmark.
+
+        :return: The calibration mode.
+        :rtype: Calibrate
+        """
+        return self._calibrate
 
     def run(self, session: 'Session | None' = None) -> None:
         """Run the benchmark tests.

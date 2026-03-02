@@ -55,25 +55,19 @@ from functools import cache
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Final, NamedTuple
 
+from simplebench import defaults
 from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
-from simplebench.defaults import (
-    DEFAULT_CPU_TIMER,
-    DEFAULT_INTERVAL_SCALE,
-    DEFAULT_SIGNIFICANT_FIGURES,
-    DEFAULT_TIMER,
-    MIN_MEASURED_ITERATIONS,
-)
 from simplebench.display.progress_tracker import ProgressTracker
-from simplebench.enums import Color
+from simplebench.enums import Calibrate, Color
 from simplebench.exceptions import (
     SimpleBenchImportError,
+    SimpleBenchRuntimeError,
     SimpleBenchTimeoutError,
     SimpleBenchTypeError,
 )
 from simplebench.metrics import Metric, metrics_registry
-from simplebench.simplebench_types import Extras, Iterations, Values, VariationCols, VariationMarks
-from simplebench.simplebench_types._metrics_timers._metrics_timers import MetricsTimers
+from simplebench.simplebench_types import Extras, Iterations, MetricsTimers, Values, VariationCols, VariationMarks
 from simplebench.timeout import Timeout
 from simplebench.timers import is_valid_timer, timer_overhead_ns, timer_precision_ns
 from simplebench.validators import validate_positive_int
@@ -491,8 +485,6 @@ class SimpleRunner(BenchmarkRunner):
 
         return getattr(_timers_module, timer_name)
 
-
-
     def _run_timed_iteration(
         self,
         *,
@@ -554,9 +546,9 @@ class SimpleRunner(BenchmarkRunner):
                 timer_metrics += 1
             if callable(teardown):
                 teardown()
-        elapsed_time = float((total_elapsed - timer_overhead_ns(timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE)
+        elapsed_time = float((total_elapsed - timer_overhead_ns(timer) * timer_metrics) * defaults.DEFAULT_INTERVAL_SCALE)
         elapsed_cpu_time = float(
-            (total_elapsed_cpu - timer_overhead_ns(cpu_timer) * timer_metrics) * DEFAULT_INTERVAL_SCALE
+            (total_elapsed_cpu - timer_overhead_ns(cpu_timer) * timer_metrics) * defaults.DEFAULT_INTERVAL_SCALE
         )
         return elapsed_time, elapsed_cpu_time
 
@@ -613,15 +605,20 @@ class SimpleRunner(BenchmarkRunner):
         min_time: float = self.case.min_time
         max_time: float = self.case.max_time
         iterations: int = self.case.iterations
+        calibrate: Calibrate = self.case.calibrate
+        if not calibrate and self.session and self.session.calibrate:
+            calibrate = self.session.calibrate
+        else:
+            calibrate = Calibrate.CPU
 
         # Prioritize the timers from the case, then from the session, then use the default timer
-        timer = DEFAULT_TIMER
+        timer = defaults.DEFAULT_TIMER
         if self.case.timer is not None:
             timer = self.case.timer
         elif self.session is not None and self.session.timer is not None:
             timer = self.session.timer
 
-        cpu_timer = DEFAULT_CPU_TIMER
+        cpu_timer = defaults.DEFAULT_CPU_TIMER
         if self.case.cpu_timer is not None:
             cpu_timer = self.case.cpu_timer
         elif self.session is not None and self.session.cpu_timer is not None:
@@ -635,15 +632,21 @@ class SimpleRunner(BenchmarkRunner):
         # iterations even if warmup_iterations is 0.
         iteration_pass: int = -self.case.warmup_iterations
         time_start: float = float(timer())
-        max_stop_at: float = float(max_time / DEFAULT_INTERVAL_SCALE) + time_start
-        min_stop_at: float = float(min_time / DEFAULT_INTERVAL_SCALE) + time_start
+        max_stop_at: float = float(max_time / defaults.DEFAULT_INTERVAL_SCALE) + time_start
+        min_stop_at: float = float(min_time / defaults.DEFAULT_INTERVAL_SCALE) + time_start
         wall_time: float = float(timer())
-        iterations_min: int = max(MIN_MEASURED_ITERATIONS, iterations)
+        iterations_min: int = max(defaults.MIN_MEASURED_ITERATIONS, iterations)
 
         rounds: int
         if self.case.rounds is None:
             rounds = self._calibrate_rounds(
-                timer=timer, cpu_timer=cpu_timer, kwargs=kwargs, setup=setup, teardown=teardown, action=action
+                calibrate=calibrate,
+                timer=timer,
+                cpu_timer=cpu_timer,
+                kwargs=kwargs,
+                setup=setup,
+                teardown=teardown,
+                action=action
             )
         else:
             rounds = self.case.rounds
@@ -735,7 +738,7 @@ class SimpleRunner(BenchmarkRunner):
 
             # Update progress display if showing progress
             iteration_completion: float = progress_max * iteration_pass / iterations_min
-            wall_time_elapsed_seconds: float = (wall_time - time_start) * DEFAULT_INTERVAL_SCALE
+            wall_time_elapsed_seconds: float = (wall_time - time_start) * defaults.DEFAULT_INTERVAL_SCALE
             time_completion: float = progress_max * (wall_time - time_start) / (min_stop_at - time_start)
             progress_current = int(min(iteration_completion, time_completion))
             progress_tracker.update(
@@ -781,6 +784,7 @@ class SimpleRunner(BenchmarkRunner):
     def _calibrate_rounds(
         self,
         *,
+        calibrate: Calibrate,
         timer: Callable[[], int],
         cpu_timer: Callable[[], int],
         kwargs: dict[str, Any],
@@ -802,14 +806,28 @@ class SimpleRunner(BenchmarkRunner):
         (specified by :data:`~simplebench.defaults.DEFAULT_SIGNIFICANT_FIGURES`) above
         the noise floor of the timer functions.
 
+        :param calibrate: The type of timer to calibrate for (wall-clock or CPU).
+        :type calibrate: Calibrate
         :param timer: The timer function to use for the benchmark.
+        :type timer: Callable[[], int]
         :param cpu_timer: The CPU timer function to use for the benchmark.
+        :type cpu_timer: Callable[[], int]
         :param kwargs: Keyword arguments to pass to the action.
+        :type kwargs: dict[str, Any]
         :param setup: A setup function to run before each iteration.
+        :type setup: Callable[..., Any] | None, optional
         :param teardown: A teardown function to run after each iteration.
+        :type teardown: Callable[..., Any] | None, optional
         :param action: The action to benchmark.
+        :type action: Callable[..., Any]
         :return: The calibrated number of rounds for the benchmark.
+        :rtype: int
         """
+        if calibrate not in (Calibrate.WALL, Calibrate.CPU):
+            raise SimpleBenchTypeError(
+                'Invalid calibrate value for rounds calibration; must be Calibrate.WALL or Calibrate.CPU',
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CALIBRATE_VALUE,
+            )
         if not is_valid_timer(timer):
             raise SimpleBenchTypeError(
                 'Invalid timer function provided for rounds calibration',
@@ -846,13 +864,16 @@ class SimpleRunner(BenchmarkRunner):
                 tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TEARDOWN,
             )
 
+        max_wallclock_calibration_time_ns: float = defaults.MAX_WALLCLOCK_CALIBRATION_TIME * 1_000_000_000
+        max_cputime_calibration_time_ns: float = defaults.MAX_CPUTIME_CALIBRATION_TIME * 1_000_000_000
+
         timer_overhead: float = timer_overhead_ns(timer)
         cpu_timer_overhead: float = timer_overhead_ns(cpu_timer)
         timer_precision: float = timer_precision_ns(timer)
         cpu_timer_precision: float = timer_precision_ns(cpu_timer)
 
         # Target significant figures for the measurement
-        multiplier: float = math.pow(10, DEFAULT_SIGNIFICANT_FIGURES)
+        multiplier: float = math.pow(10, defaults.DEFAULT_SIGNIFICANT_FIGURES)
 
         timer_noise_floor_ns = timer_precision + timer_overhead
         timer_target_time_ns = multiplier * timer_noise_floor_ns
@@ -860,64 +881,106 @@ class SimpleRunner(BenchmarkRunner):
         cpu_timer_noise_floor_ns = cpu_timer_precision + cpu_timer_overhead
         cpu_timer_target_time_ns = multiplier * cpu_timer_noise_floor_ns
 
-        if callable(setup):
-            setup()
+        # We start with an initial estimate of rounds and then iteratively increase it until
+        # we find a suitable number of rounds that meets our target measurement time above
+        # the noise floor of the timer functions.
+        noise_floor_scale_factor: int = 10
+        estimation_scale_factor: int = 2
+        need_teardown: bool = False
 
-        kiloround_timer = self._timer_function(1000)
-        estimate_rounds: int = 1
-        total_action_time_ns: float = 0.0
-        total_action_cpu_time_ns: float = 0.0
-        timer_metrics: int
+        try:
+            kiloround_timer = self._timer_function(1000)
+            estimate_rounds: int = 1
+            total_action_time_ns: float = 0.0
+            total_action_cpu_time_ns: float = 0.0
+            timer_metrics: int
 
-        while True:  # Loop until we find an adequate rounds estimate
-            # Use kiloround chunking to avoid generating excessively large timer functions
-            if estimate_rounds < 1000:
-                timer_metrics = 1
-                estimate_timer = self._timer_function(estimate_rounds)
-                total_action_time_ns, total_action_cpu_time_ns = estimate_timer(timer, cpu_timer, action, kwargs)
-            else:
-                total_action_time_ns = 0.0
-                total_action_cpu_time_ns = 0.0
-                timer_metrics = 0
-                kiloround_chunks, remaining_rounds = divmod(estimate_rounds, 1000)
-                while kiloround_chunks:
-                    action_time_ns, action_cpu_time_ns = kiloround_timer(timer, cpu_timer, action, kwargs)
-                    total_action_time_ns += action_time_ns
-                    total_action_cpu_time_ns += action_cpu_time_ns
-                    kiloround_chunks -= 1
-                    timer_metrics += 1
+            while True:  # Loop until we find an adequate rounds estimate
 
-                if remaining_rounds:
-                    partial_timer = self._timer_function(remaining_rounds)
-                    action_time_ns, action_cpu_time_ns = partial_timer(timer, cpu_timer, action, kwargs)
-                    total_action_time_ns += action_time_ns
-                    total_action_cpu_time_ns += action_cpu_time_ns
-                    timer_metrics += 1
+                # Setup/teardown are inside the calibration loop to make them the same
+                # as the actual benchmark iterations, but they are not included in the timed section to avoid
+                # affecting the timing measurements.
+                if callable(teardown):
+                    if callable(setup):
+                        setup()
+                    need_teardown = True
+                elif callable(setup):
+                    setup()
 
-            # Subtract the cumulative overhead from all timed metrics.
-            total_measured_time_ns = total_action_time_ns - (timer_overhead * timer_metrics)
-            total_measured_cpu_time_ns = total_action_cpu_time_ns - (cpu_timer_overhead * timer_metrics)
+                # Use kiloround chunking to avoid generating excessively large timer functions
+                if estimate_rounds < 1000:
+                    timer_metrics = 1
+                    estimate_timer = self._timer_function(estimate_rounds)
+                    total_action_time_ns, total_action_cpu_time_ns = estimate_timer(timer, cpu_timer, action, kwargs)
+                else:
+                    total_action_time_ns = 0.0
+                    total_action_cpu_time_ns = 0.0
+                    timer_metrics = 0
+                    kiloround_chunks, remaining_rounds = divmod(estimate_rounds, 1000)
+                    while kiloround_chunks:
+                        action_time_ns, action_cpu_time_ns = kiloround_timer(timer, cpu_timer, action, kwargs)
+                        total_action_time_ns += action_time_ns
+                        total_action_cpu_time_ns += action_cpu_time_ns
+                        kiloround_chunks -= 1
+                        timer_metrics += 1
 
-            # loop exit condition
-            if (
-                total_measured_time_ns >= timer_target_time_ns
-                and total_measured_cpu_time_ns >= cpu_timer_target_time_ns
-            ):
-                break
+                    if remaining_rounds:
+                        partial_timer = self._timer_function(remaining_rounds)
+                        action_time_ns, action_cpu_time_ns = partial_timer(timer, cpu_timer, action, kwargs)
+                        total_action_time_ns += action_time_ns
+                        total_action_cpu_time_ns += action_cpu_time_ns
+                        timer_metrics += 1
 
-            if total_measured_time_ns <= 0 or total_measured_cpu_time_ns <= 0:
-                estimate_rounds *= 10
-                continue
+                if need_teardown and callable(teardown):
+                    teardown()
+                    need_teardown = False
 
-            # Calculate the average time to estimate the next number of rounds.
-            avg_action_time_ns = total_measured_time_ns / estimate_rounds
-            avg_action_cpu_time_ns = total_measured_cpu_time_ns / estimate_rounds
-            required_rounds = max(
-                timer_target_time_ns / avg_action_time_ns, cpu_timer_target_time_ns / avg_action_cpu_time_ns
-            )
-            estimate_rounds = int(max(required_rounds, estimate_rounds * 10))
+                # Subtract the cumulative overhead from all timed metrics.
+                total_measured_time_ns = total_action_time_ns - (timer_overhead * timer_metrics)
+                total_measured_cpu_time_ns = total_action_cpu_time_ns - (cpu_timer_overhead * timer_metrics)
 
-        if callable(teardown):
-            teardown()
+                # loop exit conditions
+                # We want to break the loop if we've reached the target time for the chosen timer,
+                # or if we've hit the maximum number of calibration rounds,
+                # or if the measured time has exceeded the maximum calibration time for either timer to
+                # avoid excessively long calibration runs.
+                if ((calibrate is Calibrate.WALL and  total_measured_time_ns >= timer_target_time_ns)
+                        or (calibrate is Calibrate.CPU and total_measured_cpu_time_ns >= cpu_timer_target_time_ns)
+                        or (estimate_rounds >= defaults.MAX_CALIBRATION_ROUNDS)
+                        or (max_cputime_calibration_time_ns < total_measured_cpu_time_ns)
+                        or (max_wallclock_calibration_time_ns < total_measured_time_ns)):
+                    break
+
+                # bootstrap quickly above the noise floor of the timer functions by increasing rounds aggressively
+                if ((calibrate is Calibrate.WALL and total_measured_time_ns <= timer_noise_floor_ns)
+                    or (calibrate is Calibrate.CPU and total_measured_cpu_time_ns <= cpu_timer_noise_floor_ns)):
+                    estimate_rounds *= noise_floor_scale_factor
+                    if estimate_rounds > defaults.MAX_CALIBRATION_ROUNDS:
+                        estimate_rounds = defaults.MAX_CALIBRATION_ROUNDS
+                    continue
+
+                # Calculate the average time to estimate the next number of rounds.
+                if calibrate is Calibrate.WALL:
+                    avg_action_time_ns = total_measured_time_ns / estimate_rounds
+                    required_rounds = timer_target_time_ns / avg_action_time_ns
+                else:  # calibrate is Calibrate.CPU
+                    avg_action_cpu_time_ns = total_measured_cpu_time_ns / estimate_rounds
+                    required_rounds = cpu_timer_target_time_ns / avg_action_cpu_time_ns
+
+                estimate_rounds = int(max(required_rounds, estimate_rounds * estimation_scale_factor))
+                if estimate_rounds > defaults.MAX_CALIBRATION_ROUNDS:
+                    estimate_rounds = defaults.MAX_CALIBRATION_ROUNDS
+
+        except Exception as e:
+            raise SimpleBenchRuntimeError(
+                'An error occurred during rounds calibration',
+                tag=_SimpleRunnerErrorTag.SIMPLERUNNER_CALIBRATE_ROUNDS_ERROR,
+            ) from e
+        finally:
+            # Ensure that if we exited the loop with setup maybe having been called but not teardown,
+            # we call teardown to clean up
+            if need_teardown and callable(teardown):
+                teardown()
+
 
         return estimate_rounds

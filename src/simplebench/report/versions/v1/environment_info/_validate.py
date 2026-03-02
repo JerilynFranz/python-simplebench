@@ -106,6 +106,7 @@ def hash_id(value: str) -> str:
         message='{name} must be 64-character hexadecimal string. Found: {value}',
     )
 
+
 def data_as_core_data_mapping(data: Any, context: str) -> CoreDataMapping:
     """Validate that kwargs dictionary contains only core data mapping types."""
     return validate_core_data_mapping(data, context)

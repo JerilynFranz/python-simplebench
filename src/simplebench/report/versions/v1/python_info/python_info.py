@@ -40,11 +40,17 @@ class PythonInfo(report.EnvironmentInfo):
     VERSION: int = SCHEMA.VERSION
     """The JSON PythonInfo version number."""
 
+    TITLE: str = SCHEMA.TITLE
+    """A human-readable title for this environment."""
+
+    DESCRIPTION: str = SCHEMA.DESCRIPTION
+    """A human-readable description for this environment."""
+
     ID: str = SCHEMA.ID
     """The JSON PythonInfo identifier property value for version 1 reports."""
 
     _init_params_cache: MappingProxyType[str, Any] | None = None
-    """Cache for the constructor parameters of the ResultsInfo class."""
+    """Cache for the constructor parameters of the PythonInfo class."""
 
     @classmethod
     def _data_params(cls) -> MappingProxyType[str, Any]:
@@ -79,6 +85,8 @@ class PythonInfo(report.EnvironmentInfo):
         thread_switch_interval: float,
         architecture_bits: str,
         architecture_linkage: str,
+        title: str = TITLE,
+        description: str = DESCRIPTION,
     ) -> None:
         """Initialize a PythonInfo instance.
 
@@ -100,6 +108,9 @@ class PythonInfo(report.EnvironmentInfo):
         :param float | int thread_switch_interval: The thread switch interval in seconds.
         :param str architecture_bits: The architecture bits (e.g., '32bit', '64bit').
         :param str architecture_linkage: The architecture linkage (e.g., 'ELF', 'WindowsPE').
+        :param str title: (default = :obj:`PythonInfoSchema.TITLE`) A human-readable title for this environment.
+        :param str description: (default = :obj:`PythonInfoSchema.DESCRIPTION`) A human-readable description for
+            this environment.
         """
         data = {
             'python_version': _validate.python_version(python_version),
@@ -120,8 +131,8 @@ class PythonInfo(report.EnvironmentInfo):
         super().__init__(data=data,
                          semantic_type=self.SEMANTIC_TYPE,
                          hash_id=hash_id,
-                         title='Python Environment',
-                         description='Information about the Python execution environment')
+                         title=title,
+                         description=description)
 
     @classmethod
     def from_dict(cls, data: PythonInfoData) -> 'PythonInfo':  # type: ignore[override]
@@ -143,10 +154,10 @@ class PythonInfo(report.EnvironmentInfo):
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
-            skip_fields={'version', 'type', 'semantic_type', 'title', 'description'},
-            optional_fields={'hash_id', 'version', 'type', 'semantic_type', 'description'},
-            defaults={'version': cls.VERSION, 'type': cls.TYPE},
-            match_on={'version': cls.VERSION, 'type': cls.TYPE},
+            skip_fields={'version', 'type', 'semantic_type'},
+            optional_fields={'hash_id', 'version', 'type', 'semantic_type', 'title', 'description'},
+            defaults={'version': cls.VERSION, 'type': cls.TYPE, 'semantic_type': cls.SEMANTIC_TYPE},
+            match_on={'version': cls.VERSION, 'type': cls.TYPE, 'semantic_type': cls.SEMANTIC_TYPE},
         )
         unwrapped_data = kwargs.pop('data', {})
         kwargs.update(unwrapped_data)

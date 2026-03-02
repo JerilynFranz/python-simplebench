@@ -78,8 +78,9 @@ class MemoryInfo(BaseMemoryInfo):
         self._hash_id = _validate.hash_id(hash_id)
         self._swap_memory = _validate.swap_memory(swap_memory)
         self._virtual_memory = _validate.virtual_memory(virtual_memory)
+        if not self._hash_id:
+            self._hash_id  = self._hash_id_helper(MemoryInfoDict)
         self._dict_cache: ImmutableMemoryInfoDict = self._to_dict_helper(ImmutableMemoryInfoDict)
-        self._hash_id  = self._hash_id_helper(MemoryInfoDict)
 
     @classmethod
     def from_dict(cls, data: MemoryInfoData) -> 'MemoryInfo':
@@ -94,7 +95,7 @@ class MemoryInfo(BaseMemoryInfo):
         :return MemoryInfo: A MemoryInfo instance.
         """
         allowed_keys = dict(cls._data_params())
-        allowed_keys.update({'type': str, 'version': str})
+        allowed_keys.update({'type': str, 'version': int})
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,

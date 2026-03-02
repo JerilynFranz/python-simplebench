@@ -25,8 +25,8 @@ def hash_id(value: str) -> str:
     The hash_id must be a 64-character hexadecimal string or an empty string.
 
     :param value str: The hash_id string to validate.
-    :return str: The validated hash_id string or.
-    :raises SimpleBenchTypeError: If the value is not a valid hash_id or an empty string or.
+    :return str: The validated hash_id string or an empty string.
+    :raises SimpleBenchTypeError: If the value is not a valid hash_id, an empty string, or not a string at all.
     """
 
     value = validate_string(

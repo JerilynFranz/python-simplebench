@@ -77,7 +77,7 @@ class ImmutableMemoryInfoData(ReportElementTypedDict):
 class MemoryInfoDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 MemoryInfo (OUTPUT).
 
-    This type is strict, requiring `type`, `version`, `node`, and `hash_id` to be
+    This type is strict, requiring `type`, `version`, and `hash_id` to be
     present. It is used for output serialization and so strictly defines the expected
     structure of the MemoryInfo data.
 

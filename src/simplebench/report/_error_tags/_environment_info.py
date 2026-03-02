@@ -31,3 +31,9 @@ class _EnvironmentInfoErrorTag(ErrorTag):
 
     INVALID_SEMANTIC_TYPE_VALUE = 'INVALID_SEMANTIC_TYPE_VALUE'
     """The provided semantic_type does not match the required pattern 'namespace::type_name'."""
+
+    INVALID_TYPE_VALUE = 'INVALID_TYPE_VALUE'
+    """The provided type field does not match the expected value for this class."""
+
+    INVALID_VERSION_VALUE = 'INVALID_VERSION_VALUE'
+    """The provided version field does not match the expected value for this class."""

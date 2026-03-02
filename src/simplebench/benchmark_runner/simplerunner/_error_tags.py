@@ -28,6 +28,10 @@ class _SimpleRunnerErrorTag(ErrorTag):
     """The benchmark execution exceeded the allowed time limit."""
 
     # calibrate_rounds() tags
+    SIMPLERUNNER_CALIBRATE_ROUNDS_ERROR = 'SIMPLERUNNER_CALIBRATE_ROUNDS_ERROR'
+    """An error occurred during rounds calibration"""
+    SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CALIBRATE_VALUE = 'SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CALIBRATE_VALUE'
+    """The calibrate argument was not a valid value"""
     SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION = 'SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_TIMER_FUNCTION'
     """The timer argument was not a supported timer function"""
     SIMPLERUNNER_CALIBRATE_ROUNDS_INVALID_CPU_TIMER_FUNCTION = (

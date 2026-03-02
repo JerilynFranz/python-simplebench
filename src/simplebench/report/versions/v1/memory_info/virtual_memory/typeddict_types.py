@@ -1,17 +1,17 @@
-"""Typed dictionaries for the V1 MemoryInfo data structure.
+"""Typed dictionaries for the V1 VirtualMemoryObject data structure.
 
-This module defines three distinct dictionary types for handling MemoryInfo data,
-all modeled on the JSON schema for version 1 MemoryInfo in
-version 1: :class:`~simplebench.report.versions.v1.MemoryInfoSchema`.
+This module defines three distinct dictionary types for handling VirtualMemoryObject data,
+all modeled on the JSON schema for version 1 VirtualMemoryObject in
+version 1: :class:`~simplebench.report.versions.v1.VirtualMemoryObjectSchema`.
 
-    - `MemoryInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
+    - `VirtualMemoryObjectData`: For use as INPUT (e.g., to `from_dict`). It is more
     lenient, making `type`, `version`, and `hash_id` optional.
-    - `MemoryInfoDict`: For use as OUTPUT (e.g., from `to_dict`). It is
+    - `VirtualMemoryObjectDict`: For use as OUTPUT (e.g., from `to_dict`). It is
     stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
-    - `ImmutableMemoryInfoDict`: An immutable subclass of `MemoryInfoDict` for
+    - `ImmutableVirtualMemoryObjectDict`: An immutable subclass of `VirtualMemoryObjectDict` for
     type-checking purposes.
 
-    These types ensure proper validation and serialization of MemoryInfo data
+    These types ensure proper validation and serialization of VirtualInfo data
 """
 
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
@@ -43,6 +43,7 @@ class VirtualMemoryObjectDict(_RequiredVirtualMemoryObject, total=True):
     """Typed dictionary for V1 VirtualMemory data used as either INPUT or OUTPUT.
 
     Because it is a sub-object of :class:`~simplebench.report.versions.v1.MemoryInfo`,
+    it does not have 'type', 'version', or 'hash_id' fields. All fields are required.
     all fields are required and it does not have 'type', 'version', or 'hash_id' fields.
 
     :param Required[int] total: Total virtual memory in bytes.

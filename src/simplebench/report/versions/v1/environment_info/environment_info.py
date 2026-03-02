@@ -14,11 +14,11 @@ that does not match other specific environment types.
 """
 
 import hashlib
-from collections.abc import Mapping
+from collections.abc import Mapping, Iterator
 from types import MappingProxyType
 from typing import Any
 
-from simplebench.exceptions import SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report import base
 from simplebench.report._error_tags import _EnvironmentInfoErrorTag
 from simplebench.simplebench_types import CoreDataMapping, CoreDataTypes
@@ -27,7 +27,7 @@ from . import _validate
 from .environment_info_schema import EnvironmentInfoSchema
 from .typeddict_types import EnvironmentInfoData, ImmutableEnvironmentInfoDict
 
-__all__: list[str] = []
+__all__: list[str] = ['EnvironmentInfo']
 
 
 class EnvironmentInfo(Mapping[str, CoreDataTypes], base.BaseEnvironment):
@@ -70,6 +70,9 @@ class EnvironmentInfo(Mapping[str, CoreDataTypes], base.BaseEnvironment):
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
+    __slots__ = ('_hash_id', '_semantic_type', '_title', '_description', '_data', '_dict_cache')
+    """The instance attributes for EnvironmentInfo."""
+
     def __init__(self,
                  data: Mapping[str, Any],
                  title: str,
@@ -107,6 +110,7 @@ class EnvironmentInfo(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         self._semantic_type: str = _validate.semantic_type(semantic_type)
         self._data: CoreDataMapping = _validate.data_as_core_data_mapping(data, 'data')
         self._hash_id: str = _validate.hash_id(hash_id) or self._generate_hash_id()
+        self._dict_cache: ImmutableEnvironmentInfoDict = self._generate_dict()
 
     def _generate_hash_id(self) -> str:
         """Helper method to compute the hash_id property from the data mapping.
@@ -143,17 +147,53 @@ class EnvironmentInfo(Mapping[str, CoreDataTypes], base.BaseEnvironment):
         if not isinstance(data, Mapping):
             raise SimpleBenchTypeError('data must be a mapping type',
                                        tag=_EnvironmentInfoErrorTag.INVALID_DATA_TYPE)
+
+        allowed_keys = {'type', 'version', 'hash_id', 'semantic_type', 'title', 'description', 'data'}
+        extra_keys = set(data.keys()) - allowed_keys
+        if extra_keys:
+            raise SimpleBenchValueError(
+                f'Unexpected keys in input data: {extra_keys}',
+                tag=_EnvironmentInfoErrorTag.INVALID_DATA_TYPE)
+
         if 'title' not in data:
             raise SimpleBenchTypeError('title is a required property for Environment',
                                        tag=_EnvironmentInfoErrorTag.INVALID_TITLE_VALUE)
         data_copy = dict(data)
         title = data_copy.pop('title')
+        type_value = data_copy.pop('type', None)
+        # Optional, but must match if present
+        if type_value is not None and type_value != cls.TYPE:
+            raise SimpleBenchTypeError(
+                f'Invalid type value: {type_value}',
+                tag=_EnvironmentInfoErrorTag.INVALID_TYPE_VALUE)
+        # Optional, but must match if present
+        version_value = data_copy.pop('version', None)
+        if version_value is not None and version_value != cls.VERSION:
+            raise SimpleBenchTypeError(
+                f'Invalid version value: {version_value}',
+                tag=_EnvironmentInfoErrorTag.INVALID_VERSION_VALUE)
         description = data_copy.pop('description', '')
-        semantic_type = data_copy.get('semantic_type', 'generic_environment')
-        hash_id = data_copy.get('hash_id', '')
-        return cls(data=data_copy, title=title, description=description, semantic_type=semantic_type, hash_id=hash_id)
+        semantic_type = data_copy.pop('semantic_type', 'simplebench::generic')
+        hash_id = data_copy.pop('hash_id', '')
+        if 'data' not in data_copy or not isinstance(data_copy['data'], Mapping):
+            raise SimpleBenchTypeError(
+                'data must be a mapping type and is required',
+                tag=_EnvironmentInfoErrorTag.INVALID_DATA_TYPE)
+
+        return cls(data=data_copy['data'],
+                   title=title,
+                   description=description,
+                   semantic_type=semantic_type,
+                   hash_id=hash_id)
 
     def to_dict(self) -> ImmutableEnvironmentInfoDict:
+        """The EnvironmentInfo as an immutable dictionary.
+
+        :return ImmutableEnvironmentInfoDict: A dictionary representation of the EnvironmentInfo.
+        """
+        return self._dict_cache
+
+    def _generate_dict(self) -> ImmutableEnvironmentInfoDict:
         """Returns the Environment as an immutable dictionary suitable for JSON serialization.
 
         The returned instance is of type :class:`CoreDataMapping` to ensure immutability
@@ -243,7 +283,7 @@ class EnvironmentInfo(Mapping[str, CoreDataTypes], base.BaseEnvironment):
     def __getitem__(self, key: str) -> CoreDataTypes:
         return self.data[key]
 
-    def __iter__(self) -> Any:
+    def __iter__(self) -> Iterator[str]:
         return iter(self.data)
 
     def __len__(self) -> int:

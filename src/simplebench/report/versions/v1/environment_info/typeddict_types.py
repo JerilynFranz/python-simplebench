@@ -49,7 +49,7 @@ class ImmutableEnvironmentInfoData(ReportElementTypedDict):
     the values can be of various types, including nested dictionaries, strings, numbers, booleans, nulls, or arrays.
 
     :param version: The JSON Environment version number.
-    :type version: NotRequired[str]
+    :type version: NotRequired[int]
     :param type: The JSON Environment type property value for version 1 reports.
     :type type: NotRequired[str]
     :param hash_id: Unique 64 byte hexadecimal hash identifier for the Environment data.

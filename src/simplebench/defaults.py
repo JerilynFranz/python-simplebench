@@ -118,3 +118,12 @@ DEFAULT_SIGNIFICANT_FIGURES: int = 3
 
 DEFAULT_MAX_CORE_DATA_DEPTH: int = 100
 """Default maximum depth for core data structures (100 levels)."""
+
+MAX_WALLCLOCK_CALIBRATION_TIME: float = 2.0  # seconds
+"""Default maximum time for wall clock calibration (2 seconds)."""
+
+MAX_CPUTIME_CALIBRATION_TIME: float = 1.0  # seconds
+"""Default maximum time for CPU time calibration (1 second)."""
+
+MAX_CALIBRATION_ROUNDS: int = 1_000_000
+"""Maximum number of rounds to allow during calibration to prevent infinite loops."""

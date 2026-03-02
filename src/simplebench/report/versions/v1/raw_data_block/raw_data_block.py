@@ -57,7 +57,8 @@ class RawDataBlock(BaseRawDataBlock):
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
-    __slots__ = ('_hash_id', '_semantic_type', '_timer', '_unit', '_scale', '_data', '_to_dict_cache')
+    __slots__ = ('_hash_id', '_name', '_semantic_type', '_description', '_timer',
+                 '_unit', '_scale', '_rounds', '_iterations', '_data', '_to_dict_cache')
 
     def __init__(
         self,
@@ -91,7 +92,7 @@ class RawDataBlock(BaseRawDataBlock):
         self._name: str = _validate.name(name)
         self._description: str = _validate.description(description)
         self._semantic_type: str = _validate.semantic_type(semantic_type)
-        self._timer: str | None = _validate.timer(timer)
+        self._timer: str = _validate.timer(timer)
         self._data: Values = _validate.data(data)
         self._rounds: int = _validate.rounds(rounds)
         self._iterations: int = len(self._data)

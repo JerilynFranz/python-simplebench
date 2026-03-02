@@ -73,3 +73,5 @@ class _PythonInfoErrorTag(ErrorTag):
     """Invalid data argument extra keys"""
     INVALID_DATA_ARG_MISSING_KEYS = 'INVALID_DATA_ARG_MISSING_KEYS'
     """Invalid data argument missing keys"""
+    INVALID_ENVIRONMENT_VARIABLES_KEY_FORMAT = 'INVALID_ENVIRONMENT_VARIABLES_KEY_FORMAT'
+    """Invalid environment variable key format - all keys must match the pattern ^PYTHON[A-Z0-9_]*$"""

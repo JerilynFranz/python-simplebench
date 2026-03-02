@@ -9,6 +9,8 @@ from ..exceptions.error_tag import ErrorTag
 class _SessionErrorTag(ErrorTag):
     """ErrorTags for the session module."""
 
+    PROPERTY_INVALID_CALIBRATE_ARG = 'PROPERTY_INVALID_CALIBRATE_ARG'
+    """Something other than a Calibrate instance or None was assigned to the calibrate property"""
     PROPERTY_INVALID_TIMER_ARG = 'PROPERTY_INVALID_TIMER_ARG'
     """Something other than a callable was assigned to the timer property"""
     PROPERTY_INVALID_TIMER_RETURN_TYPE = 'PROPERTY_INVALID_TIMER_RETURN_TYPE'

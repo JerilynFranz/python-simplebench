@@ -4,6 +4,7 @@ import re
 from collections.abc import Sequence
 from typing import Any
 
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _RawDataBlockErrorTag
 from simplebench.simplebench_types import Values
 from simplebench.validators import (
@@ -78,12 +79,13 @@ def description(value: str) -> str:
     :param str value: The description string to validate.
     :return str: The validated description string.
     :raise SimpleBenchTypeError: If the description is not a string.
+    :raise SimpleBenchValueError: If the description is invalid.
     """
     return validate_string(
         value,
         'description',
-        _RawDataBlockErrorTag.INVALID_NAME_TYPE,
-        _RawDataBlockErrorTag.INVALID_NAME_VALUE,
+        _RawDataBlockErrorTag.INVALID_DESCRIPTION_TYPE,
+        _RawDataBlockErrorTag.INVALID_DESCRIPTION_VALUE,
         allow_blank=True,
         allow_empty=True,
         strip=True,
@@ -91,11 +93,17 @@ def description(value: str) -> str:
 
 
 def rounds(value: int) -> int:
-    """Validate that rounds is a non-negative integer."""
-    if not isinstance(value, int):
-        raise TypeError(f"Expected int for rounds, got {type(value).__name__}")
-    if value < 0:
-        raise ValueError("Rounds must be non-negative")
+    """Validate that rounds is a positive integer."""
+    if not isinstance(value, int) or isinstance(value, bool):
+        raise SimpleBenchTypeError(
+            f"Expected int for rounds, got {type(value).__name__}",
+            tag=_RawDataBlockErrorTag.INVALID_ROUNDS_TYPE,
+        )
+    if value <= 0:
+        raise SimpleBenchValueError(
+            "Rounds must be positive",
+            tag=_RawDataBlockErrorTag.INVALID_ROUNDS_VALUE,
+        )
     return value
 
 

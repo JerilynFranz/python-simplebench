@@ -7,6 +7,8 @@ from simplebench.exceptions import ErrorTag
 @enum_docstrings
 class _CaseErrorTag(ErrorTag):
     """ErrorTags for case-related exceptions."""
+    INVALID_CALIBRATE_TYPE = 'INVALID_CALIBRATE_TYPE'
+    """The calibrate argument passed to the Case() constructor is not of type Calibrate."""
     INVALID_ACTION_TOO_MANY_PARAMETERS = 'INVALID_ACTION_TOO_MANY_PARAMETERS'
     """The action function has more than two parameters."""
     INVALID_ACTION_MISSING_VARIATION_MARKS_PARAMETER = 'INVALID_ACTION_MISSING_VARIATION_MARKS_PARAMETER'

@@ -5,7 +5,7 @@ all modeled on the JSON schema for version 1 RawDataBlocks in
 version 1: :class:`~simplebench.report.versions.v1.RawDataBlockSchema`.
 
     - `RawDataBlockData`: For use as INPUT (e.g., to `from_dict`). It is more
-    lenient, accepting `int` or `float` for the `value` field and making `type` and `version` optional.
+    lenient, accepting `int` or `float` for the `data` values and making `type` and `version` optional.
     - `ImmutableRawDataBlockData`: An immutable version of `RawDataBlockData`.
     - `RawDataBlockDict`: For use as OUTPUT (e.g., from `to_dict`). It is
     stricter, guaranteeing that `data` is a sequence of `float` values and that
@@ -17,8 +17,8 @@ version 1: :class:`~simplebench.report.versions.v1.RawDataBlockSchema`.
 
 from collections.abc import Sequence
 
-from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
-from simplebench.simplebench_types import Never, NotRequired, Required, CoreDataSequence
+from simplebench.report.base import ReportElementTypedDict
+from simplebench.simplebench_types import CoreDataSequence, Never, NotRequired, Required
 
 __all__: list[str] = []
 
@@ -28,19 +28,21 @@ class RawDataBlockData(ReportElementTypedDict):
     """Typed dictionary for V1 RawDataBlock data used as INPUT.
 
     This type is lenient, allowing `type`, `version`, and `timer` to be
-    omitted, and accepting either `int` or `float` for the `value` field.
+    omitted, and accepting either `int` or `float` for the `data` values.
 
-    :param Required[str] name: The name of the values.
-    :param Required[str] semantic_type: The semantic type of the value.
-    :param Required[str] unit: The unit of the value.
-    :param Required[float] scale: The scaling factor for the value.
+    :param Required[str] name: The name of the raw data block.
+    :param Required[str] semantic_type: The semantic type of the raw data block.
+    :param Required[str] unit: The unit of the raw data block.
+    :param Required[float] scale: The scaling factor for the raw data block.
     :param Required[int] rounds: The number of rounds each data point represents.
     :param Required[Sequence[float | int, ...] data: The numeric data values.
-    :param NotRequired[str] description: The description of the value.
-    :param NotRequired[str] type: The type identifier for the block.
-    :param NotRequired[int] version: The version of the block's data structure.
-    :param NotRequired[str] hash_id: The hash identifier for the block.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param NotRequired[str] description: The description of the raw data block.
+    :param NotRequired[str] type: The type identifier for the raw data block.
+    :param NotRequired[int] version: The version of the raw data block's data structure.
+    :param NotRequired[str] hash_id: The hash identifier for the raw data block.
+    :param NotRequired[str] timer: The name of the timer associated with this raw data block.
+        If omitted or the empty string, it is assumed that the measurement is not timing-related.
+
     """
     name: Required[str]
     semantic_type: Required[str]
@@ -70,17 +72,18 @@ class ImmutableRawDataBlockData(ReportElementTypedDict):
 
     All fields are immutable.
 
-    :param Required[str] name: The name of the values.
-    :param Required[str] semantic_type: The semantic type of the value.
-    :param Required[str] unit: The unit of the value.
-    :param Required[float] scale: The scaling factor for the value.
+    :param Required[str] name: The name of the raw data block.
+    :param Required[str] semantic_type: The semantic type of the raw data block.
+    :param Required[str] unit: The unit of the raw data block.
+    :param Required[float] scale: The scaling factor for the raw data block.
     :param Required[int] rounds: The number of rounds each data point represents.
     :param Required[Sequence[float | int, ...] data: The numeric data values.
-    :param NotRequired[str] description: The description of the value.
-    :param NotRequired[str] type: The type identifier for the block.
-    :param NotRequired[int] version: The version of the block's data structure.
-    :param NotRequired[str] hash_id: The hash identifier for the block.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param NotRequired[str] description: The description of the raw data block.
+    :param NotRequired[str] type: The type identifier for the raw data block.
+    :param NotRequired[int] version: The version of the raw data block's data structure.
+    :param NotRequired[str] hash_id: The hash identifier for the raw data block.
+    :param NotRequired[str] timer: The name of the timer associated with this raw data block.
+        If omitted or the empty string, it is assumed that the measurement is not timing-related.
     """
     name: Required[str]
     semantic_type: Required[str]
@@ -101,21 +104,23 @@ class RawDataBlockDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 RawDataBlock (OUTPUT).
 
     This type is strict, requiring `type` and`version` to be present.
-    `value` is guaranteed to be a `float`, `timer` is optional.
+    `data` values are guaranteed to be `float`, `timer` is optional.
 
     All fields are immutable.
 
-    :param Required[str] name: The name of the value.
-    :param Required[str] semantic_type: The semantic type of the value.
-    :param Required[str] unit: The unit of the value.
-    :param Required[float] scale: The scaling factor for the value.
+    :param Required[str] name: The name of the raw data block.
+    :param Required[str] semantic_type: The semantic type of the raw data block.
+    :param Required[str] unit: The unit of the raw data block.
+    :param Required[float] scale: The scaling factor for the raw data block.
     :param Required[int] rounds: The number of rounds each data point represents.
     :param Required[Sequence[float]] data: The numeric data values.
-    :param Required[str] type: The type identifier for the block.
-    :param Required[int] version: The version of the block's data structure.
-    :param Required[str] hash_id: The hash identifier for the block.
-    :param NotRequired[str] description: The description of the value.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param Required[str] type: The type identifier for the raw data block.
+    :param Required[int] version: The version of the raw data block's data structure.
+    :param Required[str] hash_id: The hash identifier for the raw data block.
+    :param NotRequired[str] description: The description of the raw data block.
+    :param NotRequired[str] timer: The name of the timer associated with this raw data block.
+        If omitted or the empty string, it is assumed that the measurement is not timing-related.
+
     """
     name: Required[str]
     semantic_type: Required[str]
@@ -145,17 +150,19 @@ class ImmutableRawDataBlockDict(ReportElementTypedDict):
 
     All fields are immutable.
 
-    :param Required[str] name: The name of the value.
-    :param Required[str] semantic_type: The semantic type of the value.
-    :param Required[str] unit: The unit of the value.
-    :param Required[float] scale: The scaling factor for the value.
+    :param Required[str] name: The name of the raw data block.
+    :param Required[str] semantic_type: The semantic type of the raw data block.
+    :param Required[str] unit: The unit of the raw data block.
+    :param Required[float] scale: The scaling factor for the raw data block.
     :param Required[int] rounds: The number of rounds each data point represents.
     :param Required[CoreDataSequence[float]] data: The numeric data values.
-    :param Required[str] type: The type identifier for the block.
-    :param Required[int] version: The version of the block's data structure.
-    :param Required[str] hash_id: The hash identifier for the block.
-    :param NotRequired[str] description: The description of the value.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param Required[str] type: The type identifier for the raw data block.
+    :param Required[int] version: The version of the raw data block's data structure.
+    :param Required[str] hash_id: The hash identifier for the raw data block.
+    :param NotRequired[str] description: The description of the raw data block.
+    :param NotRequired[str] timer: The name of the timer associated with this raw data block.
+        If omitted or the empty string, it is assumed that the measurement is not timing-related.
+
     """
     name: Required[str]
     semantic_type: Required[str]

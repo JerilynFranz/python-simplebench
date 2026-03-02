@@ -291,6 +291,12 @@ def test_json_schema(testspec: TestSpec) -> None:
             kwargs={"obj": report_factories.report().for_json(), "sort_keys": True},
             assertion=Assert.ISINSTANCE,
             expected=str),
+    PytestAction('JSON_SERIALIZATION_004',
+        name='Report can be serialized to JSON and deserialized back to the same Report data',
+        action=lambda: report.Report.from_dict(json.loads(report_factories.report().as_json())),
+        assertion=Assert.EQUAL,
+        expected=report_factories.report()
+     ),
  ])
 def test_json_serialization(testspec: TestSpec) -> None:
     """Test that Report can be serialized to JSON."""

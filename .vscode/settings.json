@@ -87,5 +87,6 @@
     "coverage-gutters.coverageFileNames": ["coverage.xml"],
     "mypy-type-checker.args": [
       "--no-warn-unused-ignores"
-    ]
+    ],
+    "editor.inlineSuggest.minShowDelay": 500
 }

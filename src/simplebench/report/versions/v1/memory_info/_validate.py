@@ -1,4 +1,4 @@
-"""Validation functions for MachineInfo version 1."""
+"""Validation functions for MemoryInfo version 1."""
 
 import re
 

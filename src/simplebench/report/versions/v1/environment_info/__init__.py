@@ -1,7 +1,8 @@
 """Generic environment module for report version 1."""
 # ruff: noqa: F401
 
-from .environment_info import EnvironmentInfo, EnvironmentInfoSchema
+from .environment_info import EnvironmentInfo
+from .environment_info_schema import EnvironmentInfoSchema
 from .typeddict_types import (
     EnvironmentInfoData,
     EnvironmentInfoDict,

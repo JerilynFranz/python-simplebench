@@ -14,6 +14,10 @@ class _RawDataBlockErrorTag(ErrorTag):
     """The name value is not a string."""
     INVALID_NAME_VALUE = 'INVALID_NAME_VALUE'
     """The name value is blank."""
+    INVALID_DESCRIPTION_TYPE = 'INVALID_DESCRIPTION_TYPE'
+    """The description value is not a string."""
+    INVALID_DESCRIPTION_VALUE = 'INVALID_DESCRIPTION_VALUE'
+    """The description value is invalid."""
     INVALID_HASH_ID_TYPE = 'INVALID_HASH_ID_TYPE'
     """The hash_id value is not a string."""
     INVALID_HASH_ID_VALUE = 'INVALID_HASH_ID_VALUE'
@@ -48,3 +52,7 @@ class _RawDataBlockErrorTag(ErrorTag):
     """The unit value is not a string."""
     INVALID_UNIT_VALUE = 'INVALID_UNIT_VALUE'
     """The unit value is invalid."""
+    INVALID_ROUNDS_TYPE = 'INVALID_ROUNDS_TYPE'
+    """The rounds value is not an integer."""
+    INVALID_ROUNDS_VALUE = 'INVALID_ROUNDS_VALUE'
+    """The rounds value is not a positive integer."""

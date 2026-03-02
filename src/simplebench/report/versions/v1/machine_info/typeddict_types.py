@@ -11,7 +11,7 @@ version 1: :class:`~simplebench.report.versions.v1.MachineInfoSchema`.
     stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
     - `ImmutableMachineInfoDict`: An immutable variant of `MachineInfoDict`.
 
-    These types ensure proper validation and serialization of MachineInfo data\
+    These types ensure proper validation and serialization of MachineInfo data
 """
 from collections.abc import Sequence
 

@@ -5,6 +5,7 @@ from typing import Any, get_type_hints
 
 from simplebench import defaults
 from simplebench.benchmark_runner import BenchmarkRunner
+from simplebench.enums import Calibrate
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.simplebench_types import (
@@ -21,6 +22,24 @@ from simplebench.vcs import VCSInfo
 from ._error_tags import _CaseErrorTag
 from .function_runner import FunctionRunner
 
+
+def calibrate(value: Calibrate | None) -> Calibrate | None:
+    """Validate the calibrate parameter for a benchmark case.
+
+    :param value: The calibrate value to validate.
+    :type value: Calibrate | None
+    :return: The validated calibrate value.
+    :rtype: Calibrate | None
+    :raises SimpleBenchTypeError: If the value is not of type Calibrate.
+    """
+    if value is None:
+        return None
+    if not isinstance(value, Calibrate):
+        raise SimpleBenchTypeError(
+            f'Invalid calibrate value: {value}. Must be of type Calibrate.',
+            tag=_CaseErrorTag.INVALID_CALIBRATE_TYPE,
+        )
+    return value
 
 def node(node_value: str | None) -> str | None:
     """Validate the node name for a benchmark case.

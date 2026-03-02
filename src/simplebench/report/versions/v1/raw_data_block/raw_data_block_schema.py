@@ -41,7 +41,7 @@ class RawDataBlockSchema(JSONSchema):
             },
             'hash_id': {
                 'title': 'Hash ID',
-                'description': 'Unique 64 byte hexadecimal hash identifier for the stats-block data.',
+                'description': 'Unique 64 character hexadecimal hash identifier for the stats-block data.',
                 'type': 'string',
                 'pattern': '^[a-f0-9]{64}$',
             },
@@ -121,7 +121,7 @@ class RawDataBlockSchema(JSONSchema):
         The caller can modify the returned dictionary as needed or cache it for performance.
 
         Usage:
-            schema_dict = ValueBlockSchema.as_dict()
+            schema_dict = RawDataBlockSchema.as_dict()
 
         :return dict[str, object]: The JSON schema as a dictionary.
         """

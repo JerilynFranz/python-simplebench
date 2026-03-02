@@ -119,7 +119,7 @@ class EnvironmentInfoSchema(JSONSchema):
         The caller can modify the returned dictionary as needed or cache it for performance.
 
         Usage:
-            schema_dict = GenericEnvironmentSchema.as_dict()
+            schema_dict = EnvironmentInfoSchema.as_dict()
 
         :return dict[str, object]: The JSON schema as a dictionary.
         """
@@ -137,7 +137,7 @@ class EnvironmentInfoSchema(JSONSchema):
         It serializes the schema dictionary to a JSON string.
 
         Usage:
-            schema_json = GenericEnvironmentSchema.as_json()
+            schema_json = EnvironmentInfoSchema.as_json()
 
         :return str: The JSON schema as a JSON-formatted string.
 

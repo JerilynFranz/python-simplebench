@@ -9,14 +9,14 @@ from typing import TYPE_CHECKING
 from rich.console import Console
 from rich.progress import Progress
 
-from simplebench._log import _log
 from simplebench import defaults
+from simplebench._log import _log
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
 from simplebench.display.progress_tracker import ProgressTracker
 from simplebench.display.rich_progress_tasks import RichProgressTasks
 from simplebench.doc_utils import format_docstring
-from simplebench.enums import Color, Target, Verbosity
+from simplebench.enums import Calibrate, Color, Target, Verbosity
 from simplebench.exceptions import SimpleBenchArgumentError, SimpleBenchTypeError
 from simplebench.metadata import Metadata
 from simplebench.reporters.choice import Choice
@@ -28,7 +28,6 @@ from simplebench.utils import sanitize_filename, timestamp_to_iso8601
 
 from ._error_tags import _SessionErrorTag
 from .validators import validate_timer
-
 
 if TYPE_CHECKING:
     from simplebench.reporters.reporter import Reporter
@@ -57,6 +56,7 @@ class Session:
         console: Console | None = None,
         timer: Callable[[], int] | None = None,
         cpu_timer: Callable[[], int] | None = None,
+        calibrate: Calibrate | None = None,
     ) -> None:
         """Container and orchestrator for session related information while running benchmarks.
 
@@ -93,6 +93,7 @@ class Session:
         self.console = console or Console()
         self.timer = timer
         self.cpu_timer = cpu_timer
+        self.calibrate = calibrate
 
         # private attributes
         self._args_parsed: bool = False
@@ -677,3 +678,28 @@ class Session:
         if not self._timestamp:
             self._timestamp = timestamp_to_iso8601(self.epoch_timestamp)
         return self._timestamp
+
+    @property
+    def calibrate(self) -> Calibrate | None:
+        """The calibration mode for the session.
+
+        :return: The calibration mode for the session.
+        :rtype: Calibrate | None
+        """
+        return self._calibrate
+
+    @calibrate.setter
+    def calibrate(self, value: Calibrate | None) -> None:
+        """Set the calibration mode for the session.
+
+        :param value: The calibration mode for the session. If None, the default is Calibrate.CPU.
+        :type value: Calibrate or None
+        :raises SimpleBenchTypeError: If the value is not a Calibrate enum member or None.
+        """
+        self._calibrate: Calibrate | None
+        if value is None or isinstance(value, Calibrate):
+            self._calibrate = value
+            return
+        raise SimpleBenchTypeError(
+            f'calibrate must be a Calibrate enum member or None - cannot be a {type(value)}',
+            tag=_SessionErrorTag.PROPERTY_INVALID_CALIBRATE_ARG)

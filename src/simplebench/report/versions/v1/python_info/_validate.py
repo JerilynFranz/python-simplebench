@@ -1,4 +1,4 @@
-"""Validation functions for MachineInfo version 1."""
+"""Validation functions for PythonInfo version 1."""
 
 import re
 from collections.abc import Mapping, Sequence
@@ -11,18 +11,24 @@ from simplebench.validators import validate_bool, validate_string, validate_stri
 _HASH_RE: re.Pattern = re.compile(r'^[a-f0-9]{64}$')
 """Regular expression pattern for validating 64-character hexadecimal strings."""
 
+# We do not expose the validation function except via a module-level API
+# (the user is expected to import the entire module directly and use the functions
+# as module-prefixed functions, e.g. _validate.hash_id).
+#
+# Therefore, we do not need to include the validation functions in __all__.
+
 __all__: list[str] = []
 
 
 def hash_id(value: str) -> str:
-    """Validate hash_id property.
+    """Validate the ``hash_id`` field.
 
-    It is validated to be a 64-character hexadecimal string or an empty string.
-
-    :param str value: The hash_id string to validate.
-    :return str: The validated hash_id string.
-    :raises SimpleBenchTypeError: If value is not a string.
-    :raises SimpleBenchValueError: If value is not a 64-character hexadecimal string
+    :param value: Candidate SHA-256 hex digest.
+    :type value: str
+    :returns: Normalized hash digest.
+    :rtype: str
+    :raises SimpleBenchTypeError: If ``value`` is not a string.
+    :raises SimpleBenchValueError: If ``value`` does not match the required format.
     """
     hash_string = validate_string(
         value,
@@ -44,9 +50,7 @@ def hash_id(value: str) -> str:
 
 
 def compiler(value: str) -> str:
-    """Validate compiler property.
-
-    The compiler property is allowed to be an empty string.
+    """Validate the ``python_compiler`` field.
 
     :param str value: The compiler string to validate.
     :return str: The validated compiler string.
@@ -144,7 +148,7 @@ def buildno(value: str) -> str:
 
 
 def builddate(value: str) -> str:
-    """Validate build property.
+    """Validate builddate property.
 
     The build property is allowed to be an empty string.
 
@@ -200,6 +204,9 @@ def command_line_flags(value: str) -> str:
     )
 
 
+PYTHON_ENV_RE: re.Pattern = re.compile(r'^PYTHON[A-Z0-9_]*$')
+"""Regular expression pattern for validating the format of environment variable names."""
+
 def environment_variables(value: Mapping[str, str]) ->CoreDataMapping[str]:
     """Validate environment_variables property.
 
@@ -208,6 +215,7 @@ def environment_variables(value: Mapping[str, str]) ->CoreDataMapping[str]:
     :param Mapping[str, str] value: The environment_variables mapping to validate.
     :return CoreDataMapping[str]: The validated environment_variables mapping.
     :raises SimpleBenchTypeError: If value is not a mapping of strings to strings.
+    :raises SimpleBenchValueError: If any environment variable name does not match the required pattern.
     """
     if not isinstance(value, Mapping):
         raise SimpleBenchTypeError(
@@ -221,6 +229,12 @@ def environment_variables(value: Mapping[str, str]) ->CoreDataMapping[str]:
             tag=_PythonInfoErrorTag.INVALID_ENVIRONMENT_VARIABLES_ITEM_TYPE,
         )
 
+    if not all(PYTHON_ENV_RE.match(k) for k in value.keys()):
+        raise SimpleBenchValueError(
+            f'All environment variable names must match the pattern {PYTHON_ENV_RE.pattern}. '
+            f'Found: {list(value.keys())}',
+            tag=_PythonInfoErrorTag.INVALID_ENVIRONMENT_VARIABLES_KEY_FORMAT,
+        )
     if isinstance(value, CoreDataMapping):
         return value
 
@@ -254,7 +268,7 @@ def gc_thresholds(value: Sequence[int]) -> tuple[int, int, int]:
         )
     if len(value) != 3:
         raise SimpleBenchValueError(
-            'gc_thresholds must be a sequence of three integers. found {len(value)} items.',
+            f'gc_thresholds must be a sequence of three integers. found {len(value)} items.',
             tag=_PythonInfoErrorTag.INVALID_NUMBER_OF_GC_THRESHOLDS,
         )
 
@@ -277,7 +291,7 @@ def thread_switch_interval(value: float | int) -> float:
     :return float: The validated thread_switch_interval value.
     :raises SimpleBenchTypeError: If value is not a float or an integer.
     """
-    if not isinstance(value, (float, int)):
+    if not isinstance(value, (float, int)) or isinstance(value, bool):
         raise SimpleBenchTypeError(
             f'thread_switch_interval must be a float or an int. Found: {type(value).__name__}',
             tag=_PythonInfoErrorTag.INVALID_THREAD_SWITCH_INTERVAL_TYPE,

@@ -12,3 +12,4 @@ Your job is to act as a coding assistant not the primary developer.
 - Do not change logging messages unless explicitly requested.
 - The preferred quote style is single quotes for strings and double quotes for docstrings.
 - The preferred way to write tests is using the PyTestAction/PytestGet/PytestSet/TestSpec/TestAction style rather than bare 'assert' statements.
+- In compliance with PEP8, the code actively discourages the use of wildcard imports (e.g., 'from module import *') and encourages explicit imports instead (e.g., 'from module import ClassName'). To that end, the code uses __all__: list[str] = [] to block wildcard imports from modules.

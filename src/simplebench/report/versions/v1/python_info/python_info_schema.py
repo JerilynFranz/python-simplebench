@@ -34,12 +34,19 @@ class PythonInfoSchema(JSONSchema):
     SEMANTIC_TYPE: str = 'simplebench::python'
     """The semantic type of the python information, formatted as 'namespace::type_name'."""
 
+    TITLE: str = 'Python Environment Information (V1)'
+    """A human-readable title for this environment."""
+
+    DESCRIPTION: str = (
+        'Information about the Python interpreter environment, including version, implementation, compiler, and other relevant details.'
+    )
+    """A human-readable description for this environment."""
+
     _JSON_SCHEMA_DICT: dict[str, object] = {
         '$schema': 'https://json-schema.org/draft/2020-12/schema',
         '$id': ID,
         'title': 'Python Info (V1)',
         'type': 'object',
-        'description': 'Python interpreter information (V1) environment information.',
         'properties': {
             'version': {
                 'title': 'Version',
@@ -71,14 +78,17 @@ class PythonInfoSchema(JSONSchema):
                 'description': 'A human-readable title for this environment.',
                 'type': 'string',
                 'pattern': r'^\S.*$',  # Non-empty string that does not start with whitespace
+                'default': TITLE,
             },
             'description': {
                 'title': 'Description',
                 'description': 'A human-readable description for this environment.',
                 'type': 'string',
-                'default': '',
+                'default': DESCRIPTION,
             },
             'data': {
+                'type': 'object',
+                'title': 'The data object containing Python interpreter information.',
                 'properties': {
                     'python_version': {
                         'title': 'Python Version',
@@ -181,7 +191,7 @@ class PythonInfoSchema(JSONSchema):
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption='JSON Schema for ValueBlock V1',
+        caption='JSON Schema for PythonInfo V1',
         intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""

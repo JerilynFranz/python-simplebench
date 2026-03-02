@@ -24,7 +24,7 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
     """Immutable base class representing the 'extras' object in a report ResultsInfo object.
     """
 
-    __slots__ = ('_extras', '_hash_id')
+    __slots__ = ('_extras',)
 
     def __init__(self, __extras: Mapping[str, CoreDataTypes]) -> None:
         """Initialize a ExtrasObject v1 instance.
@@ -33,7 +33,6 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
             and the values are :class:`CoreDataTypes` objects.
         """
         self._extras: CoreDataMapping[str] = CoreDataMapping(__extras)
-        self._hash_id: int = hash(('ExtrasObject', self._extras))
 
     @classmethod
     def from_dict(cls, data: Mapping[str, CoreDataTypes]) -> 'ExtrasObject':
@@ -125,13 +124,13 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
     def __hash__(self) -> int:
         """Compute the hash of this ExtrasObject.
 
-        The hash is computed based on the extras dictionary, which is converted to a frozenset
-        of its items to ensure it is hashable.
+        The hash is computed based on the hash ID of the extras dictionary,
+        ensuring immutability and consistent hashing.
 
         :return: The hash of this ExtrasObject.
         :rtype: int
         """
-        return hash(self.extras)
+        return hash(self.hash_id)
 
     def __repr__(self) -> str:
         """Get the string representation of this ExtrasObject.
@@ -146,8 +145,8 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
     def hash_id(self) -> str:
         """Get the hash ID of the ExtrasObject.
 
-        The hash ID is a SHA-256 hash of the metric names and their corresponding
-        metric item hash IDs, ensuring immutability and consistent hashing.
+        The hash ID is a SHA-256 hash of the extra names and their corresponding
+        extra item hash IDs, ensuring immutability and consistent hashing.
 
         :return str: The hash ID string.
         """
@@ -159,7 +158,7 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
         Disabled because the ExtrasObject is immutable. Attempting to
         set an item will raise an error.
 
-        :param key: The metric name.
+        :param key: The extra name.
         :param value: The CoreDataTypes object (either a StatsBlock or a ValueBlock).
         :raises SimpleBenchAttributeError: Always, since the ExtrasObject is immutable.
         """
@@ -171,46 +170,46 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
         )
 
     def __getitem__(self, key: str) -> 'CoreDataTypes':
-        """Get a metric item from the metrics dictionary.
+        """Get a extra item from the extras dictionary.
 
-        :param key: The metric name.
+        :param key: The extra name.
         :return: The CoreDataTypes object (either a StatsBlock or a ValueBlock).
-        :raises SimpleBenchKeyError: If the metric name does not exist.
+        :raises SimpleBenchKeyError: If the extra name does not exist.
         """
         try:
             return self._extras[key]
         except KeyError as e:
             raise SimpleBenchKeyError(
-                f"Metric name '{key}' does not exist in metrics.",
+                f"Extra name '{key}' does not exist in extras.",
                 tag=_ExtrasErrorTag.KEY_ERROR_INVALID_EXTRA_NAME_VALUE,
             ) from e
 
     def __delitem__(self, key: str) -> None:
-        """Delete a metric item from the metrics dictionary.
+        """Delete a extra item from the extras dictionary.
 
-        Disabled because the ExtrasObject is immutable. Attempting to delete an item will raise an error.
+        Disabled because the ExtrasObject is immutable. Attempting to delete an   item will raise an error.
 
-        :param key: The metric name.
+        :param key: The extra name.
         :raises SimpleBenchAttributeError: Always, since the ExtrasObject is immutable.
         """
         raise SimpleBenchAttributeError(
-            f"Metric '{key}' cannot be deleted because the ExtrasObject is immutable.",
+            f"ExtrasObject '{key}' cannot be deleted because the ExtrasObject is immutable.",
             tag=_ExtrasErrorTag.EXTRAS_OBJECT_IMMUTABLE,
             name=key,
             obj=self,
         )
 
     def __len__(self) -> int:
-        """Get the number of metric items in the metrics dictionary.
+        """Get the number of extra items in the extras dictionary.
 
-        :return int: The number of metric items.
+        :return int: The number of extra items.
         """
         return len(self._extras)
 
     def __iter__(self) -> Iterator[str]:
-        """Get an iterator over the metric names in the metrics dictionary.
+        """Get an iterator over the extra names in the extras dictionary.
 
-        :return Iterator[str]: An iterator over the metric names.
+        :return Iterator[str]: An iterator over the extra names.
         """
         return iter(self._extras)
 
@@ -218,7 +217,7 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
         """Return a new ExtrasObject that is the union of this and another ExtrasObject.
 
         .. code-block:: python
-            new_metrics = this_metrics | other_metrics
+            new_extras = this_extras | other_extras
 
         :param other: The other ExtrasObject to union with.
         :return ExtrasObject: A new ExtrasObject that is the union of both.
@@ -231,7 +230,7 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
         """Return a new ExtrasObject that is the union of another ExtrasObject and this one. (reversed)
 
         .. code-block:: python
-            new_metrics = other_metrics | this_metrics
+            new_extras = other_extras | this_extras
 
         :param other: The other ExtrasObject to union with.
         :return ExtrasObject: A new ExtrasObject that is the union of both.
@@ -248,10 +247,10 @@ class ExtrasObject(Mapping[str, CoreDataTypes], Immutable):
         return NotImplemented
 
     def __contains__(self, key: object) -> bool:
-        """Check if a metric name is in the metrics dictionary.
+        """Check if a extra name is in the extras dictionary.
 
-        :param key: The metric name to check for.
-        :return bool: True if the metric name exists, False otherwise.
+        :param key: The extra name to check for.
+        :return bool: True if the extra name exists, False otherwise.
         """
         return key in self._extras
 

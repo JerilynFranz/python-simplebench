@@ -482,7 +482,8 @@ def _validate_generic_mapping_field(args: tuple[Any, ...], value: Any, parents: 
         raise SimpleBenchTypeError(
             f'Expected a Mapping type for value, got {type(value)}', tag=_TypedDictErrorTag.NOT_A_MAPPING
         )
-    key_type, val_type = Any, Any
+    key_type: type | Any = Any
+    val_type: type | Any = Any
 
     # CoreDataMapping is a special case that is treated as a
     # Mapping with str keys and a single value type argument.

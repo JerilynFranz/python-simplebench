@@ -1,4 +1,30 @@
-"""Decorators for simplifying benchmark case creation."""
+"""Decorator for simplifying benchmark case creation.
+
+@benchmark is a decorator that allows users to easily create benchmark cases by decorating functions.
+The decorated function should contain the code to be benchmarked, and the arguments to the decorator
+are used to create a :class:`Case` instance that wraps the function.
+
+The created :class:`Case` is then added to a global registry of cases to be run.
+
+While the decorated function is wrapped by a case action wrapper to integrate with the benchmarking process,
+the original function is returned unmodified by the decorator, allowing it to be called directly if needed
+without any benchmarking overhead.
+
+The arguments to the decorator are largely the same as those for :class:`Case`, with
+the exception of `action`, which is replaced by the decorated function.
+
+The `n` parameter is added to allow n-weighting the complexity of the benchmark case when using
+runners that support it. This is needed because while :class:`Case` supports n-weighting, the decorator needs to
+determine the n value at decoration time to create the :class:`Case`, and in some cases n may need to be determined
+dynamically based on the variation being run. Because of this, the decorator supports both a static n value via the `n`
+parameter and a dynamic n value via the `use_field_for_n` parameter.
+
+Case has a few options not supported by the decorator, such as `setup` and `teardown`,
+because they would require additional decorators or a more complex API to support in the decorator, and the
+goal of the decorator is to provide a simple and streamlined interface for creating benchmark cases.
+
+If you need those advanced features, you can create :class:`Case` instances directly and add them to the session.
+"""
 
 from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar
@@ -7,6 +33,7 @@ from simplebench import defaults
 from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case import validate as case_validate
 from simplebench.doc_utils import format_docstring
+from simplebench.enums import Calibrate
 from simplebench.exceptions import SimpleBenchValueError
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.simplebench_types import ElementCollection, VariationMarks
@@ -36,6 +63,7 @@ def benchmark(  # noqa: C901
     title: str | None = None,
     benchmark_id: str | None = None,
     description: str | None = None,
+    calibrate: Calibrate | None = None,
     runners: Sequence[type[BenchmarkRunner]] | None = None,
     iterations: int = defaults.DEFAULT_ITERATIONS,
     warmup_iterations: int = defaults.DEFAULT_WARMUP_ITERATIONS,
@@ -107,22 +135,36 @@ def benchmark(  # noqa: C901
         arguments. When the decorator is used without parameters, the group defaults
         to 'default'. This has special handling to allow the decorator to be used
         easily without any parameters.
+    :type group: str | Callable[..., Any]
     :param title: The title of the benchmark case. Uses the function
         name if None. Cannot be blank.
+    :type title: str | None
     :param benchmark_id: An optional identifier for the benchmark case.
         If None, a benchmark ID is generated based on the function name and module.
     :param description: A description for the case.
         Uses the function's docstring if None or '(no description)' if there is no docstring.
         Cannot be blank.
+    :type description: str | None
+    :param calibrate: (default = :obj:`None`) The calibration mode for the benchmark case. If None, the calibration
+        mode from the :class:`Session` is used if set, otherwise it defaults to :attr:`Calibrate.CPU`.
+        See :class:`Calibrate` for details on the available calibration modes.
+    :type calibrate: Calibrate | None
     :param runners: A list of runner types to use for the benchmark.
         If None, the default list of runners is used. The default list includes
-        all runners listed in `simplebench.defaults.DEFAULT_RUNNERS`
-        unless overridden by this parameter or overridden in the Session configuration.
+        all runners listed in :data:`simplebench.defaults.DEFAULT_RUNNERS`
+        unless overridden by this parameter or overridden in the :class:`Session` configuration.
 
-        Priority is given to runners specified here, followed by those specified in the Session,
-        configuration and finally those specified in `simplebench.defaults.DEFAULT_RUNNERS`.
+        Priority is given to runners specified here, followed by those specified in the :class:`Session`,
+        configuration and finally those specified in :data:`simplebench.defaults.DEFAULT_RUNNERS`.
+    :type runners: Sequence[type[BenchmarkRunner]] | None
     :param iterations: The minimum number of iterations to run for the benchmark.
+        Must be a positive integer. The benchmark will run for at least this many iterations,
+        but may run for more if needed to meet the `min_time` requirement.
+    :type iterations: int
     :param warmup_iterations: The number of warmup iterations to run before the benchmark.
+        Must be a non-negative integer. Warmup iterations are not timed and are used to
+        mitigate startup effects such as JIT compilation or caching.
+    :type warmup_iterations: int
     :param rounds: The number of rounds to run for the benchmark.
 
             Rounds are multiple runs of calls to the action within an iteration to mitigate timer
@@ -137,41 +179,52 @@ def benchmark(  # noqa: C901
             If the action is slower, rounds will be set to a lower value.
 
             If specified, it must be a positive integer.
+    :type rounds: int | None
     :param timer: A callable that returns the current time. If None, the default timer is used.
         The timer function should return an int representing the current time.
+    :type timer: Callable[[], int] | None
     :param cpu_timer: A callable that returns the current CPU time. If None, the default CPU timer is used.
         The CPU timer function should return an int representing the current CPU time.
+    :type cpu_timer: Callable[[], int] | None
     :param min_time: The minimum time in seconds to run the benchmark.  Must be a positive number.
         Its reference depends on the timer used, but by default it is wall-clock time.
+    :type min_time: float
     :param max_time: The maximum time in seconds to run the benchmark.
         Must be a positive number greater than min_time. Its reference depends on the timer used,
         but by default it is wall-clock time.
+    :type max_time: float
     :param timeout: The maximum time in seconds to allow the benchmark
         to run before timing out. If None, a default timeout of
         `max_time` + {DEFAULT_TIMEOUT_GRACE_PERIOD} is used. Must be a positive number.
         Time for timeout is always referenced to wall-clock time.
+    :type timeout: float | None
     :param variation_cols: kwargs to be used for cols to denote kwarg
         variations. Each key is a keyword argument name, and the value is the column label to use for that
         argument. Only keywords that are also in `kwargs_variations` can be used here. These fields will be
         added to the output of reporters that support them as columns of data with the specified labels.
         If None, an empty dict is used.
+    :type variation_cols: dict | None
     :param kwargs_variations: A mapping of keyword argument key names to
         a list of possible values for that argument. Default is {}. When tests are run, the benchmark
         will be executed for each combination of the specified keyword argument variations. The action
         function will be called with a `bench` parameter that is an instance of the runner and the
         keyword arguments for the current variation.
         If None, an empty dict is used.
+    :type kwargs_variations: dict | None
     :param options: A list of additional options for the benchmark case.
         Each option is an instance of ReporterOptions or a subclass of ReporterOptions.
         Reporter options can be used to customize the output of the benchmark reports for
         specific reporters. Reporters are responsible for extracting applicable ReporterOptionss
         from the list of options themselves.
+    :type options: list[ReporterOptions] | None
     :param n: The 'n' weighting of the benchmark case. Must be a positive integer or float.
+        This is used by some runners to weight the benchmark case when comparing it to others.
+    :type n: int | float
     :param use_field_for_n: If provided, use the value of this field from kwargs_variations
         to set 'n' dynamically for each variation.
-    :param timer: The timer function to use for the benchmark. If None, the default timer is used.
-        The timer function should be a callable that returns a float or int representing the current
-        time.
+        The value should be a key from kwargs_variations whose values are all numbers.
+        If None, the 'n' value from the n parameter is used for all variations.
+    :type use_field_for_n: str | None
     :return: A decorator that registers the function for benchmarking and returns it unmodified.
     :rtype: Callable[[Callable[P, R]], Callable[P, R]]
     :raises SimpleBenchTypeError: If any argument is of an incorrect type.
@@ -187,6 +240,7 @@ def benchmark(  # noqa: C901
     title = _validate.title(title)
     description = _validate.description(description)
 
+    calibrate = case_validate.calibrate(calibrate)
     group = case_validate.group(group)
     runners = case_validate.runners(runners)
     iterations = case_validate.iterations(iterations)
@@ -253,6 +307,7 @@ def benchmark(  # noqa: C901
             inferred_description = description
 
         case = Case(
+            calibrate=calibrate,
             group=group,
             vcs_info=vcs_info,
             title=inferred_title,
