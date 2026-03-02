@@ -4,12 +4,13 @@ This module defines four distinct dictionary types for handling MetricsObject da
 all modeled on the JSON schema for a MetricsObject as defined in the
 version 1: :class:`~simplebench.report.versions.v1.ResultsInfoSchema`.
 
-    - `MetricsObjectData`: For use as INPUT (e.g., to `from_dict`). It is more
-    lenient, making `type`, `version`, and `hash_id` optional.
-    - `ImmutableMetricsObjectData`: An immutable version of `MetricsObjectData`.
-    - `MetricsObjectDict`: For use as OUTPUT (e.g., from `to_dict`). It is
-    stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
-    - `ImmutableMetricsObjectDict`: An immutable version of `MetricsObjectDict`.
+- :class:`MetricsObjectData`: For use as INPUT (e.g., to `from_dict`). It is more
+    lenient, allowing any mapping of strings to valid metric item data types.
+- :class:`ImmutableMetricsObjectData`: An immutable variant of `MetricsObjectData` for
+    type-checking purposes.
+- :class:`MetricsObjectDict`: For use as OUTPUT (e.g., from `to_dict`). It is stricter, guaranteeing that all metric items are of the output dictionary types.
+- :class:`ImmutableMetricsObjectDict`: An immutable variant of `MetricsObjectDict` for type-checking purposes.
+
 
     These types ensure proper validation and serialization of MetricsObject data
 """

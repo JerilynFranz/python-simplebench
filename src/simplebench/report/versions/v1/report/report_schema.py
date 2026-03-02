@@ -1,4 +1,4 @@
-"""Schema for JSON reporter v1 validation."""
+"""Schema for JSON Report v1 validation."""
 # ruff: noqa: E501
 
 from copy import deepcopy
@@ -11,7 +11,7 @@ __all__: list[str] = []
 
 
 class ReportSchema(JSONSchema):
-    """Schema for the JSON reporter output (V1)"""
+    """Schema for the JSON Report output (V1)"""
 
     VERSION: int = 1
     """The JSON report schema version number."""
@@ -82,7 +82,7 @@ class ReportSchema(JSONSchema):
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption='JSON Schema for ValueBlock V1',
+        caption='JSON Schema for Report V1',
         intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""

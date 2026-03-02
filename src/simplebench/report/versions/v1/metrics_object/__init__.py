@@ -1,4 +1,4 @@
-"""Metrics block for results-info report version v1."""
+"""Metrics block for Metrics object version v1."""
 # ruff: noqa: F401
 
 from .metrics_object import METRIC_ITEM_TYPES, MetricItem, MetricsObject

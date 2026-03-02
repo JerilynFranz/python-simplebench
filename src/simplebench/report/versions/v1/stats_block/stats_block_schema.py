@@ -161,7 +161,7 @@ class StatsBlockSchema(JSONSchema):
 
     _JSON_SCHEMA_NOTE: str = format_json_for_docstring(
         json_data=_JSON_SCHEMA_TEXT,
-        caption='JSON Schema for ValueBlock V1',
+        caption='JSON Schema for StatsBlock V1',
         intro_text='The JSON schema is as follows:',
     )
     """Note containing the JSON schema for docstrings."""

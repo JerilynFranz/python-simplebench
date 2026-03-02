@@ -1,10 +1,10 @@
 """Validation functions for ResultsInfo v1."""
 import re
 from collections.abc import Mapping
+from typing import TYPE_CHECKING
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ResultsInfoErrorTag
-from simplebench.report.versions.v1 import MetricItem, ExtrasObject
 from simplebench.simplebench_types import CoreDataMapping
 from simplebench.validators import (
     validate_float,
@@ -13,7 +13,8 @@ from simplebench.validators import (
     validate_type,
 )
 
-from .. import METRIC_ITEM_TYPES, MetricsObject
+if TYPE_CHECKING:
+    from simplebench.report.versions.v1 import ExtrasObject, MetricsObject
 
 __all__: list[str] = []
 
@@ -145,13 +146,15 @@ def variation_marks(value: Mapping[str, str]) -> CoreDataMapping[str]:
     return value if isinstance(value, CoreDataMapping) else CoreDataMapping(value)
 
 
-def metrics(value: MetricsObject) -> MetricsObject:
+def metrics(value: 'MetricsObject') -> 'MetricsObject':
     """Validate the metrics property.
 
     :param MetricsObject value: The metrics value to validate.
     :return MetricsObject: The validated metrics value.
     :raises SimpleBenchTypeError: If metrics is not a MetricsObject.
     """
+    from .. import METRIC_ITEM_TYPES, MetricItem, MetricsObject
+
     validate_type(
         value,
         MetricsObject,
@@ -169,7 +172,7 @@ def metrics(value: MetricsObject) -> MetricsObject:
     return value
 
 
-def extra_info(value: ExtrasObject) -> ExtrasObject:
+def extra_info(value: 'ExtrasObject') -> 'ExtrasObject':
     """Validate the extra_info property.
 
     Validates that `extra_info` an ExtrasObject instance, which is a mapping
@@ -179,6 +182,8 @@ def extra_info(value: ExtrasObject) -> ExtrasObject:
     :return ExtrasObject: The validated extra_info values dictionary.
     :raises SimpleBenchTypeError: If extra_info is not an ExtrasObject instance.
     """
+    from .. import ExtrasObject
+
     if not isinstance(value, ExtrasObject):
         raise SimpleBenchTypeError(
             f'extra_info must be an ExtrasObject instance, got {type(value)}',

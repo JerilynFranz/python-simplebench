@@ -19,11 +19,11 @@ from simplebench.validators import (
 
 __all__: list[str] = []
 
-_HASH_ID_REGEX: re.Pattern[str] = re.compile(r'^[A-Za-z0-9]{64}$')
+_HASH_ID_REGEX: re.Pattern[str] = re.compile(r'^[a-f0-9]{64}$')
 """Regex pattern for validating hash IDs.
 
 A valid hash ID is a 64-character hexadecimal string consisting of
-uppercase or lowercase letters (A-F, a-f) and digits (0-9).
+lowercase letters (a-f) and digits (0-9).
 
 We could put the empty string in the regex as well, but it's cleaner to handle that
 separately in the validation function.

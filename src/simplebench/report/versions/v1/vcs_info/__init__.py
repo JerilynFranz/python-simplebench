@@ -1,4 +1,4 @@
-"VCSInfo related classes and types for version 1 reports."
+"""VCSInfo related classes and types for version 1 reports."""
 # ruff: noqa: F401
 
 from .typeddict_types import ImmutableVCSInfoData, ImmutableVCSInfoDict, VCSInfoData, VCSInfoDict

@@ -46,13 +46,10 @@ class Report(BaseReport):
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
 
-    """Cache for the constructor parameters of the ResultsInfo class."""
 
     @classmethod
     def _data_params(cls) -> dict[str, Any]:
         """Get the constructor parameters for the schema data class.
-
-        The parameters are cached after the first call for performance.
 
         :return dict[str, Any]: A dictionary of constructor parameter names and types.
         """
@@ -166,7 +163,7 @@ class Report(BaseReport):
         return cls(**kwargs)
 
     def to_dict(self) -> ImmutableReportDict:
-        """Convert the JSONReport instance to a dictionary.
+        """Convert the Report instance to a dictionary.
 
         The output dictionary conforms to the version 1 report schema
         and is suitable for serialization to JSON. It is immutable and cached

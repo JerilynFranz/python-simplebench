@@ -19,7 +19,7 @@ from simplebench.validators import (
     validate_string_with_regex,
 )
 
-_HASH_ID_REGEX = re.compile(r'^[a-fA-F0-9]{64}$')
+_HASH_ID_REGEX = re.compile(r'^[a-f0-9]{64}$')
 
 __all__: list[str] = []
 
@@ -30,7 +30,7 @@ def hash_id(val: str) -> str:
     An empty string is allowed, which indicates that the hash_id should be
     computed automatically.
 
-    :param value: The unique hash identifier for the vcs information.
+    :param value: The unique hash identifier for the value information.
     :return: The validated hash_id string.
     :raises SimpleBenchTypeError: If the hash_id value is not a string.
     :raises SimpleBenchValueError: If the hash_id string is not a valid 64-character hexadecimal string (when not empty).

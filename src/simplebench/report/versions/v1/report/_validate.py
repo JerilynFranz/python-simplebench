@@ -4,7 +4,7 @@ import re
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from simplebench.exceptions import SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.simplebench_types import VariationCols
 from simplebench.type_proxies import is_case
@@ -127,13 +127,13 @@ def description(value: str) -> str:
 def variation_cols(value: VariationCols) -> VariationCols:
     """Validate a variation_cols dictionary.
 
-    :param VariationColsType value: The variation_cols dictionary to validate.
-    :return ImmutableVariationColsType: The validated variation_cols as an immutable mapping.
+    :param VariationCols value: The variation_cols dictionary to validate.
+    :return VariationCols: The validated variation_cols as an immutable mapping.
     :raises SimpleBenchTypeError: If variation_cols is not a dict.
     :raises SimpleBenchValueError: If the keys or values in variation_cols are not strings.
     """
     if not isinstance(value, VariationCols):
-        raise SimpleBenchValueError(
+        raise SimpleBenchTypeError(
             f'variation_cols must be a VariationCols instance, found {type(value).__name__}.',
             tag=_ReportErrorTag.INVALID_VARIATION_COLS_TYPE,
         )

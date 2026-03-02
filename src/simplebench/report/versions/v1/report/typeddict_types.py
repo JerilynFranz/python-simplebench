@@ -31,7 +31,7 @@ __all__: list[str] = []
 class ReportData(ReportElementTypedDict):
     """Typed dictionary for V1 Report data used as INPUT.
 
-    All fields except `type` and `version` are required (`total=False`).
+    All fields except `hash_id`, `type`, and `version` are required.
 
     :param Required[str] timestamp: The timestamp of the report.
     :param Required[str] group: The benchmark reporting group.
@@ -59,7 +59,7 @@ class ReportData(ReportElementTypedDict):
 class ImmutableReportData(ReportElementTypedDict):
     """Typed dictionary for immutable V1 Report data used as INPUT.
 
-    All fields except `type`, `version`, and `hash_id` are required (`total=False`).
+    All fields except `hash_id`, `type`, and `version` are required.
 
     The `__immutable__` field is included to signal that this dictionary
     is intended to be immutable. It is not used at runtime but serves
@@ -121,7 +121,6 @@ class ImmutableReportDict(ReportElementTypedDict):
     """Required fields for immutable V1 Report data used as OUTPUT.
 
     The immutable variant ensures that the data cannot be modified after creation.
-    The
 
     :param Required[str] timestamp: The timestamp of the report.
     :param Required[str] group: The benchmark reporting group.

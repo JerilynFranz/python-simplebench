@@ -93,7 +93,7 @@ class StatsBlock(BaseStatsBlock):
     """The JSON report ID property value for version 1 reports."""
 
     _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
-    """Cache for the constructor parameters of the ResultsInfo class."""
+    """Cache for the constructor parameters of the StatsBlock class."""
 
     @classmethod
     def _data_params(cls) -> MappingProxyType[str, Any]:

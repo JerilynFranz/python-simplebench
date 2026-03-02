@@ -41,7 +41,7 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
     """The JSON schema class for version 1 reports."""
 
     _init_params_cache: MappingProxyType[str, Any] = MappingProxyType({})
-    """Cache for the constructor parameters of the ResultsInfo class."""
+    """Cache for the constructor parameters of the VCSInfo class."""
 
     @classmethod
     def _data_params(cls) -> MappingProxyType[str, Any]:
@@ -82,7 +82,7 @@ class VCSInfo(BaseVCSInfo):  # pylint: disable=too-many-instance-attributes
     ) -> None:
         """Initialize JSONVCSInfo.
 
-        :param str hash_id: The unique hash identifier for the machine information.
+        :param str hash_id: The unique hash identifier for the vcs information.
             If not provided, it defaults to an empty string and will be computed automatically.
         :param str vcs: The version control system string.
         :param str commit_id: The unique identifier of the current revision.

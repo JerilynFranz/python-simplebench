@@ -114,9 +114,9 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
                 strip=True,
             )
             validate_namespaced_identifier(validated_metric_name)
-            if not isinstance(metric_data, dict):
+            if not isinstance(metric_data, Mapping):
                 raise SimpleBenchTypeError(
-                    f'Metric item must be a dictionary, got {type(metric_data)}',
+                    f'Metric item must be a Mapping, got {type(metric_data)}',
                     tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
                 )
             discriminator_type = metric_data.get('type')
@@ -124,7 +124,7 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
                 raise SimpleBenchValueError(
                     f'Invalid metric item type: {discriminator_type}', tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE
                 )
-            metrics[metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data)
+            metrics[validated_metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data)
 
         return cls(metrics)
 

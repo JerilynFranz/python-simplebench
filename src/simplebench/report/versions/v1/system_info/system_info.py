@@ -61,7 +61,6 @@ class SystemInfo(BaseSystemInfo):
         self._hash_id: str = _validate.hash_id(hash_id) or self._hash_id_helper(SystemInfoDict)
         self._dict_cache: ImmutableSystemInfoDict = self._to_dict_helper(ImmutableSystemInfoDict)
 
-
     @classmethod
     def from_dict(cls, data: SystemInfoData) -> 'SystemInfo':
         """Create a SystemInfo instance from a dictionary.

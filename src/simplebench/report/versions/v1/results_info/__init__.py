@@ -1,4 +1,4 @@
-"""JSONResults v1 package initializer."""
+"""Results v1 package initializer."""
 # ruff: noqa: F401
 
 from .results_info import ResultsInfo

@@ -5,10 +5,10 @@ all modeled on the JSON schema for version 1 ResultsInfo in
 version 1: :class:`~simplebench.report.versions.v1.ResultsInfoSchema`.
 
     - :class:`ResultsInfoData`: For use as INPUT (e.g., to `from_dict`). It is more
-    lenient, making `type`, `version`, and `hash_id` optional.
+    lenient, making `type`, `version`, `hash_id`, and `extra_info` optional.
     - :class:`ImmutableResultsInfoData`: An immutable version of `ResultsInfoData`.
     - :class:`ResultsInfoDict`: For use as OUTPUT (e.g., from `to_dict`). It is
-    stricter, guaranteeing that `type`, `version`, and `hash_id` are present.
+    stricter, guaranteeing that `type`, `version`, `hash_id`, and `extra_info` are present.
     - :class:`ImmutableResultsInfoDict`: An immutable version of `ResultsInfoDict`.
 
     These types ensure proper validation and serialization of ResultsInfo data
@@ -35,7 +35,7 @@ class ResultsInfoData(ReportElementTypedDict):
     """Typed dictionary for V1 ResultsInfo data used as INPUT.
 
     All fields except `type`, `version`, `hash_id`, and `extra_info`
-    are required (`total=False`).
+    are required.
 
     :param Required[str] group: The group for the results.
     :param Required[str] title: The title of the results.
@@ -43,7 +43,7 @@ class ResultsInfoData(ReportElementTypedDict):
     :param Required[float] n: The n-complexity value.
     :param Required[Mapping[str, str]] variation_marks: The variation marks mapping.
     :param Required[MetricsObjectData] metrics: The metrics object data.
-    :param Required[CoreDataMappingType] extra_info: Additional information.
+    :param NotRequired[CoreDataMappingType] extra_info: Additional information.
     :param NotRequired[str] hash_id: The unique hash identifier for the Results information.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
@@ -55,7 +55,7 @@ class ResultsInfoData(ReportElementTypedDict):
     n: Required[float]
     variation_marks: Required[Mapping[str, str]]
     metrics: Required[MetricsObjectData]
-    extra_info: Required[CoreDataMappingType]
+    extra_info: NotRequired[CoreDataMappingType]
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
@@ -64,7 +64,7 @@ class ResultsInfoData(ReportElementTypedDict):
 class ImmutableResultsInfoData(ReportElementTypedDict):
     """Typed dictionary for Immutable V1 ResultsInfo data used as INPUT.
 
-    All fields except `type`, `version`, `hash_id`are required (`total=False`).
+    All fields except `type`, `version`, `hash_id`, and `extra_info` are required.
 
     `__immutable__` is a class-level marker to signal immutability. It is
     typed as `NotRequired[Never]` so that it cannot be set on instances and
@@ -76,7 +76,7 @@ class ImmutableResultsInfoData(ReportElementTypedDict):
     :param Required[float] n: The n-complexity value.
     :param Required[CoreDataMapping[str]] variation_marks: The variation marks mapping.
     :param Required[MetricsObjectData] metrics: The metrics object data.
-    :param Required[CoreDataMapping[CoreDataTypes]] extra_info: Additional information.
+    :param NotRequired[CoreDataMapping[CoreDataTypes]] extra_info: Additional information.
     :param NotRequired[str] hash_id: The unique hash identifier for the Results information.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
@@ -88,7 +88,7 @@ class ImmutableResultsInfoData(ReportElementTypedDict):
     n: Required[float]
     variation_marks: Required[CoreDataMapping[str]]
     metrics: Required[MetricsObjectData]
-    extra_info: Required[CoreDataMapping[CoreDataTypes]]
+    extra_info: NotRequired[CoreDataMapping[CoreDataTypes]]
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]

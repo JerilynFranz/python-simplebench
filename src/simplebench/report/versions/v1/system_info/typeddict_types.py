@@ -83,7 +83,7 @@ class ImmutableSystemInfoData(ReportElementTypedDict):
 class SystemInfoDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 SystemInfo (OUTPUT).
 
-    This type is strict, requiring `type`, `version`, `node`, and `hash_id` to be
+    This type is strict, requiring `type`, `version`, and `hash_id` to be
     present to strictly conform with the JSON schema and for output serialization.
 
     The type asserts to type checkers that all required fields are present and
