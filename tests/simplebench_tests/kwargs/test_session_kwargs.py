@@ -5,9 +5,8 @@ import autopypath  # noqa: F401  # adjusts sys.path for imports for running test
 import pytest
 
 from simplebench.session import Session as _MODELED_CLASS
-
-from .kwargs import kwargs_class_matches_modeled_call
-from .session_kwargs import SessionKWArgs as _KWARGS_CLASS
+from simplebench_tests.kwargs import kwargs_class_matches_modeled_call
+from simplebench_tests.kwargs.session_kwargs import SessionKWArgs as _KWARGS_CLASS
 
 _MODELED_CALL = _MODELED_CLASS.__init__
 

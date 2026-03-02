@@ -149,6 +149,10 @@ addopts = """
 [tool.coverage.run]
 branch = true
 source = ["simplebench"]
+relative = true
+
+[tool.coverage.paths]
+source = ["src/simplebench", "*/site-packages/simplebench", ".tox/coverage/lib/*/site-packages/simplebench"]
 
 [tool.coverage.report]
 # Regexes for lines to exclude from consideration

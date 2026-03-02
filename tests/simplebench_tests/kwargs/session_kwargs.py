@@ -8,7 +8,7 @@ from rich.console import Console
 
 from simplebench.benchmark_runner import BenchmarkRunner
 from simplebench.case import Case
-from simplebench.enums import Verbosity
+from simplebench.enums import Calibrate, Verbosity
 from simplebench.session import Session
 
 from .kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
@@ -34,6 +34,7 @@ class SessionKWArgs(KWArgs):
         console: Console | NoDefaultValue = NO_DEFAULT_VALUE,
         timer: Callable[[], int] | NoDefaultValue = NO_DEFAULT_VALUE,
         cpu_timer: Callable[[], int] | NoDefaultValue = NO_DEFAULT_VALUE,
+        calibrate: Calibrate | NoDefaultValue = NO_DEFAULT_VALUE,
     ) -> None:
         """Constructs a SessionKWArgs instance. This class is used to hold keyword arguments for
         initializing a Session instance in tests.
