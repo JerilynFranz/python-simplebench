@@ -91,7 +91,10 @@ include = ["src", "tests", "bench"]
 exclude = ["**/node_modules",
     "**/__pycache__",
     "src/experimental",
-    "src/typestubs"
+    "src/typestubs",
+    "**/.*",
+    ".venv",
+    ".tox/"
 ]
 ignore = []
 defineConstant = { DEBUG = true }
@@ -135,16 +138,15 @@ Changelog = "https://github.com/JerilynFranz/python-simplebench/blob/main/CHANGE
 minversion = "9.0.0"
 testpaths = ["tests"]
 norecursedirs = [".git", ".tox", ".vscode", "venv*", ".venv", ".*_cache", "build", "dist", "testplan.py"]
+# The `--continue-on-collection-errors` option is added to prevent test collection failures from blocking
+# test runs, which can be helpful in development environments where code may be in flux.
 addopts = ["--continue-on-collection-errors"]
 
 [tool.pytest.ini_options]
 minversion = "8.0.0"
 testpaths = ["tests"]
 norecursedirs = [".git", ".tox", ".vscode", "venv*", ".venv", ".*_cache", "build", "dist", "testplan.py"]
-addopts = """
---ignore=docs_source/ \
---continue-on-collection-errors
-"""
+addopts = "--ignore=docs_source/ --continue-on-collection-errors"
 
 [tool.coverage.run]
 branch = true

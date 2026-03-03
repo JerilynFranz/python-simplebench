@@ -1,5 +1,6 @@
 """KWArgs subclass for reports v1 PythonInfo()."""
 from collections.abc import Mapping, Sequence
+
 from simplebench.report.versions.v1 import PythonInfo
 from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
 
@@ -10,6 +11,8 @@ class PythonInfoKWArgs(KWArgs):
     def __init__(
             self, *,
             hash_id: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            title: str | NoDefaultValue = NO_DEFAULT_VALUE,
+            description: str | NoDefaultValue = NO_DEFAULT_VALUE,
             python_version: str | NoDefaultValue = NO_DEFAULT_VALUE,
             implementation: str | NoDefaultValue = NO_DEFAULT_VALUE,
             implementation_version: str | NoDefaultValue = NO_DEFAULT_VALUE,
