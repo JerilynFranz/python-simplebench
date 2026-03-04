@@ -7,8 +7,8 @@ from simplebench.metrics import Metric, Metrics, metrics_registry
 from simplebench.simplebench_types import ElementCollection, Immutable, is_element_collection
 
 from ._error_tags import _MetricSelectionErrorTag
-from .metrics_selection import MetricsSelection
-from .metrics_selection_type import MetricsSelectionType
+from ._metrics_selection import MetricsSelection
+from ._metrics_selection_type import MetricsSelectionType
 
 __all__: list[str] = []
 

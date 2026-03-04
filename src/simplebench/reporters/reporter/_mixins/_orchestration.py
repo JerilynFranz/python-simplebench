@@ -14,7 +14,7 @@ from rich.text import Text
 from simplebench.enums import Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.metrics import Metric
-from simplebench.metrics.metrics_selection import MetricsCollection
+from simplebench.metrics._metrics_selection import MetricsCollection
 from simplebench.reporters.protocols import ReporterCallback, ReportRenderer
 from simplebench.reporters.reporter import Prioritized, ReporterProtocol, _ReporterErrorTag
 from simplebench.type_proxies import is_case, is_choice, is_session

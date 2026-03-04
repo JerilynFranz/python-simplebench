@@ -4,8 +4,8 @@ import re
 from dataclasses import dataclass
 
 from simplebench.exceptions import SimpleBenchValueError
-from simplebench.metrics.metric_type import MetricType
-from simplebench.metrics.metric_types_registry import metric_types_registry
+from simplebench.metrics._metric_type import MetricType
+from simplebench.metrics._metric_types_registry import metric_types_registry
 from simplebench.validators import validate_string, validate_type
 
 from ._error_tags import _MetricErrorTag

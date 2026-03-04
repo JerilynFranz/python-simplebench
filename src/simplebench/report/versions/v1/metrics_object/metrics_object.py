@@ -71,6 +71,10 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
             The keys must must be in the format 'namespace::type_name'
             where both namespace and type_name start and end with an alphanumeric character
             and can contain underscores in between. The identifier cannot be blank.
+
+            They are used to identify the metric against the metrics
+            defined in the report schema and to provide a unique identifier for the metric item
+            which is used for hashing and comparisons.
         """
         for metric_name, metric_object in metrics.items():
             validate_namespaced_identifier(metric_name)

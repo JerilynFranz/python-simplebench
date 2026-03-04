@@ -88,5 +88,8 @@
     "mypy-type-checker.args": [
       "--no-warn-unused-ignores"
     ],
-    "editor.inlineSuggest.minShowDelay": 500
+    "editor.inlineSuggest.minShowDelay": 500,
+    "coverage-gutters.manualCoverageFilePaths": [
+      
+    ]
 }

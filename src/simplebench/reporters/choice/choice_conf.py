@@ -4,7 +4,7 @@ from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metrics.metrics_selection import MetricsSelection
+from simplebench.metrics._metrics_selection import MetricsSelection
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choice._error_tags import _ChoiceConfErrorTag
 from simplebench.reporters.protocols import ChoiceProtocol

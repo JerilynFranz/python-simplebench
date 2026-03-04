@@ -46,7 +46,7 @@ benchmark suite that defines them to avoid conflicts with other metrics.
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from simplebench.metrics.metrics import Metrics
+    from simplebench.metrics._metrics import Metrics
 
 __all__: list[str] = []
 
@@ -88,9 +88,9 @@ def metrics() -> 'Metrics':
     - `STD_GC_GEN2_UNCOLLECTABLE_STATS`: Generation 2 uncollectable objects statistics.
     - `STD_GC_GEN2_UNCOLLECTABLE_RAW`: Generation 2 uncollectable objects raw values.
     """
-    from .metric import Metric  # pylint: disable=import-outside-toplevel
-    from .metric_types_registry import metric_types_registry  # pylint: disable=import-outside-toplevel
-    from .metrics import Metrics  # pylint: disable=import-outside-toplevel
+    from ._metric import Metric  # pylint: disable=import-outside-toplevel
+    from ._metric_types_registry import metric_types_registry  # pylint: disable=import-outside-toplevel
+    from ._metrics import Metrics  # pylint: disable=import-outside-toplevel
 
     global _CACHED_METRICS  # pylint: disable=global-statement
     if _CACHED_METRICS is not None:

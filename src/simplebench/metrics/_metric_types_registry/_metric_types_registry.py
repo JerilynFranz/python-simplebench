@@ -20,8 +20,8 @@ from collections.abc import Iterable
 
 from simplebench.exceptions import SimpleBenchTypeError
 from simplebench.metrics import standard_metric_types
-from simplebench.metrics.metric_type import MetricType
-from simplebench.metrics.metric_types import MetricTypes
+from simplebench.metrics._metric_type import MetricType
+from simplebench.metrics._metric_types import MetricTypes
 from simplebench.validators import validate_iterable_of_type
 
 from ._error_tags import _MetricTypesRegistryErrorTag

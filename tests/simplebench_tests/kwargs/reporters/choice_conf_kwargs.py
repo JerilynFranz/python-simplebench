@@ -3,7 +3,7 @@
 from collections.abc import Sequence
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metrics.metrics_selection import MetricsSelection
+from simplebench.metrics._metrics_selection import MetricsSelection
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.simplebench_types import ElementCollection, Extras

@@ -112,9 +112,9 @@ def metric_types() -> 'MetricTypes':
     - `STD_GC_GEN2_UNCOLLECTABLE_STATS`: Number of uncollectable objects for generation 2
     - `STD_GC_GEN2_UNCOLLECTABLE_RAW`: Number of uncollectable objects for generation 2 (raw values)
     """
-    from .metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
-    from .metric_type import MetricType  # pylint: disable=import-outside-toplevel
-    from .metric_types import MetricTypes  # pylint: disable=import-outside-toplevel
+    from ._metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
+    from ._metric_type import MetricType  # pylint: disable=import-outside-toplevel
+    from ._metric_types import MetricTypes  # pylint: disable=import-outside-toplevel
 
     global _CACHED_METRIC_TYPES  # pylint: disable=global-statement
     if _CACHED_METRIC_TYPES is not None:

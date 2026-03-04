@@ -1,7 +1,7 @@
 """Metrics registry module."""
 # ruff: noqa: F401
 
-from .metrics_registry import (
+from ._metrics_registry import (
     clear_metrics,
     filtered_metrics,
     metrics_registry,

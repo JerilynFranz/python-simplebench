@@ -1,7 +1,7 @@
 """KWArgs subclass for Stats."""
 
 from simplebench.case.results.metrics.stats._stats import Stats
-from simplebench.metrics.metric.metric import Metric
+from simplebench.metrics._metric._metric import Metric
 from simplebench.simplebench_types._values._values import Values
 
 from ...kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue

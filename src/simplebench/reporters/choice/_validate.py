@@ -5,7 +5,7 @@ from typing import Any
 from simplebench._log import _log
 from simplebench.enums import FlagType, Format, Target
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
-from simplebench.metrics.metrics_selection import MetricsSelection
+from simplebench.metrics._metrics_selection import MetricsSelection
 from simplebench.options.reporter.options import ReporterOptions
 from simplebench.simplebench_types import is_immutable
 from simplebench.validators import (

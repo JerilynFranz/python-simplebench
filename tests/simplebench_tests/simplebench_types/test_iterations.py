@@ -7,7 +7,7 @@ from testspec import Assert, PytestAction, TestSpec
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 from simplebench.metrics import metrics_registry
-from simplebench.metrics.metrics import _MetricsErrorTag
+from simplebench.metrics._metrics import _MetricsErrorTag
 from simplebench.simplebench_types import Iterations, Values
 from simplebench.simplebench_types._iterations import _IterationsErrorTag
 from simplebench_tests import factories

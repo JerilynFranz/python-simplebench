@@ -24,11 +24,11 @@ and is an instance of :class:`simplebench.metrics.Metrics`.
 """
 import simplebench.metrics.standard_metrics as standard_metrics
 from simplebench.exceptions import SimpleBenchTypeError
-from simplebench.metrics.metric import Metric
-from simplebench.metrics.metric_category import MetricCategory
-from simplebench.metrics.metric_type import MetricType
-from simplebench.metrics.metric_types import MetricTypes
-from simplebench.metrics.metrics import Metrics
+from simplebench.metrics._metric import Metric
+from simplebench.metrics._metric_category import MetricCategory
+from simplebench.metrics._metric_type import MetricType
+from simplebench.metrics._metric_types import MetricTypes
+from simplebench.metrics._metrics import Metrics
 from simplebench.simplebench_types import ElementCollection, is_element_collection
 from simplebench.validators import validate_iterable_of_type
 

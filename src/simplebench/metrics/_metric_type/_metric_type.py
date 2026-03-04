@@ -15,7 +15,7 @@ __all__: list[str] = []
 _deferred_imports_done: bool = False
 
 if TYPE_CHECKING:
-    from simplebench.metrics.metric_category import MetricCategory
+    from simplebench.metrics._metric_category import MetricCategory
 
     _deferred_imports_done = True
 
@@ -27,7 +27,7 @@ def _deferred_imports() -> None:
     """Perform deferred imports for runtime use to avoid circular dependencies."""
     global MetricCategory, _deferred_imports_done  # pylint: disable=global-statement
     if not _deferred_imports_done:
-        from simplebench.metrics.metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
+        from simplebench.metrics._metric_category import MetricCategory  # pylint: disable=import-outside-toplevel
 
         _deferred_imports_done = True
 

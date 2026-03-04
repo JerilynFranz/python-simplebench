@@ -1,8 +1,8 @@
 """MetricsUnspecified metrics class."""
 
-from simplebench.metrics.metrics_selection.metrics_selection_type import MetricsSelectionType
+from simplebench.metrics._metrics_selection._metrics_selection_type import MetricsSelectionType
 
-from .metrics_selection import MetricsSelection
+from ._metrics_selection import MetricsSelection
 
 __all__: list[str] = []
 

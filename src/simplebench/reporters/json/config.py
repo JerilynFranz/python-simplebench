@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from simplebench.enums import FlagType, Format, Target
-from simplebench.metrics.metrics_selection import MetricsSelection, MetricsUnspecified
+from simplebench.metrics._metrics_selection import MetricsSelection, MetricsUnspecified
 from simplebench.options import JSONOptions
 from simplebench.reporters.choice.choice_conf import ChoiceConf
 from simplebench.reporters.choices.choices_conf import ChoicesConf

@@ -1,6 +1,6 @@
 """Metric definition package"""
 # ruff: noqa: F401
 
-from .metric_type import MetricType
+from ._metric_type import MetricType
 
 __all__: list[str] = []

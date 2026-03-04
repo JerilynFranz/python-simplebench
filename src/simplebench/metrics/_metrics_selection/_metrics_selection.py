@@ -1,6 +1,6 @@
 """MetricSelection class for selecting and managing metrics."""
 
-from .metrics_selection_type import MetricsSelectionType
+from ._metrics_selection_type import MetricsSelectionType
 
 __all__: list[str] = []
 
