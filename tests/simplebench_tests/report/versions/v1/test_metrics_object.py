@@ -15,7 +15,7 @@ from simplebench.exceptions import (
     SimpleBenchTypeError,
     SimpleBenchValueError,
 )
-from simplebench.report._error_tags import _MetricsErrorTag
+from simplebench.report._error_tags import _MetricsObjectErrorTag
 from simplebench.report.versions import v1 as report
 from simplebench.report.versions.v1 import MetricsObject, RawDataBlock, StatsBlock, ValueBlock
 from simplebench.simplebench_types import CoreDataMapping, Values, is_immutable
@@ -37,7 +37,7 @@ from simplebench_tests.factories.report import v1 as report_factories
         action=MetricsObject,
         args=[{'test::invaliditem': 'not a metric item'}],
         exception=SimpleBenchTypeError,
-        exception_tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE
+        exception_tag=_MetricsObjectErrorTag.INVALID_METRIC_ITEM_TYPE
         ),
     PytestAction("INIT_003",
         name="Invalid key type in MetricsObject initialization",
@@ -124,7 +124,7 @@ def test_pickling(testspec: TestSpec) -> None:
         action=MetricsObject({'test::valueblock': report_factories.value_block()}).__setitem__,
         args=['test::valueblock', report_factories.value_block()],
         exception=SimpleBenchAttributeError,
-        exception_tag=_MetricsErrorTag.METRICS_OBJECT_IMMUTABLE
+        exception_tag=_MetricsObjectErrorTag.METRICS_OBJECT_IMMUTABLE
     ),
     PytestAction("IMMUTABLE_002",
         name="Test Immutable subclassing of MetricsObject",
@@ -204,14 +204,14 @@ def test_to_dict(testspec: TestSpec) -> None:
         action=MetricsObject.from_dict,
         args=[{'test::invaliditem': 'not a metric item'}],
         exception=SimpleBenchTypeError,
-        exception_tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE
+        exception_tag=_MetricsObjectErrorTag.INVALID_METRIC_ITEM_TYPE
      ),
     PytestAction("FROM_DICT_004",
             name="Test from_dict with invalid key type",
             action=MetricsObject.from_dict,
             args=[{123: report_factories.value_block()}],
             exception=SimpleBenchTypeError,
-            exception_tag=_MetricsErrorTag.INVALID_METRIC_NAME_TYPE
+            exception_tag=_MetricsObjectErrorTag.INVALID_METRIC_NAME_TYPE
         ),
     PytestAction("FROM_DICT_005",
         name="Invalid type in from_dict input",
@@ -226,7 +226,7 @@ def test_to_dict(testspec: TestSpec) -> None:
             'scale': 1.0,
             'value': 123.456,}}],
         exception=SimpleBenchValueError,
-        exception_tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE),
+        exception_tag=_MetricsObjectErrorTag.INVALID_METRIC_ITEM_TYPE),
 ])
 def test_from_dict(testspec: TestSpec) -> None:
     """Test that MetricsObject can be created from a dictionary correctly."""
@@ -272,7 +272,7 @@ def test_json_serialization(testspec: TestSpec) -> None:
         action=report_factories.metrics_object().__getitem__,
         args=['nonexistent::key'],
         exception=SimpleBenchKeyError,
-        exception_tag=_MetricsErrorTag.KEY_ERROR_INVALID_METRIC_NAME_VALUE
+        exception_tag=_MetricsObjectErrorTag.KEY_ERROR_INVALID_METRIC_NAME_VALUE
     ),
 ])
 def test_getitem(testspec: TestSpec) -> None:
@@ -286,7 +286,7 @@ def test_getitem(testspec: TestSpec) -> None:
         action=report_factories.metrics_object().__setitem__,
         args=['test::valueblock', report_factories.value_block()],
         exception=SimpleBenchAttributeError,
-        exception_tag=_MetricsErrorTag.METRICS_OBJECT_IMMUTABLE
+        exception_tag=_MetricsObjectErrorTag.METRICS_OBJECT_IMMUTABLE
     ),
 ])
 def test_setitem(testspec: TestSpec) -> None:
@@ -299,7 +299,7 @@ def test_setitem(testspec: TestSpec) -> None:
         action=report_factories.metrics_object().__delitem__,
         args=['test::valueblock'],
         exception=SimpleBenchAttributeError,
-        exception_tag=_MetricsErrorTag.METRICS_OBJECT_IMMUTABLE
+        exception_tag=_MetricsObjectErrorTag.METRICS_OBJECT_IMMUTABLE
     ),
 ])
 def test_delitem(testspec: TestSpec) -> None:

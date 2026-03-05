@@ -3,6 +3,7 @@
 from simplebench.validators._error_tags.validators import _ValidatorsErrorTag
 
 from ._typed_dict import is_typed_dict_mimic, typed_dict_mimic
+from ._validate_hash_id import validate_hash_id
 from ._validate_iterable_of_type import validate_iterable_of_type
 from .core_data_types import (
     is_core_data,

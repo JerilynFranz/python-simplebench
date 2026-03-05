@@ -45,6 +45,15 @@ from .memory_info import (
     VirtualMemoryObject,
     VirtualMemoryObjectDict,
 )
+from .metric_type import (
+    AllowedCategoryValues,
+    ImmutableMetricTypeData,
+    ImmutableMetricTypeDict,
+    MetricType,
+    MetricTypeData,
+    MetricTypeDict,
+    MetricTypeSchema,
+)
 from .metrics_object import (
     METRIC_ITEM_TYPES,
     ImmutableMetricDataTypes,

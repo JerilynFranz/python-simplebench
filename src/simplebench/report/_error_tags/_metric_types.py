@@ -7,13 +7,11 @@ __all__: list[str] = []
 
 
 @enum_docstrings
-class _MetricsErrorTag(ErrorTag):
+class _MetricTypesErrorTag(ErrorTag):
     """Error tags for the Metrics class"""
 
-    ATTRIBUTE_CONFLICT = 'ATTRIBUTE_CONFLICT'
-    """Attribute name conflicts with existing Metrics object attribute"""
-    NOT_A_METRIC = 'NOT_A_METRIC'
-    """Value is not a Metric object"""
+    NOT_A_METRIC_TYPE = 'NOT_A_METRIC_TYPE'
+    """Value is not a MetricType object"""
     INVALID_KEY_FORMAT = 'INVALID_KEY_FORMAT'
     """Invalid key format for a metric key"""
     NOT_ITERABLE_ERROR = 'NOT_ITERABLE_ERROR'
@@ -27,9 +25,4 @@ class _MetricsErrorTag(ErrorTag):
     INVALID_METRICS_LIST_TYPE = 'INVALID_METRICS_LIST_TYPE'
     """metrics parameter is not a list"""
     INVALID_METRICS_LIST_ITEM_TYPE = 'INVALID_METRICS_LIST_ITEM_TYPE'
-    """An item in the metrics parameter is not a Metric object"""
-    ATTRIBUTE_SET_NOT_ALLOWED = 'ATTRIBUTE_SET_NOT_ALLOWED'
-    """Setting attributes on Metrics object is not allowed"""
-    METRIC_NOT_FOUND = 'METRIC_NOT_FOUND'
-    """Requested metric not found in Metrics object"""
-
+    """An item in the metrics parameter is not a MetricType object"""

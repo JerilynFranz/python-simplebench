@@ -22,7 +22,7 @@ from simplebench.exceptions import (
     SimpleBenchTypeError,
     SimpleBenchValueError,
 )
-from simplebench.report._error_tags import _MetricsErrorTag
+from simplebench.report._error_tags import _MetricsObjectErrorTag
 from simplebench.simplebench_types import CoreDataMapping, Immutable
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
@@ -81,7 +81,7 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
             if not isinstance(metric_object, METRIC_ITEM_TYPES):
                 raise SimpleBenchTypeError(
                     f'Metric item must be a StatsBlock, ValueBlock, RawDataBlock - got {type(metric_object)}',
-                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
+                    tag=_MetricsObjectErrorTag.INVALID_METRIC_ITEM_TYPE,
                 )
         # Shallow copy the input dictionary to ensure immutability and prevent external modifications.
         self._metric_items: dict[str, MetricItem] = dict(metrics)
@@ -112,8 +112,8 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
             validated_metric_name: str = validate_string(
                 metric_name,
                 'metric name',
-                _MetricsErrorTag.INVALID_METRIC_NAME_TYPE,
-                _MetricsErrorTag.INVALID_METRIC_NAME_VALUE,
+                _MetricsObjectErrorTag.INVALID_METRIC_NAME_TYPE,
+                _MetricsObjectErrorTag.INVALID_METRIC_NAME_VALUE,
                 allow_blank=False,
                 strip=True,
             )
@@ -121,12 +121,12 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
             if not isinstance(metric_data, Mapping):
                 raise SimpleBenchTypeError(
                     f'Metric item must be a Mapping, got {type(metric_data)}',
-                    tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE,
+                    tag=_MetricsObjectErrorTag.INVALID_METRIC_ITEM_TYPE,
                 )
             discriminator_type = metric_data.get('type')
             if discriminator_type not in supported_metric_types:
                 raise SimpleBenchValueError(
-                    f'Invalid metric item type: {discriminator_type}', tag=_MetricsErrorTag.INVALID_METRIC_ITEM_TYPE
+                    f'Invalid metric item type: {discriminator_type}', tag=_MetricsObjectErrorTag.INVALID_METRIC_ITEM_TYPE
                 )
             metrics[validated_metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data)
 
@@ -192,7 +192,7 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
         """
         raise SimpleBenchAttributeError(
             'MetricsObject is immutable and cannot be modified after initialization.',
-            tag=_MetricsErrorTag.METRICS_OBJECT_IMMUTABLE,
+            tag=_MetricsObjectErrorTag.METRICS_OBJECT_IMMUTABLE,
             name=key,
             obj=self,
         )
@@ -209,7 +209,7 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
         except KeyError as e:
             raise SimpleBenchKeyError(
                 f"Metric name '{key}' does not exist in metrics.",
-                tag=_MetricsErrorTag.KEY_ERROR_INVALID_METRIC_NAME_VALUE,
+                tag=_MetricsObjectErrorTag.KEY_ERROR_INVALID_METRIC_NAME_VALUE,
             ) from e
 
     def __delitem__(self, key: str) -> None:
@@ -222,7 +222,7 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
         """
         raise SimpleBenchAttributeError(
             f"Metric '{key}' cannot be deleted because the MetricsObject is immutable.",
-            tag=_MetricsErrorTag.METRICS_OBJECT_IMMUTABLE,
+            tag=_MetricsObjectErrorTag.METRICS_OBJECT_IMMUTABLE,
             name=key,
             obj=self,
         )
