@@ -124,3 +124,15 @@ class _StatsBlockErrorTag(ErrorTag):
     """The version is not of type integer."""
     UNSUPPORTED_VERSION = 'UNSUPPORTED_VERSION'
     """The version is not supported."""
+    INVALID_DRIFT_INDEX_TYPE = 'INVALID_DRIFT_INDEX_TYPE'
+    """The drift_index is not of type float."""
+    INVALID_DRIFT_INDEX_VALUE = 'INVALID_DRIFT_INDEX_VALUE'
+    """The drift_index has an invalid value. Must be in [-1.0, 1.0]."""
+    DRIFT_INDEX_AND_MEASUREMENTS_PROVIDED = 'DRIFT_INDEX_AND_MEASUREMENTS_PROVIDED'
+    """Both drift_index and measurements were provided, but only one is allowed."""
+    INVALID_AUTOCORRELATION_TYPE = 'INVALID_AUTOCORRELATION_TYPE'
+    """The autocorrelation is not of type float."""
+    INVALID_AUTOCORRELATION_VALUE = 'INVALID_AUTOCORRELATION_VALUE'
+    """The autocorrelation has an invalid value. Must be in [-1.0, 1.0]."""
+    AUTOCORRELATION_AND_MEASUREMENTS_PROVIDED = 'AUTOCORRELATION_AND_MEASUREMENTS_PROVIDED'
+    """Both autocorrelation and measurements were provided, but only one is allowed."""

@@ -59,9 +59,9 @@ class ValueBlockSchema(JSONSchema):
                     'my_plugin::context_switches',
                 ],
             },
-            'timer': {
-                'title': 'Timer',
-                'description': "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
+            'timer_metric': {
+                'title': 'Timer Metric',
+                'description': "The timer metric associated with this measurement (e.g., 'PERF_COUNTER'). Should be included for any timing-related metrics.",
                 'type': 'string',
             },
             'unit': {

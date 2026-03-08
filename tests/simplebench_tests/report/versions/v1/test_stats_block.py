@@ -322,6 +322,42 @@ StatsBlock: TypeAlias = report.StatsBlock
         kwargs=report_factories.stats_block_measurements_kwargs().replace(iterations=100),
         exception=SimpleBenchValueError,
         exception_tag=_StatsBlockErrorTag.ITERATIONS_AND_MEASUREMENTS_PROVIDED),
+    PytestAction("INIT_052",
+        name="Wrong type for drift_index field (drift_index as str)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_kwargs().replace(drift_index='not a float'),
+        exception=SimpleBenchTypeError,
+        exception_tag=_StatsBlockErrorTag.INVALID_DRIFT_INDEX_TYPE),
+    PytestAction("INIT_053",
+        name="Invalid drift_index value (out of range, > 1.0)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_kwargs().replace(drift_index=2.0),
+        exception=SimpleBenchValueError,
+        exception_tag=_StatsBlockErrorTag.INVALID_DRIFT_INDEX_VALUE),
+    PytestAction("INIT_054",
+        name="Initialization with measurements and drift_index value (conflicting)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_measurements_kwargs().replace(drift_index=0.5),
+        exception=SimpleBenchValueError,
+        exception_tag=_StatsBlockErrorTag.DRIFT_INDEX_AND_MEASUREMENTS_PROVIDED),
+    PytestAction("INIT_055",
+        name="Wrong type for autocorrelation field (autocorrelation as str)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_kwargs().replace(autocorrelation='not a float'),
+        exception=SimpleBenchTypeError,
+        exception_tag=_StatsBlockErrorTag.INVALID_AUTOCORRELATION_TYPE),
+    PytestAction("INIT_056",
+        name="Invalid autocorrelation value (out of range, < -1.0)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_kwargs().replace(autocorrelation=-2.0),
+        exception=SimpleBenchValueError,
+        exception_tag=_StatsBlockErrorTag.INVALID_AUTOCORRELATION_VALUE),
+    PytestAction("INIT_057",
+        name="Initialization with measurements and autocorrelation value (conflicting)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_measurements_kwargs().replace(autocorrelation=0.5),
+        exception=SimpleBenchValueError,
+        exception_tag=_StatsBlockErrorTag.AUTOCORRELATION_AND_MEASUREMENTS_PROVIDED),
 ])
 def test_init(testspec: TestSpec) -> None:
     _log.setLevel('DEBUG')
@@ -415,6 +451,18 @@ def test_init(testspec: TestSpec) -> None:
         kwargs=report_factories.stats_block_kwargs(),
         validate_attr='percentiles',
         expected=Values(report_factories.stats_block_kwargs()['percentiles'])),
+    PytestAction("PROP_015",
+        name="drift_index property set correctly",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_kwargs(),
+        validate_attr='drift_index',
+        expected=report_factories.stats_block_kwargs()['drift_index']),
+    PytestAction("PROP_016",
+        name="autocorrelation property set correctly",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_kwargs(),
+        validate_attr='autocorrelation',
+        expected=report_factories.stats_block_kwargs()['autocorrelation']),
 ])
 def test_properties(testspec: TestSpec) -> None:
     testspec.run()
@@ -505,8 +553,65 @@ def test_properties(testspec: TestSpec) -> None:
         kwargs=report_factories.stats_block_measurements_kwargs(),
         validate_attr='percentiles',
         expected=Values(report_factories.stats_block_kwargs()['percentiles'])),
+    PytestAction("MEASUREMENTS_015",
+        name="drift_index derived correctly from measurements (linear sequence → 1.0)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_measurements_kwargs(),
+        validate_attr='drift_index',
+        expected=1.0),
+    PytestAction("MEASUREMENTS_016",
+        name="autocorrelation derived correctly from measurements (linear sequence → 1.0)",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_measurements_kwargs(),
+        validate_attr='autocorrelation',
+        expected=1.0),
 ])
 def test_measurements(testspec: TestSpec) -> None:
+    testspec.run()
+
+
+@pytest.mark.parametrize("testspec", [
+    PytestAction("STABILITY_001",
+        name="drift_index is positive for an increasing measurement sequence",
+        action=lambda: report.StatsBlock(
+            **report_factories.stats_block_measurements_kwargs().replace(
+                measurements=Values([1.0, 2.0, 3.0, 4.0, 5.0]))).drift_index > 0,
+        assertion=Assert.TRUE),
+    PytestAction("STABILITY_002",
+        name="drift_index is negative for a decreasing measurement sequence",
+        action=lambda: report.StatsBlock(
+            **report_factories.stats_block_measurements_kwargs().replace(
+                measurements=Values([5.0, 4.0, 3.0, 2.0, 1.0]))).drift_index < 0,
+        assertion=Assert.TRUE),
+    PytestAction("STABILITY_003",
+        name="drift_index is 0.0 for a constant measurement sequence",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_measurements_kwargs().replace(
+            measurements=Values([5.0, 5.0, 5.0, 5.0, 5.0])),
+        validate_attr='drift_index',
+        expected=0.0),
+    PytestAction("STABILITY_004",
+        name="autocorrelation is negative for a strictly alternating high/low sequence",
+        action=lambda: report.StatsBlock(
+            **report_factories.stats_block_measurements_kwargs().replace(
+                measurements=Values([1.0, 9.0, 1.0, 9.0, 1.0]))).autocorrelation < 0,
+        assertion=Assert.TRUE),
+    PytestAction("STABILITY_005",
+        name="autocorrelation is positive for a slowly-varying (grouped) sequence",
+        action=lambda: report.StatsBlock(
+            **report_factories.stats_block_measurements_kwargs().replace(
+                measurements=Values([1.0, 1.1, 1.2, 9.0, 9.1]))).autocorrelation > 0,
+        assertion=Assert.TRUE),
+    PytestAction("STABILITY_006",
+        name="autocorrelation is 0.0 for a constant measurement sequence",
+        action=report.StatsBlock,
+        kwargs=report_factories.stats_block_measurements_kwargs().replace(
+            measurements=Values([5.0, 5.0, 5.0, 5.0, 5.0])),
+        validate_attr='autocorrelation',
+        expected=0.0),
+])
+def test_stability_metrics(testspec: TestSpec) -> None:
+    """Test drift_index and autocorrelation stability metrics."""
     testspec.run()
 
 

@@ -118,6 +118,8 @@ class StatsBlock(BaseStatsBlock):
         'maximum',
         'stdev',
         'relative_stdev',
+        'drift_index',
+        'autocorrelation',
         'percentiles',
     )
 
@@ -137,6 +139,8 @@ class StatsBlock(BaseStatsBlock):
         '_maximum',
         '_stdev',
         '_relative_stdev',
+        '_drift_index',
+        '_autocorrelation',
         '_percentiles',
         '_measurements',
         '_to_dict_cache',
@@ -188,6 +192,8 @@ class StatsBlock(BaseStatsBlock):
         maximum: float,
         stdev: float,
         relative_stdev: float,
+        drift_index: float,
+        autocorrelation: float,
         percentiles: Sequence[float],
     ) -> None:
         """Initialize a StatsBlock with pre-calculated statistical values.
@@ -206,6 +212,8 @@ class StatsBlock(BaseStatsBlock):
         :param float | None maximum: The maximum value of the stats block.
         :param float | None stdev: The standard deviation of the stats block.
         :param float | None relative_stdev: The relative standard deviation of the stats block.
+        :param float drift_index: The drift index (Pearson correlation with position).
+        :param float autocorrelation: The lag-1 autocorrelation of the measurement sequence.
         :param Sequence[float] | None percentiles: The list of percentiles for the stats block.
         """
 
@@ -227,6 +235,8 @@ class StatsBlock(BaseStatsBlock):
         maximum: float | None = None,
         stdev: float | None = None,
         relative_stdev: float | None = None,
+        drift_index: float | None = None,
+        autocorrelation: float | None = None,
         percentiles: Sequence[float] | None = None,
         measurements: Sequence[float] | Values | None = None,
     ) -> None:
@@ -314,6 +324,10 @@ class StatsBlock(BaseStatsBlock):
         """The standard deviation."""
         self._relative_stdev: float | None = _validate.relative_stdev(relative_stdev, self._measurements)
         """The relative standard deviation."""
+        self._drift_index: float | None = _validate.drift_index(drift_index, self._measurements)
+        """The drift index (Pearson correlation with sequential position indices)."""
+        self._autocorrelation: float | None = _validate.autocorrelation(autocorrelation, self._measurements)
+        """The lag-1 autocorrelation of the measurement sequence."""
         self._percentiles: Values | None = _validate.percentiles(percentiles, self._measurements)
         """The list of percentiles."""
 
@@ -593,6 +607,60 @@ class StatsBlock(BaseStatsBlock):
             else:
                 self._relative_stdev = 100 * abs(self.stdev / self.mean)
         return self._relative_stdev
+
+    @property
+    def drift_index(self) -> float:
+        """Get the drift index.
+
+        The drift index is the Pearson correlation coefficient between the measurement
+        values and their sequential position indices (0, 1, 2, …, n−1).
+
+        Range [-1.0, 1.0]. 0.0 indicates no monotonic trend. Positive values indicate
+        measurements increasing over iterations (e.g., growing timing, heap pressure).
+        Negative values indicate measurements settling over iterations. Does not detect
+        periodic patterns; see :attr:`autocorrelation` for that.
+
+        Degenerate case (all measurements identical): returns 0.0.
+
+        .. note::
+            The value is either set directly or calculated from the `measurements` property.
+
+        :return float: The drift index.
+        """
+        if self._drift_index is None:
+            data = self._measurements  # type: ignore  # validated in __init__
+            try:
+                self._drift_index = float(statistics.correlation(data, range(len(data))))
+            except statistics.StatisticsError:
+                self._drift_index = 0.0
+        return self._drift_index
+
+    @property
+    def autocorrelation(self) -> float:
+        """Get the lag-1 autocorrelation.
+
+        The autocorrelation is the Pearson correlation coefficient between each
+        measurement and the next (lag-1).
+
+        Range [-1.0, 1.0]. Near 0.0 indicates statistically independent consecutive
+        samples (ideal). Strong positive values indicate slow-moving environmental
+        effects (thermal throttling, OS load). Strong negative values indicate an
+        alternating fast/slow pattern (GC-induced oscillation, cache state cycling).
+
+        Degenerate case (constant sequence): returns 0.0.
+
+        .. note::
+            The value is either set directly or calculated from the `measurements` property.
+
+        :return float: The lag-1 autocorrelation.
+        """
+        if self._autocorrelation is None:
+            data = self._measurements  # type: ignore  # validated in __init__
+            try:
+                self._autocorrelation = float(statistics.correlation(data[:-1], data[1:]))
+            except statistics.StatisticsError:
+                self._autocorrelation = 0.0
+        return self._autocorrelation
 
     @property
     def percentiles(self) -> Values:

@@ -10,6 +10,10 @@ __all__: list[str] = []
 class _MetricTypeErrorTag(ErrorTag):
     """Error tags for metric definition issues."""
 
+    MAPPING_KEY_ERROR = 'MAPPING_KEY_ERROR'
+    """Key not found in the mapping."""
+    MAPPING_IMMUTABLE = 'MAPPING_IMMUTABLE'
+    """Attempted to modify an immutable mapping."""
     INVALID_HASH_ID_FIELD_TYPE = 'INVALID_HASH_ID_FIELD_TYPE'
     """hash_id field is not of type string."""
     INVALID_HASH_ID_FIELD_VALUE = 'INVALID_HASH_ID_FIELD_VALUE'

@@ -36,7 +36,7 @@ class ValueBlockData(ReportElementTypedDict):
     :param NotRequired[str] hash_id: The unique hash identifier for the value block.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param NotRequired[str] timer_metric: The name of the timer metric associated with this value.
     """
     semantic_type: Required[str]
     unit: Required[str]
@@ -45,7 +45,7 @@ class ValueBlockData(ReportElementTypedDict):
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
-    timer: NotRequired[str]
+    timer_metric: NotRequired[str]
 
 
 class ImmutableValueBlockData(ReportElementTypedDict):
@@ -58,7 +58,7 @@ class ImmutableValueBlockData(ReportElementTypedDict):
     :param NotRequired[str] hash_id: The unique hash identifier for the value block.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param NotRequired[str] timer_metric: The name of the timer metric associated with this value.
     This type is identical to :class:`ValueBlockData` but is immutable
     (all fields are read-only) for type-checking purposes.
     """
@@ -69,7 +69,7 @@ class ImmutableValueBlockData(ReportElementTypedDict):
     hash_id: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
-    timer: NotRequired[str]
+    timer_metric: NotRequired[str]
     __immutable__: NotRequired[Never]  # Marker for immutability
 
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
@@ -78,7 +78,7 @@ class ValueBlockDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 ValueBlock (OUTPUT).
 
     This type is strict, requiring `hash_id`, `type` and`version` to be present.
-    `value` is guaranteed to be a `float`, `timer` is optional.
+    `value` is guaranteed to be a `float`, `timer_metric` is optional.
 
     :param Required[str] semantic_type: The semantic type of the value.
     :param Required[str] unit: The unit of the value.
@@ -87,7 +87,7 @@ class ValueBlockDict(ReportElementTypedDict):
     :param Required[str] hash_id: The unique hash identifier for the value block.
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param NotRequired[str] timer_metric: The name of the timer metric associated with this value.
     """
     semantic_type: Required[str]
     unit: Required[str]
@@ -96,7 +96,7 @@ class ValueBlockDict(ReportElementTypedDict):
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
-    timer: NotRequired[str]
+    timer_metric: NotRequired[str]
 
 
 class ImmutableValueBlockDict(ReportElementTypedDict):
@@ -112,7 +112,7 @@ class ImmutableValueBlockDict(ReportElementTypedDict):
     :param Required[str] hash_id: The unique hash identifier for the value block.
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
+    :param NotRequired[str] timer_metric: The name of the timer metric associated with this value.
 
     The ``__immutable__`` field is a class marker to indicate immutability
     for type-checking purposes. It should not be set or used at runtime.
@@ -124,5 +124,5 @@ class ImmutableValueBlockDict(ReportElementTypedDict):
     hash_id: Required[str]
     type: Required[str]
     version: Required[int]
-    timer: NotRequired[str]
+    timer_metric: NotRequired[str]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability

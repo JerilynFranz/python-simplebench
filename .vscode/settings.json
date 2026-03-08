@@ -80,7 +80,7 @@
     ],
     "coverage-gutters.ignoredPathGlobs": "**/{node_modules,venv,.venv,vendor}/**",
     "coverage-gutters.showGutterCoverage": true,
-    "coverage-gutters.watchOnActivate": true,
+    "coverage-gutters.watchOnActivate": false,
     "coverage-gutters.showLineCoverage": true,
     "coverage-gutters.showRulerCoverage": true,
     "coverage-gutters.coverageReportFileName": "coverage_html_report/index.html",

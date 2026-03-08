@@ -72,6 +72,8 @@ def stats_block_kwargs() -> StatsBlockKWArgs:
         maximum=data['maximum'],
         stdev=data['stdev'],
         relative_stdev=data['relative_stdev'],
+        drift_index=data['drift_index'],
+        autocorrelation=data['autocorrelation'],
         percentiles=data['percentiles'],
         timer=data['timer'],  # type: ignore  # validated in stats_block_data
         description=data['description'],  # type: ignore  # validated in stats_block_data
@@ -111,6 +113,8 @@ def stats_block_data() -> report.StatsBlockData:
         stdev=statistics.stdev(stats_block_measurements()) * math.sqrt(5),
         relative_stdev= 100 * math.sqrt(5) * abs(
             statistics.stdev(stats_block_measurements()) / statistics.mean(stats_block_measurements())),
+        drift_index=1.0,  # measurements are [0,1,...,99]: perfect linear increase → correlation with position = 1.0
+        autocorrelation=1.0,  # consecutive differences are constant (all +1) → lag-1 correlation = 1.0
         percentiles=statistics.quantiles(stats_block_measurements(), n=102, method='inclusive'),
         timer='test_timer',
         description='This is a test StatsBlockData instance.',

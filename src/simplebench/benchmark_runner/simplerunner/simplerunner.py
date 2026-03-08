@@ -262,14 +262,14 @@ measurement data must be added here to be included in the benchmark results.
 
 @cache
 def _metric_timers(
-        wall_timer: Callable[[], int | float],
-        cpu_timer: Callable[[], int | float]) -> dict[Metric, str | None]:
+        wall_timer: Callable[[], int],
+        cpu_timer: Callable[[], int]) -> dict[Metric, str | None]:
     """Return a mapping of metrics to their corresponding timer names or None.
 
     :param wall_timer: The wall-clock timer function used for the benchmark.
-    :type wall_timer: Callable[[], int | float]
+    :type wall_timer: Callable[[], int]
     :param cpu_timer: The CPU timer function used for the benchmark.
-    :type cpu_timer: Callable[[], int | float]
+    :type cpu_timer: Callable[[], int]
     :return: A dictionary mapping metrics to their timer names.
     :rtype: dict[Metric, str | None]
     """
@@ -425,7 +425,7 @@ class SimpleRunner(BenchmarkRunner):
     def _timer_function(
         self, rounds: int
     ) -> Callable[
-        [Callable[[], int | float], Callable[[], int | float], Callable[..., Any], dict[str, Any]], tuple[float, float]
+        [Callable[[], int], Callable[[], int], Callable[..., Any], dict[str, Any]], tuple[float, float]
     ]:
         """Return a timer function for the benchmark.
 
@@ -485,12 +485,57 @@ class SimpleRunner(BenchmarkRunner):
 
         return getattr(_timers_module, timer_name)
 
+    def _execute_timed_rounds(
+        self,
+        *,
+        rounds: int,
+        timer: Callable[[], int],
+        cpu_timer: Callable[[], int],
+        action: Callable[..., Any],
+        kwargs: dict[str, Any],
+    ) -> tuple[float, float, int]:
+        """Execute the action for the specified number of rounds and return raw timing totals.
+
+        Uses kiloround chunking (1000-round slices) for large round counts to avoid generating
+        excessively large timer functions and hitting Python's function size limits.
+
+        :param rounds: The number of rounds to execute.
+        :param timer: The wall-clock timer function.
+        :param cpu_timer: The CPU timer function.
+        :param action: The action to benchmark.
+        :param kwargs: Keyword arguments to pass to the action.
+        :return: A tuple of (total_elapsed_ns, total_elapsed_cpu_ns, timer_metrics_count).
+        """
+        if rounds < 1000:
+            total_elapsed, total_elapsed_cpu = self._timer_function(rounds)(timer, cpu_timer, action, kwargs)
+            return total_elapsed, total_elapsed_cpu, 1
+
+        # for 1000 or more rounds, break into chunks of 1000 (a "kiloround") to reduce the
+        # footprint of the generated timer functions and avoid hitting Python's function size limits.
+        kiloround_timer = self._timer_function(1000)
+        total_elapsed = 0.0
+        total_elapsed_cpu = 0.0
+        timer_metrics = 0
+        kiloround_chunks, remaining_rounds = divmod(rounds, 1000)
+        while kiloround_chunks:
+            elapsed, elapsed_cpu = kiloround_timer(timer, cpu_timer, action, kwargs)
+            total_elapsed += elapsed
+            total_elapsed_cpu += elapsed_cpu
+            kiloround_chunks -= 1
+            timer_metrics += 1
+        if remaining_rounds:
+            elapsed, elapsed_cpu = self._timer_function(remaining_rounds)(timer, cpu_timer, action, kwargs)
+            total_elapsed += elapsed
+            total_elapsed_cpu += elapsed_cpu
+            timer_metrics += 1
+        return total_elapsed, total_elapsed_cpu, timer_metrics
+
     def _run_timed_iteration(
         self,
         *,
         rounds: int,
-        timer: Callable[[], int | float],
-        cpu_timer: Callable[[], int | float],
+        timer: Callable[[], int],
+        cpu_timer: Callable[[], int],
         action: Callable[..., Any],
         kwargs: dict[str, Any],
         setup: Callable[..., Any] | None,
@@ -508,44 +553,13 @@ class SimpleRunner(BenchmarkRunner):
         :param Optional[Callable[..., Any]] teardown: A teardown function to run after the iteration.
         :return float: The elapsed time for the iteration in seconds.
         """
-        timer_metrics: int
-        total_elapsed: float
-        total_elapsed_cpu: float
-
-        kiloround_timer = self._timer_function(1000)
-
-        if rounds < 1000:
-            # for less than 1000 rounds, we can use the generated timer function directly
-            timer_metrics = 1
-            if callable(setup):
-                setup()
-            total_elapsed, total_elapsed_cpu = self._timer_function(rounds)(timer, cpu_timer, action, kwargs)
-            if callable(teardown):
-                teardown()
-        else:
-            # for 1000 or more rounds, we break the timing into chunks of 1000 rounds (a "kiloround")
-            # to reduce the footprint of the generated timer functions and avoid hitting
-            # Python's function size limits.
-            total_elapsed = 0.0
-            total_elapsed_cpu = 0.0
-            timer_metrics = 0
-            kiloround_chunks, remaining_rounds = divmod(rounds, 1000)
-            if callable(setup):
-                setup()
-            while kiloround_chunks:
-                elapsed, elapsed_cpu = kiloround_timer(timer, cpu_timer, action, kwargs)
-                total_elapsed += elapsed
-                total_elapsed_cpu += elapsed_cpu
-                kiloround_chunks -= 1
-                timer_metrics += 1
-            if remaining_rounds:
-                partial_timer = self._timer_function(remaining_rounds)
-                elapsed, elapsed_cpu = partial_timer(timer, cpu_timer, action, kwargs)
-                total_elapsed += elapsed
-                total_elapsed_cpu += elapsed_cpu
-                timer_metrics += 1
-            if callable(teardown):
-                teardown()
+        if callable(setup):
+            setup()
+        total_elapsed, total_elapsed_cpu, timer_metrics = self._execute_timed_rounds(
+            rounds=rounds, timer=timer, cpu_timer=cpu_timer, action=action, kwargs=kwargs
+        )
+        if callable(teardown):
+            teardown()
         elapsed_time = float((total_elapsed - timer_overhead_ns(timer) * timer_metrics) * defaults.DEFAULT_INTERVAL_SCALE)
         elapsed_cpu_time = float(
             (total_elapsed_cpu - timer_overhead_ns(cpu_timer) * timer_metrics) * defaults.DEFAULT_INTERVAL_SCALE
@@ -594,9 +608,7 @@ class SimpleRunner(BenchmarkRunner):
         :rtype: Results
         """
         kwargs: dict[str, Any] = {}
-        if variation_marks is None:
-            kwargs = {}
-        else:
+        if variation_marks:
             kwargs = { k: v.value for k, v in variation_marks.items() }
 
         group: str = self.case.group
@@ -605,11 +617,12 @@ class SimpleRunner(BenchmarkRunner):
         min_time: float = self.case.min_time
         max_time: float = self.case.max_time
         iterations: int = self.case.iterations
-        calibrate: Calibrate = self.case.calibrate
-        if not calibrate and self.session and self.session.calibrate:
-            calibrate = self.session.calibrate
-        else:
-            calibrate = Calibrate.CPU
+        calibrate: Calibrate | None = self.case.calibrate
+        if calibrate is None:
+            if self.session and self.session.calibrate:
+                calibrate = self.session.calibrate
+            else:
+                calibrate = Calibrate.CPU
 
         # Prioritize the timers from the case, then from the session, then use the default timer
         timer = defaults.DEFAULT_TIMER
@@ -694,7 +707,7 @@ class SimpleRunner(BenchmarkRunner):
             tracemalloc.start()
             tracemalloc.reset_peak()
 
-            # Measure garbage collection counts
+            # Measure garbage collection counts baseline before the action
             gc_gen0_start = gc.get_stats()[0]
             gc_gen1_start = gc.get_stats()[1]
             gc_gen2_start = gc.get_stats()[2]
@@ -703,6 +716,12 @@ class SimpleRunner(BenchmarkRunner):
             action(**kwargs)
             end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
             tracemalloc.stop()
+
+            # Measure garbage collection counts after the action
+            gc_gen0_end = gc.get_stats()[0]
+            gc_gen1_end = gc.get_stats()[1]
+            gc_gen2_end = gc.get_stats()[2]
+
             if callable(teardown):
                 teardown()
 
@@ -713,10 +732,7 @@ class SimpleRunner(BenchmarkRunner):
             memory = end_memory_current - start_memory_current
             peak_memory = end_memory_peak - start_memory_peak
 
-            # Measure garbage collection counts
-            gc_gen0_end = gc.get_stats()[0]
-            gc_gen1_end = gc.get_stats()[1]
-            gc_gen2_end = gc.get_stats()[2]
+
 
             iteration_result = _Measurement(
                 timing=elapsed,
@@ -752,7 +768,7 @@ class SimpleRunner(BenchmarkRunner):
         # Values objects for each metric with all iterations collected 'per-metric'
         # instead.
         empty_values = Values(())
-        values: list[Values] = [empty_values] * len(_METRIC_TO_MEASUREMENT_INDEX)
+        values: list[Values] = [empty_values] * len(_RETAINED_METRICS)
         for metric_index in _RETAINED_METRICS:
             values[metric_index] = Values(tuple(iteration[metric_index] for iteration in iterations_list))
         # Calculate operations per second values as a special case just for easier access
@@ -809,9 +825,9 @@ class SimpleRunner(BenchmarkRunner):
         :param calibrate: The type of timer to calibrate for (wall-clock or CPU).
         :type calibrate: Calibrate
         :param timer: The timer function to use for the benchmark.
-        :type timer: Callable[[], int]
+        :type timer: Callable[[], int | float]
         :param cpu_timer: The CPU timer function to use for the benchmark.
-        :type cpu_timer: Callable[[], int]
+        :type cpu_timer: Callable[[], int | float]
         :param kwargs: Keyword arguments to pass to the action.
         :type kwargs: dict[str, Any]
         :param setup: A setup function to run before each iteration.
@@ -889,7 +905,6 @@ class SimpleRunner(BenchmarkRunner):
         need_teardown: bool = False
 
         try:
-            kiloround_timer = self._timer_function(1000)
             estimate_rounds: int = 1
             total_action_time_ns: float = 0.0
             total_action_cpu_time_ns: float = 0.0
@@ -907,29 +922,9 @@ class SimpleRunner(BenchmarkRunner):
                 elif callable(setup):
                     setup()
 
-                # Use kiloround chunking to avoid generating excessively large timer functions
-                if estimate_rounds < 1000:
-                    timer_metrics = 1
-                    estimate_timer = self._timer_function(estimate_rounds)
-                    total_action_time_ns, total_action_cpu_time_ns = estimate_timer(timer, cpu_timer, action, kwargs)
-                else:
-                    total_action_time_ns = 0.0
-                    total_action_cpu_time_ns = 0.0
-                    timer_metrics = 0
-                    kiloround_chunks, remaining_rounds = divmod(estimate_rounds, 1000)
-                    while kiloround_chunks:
-                        action_time_ns, action_cpu_time_ns = kiloround_timer(timer, cpu_timer, action, kwargs)
-                        total_action_time_ns += action_time_ns
-                        total_action_cpu_time_ns += action_cpu_time_ns
-                        kiloround_chunks -= 1
-                        timer_metrics += 1
-
-                    if remaining_rounds:
-                        partial_timer = self._timer_function(remaining_rounds)
-                        action_time_ns, action_cpu_time_ns = partial_timer(timer, cpu_timer, action, kwargs)
-                        total_action_time_ns += action_time_ns
-                        total_action_cpu_time_ns += action_cpu_time_ns
-                        timer_metrics += 1
+                total_action_time_ns, total_action_cpu_time_ns, timer_metrics = self._execute_timed_rounds(
+                    rounds=estimate_rounds, timer=timer, cpu_timer=cpu_timer, action=action, kwargs=kwargs
+                )
 
                 if need_teardown and callable(teardown):
                     teardown()

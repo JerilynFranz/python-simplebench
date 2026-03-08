@@ -812,7 +812,7 @@ class Case:
         return self._node
 
     @property
-    def calibrate(self) -> Calibrate:
+    def calibrate(self) -> Calibrate | None:
         """The calibration mode for the benchmark case.
 
         This controls how the number of rounds is automatically calibrated when `rounds` is set to `None`.
@@ -820,7 +820,7 @@ class Case:
         of the benchmark.
 
         :return: The calibration mode.
-        :rtype: Calibrate
+        :rtype: Calibrate | None
         """
         return self._calibrate
 

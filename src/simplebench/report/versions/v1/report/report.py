@@ -18,20 +18,21 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from simplebench.report._error_tags import _ReportErrorTag
-from simplebench.report.base import BaseReport, JSONSchema
-from simplebench.report.versions.v1 import MachineInfo
+from simplebench.report.base import ReportElement, JSONSchema
 from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, VariationCols
 from simplebench.validators import validate_sequence_of_type
 
 from . import _validate
 from .report_schema import ReportSchema
 from .typeddict_types import ImmutableReportDict, ReportData
+from ..machine_info import MachineInfo
+from ..metrics import Metrics
 
 if TYPE_CHECKING:
     from .. import ResultsInfo
 
 
-class Report(BaseReport):
+class Report(ReportElement):
     """Immutable class representing a version 1 report."""
 
     SCHEMA: type[JSONSchema] = ReportSchema
@@ -61,6 +62,7 @@ class Report(BaseReport):
             'title': str,
             'description': str,
             'variation_cols': VariationCols,
+            'metrics': Metrics,
             'results': Sequence[ResultsInfo],
             'machine': MachineInfo,
         }
@@ -71,6 +73,7 @@ class Report(BaseReport):
         '_title',
         '_description',
         '_variation_cols',
+        '_metrics',
         '_results',
         '_machine',
         '_hash_id',
@@ -86,19 +89,30 @@ class Report(BaseReport):
         title: str,
         description: str,
         variation_cols: VariationCols,
+        metrics: Metrics,
         results: Sequence['ResultsInfo'],
         machine: MachineInfo,
     ) -> None:
         """Initialize a Report instance.
 
-        :param str hash_id: The unique hash identifier for the report.
-        :param str timestamp: ISO 8601 formatted timestamp string.
-        :param str group: Group of the benchmark.
-        :param str title: Title of the benchmark.
-        :param str description: Description of the benchmark.
-        :param VariationCols variation_cols: Variation columns dictionary.
-        :param Sequence[ResultsInfo] results: Sequence of ResultsInfo instances.
-        :param MachineInfo machine: MachineInfo instance.
+        :param hash_id: (optional) The unique hash identifier for the report.
+        :type hash_id: str
+        :param timestamp: ISO 8601 formatted timestamp string.
+        :type timestamp: str
+        :param group: Group of the benchmark.
+        :type group: str
+        :param title: Title of the benchmark.
+        :type title: str
+        :param description: Description of the benchmark.
+        :type description: str
+        :param variation_cols: Variation columns dictionary.
+        :type variation_cols: VariationCols
+        :param metrics: The metrics mapping for the report.
+        :type metrics: Metrics
+        :param results: Sequence of ResultsInfo instances.
+        :type results: Sequence[ResultsInfo]
+        :param machine: MachineInfo instance.
+        :type machine: MachineInfo
         :raises SimpleBenchTypeError: If any parameter is of incorrect type.
         :raises SimpleBenchValueError: If any parameter has an invalid value.
         """
@@ -108,6 +122,7 @@ class Report(BaseReport):
         self._description: str = _validate.description(description)
         self._variation_cols: VariationCols = _validate.variation_cols(variation_cols)
         self._results: tuple[ResultsInfo, ...] = _validate.results(results)
+        self._metrics: Metrics = _validate.metrics(metrics)
         self._machine: MachineInfo = _validate.machine(machine)
         self._hash_id = _validate.hash_id(hash_id)
         if not self._hash_id:
@@ -261,6 +276,14 @@ class Report(BaseReport):
         :return VariationCols: The variation_cols dictionary as an immutable mapping.
         """
         return self._variation_cols
+
+    @property
+    def metrics(self) -> Metrics:
+        """Return the metrics property.
+
+        :return Metrics: The metrics mapping for the report.
+        """
+        return self._metrics
 
     @property
     def results(self) -> tuple['ResultsInfo', ...]:

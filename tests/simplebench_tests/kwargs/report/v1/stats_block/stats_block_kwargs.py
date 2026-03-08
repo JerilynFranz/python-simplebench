@@ -24,6 +24,8 @@ class StatsBlockKWArgs(KWArgs):
             maximum: float | NoDefaultValue = NO_DEFAULT_VALUE,
             stdev: float | NoDefaultValue = NO_DEFAULT_VALUE,
             relative_stdev: float | NoDefaultValue = NO_DEFAULT_VALUE,
+            drift_index: float | NoDefaultValue = NO_DEFAULT_VALUE,
+            autocorrelation: float | NoDefaultValue = NO_DEFAULT_VALUE,
             percentiles: Sequence[float] | NoDefaultValue = NO_DEFAULT_VALUE,
             measurements: Sequence[float] | Values | NoDefaultValue = NO_DEFAULT_VALUE) -> None:
         """Initialize a StatsBlock object with the given parameters.
@@ -62,6 +64,8 @@ class StatsBlockKWArgs(KWArgs):
         :param float | None maximum: The maximum value of the data. (exclusive with `measurements`)
         :param float | None stdev: The standard deviation of the data. (exclusive with `measurements`)
         :param float | None relative_stdev: The relative standard deviation of the data. (exclusive with `measurements`)
+        :param float | None drift_index: The drift index (exclusive with `measurements`).
+        :param float | None autocorrelation: The lag-1 autocorrelation (exclusive with `measurements`).
         :param Sequence[float] | None percentiles: The list of percentiles for the data (exclusive with `measurements`).
         :param Sequence[float] | Values | None measurements: The list of raw measurements for the data.
         :raise SimpleBenchTypeError: If any parameter is of an invalid type.

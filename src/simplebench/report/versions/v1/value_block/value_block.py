@@ -30,6 +30,7 @@ from simplebench.report.base import BaseValueBlock, JSONSchema
 from . import _validate
 from .value_block_dict import ImmutableValueBlockDict, ValueBlockData
 from .value_block_schema import ValueBlockSchema
+from ..metric import Metric
 
 __all__: list[str] = []
 
@@ -37,12 +38,19 @@ __all__: list[str] = []
 class ValueBlock(BaseValueBlock):
     """Class representing a value block (V1).
 
-    :param str hash_id: The unique hash identifier for the value block.
-    :param str semantic_type: The semantic type string for the value block.
-    :param (str | None) timer: The timer string or None.
-    :param str unit: The unit of measurement.
-    :param float scale: The scale factor.
-    :param float | int value: The value of the block.
+    :param hash_id: The unique hash identifier for the value block.
+    :type hash_id: str
+    :param semantic_type: The semantic type string for the value block.
+    :type semantic_type: str
+    :param unit: The unit of measurement.
+    :type unit: str
+    :param scale: The scale factor.
+    :type scale: float
+    :param value: The value of the block.
+    :type value: float
+    :param timer_metric: The timer metric associated with this value (e.g., 'PERF_COUNTER'). Should be included for
+        any timing-related metrics.
+    :type timer_metric: str | None
     :raise SimpleBenchTypeError: If any parameter is of incorrect type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -77,7 +85,7 @@ class ValueBlock(BaseValueBlock):
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
-    __slots__ = ('_hash_id', '_semantic_type', '_timer', '_unit', '_scale', '_value', '_dict_cache')
+    __slots__ = ('_hash_id', '_semantic_type', '_timer', '_metric', '_value', '_dict_cache')
     """Slots for immutable attributes and cached dictionary representation."""
 
     def __init__(
@@ -85,9 +93,9 @@ class ValueBlock(BaseValueBlock):
         *,
         hash_id: str = '',
         semantic_type: str,
-        timer: str = '',
-        unit: str,
-        scale: float,
+        timer_metric: Metric,
+        metric: Metric,
+        metrics: Metrics,
         value: float | int,
     ) -> None:
         """Initialize ValueBlock instance.
@@ -95,9 +103,8 @@ class ValueBlock(BaseValueBlock):
         :param str hash_id: The unique hash identifier for the value block.
             If not provided, it defaults to an empty string and will be computed automatically.
         :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
-        :param str timer: The timer string.
-        :param str unit: The unit of measurement.
-        :param float scale: The scale factor.
+        :param str timer_metric: The timer string.
+        :param Metric metric: The metric associated with this value block.
         :param float | int value: The value of the block.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
@@ -182,12 +189,12 @@ class ValueBlock(BaseValueBlock):
         return self._semantic_type
 
     @property
-    def timer(self) -> str | None:
-        """Get the timer value.
+    def timer_metric(self) -> str | None:
+        """Get the timer metric value.
 
-        :return: The timer value or None.
+        :return: The timer metric value or None.
         """
-        return self._timer
+        return self._timer_metric if self._timer_metric != '' else None
 
     @property
     def unit(self) -> str:
