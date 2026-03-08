@@ -2,6 +2,7 @@
 in the :mod:`~simplebench.reporters` package.
 """
 
+from enum import auto
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -10,49 +11,49 @@ from simplebench.exceptions import ErrorTag
 class _MatPlotLibOptionsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the :class:`~.MatPlotLibOptions` class."""
 
-    INVALID_DEFAULT_STYLE_ARG_TYPE = 'INVALID_DEFAULT_STYLE_ARG_TYPE'
+    INVALID_DEFAULT_STYLE_ARG_TYPE = auto()
     """The default style specified in the MatPlotLibOptions must be a Style enum member or None."""
-    INVALID_DEFAULT_WIDTH_ARG_TYPE = 'INVALID_DEFAULT_WIDTH_ARG_TYPE'
+    INVALID_DEFAULT_WIDTH_ARG_TYPE = auto()
     """The default width specified in the MatPlotLibOptions must be an integer or None."""
-    INVALID_DEFAULT_WIDTH_ARG_VALUE = 'INVALID_DEFAULT_WIDTH_ARG_VALUE'
+    INVALID_DEFAULT_WIDTH_ARG_VALUE = auto()
     """The default width specified in the MatPlotLibOptions must be greater than zero."""
-    INVALID_DEFAULT_HEIGHT_ARG_TYPE = 'INVALID_DEFAULT_HEIGHT_ARG_TYPE'
+    INVALID_DEFAULT_HEIGHT_ARG_TYPE = auto()
     """The default height specified in the MatPlotLibOptions must be an integer or None."""
-    INVALID_DEFAULT_HEIGHT_ARG_VALUE = 'INVALID_DEFAULT_HEIGHT_ARG_VALUE'
+    INVALID_DEFAULT_HEIGHT_ARG_VALUE = auto()
     """The default height specified in the MatPlotLibOptions must be greater than zero."""
-    INVALID_DEFAULT_DPI_ARG_TYPE = 'INVALID_DEFAULT_DPI_ARG_TYPE'
+    INVALID_DEFAULT_DPI_ARG_TYPE = auto()
     """The default DPI specified in the MatPlotLibOptions must be an integer."""
-    INVALID_DEFAULT_DPI_ARG_VALUE = 'INVALID_DEFAULT_DPI_ARG_VALUE'
+    INVALID_DEFAULT_DPI_ARG_VALUE = auto()
     """The default DPI specified in the MatPlotLibOptions must be between 75 and 400 (inclusive)."""
-    INVALID_DEFAULT_THEME_ARG_TYPE = 'INVALID_DEFAULT_THEME_ARG_TYPE'
+    INVALID_DEFAULT_THEME_ARG_TYPE = auto()
     """The default theme specified in the MatPlotLibOptions must be a Theme instance or None."""
-    INVALID_DEFAULT_Y_STARTS_AT_ZERO_ARG_TYPE = 'INVALID_DEFAULT_Y_STARTS_AT_ZERO_ARG_TYPE'
+    INVALID_DEFAULT_Y_STARTS_AT_ZERO_ARG_TYPE = auto()
     """The default y_starts_at_zero option specified in the MatPlotLibOptions must be a bool or None."""
-    INVALID_DEFAULT_X_LABELS_ROTATION_ARG_TYPE = 'INVALID_DEFAULT_X_LABELS_ROTATION_ARG_TYPE'
+    INVALID_DEFAULT_X_LABELS_ROTATION_ARG_TYPE = auto()
     """The default x_labels_rotation option specified in the MatPlotLibOptions must be a float or None."""
-    INVALID_DEFAULT_IMAGE_TYPE_ARG_TYPE = 'INVALID_DEFAULT_IMAGE_TYPE_ARG_TYPE'
+    INVALID_DEFAULT_IMAGE_TYPE_ARG_TYPE = auto()
     """The default image_type option specified in the MatPlotLibOptions must be an ImageType enum
     member or None."""
-    INVALID_STYLE_ARG_TYPE = 'INVALID_STYLE_ARG_TYPE'
+    INVALID_STYLE_ARG_TYPE = auto()
     """The default style specified in the MatPlotLibOptions must be a Style enum member or None."""
-    INVALID_WIDTH_ARG_TYPE = 'INVALID_WIDTH_ARG_TYPE'
+    INVALID_WIDTH_ARG_TYPE = auto()
     """The width specified in the MatPlotLibOptions must be an integer or None."""
-    INVALID_WIDTH_ARG_VALUE = 'INVALID_WIDTH_ARG_VALUE'
+    INVALID_WIDTH_ARG_VALUE = auto()
     """The width specified in the MatPlotLibOptions must be greater than zero."""
-    INVALID_HEIGHT_ARG_TYPE = 'INVALID_HEIGHT_ARG_TYPE'
+    INVALID_HEIGHT_ARG_TYPE = auto()
     """The height specified in the MatPlotLibOptions must be an integer or None."""
-    INVALID_HEIGHT_ARG_VALUE = 'INVALID_HEIGHT_ARG_VALUE'
+    INVALID_HEIGHT_ARG_VALUE = auto()
     """The height specified in the MatPlotLibOptions must be greater than zero."""
-    INVALID_DPI_ARG_TYPE = 'INVALID_DPI_ARG_TYPE'
+    INVALID_DPI_ARG_TYPE = auto()
     """The DPI specified in the MatPlotLibOptions must be an integer."""
-    INVALID_DPI_ARG_VALUE = 'INVALID_DPI_ARG_VALUE'
+    INVALID_DPI_ARG_VALUE = auto()
     """The DPI specified in the MatPlotLibOptions must be between 75 and 400 (inclusive)."""
-    INVALID_THEME_ARG_TYPE = 'INVALID_THEME_ARG_TYPE'
+    INVALID_THEME_ARG_TYPE = auto()
     """The theme specified in the MatPlotLibOptions must be a Theme instance or None."""
-    INVALID_Y_STARTS_AT_ZERO_ARG_TYPE = 'INVALID_Y_STARTS_AT_ZERO_ARG_TYPE'
+    INVALID_Y_STARTS_AT_ZERO_ARG_TYPE = auto()
     """The y_starts_at_zero option specified in the MatPlotLibOptions must be a bool or None."""
-    INVALID_X_LABELS_ROTATION_ARG_TYPE = 'INVALID_X_LABELS_ROTATION_ARG_TYPE'
+    INVALID_X_LABELS_ROTATION_ARG_TYPE = auto()
     """The x_labels_rotation option specified in the MatPlotLibOptions must be a float or None."""
-    INVALID_IMAGE_TYPE_ARG_TYPE = 'INVALID_IMAGE_TYPE_ARG_TYPE'
+    INVALID_IMAGE_TYPE_ARG_TYPE = auto()
     """The image_type option specified in the MatPlotLibOptions must be an ImageType enum
     member or None."""

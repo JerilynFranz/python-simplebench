@@ -1,5 +1,6 @@
 """Exception ErrorTags for the results module."""
 
+from enum import auto
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -8,106 +9,106 @@ from simplebench.exceptions import ErrorTag
 class _ResultsErrorTag(ErrorTag):
     """ErrorTags for exceptions in the Results module."""
 
-    METRICS_TIMERS_INVALID_ARG_TYPE = 'METRICS_TIMERS_INVALID_ARG_TYPE'
+    METRICS_TIMERS_INVALID_ARG_TYPE = auto()
     """Something other than a MetricsTimers instance was passed as the metrics_timers arg"""
-    INVALID_METRIC_ARG_TYPE = 'INVALID_METRIC_ARG_TYPE'
+    INVALID_METRIC_ARG_TYPE = auto()
     """Something other than a Metric was passed as the metric arg"""
-    INVALID_METRIC_CATEGORY_ARG_TYPE = 'INVALID_METRIC_CATEGORY_ARG_TYPE'
+    INVALID_METRIC_CATEGORY_ARG_TYPE = auto()
     """Something other than a MetricCategory was passed as the metric_category arg"""
-    INVALID_METRIC_TYPE_CATEGORY_ARG_VALUE = 'INVALID_METRIC_TYPE_CATEGORY_ARG_VALUE'
+    INVALID_METRIC_TYPE_CATEGORY_ARG_VALUE = auto()
     """The metric arg passed must have a metric_type with the specified metric_category"""
-    VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE = 'VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE'
+    VARIATION_MARKS_INVALID_ARG_VALUE_ITEM_TYPE = auto()
     """Something other than a str was found as a value in the variation_marks dict
     in the Results constructor"""
-    GROUP_INVALID_ARG_TYPE = 'GROUP_INVALID_ARG_TYPE'
+    GROUP_INVALID_ARG_TYPE = auto()
     """Something other than a str was passed as the group"""
-    GROUP_INVALID_ARG_VALUE = 'GROUP_INVALID_ARG_VALUE'
+    GROUP_INVALID_ARG_VALUE = auto()
     """The group must be a non-empty string"""
-    TITLE_INVALID_ARG_TYPE = 'TITLE_INVALID_ARG_TYPE'
+    TITLE_INVALID_ARG_TYPE = auto()
     """Something other than a str was passed as the title arg"""
-    TITLE_INVALID_ARG_VALUE = 'TITLE_INVALID_ARG_VALUE'
+    TITLE_INVALID_ARG_VALUE = auto()
     """The title arg passed must be a non-empty string"""
-    DESCRIPTION_INVALID_ARG_TYPE = 'DESCRIPTION_INVALID_ARG_TYPE'
+    DESCRIPTION_INVALID_ARG_TYPE = auto()
     """Something other than a str was passed as the description arg"""
-    DESCRIPTION_INVALID_ARG_VALUE = 'DESCRIPTION_INVALID_ARG_VALUE'
+    DESCRIPTION_INVALID_ARG_VALUE = auto()
     """The description arg passed must be a non-empty string"""
-    N_INVALID_ARG_TYPE = 'N_INVALID_ARG_TYPE'
+    N_INVALID_ARG_TYPE = auto()
     """Something other than a float was passed as the n arg"""
-    N_INVALID_ARG_VALUE = 'N_INVALID_ARG_VALUE'
+    N_INVALID_ARG_VALUE = auto()
     """The n arg passed must be greater than zero"""
-    ROUNDS_INVALID_ARG_TYPE = 'ROUNDS_INVALID_ARG_TYPE'
+    ROUNDS_INVALID_ARG_TYPE = auto()
     """Something other than an int was passed as the rounds arg"""
-    ROUNDS_INVALID_ARG_VALUE = 'ROUNDS_INVALID_ARG_VALUE'
+    ROUNDS_INVALID_ARG_VALUE = auto()
     """The rounds arg passed must be greater than zero"""
-    INTERVAL_UNIT_INVALID_ARG_TYPE = 'INTERVAL_UNIT_INVALID_ARG_TYPE'
+    INTERVAL_UNIT_INVALID_ARG_TYPE = auto()
     """Something other than a str was passed as the interval_unit arg"""
-    INTERVAL_UNIT_INVALID_ARG_VALUE = 'INTERVAL_UNIT_INVALID_ARG_VALUE'
+    INTERVAL_UNIT_INVALID_ARG_VALUE = auto()
     """The interval_unit arg passed must be a non-empty string"""
-    INTERVAL_SCALE_INVALID_ARG_TYPE = 'INTERVAL_SCALE_INVALID_ARG_TYPE'
+    INTERVAL_SCALE_INVALID_ARG_TYPE = auto()
     """Something other than a float was passed as the interval_scale arg"""
-    INTERVAL_SCALE_INVALID_ARG_VALUE = 'INTERVAL_SCALE_INVALID_ARG_VALUE'
+    INTERVAL_SCALE_INVALID_ARG_VALUE = auto()
     """The interval_scale arg passed must be greater than zero"""
-    OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE = 'OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE'
+    OPS_PER_INTERVAL_UNIT_INVALID_ARG_TYPE = auto()
     """Something other than a str was passed as the ops_per_interval_unit arg"""
-    OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE = 'OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE'
+    OPS_PER_INTERVAL_UNIT_INVALID_ARG_VALUE = auto()
     """The ops_per_interval_unit arg passed must be a non-empty string"""
-    OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE = 'OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE'
+    OPS_PER_INTERVAL_SCALE_INVALID_ARG_TYPE = auto()
     """Something other than a float was passed as the ops_per_interval_scale arg"""
-    OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE = 'OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE'
+    OPS_PER_INTERVAL_SCALE_INVALID_ARG_VALUE = auto()
     """The ops_per_interval_scale arg passed must be greater than zero"""
-    TOTAL_ELAPSED_INVALID_ARG_TYPE = 'TOTAL_ELAPSED_INVALID_ARG_TYPE'
+    TOTAL_ELAPSED_INVALID_ARG_TYPE = auto()
     """Something other than a float was passed as the total_elapsed arg"""
-    TOTAL_ELAPSED_INVALID_ARG_VALUE = 'TOTAL_ELAPSED_INVALID_ARG_VALUE'
+    TOTAL_ELAPSED_INVALID_ARG_VALUE = auto()
     """The total_elapsed arg passed must be greater than zero"""
-    VARIATION_MARKS_INVALID_ARG_TYPE = 'VARIATION_MARKS_INVALID_ARG_TYPE'
+    VARIATION_MARKS_INVALID_ARG_TYPE = auto()
     """Something other than a VariationMarks instance was passed as the variation_marks arg"""
-    VARIATION_MARKS_INVALID_ARG_KEY_TYPE = 'VARIATION_MARKS_INVALID_ARG_KEY_TYPE'
+    VARIATION_MARKS_INVALID_ARG_KEY_TYPE = auto()
     """Something other than a str was found as a key in the dict passed as the variation_marks arg"""
-    VARIATION_MARKS_INVALID_ARG_VALUE_TYPE = 'VARIATION_MARKS_INVALID_ARG_VALUE_TYPE'
+    VARIATION_MARKS_INVALID_ARG_VALUE_TYPE = auto()
     """Something other than a str was found as a value in the dict passed as the variation_marks arg"""
-    EXTRA_INFO_INVALID_ARG_TYPE = 'EXTRA_INFO_INVALID_ARG_TYPE'
+    EXTRA_INFO_INVALID_ARG_TYPE = auto()
     """Something other than Extras instance was passed as the extra_info arg"""
-    OPS_PER_SECOND_INVALID_ARG_TYPE = 'OPS_PER_SECOND_INVALID_ARG_TYPE'
+    OPS_PER_SECOND_INVALID_ARG_TYPE = auto()
     """Something other than an OperationsPerInterval instance was passed as the ops_per_second arg"""
-    PER_ROUND_TIMINGS_INVALID_ARG_TYPE = 'PER_ROUND_TIMINGS_INVALID_ARG_TYPE'
+    PER_ROUND_TIMINGS_INVALID_ARG_TYPE = auto()
     """Something other than an OperationTimings instance was passed as the per_round_timings arg"""
-    ITERATIONS_INVALID_ARG_TYPE = 'ITERATIONS_INVALID_ARG_TYPE'
+    ITERATIONS_INVALID_ARG_TYPE = auto()
     """Something other than an Iterations instance was passed as the iterations arg"""
-    ITERATIONS_INVALID_ARG_VALUE = 'ITERATIONS_INVALID_ARG_VALUE'
+    ITERATIONS_INVALID_ARG_VALUE = auto()
     """The iterations arg must contain at least one iteration"""
-    VARIATION_COLS_INVALID_ARG_TYPE = 'VARIATION_COLS_INVALID_ARG_TYPE'
+    VARIATION_COLS_INVALID_ARG_TYPE = auto()
     """Something other than a dict of str to str was passed as the variation_cols arg"""
-    VARIATION_COLS_INVALID_ARG_KEY_TYPE = 'VARIATION_COLS_INVALID_ARG_KEY_TYPE'
+    VARIATION_COLS_INVALID_ARG_KEY_TYPE = auto()
     """Something other than a str was found as a key in the dict passed as the variation_cols arg"""
-    VARIATION_COLS_INVALID_ARG_KEY_VALUE = 'VARIATION_COLS_INVALID_ARG_KEY_VALUE'
+    VARIATION_COLS_INVALID_ARG_KEY_VALUE = auto()
     """An empty string was found as a key in the dict passed as the variation_cols arg"""
-    VARIATION_COLS_INVALID_ARG_VALUE_TYPE = 'VARIATION_COLS_INVALID_ARG_VALUE_TYPE'
+    VARIATION_COLS_INVALID_ARG_VALUE_TYPE = auto()
     """Something other than a str was found as a value in the dict passed as the variation_cols arg"""
-    RESULTS_SECTION_INVALID_SECTION_ARG_TYPE = 'RESULTS_SECTION_INVALID_SECTION_ARG_TYPE'
+    RESULTS_SECTION_INVALID_SECTION_ARG_TYPE = auto()
     """Something other than a Metric enum was passed as the results_metrics arg"""
-    RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE = 'RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE'
+    RESULTS_SECTION_UNSUPPORTED_SECTION_ARG_VALUE = auto()
     """Something other than a Metric.OPS or Metric.TIMING was passed to the Results.result_metric() method"""
-    MEMORY_INVALID_ARG_TYPE = 'MEMORY_INVALID_ARG_TYPE'
+    MEMORY_INVALID_ARG_TYPE = auto()
     """Something other than a MemoryUsage instance was passed as the memory arg"""
-    PEAK_MEMORY_INVALID_ARG_TYPE = 'PEAK_MEMORY_INVALID_ARG_TYPE'
+    PEAK_MEMORY_INVALID_ARG_TYPE = auto()
     """Something other than a PeakMemoryUsage instance was passed as the peak_memory arg"""
-    PEAK_MEMORY_SCALE_INVALID_ARG_TYPE = 'PEAK_MEMORY_SCALE_INVALID_ARG_TYPE'
+    PEAK_MEMORY_SCALE_INVALID_ARG_TYPE = auto()
     """Something other than a float was passed as the peak_memory_scale arg"""
-    PEAK_MEMORY_SCALE_INVALID_ARG_VALUE = 'PEAK_MEMORY_SCALE_INVALID_ARG_VALUE'
+    PEAK_MEMORY_SCALE_INVALID_ARG_VALUE = auto()
     """The peak_memory_scale arg passed must be greater than zero"""
-    PEAK_MEMORY_UNIT_INVALID_ARG_TYPE = 'PEAK_MEMORY_UNIT_INVALID_ARG_TYPE'
+    PEAK_MEMORY_UNIT_INVALID_ARG_TYPE = auto()
     """Something other than a str was passed as the peak_memory_unit arg"""
-    PEAK_MEMORY_UNIT_INVALID_ARG_VALUE = 'PEAK_MEMORY_UNIT_INVALID_ARG_VALUE'
+    PEAK_MEMORY_UNIT_INVALID_ARG_VALUE = auto()
     """The peak_memory_unit arg passed must be a non-empty string"""
-    MEMORY_UNIT_INVALID_ARG_TYPE = 'MEMORY_UNIT_INVALID_ARG_TYPE'
+    MEMORY_UNIT_INVALID_ARG_TYPE = auto()
     """Something other than a str was passed as the memory_unit arg"""
-    MEMORY_UNIT_INVALID_ARG_VALUE = 'MEMORY_UNIT_INVALID_ARG_VALUE'
+    MEMORY_UNIT_INVALID_ARG_VALUE = auto()
     """The memory_unit arg passed must be a non-empty string"""
-    MEMORY_SCALE_INVALID_ARG_TYPE = 'MEMORY_SCALE_INVALID_ARG_TYPE'
+    MEMORY_SCALE_INVALID_ARG_TYPE = auto()
     """Something other than a float was passed as the memory_scale arg"""
-    MEMORY_SCALE_INVALID_ARG_VALUE = 'MEMORY_SCALE_INVALID_ARG_VALUE'
+    MEMORY_SCALE_INVALID_ARG_VALUE = auto()
     """The memory_scale arg passed must be greater than zero"""
-    MODIFY_READONLY_ATTR = 'MODIFY_READONLY_ATTR'
+    MODIFY_READONLY_ATTR = auto()
     """An attempt was made to modify a read-only attribute of the Results instance"""
-    VARIATION_MARKS_INVALID_ARG_KEY_VALUE = 'VARIATION_MARKS_INVALID_ARG_KEY_VALUE'
+    VARIATION_MARKS_INVALID_ARG_KEY_VALUE = auto()
     """An empty string was found as a key in the dict passed as the variation_marks arg"""

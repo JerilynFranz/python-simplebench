@@ -11,6 +11,7 @@ from abc import ABC
 from collections.abc import Callable, Mapping, Sequence, Set
 from typing import Any, TypeVar
 
+from enum import auto
 from simplebench.base._hydrator import Hydrator
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag, SimpleBenchAttributeError, SimpleBenchTypeError
@@ -45,10 +46,10 @@ _NO_MATCH = _NoMatch()
 class _ReportElementErrorTag(ErrorTag):
     """Error tags for ReportElement errors."""
 
-    INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE = 'INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE'
+    INVALID_REPORT_ELEMENT_TO_DICT_METHOD_NONCALLABLE = auto()
     """The to_dict method of a ReportElement attribute is not callable."""
 
-    INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING = 'INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING'
+    INVALID_REPORT_ELEMENT_ATTRIBUTE_MISSING = auto()
     """A required attribute is missing from a ReportElement instance."""
 
 
