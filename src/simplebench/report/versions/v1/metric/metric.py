@@ -28,7 +28,7 @@ from simplebench.simplebench_types import Never
 from ..metric_type import ImmutableMetricTypeDict, MetricType, MetricTypeData
 from . import _validate
 from .metric_schema import MetricSchema
-from .typed_dict import ImmutableMetricDict, MetricData
+from .metric_dict import ImmutableMetricDict, MetricData
 
 __all__: list[str] = []
 
@@ -323,7 +323,7 @@ class Metric(ReportElement, Mapping[str, str | int | ImmutableMetricTypeDict]):
             raise SimpleBenchKeyError(
                 f'Key {key!r} not found in Metric. Valid keys are: {self._dict_cache.keys()}',
                 tag=_MetricErrorTag.MAPPING_KEY_ERROR)
-        return self._dict_cache[key]
+        return self._dict_cache[key]  # type: ignore
 
     def get(self, key: str) -> str | int | ImmutableMetricTypeDict:  # type: ignore
         """Get the value for the given key, or raise an error if the key is not found.

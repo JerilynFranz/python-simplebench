@@ -210,7 +210,7 @@ class MetricTypes(ReportElement, Mapping[str, MetricType]):
             'MetricTypes is immutable and does not support item assignment.',
             tag=_MetricTypesErrorTag.MAPPING_IMMUTABLE)
 
-    def __add__(self, other: 'MetricTypes | MetricType', allow_duplicates: bool = False) -> 'MetricTypes':
+    def __add__(self, other: 'MetricTypes | MetricType') -> 'MetricTypes':
         """Create a new MetricTypes object by combining two MetricTypes objects
         or adding a single MetricType object.
 
@@ -220,6 +220,24 @@ class MetricTypes(ReportElement, Mapping[str, MetricType]):
         :rtype: MetricTypes
         :raises SimpleBenchTypeError: If the other object is not a MetricTypes instance.
         :raises SimpleBenchKeyError: If there are duplicate metric type labels when combining.
+        """
+        return self._internal_add_or_union(other, allow_duplicates=False)
+
+    def _internal_add_or_union(self,
+                               other: 'MetricTypes | MetricType',
+                               *,
+                               allow_duplicates: bool = False) -> 'MetricTypes':
+        """Internal method to create a new MetricTypes object by combining two MetricTypes objects
+        or adding a single MetricType object, with an option to allow duplicates.
+
+        :param other: The MetricTypes or MetricType object to add.
+        :param allow_duplicates: Whether to allow duplicate metric type labels when combining.
+            If False, a SimpleBenchKeyError will be raised if duplicate labels are found.
+            If True, duplicate labels will be allowed and the last one encountered will be used.
+        :return: A new MetricTypes object containing the combined metric types.
+        :raises SimpleBenchTypeError: If the other object is not a MetricTypes instance or a MetricType instance.
+        :raises SimpleBenchKeyError: If there are duplicate metric type labels when combining and
+            allow_duplicates is False.
         """
         if not isinstance(other, (MetricTypes, MetricType)):
             raise SimpleBenchTypeError(
@@ -303,7 +321,7 @@ class MetricTypes(ReportElement, Mapping[str, MetricType]):
         :param other: The MetricTypes object to perform the union with.
         :return: A new MetricTypes object representing the union.
         """
-        return self.__add__(other, allow_duplicates=True)
+        return self._internal_add_or_union(other, allow_duplicates=True)
 
     def __and__(self, other: 'MetricTypes') -> 'MetricTypes':
         """Create a new MetricTypes object representing the intersection.
@@ -366,13 +384,13 @@ class MetricTypes(ReportElement, Mapping[str, MetricType]):
             tag=_MetricTypesErrorTag.MAPPING_IMMUTABLE
         )
 
-    def __isub__(self, other: 'MetricTypes | MetricType') -> 'MetricTypes':
+    def __isub__(self, other: 'MetricTypes | MetricType | Sequence[str] | Set[str]') -> 'MetricTypes':
         """Perform in-place subtraction.
 
         Not implemented because MetricTypes is immutable and does not support in-place modification.
         This method will always raise a SimpleBenchTypeError.
 
-        :param other: The MetricTypes object whose keys will be removed.
+        :param other: The MetricTypes object, MetricType object, sequence of keys, or set of keys to remove.
         :return: The modified MetricTypes object.
         :raises SimpleBenchTypeError: Always, since MetricTypes is immutable and does not
             support in-place modification.

@@ -4,7 +4,7 @@ import re
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from simplebench.exceptions import SimpleBenchValueError, SimpleBenchTypeError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _ReportErrorTag
 from simplebench.simplebench_types import VariationCols
 from simplebench.type_proxies import is_case
@@ -15,6 +15,8 @@ from simplebench.validators import (
     validate_type,
 )
 from simplebench.validators.strings import validate_string_with_regex
+
+from ..metrics import Metrics
 
 if TYPE_CHECKING:
     from simplebench.case import Case
@@ -201,5 +203,20 @@ def case_has_been_run(value: 'Case') -> None:
 
     if value.state is not CaseState.COMPLETED:
         raise SimpleBenchValueError(
-            'The provided Case instance has not been run yet.', tag=_ReportErrorTag.CASE_HAS_NOT_BEEN_RUN
+            'The provided Case instance has not been run yet.',
+            tag=_ReportErrorTag.CASE_HAS_NOT_BEEN_RUN
         )
+
+
+def metrics(value: 'Metrics') -> 'Metrics':
+    """Validate that the given object is a Metrics instance.
+
+    :param value: The object to validate.
+    :return Metrics: The validated Metrics instance.
+    :raises SimpleBenchValueError: If the object is not a Metrics instance.
+    """
+    return validate_type(
+        value, Metrics, 'metrics',
+        _ReportErrorTag.INVALID_METRICS_TYPE,
+        message='{name} must be a Metrics instance',
+    )

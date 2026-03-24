@@ -410,3 +410,21 @@ class CoreDataSequence(Sequence[T],
         # because the CoreDataSequence is immutable, we return self
         # instead of performing an actual copy.
         return self
+
+    def __copy__(self) -> 'CoreDataSequence':
+        """Return the same CoreDataSequence.
+
+        Since the CoreDataSequence instance is immutable and composed of
+        immutable components, there is no need to perform a copy
+        of its contents. Instead, we simply return the instance itself
+        which is a extremely fast O(1) operation.
+
+        If a true copy is required for some reason, the caller
+        can manually create a new instance by passing the thawed contents
+        to the constructor.
+
+        :return CoreDataSequence: The same CoreDataSequence instance.
+        """
+        # because the CoreDataSequence is immutable, we return self
+        # instead of performing an actual copy.
+        return self

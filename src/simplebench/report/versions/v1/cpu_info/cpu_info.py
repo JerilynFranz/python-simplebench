@@ -23,7 +23,7 @@ from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
 from .cpu_info_schema import CPUInfoSchema
-from .typeddict_types import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from .cpu_info_dict import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
 
 if TYPE_CHECKING:
     from simplebench import environment

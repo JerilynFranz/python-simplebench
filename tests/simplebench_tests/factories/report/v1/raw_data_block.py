@@ -17,12 +17,7 @@ def raw_data_block_kwargs() -> RawDataBlockKWArgs:
     data = raw_data_block_data()
     return RawDataBlockKWArgs(
         hash_id=data['hash_id'],  # type: ignore[call-arg]
-        name=data['name'],
-        description=data['description'],  # type: ignore[call-arg]
-        semantic_type=data['semantic_type'],
-        timer=data['timer'], # type: ignore[call-arg]
-        unit=data['unit'],
-        scale=data['scale'],
+        metric=data['metric'],  # type: ignore[call-arg]
         rounds=data['rounds'],
         data=data['data'],
     )
@@ -47,14 +42,9 @@ def raw_data_block_data() -> report.RawDataBlockData:
     """
     info = report.RawDataBlockData(
         hash_id='c' * 64,
-        name='test_name',
-        description='test_description',
+        metric='test_metric',
         type=report.RawDataBlockSchema.TYPE,
         version=report.RawDataBlockSchema.VERSION,
-        semantic_type='test::value',
-        timer='test_timer',
-        unit='seconds',
-        scale=1.0,
         rounds=5,
         data=Values([1.0, 2.0, 3.0, 4.0, 5.0]),
       )

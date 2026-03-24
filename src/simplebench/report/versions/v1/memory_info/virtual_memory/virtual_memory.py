@@ -15,7 +15,7 @@ from typing import Any
 from simplebench.report.base import BaseVirtualMemoryObject
 
 from . import _validate
-from .typeddict_types import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
+from .virtual_memory_dict import ImmutableVirtualMemoryObjectDict, VirtualMemoryObjectDict
 
 __all__: list[str] = []
 

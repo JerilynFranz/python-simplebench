@@ -25,7 +25,7 @@ from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence
 from ..environment_info import EnvironmentInfoData, ImmutableEnvironmentInfoData
 from . import _validate
 from .machine_info_schema import MachineInfoSchema
-from .typeddict_types import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData
+from .machine_info_dict import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData
 
 if TYPE_CHECKING:
     from simplebench.report.versions.v1 import CPUInfo, EnvironmentInfo, MemoryInfo, SystemInfo

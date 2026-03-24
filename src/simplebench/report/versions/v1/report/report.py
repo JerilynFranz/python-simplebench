@@ -17,16 +17,17 @@ and serves as a foundation for future versions.
 from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
+from simplebench.exceptions import SimpleBenchValueError
 from simplebench.report._error_tags import _ReportErrorTag
-from simplebench.report.base import ReportElement, JSONSchema
+from simplebench.report.base import JSONSchema, ReportElement
 from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, VariationCols
 from simplebench.validators import validate_sequence_of_type
 
-from . import _validate
-from .report_schema import ReportSchema
-from .typeddict_types import ImmutableReportDict, ReportData
 from ..machine_info import MachineInfo
 from ..metrics import Metrics
+from . import _validate
+from .report_schema import ReportSchema
+from .report_dict import ImmutableReportDict, ReportData
 
 if TYPE_CHECKING:
     from .. import ResultsInfo
@@ -46,7 +47,6 @@ class Report(ReportElement):
 
     ID: str = SCHEMA.ID
     """The JSON report ID property value for version 1 reports."""
-
 
     @classmethod
     def _data_params(cls) -> dict[str, Any]:
@@ -143,15 +143,31 @@ class Report(ReportElement):
         The input dictionary is validated against the rules for the version 1 report schema.
 
         :param Mapping[str, Any] data: Dictionary containing the JSON structured report data.
+        :param Metrics | None metrics: Optional Metrics instance to use. If not provided, it will be constructed
+            from the 'metrics' field in the input data if available, or an empty Metrics instance if not.
         :return Report: Report instance.
         :raises SimpleBenchValueError: If any field has an invalid value.
         :raises SimpleBenchTypeError: If any field is of an incorrect type.
         """
         from simplebench.report.versions.v1 import ResultsInfo
 
+        if not isinstance(data, Mapping):
+            raise SimpleBenchValueError(
+                "Input data for Report.from_dict must be a mapping type (e.g., dict).",
+                _ReportErrorTag.INPUT_DATA_NOT_A_MAPPING)
+        data = dict(data)  # Make a shallow copy to avoid mutating the input
+
         allowed_keys = dict(cls._data_params())
         allowed_keys['type'] = str
         allowed_keys['version'] = int
+        if 'metrics' not in data:
+            raise SimpleBenchValueError(
+                "Missing required 'metrics' field in input data for Report.from_dict.'",
+                tag=_ReportErrorTag.MISSING_METRICS)
+
+        metrics_registry = Metrics.from_dict(data['metrics'])
+        data.pop('metrics')
+
         def process_results(value: Any) -> list[ResultsInfo]:
             """Process the results-info objects in the input sequence"""
             validated_list = validate_sequence_of_type(
@@ -162,7 +178,7 @@ class Report(ReportElement):
                 _ReportErrorTag.INVALID_RESULTS_PROPERTY_ELEMENT_NOT_DICT,
                 allow_empty=False,
             )
-            return [ResultsInfo.from_dict(item) for item in validated_list]
+            return [ResultsInfo.from_dict(item, metrics_registry) for item in validated_list]
 
         kwargs = cls.import_data(  # Hydrate instance arguments from dict
             data=data,
@@ -306,7 +322,7 @@ class Report(ReportElement):
         This method ensures that the pickled representation of the Report instance
         is compact. It excludes calculated properties like `_to_dict_cache`.
         This decreases the pickled size by about 50%, which can significantly improve
-        pickling and unpickling performance, especially for large reports. 
+        pickling and unpickling performance, especially for large reports.
 
         This prioritizes a smaller pickled size and fast subsequent unpickling over
         preserving the lazy-evaluation state across serialization.

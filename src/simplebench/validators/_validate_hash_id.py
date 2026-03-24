@@ -11,7 +11,8 @@ exceptions if the validation fails.
 import re
 
 from simplebench.exceptions import ErrorTag, SimpleBenchValueError
-from simplebench.validators import validate_string_with_regex
+
+from .strings import validate_string_with_regex
 
 _HASH_ID_REGEX = re.compile(r'^(?:[a-f0-9]{64}|)$')
 """Validates the hash_id string.

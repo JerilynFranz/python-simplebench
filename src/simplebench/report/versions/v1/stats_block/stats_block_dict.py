@@ -40,10 +40,7 @@ class StatsBlockData(ReportElementTypedDict):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The hash ID of the block (64-character hex string).
-    :param Required[str] name: The name of the statistic.
-    :param Required[str] semantic_type: The semantic type of the value.
-    :param Required[str] unit: The unit of the value.
-    :param Required[float] scale: The scaling factor for the value.
+    :param Required[str] metric: The label of the metric this value is associated with.
     :param Required[int] iterations: The number of iterations.
     :param Required[int] rounds: The number of rounds.
     :param Required[float] mean: The mean value.
@@ -53,15 +50,10 @@ class StatsBlockData(ReportElementTypedDict):
     :param Required[float] stdev: The standard deviation.
     :param Required[float] relative_stdev: The relative standard deviation.
     :param Required[Sequence[float]] percentiles: The percentiles data.
-    :param NotRequired[str] timer: The name of the timer associated with this value.
-    :param NotRequired[str] description: A description of the statistic.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     """
-    name: Required[str]
-    semantic_type: Required[str]
-    unit: Required[str]
-    scale: Required[float]
+    metric: Required[str]
     iterations: Required[int]
     rounds: Required[int]
     mean: Required[float]
@@ -73,8 +65,6 @@ class StatsBlockData(ReportElementTypedDict):
     drift_index: Required[float]
     autocorrelation: Required[float]
     percentiles: Required[Sequence[float]]
-    timer: NotRequired[str]
-    description: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
@@ -99,10 +89,7 @@ class ImmutableStatsBlockData(ReportElementTypedDict):
     dictionary as immutable for type-checking purposes. It is not
     intended to be used at runtime and should never be set on instances.
 
-    :param Required[str] name: The name of the statistic.
-    :param Required[str] semantic_type: The semantic type of the stats block.
-    :param Required[str] unit: The unit of the stats block.
-    :param Required[float] scale: The scaling factor for the stats block.
+    :param Required[str] metric: The label of the metric this stats block is associated with.
     :param Required[int] iterations: The number of iterations.
     :param Required[int] rounds: The number of rounds.
     :param Required[float] mean: The mean value.
@@ -112,17 +99,12 @@ class ImmutableStatsBlockData(ReportElementTypedDict):
     :param Required[float] stdev: The standard deviation.
     :param Required[float] relative_stdev: The relative standard deviation.
     :param Required[tuple[float, ...]] percentiles: The percentiles data.
-    :param NotRequired[str] timer: The name of the timer associated with this stats block.
-    :param NotRequired[str] description: A description of the stats block.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
     :param NotRequired[str] hash_id: The hash ID of the block (64-character hex string).
 
     """
-    name: Required[str]
-    semantic_type: Required[str]
-    unit: Required[str]
-    scale: Required[float]
+    metric: Required[str]
     iterations: Required[int]
     rounds: Required[int]
     mean: Required[float]
@@ -134,8 +116,6 @@ class ImmutableStatsBlockData(ReportElementTypedDict):
     drift_index: Required[float]
     autocorrelation: Required[float]
     percentiles: Required[tuple[float, ...]]
-    timer: NotRequired[str]
-    description: NotRequired[str]
     type: NotRequired[str]
     version: NotRequired[int]
     hash_id: NotRequired[str]
@@ -153,10 +133,7 @@ class StatsBlockDict(ReportElementTypedDict):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The hash ID of the block (64-character hex string).
-    :param Required[str] name: The name of the statistic.
-    :param Required[str] semantic_type: The semantic type of the stats block.
-    :param Required[str] unit: The unit of the stats block.
-    :param Required[float] scale: The scaling factor for the stats block.
+    :param Required[str] metric: The label of the metric this stats block is associated with.
     :param Required[int] iterations: The number of iterations.
     :param Required[int] rounds: The number of rounds.
     :param Required[float] mean: The mean value.
@@ -166,17 +143,11 @@ class StatsBlockDict(ReportElementTypedDict):
     :param Required[float] stdev: The standard deviation.
     :param Required[float] relative_stdev: The relative standard deviation.
     :param Required[CoreDataSequence[float]] percentiles: The percentiles data (101 values).
-    :param NotRequired[str] timer: The name of the timer associated with this stats block.
-    :param NotRequired[str] description: A description of the stats block.
-
     """
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
-    name: Required[str]
-    semantic_type: Required[str]
-    unit: Required[str]
-    scale: Required[float]
+    metric: Required[str]
     iterations: Required[int]
     rounds: Required[int]
     mean: Required[float]
@@ -188,8 +159,6 @@ class StatsBlockDict(ReportElementTypedDict):
     drift_index: Required[float]
     autocorrelation: Required[float]
     percentiles: Required[CoreDataSequence[float]]
-    timer: NotRequired[str]
-    description: NotRequired[str]
 
 
 class ImmutableStatsBlockDict(ReportElementTypedDict):
@@ -209,10 +178,7 @@ class ImmutableStatsBlockDict(ReportElementTypedDict):
     :param Required[str] type: The type identifier for the block.
     :param Required[int] version: The version of the block's data structure.
     :param Required[str] hash_id: The hash ID of the block (64-character hex string).
-    :param Required[str] name: The name of the statistic.
-    :param Required[str] semantic_type: The semantic type of the stats block.
-    :param Required[str] unit: The unit of the stats block.
-    :param Required[float] scale: The scaling factor for the stats block.
+    :param Required[str] metric: The label of the metric this stats block is associated with.
     :param Required[int] iterations: The number of iterations.
     :param Required[int] rounds: The number of rounds.
     :param Required[float] mean: The mean value.
@@ -222,16 +188,11 @@ class ImmutableStatsBlockDict(ReportElementTypedDict):
     :param Required[float] stdev: The standard deviation.
     :param Required[float] relative_stdev: The relative standard deviation.
     :param Required[CoreDataSequence[float]] percentiles: The percentiles data.
-    :param NotRequired[str] timer: The name of the timer associated with this stats block.
-    :param NotRequired[str] description: A description of the stats block.
     """
     type: Required[str]
     version: Required[int]
     hash_id: Required[str]
-    name: Required[str]
-    semantic_type: Required[str]
-    unit: Required[str]
-    scale: Required[float]
+    metric: Required[str]
     iterations: Required[int]
     rounds: Required[int]
     mean: Required[float]
@@ -243,6 +204,4 @@ class ImmutableStatsBlockDict(ReportElementTypedDict):
     drift_index: Required[float]
     autocorrelation: Required[float]
     percentiles: Required[CoreDataSequence[float]]
-    timer: NotRequired[str]
-    description: NotRequired[str]
     __immutable__: NotRequired[Never]

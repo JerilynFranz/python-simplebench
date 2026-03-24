@@ -23,6 +23,9 @@ from ._core_data_mapping import CoreDataMapping
 from ._core_data_sequence import CoreDataSequence
 from ._core_data_set import CoreDataSet
 
+__all__: list[str] = []
+
+
 CoreDataPrimitiveTypes: TypeAlias = (str | int | float | bool | None)
 """Type alias for core data primitive types.
 

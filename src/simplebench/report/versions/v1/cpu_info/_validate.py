@@ -10,7 +10,7 @@ from simplebench.report._error_tags import _CPUInfoErrorTag
 from simplebench.simplebench_types import CoreDataMapping
 from simplebench.validators import validate_core_data_mapping, validate_string, validate_string_with_regex
 
-from .typeddict_types import CPUInfoData, ImmutableCPUInfoData
+from .cpu_info_dict import CPUInfoData, ImmutableCPUInfoData
 
 _HASH_RE = re.compile(r'^[a-f0-9]{64}$')
 

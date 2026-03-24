@@ -137,10 +137,8 @@ class Raw:
                 name=self.name,
                 semantic_type=self.semantic_type,
                 description=self.description,
-                unit=self.unit,
-                scale=self.scale,
+                metric=self.metric,
                 rounds=self.rounds,
-                timer=self.timer,
                 data=self.data
             )
         return self._raw_data_block

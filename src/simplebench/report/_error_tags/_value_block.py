@@ -1,6 +1,7 @@
 """Error tags for JSON value block representation exceptions."""
 
 from enum import auto
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -11,6 +12,22 @@ __all__: list[str] = []
 class _ValueBlockErrorTag(ErrorTag):
     """Error tags for JSON value block representation exceptions."""
 
+    INVALID_NAME_TYPE = auto()
+    """The name value is not a string."""
+    INVALID_NAME_VALUE = auto()
+    """The name value is invalid. Must be a non-empty string."""
+    INVALID_DESCRIPTION_TYPE = auto()
+    """The description value is not a string."""
+    INVALID_DESCRIPTION_VALUE = auto()
+    """The description value is invalid. Must be a string (can be empty)."""
+    UNKNOWN_METRIC_HASH_ID = auto()
+    """The metric hash_id value is not recognized."""
+    INVALID_METRIC_HASH_ID = auto()
+    """The metric hash_id value is invalid."""
+    MISSING_METRIC_FIELD = auto()
+    """The metric field is missing from the JSON data."""
+    INVALID_METRIC_TYPE = auto()
+    """The metric is not of type Metric."""
     INVALID_HASH_ID_TYPE = auto()
     """The hash_id value is not a string."""
     INVALID_HASH_ID_VALUE = auto()

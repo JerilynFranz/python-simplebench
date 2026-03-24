@@ -1,21 +1,24 @@
 """Definition for a Metrics object for the simplebench library."""
 import hashlib
 from collections.abc import Iterable, Iterator, Mapping, Sequence, Set
-from typing import Any
+from typing import Any, TypeAlias
 
 from simplebench.exceptions import SimpleBenchKeyError, SimpleBenchTypeError
 from simplebench.report._error_tags import _MetricsErrorTag
 from simplebench.report.base import ReportElement
 from simplebench.simplebench_types import CoreDataMapping, Never
 
-from ..metric import Metric
+from ..metric import Metric, MetricData, MetricDict
 from . import _validate
 
 __all__: list[str] = []
 
 
 class Metrics(ReportElement, Mapping[str, Metric]):
-    """Definition for a Metrics object, which is a Mapping of str to Metric instances.
+    """Immutable container for Metric objects in the simplebench library.
+
+    It has full Mapping semantics with string keys corresponding to the 'label' field of the contained Metric objects.
+    It also has set-like operations for combining and manipulating collections of Metric objects.
     """
 
     __slots__ = ('_dict', '_hash_id')
@@ -210,7 +213,23 @@ class Metrics(ReportElement, Mapping[str, Metric]):
             'Metrics is immutable and does not support item assignment.',
             tag=_MetricsErrorTag.MAPPING_IMMUTABLE)
 
-    def __add__(self, other: 'Metrics | Metric', allow_duplicates: bool = False) -> 'Metrics':
+    def __add__(self, other: 'Metrics | Metric') -> 'Metrics':
+        """Create a new Metrics object by combining two Metrics objects
+        or adding a single Metric object. (The "+" operator is used for this operation.)
+
+        This method does not allow duplicate metric labels and will raise an error if duplicates are found. 
+        If you want to allow duplicates (last one wins), use the "|" operator instead which performs a union.
+
+        :param other: The Metrics or Metric object to add.
+        :type other: Metrics or Metric
+        :return: A new Metrics object containing the combined metrics.
+        :rtype: Metrics
+        :raises SimpleBenchTypeError: If the other object is not a Metrics instance or a Metric instance.
+        :raises SimpleBenchKeyError: If there are duplicate metric labels when combining.
+        """
+        return self._internal_add_or_union(other, allow_duplicates=False)
+
+    def _internal_add_or_union(self, other: 'Metrics | Metric', *, allow_duplicates: bool = False) -> 'Metrics':
         """Create a new Metrics object by combining two Metrics objects
         or adding a single Metric object. (The "+" operator is used for this operation.)
 
@@ -328,7 +347,7 @@ class Metrics(ReportElement, Mapping[str, Metric]):
         :type other: Metrics
         :return: A new Metrics object representing the union.
         """
-        return self.__add__(other, allow_duplicates=True)
+        return self._internal_add_or_union(other, allow_duplicates=True)
 
     def __and__(self, other: 'Metrics') -> 'Metrics':
         """Create a new Metrics object representing the intersection.
@@ -393,13 +412,13 @@ class Metrics(ReportElement, Mapping[str, Metric]):
             tag=_MetricsErrorTag.MAPPING_IMMUTABLE
         )
 
-    def __isub__(self, other: 'Metrics | Metric') -> 'Metrics':
+    def __isub__(self, other: 'Metrics | Metric | Sequence[str] | Set[str]') -> 'Metrics':
         """Perform in-place subtraction.
 
         Not implemented because Metrics is immutable and does not support in-place modification.
         This method will always raise a SimpleBenchTypeError.
 
-        :param other: The Metrics object whose keys will be removed.
+        :param other: The Metrics object, Metric object, sequence of keys, or set of keys to remove.
         :return: The modified Metrics object.
         :raises SimpleBenchTypeError: Always, since Metrics is immutable and does not support in-place modification.
         """
@@ -442,3 +461,10 @@ class Metrics(ReportElement, Mapping[str, Metric]):
         :rtype: int
         """
         return len(self._dict)
+
+MetricsData: TypeAlias = Mapping[str, MetricData]
+"""Type alias for the data representation of a Metrics object, which is a mapping of metric labels to MetricData."""
+
+MetricsDict: TypeAlias = Mapping[str, MetricDict]
+"""Type alias for the dictionary representation of a Metrics object, which is a mapping of metric labels
+to MetricDict."""

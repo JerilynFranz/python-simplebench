@@ -7,15 +7,17 @@ from collections.abc import Mapping
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any
 
+from simplebench.exceptions import SimpleBenchValueError
+from simplebench.report._error_tags import _ResultsInfoErrorTag
 from simplebench.report.base import BaseResultsInfo
 from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
 from .results_info_schema import ResultsInfoSchema
-from .typeddict_types import ImmutableResultsInfoDict, ResultsInfoData
+from .results_info_dict import ImmutableResultsInfoDict, ResultsInfoData
 
 if TYPE_CHECKING:
-    from .. import ExtrasObject, MetricsObject
+    from .. import ExtrasObject, Metrics, MetricsObject
 
 __all__: list[str] = []
 
@@ -109,24 +111,47 @@ class ResultsInfo(BaseResultsInfo):
         self._to_dict_cache: ImmutableResultsInfoDict | None = None
 
     @classmethod
-    def from_dict(cls, data: Any) -> 'ResultsInfo':
+    def from_dict(cls, data: Any, metrics_registry: 'Metrics') -> 'ResultsInfo':
         """Create a ResultsInfo object instance from a mapping of data conformant
         to the V1 results-info JSON schema.
 
+        The input data is validated against the schema and the expected types of each field.
+
+        The metrics argument is required to properly construct the MetricsObject
+        for the ResultsInfo instance because the serialized metrics data needs to be
+        associated with a specific Metrics instance (which it links to via
+        a foreign key).
+
         :param ResultsInfoData data: Mapping containing the results-info object data.
+        :param Metrics metrics: Metrics instance to use for the ResultsInfo.
         :return ResultsInfo: ResultsInfo instance.
         """
-        from .. import ExtrasObject, MetricsObject
+        from ..extras_object import ExtrasObject
+        from ..metrics import Metrics
+        from ..metrics_object import MetricsObject
+
+        if not isinstance(data, Mapping):
+            raise SimpleBenchValueError(
+                "Input data for Report.from_dict must be a mapping type (e.g., dict).",
+                tag=_ResultsInfoErrorTag.INPUT_DATA_NOT_A_MAPPING)
+
+        if not isinstance(metrics_registry, Metrics):
+            raise SimpleBenchValueError(
+                "The metrics_registry argument must be of type Metrics.",
+                tag=_ResultsInfoErrorTag.INVALID_METRICS_TYPE)
 
         allowed_keys = cls._data_params()
+        data = dict(data)  # Make a shallow copy to avoid mutating the input
+
+        data['metrics'] = MetricsObject.from_dict(data['metrics'], metrics_registry)
+
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
             optional_fields={'variation_marks', 'extra_info', 'hash_id'},
             defaults={'variation_marks': {}, 'extra_info': {}},
             skip_fields={'type', 'version'},
-            process_as={'metrics': MetricsObject.from_dict,
-                        'extra_info': ExtrasObject.from_dict},
+            process_as={'extra_info': ExtrasObject.from_dict},
         )
         return cls(**kwargs)
 

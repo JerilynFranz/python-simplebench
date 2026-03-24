@@ -22,7 +22,8 @@ from simplebench.report.base import ReportElementTypedDict
 from simplebench.simplebench_types import Never, NotRequired, Required, VariationCols
 
 from ..machine_info import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
-from ..metrics import ImmutableMetricsData, ImmutableMetricsDict, MetricsData, MetricsDict
+from ..metric import MetricData
+from ..metrics import Metrics
 from ..results_info import ImmutableResultsInfoData, ImmutableResultsInfoDict, ResultsInfoData, ResultsInfoDict
 
 __all__: list[str] = []
@@ -39,7 +40,8 @@ class ReportData(ReportElementTypedDict):
     :param Required[str] title: The title of the benchmark case.
     :param Required[str] description: A brief description of the benchmark case.
     :param Required[Mapping[str, str]] variation_cols: Columns for keyword argument variations.
-    :param Required[Mapping[str, MetricsData]] metrics: A mapping of metric labels to their corresponding Metric definitions.
+    :param Required[Mapping[str, MetricData]] metrics: A mapping of metric labels to their corresponding Metric
+        definitions.
     :param Required[Sequence[ResultsInfoData]] results: A list of benchmark results.
     :param Required[MachineInfoData] machine: Information about the machine running the benchmark.
     :param NotRequired[str] type: The type identifier for the report.
@@ -51,7 +53,7 @@ class ReportData(ReportElementTypedDict):
     title: Required[str]
     description: Required[str]
     variation_cols: Required[Mapping[str, str]]
-    metrics: Required[Mapping[str, MetricsData]]
+    metrics: Required[Mapping[str, MetricData]]
     results: Required[Sequence[ResultsInfoData]]
     machine: Required[MachineInfoData]
     type: NotRequired[str]
@@ -74,7 +76,7 @@ class ImmutableReportData(ReportElementTypedDict):
     :param Required[str] title: The title of the benchmark case.
     :param Required[str] description: A brief description of the benchmark case.
     :param Required[VariationCols] variation_cols: Columns for keyword argument variations.
-    :param Required[ImmutableMetricsData] metrics: A mapping of metric labels to their corresponding
+    :param Required[Metrics] metrics: A mapping of metric labels to their corresponding
         immutable Metric definitions.
     :param Required[tuple[ImmutableResultsInfoData, ...]] results: A tuple of benchmark results.
     :param Required[ImmutableMachineInfoData] machine: Information about the machine running the benchmark.
@@ -87,7 +89,7 @@ class ImmutableReportData(ReportElementTypedDict):
     title: Required[str]
     description: Required[str]
     variation_cols: Required[VariationCols]
-    metrics: Required[ImmutableMetricsData]
+    metrics: Required[Metrics]
     results: Required[tuple[ImmutableResultsInfoData, ...]]
     machine: Required[ImmutableMachineInfoData]
     type: NotRequired[str]
@@ -116,7 +118,7 @@ class ReportDict(ReportElementTypedDict):
     group: Required[str]
     title: Required[str]
     description: Required[str]
-    metrics: Required[MetricsDict]
+    metrics: Required[Mapping[str, MetricData]]
     results: Required[tuple[ResultsInfoDict, ...]]
     machine: Required[MachineInfoDict]
     variation_cols: Required[VariationCols]
@@ -134,7 +136,7 @@ class ImmutableReportDict(ReportElementTypedDict):
     :param Required[str] group: The benchmark reporting group.
     :param Required[str] title: The title of the benchmark case.
     :param Required[str] description: A brief description of the benchmark case.
-    :param Required[ImmutableMetricsDict] metrics: A mapping of metric labels to their corresponding immutable Metric definitions.
+    :param Required[Metrics] metrics: A mapping of metric labels to their corresponding immutable Metric definitions.
     :param Required[tuple[ImmutableResultsInfoDict, ...]] results: A tuple of benchmark results.
     :param Required[ImmutableMachineInfoDict] machine: Information about the machine running the benchmark.
     :param Required[VariationCols] variation_cols: Columns for keyword argument variations.
@@ -146,7 +148,7 @@ class ImmutableReportDict(ReportElementTypedDict):
     group: Required[str]
     title: Required[str]
     description: Required[str]
-    metrics: Required[ImmutableMetricsDict]
+    metrics: Required[Metrics]
     results: Required[tuple[ImmutableResultsInfoDict, ...]]
     machine: Required[ImmutableMachineInfoDict]
     variation_cols: Required[VariationCols]

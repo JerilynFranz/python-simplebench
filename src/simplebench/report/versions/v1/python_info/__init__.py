@@ -3,6 +3,6 @@
 
 from .python_info import PythonInfo
 from .python_info_schema import PythonInfoSchema
-from .typeddict_types import ImmutablePythonInfoData, ImmutablePythonInfoDict, PythonInfoData, PythonInfoDict, ImmutablePythonInfoEnv, PythonInfoEnv
+from .python_info_dict import ImmutablePythonInfoData, ImmutablePythonInfoDict, PythonInfoData, PythonInfoDict, ImmutablePythonInfoEnv, PythonInfoEnv
 
 __all__: list[str] = []

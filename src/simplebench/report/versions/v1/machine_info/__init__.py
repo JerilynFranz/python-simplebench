@@ -3,6 +3,6 @@
 
 from .machine_info import MachineInfo
 from .machine_info_schema import MachineInfoSchema
-from .typeddict_types import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
+from .machine_info_dict import ImmutableMachineInfoData, ImmutableMachineInfoDict, MachineInfoData, MachineInfoDict
 
 __all__: list[str] = []

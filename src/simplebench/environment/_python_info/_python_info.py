@@ -9,9 +9,7 @@ typed set of properties to access the :attr:`version`, :attr:`implementation`,
 :attr:`compiler`, :attr:`revision`, and :attr:`build` details.
 
 It also inspects :attr:`sys.flags` to provide a :attr:`command_line_flags` property
-that summarizes the command line flags used to start the interpreter and a
-:attr:`environment_variables` property that exposes a read-only mapping of
-Python-specific environment variables that are set.
+that summarizes the command line flags used to start the interpreter.
 
 It also gathers information about the garbage collector settings
 using the :module:`gc` module.
@@ -25,20 +23,20 @@ Exposed properties include:
 - `buildno` - build number of the Python interpreter.
 - `builddate` - build date of the Python interpreter.
 - `command_line_flags` - command line flags used to start the interpreter.
-- `environment_variables` - Python-specific environment variables that are set.
 - `gc_is_enabled` - whether the garbage collector is enabled.
 - `gc_thresholds` - the garbage collection thresholds.
 - `thread_switch_interval` - the thread switch interval in seconds.
-
 """
 
 import gc
-import os
 import platform
 import sys
+import sysconfig
 from collections.abc import Callable
 from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Final, Literal, cast
+
+from simplebench.simplebench_types import CoreDataMapping
 
 if TYPE_CHECKING:
     from simplebench.report.versions import v1 as report
@@ -80,7 +78,6 @@ class PythonInfo:
     - `buildno` - build number of the Python interpreter.
     - `builddate` - build date of the Python interpreter.
     - `command_line_flags` - command line flags used to start the interpreter.
-    - `environment_variables` - Python-specific environment variables that are set.
 
     It unpacks the :func:`platform.python_build()` tuple into separate string attributes for easier
     access and type casts :func:`platform.python_version()` to a string for static typing tools
@@ -88,9 +85,7 @@ class PythonInfo:
     sometimes get confused by it.
 
     It also inspects :attr:`sys.flags` to construct a string representation of the command line flags
-    used to start the interpreter and gathers a read-only mapping of Python-specific environment variables
-    that are set in the current environment. Both of the are sorted for consistency in
-    representation and comparison.
+    used to start the interpreter.
 
     By 'snapshotting' this information at initialization, the PythonInfo class provides
     a consistent view of the Python environment that can be easily passed around and used
@@ -109,12 +104,18 @@ class PythonInfo:
         '_buildno',
         '_builddate',
         '_command_line_flags',
-        '_environment_variables',
         '_gc_is_enabled',
         '_gc_thresholds',
         '_thread_switch_interval',
         '_architecture_bits',
         '_architecture_linkage',
+        '_xoptions',
+        '_sys_flags',
+        '_gil_is_enabled',
+        '_abiflags',
+        '_config_args',
+        '_py_debug',
+        '_with_pymalloc',
         '_dict_cache',
     )
 
@@ -127,7 +128,7 @@ class PythonInfo:
         It caches information that would not change during a run (like version, implementation,
         compiler, etc.) in a class-level variable for future instances to reuse and optimize
         performance, while still re-evaluating fields that could change during a run
-        (like garbage collector settings, thread switch interval, and environment variables)
+        (like garbage collector settings, and thread switch interval)
         """
         cls = self.__class__
         if cls._cached_proto is None:
@@ -143,23 +144,27 @@ class PythonInfo:
             self._buildno = build_info[_BUILDNO]
             self._builddate = build_info[_BUILDDATE]
             self._command_line_flags = self._python_command_line_flags()
-            self._environment_variables = self._current_environment_variables()
             self._gc_is_enabled = gc.isenabled()
             self._gc_thresholds = gc.get_threshold()
             self._thread_switch_interval = sys.getswitchinterval()
+            self._xoptions = self._python_xoptions()
+            self._sys_flags = self._python_sys_flags()
+            self._gil_is_enabled = self._python_gil_is_enabled()
+            self._abiflags = getattr(sys, 'abiflags', '')
+            self._config_args = self._sysconfig_config_args()
+            self._py_debug = self._sysconfig_flag('Py_DEBUG')
+            self._with_pymalloc = self._sysconfig_flag('WITH_PYMALLOC')
             self._dict_cache: None | MappingProxyType[str, object] = None
             cls._cached_proto = self
 
         for field in cls.__slots__:
             self.__setattr__(field, getattr(cls._cached_proto, field))
 
-        # Only fields that could change during a run are re-evaluated
         self._gc_is_enabled = gc.isenabled()
         self._gc_thresholds = gc.get_threshold()
         self._thread_switch_interval = sys.getswitchinterval()
-        self._environment_variables = self._current_environment_variables()
+        self._gil_is_enabled = self._python_gil_is_enabled()
 
-        # Prerender the dict cache
         output: dict[str, object] = {}
         fields = cls.__slots__
         for field in fields:
@@ -211,11 +216,6 @@ class PythonInfo:
         return self._command_line_flags
 
     @property
-    def environment_variables(self) -> MappingProxyType[str, str]:
-        """Return a read-only dictionary of set Python-specific environment variables."""
-        return self._environment_variables
-
-    @property
     def gc_is_enabled(self) -> bool:
         """Return a boolean indicating if the garbage collector is enabled."""
         return self._gc_is_enabled
@@ -239,6 +239,10 @@ class PythonInfo:
     def architecture_linkage(self) -> str:
         """Return a string containing the architecture linkage format."""
         return self._architecture_linkage
+
+    @property
+    def xoptions(self) -> CoreDataMapping[str | bool]:
+        return self._xoptions
 
     def _python_implementation_version(self) -> str:
         """Return the Python implementation revision.
@@ -321,76 +325,6 @@ class PythonInfo:
         }
         return flag_map
 
-    def _current_environment_variables(self) -> MappingProxyType[str, str]:
-        """Return a read-only dictionary of set Python environment variables.
-
-        This inspects :attr:`os.environ` for a predefined list of variables
-        that can influence Python's behavior.
-
-        :return: A mapping proxy of the set environment variables.
-        """
-        # A comprehensive list of Python-specific environment variables.
-        python_vars = (
-            'PYTHONHOME',
-            'PYTHONPATH',
-            'PYTHONSAFEPATH',
-            'PYTHONPLATLIBDIR',
-            'PYTHONSTARTUP',
-            'PYTHONOPTIMIZE',
-            'PYTHONBREAKPOINT',
-            'PYTHONDEBUG',
-            'PYTHONINSPECT',
-            'PYTHONUNBUFFERED',
-            'PYTHONVERBOSE',
-            'PYTHONCASEOK',
-            'PYTHONDONTWRITEBYTECODE',
-            'PYTHONPYCACHEPREFIX',
-            'PYTHONHASHSEED',
-            'PYTHONINTMAXSTRDIGITS',
-            'PYTHONIOENCODING',
-            'PYTHONNOUSERSITE',
-            'PYTHONUSERBASE',
-            'PYTHONEXECUTABLE',
-            'PYTHONWARNINGS',
-            'PYTHONFAULTHANDLER',
-            'PYTHONTRACEMALLOC',
-            'PYTHONPROFILEIMPORTTIME',
-            'PYTHONASYNCIODEBUG',
-            'PYTHONMALLOC',
-            'PYTHONMALLOCSTATS',
-            'PYTHONLEGACYWINDOWSFSENCODING',
-            'PYTHONLEGACYWINDOWSSTDIO',
-            'PYTHONCOERCECLOCALE',
-            'PYTHONDEVMODE',
-            'PYTHONUTF8',
-            'PYTHONWARNDEFAULTENCODING',
-            'PYTHONNODEBUGRANGES',
-            'PYTHONPERFSUPPORT',
-            'PYTHON_PERF_JIT_SUPPORT',
-            'PYTHON_DISABLE_REMOTE_DEBUG',
-            'PYTHON_CPU_COUNT',
-            'PYTHON_FROZEN_MODULES',
-            'PYTHON_COLORS',
-            'PYTHON_BASIC_REPL',
-            'PYTHON_HISTORY',
-            'PYTHON_GIL',
-            'PYTHON_THREAD_INHERIT_CONTEXT',
-            'PYTHON_CONTEXT_AWARE_WARNINGS',
-            'PYTHON_JIT',
-            'PYTHON_TLBC',
-            'PYTHONDUMPREFS',
-            'PYTHONDUMPREFSFILE',
-            'PYTHON_PRESITE',
-        )
-
-        env_data = {}
-        for var_name in sorted(python_vars):
-            value = os.getenv(var_name)
-            if value is not None:
-                env_data[var_name] = value
-
-        return MappingProxyType(env_data)
-
     def to_dict(self) -> 'report.ImmutablePythonInfoData':
         """Get the Python information dictionary.
 
@@ -400,3 +334,52 @@ class PythonInfo:
             the Python information.
         """
         return cast('report.ImmutablePythonInfoData', self._dict_cache)
+
+    def _python_xoptions(self) -> CoreDataMapping[str | bool]:
+        xoptions = getattr(sys, '_xoptions', {})
+        output: dict[str, str | bool] = {}
+        for key, value in sorted(xoptions.items()):
+            output[str(key)] = value
+        return CoreDataMapping(output)
+
+    def _python_sys_flags(self) -> CoreDataMapping[int]:
+        output: dict[str, int] = {}
+        sys_flags = sys.flags
+
+        for flag_name in sorted(self._flag_map().keys()):
+            flag_value: int | _NonExistentFlag = getattr(sys_flags, flag_name, _NO_FLAG_SET)
+            if isinstance(flag_value, _NonExistentFlag):
+                continue
+            output[flag_name] = int(flag_value)
+
+        return CoreDataMapping(output)
+
+    def _python_gil_is_enabled(self) -> bool | None:
+            gil_state = getattr(sys, '_is_gil_enabled', None)
+            if callable(gil_state):
+                return bool(gil_state())
+            return None
+
+    def _sysconfig_config_args(self) -> str | None:
+        config_args = sysconfig.get_config_var('CONFIG_ARGS')
+        if config_args is None:
+            return None
+        return str(config_args)
+
+    def _sysconfig_flag(self, name: str) -> bool | None:
+        value = sysconfig.get_config_var(name)
+        if value is None:
+            return None
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, int):
+            return value != 0
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized == '':
+                return None
+            if normalized in {'0', 'false', 'no', 'off'}:
+                return False
+            if normalized in {'1', 'true', 'yes', 'on'}:
+                return True
+        return bool(value)

@@ -80,9 +80,7 @@ class ImmutableVCSInfoData(ReportElementTypedDict):
     hash_id: NotRequired[str]
     __immutable__: NotRequired[Never]  # Marker to indicate immutability
 
-
 # --- For data used as OUTPUT (e.g., from `to_dict`) ---
-
 
 class VCSInfoDict(ReportElementTypedDict):
     """Typed dictionary for the JSON representation of a V1 VCSInfo (OUTPUT).

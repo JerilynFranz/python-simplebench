@@ -17,7 +17,25 @@ from simplebench.validators import (
     validate_string_with_regex,
 )
 
+from ..metric import Metric
+
 __all__: list[str] = []
+
+
+def metric(value: Metric) -> Metric:
+    """Validates that metric is a Metric instance.
+
+    :param Metric value: The value to validate.
+    :return Metric: The validated Metric instance.
+    :raise SimpleBenchTypeError: If the value is not a Metric instance.
+    """
+    if not isinstance(value, Metric):
+        raise SimpleBenchTypeError(
+            f'metric must be of type Metric, got {type(value)}',
+            tag=_StatsBlockErrorTag.INVALID_METRIC_TYPE,
+        )
+    return value
+
 
 _HASH_ID_REGEX: re.Pattern[str] = re.compile(r'^[a-f0-9]{64}$')
 """Regex pattern for validating hash IDs.
@@ -56,49 +74,6 @@ def hash_id(value: str) -> str:
         _HASH_ID_REGEX,
         _StatsBlockErrorTag.INVALID_HASH_ID_TYPE,  # impossible to trigger the type error here
         _StatsBlockErrorTag.INVALID_HASH_ID_VALUE,
-    )
-
-
-def timer(value: str) -> str:
-    """Validate the timer.
-
-    It must be a string, but it can be empty. If it is not empty,
-    it will be stripped of leading and trailing whitespace.
-
-    :param str value: The timer string to validate.
-    :return str: The validated timer string.
-    :raise SimpleBenchTypeError: If the timer is not a string.
-    :raises SimpleBenchValueError: If the timer string is invalid.
-    """
-    return validate_string(
-        value,
-        'timer',
-        _StatsBlockErrorTag.INVALID_TIMER_TYPE,
-        _StatsBlockErrorTag.INVALID_TIMER_VALUE,
-        allow_blank=True,
-        allow_empty=True,
-        strip=True,
-    )
-
-
-def description(value: str) -> str:
-    """Validates that description is a string.
-
-    .. note::
-        The description can be empty and will be stripped of leading
-        and trailing whitespace.
-
-    :param str value: The value to validate.
-    :return str: The validated string value.
-    :raise SimpleBenchTypeError: If the value is not a string.
-    """
-    return validate_string(
-        value,
-        'description',
-        _StatsBlockErrorTag.INVALID_DESCRIPTION_TYPE,
-        _StatsBlockErrorTag.INVALID_DESCRIPTION_VALUE,
-        allow_blank=True,
-        strip=True,
     )
 
 
@@ -230,24 +205,6 @@ def measurements(value: Sequence[float] | Values | None) -> Values | None:
     return Values(value)
 
 
-def name(value: str) -> str:
-    """Validates that name is a non-blank string.
-
-    :param str value: The value to validate.
-    :return str: The validated string value.
-    :raise SimpleBenchTypeError: If the value is not a string.
-    :raise SimpleBenchValueError: If the value is blank.
-    """
-    return validate_string(
-        value, 'name',
-        _StatsBlockErrorTag.INVALID_NAME_TYPE,
-        _StatsBlockErrorTag.INVALID_NAME_VALUE,
-        allow_blank=False,
-        allow_empty=False,
-        strip=True,
-    )
-
-
 def rounds(value: int) -> int:
     """Validates that rounds is a positive integer.
 
@@ -374,40 +331,6 @@ def relative_stdev(value: float | None, measurements_value: Values | None) -> fl
     )
 
 
-def scale(value: float) -> float:
-    """Validate that scale is a positive floating point number (greater than 0).
-
-    :param float value: The value to validate.
-    :return float: The validated positive floating point value.
-    :raise SimpleBenchTypeError: If the value is not a float.
-    :raise SimpleBenchValueError: If the value is not positive.
-    """
-    return validate_positive_float(
-        value, 'scale', _StatsBlockErrorTag.INVALID_SCALE_TYPE, _StatsBlockErrorTag.INVALID_SCALE_VALUE
-    )
-
-
-def semantic_type(value: str) -> str:
-    """Validate that semantic_type is a valid namespaced identifier
-
-    A namespaced identifier is a string in the format "namespace::identifier"
-    where "namespace" and "identifier" are non-blank strings beginning with a letter,
-    followed by any combination of letters, digits, or underscores and ending with
-    either a letter or a digit.
-
-    :param str value: The value to validate.
-    :return str: The validated namespaced identifier.
-    :raise SimpleBenchTypeError: If the value is not a string.
-    :raise SimpleBenchValueError: If the value is not a valid namespaced identifier.
-    """
-    return validate_namespaced_identifier(
-        value,
-        'semantic_type',
-        _StatsBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
-        _StatsBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE,
-    )
-
-
 def stdev(value: float | None, measurements_value: Values | None) -> float | None:
     """Validates that stdev is a float or None.
 
@@ -438,21 +361,6 @@ def stdev(value: float | None, measurements_value: Values | None) -> float | Non
         _StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_TYPE,
         _StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_VALUE,
     )
-
-
-def unit(value: str) -> str:
-    """Validates that unit is a non-blank string.
-
-    :param str value: The value to validate.
-    :return str: The validated string value.
-    :raise SimpleBenchTypeError: If the value is not a string.
-    :raise SimpleBenchValueError: If the value is blank or empty.
-    """
-    return validate_string(
-        value, 'unit',
-        _StatsBlockErrorTag.INVALID_UNIT_TYPE,
-        _StatsBlockErrorTag.INVALID_UNIT_VALUE,
-        allow_blank=False, allow_empty=False, strip=True)
 
 
 def drift_index(value: float | None, measurements_value: Values | None) -> float | None:

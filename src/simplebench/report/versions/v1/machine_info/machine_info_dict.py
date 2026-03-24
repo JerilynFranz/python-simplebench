@@ -18,26 +18,26 @@ from collections.abc import Sequence
 from simplebench.report.base._report_element_typed_dict import ReportElementTypedDict
 from simplebench.simplebench_types import Never, NotRequired, Required
 
-from ..cpu_info.typeddict_types import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
-from ..environment_info.typeddict_types import (
+from ..cpu_info.cpu_info_dict import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from ..environment_info.environoment_info_dict import (
     EnvironmentInfoData,
     EnvironmentInfoDict,
     ImmutableEnvironmentInfoData,
     ImmutableEnvironmentInfoDict,
 )
-from ..memory_info.typeddict_types import (
+from ..memory_info.memory_info_dict import (
     ImmutableMemoryInfoData,
     ImmutableMemoryInfoDict,
     MemoryInfoData,
     MemoryInfoDict,
 )
-from ..python_info.typeddict_types import (
+from ..python_info.python_info_dict import (
     ImmutablePythonInfoData,
     ImmutablePythonInfoDict,
     PythonInfoData,
     PythonInfoDict,
 )
-from ..system_info.typeddict_types import (
+from ..system_info.system_info_dict import (
     ImmutableSystemInfoData,
     ImmutableSystemInfoDict,
     SystemInfoData,

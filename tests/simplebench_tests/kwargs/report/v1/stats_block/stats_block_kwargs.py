@@ -1,9 +1,11 @@
 """KWArgs subclass for StatsBlock.__init__."""
 
 from collections.abc import Sequence
-from simplebench.report.versions.v1 import StatsBlock
+
+from simplebench.report.versions.v1 import Metric, StatsBlock
 from simplebench.simplebench_types import Values
-from simplebench_tests.kwargs import KWArgs, NoDefaultValue, NO_DEFAULT_VALUE
+from simplebench_tests.kwargs import NO_DEFAULT_VALUE, KWArgs, NoDefaultValue
+
 
 class StatsBlockKWArgs(KWArgs):
     """KWArgs for StatsBlock.__init__"""
@@ -13,11 +15,9 @@ class StatsBlockKWArgs(KWArgs):
             name: str | NoDefaultValue = NO_DEFAULT_VALUE,
             description: str | NoDefaultValue = NO_DEFAULT_VALUE,
             semantic_type: str | NoDefaultValue = NO_DEFAULT_VALUE,
-            unit: str | NoDefaultValue = NO_DEFAULT_VALUE,
-            scale: float | NoDefaultValue = NO_DEFAULT_VALUE,
+            metric: Metric | NoDefaultValue = NO_DEFAULT_VALUE,
             iterations: int | NoDefaultValue = NO_DEFAULT_VALUE,
             rounds: int | NoDefaultValue = NO_DEFAULT_VALUE,
-            timer: str | NoDefaultValue = NO_DEFAULT_VALUE,
             mean: float | NoDefaultValue = NO_DEFAULT_VALUE,
             median: float | NoDefaultValue = NO_DEFAULT_VALUE,
             minimum: float | NoDefaultValue = NO_DEFAULT_VALUE,
@@ -53,8 +53,7 @@ class StatsBlockKWArgs(KWArgs):
         :param str name: The name of the stats block.
         :param str description: The description.
         :param str semantic_type: The semantic type of the stats block.
-        :param str unit: The unit of measurement.
-        :param float scale: The scale factor.
+        :param Metric metric: The Metric object associated with the stats block.
         :param int | None iterations: The number of iterations. (exclusive with `measurements`)
         :param int rounds: The number of rounds in the stats block.
         :param str timer: The timer used for measurements.

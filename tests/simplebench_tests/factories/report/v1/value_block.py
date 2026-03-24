@@ -5,6 +5,19 @@ from simplebench.report.versions import v1 as report
 from simplebench.validators import is_typed_dict_mimic
 from simplebench_tests.kwargs.report.v1 import ValueBlockKWArgs
 
+_METRIC = report.Metric(
+    label='TESTMETRIC',
+    title='test_metric',
+    description='test metric description',
+    metric_type=report.MetricType(
+        label='TESTMETRICTYPE',
+        description='test_metric_type',
+        semantic_type='test::metric_type',
+        unit='seconds',
+        scale=1.0,
+        category=report.MetricCategory.VALUE,)
+)
+
 
 @cache
 def value_block_kwargs() -> ValueBlockKWArgs:
@@ -17,9 +30,7 @@ def value_block_kwargs() -> ValueBlockKWArgs:
     return ValueBlockKWArgs(
         hash_id=data['hash_id'],  # type: ignore[call-arg]
         semantic_type=data['semantic_type'],
-        timer=data['timer'], # type: ignore[call-arg]
-        unit=data['unit'],
-        scale=data['scale'],
+        metric=_METRIC,
         value=data['value'],
     )
 
@@ -33,7 +44,6 @@ def value_block() -> report.ValueBlock:
     """
     return report.ValueBlock(**value_block_kwargs())
 
-"""Factories for creating report ValueBlockData instances with dummy data for testing."""
 
 def value_block_data() -> report.ValueBlockData:
     """ValueBlockData factory for testing purposes.
@@ -43,10 +53,7 @@ def value_block_data() -> report.ValueBlockData:
     """
     info = report.ValueBlockData(
         hash_id='c' * 64,
-        type=report.ValueBlockSchema.TYPE,
-        version=report.ValueBlockSchema.VERSION,
         semantic_type='test::value',
-        timer='test_timer',
         unit='seconds',
         scale=1.0,
         value=123.456,
@@ -56,6 +63,7 @@ def value_block_data() -> report.ValueBlockData:
     if not is_typed_dict_mimic(info, report.ValueBlockData):
         raise TypeError(f'Generated info does not conform to ValueBlockData TypedDict: {info!r}')
     return info
+
 
 def no_hash_id_value_block_data() -> report.ValueBlockData:
     """ValueBlockData factory for testing purposes.
@@ -68,5 +76,3 @@ def no_hash_id_value_block_data() -> report.ValueBlockData:
     if not is_typed_dict_mimic(info, report.ValueBlockData):
         raise TypeError(f'Generated info does not conform to ValueBlockData TypedDict: {info!r}')
     return info
-
-

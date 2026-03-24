@@ -39,11 +39,13 @@ from math import sqrt
 from types import MappingProxyType
 from typing import Any, overload
 
-from simplebench.exceptions import SimpleBenchValueError
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.report.base import BaseStatsBlock, JSONSchema
 from simplebench.simplebench_types._values._values import Values
 
+from ..metric import Metric
+from ..metrics import Metrics
 from . import _validate
 from .stats_block_dict import ImmutableStatsBlockDict, StatsBlockData
 from .stats_block_schema import StatsBlockSchema
@@ -61,11 +63,10 @@ class StatsBlock(BaseStatsBlock):
     https://raw.githubusercontent.com/JerilynFranz/python-simplebench/main/schemas/v1/stats-block.json
 
     :hash_id str: The hash identifier for the stats block.
-    :param str name: The name of the stats block.
-    :param str description: The description of the stats block.
-    :param str semantic_type: The semantic type of the stats block.
-    :param str unit: The unit of measurement for the stats block.
-    :param float scale: The scale factor for the stats block.
+
+    Properties:
+
+    :param Metric metric: The Metric instance associated with this stats block.
     :param int iterations: The number of iterations measured for the stats block.
     :param int rounds: The number of rounds in each iteration measured.
     :param float mean: The mean value of the stats block.
@@ -125,14 +126,8 @@ class StatsBlock(BaseStatsBlock):
 
     __slots__ = (
         '_hash_id',
-        '_name',
-        '_description',
-        '_semantic_type',
-        '_unit',
-        '_scale',
         '_iterations',
         '_rounds',
-        '_timer',
         '_mean',
         '_median',
         '_minimum',
@@ -151,25 +146,15 @@ class StatsBlock(BaseStatsBlock):
         self,
         *,
         hash_id: str = '',
-        name: str,
-        semantic_type: str,
-        description: str = '',
-        unit: str,
-        scale: float,
+        metric: Metric,
         rounds: int,
-        timer: str = '',
         measurements: Sequence[float] | Values,
     ) -> None:
         """Initialize a StatsBlock by calculating statistics from raw measurements.
 
         :param str hash_id: The hash identifier for the stats block.
-        :param str name: The name of the stats block.
-        :param str description: The description of the stats block.
-        :param str semantic_type: The semantic type of the stats block.
-        :param str unit: The unit of measurement for the stats block.
-        :param float scale: The scale factor for the stats block.
+        :param Metric metric: The Metric instance associated with this stats block.
         :param int rounds: The number of rounds in the stats block.
-        :param str timer: The timer used for measurements.
         :param Sequence[float] | Values | None measurements: The list of raw measurements for the stats block.
         """
 
@@ -178,14 +163,9 @@ class StatsBlock(BaseStatsBlock):
         self,
         *,
         hash_id: str = '',
-        name: str,
-        description: str = '',
-        semantic_type: str,
-        unit: str,
-        scale: float,
+        metric: Metric,
         iterations: int,
         rounds: int,
-        timer: str = '',
         mean: float,
         median: float,
         minimum: float,
@@ -198,14 +178,9 @@ class StatsBlock(BaseStatsBlock):
     ) -> None:
         """Initialize a StatsBlock with pre-calculated statistical values.
 
-        :param str name: The name of the stats block.
-        :param str description: The description of the stats block.
-        :param str semantic_type: The semantic type of the stats block.
-        :param str unit: The unit of measurement for the stats block.
-        :param float scale: The scale factor for the stats block.
+        :param Metric metric: The Metric instance associated with this stats block.
         :param int | None iterations: The number of iterations in the stats block.
         :param int rounds: The number of rounds in the stats block.
-        :param str timer: The timer used for measurements.
         :param float | None mean: The mean value of the stats block.
         :param float | None median: The median value of the stats block.
         :param float | None minimum: The minimum value of the stats block.
@@ -221,14 +196,9 @@ class StatsBlock(BaseStatsBlock):
         self,
         *,
         hash_id: str = '',
-        name: str,
-        description: str = '',
-        semantic_type: str,
-        unit: str,
-        scale: float,
+        metric: Metric,
         iterations: int | None = None,
         rounds: int,
-        timer: str = '',
         mean: float | None = None,
         median: float | None = None,
         minimum: float | None = None,
@@ -262,11 +232,6 @@ class StatsBlock(BaseStatsBlock):
             - percentiles
 
         :param str hash_id: The hash identifier for the stats block.
-        :param str name: The name of the stats block.
-        :param str description: The description.
-        :param str semantic_type: The semantic type of the stats block.
-        :param str unit: The unit of measurement.
-        :param float scale: The scale factor.
         :param int | None iterations: The number of iterations. (exclusive with `measurements`)
         :param int rounds: The number of rounds in the stats block.
         :param str timer: The timer used for measurements.
@@ -292,20 +257,11 @@ class StatsBlock(BaseStatsBlock):
         included in the exported dictionary representation of the StatsBlock or
         considered part of the object's identity for equality or hashing."""
 
-        self._name: str = _validate.name(name)
-        """The name of the stats block."""
-        self._description: str = _validate.description(description)
-        """The description of the stats block."""
-        self._semantic_type: str = _validate.semantic_type(semantic_type)
-        """The semantic type of the stats block."""
-        self._unit: str = _validate.unit(unit)
-        """The unit of measurement."""
-        self._scale: float = _validate.scale(scale)
-        """The scale factor."""
+        self._metric: Metric = _validate.metric(metric)
+        """The Metric instance associated with this stats block."""
         self._rounds: int = _validate.rounds(rounds)
         """The number of rounds per iteration."""
-        self._timer: str = _validate.timer(timer)
-        """The timer used for measurements."""
+
         self._hash_id: str = _validate.hash_id(hash_id)
         """The hash identifier for the stats block."""
 
@@ -337,7 +293,7 @@ class StatsBlock(BaseStatsBlock):
         self._validate_stats_block_consistency()
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> 'StatsBlock':
+    def from_dict(cls, data: Mapping[str, Any], metrics_registry: 'Metrics') -> 'StatsBlock':
         """Create a StatsBlock object from a dictionary representation
         that conforms to the version 1 :class:`StatsBlockSchema`.
 
@@ -348,16 +304,58 @@ class StatsBlock(BaseStatsBlock):
         the statistical parameters must be provided directly in the dictionary.
 
         :param Any data: A dictionary representation of a StatsBlock.
+        :param Metrics metrics_registry: A Metrics object for validating metric references.
         :return StatsBlock: A StatsBlock object created from the dictionary.
         :raise SimpleBenchTypeError: If any parameter in the dictionary is of an invalid type.
+        :raise SimpleBenchTypeError: If the metrics registry is not of type Metrics.
+        :raise SimpleBenchTypeError: If the data parameter is not a mapping type.
         :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.
+        :raise SimpleBenchValueError: If the metric reference in the dictionary is missing, invalid,
+        or not found in the metrics registry.
+        :raise SimpleBenchValueError: If the input data does not conform to the expected schema.
+        :raise SimpleBenchValueError: If the input data contains unexpected extra keys or is missing required keys.
         """
+        if not isinstance(data, Mapping):
+            raise SimpleBenchTypeError(
+                f"Invalid data type for StatsBlock: expected Mapping, got {type(data).__name__}.",
+                tag=_StatsBlockErrorTag.INVALID_DATA_TYPE,
+            )
+        if not isinstance(metrics_registry, Metrics):
+            raise SimpleBenchTypeError(
+                f"Invalid metrics registry type: expected Metrics, got {type(metrics_registry).__name__}.",
+                tag=_StatsBlockErrorTag.INVALID_METRICS_REGISTRY_TYPE,
+            )
         allowed_keys = cls._data_params()
+
+        data = dict(data)  # Make a shallow copy to avoid mutating the input
+
+        # Lookup the metric in the metrics registry using the hash_id from the input data
+        # as a foreign key. This allows us to convert the metric hash_id string from the input data
+        # into the corresponding Metric instance from the metrics registry, which is required for
+        # constructing the ValueBlock instance.
+        if 'metric' not in data:
+            raise SimpleBenchValueError(
+                "Missing required field 'metric' in data for ValueBlock.",
+                tag=_StatsBlockErrorTag.MISSING_METRIC_FIELD
+            )
+        metric_hash_id: str = data['metric']
+        if not isinstance(metric_hash_id, str):
+            raise SimpleBenchTypeError(
+                f"Invalid type for 'metric' field: expected str, got {type(metric_hash_id).__name__}.",
+                tag=_StatsBlockErrorTag.INVALID_METRIC_HASH_ID,
+            )
+        if metric_hash_id not in metrics_registry:
+            raise SimpleBenchValueError(
+                f"Invalid 'metric' field value: '{metric_hash_id}' not found in metrics registry.",
+                tag=_StatsBlockErrorTag.UNKNOWN_METRIC_HASH_ID,
+            )
+        data['metric'] = metrics_registry[metric_hash_id]
+
         kwargs = cls.import_data(
             data=data,
             allowed_fields=allowed_keys,
             skip_fields={'version', 'type'},
-            optional_fields={'description', 'version', 'type', 'hash_id', 'timer'},
+            optional_fields={'description', 'version', 'type', 'hash_id'},
             defaults={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
             process_as={'percentiles': Values},
@@ -412,12 +410,12 @@ class StatsBlock(BaseStatsBlock):
         return self._hash_id
 
     @property
-    def name(self) -> str:
-        """Get the name of the stats block.
+    def title(self) -> str:
+        """Get the title of the stats block.
 
-        :return: The name of the stats block.
+        :return: The title of the stats block.
         """
-        return self._name
+        return self.metric.title
 
     @property
     def description(self) -> str:
@@ -425,7 +423,7 @@ class StatsBlock(BaseStatsBlock):
 
         :return: The description of the stats block.
         """
-        return self._description
+        return self.metric.description
 
     @property
     def semantic_type(self) -> str:
@@ -456,7 +454,15 @@ class StatsBlock(BaseStatsBlock):
 
         :return: The semantic type of the stats block.
         """
-        return self._semantic_type
+        return self.metric.semantic_type
+
+    @property
+    def metric(self) -> Metric:
+        """Get the Metric instance associated with this stats block.
+
+        :return: The Metric instance associated with this stats block.
+        """
+        return self._metric
 
     @property
     def unit(self) -> str:
@@ -464,7 +470,7 @@ class StatsBlock(BaseStatsBlock):
 
         :return: The unit of measurement.
         """
-        return self._unit
+        return self.metric.unit
 
     @property
     def scale(self) -> float:
@@ -473,7 +479,7 @@ class StatsBlock(BaseStatsBlock):
         :return: The scale factor.
         :raise SimpleBenchTypeError: If scale is not a float.
         """
-        return self._scale
+        return self.metric.scale
 
     @property
     def iterations(self) -> int:
@@ -628,7 +634,12 @@ class StatsBlock(BaseStatsBlock):
         :return float: The drift index.
         """
         if self._drift_index is None:
-            data = self._measurements  # type: ignore  # validated in __init__
+            data = self._measurements
+            if data is None:
+                raise SimpleBenchValueError(
+                    'Cannot calculate drift index because measurements are not set',
+                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+                )
             try:
                 self._drift_index = float(statistics.correlation(data, range(len(data))))
             except statistics.StatisticsError:
@@ -655,7 +666,12 @@ class StatsBlock(BaseStatsBlock):
         :return float: The lag-1 autocorrelation.
         """
         if self._autocorrelation is None:
-            data = self._measurements  # type: ignore  # validated in __init__
+            data = self._measurements
+            if data is None:
+                raise SimpleBenchValueError(
+                    'Cannot calculate autocorrelation because measurements are not set',
+                    tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
+                )
             try:
                 self._autocorrelation = float(statistics.correlation(data[:-1], data[1:]))
             except statistics.StatisticsError:
@@ -679,14 +695,6 @@ class StatsBlock(BaseStatsBlock):
         if self._percentiles is None:
             self._percentiles = self._calculate_percentiles()
         return self._percentiles
-
-    @property
-    def timer(self) -> str:
-        """Get the timer used for measurements.
-
-        :return: The timer used for measurements.
-        """
-        return self._timer
 
     def _calculate_percentiles(self) -> Values:
         """Helper to calculate percentiles from the measurements.

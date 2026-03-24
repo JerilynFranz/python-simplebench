@@ -392,7 +392,7 @@ def kwargs_class_matches_modeled_call(
         stripped_kwargs_annotation = _strip_novalue_and_none(kwargs_annotation)
         log.debug('Stripped kwargs annotation for parameter "%s": %r', param_name, stripped_kwargs_annotation)
 
-        if stripped_modeled_annotation != stripped_kwargs_annotation:
+        if f'{stripped_modeled_annotation!r}' != f'{stripped_kwargs_annotation!r}':
             log.debug('Parameter "%s" type mismatch: %s has %r, but %s has %r.',
                       param_name, kwargs_class.__name__, stripped_kwargs_annotation,
                       modeled_call.__name__, stripped_modeled_annotation)

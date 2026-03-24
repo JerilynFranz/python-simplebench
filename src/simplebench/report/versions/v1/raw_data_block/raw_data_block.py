@@ -4,9 +4,13 @@ from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import Any
 
+from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
+from simplebench.report._error_tags import _RawDataBlockErrorTag
 from simplebench.report.base import BaseRawDataBlock, JSONSchema
 from simplebench.simplebench_types import Values
 
+from ..metric import Metric
+from ..metrics import Metrics
 from . import _validate
 from .raw_data_block_dict import ImmutableRawDataBlockDict, RawDataBlockData
 from .raw_data_block_schema import RawDataBlockSchema
@@ -15,12 +19,7 @@ from .raw_data_block_schema import RawDataBlockSchema
 class RawDataBlock(BaseRawDataBlock):
     """Class representing a raw data block (V1).
     :param str hash_id: The hash ID string for the raw data block.
-    :param str name: The name string for the raw data block. ('name' field in JSON data)
-    :param str semantic_type: The semantic type string for the raw data block. ('type' field in JSON data)
-    :param str description: The description string for the raw data block.
-    :param (str | None) timer: The timer string or None.
-    :param str unit: The unit of measurement.
-    :param float scale: The scale factor.
+    :param Metric metric: The Metric instance associated with this raw data block.
     :param int rounds: The number of rounds per data point.
     :param Values data: The raw data values of the block.
     :raise SimpleBenchTypeError: If any parameter is of incorrect type.
@@ -57,65 +56,73 @@ class RawDataBlock(BaseRawDataBlock):
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
-    __slots__ = ('_hash_id', '_name', '_semantic_type', '_description', '_timer',
-                 '_unit', '_scale', '_rounds', '_iterations', '_data', '_to_dict_cache')
+    __slots__ = ('_hash_id', '_metric', '_rounds', '_iterations', '_data', '_to_dict_cache')
 
     def __init__(
         self,
         *,
         hash_id: str = '',
-        name: str,
-        semantic_type: str,
-        description: str = '',
-        unit: str,
-        scale: float,
+        metric: Metric,
         rounds: int,
-        timer: str = '',
         data: Sequence[int | float] | Values,
     ) -> None:
         """Initialize RawDataBlock class.
 
         :param str hash_id: The hash ID string for the raw data block.
-        :param str name: The name string for the raw data block.
-        :param str description: The description string for the raw data block.
-        :param str semantic_type: The semantic type string for the raw data block.
-        :param str timer: The timer string.
-        :param str unit: The unit of measurement.
-        :param float scale: The scale factor.
+        :param Metric metric: The Metric instance associated with this raw data block.
         :param int rounds: The number of rounds per data point.
         :param Values data: The raw data values of the block.
-        :param str timer: The timer string.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
         self._hash_id: str = _validate.hash_id(hash_id)
-        self._name: str = _validate.name(name)
-        self._description: str = _validate.description(description)
-        self._semantic_type: str = _validate.semantic_type(semantic_type)
-        self._timer: str = _validate.timer(timer)
         self._data: Values = _validate.data(data)
         self._rounds: int = _validate.rounds(rounds)
         self._iterations: int = len(self._data)
-        self._unit: str = _validate.unit(unit)
-        self._scale: float = _validate.scale(scale)
+        self._metric: Metric = _validate.metric(metric)
         if self._hash_id == '':
             self._hash_id = self._hash_id_helper(RawDataBlockData)
         self._to_dict_cache: ImmutableRawDataBlockDict | None = None  # Cache for to_dict output
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> 'RawDataBlock':
+    def from_dict(cls, data: Mapping[str, Any], metrics_registry: Metrics) -> 'RawDataBlock':
         """Create a RawDataBlock instance from a dictionary that represents the
         JSON raw data block. It must conform to the :class:`RawDataBlockSchema`.
 
         :param data: Dictionary containing the JSON raw data block data.
         :return RawDataBlock: A RawDataBlock instance.
         """
+
+        data = dict(data)  # Make a shallow copy to avoid mutating the input
+
+        # Lookup the metric in the metrics registry using the hash_id from the input data
+        # as a foreign key. This allows us to convert the metric hash_id string from the input data
+        # into the corresponding Metric instance from the metrics registry, which is required for
+        # constructing the ValueBlock instance.
+        if 'metric' not in data:
+            raise SimpleBenchValueError(
+                "Missing required field 'metric' in data for ValueBlock.",
+                tag=_RawDataBlockErrorTag.MISSING_METRIC_FIELD
+            )
+        metric_hash_id: str = data['metric']
+        if not isinstance(metric_hash_id, str):
+            raise SimpleBenchTypeError(
+                f"Invalid type for 'metric' field: expected str, got {type(metric_hash_id).__name__}.",
+                tag=_RawDataBlockErrorTag.INVALID_METRIC_HASH_ID,
+            )
+        if metric_hash_id not in metrics_registry:
+            raise SimpleBenchValueError(
+                f"Invalid 'metric' field value: '{metric_hash_id}' not found in metrics registry.",
+                tag=_RawDataBlockErrorTag.UNKNOWN_METRIC_HASH_ID,
+            )
+        data['metric'] = metrics_registry[metric_hash_id]
+
         init_params = cls._data_params()
         kwargs = cls.import_data(
             data=data,
             allowed_fields=init_params,
             skip_fields={'type', 'version'},
-            optional_fields={'timer', 'type', 'version', 'hash_id'},
+            optional_fields={'type', 'version', 'hash_id'},
             defaults={'type': cls.TYPE, 'version': cls.VERSION},
             match_on={'type': cls.TYPE, 'version': cls.VERSION},
             process_as={'data': Values},
@@ -179,12 +186,12 @@ class RawDataBlock(BaseRawDataBlock):
         return self._hash_id
 
     @property
-    def name(self) -> str:
-        """Get the name of the raw data block.
+    def title(self) -> str:
+        """Get the title of the raw data block.
 
-        :return str: The name of the raw data block.
+        :return str: The title of the raw data block.
         """
-        return self._name
+        return self.metric.title
 
     @property
     def description(self) -> str:
@@ -192,7 +199,7 @@ class RawDataBlock(BaseRawDataBlock):
 
         :return str: The description of the raw data block.
         """
-        return self._description
+        return self.metric.description
 
     @property
     def semantic_type(self) -> str:
@@ -200,7 +207,15 @@ class RawDataBlock(BaseRawDataBlock):
 
         :return str: The semantic type value.
         """
-        return self._semantic_type
+        return self.metric.semantic_type
+
+    @property
+    def metric(self) -> Metric:
+        """Get the Metric instance associated with this raw data block.
+
+        :return Metric: The Metric instance associated with this raw data block.
+        """
+        return self._metric
 
     @property
     def unit(self) -> str:
@@ -208,7 +223,7 @@ class RawDataBlock(BaseRawDataBlock):
 
         :return str: The unit of measurement.
         """
-        return self._unit
+        return self.metric.unit
 
     @property
     def scale(self) -> float:
@@ -217,7 +232,7 @@ class RawDataBlock(BaseRawDataBlock):
         :return float: The scale factor.
         :raise SimpleBenchTypeError: If scale is not a float.
         """
-        return self._scale
+        return self.metric.scale
 
     @property
     def rounds(self) -> int:
@@ -234,14 +249,6 @@ class RawDataBlock(BaseRawDataBlock):
         :return int: The number of iterations.
         """
         return self._iterations
-
-    @property
-    def timer(self) -> str | None:
-        """Get the timer.
-
-        :return str | None: The timer.
-        """
-        return self._timer
 
     @property
     def data(self) -> Values:

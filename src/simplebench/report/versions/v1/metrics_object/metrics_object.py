@@ -26,11 +26,13 @@ from simplebench.report._error_tags import _MetricsObjectErrorTag
 from simplebench.simplebench_types import CoreDataMapping, Immutable
 from simplebench.validators import validate_namespaced_identifier, validate_string
 
+from ..metrics import Metrics
 from ..raw_data_block import RawDataBlock
 from ..stats_block import StatsBlock
 from ..value_block import ValueBlock
 from .metrics_object_dict import ImmutableMetricDictTypes
 
+# No '*' imports allowed by policy
 __all__: list[str] = []
 
 MetricItem: TypeAlias = StatsBlock | ValueBlock | RawDataBlock
@@ -95,10 +97,11 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
         self._dict_cache: CoreDataMapping | None = None
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Mapping[str, Any]]) -> 'MetricsObject':
+    def from_dict(cls, data: Mapping[str, Mapping[str, Any]], metrics_registry: 'Metrics') -> 'MetricsObject':
         """Create a Metrics object instance from a dictionary.
 
         :param data: Dictionary containing the JSON results object data.
+        :param metrics_registry: Metrics instance to use for the MetricsObject.
         :return: JSON Metrics object instance.
         """
         supported_metric_types: dict[str, type[MetricItem]] = {
@@ -128,7 +131,7 @@ class MetricsObject(Mapping[str, MetricItem], Immutable):
                 raise SimpleBenchValueError(
                     f'Invalid metric item type: {discriminator_type}', tag=_MetricsObjectErrorTag.INVALID_METRIC_ITEM_TYPE
                 )
-            metrics[validated_metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data)
+            metrics[validated_metric_name] = supported_metric_types[discriminator_type].from_dict(metric_data, metrics_registry)
 
         return cls(metrics)
 

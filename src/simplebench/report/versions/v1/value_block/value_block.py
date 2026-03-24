@@ -25,12 +25,15 @@ from collections.abc import Mapping
 from types import MappingProxyType
 from typing import Any
 
+from simplebench.exceptions import SimpleBenchValueError
+from simplebench.report._error_tags import _ValueBlockErrorTag
 from simplebench.report.base import BaseValueBlock, JSONSchema
 
+from ..metric import Metric
+from ..metrics import Metrics
 from . import _validate
 from .value_block_dict import ImmutableValueBlockDict, ValueBlockData
 from .value_block_schema import ValueBlockSchema
-from ..metric import Metric
 
 __all__: list[str] = []
 
@@ -40,17 +43,10 @@ class ValueBlock(BaseValueBlock):
 
     :param hash_id: The unique hash identifier for the value block.
     :type hash_id: str
-    :param semantic_type: The semantic type string for the value block.
-    :type semantic_type: str
-    :param unit: The unit of measurement.
-    :type unit: str
-    :param scale: The scale factor.
-    :type scale: float
     :param value: The value of the block.
     :type value: float
-    :param timer_metric: The timer metric associated with this value (e.g., 'PERF_COUNTER'). Should be included for
-        any timing-related metrics.
-    :type timer_metric: str | None
+    :param metric: The metric associated with this value block.
+    :type metric: Metric
     :raise SimpleBenchTypeError: If any parameter is of incorrect type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -85,34 +81,27 @@ class ValueBlock(BaseValueBlock):
             cls._init_params_cache = MappingProxyType(params)
         return cls._init_params_cache
 
-    __slots__ = ('_hash_id', '_semantic_type', '_timer', '_metric', '_value', '_dict_cache')
+    __slots__ = ('_hash_id', '_metric', '_value', '_dict_cache')
     """Slots for immutable attributes and cached dictionary representation."""
 
     def __init__(
         self,
         *,
         hash_id: str = '',
-        semantic_type: str,
-        timer_metric: Metric,
         metric: Metric,
-        metrics: Metrics,
         value: float | int,
     ) -> None:
         """Initialize ValueBlock instance.
 
         :param str hash_id: The unique hash identifier for the value block.
             If not provided, it defaults to an empty string and will be computed automatically.
-        :param str semantic_type: The semantic type string for the value block. ('type' field in JSON data)
-        :param str timer_metric: The timer string.
-        :param Metric metric: The metric associated with this value block.
+        :param metric: The metric associated with this value block.
+        :type metric: Metric
         :param float | int value: The value of the block.
         :raise SimpleBenchTypeError: If any parameter is of incorrect type.
         :raise SimpleBenchValueError: If any parameter has an invalid value.
         """
-        self._semantic_type: str = _validate.semantic_type(semantic_type)
-        self._timer: str = _validate.timer(timer)
-        self._unit: str = _validate.unit(unit)
-        self._scale: float = _validate.scale(scale)
+        self._metric: Metric = _validate.metric(metric)
         self._value: float = _validate.value(value)
         self._hash_id: str = _validate.hash_id(hash_id)
         if self._hash_id == '':
@@ -120,7 +109,7 @@ class ValueBlock(BaseValueBlock):
         self._dict_cache: ImmutableValueBlockDict = self._to_dict_helper(ImmutableValueBlockDict)
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> 'ValueBlock':  # type: ignore[override]
+    def from_dict(cls, data: Mapping[str, Any], metrics_registry: 'Metrics') -> 'ValueBlock':  # type: ignore[override]
         """Create a ValueBlock instance from a dictionary.
 
         The input dictionary must conform to the JSON schema for ValueBlock V1,
@@ -129,16 +118,42 @@ class ValueBlock(BaseValueBlock):
         :attr:`ValueBlockSchema.VERSION` constants.
 
         :param ValueBlockData data: Dictionary containing the JSON results data.
+        :param Metrics metrics_registry: Metrics instance to use for the ValueBlock.
         :return ValueBlock: A ValueBlock instance.
         """
         init_params = dict(cls._data_params())
         init_params['type'] = str
         init_params['version'] = int
+
+        data = dict(data)  # Make a shallow copy to avoid mutating the input
+
+        # Lookup the metric in the metrics registry using the hash_id from the input data
+        # as a foreign key. This allows us to convert the metric hash_id string from the input data
+        # into the corresponding Metric instance from the metrics registry, which is required for
+        # constructing the ValueBlock instance.
+        if 'metric' not in data:
+            raise SimpleBenchValueError(
+                "Missing required field 'metric' in data for ValueBlock.",
+                tag=_ValueBlockErrorTag.MISSING_METRIC_FIELD
+            )
+        metric_hash_id: str = data['metric']
+        if not isinstance(metric_hash_id, str):
+            raise SimpleBenchValueError(
+                f"Invalid type for 'metric' field: expected str, got {type(metric_hash_id).__name__}.",
+                tag=_ValueBlockErrorTag.INVALID_METRIC_HASH_ID,
+            )
+        if metric_hash_id not in metrics_registry:
+            raise SimpleBenchValueError(
+                f"Invalid 'metric' field value: '{metric_hash_id}' not found in metrics registry.",
+                tag=_ValueBlockErrorTag.UNKNOWN_METRIC_HASH_ID,
+            )
+        data['metric'] = metrics_registry[metric_hash_id]
+
         kwargs = cls.import_data(
             data=data,
             allowed_fields=init_params,
             skip_fields={'type', 'version'},
-            optional_fields={'timer', 'type', 'version', 'hash_id'},
+            optional_fields={'type', 'version', 'hash_id'},
             defaults={'type': cls.TYPE, 'version': cls.VERSION},
             match_on={'type': cls.TYPE, 'version': cls.VERSION},
         )
@@ -181,37 +196,38 @@ class ValueBlock(BaseValueBlock):
         return self.to_dict().as_json()  # type: ignore
 
     @property
+    def metric(self) -> Metric:
+        """Get the Metric instance associated with this ValueBlock.
+
+        :return: The Metric instance associated with this ValueBlock.
+        """
+        return self._metric
+
+    @property
     def semantic_type(self) -> str:
         """Get the semantic type value.
 
         :return: The semantic type value.
         """
-        return self._semantic_type
-
-    @property
-    def timer_metric(self) -> str | None:
-        """Get the timer metric value.
-
-        :return: The timer metric value or None.
-        """
-        return self._timer_metric if self._timer_metric != '' else None
+        return self.metric.semantic_type
 
     @property
     def unit(self) -> str:
         """Get the unit of measurement.
 
         :return: The unit of measurement.
+        :rtype: str
         """
-        return self._unit
+        return self.metric.unit
 
     @property
     def scale(self) -> float:
         """Get the scale factor.
 
         :return: The scale factor.
-        :raise SimpleBenchTypeError: If scale is not a float.
+        :rtype: float
         """
-        return self._scale
+        return self.metric.scale
 
     @property
     def value(self) -> float:

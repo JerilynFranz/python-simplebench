@@ -206,7 +206,7 @@ class CoreDataSet(Set[T],
         """
         if not isinstance(other, CoreDataSet):
             return False
-        return self._data == other._data
+        return self.hash_id() == other.hash_id()
 
     def hash_id(self) -> str:
         """Return a SHA256 hash of the CoreDataSet content.

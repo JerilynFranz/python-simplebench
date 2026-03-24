@@ -2,6 +2,6 @@
 # ruff: noqa: F401
 
 from .swap_memory import SwapMemoryObject
-from .typeddict_types import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
+from .swap_memory_dict import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 
 __all__: list[str] = []

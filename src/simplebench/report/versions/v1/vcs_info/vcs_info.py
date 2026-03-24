@@ -19,7 +19,7 @@ from typing import Any
 from simplebench.report.base import BaseVCSInfo, JSONSchema
 
 from . import _validate
-from .typeddict_types import ImmutableVCSInfoDict, VCSInfoData
+from .vcs_info_dict import ImmutableVCSInfoDict, VCSInfoData
 from .vcs_info_schema import VCSInfoSchema
 
 __all__: list[str] = []

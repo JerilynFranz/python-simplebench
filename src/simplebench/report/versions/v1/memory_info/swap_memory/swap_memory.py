@@ -14,7 +14,7 @@ from typing import Any
 from simplebench.report.base import BaseSwapMemoryObject
 
 from . import _validate
-from .typeddict_types import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
+from .swap_memory_dict import ImmutableSwapMemoryObjectDict, SwapMemoryObjectDict
 
 __all__: list[str] = []
 

@@ -3,7 +3,7 @@
 
 from .metric_type import MetricType
 from .metric_type_schema import MetricTypeSchema
-from .typed_dict import (
+from .metric_type_dict import (
     AllowedCategoryValues,
     ImmutableMetricTypeData,
     ImmutableMetricTypeDict,

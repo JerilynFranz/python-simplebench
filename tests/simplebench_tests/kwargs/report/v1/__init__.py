@@ -5,6 +5,8 @@ from .cpu_info import CPUInfoKWArgs
 from .environment_info import EnvironmentInfoKWArgs
 from .machine_info import MachineInfoKWArgs
 from .memory_info import MemoryInfoKWArgs, SwapMemoryObjectKWArgs, VirtualMemoryObjectKWArgs
+from .metric import MetricKWArgs
+from .metric_type import MetricTypeKWArgs
 from .python_info import PythonInfoKWArgs
 from .raw_data_block import RawDataBlockKWArgs
 from .report import ReportKWArgs

@@ -12,8 +12,9 @@ class MetricCategory(str, Enum):
     """Type of metric"""
 
     VALUE = 'VALUE'
-    """A metric that is aggregated into a single value for all measurements"""
+    """A metric that is aggregated into a single value for all measurements (e.g., total execution time)."""
     STATS = 'STATS'
     """A metric that provides statistical information for measurements, such as the average response time."""
     RAW_DATA = 'RAW_DATA'
-    """A metric that represents raw measurements without any aggregation or statistical processing."""
+    """A metric that represents raw measurements without any aggregation or statistical
+    processing (e.g., individual response times)."""

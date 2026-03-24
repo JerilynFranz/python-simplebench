@@ -53,11 +53,11 @@ class ReportSchema(JSONSchema):
                 'type': 'object',
                 'additionalProperties': {'type': 'string'},
             },
-            'metrics': {
+             'metrics': {
                 'title': 'Metrics',
                 'description': 'Mapping of metric labels to their corresponding Metric definitions. Each metric label corresponds to a specific metric used in the benchmark.',
                 'type': 'object',
-                'items': {'$ref': 'metrics.json'},
+                'additionalProperties': {'$ref': 'metric.json'},
                 'minProperties': 1,
             },
             'results': {

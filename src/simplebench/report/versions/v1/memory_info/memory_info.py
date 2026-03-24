@@ -22,7 +22,7 @@ from simplebench.report.base import BaseMemoryInfo, JSONSchema
 from . import _validate
 from .memory_info_schema import MemoryInfoSchema
 from .swap_memory import SwapMemoryObject
-from .typeddict_types import ImmutableMemoryInfoDict, MemoryInfoData, MemoryInfoDict
+from .memory_info_dict import ImmutableMemoryInfoDict, MemoryInfoData, MemoryInfoDict
 from .virtual_memory import VirtualMemoryObject
 
 __all__: list[str] = []

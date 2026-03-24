@@ -8,11 +8,30 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _RawDataBlockErrorTag
 from simplebench.simplebench_types import Values
 from simplebench.validators import (
-    validate_namespaced_identifier,
-    validate_positive_float,
     validate_string,
     validate_string_with_regex,
 )
+
+from ..metric import Metric
+
+
+def metric(value: Any) -> Metric:
+    """Validate the metric.
+
+    The metric must be an instance of the Metric class.
+
+    :param Any value: The metric to validate.
+    :return Metric: The validated Metric instance.
+    :raise SimpleBenchTypeError: If the metric is not an instance of Metric.
+    """
+    from ..metric import Metric  # Import here to avoid circular import issues
+    if not isinstance(value, Metric):
+        raise SimpleBenchTypeError(
+            f"Expected Metric instance for metric, got {type(value).__name__}",
+            tag=_RawDataBlockErrorTag.INVALID_METRIC_TYPE,
+        )
+    return value
+
 
 _HASH_ID_REGEX = re.compile(r'^[0-9a-f]{64}$')
 """Regular expression for validating hash_id strings.
@@ -52,45 +71,6 @@ def hash_id(value: str) -> str:
         _RawDataBlockErrorTag.INVALID_HASH_ID_VALUE,
     )
 
-def name(value: str) -> str:
-    """Validate the name.
-
-    The name must be a non-blank string.
-
-    :param str value: The name string to validate.
-    :return str: The validated name string.
-    :raise SimpleBenchTypeError: If the name is not a string.
-    :raise SimpleBenchValueError: If the name is blank.
-    """
-    return validate_string(
-        value,
-        'name',
-        _RawDataBlockErrorTag.INVALID_NAME_TYPE,
-        _RawDataBlockErrorTag.INVALID_NAME_VALUE,
-        allow_blank=False,
-    )
-
-
-def description(value: str) -> str:
-    """Validate the description.
-
-    The description must be a string (can be blank).
-
-    :param str value: The description string to validate.
-    :return str: The validated description string.
-    :raise SimpleBenchTypeError: If the description is not a string.
-    :raise SimpleBenchValueError: If the description is invalid.
-    """
-    return validate_string(
-        value,
-        'description',
-        _RawDataBlockErrorTag.INVALID_DESCRIPTION_TYPE,
-        _RawDataBlockErrorTag.INVALID_DESCRIPTION_VALUE,
-        allow_blank=True,
-        allow_empty=True,
-        strip=True,
-    )
-
 
 def rounds(value: int) -> int:
     """Validate that rounds is a positive integer."""
@@ -120,71 +100,3 @@ def data(value: Values | Sequence[int | float]) -> Values:
     if isinstance(value, Values):
         return value
     return Values(value)
-
-
-def scale(value: float) -> float:
-    """Validate that scale is a positive floating point number (greater than 0).
-
-    :param float value: The value to validate.
-    :return float: The validated positive floating point value.
-    :raise SimpleBenchTypeError: If the value is not a float.
-    :raise SimpleBenchValueError: If the value is not positive.
-    """
-    return validate_positive_float(
-        value, 'scale', _RawDataBlockErrorTag.INVALID_SCALE_TYPE, _RawDataBlockErrorTag.INVALID_SCALE_VALUE
-    )
-
-
-def semantic_type(value: Any) -> str:
-    """Validate the semantic_type
-
-    The semantic_type must be a valid namespaced identifier.
-
-    :param Any value: The semantic type string to validate.
-    :return str: The validated semantic type string.
-    :raise SimpleBenchTypeError: If the semantic type is not a string.
-    :raise SimpleBenchValueError: If the semantic type string is invalid.
-    """
-    return validate_namespaced_identifier(
-        value,
-        'semantic_type',
-        _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_TYPE,
-        _RawDataBlockErrorTag.INVALID_SEMANTIC_TYPE_VALUE,
-    )
-
-
-def timer(value: Any) -> str:
-    """Validate the timer.
-    :param value: The timer string to validate.
-    :return str: The validated timer string.
-    :raise SimpleBenchTypeError: If the timer is not a string.
-    :raises SimpleBenchValueError: If the timer string is invalid.
-    """
-    return validate_string(
-        value,
-        'timer',
-        _RawDataBlockErrorTag.INVALID_TIMER_TYPE,
-        _RawDataBlockErrorTag.INVALID_TIMER_VALUE,
-        allow_blank=True,
-        allow_empty=True,
-        strip=True,
-    )
-
-
-def unit(value: str) -> str:
-    """Validates that unit is a non-blank string.
-
-    :param str value: The value to validate.
-    :return str: The validated string value.
-    :raise SimpleBenchTypeError: If the value is not a string.
-    :raise SimpleBenchValueError: If the value is blank.
-    """
-    return validate_string(
-        value,
-        'unit',
-        _RawDataBlockErrorTag.INVALID_UNIT_TYPE,
-        _RawDataBlockErrorTag.INVALID_UNIT_VALUE,
-        allow_blank=False,
-        allow_empty=False,
-        strip=True,
-    )

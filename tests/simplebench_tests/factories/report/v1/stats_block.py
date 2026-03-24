@@ -8,6 +8,8 @@ from simplebench.simplebench_types import Values
 from simplebench.validators import is_typed_dict_mimic
 from simplebench_tests.kwargs.report.v1 import StatsBlockKWArgs
 
+from .metric import metric, metric_data
+
 
 @cache
 def stats_block_measurements() -> Values:
@@ -42,8 +44,7 @@ def stats_block_measurements_kwargs() -> StatsBlockKWArgs:
     return StatsBlockKWArgs(
         name=data['name'],
         semantic_type=data['semantic_type'],
-        unit=data['unit'],
-        scale=data['scale'],
+        metric=metric(),
         rounds=data['rounds'],
         timer=data['timer'],  # type: ignore  # validated in stats_block_data
         description=data['description'],  # type: ignore  # validated in stats_block_data
@@ -62,8 +63,7 @@ def stats_block_kwargs() -> StatsBlockKWArgs:
     return StatsBlockKWArgs(
         name=data['name'],
         semantic_type=data['semantic_type'],
-        unit=data['unit'],
-        scale=data['scale'],
+        metric=metric(),
         iterations=data['iterations'],
         rounds=data['rounds'],
         mean=data['mean'],
@@ -101,22 +101,21 @@ def stats_block_data() -> report.StatsBlockData:
     info = report.StatsBlockData(
         name='Test StatsBlock',
         semantic_type='test::stats',
-        unit='seconds',
-        scale=1.0,
+        metric=metric_data()['hash_id'],  # type: ignore[name-defined]  # using metric_data directly to ensure consistent hash_id for testing
         iterations=100,
         rounds=5,
         mean=statistics.mean(stats_block_measurements()),
         median=statistics.median(stats_block_measurements()),
         minimum=min(stats_block_measurements()),
         maximum=max(stats_block_measurements()),
-        # stdev scaled by sqrt of rounds to test correct handling of stdev scaling in StatsBlock when measurements are provided, since stdev of the mean should be stdev of measurements divided by sqrt(rounds)
+        # stdev scaled by sqrt of rounds to test correct handling of stdev scaling in StatsBlock when
+        # measurements are provided, since stdev of the mean should be stdev of measurements divided by sqrt(rounds)
         stdev=statistics.stdev(stats_block_measurements()) * math.sqrt(5),
         relative_stdev= 100 * math.sqrt(5) * abs(
             statistics.stdev(stats_block_measurements()) / statistics.mean(stats_block_measurements())),
         drift_index=1.0,  # measurements are [0,1,...,99]: perfect linear increase → correlation with position = 1.0
         autocorrelation=1.0,  # consecutive differences are constant (all +1) → lag-1 correlation = 1.0
         percentiles=statistics.quantiles(stats_block_measurements(), n=102, method='inclusive'),
-        timer='test_timer',
         description='This is a test StatsBlockData instance.',
         hash_id='c' * 64,
         type=report.StatsBlockSchema.TYPE,

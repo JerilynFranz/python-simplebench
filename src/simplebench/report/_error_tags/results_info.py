@@ -1,6 +1,7 @@
 """Exceptions for JSONResults"""
 
 from enum import auto
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -11,6 +12,8 @@ __all__: list[str] = []
 class _ResultsInfoErrorTag(ErrorTag):
     """Error tags for JSONResults v1 exceptions."""
 
+    INPUT_DATA_NOT_A_MAPPING = auto()
+    """The input data for Report.from_dict must be a mapping type (e.g., dict)"""
     INVALID_HASH_ID_TYPE = auto()
     """The hash_id is not of type str."""
     INVALID_HASH_ID_VALUE = auto()

@@ -13,10 +13,6 @@ class _TimeoutErrorTag(ErrorTag):
     """The provided function argument is not callable."""
     INVALID_EXCEPTION_ARG_TYPE = auto()
     """The provided exception argument is not a valid exception type."""
-    INVALID_THREAD_ID_TYPE = auto()
-    """The provided thread ID is not of type `ThreadId` (`int`)."""
-    INVALID_THREAD_ID_VALUE = auto()
-    """The provided thread ID is not a non-negative integer."""
     INVALID_TIMER_TYPE = auto()
     """The provided timer is not of type `threading.Timer`."""
     INVALID_TIMEOUT_INTERVAL_TYPE = auto()

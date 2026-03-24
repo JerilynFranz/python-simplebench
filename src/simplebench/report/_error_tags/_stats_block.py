@@ -1,6 +1,7 @@
 """Exceptions for JSON stats summary report."""
 
 from enum import auto
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -11,6 +12,18 @@ __all__: list[str] = []
 class _StatsBlockErrorTag(ErrorTag):
     """Error tags for JSON stats summary exceptions."""
 
+    INVALID_METRIC_TYPE = auto()
+    """The metric provided is not of type Metric."""
+    INVALID_METRICS_REGISTRY_TYPE = auto()
+    """The metric registry provided is not of type Metrics."""
+    INVALID_METRIC_HASH_ID = auto()
+    """The metric hash_id value is invalid."""
+    UNKNOWN_METRIC_HASH_ID = auto()
+    """The metric hash_id value is not recognized."""
+    MISSING_METRIC_FIELD = auto()
+    """The metric field is missing from the JSON data."""
+    INVALID_DATA_TYPE = auto()
+    """The data argument is not a Mapping."""
     INVALID_HASH_ID_TYPE = auto()
     """The hash_id is not a string."""
     INVALID_HASH_ID_VALUE = auto()

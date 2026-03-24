@@ -11,7 +11,7 @@ will inherit from this class to extend its functionality, but this implementatio
 will not be changed.
 """
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from types import MappingProxyType
 from typing import Any
 
@@ -19,8 +19,8 @@ from simplebench.report.versions import v1 as report
 from simplebench.simplebench_types import CoreDataMapping
 
 from . import _validate
+from .python_info_dict import ImmutablePythonInfoDict, PythonInfoData
 from .python_info_schema import PythonInfoSchema
-from .typeddict_types import ImmutablePythonInfoDict, PythonInfoData
 
 __all__: list[str] = []
 
@@ -79,7 +79,6 @@ class PythonInfo(report.EnvironmentInfo):
         buildno: str,
         builddate: str,
         command_line_flags: str,
-        environment_variables: Mapping[str, str],
         gc_is_enabled: bool,
         gc_thresholds: Sequence[int],
         thread_switch_interval: float,
@@ -102,7 +101,6 @@ class PythonInfo(report.EnvironmentInfo):
         :param str buildno: The Python build number.
         :param str builddate: The Python build date string.
         :param str command_line_flags: The command line flags used to start Python.
-        :param Mapping[str, str] environment_variables: The Python-specific environment variables.
         :param bool gc_is_enabled: Whether the garbage collector is enabled.
         :param Sequence[int] gc_thresholds: The garbage collection thresholds.
         :param float | int thread_switch_interval: The thread switch interval in seconds.
@@ -121,7 +119,6 @@ class PythonInfo(report.EnvironmentInfo):
             'buildno': _validate.buildno(buildno),
             'builddate': _validate.builddate(builddate),
             'command_line_flags': _validate.command_line_flags(command_line_flags),
-            'environment_variables': _validate.environment_variables(environment_variables),
             'gc_is_enabled': _validate.gc_is_enabled(gc_is_enabled),
             'gc_thresholds': _validate.gc_thresholds(gc_thresholds),
             'thread_switch_interval': _validate.thread_switch_interval(thread_switch_interval),

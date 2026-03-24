@@ -45,44 +45,11 @@ class RawDataBlockSchema(JSONSchema):
                 'type': 'string',
                 'pattern': '^[a-f0-9]{64}$',
             },
-            'semantic_type': {
-                'title': 'Measurement Type',
-                'description': "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
+            'metric': {
+                'title': 'Metric Reference',
+                'description': 'Reference to a Metric by hash_id. This links the raw data block to the specific metric it is associated with, allowing for proper interpretation of the data.',
                 'type': 'string',
-                'pattern': '^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$',
-                'examples': [
-                    'simplebench_std::wallclock_time',
-                    'simplebench_std::cpu_time',
-                    'my_plugin::context_switches',
-                ],
-            },
-            'name': {
-                'title': 'Measurement Name',
-                'description': 'Human-readable name of the measurement.',
-                'type': 'string',
-                'minLength': 1,
-            },
-            'description': {
-                'title': 'Measurement Description',
-                'description': "A brief description of the measurement's content or purpose.",
-                'type': 'string',
-            },
-            'timer': {
-                'title': 'Timer',
-                'description': "The timing function used for this measurement (e.g., 'perf_counter'). Should be included for any timing-related metrics.",
-                'type': 'string',
-            },
-            'unit': {
-                'title': 'Measurement Unit',
-                'description': 'Unit of the measurement value',
-                'type': 'string',
-                'minLength': 1,
-            },
-            'scale': {
-                'title': 'Measurement Scale',
-                'description': 'Scale of the measurement value',
-                'type': 'number',
-                'exclusiveMinimum': 0,
+                'pattern': '^[a-f0-9]{64}$',
             },
             'rounds': {
                 'title': 'Number of Rounds',
@@ -97,7 +64,7 @@ class RawDataBlockSchema(JSONSchema):
                 'items': {'type': 'number'},
             },
         },
-        'required': ['version', 'type', 'hash_id', 'semantic_type', 'name', 'description', 'unit', 'scale', 'rounds', 'data'],
+        'required': ['version', 'type', 'hash_id', 'semantic_type', 'name', 'description', 'metric', 'rounds', 'data'],
         'additionalProperties': False,
     }
 

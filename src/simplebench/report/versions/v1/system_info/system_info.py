@@ -6,7 +6,7 @@ from simplebench.report.base import BaseSystemInfo, JSONSchema
 
 from . import _validate
 from .system_info_schema import SystemInfoSchema
-from .typeddict_types import ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
+from .system_info_dict import ImmutableSystemInfoDict, SystemInfoData, SystemInfoDict
 
 __all__: list[str] = []
 

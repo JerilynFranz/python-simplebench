@@ -1,6 +1,7 @@
 """Error tags for JSON raw datablock representation exceptions."""
 
 from enum import auto
+
 from simplebench.doc_utils import enum_docstrings
 from simplebench.exceptions import ErrorTag
 
@@ -11,6 +12,14 @@ __all__: list[str] = []
 class _RawDataBlockErrorTag(ErrorTag):
     """Error tags for JSON raw data block representation exceptions."""
 
+    MISSING_METRIC_FIELD = auto()
+    """The required 'metric' field is missing from the data."""
+    INVALID_METRIC_HASH_ID = auto()
+    """The 'metric' field value is not a string."""
+    UNKNOWN_METRIC_HASH_ID = auto()
+    """The 'metric' field value does not correspond to any known metric hash ID in the metrics registry."""
+    INVALID_METRIC_TYPE = auto()
+    """The metric value is not an instance of Metric."""
     INVALID_NAME_TYPE = auto()
     """The name value is not a string."""
     INVALID_NAME_VALUE = auto()

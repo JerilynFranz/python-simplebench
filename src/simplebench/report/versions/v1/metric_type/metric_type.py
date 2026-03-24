@@ -11,7 +11,7 @@ from simplebench.simplebench_types import CoreDataMapping, Never
 from ..metric_category import MetricCategory
 from . import _validate
 from .metric_type_schema import MetricTypeSchema
-from .typed_dict import ImmutableMetricTypeDict, MetricTypeData
+from .metric_type_dict import ImmutableMetricTypeDict, MetricTypeData
 
 __all__: list[str] = []
 

@@ -15,7 +15,7 @@ These types support validation-oriented typing for ingestion and serialization.
 from collections.abc import Mapping, Sequence
 
 from simplebench.report.base import ReportElementTypedDict
-from simplebench.simplebench_types import CoreDataMapping, CoreDataSequence, Never, NotRequired, Required
+from simplebench.simplebench_types import CoreDataSequence, Never, NotRequired, Required
 
 __all__: list[str] = []
 
@@ -39,18 +39,32 @@ class PythonInfoEnv(ReportElementTypedDict):
     :type builddate: str
     :param command_line_flags: The command line flags used when running the Python interpreter.
     :type command_line_flags: str
-    :param environment_variables: A mapping of environment variable names to their values.
-    :type environment_variables: Mapping[str, str]
     :param gc_is_enabled: Whether garbage collection is enabled in the Python interpreter.
     :type gc_is_enabled: bool
     :param gc_thresholds: The garbage collection thresholds for the Python interpreter.
     :type gc_thresholds: Sequence[int]
+    :param gc_counts: The garbage collection counts for the Python interpreter.
+    :type gc_counts: Sequence[int]
     :param thread_switch_interval: The thread switch interval for the Python interpreter.
     :type thread_switch_interval: float
     :param architecture_bits: The architecture bits of the Python interpreter (e.g., '32bit', '64bit').
     :type architecture_bits: str
     :param architecture_linkage: The architecture linkage of the Python interpreter (e.g., 'ELF', 'WindowsPE').
     :type architecture_linkage: str
+    :param xoptions: The xoptions used when running the Python interpreter.
+    :type xoptions: Mapping[str, str | bool | int]
+    :param sys_flags: The sys_flags used when running the Python interpreter.
+    :type sys_flags: Mapping[str, int]
+    :param gil_is_enabled: Whether the Global Interpreter Lock is enabled in the Python interpreter.
+    :type gil_is_enabled: bool | None
+    :param abiflags: The ABIFlags used by the Python interpreter.
+    :type abiflags: str
+    :param config_args: The configuration arguments used by the Python interpreter.
+    :type config_args: str | None
+    :param py_debug: Whether the Python interpreter is in debug mode.
+    :type py_debug: bool | None
+    :param with_pymalloc: Whether the Python interpreter is using PyMalloc.
+    :type with_pymalloc: bool | None
     """
     python_version: Required[str]
     implementation: Required[str]
@@ -60,12 +74,19 @@ class PythonInfoEnv(ReportElementTypedDict):
     buildno: Required[str]
     builddate: Required[str]
     command_line_flags: Required[str]
-    environment_variables: Required[Mapping[str, str]]
     gc_is_enabled: Required[bool]
     gc_thresholds: Required[Sequence[int]]
+    gc_counts: Required[Sequence[int]]
     thread_switch_interval: Required[float]
     architecture_bits: Required[str]
     architecture_linkage: Required[str]
+    xoptions: Required[Mapping[str, str | bool | int]]
+    sys_flags: Required[Mapping[str, int]]
+    gil_is_enabled: Required[bool | None]
+    abiflags: Required[str]
+    config_args: Required[str | None]
+    py_debug: Required[bool | None]
+    with_pymalloc: Required[bool | None]
 
 class ImmutablePythonInfoEnv(ReportElementTypedDict):
     """Immutable version of :class:`PythonInfoEnv` for type-checking purposes.
@@ -86,12 +107,12 @@ class ImmutablePythonInfoEnv(ReportElementTypedDict):
     :type builddate: str
     :param command_line_flags: The command line flags used when running the Python interpreter.
     :type command_line_flags: str
-    :param environment_variables: A mapping of environment variable names to their values.
-    :type environment_variables: Mapping[str, str]
     :param gc_is_enabled: Whether garbage collection is enabled in the Python interpreter.
     :type gc_is_enabled: bool
     :param gc_thresholds: The garbage collection thresholds for the Python interpreter.
     :type gc_thresholds: Sequence[int]
+    :param gc_counts: The garbage collection counts for the Python interpreter.
+    :type gc_counts: Sequence[int]
     :param thread_switch_interval: The thread switch interval for the Python interpreter.
     :type thread_switch_interval: float
     :param architecture_bits: The architecture bits of the Python interpreter (e.g., '32bit', '64bit').
@@ -107,7 +128,6 @@ class ImmutablePythonInfoEnv(ReportElementTypedDict):
     buildno: Required[str]
     builddate: Required[str]
     command_line_flags: Required[str]
-    environment_variables: Required[CoreDataMapping[str]]
     gc_is_enabled: Required[bool]
     gc_thresholds: Required[CoreDataSequence[int]]
     thread_switch_interval: Required[float]

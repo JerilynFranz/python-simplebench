@@ -48,37 +48,15 @@ class ValueBlockSchema(JSONSchema):
                 'type': 'string',
                 'pattern': '^[a-f0-9]{64}$',
             },
-            'semantic_type': {
-                'title': 'Measurement Type',
-                'description': "The semantic type of the measurements, formatted as 'namespace::type_name'. This dictates how the data should be interpreted. Standard types use the 'simplebench_std' namespace. Users can define custom types using their own namespace.",
+            'metric': {
+                'title': 'Metric Reference',
+                'description': 'Reference to a Metric by hash_id.',
                 'type': 'string',
-                'pattern': '^[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?::[A-Za-z0-9](?:[_A-Za-z0-9]*[A-Za-z0-9])?$',
-                'examples': [
-                    'simplebench_std::wallclock_time',
-                    'simplebench_std::cpu_time',
-                    'my_plugin::context_switches',
-                ],
-            },
-            'timer_metric': {
-                'title': 'Timer Metric',
-                'description': "The timer metric associated with this measurement (e.g., 'PERF_COUNTER'). Should be included for any timing-related metrics.",
-                'type': 'string',
-            },
-            'unit': {
-                'title': 'Measurement Unit',
-                'description': 'Unit of the measurement value',
-                'type': 'string',
-                'minLength': 1,
-            },
-            'scale': {
-                'title': 'Measurement Scale',
-                'description': 'Scale of the measurement value',
-                'type': 'number',
-                'exclusiveMinimum': 0,
+                'pattern': '^[a-f0-9]{64}$',
             },
             'value': {'title': 'Value', 'description': 'The single measurement value.', 'type': 'number'},
         },
-        'required': ['version', 'type', 'hash_id', 'semantic_type', 'unit', 'scale', 'value'],
+        'required': ['version', 'type', 'name', 'hash_id', 'semantic_type', 'metric', 'value'],
         'additionalProperties': False,
     }
     """The JSON schema as a dictionary."""

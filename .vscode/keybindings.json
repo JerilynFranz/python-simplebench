@@ -1,0 +1,12 @@
+[
+    {
+        "key": "escape",
+        "command": "editor.action.inlineSuggest.hide",
+        "when": "inlineSuggestVisible"
+    },
+    {
+        "key": "escape",
+        "command": "editor.action.inlineEdit.hide",
+        "when": "inlineEditVisible"
+    }
+]

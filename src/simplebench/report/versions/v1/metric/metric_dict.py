@@ -18,11 +18,12 @@ class MetricData(ReportElementTypedDict):
     All fields except `hash_id`, `version`, and `type` are required.
 
     :param NotRequired[str] type: The type of the metric type schema. This is an optional field that can be used
-        to identify the schema type of the data. For version 1 reports, this should always be 
+        to identify the schema type of the data. For version 1 reports, this should always be
         'SimpleBenchMetricType::V1'.
     :param NotRequired[int] version: The version of the metric type schema. This is an optional field that can be used
         to identify the schema version of the data. For version 1 reports, this should always be 1.
-    :param NotRequired[str] hash_id: The unique hash identifier for the metric type. This is an optional field that can
+    :param NotRequired[str] hash_id: The unique hash identifier for the metric type. This is an optional
+    field that can
         be used to uniquely identify the metric type. If not provided, it will be generated based on
         the other fields of the metric type.
     :param Required[str] label: A human-readable label for the metric.
@@ -52,13 +53,15 @@ class ImmutableMetricData(ReportElementTypedDict):
         to identify the schema type of the data. For version 1 reports, this should always be
         'SimpleBenchMetricType::V1'.
     :param NotRequired[int] version: The version of the metric type schema. This is an optional field that can be used
-        to identify the schema version of the data. For version 1 reports, this should always be 1. 
-    :param NotRequired[str] hash_id: The unique hash identifier for the metric type. This is an optional field that can be used to uniquely
-        identify the metric type. If not provided, it will be generated based on the other fields of the metric type.
+        to identify the schema version of the data. For version 1 reports, this should always be 1.
+    :param NotRequired[str] hash_id: The unique hash identifier for the metric type. This is an optional
+        field that can be used to uniquely identify the metric type. If not provided, it will be generated based on
+        the other fields of the metric type.
     :param Required[str] label: A human-readable label for the metric.
     :param Required[str] title: A human-readable title for the metric.
     :param Required[str] description: A brief description of the metric.
-    :param Required[ImmutableMetricTypeData] metric_type: The ImmutableMetricTypeData representing the type of the metric.
+    :param Required[ImmutableMetricTypeData] metric_type: The ImmutableMetricTypeData representing
+        the type of the metric.
 
     """
     type: NotRequired[str]
@@ -69,7 +72,6 @@ class ImmutableMetricData(ReportElementTypedDict):
     description: Required[str]
     metric_type: Required[ImmutableMetricTypeData]
     __immutable__: NotRequired[Never]
-
 
 # --- OUTPUT (e.g., from `to_dict`) ---
 
@@ -96,6 +98,7 @@ class MetricDict(ReportElementTypedDict):
     title: str
     description: str
     metric_type: MetricTypeDict
+
 
 class ImmutableMetricDict(ReportElementTypedDict):
     """Immutable version of MetricDict.

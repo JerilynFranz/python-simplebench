@@ -3,6 +3,6 @@
 
 from .cpu_info import CPUInfo
 from .cpu_info_schema import CPUInfoSchema
-from .typeddict_types import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
+from .cpu_info_dict import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
 
 __all__: list[str] = []
