@@ -91,5 +91,6 @@
     "editor.inlineSuggest.minShowDelay": 500,
     "coverage-gutters.manualCoverageFilePaths": [
       
-    ]
+    ],
+    "ruff.lineLength": 120
 }

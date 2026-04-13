@@ -349,6 +349,7 @@ DETECTED_VCS: VCS = VCS(name='none', repo_root=Path('.'))
 
 _powershell_execution_policy_set: bool = False
 
+
 def run_post_install_steps(python_exe: Path, root_path: Path, bin_dir: Path) -> None:
     """Runs any post-installation steps required after installing tools.
 
@@ -380,7 +381,6 @@ class FatalBootstrapError(Exception):
     def __init__(self, message: str, error_code: int = 1) -> None:
         super().__init__(message)
         self.error_code = error_code
-
 
 
 def _validate_string(value: str, name: str) -> None:
