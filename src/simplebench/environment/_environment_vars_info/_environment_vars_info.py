@@ -14,19 +14,21 @@ class EnvironmentVarsInfo(CoreDataMapping[str]):
     def __init__(self, __vars: Set[str] | Sequence[str] | Iterable[str]) -> None:
         """Initializes the EnvironmentVarsInfo instance.
 
-        Takes a set, sequence, or iterable of environment variable names and retrieves their values from the environment,
-        creating a mapping of variable names to their corresponding values. If a variable is not set in the environment,
+        Takes a set, sequence, or iterable of environment variable names and retrieves
+        their values from the environment, creating a mapping of variable names to their
+        corresponding values. If a variable is not set in the environment,
         the environment, the variable will be excluded from the mapping.
 
-        EnvironmentVarsInfo is a subclass of CoreDataMapping, which means it behaves like a mapping (dictionary)
-        where the keys are the environment variable names and the values are their corresponding values.
+        EnvironmentVarsInfo is a subclass of CoreDataMapping, which means it behaves
+        like a mapping (dictionary) where the keys are the environment variable names
+        and the values are their corresponding values.
 
         It is immutable, so once an instance is created, the environment variable information it contains
         cannot be modified.
 
         Example:
 
-        ..code-block:: python
+        .. code-block:: python
             env_info = EnvironmentVarsInfo(['HOME', 'PATH', 'SHELL'])
 
         :param __vars: A set, sequence, or iterable of environment variable names to retrieve information for.
@@ -38,7 +40,8 @@ class EnvironmentVarsInfo(CoreDataMapping[str]):
         """
         if isinstance(__vars, (str, bytes)):
             raise SimpleBenchTypeError(
-                f"Expected a set, sequence, or iterable for environment variables information, got {type(__vars).__name__}",
+                "Expected a set, sequence, or iterable for environment variables information, "
+                f"got {type(__vars).__name__}",
                 tag=_EnvironmentVarsInfoErrorTag.INVALID_ENV_VARS_INFO_TYPE_STR_OR_BYTES,
             )
         if not isinstance(__vars, (Set, Sequence, Iterable)):
@@ -47,13 +50,14 @@ class EnvironmentVarsInfo(CoreDataMapping[str]):
                 f"got {type(__vars).__name__}",
                 tag=_EnvironmentVarsInfoErrorTag.INVALID_ENV_VARS_INFO_TYPE,
             )
-        if not all(isinstance(key, str) for key in __vars):
+        var_names = set(__vars)  # Capture to prevent loss of single pass iterables and ensure uniqueness
+        if not all(isinstance(key, str) for key in var_names):
             raise SimpleBenchTypeError(
                 "All environment variables keys must be strings",
                 tag=_EnvironmentVarsInfoErrorTag.INVALID_ENV_VARS_INFO_KEY_TYPE,
             )
         env_vars: dict[str, str] = {}
-        for var in __vars:
+        for var in var_names:
             var_value = os.environ.get(var)
             if var_value is not None:
                 env_vars[var] = var_value

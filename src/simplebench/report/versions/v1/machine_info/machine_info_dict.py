@@ -19,7 +19,7 @@ from simplebench.report.base._report_element_typed_dict import ReportElementType
 from simplebench.simplebench_types import Never, NotRequired, Required
 
 from ..cpu_info.cpu_info_dict import CPUInfoData, CPUInfoDict, ImmutableCPUInfoData, ImmutableCPUInfoDict
-from ..environment_info.environoment_info_dict import (
+from ..environment_info.environment_info_dict import (
     EnvironmentInfoData,
     EnvironmentInfoDict,
     ImmutableEnvironmentInfoData,

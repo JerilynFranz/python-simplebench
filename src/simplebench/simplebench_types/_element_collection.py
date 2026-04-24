@@ -24,7 +24,8 @@ class ElementCollection(Protocol[T_co]):
     for membership.
 
     It does **not** enforce the exclusions of str, bytes, or Mapping types
-    from being considered as ElementCollections by 'isinstance' checks.
+    from being considered as ElementCollections by 'isinstance' checks
+    or static type checkers.
 
     This is a Python limitation, not a bug.
 
@@ -113,7 +114,7 @@ class ElementCollection(Protocol[T_co]):
     def __subclasshook__(cls, C: type, /) -> bool:
         if cls is ElementCollection:
             if issubclass(C, (str, bytes, Mapping)):
-                return False
+                return NotImplemented
             # Check for required methods, but ignore __subclasshook__ itself
             required_methods = ('__iter__', '__len__', '__contains__')
             for method in required_methods:

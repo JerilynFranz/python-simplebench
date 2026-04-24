@@ -25,7 +25,7 @@ from simplebench.simplebench_types import CoreDataMapping, CoreDataTypes
 
 from . import _validate
 from .environment_info_schema import EnvironmentInfoSchema
-from .environoment_info_dict import EnvironmentInfoData, ImmutableEnvironmentInfoDict
+from .environment_info_dict import EnvironmentInfoData, ImmutableEnvironmentInfoDict
 
 __all__: list[str] = ['EnvironmentInfo']
 

@@ -3,7 +3,7 @@
 
 from .environment_info import EnvironmentInfo
 from .environment_info_schema import EnvironmentInfoSchema
-from .environoment_info_dict import (
+from .environment_info_dict import (
     EnvironmentInfoData,
     EnvironmentInfoDict,
     ImmutableEnvironmentInfoData,

@@ -6,6 +6,9 @@ from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 
 from ._error_tags import _SIUnitsErrorTag
 
+__all__: list[str] = []
+
+
 # SI prefixes from tera (T) to pico (p)
 # We don't go beyond pico (p) because it's not commonly used in benchmarking
 # and increases the chances of confusion with autodetected units.

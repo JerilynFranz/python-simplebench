@@ -30,13 +30,15 @@
 		},
 		"testing.coverageToolbarEnabled": true,
 		"coverage-gutters.coverageReportFileName": "coverage_html_report/index.html",
-		"coverage-gutters.showLineCoverage": true,
+		"coverage-gutters.showLineCoverage": false,
 		"coverage-gutters.watchOnActivate": true,
 		"coverage-gutters.showGutterCoverage": true,
 		"testing.showCoverageInExplorer": false,
 		"coverage-gutters.showRulerCoverage": true,
 		"coverage-gutters.coverageFileNames": [
+
 			"coverage.xml"
 		],
+		"chat.agent.enabled": false,
 	}
 }
