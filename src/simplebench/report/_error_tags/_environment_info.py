@@ -12,6 +12,9 @@ class _EnvironmentInfoErrorTag(ErrorTag):
     INVALID_DATA_TYPE = auto()
     """The provided data is not of the expected type."""
 
+    INVALID_DATA_KEY = auto()
+    """One or more keys in the provided data are not valid environment variable names."""
+
     INVALID_HASH_ID_TYPE = auto()
     """The provided hash_id is not a string."""
 
