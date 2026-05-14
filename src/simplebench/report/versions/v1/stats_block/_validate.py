@@ -1,5 +1,5 @@
 """Validation functions for V1 StatsBlock properties."""
-
+from math import isnan, isinf
 import re
 from collections.abc import Sequence
 
@@ -8,9 +8,7 @@ from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.simplebench_types import Values
 from simplebench.validators import (
     validate_float,
-    validate_namespaced_identifier,
     validate_non_negative_float,
-    validate_positive_float,
     validate_positive_int,
     validate_sequence_of_numbers,
     validate_string,
@@ -334,12 +332,18 @@ def relative_stdev(value: float | None, measurements_value: Values | None) -> fl
 def stdev(value: float | None, measurements_value: Values | None) -> float | None:
     """Validates that stdev is a float or None.
 
+    It is allowed to be NaN since not all data sets will have a well-defined standard deviation,
+    but it is not allowed to be negative.
+
     It also checks that it is non-negative if it is not None.
+
+    If the value is None, the measurements_value must be provided (not None) because the standard deviation
+    can be computed from the measurements.
 
     :param float | None value: The value to validate.
     :return float | None: The validated float value or None.
     :raise SimpleBenchTypeError: If the value is not a float.
-    :raise SimpleBenchValueError: If the value is negative.
+    :raise SimpleBenchValueError: If the value is negative, is negative infinity, or positive infinity.
     :raise SimpleBenchValueError: If the value is provided when measurements are provided,
         or if the value is None when measurements is None.
     """
@@ -350,26 +354,49 @@ def stdev(value: float | None, measurements_value: Values | None) -> float | Non
         )
     if value is None and measurements_value is None:
         raise SimpleBenchValueError(
-            'stdev cannot be None when measurements is None because statistics cannot be computed',
+            'stdev cannot be None when measurements is also None because statistics cannot be computed',
             tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
         )
+
+    if measurements_value is not None and not isinstance(measurements_value, Values):
+        raise SimpleBenchTypeError(
+            f'measurements must be of type Values when validating stdev, got {type(measurements_value)}',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_TYPE_FOR_STDEV,
+        )
+
     if value is None:
         return None
-    return validate_non_negative_float(
-        value,
-        'stdev',
-        _StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_TYPE,
-        _StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_VALUE,
-    )
+
+    if not isinstance(value, float):
+        raise SimpleBenchTypeError(
+            f'stdev must be of type float or None, got {type(value)}',
+            tag=_StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_TYPE,
+        )
+    if isnan(value):
+        return value
+
+    if value < 0.0 or isinf(value):
+        raise SimpleBenchValueError(
+            'stdev cannot be negative or infinity',
+            tag=_StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_VALUE
+        )
+    return value
 
 
 def drift_index(value: float | None, measurements_value: Values | None) -> float | None:
-    """Validates that drift_index is a float in [-1.0, 1.0] or None.
+    """Validates that drift_index is a float in the range [-1.0, 1.0], NaN, or None.
+
+    If value is not None, it must be a float in the range [-1.0, 1.0] or NaN.
+    It is allowed to be NaN since not all data sets will have a well-defined drift index,
+    but it is not allowed to be less than -1.0 or greater than 1.0.
+
+    If the value is None, the measurements_value must be provided (not None) because the drift index
+    can be computed from the measurements.
 
     :param float | None value: The value to validate.
     :return float | None: The validated float value or None.
-    :raise SimpleBenchTypeError: If the value is not a float.
-    :raise SimpleBenchValueError: If the value is outside [-1.0, 1.0].
+    :raise SimpleBenchTypeError: If the value is not a float or None.
+    :raise SimpleBenchValueError: If the value is not in the range [-1.0, 1.0] or NaN.
     :raise SimpleBenchValueError: If the value is provided when measurements are provided,
         or if the value is None when measurements is None.
     """
@@ -383,24 +410,47 @@ def drift_index(value: float | None, measurements_value: Values | None) -> float
             'drift_index cannot be None when measurements is None because statistics cannot be computed',
             tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
         )
+
+    if measurements_value is not None and not isinstance(measurements_value, Values):
+        raise SimpleBenchTypeError(
+            f'measurements must be of type Values when validating drift_index, got {type(measurements_value)}',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_TYPE_FOR_DRIFT_INDEX,
+        )
+
     if value is None:
         return None
-    validated = validate_float(value, 'drift_index', _StatsBlockErrorTag.INVALID_DRIFT_INDEX_TYPE)
-    if not -1.0 <= validated <= 1.0:
+
+    if not isinstance(value, float):
+        raise SimpleBenchTypeError(
+            f'drift_index must be of type float or None, got {type(value)}',
+            tag=_StatsBlockErrorTag.INVALID_DRIFT_INDEX_TYPE,
+        )
+
+    if isnan(value):
+        return value
+
+    if not -1.0 <= value <= 1.0:
         raise SimpleBenchValueError(
-            f'drift_index must be in [-1.0, 1.0], got {validated}',
+            f'drift_index must be in range [-1.0, 1.0], got {value}',
             tag=_StatsBlockErrorTag.INVALID_DRIFT_INDEX_VALUE,
         )
-    return validated
+    return value
 
 
 def autocorrelation(value: float | None, measurements_value: Values | None) -> float | None:
-    """Validates that autocorrelation is a float in [-1.0, 1.0] or None.
+    """Validates that autocorrelation is a float in range [-1.0, 1.0], NaN, or None.
+
+    If value is not None, it must be a float in the range [-1.0, 1.0] or NaN.
+    It is allowed to be NaN since not all data sets will have a well-defined autocorrelation,
+    but it is not allowed to be less than -1.0 or greater than 1.0.
+
+    If the value is None, the measurements_value must be provided (not None) because the autocorrelation
+    can be computed from the measurements.
 
     :param float | None value: The value to validate.
     :return float | None: The validated float value or None.
-    :raise SimpleBenchTypeError: If the value is not a float.
-    :raise SimpleBenchValueError: If the value is outside [-1.0, 1.0].
+    :raise SimpleBenchTypeError: If the value is not a float or None
+    :raise SimpleBenchValueError: If the value is not a number in the range [-1.0, 1.0] or NaN.
     :raise SimpleBenchValueError: If the value is provided when measurements are provided,
         or if the value is None when measurements is None.
     """
@@ -414,12 +464,26 @@ def autocorrelation(value: float | None, measurements_value: Values | None) -> f
             'autocorrelation cannot be None when measurements is None because statistics cannot be computed',
             tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_STATE,
         )
+
+    if measurements_value is not None and not isinstance(measurements_value, Values):
+        raise SimpleBenchTypeError(
+            f'measurements must be of type Values when validating autocorrelation, got {type(measurements_value)}',
+            tag=_StatsBlockErrorTag.INVALID_MEASUREMENTS_TYPE_FOR_AUTOCORRELATION,
+        )
+
     if value is None:
         return None
-    validated = validate_float(value, 'autocorrelation', _StatsBlockErrorTag.INVALID_AUTOCORRELATION_TYPE)
-    if not -1.0 <= validated <= 1.0:
+    if not isinstance(value, float):
+        raise SimpleBenchTypeError(
+            f'autocorrelation must be of type float or None, got {type(value)}',
+            tag=_StatsBlockErrorTag.INVALID_AUTOCORRELATION_TYPE,
+        )
+    if isnan(value):
+        return value
+
+    if not -1.0 <= value <= 1.0:
         raise SimpleBenchValueError(
-            f'autocorrelation must be in [-1.0, 1.0], got {validated}',
+            f'autocorrelation must be in range [-1.0, 1.0], got {value}',
             tag=_StatsBlockErrorTag.INVALID_AUTOCORRELATION_VALUE,
         )
-    return validated
+    return value

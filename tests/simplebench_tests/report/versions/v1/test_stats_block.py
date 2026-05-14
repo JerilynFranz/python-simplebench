@@ -244,7 +244,7 @@ StatsBlock: TypeAlias = report.StatsBlock
     PytestAction("INIT_039",
         name="Invalid percentiles value (percentiles list not 101 items long)",
         action=report.StatsBlock,
-        kwargs=report_factories.stats_block_kwargs().replace(percentiles=[0.0, 50.0, 100.0]),  # Only 3 items instead of 101
+        kwargs=report_factories.stats_block_kwargs().replace(percentiles=[0.0, 50.0, 100.0]),  # Only 3 items
         exception=SimpleBenchValueError,
         exception_tag=_StatsBlockErrorTag.INVALID_PERCENTILES_LENGTH),
     PytestAction("INIT_040",

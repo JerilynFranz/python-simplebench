@@ -24,7 +24,7 @@ def value_block_kwargs() -> ValueBlockKWArgs:
     """ValueBlockKWArgs factory for testing purposes.
 
     :return: A ValueBlockKWArgs instance with dummy data.
-    :rtype: ValueBlockKWArgs
+    :rtype: ValueBlockKWArgs 
     """
     data = value_block_data()
     return ValueBlockKWArgs(

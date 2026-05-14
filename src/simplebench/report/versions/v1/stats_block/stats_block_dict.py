@@ -47,8 +47,10 @@ class StatsBlockData(ReportElementTypedDict):
     :param Required[float] median: The median value.
     :param Required[float] minimum: The minimum value.
     :param Required[float] maximum: The maximum value.
-    :param Required[float] stdev: The standard deviation.
-    :param Required[float] relative_stdev: The relative standard deviation.
+    :param Required[float | None] stdev: The standard deviation.
+    :param Required[float | None] relative_stdev: The relative standard deviation.
+    :param Required[float | None] drift_index: The drift index.
+    :param Required[float | None] autocorrelation: The autocorrelation.
     :param Required[Sequence[float]] percentiles: The percentiles data.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
@@ -60,10 +62,10 @@ class StatsBlockData(ReportElementTypedDict):
     median: Required[float]
     minimum: Required[float]
     maximum: Required[float]
-    stdev: Required[float]
-    relative_stdev: Required[float]
-    drift_index: Required[float]
-    autocorrelation: Required[float]
+    stdev: Required[float | None]
+    relative_stdev: Required[float | None]
+    drift_index: Required[float | None]
+    autocorrelation: Required[float | None]
     percentiles: Required[Sequence[float]]
     type: NotRequired[str]
     version: NotRequired[int]
@@ -96,8 +98,10 @@ class ImmutableStatsBlockData(ReportElementTypedDict):
     :param Required[float] median: The median value.
     :param Required[float] minimum: The minimum value.
     :param Required[float] maximum: The maximum value.
-    :param Required[float] stdev: The standard deviation.
-    :param Required[float] relative_stdev: The relative standard deviation.
+    :param Required[float | None] stdev: The standard deviation.
+    :param Required[float | None] relative_stdev: The relative standard deviation.
+    :param Required[float | None] drift_index: The drift index.
+    :param Required[float | None] autocorrelation: The autocorrelation.
     :param Required[tuple[float, ...]] percentiles: The percentiles data.
     :param NotRequired[str] type: The type identifier for the block.
     :param NotRequired[int] version: The version of the block's data structure.
@@ -111,10 +115,10 @@ class ImmutableStatsBlockData(ReportElementTypedDict):
     median: Required[float]
     minimum: Required[float]
     maximum: Required[float]
-    stdev: Required[float]
-    relative_stdev: Required[float]
-    drift_index: Required[float]
-    autocorrelation: Required[float]
+    stdev: Required[float | None]
+    relative_stdev: Required[float | None]
+    drift_index: Required[float | None]
+    autocorrelation: Required[float | None]
     percentiles: Required[tuple[float, ...]]
     type: NotRequired[str]
     version: NotRequired[int]
@@ -140,8 +144,10 @@ class StatsBlockDict(ReportElementTypedDict):
     :param Required[float] median: The median value.
     :param Required[float] minimum: The minimum value.
     :param Required[float] maximum: The maximum value.
-    :param Required[float] stdev: The standard deviation.
-    :param Required[float] relative_stdev: The relative standard deviation.
+    :param Required[float | None] stdev: The standard deviation.
+    :param Required[float | None] relative_stdev: The relative standard deviation.
+    :param Required[float | None] drift_index: The drift index.
+    :param Required[float | None] autocorrelation: The autocorrelation.
     :param Required[CoreDataSequence[float]] percentiles: The percentiles data (101 values).
     """
     type: Required[str]
@@ -154,10 +160,10 @@ class StatsBlockDict(ReportElementTypedDict):
     median: Required[float]
     minimum: Required[float]
     maximum: Required[float]
-    stdev: Required[float]
-    relative_stdev: Required[float]
-    drift_index: Required[float]
-    autocorrelation: Required[float]
+    stdev: Required[float | None]
+    relative_stdev: Required[float | None]
+    drift_index: Required[float | None]
+    autocorrelation: Required[float | None]
     percentiles: Required[CoreDataSequence[float]]
 
 
@@ -185,8 +191,10 @@ class ImmutableStatsBlockDict(ReportElementTypedDict):
     :param Required[float] median: The median value.
     :param Required[float] minimum: The minimum value.
     :param Required[float] maximum: The maximum value.
-    :param Required[float] stdev: The standard deviation.
-    :param Required[float] relative_stdev: The relative standard deviation.
+    :param Required[float | None] stdev: The standard deviation.
+    :param Required[float | None] relative_stdev: The relative standard deviation.
+    :param Required[float | None] drift_index: The drift index.
+    :param Required[float | None] autocorrelation: The autocorrelation.
     :param Required[CoreDataSequence[float]] percentiles: The percentiles data.
     """
     type: Required[str]
@@ -199,9 +207,9 @@ class ImmutableStatsBlockDict(ReportElementTypedDict):
     median: Required[float]
     minimum: Required[float]
     maximum: Required[float]
-    stdev: Required[float]
-    relative_stdev: Required[float]
-    drift_index: Required[float]
-    autocorrelation: Required[float]
+    stdev: Required[float | None]
+    relative_stdev: Required[float | None]
+    drift_index: Required[float | None]
+    autocorrelation: Required[float | None]
     percentiles: Required[CoreDataSequence[float]]
     __immutable__: NotRequired[Never]

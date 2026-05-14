@@ -11,7 +11,7 @@ It is the base implemention of the JSON report stats block representation.
 
 This makes the implementations of StatsBlock backwards compatible with future versions
 of the JSON report schema and the V1 implementation itself is essentially a frozen snapshot
-of the base CPUInfo representation at the time of the V1 schema release.
+of the base StatsBlock representation at the time of the V1 schema release.
 
 The code has three basic paths for creating a stats block:
 
@@ -31,18 +31,30 @@ implements size-optimized pickling support for serialization/deserialization.
 
 The dictionary serialized representation matches the JSON schema for version 1 reports
 and can be used for JSON serialization and deserialization.
+
+Some statistical properties cannot always be calculated from raw measurements (e.g.,
+if there are too few measurements to calculate stdev) and so these properties (stdev, relative_stdev,
+drift_index, autocorrelation, percentiles) may be NaN.
+
+In the dictionary and JSON representations, NaN values are converted to None to
+ensure compatibility with JSON, which does not support NaN as a value.
+
+While the StatsBlock can be initialized using measurements, they are NOT
+considered part of the StatsBlock's identity for equality or hashing, and they are not included in the
+dictionary representation of the StatsBlock. They are only used optionally in calculating the statistical properties
+when initializing the object and are not stored as part of the object's state for comparison or serialization.
 """
 
 import statistics
 from collections.abc import Mapping, Sequence
-from math import sqrt
+from math import isnan, sqrt
 from types import MappingProxyType
 from typing import Any, overload
 
 from simplebench.exceptions import SimpleBenchTypeError, SimpleBenchValueError
 from simplebench.report._error_tags import _StatsBlockErrorTag
 from simplebench.report.base import BaseStatsBlock, JSONSchema
-from simplebench.simplebench_types._values._values import Values
+from simplebench.simplebench_types import CoreDataMapping, Values
 
 from ..metric import Metric
 from ..metrics import Metrics
@@ -75,8 +87,9 @@ class StatsBlock(BaseStatsBlock):
     :param float maximum: The maximum value of the stats block.
     :param float stdev: The standard deviation of the stats block.
     :param float relative_stdev: The relative standard deviation of the stats block.
+    :param float drift_index: The drift index (Pearson correlation with sequential position indices) of the stats block.
+    :param float autocorrelation: The lag-1 autocorrelation of the measurement sequence for the stats block.
     :param Values percentiles: The list of percentiles for the stats block as a `Values` instance.
-    :param Sequence[float] | Values measurements: A list of raw measurements for initializing the stats block.
     :raise SimpleBenchTypeError: If any parameter is of an invalid type.
     :raise SimpleBenchValueError: If any parameter has an invalid value.
     """
@@ -229,6 +242,8 @@ class StatsBlock(BaseStatsBlock):
             - maximum
             - stdev
             - relative_stdev
+            - drift_index
+            - autocorrelation
             - percentiles
 
         :param str hash_id: The hash identifier for the stats block.
@@ -311,7 +326,7 @@ class StatsBlock(BaseStatsBlock):
         :raise SimpleBenchTypeError: If the data parameter is not a mapping type.
         :raise SimpleBenchValueError: If any parameter in the dictionary has an invalid value.
         :raise SimpleBenchValueError: If the metric reference in the dictionary is missing, invalid,
-        or not found in the metrics registry.
+            or not found in the metrics registry.
         :raise SimpleBenchValueError: If the input data does not conform to the expected schema.
         :raise SimpleBenchValueError: If the input data contains unexpected extra keys or is missing required keys.
         """
@@ -332,10 +347,10 @@ class StatsBlock(BaseStatsBlock):
         # Lookup the metric in the metrics registry using the hash_id from the input data
         # as a foreign key. This allows us to convert the metric hash_id string from the input data
         # into the corresponding Metric instance from the metrics registry, which is required for
-        # constructing the ValueBlock instance.
+        # constructing the StatsBlock instance.
         if 'metric' not in data:
             raise SimpleBenchValueError(
-                "Missing required field 'metric' in data for ValueBlock.",
+                "Missing required field 'metric' in data for StatsBlock.",
                 tag=_StatsBlockErrorTag.MISSING_METRIC_FIELD
             )
         metric_hash_id: str = data['metric']
@@ -358,12 +373,121 @@ class StatsBlock(BaseStatsBlock):
             optional_fields={'description', 'version', 'type', 'hash_id'},
             defaults={'description': '', 'version': cls.VERSION, 'type': cls.TYPE},
             match_on={'version': cls.VERSION, 'type': cls.TYPE},
-            process_as={'percentiles': Values},
+            process_as={'percentiles': Values,
+                        'stdev': cls.import_stdev,
+                        'relative_stdev': cls.import_relative_stdev,
+                        'drift_index': cls.import_drift_index,
+                        'autocorrelation': cls.import_autocorrelation},
         )
         return cls(**kwargs)
 
+    @classmethod
+    def import_stdev(cls, value: Any) -> float:
+        """Import and validate the stdev value from the input data.
+
+        This method validates that the stdev value is a float, int, or None.
+        If it is a float or int, it must be non-negative. If it is None, it is imported as NaN.
+
+        :param Any value: The stdev value to validate.
+        :return float: The validated stdev value as a float.
+        :raise SimpleBenchTypeError: If the value is not a float, int or None.
+        :raise SimpleBenchValueError: If the value is a negative float or int.
+        """
+        if value is None:
+            return float('nan')
+        if not isinstance(value, (float, int)):
+            raise SimpleBenchTypeError(
+                f'stdev must be a float, int, or None, got {type(value).__name__}',
+                tag=_StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_TYPE,
+            )
+        if value < 0.0:
+            raise SimpleBenchValueError(
+                f'stdev must be non-negative, got {value}',
+                tag=_StatsBlockErrorTag.INVALID_STANDARD_DEVIATION_VALUE,
+            )
+        return float(value)
+
+    @classmethod
+    def import_relative_stdev(cls, value: Any) -> float:
+        """Import and validate the relative_stdev value from the input data.
+
+        This method validates that the relative_stdev value is a float, int, or None.
+        If it is a float or int, it must be non-negative. If it is None, it is imported as NaN.
+
+        :param Any value: The relative_stdev value to validate.
+        :return float: The validated relative_stdev value as a float.
+        :raise SimpleBenchTypeError: If the value is not a float, int or None.
+        :raise SimpleBenchValueError: If the value is a negative float or int.
+        """
+        if value is None:
+            return float('nan')
+        if not isinstance(value, (float, int)):
+            raise SimpleBenchTypeError(
+                f'relative_stdev must be a float, int, or None, got {type(value).__name__}',
+                tag=_StatsBlockErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_TYPE,
+            )
+        if value < 0.0:
+            raise SimpleBenchValueError(
+                f'relative_stdev must be non-negative, got {value}',
+                tag=_StatsBlockErrorTag.INVALID_RELATIVE_STANDARD_DEVIATION_VALUE,
+            )
+        return float(value)
+
+    @classmethod
+    def import_drift_index(cls, value: Any) -> float:
+        """Import and validate the drift_index value from the input data.
+
+        This method validates that the drift_index value is a float, int, or None.
+        If it is a float or int, it must be in the range [-1.0, 1.0]. If it is None, it is imported as NaN.
+
+        :param Any value: The drift_index value to validate.
+        :return float: The validated drift_index value as a float.
+        :raise SimpleBenchTypeError: If the value is not a float, int or None.
+        :raise SimpleBenchValueError: If the value is a float or int but not in the range [-1.0, 1.0].
+        """
+        if value is None:
+            return float('nan')
+        if not isinstance(value, (float, int)):
+            raise SimpleBenchTypeError(
+                f'drift_index must be a float, int, or None, got {type(value).__name__}',
+                tag=_StatsBlockErrorTag.INVALID_DRIFT_INDEX_TYPE,
+            )
+        if value < -1.0 or value > 1.0:
+            raise SimpleBenchValueError(
+                f'drift_index must be in the range [-1.0, 1.0], got {value}',
+                tag=_StatsBlockErrorTag.INVALID_DRIFT_INDEX_VALUE,
+            )
+        return float(value)
+
+    @classmethod
+    def import_autocorrelation(cls, value: Any) -> float:
+        """Import and validate the autocorrelation value from the input data.
+
+        This method validates that the autocorrelation value is a float, int, or None.
+        If it is a float or int, it must be in the range [-1.0, 1.0]. If it is None, it is imported as NaN.
+
+        :param Any value: The autocorrelation value to validate.
+        :return float: The validated autocorrelation value as a float.
+        :raise SimpleBenchTypeError: If the value is not a float, int or None.
+        :raise SimpleBenchValueError: If the value is a float or int but not in the range [-1.0, 1.0].
+        """
+        if value is None:
+            return float('nan')
+        if not isinstance(value, (float, int)):
+            raise SimpleBenchTypeError(
+                f'autocorrelation must be a float, int, or None, got {type(value).__name__}',
+                tag=_StatsBlockErrorTag.INVALID_AUTOCORRELATION_TYPE,
+            )
+        if value < -1.0 or value > 1.0:
+            raise SimpleBenchValueError(
+                f'autocorrelation must be in the range [-1.0, 1.0], got {value}',
+                tag=_StatsBlockErrorTag.INVALID_AUTOCORRELATION_VALUE,
+            )
+        return float(value)
+
     def to_dict(self) -> ImmutableStatsBlockDict:
-        """Convert the StatsBlock object to an immutable mapping conforming to the version 1 :class:`StatsBlockSchema`.
+        """Convert the StatsBlock object to an immutable mapping conforming to the version 1
+        :class:`ImmutableStatsBlockSchema`.
 
         The exported mapping includes all properties of the StatsBlock and
         expands any nested objects by calling their own `to_dict` methods if available.
@@ -371,11 +495,31 @@ class StatsBlock(BaseStatsBlock):
         It is the canonical representation of the StatsBlock suitable for serialization to JSON
         and deserialization back into a StatsBlock object.
 
-        :return StatsBlockDict: A dictionary representation of the StatsBlock.
+        It converts possible NaN values to None in the output dictionary to ensure JSON compatibility, as NaN is not a
+        valid JSON value.
+
+        :return ImmutableStatsBlockDict: A dictionary representation of the StatsBlock.
         """
-        if self._to_dict_cache is None:
-            self._to_dict_cache = self._to_dict_helper(ImmutableStatsBlockDict)
-        return self._to_dict_cache
+        return CoreDataMapping({
+            'type': self.TYPE,
+            'version': self.VERSION,
+            'hash_id': self.hash_id,
+            'metric': self.metric.to_dict(),
+            'iterations': self.iterations,
+            'rounds': self.rounds,
+            'mean': self.mean,
+            'median': self.median,
+            'minimum': self.minimum,
+            'maximum': self.maximum,
+            'stdev': None if isnan(self.stdev) else self.stdev,
+            'relative_stdev': None if isnan(self.relative_stdev) else self.relative_stdev,
+            'drift_index': None if isnan(self.drift_index) else self.drift_index,
+            'autocorrelation': None if isnan(self.autocorrelation) else self.autocorrelation,
+            'percentiles': self.percentiles
+        })  # type: ignore[return-value]
+    # The return type is actually a CoreDataMapping that conforms to the ImmutableStatsBlockDict
+    # TypedDict protocol, but we use the protocol as the return type for better type checking and to avoid
+    # exposing the internal CoreDataMapping class in the public API.
 
     def for_json(self) -> ImmutableStatsBlockDict:
         """Get the JSON-serializable dictionary representation of this StatsBlock.
@@ -386,7 +530,7 @@ class StatsBlock(BaseStatsBlock):
 
         :return: The JSON-serializable dictionary representation of this StatsBlock.
         """
-        return self.to_dict().for_json()  # type: ignore
+        return self.to_dict().for_json()  # type: ignore[return-value]
 
     def as_json(self) -> str:
         """Get the JSON string representation of this StatsBlock.
@@ -583,7 +727,7 @@ class StatsBlock(BaseStatsBlock):
                         * sqrt(float(self.rounds))
                 )
             else:
-                self._stdev = 0.0  # Standard deviation is 0 if only one measurement
+                self._stdev = float('nan')  # Standard deviation is NaN if only one measurement
         return self._stdev
 
     @property
@@ -594,22 +738,13 @@ class StatsBlock(BaseStatsBlock):
         divided by the mean, expressed as a percentage.
 
         .. note::
-            If `mean` is exactly 0.0 but there is variation in the measurements,
-            the relative standard deviation will be set to a very large number (1e9)
-            to indicate an undefined relative standard deviation. This is because
-            RSD is not mathematically defined when the mean is zero but there is
-            variation in the measurements. If both the mean and standard deviation are zero,
-            the relative standard deviation will be set to 0.0.
-
-            The 1e9 value is used as a placeholder to indicate an undefined relative
-            standard deviation without causing a division by zero error or needing
-            to use NaN or inf values that cannot be easily represented in JSON.
+            If the mean is zero, the relative standard deviation is defined as NaN.
 
         :return: The relative standard deviation.
         """
         if self._relative_stdev is None:
             if self.mean == 0.0:
-                self._relative_stdev = 1e9 if self.stdev else 0.0
+                self._relative_stdev = float('nan')
             else:
                 self._relative_stdev = 100 * abs(self.stdev / self.mean)
         return self._relative_stdev
@@ -689,8 +824,8 @@ class StatsBlock(BaseStatsBlock):
             The value is either set directly or calculated from the `measurements` property.
 
         :return Values: The Values instance containing the percentiles.
-        :raise SimpleBenchValueError: If percentiles cannot be calculated because measurements are not set.
-
+        :raise SimpleBenchValueError: If percentiles cannot be calculated because measurements are not set
+            and it was not set directly either.
         """
         if self._percentiles is None:
             self._percentiles = self._calculate_percentiles()
@@ -779,8 +914,10 @@ class StatsBlock(BaseStatsBlock):
             if attr_name in public_attrs:
                 slot_values.append(getattr(self, attr_name))
             else:
+                # For any attributes that are not part of the public interface, we append None to the slot values
+                # to maintain the correct number of slot values for unpickling, but we do not actually need to
+                # store their values.
                 slot_values.append(None)
-
         # Build the state tuple for a __slots__ class. The first element is for
         # __dict__ (None in our case) and the second is a tuple of the slotted values.
         state = tuple(slot_values)
@@ -808,12 +945,25 @@ class StatsBlock(BaseStatsBlock):
     def __repr__(self) -> str:
         """Get the string representation of the StatsBlock instance.
 
+        This is a custom implementation of __repr__ that constructs a string representation of the StatsBlock
+        by including all of its properties in a key=value format. It accesses the properties via their getters,
+        which will trigger any lazy calculations if they haven't been computed yet. This ensures that the
+        string representation includes the actual values of all properties, even those that are lazily computed.
+
+        It DOES NOT include the 'type' and 'version' properties in the string representation since they
+        are fixed for this class and do not provide additional information about the instance.
+
+        It also does not include 'measurements' in the string representation since they are only needed
+        for calculating the statistical properties - which can be used to completely reconstruct the StatsBlock -
+        and including them would make the string representation excessively long and less readable.
+
         :return: The string representation of the StatsBlock.
         """
         # Get the init parameters excluding 'type' and 'version' since they are fixed for this class
         init_params = dict(self._data_params())
         init_params.pop('type', None)
         init_params.pop('version', None)
+        init_params.pop('measurements', None)
 
         # Build the key-value argument string. Accessing the properties via getattr
         # will trigger their lazy calculation if they haven't been computed yet.
@@ -836,6 +986,16 @@ class StatsBlock(BaseStatsBlock):
         if not isinstance(other, StatsBlock):
             return NotImplemented
         return self.hash_id == other.hash_id
+
+    def __ne__(self, other: object) -> bool:
+        """Check inequality between two StatsBlock instances.
+
+        :param other: The other object to compare.
+        :return: True if not equal, False otherwise.
+        """
+        if not isinstance(other, StatsBlock):
+            return NotImplemented
+        return self.hash_id != other.hash_id
 
     def __copy__(self) -> 'StatsBlock':
         """Return the same instance since StatsBlock is immutable."""

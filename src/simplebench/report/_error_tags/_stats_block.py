@@ -12,6 +12,12 @@ __all__: list[str] = []
 class _StatsBlockErrorTag(ErrorTag):
     """Error tags for JSON stats summary exceptions."""
 
+    INVALID_MEASUREMENTS_TYPE_FOR_AUTOCORRELATION = auto()
+    """The measurements value is not of type Values when validating autocorrelation."""
+    INVALID_MEASUREMENTS_TYPE_FOR_DRIFT_INDEX = auto()
+    """The measurements value is not of type Values when validating drift_index."""
+    INVALID_MEASUREMENTS_TYPE_FOR_STDEV = auto()
+    """The measurements value is not of type Values when validating stdev."""
     INVALID_METRIC_TYPE = auto()
     """The metric provided is not of type Metric."""
     INVALID_METRICS_REGISTRY_TYPE = auto()

@@ -12,9 +12,6 @@ class StatsBlockKWArgs(KWArgs):
 
     def __init__(self, *,
             hash_id: str | NoDefaultValue = NO_DEFAULT_VALUE,
-            name: str | NoDefaultValue = NO_DEFAULT_VALUE,
-            description: str | NoDefaultValue = NO_DEFAULT_VALUE,
-            semantic_type: str | NoDefaultValue = NO_DEFAULT_VALUE,
             metric: Metric | NoDefaultValue = NO_DEFAULT_VALUE,
             iterations: int | NoDefaultValue = NO_DEFAULT_VALUE,
             rounds: int | NoDefaultValue = NO_DEFAULT_VALUE,
@@ -50,9 +47,6 @@ class StatsBlockKWArgs(KWArgs):
             - percentiles
 
         :param str hash_id: The hash identifier for the stats block.
-        :param str name: The name of the stats block.
-        :param str description: The description.
-        :param str semantic_type: The semantic type of the stats block.
         :param Metric metric: The Metric object associated with the stats block.
         :param int | None iterations: The number of iterations. (exclusive with `measurements`)
         :param int rounds: The number of rounds in the stats block.

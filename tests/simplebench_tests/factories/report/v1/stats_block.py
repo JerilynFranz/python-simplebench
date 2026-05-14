@@ -42,8 +42,6 @@ def stats_block_measurements_kwargs() -> StatsBlockKWArgs:
     """
     data = stats_block_data()
     return StatsBlockKWArgs(
-        name=data['name'],
-        semantic_type=data['semantic_type'],
         metric=metric(),
         rounds=data['rounds'],
         timer=data['timer'],  # type: ignore  # validated in stats_block_data
@@ -61,8 +59,6 @@ def stats_block_kwargs() -> StatsBlockKWArgs:
     """
     data = stats_block_data()
     return StatsBlockKWArgs(
-        name=data['name'],
-        semantic_type=data['semantic_type'],
         metric=metric(),
         iterations=data['iterations'],
         rounds=data['rounds'],
@@ -99,8 +95,6 @@ def stats_block_data() -> report.StatsBlockData:
     :rtype: report.StatsBlockData
     """
     info = report.StatsBlockData(
-        name='Test StatsBlock',
-        semantic_type='test::stats',
         metric=metric_data()['hash_id'],  # type: ignore[name-defined]  # using metric_data directly to ensure consistent hash_id for testing
         iterations=100,
         rounds=5,
