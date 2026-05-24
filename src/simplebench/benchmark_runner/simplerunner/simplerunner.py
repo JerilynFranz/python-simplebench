@@ -56,6 +56,7 @@ from types import ModuleType
 from typing import TYPE_CHECKING, Any, Final, NamedTuple
 
 from simplebench import defaults
+from simplebench._log import _log
 from simplebench.benchmark_runner.benchmark_runner import BenchmarkRunner
 from simplebench.case.results import Results
 from simplebench.display.progress_tracker import ProgressTracker
@@ -679,7 +680,12 @@ class SimpleRunner(BenchmarkRunner):
 
         while (iteration_pass <= iterations_min or wall_time < min_stop_at) and wall_time < max_stop_at:
             iteration_pass += 1
-            # Time the action
+
+            # Time the action. The performance measurement is taken separately
+            # from the memory measurement to avoid cross-interference between
+            # the two types of measurements. This is especially important for
+            # micro-benchmarks where the overhead of memory measurement
+            # can significantly affect the performance timing results.
             elapsed, cpu_elapsed = self._run_timed_iteration(
                 rounds=rounds,
                 timer=timer,
@@ -704,25 +710,37 @@ class SimpleRunner(BenchmarkRunner):
             if iteration_pass <= 1:
                 gc.collect()  # Only collect garbage before the first measured iteration
 
-            tracemalloc.start()
-            tracemalloc.reset_peak()
+            teardown_required = callable(teardown)
+            try:
+                tracemalloc.start()
+                tracemalloc.reset_peak()
 
-            # Measure garbage collection counts baseline before the action
-            gc_gen0_start = gc.get_stats()[0]
-            gc_gen1_start = gc.get_stats()[1]
-            gc_gen2_start = gc.get_stats()[2]
+                # Measure garbage collection counts baseline before the action
+                gc_gen0_start = gc.get_stats()[0]
+                gc_gen1_start = gc.get_stats()[1]
+                gc_gen2_start = gc.get_stats()[2]
 
-            start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
-            action(**kwargs)
-            end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
-            tracemalloc.stop()
+                start_memory_current, start_memory_peak = tracemalloc.get_traced_memory()
+                action(**kwargs)
+                end_memory_current, end_memory_peak = tracemalloc.get_traced_memory()
+            except Exception as e:
+                try:
+                    if teardown_required:
+                        teardown()
+                except Exception as teardown_exception:
+                    _log.error(
+                        f'Exception during teardown after action exception: {teardown_exception}', exc_info=True)
+                _log.error(f'Exception during memory usage measurement execution: {e}', exc_info=True)
+                raise e
+            finally:
+                tracemalloc.stop()
 
             # Measure garbage collection counts after the action
             gc_gen0_end = gc.get_stats()[0]
             gc_gen1_end = gc.get_stats()[1]
             gc_gen2_end = gc.get_stats()[2]
 
-            if callable(teardown):
+            if teardown_required:
                 teardown()
 
             if iteration_pass < 1:
@@ -731,8 +749,6 @@ class SimpleRunner(BenchmarkRunner):
 
             memory = end_memory_current - start_memory_current
             peak_memory = end_memory_peak - start_memory_peak
-
-
 
             iteration_result = _Measurement(
                 timing=elapsed,

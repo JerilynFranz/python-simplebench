@@ -8,35 +8,15 @@ from textwrap import dedent
 from .error_tag import ErrorTag
 from .tagged_exception import TaggedException
 
-__all__ = [
-    'TaggedException',
-    'SimpleBenchAssertionError',
-    'SimpleBenchBenchmarkError',
-    'SimpleBenchDuplicateKeyError',
-    'SimpleBenchTypeError',
-    'SimpleBenchValueError',
-    'SimpleBenchKeyError',
-    'SimpleBenchRuntimeError',
-    'SimpleBenchSubprocessExecutableNotFoundError',
-    'SimpleBenchNotARepositoryError',
-    'SimpleBenchRepositoryActionFailedError',
-    'SimpleBenchTimeoutError',
-    'SimpleBenchUsageError',
-    'SimpleBenchFileNotFoundError',
-    'SimpleBenchPermissionError',
-    'SimpleBenchOSError',
-    'SimpleBenchJSONDecodeError',
-    'SimpleBenchNotAFileError',
-    'SimpleBenchNotImplementedError',
-    'SimpleBenchAttributeError',
-    'SimpleBenchArgumentError',
-    'SimpleBenchImportError',
-    'ErrorTag',
-]
+# The __all__ variable is intentionally left empty to prevent wildcard imports
+# of these exceptions.
+__all__: list[str] = []
 
+
+_WHITESPACE_PATTERN = re.compile(r'\s+')
 
 def dedent_and_normalize_whitespace(text: str) -> str:
-    """Dedent and and normalize whitespace.
+    """Dedent and normalize whitespace.
 
     * \\n and \\t characters are removed.
     * Leading and trailing whitespace is removed.
@@ -50,7 +30,7 @@ def dedent_and_normalize_whitespace(text: str) -> str:
     """
     dedented_text = dedent(text)
     no_newlines_tabs = dedented_text.replace('\n', ' ').replace('\t', ' ')
-    normalized_whitespace = re.sub(re.compile(r'\s+'), ' ', no_newlines_tabs)
+    normalized_whitespace = re.sub(_WHITESPACE_PATTERN, ' ', no_newlines_tabs)
     return normalized_whitespace.strip()
 
 
@@ -71,7 +51,7 @@ def generate_message(msg: str, tag: ErrorTag) -> str:
     return message.replace('\n', '')
 
 
-class SimpleBenchTypeError(TaggedException[TypeError], TypeError):
+class SimpleBenchTypeError(TaggedException, TypeError):
     """Base class for all SimpleBench type errors.
 
     It differs from a standard TypeError by the addition of a
@@ -90,7 +70,7 @@ class SimpleBenchTypeError(TaggedException[TypeError], TypeError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchTypeError with the given message and tag.
+        """Initializes a SimpleBenchTypeError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -100,7 +80,7 @@ class SimpleBenchTypeError(TaggedException[TypeError], TypeError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchValueError(TaggedException[ValueError], ValueError):
+class SimpleBenchValueError(TaggedException, ValueError):
     """Base class for all SimpleBench value errors.
 
     It differs from a standard ValueError by the addition of a
@@ -119,7 +99,7 @@ class SimpleBenchValueError(TaggedException[ValueError], ValueError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchValueError with the given message and tag.
+        """Initializes a SimpleBenchValueError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -129,7 +109,7 @@ class SimpleBenchValueError(TaggedException[ValueError], ValueError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchKeyError(TaggedException[KeyError], KeyError):
+class SimpleBenchKeyError(TaggedException, KeyError):
     """Base class for all SimpleBench key errors.
 
     It differs from a standard KeyError by the addition of a
@@ -148,7 +128,7 @@ class SimpleBenchKeyError(TaggedException[KeyError], KeyError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchKeyError with the given message and tag.
+        """Initializes a SimpleBenchKeyError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -158,7 +138,7 @@ class SimpleBenchKeyError(TaggedException[KeyError], KeyError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchRuntimeError(TaggedException[RuntimeError], RuntimeError):
+class SimpleBenchRuntimeError(TaggedException, RuntimeError):
     """Base class for all SimpleBench runtime errors.
 
     It differs from a standard RuntimeError by the addition of a
@@ -177,7 +157,7 @@ class SimpleBenchRuntimeError(TaggedException[RuntimeError], RuntimeError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchRuntimeError with the given message and tag.
+        """Initializes a SimpleBenchRuntimeError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -187,7 +167,7 @@ class SimpleBenchRuntimeError(TaggedException[RuntimeError], RuntimeError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchNotImplementedError(TaggedException[NotImplementedError], NotImplementedError):
+class SimpleBenchNotImplementedError(TaggedException, NotImplementedError):
     """Base class for all SimpleBench not implemented errors.
 
     It differs from a standard NotImplementedError by the addition of a
@@ -206,7 +186,7 @@ class SimpleBenchNotImplementedError(TaggedException[NotImplementedError], NotIm
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchNotImplementedError with the given message and tag.
+        """Initializes a SimpleBenchNotImplementedError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -216,7 +196,7 @@ class SimpleBenchNotImplementedError(TaggedException[NotImplementedError], NotIm
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchAttributeError(TaggedException[AttributeError], AttributeError):
+class SimpleBenchAttributeError(TaggedException, AttributeError):
     """Base class for all SimpleBench attribute errors.
 
     It differs from a standard AttributeError by the addition of a
@@ -237,7 +217,7 @@ class SimpleBenchAttributeError(TaggedException[AttributeError], AttributeError)
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag, name: str | None = None, obj: object) -> None:
-        """Raises a SimpleBenchAttributeError with the given message, name, obj, and tag.
+        """Initializes a SimpleBenchAttributeError with the given message, name, obj, and tag.
 
         Args:
             msg (str): The error message.
@@ -249,7 +229,7 @@ class SimpleBenchAttributeError(TaggedException[AttributeError], AttributeError)
         super().__init__(message, tag=tag, name=name, obj=obj)
 
 
-class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError], argparse.ArgumentError):
+class SimpleBenchArgumentError(TaggedException, argparse.ArgumentError):
     """Base class for re-raising all SimpleBench ArgumentError errors.
 
     It is designed to be used in places where an argparse.ArgumentError
@@ -288,7 +268,7 @@ class SimpleBenchArgumentError(TaggedException[argparse.ArgumentError], argparse
         self.argument_name = argument_name
 
 
-class SimpleBenchImportError(TaggedException[ImportError], ImportError):
+class SimpleBenchImportError(TaggedException, ImportError):
     """Base class for all SimpleBench import errors.
 
     It differs from a standard ImportError by the addition of a
@@ -307,7 +287,7 @@ class SimpleBenchImportError(TaggedException[ImportError], ImportError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchImportError with the given message and tag.
+        """Initializes a SimpleBenchImportError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -317,7 +297,7 @@ class SimpleBenchImportError(TaggedException[ImportError], ImportError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchTimeoutError(TaggedException[TimeoutError], TimeoutError):
+class SimpleBenchTimeoutError(TaggedException, TimeoutError):
     """Exceptions raised for timeout implementations.
 
     Usage:
@@ -331,7 +311,7 @@ class SimpleBenchTimeoutError(TaggedException[TimeoutError], TimeoutError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag, func_name: str | None = None) -> None:
-        """Raises a SimpleBenchTimeoutError with the given message and tag.
+        """Initializes a SimpleBenchTimeoutError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -343,7 +323,7 @@ class SimpleBenchTimeoutError(TaggedException[TimeoutError], TimeoutError):
         self.func_name: str | None = func_name
 
 
-class SimpleBenchUsageError(TaggedException[RuntimeError], RuntimeError):
+class SimpleBenchUsageError(TaggedException, RuntimeError):
     """Exceptions raised for CLI usage errors.
 
     Usage:
@@ -355,18 +335,17 @@ class SimpleBenchUsageError(TaggedException[RuntimeError], RuntimeError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchTimeoutError with the given message and tag.
+        """Initializes a SimpleBenchUsageError with the given message and tag.
 
         Args:
             msg (str): The error message.
-            func_name (str | None): The name of the function that timed out.
             tag (ErrorTag): The tag code.
         """
         message = generate_message(msg, tag)
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchBenchmarkError(TaggedException[RuntimeError], RuntimeError):
+class SimpleBenchBenchmarkError(TaggedException, RuntimeError):
     """Exceptions raised for benchmark execution errors.
 
     If an exception occurs during the execution of a benchmark,
@@ -382,7 +361,7 @@ class SimpleBenchBenchmarkError(TaggedException[RuntimeError], RuntimeError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchBenchmarkError with the given message and tag.
+        """Initializes a SimpleBenchBenchmarkError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -392,7 +371,7 @@ class SimpleBenchBenchmarkError(TaggedException[RuntimeError], RuntimeError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchFileNotFoundError(TaggedException[FileNotFoundError], FileNotFoundError):
+class SimpleBenchFileNotFoundError(TaggedException, FileNotFoundError):
     """Exceptions raised for file not found errors in simplebench.
 
     Usage:
@@ -404,7 +383,7 @@ class SimpleBenchFileNotFoundError(TaggedException[FileNotFoundError], FileNotFo
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchFileNotFoundError with the given message and tag.
+        """Initializes a SimpleBenchFileNotFoundError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -414,7 +393,7 @@ class SimpleBenchFileNotFoundError(TaggedException[FileNotFoundError], FileNotFo
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchPermissionError(TaggedException[PermissionError], PermissionError):
+class SimpleBenchPermissionError(TaggedException, PermissionError):
     """Exceptions raised for permission errors in simplebench.
 
     Usage:
@@ -426,7 +405,7 @@ class SimpleBenchPermissionError(TaggedException[PermissionError], PermissionErr
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchPermissionError with the given message and tag.
+        """Initializes a SimpleBenchPermissionError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -436,7 +415,7 @@ class SimpleBenchPermissionError(TaggedException[PermissionError], PermissionErr
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchOSError(TaggedException[OSError], OSError):
+class SimpleBenchOSError(TaggedException, OSError):
     """Exceptions raised for OS errors in simplebench.
 
     Usage:
@@ -448,7 +427,7 @@ class SimpleBenchOSError(TaggedException[OSError], OSError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchOSError with the given message and tag.
+        """Initializes a SimpleBenchOSError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -458,7 +437,7 @@ class SimpleBenchOSError(TaggedException[OSError], OSError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchJSONDecodeError(TaggedException[JSONDecodeError], JSONDecodeError):
+class SimpleBenchJSONDecodeError(TaggedException, JSONDecodeError):
     """Exceptions raised for JSON decode errors in simplebench.
 
     Usage:
@@ -470,7 +449,7 @@ class SimpleBenchJSONDecodeError(TaggedException[JSONDecodeError], JSONDecodeErr
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchJSONDecodeError with the given message and tag.
+        """Initializes a SimpleBenchJSONDecodeError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -480,7 +459,7 @@ class SimpleBenchJSONDecodeError(TaggedException[JSONDecodeError], JSONDecodeErr
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchNotAFileError(TaggedException[OSError], OSError):
+class SimpleBenchNotAFileError(TaggedException, OSError):
     """Exceptions raised when a given path is not a file in simplebench.
 
     Usage:
@@ -492,7 +471,7 @@ class SimpleBenchNotAFileError(TaggedException[OSError], OSError):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchNotAFileError with the given message and tag.
+        """Initializes a SimpleBenchNotAFileError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -502,7 +481,7 @@ class SimpleBenchNotAFileError(TaggedException[OSError], OSError):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchNotARepositoryError(TaggedException[Exception]):
+class SimpleBenchNotARepositoryError(TaggedException):
     """Exception raised when a directory is not a VCS repository in simplebench.
 
     This exception is raised when an operation expects to be performed
@@ -526,7 +505,7 @@ class SimpleBenchNotARepositoryError(TaggedException[Exception]):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchNotARepositoryError with the given message and tag.
+        """Initializes a SimpleBenchNotARepositoryError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -536,7 +515,7 @@ class SimpleBenchNotARepositoryError(TaggedException[Exception]):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchRepositoryActionFailedError(TaggedException[Exception]):
+class SimpleBenchRepositoryActionFailedError(TaggedException):
     """Exception raised when a VCS repository action fails in simplebench.
 
     This exception is raised when an operation intended to interact
@@ -557,7 +536,7 @@ class SimpleBenchRepositoryActionFailedError(TaggedException[Exception]):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchRepositoryActionFailedError with the given message and tag.
+        """Initializes a SimpleBenchRepositoryActionFailedError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -567,19 +546,20 @@ class SimpleBenchRepositoryActionFailedError(TaggedException[Exception]):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchSubprocessExecutableNotFoundError(TaggedException[FileNotFoundError], FileNotFoundError):
+class SimpleBenchSubprocessExecutableNotFoundError(TaggedException, FileNotFoundError):
     """Exceptions raised when a required executable is not found in simplebench.
 
     Usage:
-        raise SimpleBenchExecutableNotFoundError("An error occurred",
-                                                 tag=MyErrorTags.SOME_ERROR)
+        raise SimpleBenchSubprocessExecutableNotFoundError(
+                "An error occurred",
+                tag=MyErrorTags.SOME_ERROR)
     Args:
         msg (str): The error message.
         tag (ErrorTag): The tag code.
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchExecutableNotFoundError with the given message and tag.
+        """Initializes a SimpleBenchSubprocessExecutableNotFoundError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -589,7 +569,7 @@ class SimpleBenchSubprocessExecutableNotFoundError(TaggedException[FileNotFoundE
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchDuplicateKeyError(TaggedException[Exception]):
+class SimpleBenchDuplicateKeyError(TaggedException):
     """Exception raised when a duplicate key is encountered in simplebench.
 
     Usage:
@@ -601,7 +581,7 @@ class SimpleBenchDuplicateKeyError(TaggedException[Exception]):
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchDuplicateKeyError with the given message and tag.
+        """Initializes a SimpleBenchDuplicateKeyError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -611,7 +591,7 @@ class SimpleBenchDuplicateKeyError(TaggedException[Exception]):
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchRecursionError(TaggedException[RecursionError], RecursionError):
+class SimpleBenchRecursionError(TaggedException, RecursionError):
     """Exception raised when maximum recursion depth is exceeded in simplebench.
 
     Usage:
@@ -623,7 +603,7 @@ class SimpleBenchRecursionError(TaggedException[RecursionError], RecursionError)
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchRecursionError with the given message and tag.
+        """Initializes a SimpleBenchRecursionError with the given message and tag.
 
         Args:
             msg (str): The error message.
@@ -633,7 +613,7 @@ class SimpleBenchRecursionError(TaggedException[RecursionError], RecursionError)
         super().__init__(message, tag=tag)
 
 
-class SimpleBenchAssertionError(TaggedException[AssertionError], AssertionError):
+class SimpleBenchAssertionError(TaggedException, AssertionError):
     """Base class for all SimpleBench assertion errors.
 
     It differs from a standard AssertionError by the addition of a
@@ -652,7 +632,7 @@ class SimpleBenchAssertionError(TaggedException[AssertionError], AssertionError)
     """
 
     def __init__(self, msg: str, *, tag: ErrorTag) -> None:
-        """Raises a SimpleBenchAssertionError with the given message and tag.
+        """Initializes a SimpleBenchAssertionError with the given message and tag.
 
         Args:
             msg (str): The error message.
