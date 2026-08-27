@@ -552,7 +552,8 @@ class SimpleRunner(BenchmarkRunner):
         :param dict[str, Any] kwargs: Keyword arguments to pass to the action.
         :param Optional[Callable[..., Any]] setup: A setup function to run before the iteration.
         :param Optional[Callable[..., Any]] teardown: A teardown function to run after the iteration.
-        :return float: The elapsed time for the iteration in seconds.
+        :return: A tuple of (elapsed_time, elapsed_cpu_time) in seconds.
+        :rtype: tuple[float, float]
         """
         if callable(setup):
             setup()
@@ -955,7 +956,7 @@ class SimpleRunner(BenchmarkRunner):
                 # or if we've hit the maximum number of calibration rounds,
                 # or if the measured time has exceeded the maximum calibration time for either timer to
                 # avoid excessively long calibration runs.
-                if ((calibrate is Calibrate.WALL and  total_measured_time_ns >= timer_target_time_ns)
+                if ((calibrate is Calibrate.WALL and total_measured_time_ns >= timer_target_time_ns)
                         or (calibrate is Calibrate.CPU and total_measured_cpu_time_ns >= cpu_timer_target_time_ns)
                         or (estimate_rounds >= defaults.MAX_CALIBRATION_ROUNDS)
                         or (max_cputime_calibration_time_ns < total_measured_cpu_time_ns)
