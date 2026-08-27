@@ -86,21 +86,6 @@ mypy_path = "src,tests"
 warn_unused_ignores = false
 warn_redundant_casts = true
 
-[tool.pyright]
-include = ["src", "tests", "bench"]
-exclude = ["**/node_modules",
-    "**/__pycache__",
-    "src/experimental",
-    "src/typestubs",
-    "**/.*",
-    ".venv",
-    ".tox/"
-]
-ignore = []
-defineConstant = { DEBUG = true }
-
-reportMissingImports = "error"
-reportUnnecessaryIsInstance = false
 
 
 [project.optional-dependencies]
@@ -530,3 +515,31 @@ docstring-code-line-length = "dynamic"
 [tool.autopypath]
 paths = ["src", "tests"]
 
+# This is a configuration for the `uv` tool, which is used for managing virtual environments and dependencies.
+[tool.uv]
+# The `exclude-newer` option specifies that any dependencies that are newer than 14 days should be excluded
+# from consideration when resolving dependencies. This is intended to help mitigate 'drive-by' dependency upgrades
+# that can result in supply-chain security vulnerabilities.
+exclude-newer = "14 days"
+
+# To keep Zed from using basedpyright for type checking.
+# We don't use it and trying to keep it synced with the tools
+# we DO use is a mess.
+[tool.basedpyright]
+typeCheckingMode = "off"
+
+#[tool.pyright]
+#include = ["src", "tests", "bench"]
+#exclude = ["**/node_modules",
+#    "**/__pycache__",
+#    "src/experimental",
+#    "src/typestubs",
+#    "**/.*",
+#    ".venv",
+#    ".tox/"
+#]
+#ignore = []
+#defineConstant = { DEBUG = true }
+#
+#reportMissingImports = "error"
+#reportUnnecessaryIsInstance = false
