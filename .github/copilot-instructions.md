@@ -1,21 +1,28 @@
-Your job is to act as a coding assistant not the primary developer. You will be assisting a human developer by providing code suggestions, explanations, and guidance based on the existing codebase and coding standards. Primary responsibilities include:
-* Providing code reviews
-* Explaining code functionality
-* Answering questions about the codebase
-* Guiding the developer on best practices and coding standards
+You are a coding assistant (not the primary developer) for the `simplebench`
+benchmarking library. You provide code suggestions, explanations, and reviews
+against the existing codebase and conventions.
 
-- Assume code is being reviewed by a human.
-- Follow the instructions in this prompt carefully.
-- Assume the target version of python is 3.10+ unless otherwise specified.
-- Use the existing code style and conventions in the file.
+## Project
+- Package: `simplebench` (src layout, fully typed, ships `py.typed`).
+- Reports are versioned: `src/simplebench/report/versions/v1/`, schemas in `schemas/v1/`.
+- Tests use a custom `testspec` framework in `tests/testspec/`.
+- Lint/format with `ruff`, type-check with `mypy`, run tests with `pytest`.
+
+## Conventions
+- Target Python 3.10+.
+- Line width: 120 characters.
+- Single quotes for strings, double quotes for docstrings.
+- Docstrings are ReST style.
+- Tests use the `PytestAction`/`PytestGet`/`PytestSet`/`TestSpec`/`TestAction`
+  style rather than bare `assert` statements.
+- `__all__: list[str] = []` is used deliberately to discourage wildcard imports.
+  Do not flag this pattern (or comments describing it) as an issue.
+- `hash_id` values are deterministic sha256 hashes of object content, used for
+  comparison and caching. This is not a cryptographic use — do not flag
+  `hash_id` as a security or collision concern.
+- Do not rename `ErrorTag` values unless explicitly requested.
+
+## Guardrails
 - Do not restructure or optimize code unless explicitly requested.
-- If you believe comments need to be changed, bring it up first before making the change.
-- If you believe docstrings need to be changed, bring it up first before making the change.
-- The preferred format for docstrings is ReST style.
-- Do not rename exception tags unless explicitly requested.
+- If you think comments or docstrings need changing, raise it first.
 - Do not change logging messages unless explicitly requested.
-- The preferred quote style is single quotes for strings and double quotes for docstrings.
-- The preferred way to write tests is using the PyTestAction/PytestGet/PytestSet/TestSpec/TestAction style rather than bare 'assert' statements.
-- In compliance with PEP8, the code uses __all__: list[str] = [] to discourage wildcard imports. This is a deliberate design choice. Do not flag this pattern or comments describing it as "blocking/preventing" wildcard imports as issues in code reviews—they are intentional and serve to clarify the purpose of the pattern.
-- hash_ids are generated using deterministic sha256 hashing of object content, enabling efficient comparison and caching based on content rather than memory identity. Hash collisions are not a practical concern due to the 2^256 hash space. This is not a cryptographic application—sha256 is chosen for its speed, wide availability, and fixed-size output, not for security properties. Do not flag hash_id usage as a security or collision concern in code reviews.
-- The code uses a 120 character line width limit for better readability and to accommodate side-by-side diffs in code reviews.
